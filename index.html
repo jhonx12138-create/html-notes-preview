@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#f5f0e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>📚 笔记预览</title>
+<style>
+/* ===== CSS Variables ===== */
+:root {
+  --bg-primary: #f5f0e8;
+  --bg-secondary: #ffffff;
+  --bg-sidebar: #ede8dd;
+  --bg-hover: #e3dcd0;
+  --bg-active: #d5cfc2;
+  --bg-card: #ffffff;
+  --text-primary: #2c3e50;
+  --text-secondary: #5a6c7d;
+  --text-muted: #8a9aaa;
+  --border-color: #d5cfc2;
+  --accent: #c0392b;
+  --accent-hover: #a93226;
+  --accent-light: #fce4e4;
+  --tag-colors: #e74c3c, #e67e22, #2980b9, #27ae60, #8e44ad, #16a085, #d35400, #2c3e50;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.10);
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --transition: 0.2s ease;
+}
+
+[data-theme="dark"] {
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --bg-sidebar: #1f2b3d;
+  --bg-hover: #263550;
+  --bg-active: #2d3f5e;
+  --bg-card: #16213e;
+  --text-primary: #e8e6e3;
+  --text-secondary: #b0b8c1;
+  --text-muted: #6b7b8d;
+  --border-color: #2d3f5e;
+  --accent: #ff6b6b;
+  --accent-hover: #ee5a5a;
+  --accent-light: #3d2025;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.20);
+  --shadow-md: 0 2px 8px rgba(0,0,0,0.25);
+  --shadow-lg: 0 4px 16px rgba(0,0,0,0.35);
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Prevent pull-to-refresh on mobile */
+  overscroll-behavior: none;
+}
+
+/* ===== App Shell ===== */
+.app {
+  display: flex;
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ===== Sidebar ===== */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  min-width: 340px;
+  height: 100%;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  transition: transform var(--transition);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 20px 20px 12px;
+  flex-shrink: 0;
+}
+
+.sidebar-header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+.sidebar-header .subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 14px;
+}
+
+/* Search */
+.search-box {
+  position: relative;
+  margin-bottom: 0;
+}
+
+.search-box input {
+  width: 100%;
+  height: 40px;
+  padding: 0 16px 0 38px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  transition: all var(--transition);
+}
+
+.search-box input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.search-box .search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  font-size: 1rem;
+}
+
+/* Toolbar */
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.toolbar .count {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex: 1;
+}
+
+.icon-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.icon-btn.active {
+  background: var(--accent-light);
+  color: var(--accent);
+}
+
+/* Note List */
+.note-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  /* iOS smooth scroll */
+  -webkit-overflow-scrolling: touch;
+}
+
+.note-list::-webkit-scrollbar {
+  width: 4px;
+}
+
+.note-list::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+.note-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-bottom: 2px;
+  position: relative;
+}
+
+.note-item:hover {
+  background: var(--bg-hover);
+}
+
+.note-item.active {
+  background: var(--bg-active);
+}
+
+.note-item .read-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 7px;
+  background: var(--accent);
+  opacity: 1;
+  transition: opacity var(--transition);
+}
+
+.note-item .read-dot.read {
+  opacity: 0;
+}
+
+.note-item .note-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.note-item .note-title {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  line-height: 1.4;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-item .note-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.note-item .note-date {
+  flex-shrink: 0;
+}
+
+.note-item .note-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: nowrap;
+  overflow: hidden;
+}
+
+.tag-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  white-space: nowrap;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.tag-pill .tag-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.empty-state .empty-icon {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  opacity: 0.6;
+}
+
+.empty-state p {
+  font-size: 0.9rem;
+}
+
+/* ===== Main Content ===== */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--bg-primary);
+  min-width: 0;
+}
+
+/* Preview Header */
+.preview-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.preview-header .back-btn {
+  display: none;
+}
+
+.preview-header .note-title-display {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.preview-header .note-date-display {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+/* Preview Body */
+.preview-body {
+  flex: 1;
+  position: relative;
+  background: var(--bg-secondary);
+}
+
+.preview-body iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #ffffff;
+}
+
+/* Welcome / Empty Preview */
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 40px;
+}
+
+.welcome .welcome-icon {
+  font-size: 5rem;
+  margin-bottom: 20px;
+  opacity: 0.5;
+}
+
+.welcome h3 {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.welcome p {
+  font-size: 0.85rem;
+  max-width: 300px;
+}
+
+/* ===== Bottom Nav (Mobile) ===== */
+.bottom-nav {
+  display: none;
+  align-items: center;
+  justify-content: space-around;
+  padding: 8px 16px;
+  padding-bottom: max(8px, env(safe-area-inset-bottom));
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.bottom-nav .nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 16px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.bottom-nav .nav-item .nav-icon {
+  font-size: 1.3rem;
+}
+
+.bottom-nav .nav-item.active {
+  color: var(--accent);
+}
+
+/* ===== Loading & Error ===== */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.loading-spinner .spinner {
+  width: 24px;
+  height: 24px;
+  border: 2.5px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-banner {
+  margin: 12px;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: var(--accent-light);
+  color: var(--accent);
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+/* ===== Responsive: Mobile ===== */
+@media (max-width: 767px) {
+  .app {
+    flex-direction: column;
+    position: relative;
+    height: 100%;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-right: none;
+  }
+
+  .sidebar.hidden {
+    transform: translateX(-100%);
+    pointer-events: none;
+  }
+
+  .main-content {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .main-content.hidden {
+    transform: translateX(100%);
+    pointer-events: none;
+    visibility: hidden;
+  }
+
+  .preview-header .back-btn {
+    display: flex;
+  }
+
+  .bottom-nav {
+    display: flex;
+  }
+
+  /* Adjust layout so bottom nav is visible */
+  .app {
+    padding-bottom: 0;
+  }
+
+  /* On mobile, sidebar needs bottom padding to clear the fixed bottom nav.
+     Uses calc() so safe-area-inset is respected on notched devices. */
+  .sidebar {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
+  }
+
+  .preview-body {
+    flex: 1;
+  }
+}
+
+/* ===== Responsive: Tablet ===== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .sidebar {
+    width: 300px;
+    min-width: 300px;
+  }
+
+  .note-item {
+    padding: 10px 12px;
+  }
+}
+
+/* ===== Responsive: Large Screens ===== */
+@media (min-width: 1024px) {
+  .sidebar {
+    width: 360px;
+    min-width: 360px;
+  }
+}
+
+/* ===== Utility ===== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ===== App Shell ===== -->
+<div class="app" id="app">
+
+  <!-- Sidebar / Note List -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <h1>📚 读书笔记</h1>
+      <p class="subtitle">点击笔记开始阅读</p>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="搜索笔记标题…" autocomplete="off">
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <span class="count" id="noteCount">共 0 篇</span>
+      <button class="icon-btn" id="themeToggle" title="切换主题" aria-label="切换暗色/亮色主题">🌓</button>
+    </div>
+
+    <div class="note-list" id="noteList">
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        加载笔记中…
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content / Preview -->
+  <main class="main-content hidden" id="mainContent">
+    <div class="preview-header">
+      <button class="icon-btn back-btn" id="backBtn" title="返回列表" aria-label="返回笔记列表">←</button>
+      <span class="note-title-display" id="previewTitle">选择一篇笔记</span>
+      <span class="note-date-display" id="previewDate"></span>
+    </div>
+    <div class="preview-body" id="previewBody">
+      <div class="welcome">
+        <div class="welcome-icon">📖</div>
+        <h3>选择一篇笔记开始阅读</h3>
+        <p>从左侧列表中选择一篇读书笔记，内容将在此显示</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- Bottom Nav (Mobile-only) -->
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-item active" id="navList" data-view="list">
+      <span class="nav-icon">📋</span>
+      <span>列表</span>
+    </button>
+    <button class="nav-item" id="navPreview" data-view="preview" disabled>
+      <span class="nav-icon">📄</span>
+      <span>预览</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+/* ===================================================================
+ * 笔记预览 APP — 主逻辑
+ * =================================================================== */
+
+(function() {
+  'use strict';
+
+  /* ---- DOM References ---- */
+  const $ = (sel, ctx) => (ctx || document).querySelector(sel);
+  const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
+
+  const app = $('#app');
+  const sidebar = $('#sidebar');
+  const mainContent = $('#mainContent');
+  const noteList = $('#noteList');
+  const searchInput = $('#searchInput');
+  const noteCount = $('#noteCount');
+  const themeToggle = $('#themeToggle');
+  const backBtn = $('#backBtn');
+  const previewTitle = $('#previewTitle');
+  const previewDate = $('#previewDate');
+  const previewBody = $('#previewBody');
+  const bottomNav = $('#bottomNav');
+  const navListBtn = $('#navList');
+  const navPreviewBtn = $('#navPreview');
+
+  /* ---- State ---- */
+  const STATE = {
+    notes: [],
+    selectedId: null,
+    searchQuery: '',
+    theme: 'light',
+    readStatus: {},       // { noteId: true } — persisted in localStorage
+    isMobile: false,
+    mobileView: 'list',   // 'list' | 'preview'
+  };
+
+  /* ---- Helpers ---- */
+
+  /** Generate a consistent color from a string (simple hash → index into palette). */
+  const TAG_COLORS = ['#e74c3c', '#e67e22', '#2980b9', '#27ae60', '#8e44ad', '#16a085', '#d35400', '#2c3e50'];
+
+  function tagColor(tag) {
+    let hash = 0;
+    for (let i = 0; i < tag.length; i++) {
+      hash = ((hash << 5) - hash) + tag.charCodeAt(i);
+      hash |= 0;
+    }
+    return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length];
+  }
+
+  /** Format date string to a friendlier form. */
+  function formatDate(dateStr) {
+    if (!dateStr) return '';
+    try {
+      const d = new Date(dateStr);
+      if (isNaN(d.getTime())) return dateStr;
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    } catch (_) {
+      return dateStr;
+    }
+  }
+
+  /** Detect if we are on a mobile-sized viewport. */
+  function checkMobile() {
+    STATE.isMobile = window.innerWidth < 768;
+  }
+
+  /* ---- Persistence ---- */
+
+  function loadReadStatus() {
+    try {
+      const raw = localStorage.getItem('notes-read-status');
+      if (raw) {
+        STATE.readStatus = JSON.parse(raw);
+      }
+    } catch (_) {
+      STATE.readStatus = {};
+    }
+  }
+
+  function saveReadStatus() {
+    try {
+      localStorage.setItem('notes-read-status', JSON.stringify(STATE.readStatus));
+    } catch (_) { /* quota exceeded — silently ignore */ }
+  }
+
+  function markAsRead(noteId) {
+    if (!STATE.readStatus[noteId]) {
+      STATE.readStatus[noteId] = true;
+      saveReadStatus();
+    }
+  }
+
+  function loadTheme() {
+    try {
+      const saved = localStorage.getItem('notes-theme');
+      if (saved === 'dark' || saved === 'light') {
+        STATE.theme = saved;
+      }
+    } catch (_) {
+      STATE.theme = 'light';
+    }
+    applyTheme();
+  }
+
+  function saveTheme() {
+    try {
+      localStorage.setItem('notes-theme', STATE.theme);
+    } catch (_) { /* ignore */ }
+  }
+
+  function applyTheme() {
+    document.documentElement.setAttribute('data-theme', STATE.theme);
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute('content', STATE.theme === 'dark' ? '#1a1a2e' : '#f5f0e8');
+    }
+  }
+
+  /* ---- Data Fetching ---- */
+
+  async function loadNotes() {
+    noteList.innerHTML = `
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        加载笔记中…
+      </div>`;
+    try {
+      const resp = await fetch('notes.json');
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
+      }
+      const data = await resp.json();
+      if (!Array.isArray(data)) {
+        throw new Error('笔记数据格式错误：期望数组');
+      }
+      STATE.notes = data.map((n, i) => ({
+        ...n,
+        id: n.id || String(i + 1),
+        title: n.title || '未命名笔记',
+        file: n.file || '',
+        date: n.date || '',
+        tags: Array.isArray(n.tags) ? n.tags : [],
+      }));
+      renderNoteList();
+    } catch (err) {
+      console.error('加载笔记失败:', err);
+      noteList.innerHTML = `
+        <div class="error-banner">
+          ⚠️ 加载笔记失败：${err.message}
+        </div>`;
+      updateCount();
+    }
+  }
+
+  /* ---- Rendering ---- */
+
+  function getFilteredNotes() {
+    const q = STATE.searchQuery.trim().toLowerCase();
+    if (!q) return STATE.notes;
+    return STATE.notes.filter(n =>
+      n.title.toLowerCase().includes(q) ||
+      n.tags.some(t => t.toLowerCase().includes(q))
+    );
+  }
+
+  function renderNoteList() {
+    const filtered = getFilteredNotes();
+
+    if (filtered.length === 0) {
+      noteList.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>${STATE.searchQuery ? '没有匹配的笔记' : '暂无笔记'}</p>
+        </div>`;
+      updateCount(filtered.length);
+      return;
+    }
+
+    noteList.innerHTML = filtered.map(n => {
+      const isActive = n.id === STATE.selectedId;
+      const isRead = STATE.readStatus[n.id];
+      return `
+        <div class="note-item ${isActive ? 'active' : ''}" data-id="${n.id}" role="button" tabindex="0">
+          <div class="read-dot ${isRead ? 'read' : ''}" title="${isRead ? '已读' : '未读'}"></div>
+          <div class="note-info">
+            <div class="note-title">${escapeHtml(n.title)}</div>
+            <div class="note-meta">
+              ${n.date ? `<span class="note-date">${formatDate(n.date)}</span>` : ''}
+              <span class="note-tags">
+                ${n.tags.map(t => `
+                  <span class="tag-pill">
+                    <span class="tag-dot" style="background:${tagColor(t)}"></span>
+                    ${escapeHtml(t)}
+                  </span>
+                `).join('')}
+              </span>
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+
+    updateCount(filtered.length);
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function updateCount(count) {
+    const c = count !== undefined ? count : getFilteredNotes().length;
+    noteCount.textContent = `共 ${c} 篇`;
+  }
+
+  function showPreview(note) {
+    if (!note) return;
+
+    STATE.selectedId = note.id;
+    markAsRead(note.id);
+
+    previewTitle.textContent = note.title;
+    previewDate.textContent = note.date ? formatDate(note.date) : '';
+
+    // Build iframe wrapper: iframe + hidden error fallback
+    previewBody.innerHTML = `
+      <iframe
+        src="${escapeHtml(note.file)}"
+        title="${escapeHtml(note.title)}"
+        sandbox="allow-same-origin allow-scripts"
+        class="preview-iframe"
+      ></iframe>
+      <div class="welcome preview-error" style="display:none">
+        <div class="welcome-icon">⚠️</div>
+        <h3>笔记加载失败</h3>
+        <p>无法加载「${escapeHtml(note.title)}」，请检查文件 <code>${escapeHtml(note.file)}</code> 是否存在。</p>
+      </div>`;
+
+    // Attach error handling: if iframe fails to load, show the fallback
+    var iframe = previewBody.querySelector('.preview-iframe');
+    var errorFallback = previewBody.querySelector('.preview-error');
+    if (iframe && errorFallback) {
+      iframe.addEventListener('error', function() {
+        iframe.style.display = 'none';
+        errorFallback.style.display = '';
+      });
+    }
+
+    // Update UI
+    renderNoteList();
+
+    // On mobile, switch to preview view
+    if (STATE.isMobile) {
+      setMobileView('preview');
+    }
+
+    // Enable preview button in bottom nav
+    navPreviewBtn.disabled = false;
+    navPreviewBtn.classList.add('active');
+    navListBtn.classList.remove('active');
+  }
+
+  function showWelcome() {
+    STATE.selectedId = null;
+    previewTitle.textContent = '选择一篇笔记';
+    previewDate.textContent = '';
+    previewBody.innerHTML = `
+      <div class="welcome">
+        <div class="welcome-icon">📖</div>
+        <h3>选择一篇笔记开始阅读</h3>
+        <p>从列表中选择一篇读书笔记，内容将在此显示</p>
+      </div>`;
+    renderNoteList();
+    if (STATE.isMobile) {
+      setMobileView('list');
+    }
+    navPreviewBtn.disabled = true;
+    navPreviewBtn.classList.remove('active');
+  }
+
+  /* ---- Mobile View Management ---- */
+
+  function setMobileView(view) {
+    STATE.mobileView = view;
+
+    if (STATE.isMobile) {
+      if (view === 'list') {
+        sidebar.classList.remove('hidden');
+        mainContent.classList.add('hidden');
+        navListBtn.classList.add('active');
+        navPreviewBtn.classList.remove('active');
+      } else {
+        sidebar.classList.add('hidden');
+        mainContent.classList.remove('hidden');
+        navPreviewBtn.classList.add('active');
+        navListBtn.classList.remove('active');
+      }
+    } else {
+      // Desktop: both visible
+      sidebar.classList.remove('hidden');
+      mainContent.classList.remove('hidden');
+    }
+  }
+
+  /* ---- Event Handlers ---- */
+
+  // Note list click delegation
+  noteList.addEventListener('click', function(e) {
+    const item = e.target.closest('.note-item');
+    if (!item) return;
+    const id = item.getAttribute('data-id');
+    const note = STATE.notes.find(n => n.id === id);
+    if (note) {
+      showPreview(note);
+    }
+  });
+
+  // Keyboard support for note items
+  noteList.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const item = e.target.closest('.note-item');
+      if (item) {
+        e.preventDefault();
+        const id = item.getAttribute('data-id');
+        const note = STATE.notes.find(n => n.id === id);
+        if (note) showPreview(note);
+      }
+    }
+  });
+
+  // Search input
+  let searchDebounceTimer = null;
+  searchInput.addEventListener('input', function() {
+    STATE.searchQuery = this.value;
+    clearTimeout(searchDebounceTimer);
+    searchDebounceTimer = setTimeout(() => {
+      renderNoteList();
+    }, 150);
+  });
+
+  // Back button (mobile)
+  backBtn.addEventListener('click', function() {
+    if (STATE.isMobile) {
+      setMobileView('list');
+    }
+  });
+
+  // Bottom nav
+  navListBtn.addEventListener('click', function() {
+    setMobileView('list');
+  });
+
+  navPreviewBtn.addEventListener('click', function() {
+    if (STATE.selectedId) {
+      setMobileView('preview');
+    }
+  });
+
+  // Theme toggle
+  themeToggle.addEventListener('click', function() {
+    STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
+    applyTheme();
+    saveTheme();
+  });
+
+  // Responsive resize
+  let resizeDebounceTimer = null;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeDebounceTimer);
+    resizeDebounceTimer = setTimeout(() => {
+      const wasMobile = STATE.isMobile;
+      checkMobile();
+      if (wasMobile !== STATE.isMobile) {
+        if (!STATE.isMobile) {
+          // Moving to desktop — show both panels
+          sidebar.classList.remove('hidden');
+          mainContent.classList.remove('hidden');
+        } else {
+          // Moving to mobile — apply current mobile view
+          setMobileView(STATE.mobileView);
+        }
+      }
+    }, 200);
+  });
+
+  // Hardware back button support (Android)
+  // Note: popstate is not cancelable; e.preventDefault() has no effect here.
+  // We push a new state to keep the user on the page, effectively trapping the back navigation.
+  window.addEventListener('popstate', function(e) {
+    if (STATE.isMobile && STATE.mobileView === 'preview') {
+      setMobileView('list');
+      history.pushState({ view: 'preview' }, '');
+    }
+  });
+
+  /* ---- Initialization ---- */
+
+  function init() {
+    loadReadStatus();
+    loadTheme();
+    checkMobile();
+
+    // On desktop, show both panels immediately
+    if (!STATE.isMobile) {
+      sidebar.classList.remove('hidden');
+      mainContent.classList.remove('hidden');
+    } else {
+      // On mobile, start with list view
+      setMobileView('list');
+    }
+
+    // Push initial history state for back button handling
+    if (STATE.isMobile) {
+      history.pushState({ view: 'list' }, '');
+    }
+
+    // Show welcome state in preview panel
+    showWelcome();
+
+    // Load notes
+    loadNotes();
+  }
+
+  init();
+})();
+</script>
+
+</body>
+</html>

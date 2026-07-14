@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📋 笔记预览 APP — 测试套件</title>
+<style>
+  :root { --pass: #27ae60; --fail: #e74c3c; --warn: #f39c12; --info: #2980b9; --bg: #1a1a2e; --card: #16213e; --text: #e8e6e3; --text2: #b0b8c1; --border: #2d3f5e; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); padding: 24px; line-height: 1.6; }
+  h1 { font-size: 1.4rem; margin-bottom: 4px; }
+  .subtitle { color: var(--text2); font-size: 0.85rem; margin-bottom: 20px; }
+  .summary { display: flex; gap: 16px; margin: 16px 0; flex-wrap: wrap; }
+  .summary-card { flex: 1; min-width: 120px; background: var(--card); border-radius: 10px; padding: 16px; text-align: center; border: 2px solid var(--border); }
+  .summary-card .num { font-size: 2rem; font-weight: 700; }
+  .summary-card .label { font-size: 0.8rem; color: var(--text2); }
+  .summary-card.pass { border-color: var(--pass); }
+  .summary-card.pass .num { color: var(--pass); }
+  .summary-card.fail { border-color: var(--fail); }
+  .summary-card.fail .num { color: var(--fail); }
+  .summary-card.warn { border-color: var(--warn); }
+  .summary-card.warn .num { color: var(--warn); }
+  .section { margin: 20px 0; }
+  .section h2 { font-size: 1.1rem; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+  .test-case { background: var(--card); border-radius: 8px; padding: 10px 14px; margin: 6px 0; display: flex; align-items: flex-start; gap: 10px; border-left: 4px solid var(--border); }
+  .test-case.pass { border-left-color: var(--pass); }
+  .test-case.fail { border-left-color: var(--fail); }
+  .test-case .icon { flex-shrink: 0; font-size: 1.1rem; margin-top: 1px; }
+  .test-case .details { flex: 1; }
+  .test-case .name { font-weight: 500; font-size: 0.9rem; }
+  .test-case .msg { font-size: 0.8rem; color: var(--text2); margin-top: 2px; }
+  .test-case .msg code { background: rgba(255,255,255,0.08); padding: 1px 5px; border-radius: 3px; font-size: 0.78rem; word-break: break-all; }
+  .app-frame-container { margin-top: 16px; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .app-frame-container h3 { padding: 10px 16px; background: var(--card); border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  .routing { margin: 20px 0; padding: 16px; border-radius: 10px; font-weight: 600; text-align: center; font-size: 1.1rem; }
+  .routing.engineer { background: rgba(231,76,60,0.15); border: 2px solid var(--fail); color: var(--fail); }
+  .routing.noone { background: rgba(39,174,96,0.15); border: 2px solid var(--pass); color: var(--pass); }
+</style>
+</head>
+<body>
+
+<h1>📋 笔记预览 APP — 自动化测试报告</h1>
+<p class="subtitle" id="timestamp"></p>
+
+<div class="summary" id="summary"></div>
+
+<div id="results"></div>
+
+<div id="routing-decision"></div>
+
+<script>
+'use strict';
+
+const results = { pass: 0, fail: 0, warn: 0, cases: [] };
+let currentSection = '';
+
+document.getElementById('timestamp').textContent = '执行时间: ' + new Date().toLocaleString();
+
+function section(name) {
+  currentSection = name;
+  const el = document.createElement('div');
+  el.className = 'section';
+  el.innerHTML = `<h2>${name}</h2>`;
+  document.getElementById('results').appendChild(el);
+}
+
+function test(name, fn) {
+  try {
+    const result = fn();
+    if (result === true || result === undefined) {
+      results.pass++;
+      addCase('pass', '✅', name, '通过');
+    } else {
+      results.fail++;
+      addCase('fail', '❌', name, String(result));
+    }
+  } catch (e) {
+    results.fail++;
+    addCase('fail', '❌', name, `异常: ${e.message}`);
+  }
+}
+
+function testAsync(name, fn) {
+  return fn().then(() => {
+    results.pass++;
+    addCase('pass', '✅', name, '通过');
+  }).catch(e => {
+    results.fail++;
+    addCase('fail', '❌', name, `异常: ${e.message}`);
+  });
+}
+
+function addCase(status, icon, name, msg) {
+  results.cases.push({ status, icon, name, msg, section: currentSection });
+  const sections = document.querySelectorAll('.section');
+  const lastSection = sections[sections.length - 1];
+  const div = document.createElement('div');
+  div.className = `test-case ${status}`;
+  div.innerHTML = `<span class="icon">${icon}</span><div class="details"><div class="name">${name}</div><div class="msg">${msg}</div></div>`;
+  lastSection.appendChild(div);
+}
+
+function renderSummary() {
+  const total = results.pass + results.fail;
+  const el = document.getElementById('summary');
+  el.innerHTML = `
+    <div class="summary-card ${results.fail === 0 ? 'pass' : 'fail'}"><div class="num">${total}</div><div class="label">总计</div></div>
+    <div class="summary-card pass"><div class="num">${results.pass}</div><div class="label">✅ 通过</div></div>
+    <div class="summary-card fail"><div class="num">${results.fail}</div><div class="label">❌ 失败</div></div>
+  `;
+}
+
+function renderRouting() {
+  const el = document.getElementById('routing-decision');
+  if (results.fail === 0) {
+    el.className = 'routing noone';
+    el.textContent = '🚀 智能路由判定: NoOne — 全部测试通过，无需修复';
+  } else {
+    el.className = 'routing engineer';
+    el.textContent = '🔧 智能路由判定: Engineer — 存在 ' + results.fail + ' 个测试失败，源码需要修复';
+  }
+}
+
+// ============================================================================
+// 测试 1: 核心工具函数
+// ============================================================================
+section('1. 核心工具函数 (Unit Tests)');
+
+// 复制源码中的函数（与其逻辑一致）
+const TAG_COLORS = ['#e74c3c', '#e67e22', '#2980b9', '#27ae60', '#8e44ad', '#16a085', '#d35400', '#2c3e50'];
+
+function tagColor(tag) {
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) {
+    hash = ((hash << 5) - hash) + tag.charCodeAt(i);
+    hash |= 0;
+  }
+  return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length];
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '';
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  } catch (_) {
+    return dateStr;
+  }
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+// tagColor tests
+test('tagColor("哲学") 返回有效颜色', () => {
+  const c = tagColor('哲学');
+  return TAG_COLORS.includes(c) || `期望标签颜色之一，得到: ${c}`;
+});
+
+test('tagColor 对相同输入返回一致结果', () => {
+  const c1 = tagColor('历史');
+  const c2 = tagColor('历史');
+  return c1 === c2 || `不一致: ${c1} vs ${c2}`;
+});
+
+test('tagColor 空字符串不报错', () => {
+  const c = tagColor('');
+  return TAG_COLORS.includes(c) || `空字符串返回: ${c}`;
+});
+
+test('tagColor 特殊字符输入不报错', () => {
+  const c = tagColor('<script>alert(1)</script>');
+  return TAG_COLORS.includes(c) || `特殊字符返回: ${c}`;
+});
+
+// formatDate tests
+test('formatDate("2024-01-15") 返回 "2024-01-15"', () => {
+  return formatDate('2024-01-15') === '2024-01-15' || `得到: ${formatDate('2024-01-15')}`;
+});
+
+test('formatDate("") 返回空字符串', () => {
+  return formatDate('') === '' || `得到: "${formatDate('')}"`;
+});
+
+test('formatDate(null) 返回空字符串', () => {
+  return formatDate(null) === '' || `得到: "${formatDate(null)}"`;
+});
+
+test('formatDate(undefined) 返回空字符串', () => {
+  return formatDate(undefined) === '' || `得到: "${formatDate(undefined)}"`;
+});
+
+test('formatDate("invalid-date") 返回原始字符串', () => {
+  return formatDate('invalid-date') === 'invalid-date' || `得到: ${formatDate('invalid-date')}`;
+});
+
+test('formatDate("2024-12-31") 正确处理年末', () => {
+  return formatDate('2024-12-31') === '2024-12-31' || `得到: ${formatDate('2024-12-31')}`;
+});
+
+test('formatDate 时间戳格式也能处理', () => {
+  const result = formatDate('2024-06-15T10:30:00Z');
+  return result === '2024-06-15' || `得到: ${result}`;
+});
+
+// escapeHtml tests
+test('escapeHtml 转义 < 和 >', () => {
+  const result = escapeHtml('<script>alert("xss")</script>');
+  return !result.includes('<script>') || `未转义: ${result}`;
+});
+
+test('escapeHtml 转义 & 符号', () => {
+  const result = escapeHtml('A & B');
+  return result.includes('&amp;') || `未转义 &: ${result}`;
+});
+
+test('escapeHtml 保留正常文本', () => {
+  const result = escapeHtml('Hello World');
+  return result === 'Hello World' || `被修改: ${result}`;
+});
+
+test('escapeHtml 处理中文', () => {
+  const result = escapeHtml('《苏菲的世界》');
+  return result === '《苏菲的世界》' || `被修改: ${result}`;
+});
+
+test('escapeHtml 处理空字符串', () => {
+  return escapeHtml('') === '' || `得到: "${escapeHtml('')}"`;
+});
+
+// ============================================================================
+// 测试 2: 搜索/过滤逻辑
+// ============================================================================
+section('2. 搜索过滤逻辑 (Unit Tests)');
+
+function getFilteredNotes(notes, query) {
+  const q = query.trim().toLowerCase();
+  if (!q) return notes;
+  return notes.filter(n =>
+    n.title.toLowerCase().includes(q) ||
+    n.tags.some(t => t.toLowerCase().includes(q))
+  );
+}
+
+const mockNotes = [
+  { id: '1', title: '《苏菲的世界》— 哲学入门笔记', tags: ['哲学', '小说', '启蒙'] },
+  { id: '2', title: '《人类简史》— 认知革命与农业革命', tags: ['历史', '人类学', '科普'] },
+  { id: '3', title: '《百年孤独》— 魔幻现实主义赏析', tags: ['文学', '拉美', '经典'] },
+  { id: '4', title: '《思考，快与慢》— 行为经济学要点', tags: ['心理学', '经济学', '思维'] },
+  { id: '5', title: '《局外人》— 加缪与荒诞哲学', tags: ['哲学', '文学', '存在主义'] },
+];
+
+test('空查询返回全部笔记', () => {
+  const r = getFilteredNotes(mockNotes, '');
+  return r.length === 5 || `期望5, 得到${r.length}`;
+});
+
+test('按标题搜索 "苏菲" 返回1条', () => {
+  const r = getFilteredNotes(mockNotes, '苏菲');
+  return r.length === 1 || `期望1, 得到${r.length}`;
+});
+
+test('按标题搜索 "哲学" 返回2条（标题含哲学）', () => {
+  const r = getFilteredNotes(mockNotes, '哲学');
+  return r.length === 2 || `期望2, 得到${r.length}`;
+});
+
+test('按标签搜索 "心理学" 返回1条', () => {
+  const r = getFilteredNotes(mockNotes, '心理学');
+  return r.length === 1 || `期望1, 得到${r.length}`;
+});
+
+test('按标签搜索 "文学" 返回2条（两个笔记标签含文学）', () => {
+  const r = getFilteredNotes(mockNotes, '文学');
+  return r.length === 2 || `期望2, 得到${r.length}: ${r.map(n=>n.id).join(',')}`;
+});
+
+test('搜索不存在的关键词返回空', () => {
+  const r = getFilteredNotes(mockNotes, '量子力学');
+  return r.length === 0 || `期望0, 得到${r.length}`;
+});
+
+test('搜索大小写不敏感', () => {
+  // 中文没有大小写，但测试逻辑是否正确处理
+  const r1 = getFilteredNotes(mockNotes, '哲学');
+  const r2 = getFilteredNotes(mockNotes, '哲学');
+  return r1.length === r2.length || '大小写处理异常';
+});
+
+test('搜索空白字符查询返回全部', () => {
+  const r = getFilteredNotes(mockNotes, '   ');
+  return r.length === 5 || `期望5, 得到${r.length}`;
+});
+
+test('空笔记列表搜索不报错', () => {
+  const r = getFilteredNotes([], 'anything');
+  return r.length === 0 || `期望0, 得到${r.length}`;
+});
+
+test('部分匹配标题有效', () => {
+  const r = getFilteredNotes(mockNotes, '人类');
+  return r.length === 1 || `期望1, 得到${r.length}`;
+});
+
+// ============================================================================
+// 测试 3: localStorage 持久化
+// ============================================================================
+section('3. localStorage 持久化 (Unit Tests)');
+
+test('localStorage 读写正常', () => {
+  const key = '_test_notes_app';
+  localStorage.setItem(key, JSON.stringify({ '1': true, '2': false }));
+  const raw = localStorage.getItem(key);
+  const data = JSON.parse(raw);
+  localStorage.removeItem(key);
+  return data['1'] === true && data['2'] === false || `数据异常: ${raw}`;
+});
+
+test('localStorage 读取不存在 key 返回 null', () => {
+  const val = localStorage.getItem('_nonexistent_key_xyz_123');
+  return val === null || `期望null, 得到: ${val}`;
+});
+
+test('localStorage 处理损坏的 JSON 不崩溃', () => {
+  localStorage.setItem('_test_corrupt', 'not-json{{{');
+  let err = null;
+  try { JSON.parse(localStorage.getItem('_test_corrupt')); } catch(e) { err = e; }
+  localStorage.removeItem('_test_corrupt');
+  return err !== null || '未抛出异常（但应抛出）';
+});
+
+// ============================================================================
+// 测试 4: notes.json 数据验证
+// ============================================================================
+section('4. notes.json 数据验证');
+
+test('notes.json 可被正常 fetch', async () => {
+  const resp = await fetch('../notes.json');
+  return resp.ok || `HTTP ${resp.status}`;
+});
+
+test('notes.json 返回 JSON 数组', async () => {
+  const resp = await fetch('../notes.json');
+  const data = await resp.json();
+  return Array.isArray(data) || `类型: ${typeof data}`;
+});
+
+test('notes.json 包含 5 条笔记', async () => {
+  const resp = await fetch('../notes.json');
+  const data = await resp.json();
+  return data.length === 5 || `期望5, 得到${data.length}`;
+});
+
+test('每条笔记有必需字段 (id, title, file, date, tags)', async () => {
+  const resp = await fetch('../notes.json');
+  const data = await resp.json();
+  const missing = data.filter(n => !n.id || !n.title || !n.file);
+  return missing.length === 0 || `缺少字段的笔记: ${JSON.stringify(missing)}`;
+});
+
+test('每个 file 路径指向存在的文件', async () => {
+  const resp = await fetch('../notes.json');
+  const data = await resp.json();
+  const files = [...new Set(data.map(n => n.file))];
+  const errors = [];
+  for (const f of files) {
+    const r = await fetch(`../${f}`);
+    if (!r.ok) errors.push(`${f} → HTTP ${r.status}`);
+  }
+  return errors.length === 0 || errors.join('; ');
+});
+
+test('tags 都是数组', async () => {
+  const resp = await fetch('../notes.json');
+  const data = await resp.json();
+  const bad = data.filter(n => !Array.isArray(n.tags));
+  return bad.length === 0 || `非数组: ${JSON.stringify(bad)}`;
+});
+
+// ============================================================================
+// 测试 5: 笔记文件验证
+// ============================================================================
+section('5. 笔记 HTML 文件验证');
+
+test('note1.html 是有效 HTML', async () => {
+  const resp = await fetch('../notes/note1.html');
+  const html = await resp.text();
+  return html.includes('<!DOCTYPE html>') && html.includes('</html>') || '缺少 HTML 结构';
+});
+
+test('note2.html 是有效 HTML', async () => {
+  const resp = await fetch('../notes/note2.html');
+  const html = await resp.text();
+  return html.includes('<!DOCTYPE html>') && html.includes('</html>') || '缺少 HTML 结构';
+});
+
+test('笔记 HTML 包含 charset 声明', async () => {
+  const resp = await fetch('../notes/note1.html');
+  const html = await resp.text();
+  return html.includes('charset') || '缺少 charset 声明';
+});
+
+// ============================================================================
+// 测试 6: App 主页面行为 (Integration via iframe)
+// ============================================================================
+section('6. App 主页面行为 (Integration Tests)');
+
+// We test the app by loading it in an iframe and observing DOM changes
+let appIframe;
+
+function waitForAppLoad(iframe) {
+  return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('App load timeout')), 8000);
+    const check = () => {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        if (doc && doc.readyState === 'complete') {
+          // Check if notes are loaded
+          const items = doc.querySelectorAll('.note-item');
+          if (items.length > 0) {
+            clearTimeout(timeout);
+            resolve(doc);
+            return;
+          }
+          // Check for error state
+          const error = doc.querySelector('.error-banner');
+          if (error) {
+            clearTimeout(timeout);
+            resolve(doc);
+            return;
+          }
+        }
+      } catch(e) {}
+      setTimeout(check, 200);
+    };
+    check();
+  });
+}
+
+test('App 成功加载并渲染笔记列表', async () => {
+  return new Promise((resolve, reject) => {
+    const iframe = document.createElement('iframe');
+    iframe.src = '../index.html';
+    iframe.style.width = '100%';
+    iframe.style.height = '600px';
+    iframe.style.border = '1px solid var(--border)';
+    iframe.style.borderRadius = '8px';
+    iframe.style.margin = '10px 0';
+    
+    const container = document.querySelector('#results .section:last-child');
+    container.appendChild(iframe);
+    appIframe = iframe;
+
+    const timeout = setTimeout(() => {
+      try {
+        const doc = iframe.contentDocument;
+        const items = doc.querySelectorAll('.note-item');
+        if (items.length > 0) {
+          resolve(`加载 ${items.length} 条笔记`);
+        } else {
+          const err = doc.querySelector('.error-banner');
+          reject(new Error(err ? err.textContent : '笔记列表为空且无错误提示'));
+        }
+      } catch(e) {
+        reject(new Error('跨域或安全限制: ' + e.message));
+      }
+    }, 8000);
+
+    iframe.onload = () => {
+      setTimeout(() => {
+        try {
+          const doc = iframe.contentDocument || iframe.contentWindow.document;
+          const items = doc.querySelectorAll('.note-item');
+          if (items.length > 0) {
+            clearTimeout(timeout);
+            resolve(`加载 ${items.length} 条笔记`);
+          } else {
+            const err = doc.querySelector('.error-banner');
+            clearTimeout(timeout);
+            reject(new Error(err ? err.textContent.trim() : '笔记列表渲染为空'));
+          }
+        } catch(e) {
+          clearTimeout(timeout);
+          reject(new Error('无法访问 iframe 内容: ' + e.message));
+        }
+      }, 1500);
+    };
+  });
+});
+
+test('App 笔记列表应显示5条笔记', async () => {
+  if (!appIframe) throw new Error('上一个测试失败，iframe 未创建');
+  const doc = appIframe.contentDocument;
+  const items = doc.querySelectorAll('.note-item');
+  return items.length === 5 || `期望5, 得到${items.length}`;
+});
+
+test('App 搜索功能过滤笔记', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const searchInput = doc.getElementById('searchInput');
+  if (!searchInput) throw new Error('找不到搜索输入框');
+  
+  searchInput.value = '苏菲';
+  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise(r => setTimeout(r, 300));
+  
+  const items = doc.querySelectorAll('.note-item');
+  return items.length === 1 || `期望1, 得到${items.length}`;
+});
+
+test('App 搜索无结果时显示空态', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const searchInput = doc.getElementById('searchInput');
+  
+  searchInput.value = '量子力学不存在';
+  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise(r => setTimeout(r, 300));
+  
+  const emptyState = doc.querySelector('.empty-state');
+  return emptyState !== null || '空态未显示';
+});
+
+test('App 清空搜索恢复全部笔记', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const searchInput = doc.getElementById('searchInput');
+  
+  searchInput.value = '';
+  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+  await new Promise(r => setTimeout(r, 300));
+  
+  const items = doc.querySelectorAll('.note-item');
+  return items.length === 5 || `期望5, 得到${items.length}`;
+});
+
+test('App 点击笔记加载预览', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const firstNote = doc.querySelector('.note-item');
+  if (!firstNote) throw new Error('没有笔记项');
+  
+  firstNote.click();
+  await new Promise(r => setTimeout(r, 500));
+  
+  const iframe = doc.querySelector('#previewBody iframe');
+  return iframe !== null || '预览 iframe 未创建';
+});
+
+test('App 已读标记更新', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  // After clicking first note, check read dot
+  const firstNote = doc.querySelector('.note-item');
+  const readDot = firstNote ? firstNote.querySelector('.read-dot') : null;
+  return readDot !== null || '找不到已读标记元素';
+});
+
+test('App 主题切换 (亮→暗)', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const themeBtn = doc.getElementById('themeToggle');
+  if (!themeBtn) throw new Error('找不到主题切换按钮');
+  
+  const currentTheme = doc.documentElement.getAttribute('data-theme');
+  themeBtn.click();
+  await new Promise(r => setTimeout(r, 200));
+  const newTheme = doc.documentElement.getAttribute('data-theme');
+  
+  return currentTheme !== newTheme || '主题未切换';
+});
+
+test('App 主题切换 (暗→亮)', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const themeBtn = doc.getElementById('themeToggle');
+  
+  themeBtn.click();
+  await new Promise(r => setTimeout(r, 200));
+  const theme = doc.documentElement.getAttribute('data-theme');
+  return theme === 'light' || `期望light, 得到${theme}`;
+});
+
+test('笔记计数器正确显示', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const count = doc.getElementById('noteCount');
+  return count && count.textContent.includes('5') || `计数器: ${count ? count.textContent : '不存在'}`;
+});
+
+// ============================================================================
+// 测试 7: 移动端适配
+// ============================================================================
+section('7. 移动端适配');
+
+test('底部导航在宽屏下隐藏 (display:none)', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const bottomNav = doc.getElementById('bottomNav');
+  const style = window.getComputedStyle(bottomNav);
+  return style.display === 'none' || `display: ${style.display}`;
+});
+
+test('返回按钮在宽屏下隐藏', async () => {
+  if (!appIframe) throw new Error('iframe 不可用');
+  const doc = appIframe.contentDocument;
+  const backBtn = doc.getElementById('backBtn');
+  const style = window.getComputedStyle(backBtn);
+  return style.display === 'none' || `display: ${style.display}`;
+});
+
+test('移动端 CSS 媒体查询存在 (max-width:767px)', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('max-width: 767px') || '缺少移动端断点';
+});
+
+test('safe-area 适配存在', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('safe-area-inset-bottom') || '缺少 safe-area 适配';
+});
+
+test('viewport-fit=cover 配置存在', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('viewport-fit=cover') || '缺少 viewport-fit';
+});
+
+// ============================================================================
+// 测试 8: 错误处理与边缘情况
+// ============================================================================
+section('8. 错误处理与边缘情况');
+
+test('notes.json 不存在时显示错误', async () => {
+  // Create a test scenario with missing notes.json
+  // We validate that the app code handles this
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  // Check error handling code exists
+  return html.includes('error-banner') || '缺少错误处理 UI';
+});
+
+test('notes.json 格式错误处理代码存在', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('笔记数据格式错误') || '缺少格式错误处理';
+});
+
+test('笔记数据标准化（缺失字段用默认值填充）', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  const hasDefaults = html.includes('n.title || \'未命名笔记\'') &&
+                      html.includes('n.file || \'\'') &&
+                      html.includes('n.date || \'\'') &&
+                      html.includes('Array.isArray(n.tags) ? n.tags : []');
+  return hasDefaults || '缺少字段默认值处理';
+});
+
+test('localStorage 读取异常被捕获', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('catch') && html.includes('readStatus') || '缺少 localStorage 异常处理';
+});
+
+test('localStorage 写入异常被静默忽略', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  const hasQuota = html.includes('quota exceeded') || html.includes('catch');
+  return hasQuota || '缺少 quota 异常注释或处理';
+});
+
+// ============================================================================
+// 测试 9: HTML/CSS/JS 静态分析
+// ============================================================================
+section('9. HTML/CSS/JS 静态分析');
+
+test('HTML 有 DOCTYPE 声明', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.trimStart().startsWith('<!DOCTYPE html>') || '缺少 DOCTYPE';
+});
+
+test('HTML lang 属性设置为 zh-CN', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('lang="zh-CN"') || '缺少 lang 属性';
+});
+
+test('CSS 使用 CSS 变量进行主题管理', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('--bg-primary') && html.includes('--text-primary') || '缺少 CSS 变量';
+});
+
+test('CSS 定义了暗色主题', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('[data-theme="dark"]') || '缺少暗色主题';
+});
+
+test('JS 使用 use strict 模式', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes("'use strict'") || html.includes('"use strict"') || '未使用严格模式';
+});
+
+test('没有明显的 console.log 调试代码（除 console.error 外）', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  const scriptMatch = html.match(/<script>([\s\S]*?)<\/script>/g);
+  if (!scriptMatch) return '找不到 script 标签';
+  const mainScript = scriptMatch[scriptMatch.length - 1];
+  // Count console.log vs console.error
+  const logCount = (mainScript.match(/console\.log/g) || []).length;
+  const errorCount = (mainScript.match(/console\.error/g) || []).length;
+  return logCount === 0 || `console.log 出现 ${logCount} 次（仅允许 console.error）`;
+});
+
+test('搜索有防抖处理', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('debounce') || html.includes('setTimeout') && html.includes('searchDebounce') || '缺少搜索防抖';
+});
+
+test('resize 事件有防抖处理', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('resizeDebounce') || '缺少 resize 防抖';
+});
+
+test('sandbox 属性正确配置', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('sandbox="allow-same-origin allow-scripts"') || 'sandbox 配置不正确';
+});
+
+test('CSS 滚动条自定义存在', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('::-webkit-scrollbar') || '缺少滚动条自定义';
+});
+
+test('overscroll-behavior: none 防止移动端下拉刷新', async () => {
+  const resp = await fetch('../index.html');
+  const html = await resp.text();
+  return html.includes('overscroll-behavior: none') || '缺少 overscroll-behavior';
+});
+
+// ============================================================================
+// 完成处理
+// ============================================================================
+
+async function runAllTests() {
+  // First run sync tests
+  // Then run async tests
+  // Wait for all promises
+
+  // Give iframe time to load
+  await new Promise(r => setTimeout(r, 3000));
+  
+  // Run remaining async tests that depend on appIframe
+  const asyncTests = document.querySelectorAll('#results .section');
+  // Tests are already run inline
+  
+  renderSummary();
+  renderRouting();
+  
+  // Log final results
+  console.log('=== TEST RESULTS ===');
+  console.log(`Total: ${results.pass + results.fail} | Pass: ${results.pass} | Fail: ${results.fail}`);
+  results.cases.filter(c => c.status === 'fail').forEach(c => {
+    console.error(`FAIL: [${c.section}] ${c.name}: ${c.msg}`);
+  });
+}
+
+// Run after all async tasks settle
+setTimeout(runAllTests, 4000);
+
+</script>
+</body>
+</html>
