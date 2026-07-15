@@ -65,7 +65,6 @@ html, body {
   background: var(--bg-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* Prevent pull-to-refresh on mobile */
   overscroll-behavior: none;
 }
 
@@ -96,52 +95,63 @@ html, body {
   flex-shrink: 0;
 }
 
+.sidebar-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
 .sidebar-header h1 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-primary);
   letter-spacing: -0.02em;
-  margin-bottom: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.header-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.header-actions .icon-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition);
+}
+
+.header-actions .icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Profile button: desktop only */
+.profile-btn-desktop {
+  display: flex;
+}
+
+@media (max-width: 767px) {
+  .profile-btn-desktop {
+    display: none;
+  }
 }
 
 .sidebar-header .subtitle {
   font-size: 0.8rem;
   color: var(--text-muted);
-  margin-bottom: 14px;
-}
-
-/* Search */
-.search-box {
-  position: relative;
-  margin-bottom: 0;
-}
-
-.search-box input {
-  width: 100%;
-  height: 40px;
-  padding: 0 16px 0 38px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-card);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  outline: none;
-  transition: all var(--transition);
-}
-
-.search-box input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-light);
-}
-
-.search-box .search-icon {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
-  pointer-events: none;
-  font-size: 1rem;
 }
 
 /* Toolbar */
@@ -185,12 +195,30 @@ html, body {
   color: var(--accent);
 }
 
+/* ---- Sidebar Content Area (swappable) ---- */
+.sidebar-content-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-content-area .sidebar-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sidebar-content-area .sidebar-content.hidden {
+  display: none;
+}
+
 /* Note List */
 .note-list {
   flex: 1;
   overflow-y: auto;
   padding: 8px 12px;
-  /* iOS smooth scroll */
   -webkit-overflow-scrolling: touch;
 }
 
@@ -221,21 +249,6 @@ html, body {
 
 .note-item.active {
   background: var(--bg-active);
-}
-
-.note-item .read-dot {
-  flex-shrink: 0;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-top: 7px;
-  background: var(--accent);
-  opacity: 1;
-  transition: opacity var(--transition);
-}
-
-.note-item .read-dot.read {
-  opacity: 0;
 }
 
 .note-item .note-info {
@@ -271,6 +284,35 @@ html, body {
   gap: 6px;
   flex-wrap: nowrap;
   overflow: hidden;
+}
+
+/* Delete button on user notes (hover only) */
+.note-item .note-delete {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: all var(--transition);
+  margin-top: 2px;
+  line-height: 1;
+}
+
+.note-item:hover .note-delete {
+  opacity: 1;
+}
+
+.note-item .note-delete:hover {
+  background: var(--accent-light);
+  color: var(--accent);
 }
 
 .tag-pill {
@@ -312,6 +354,164 @@ html, body {
 
 .empty-state p {
   font-size: 0.9rem;
+}
+
+/* ===== Search Page (inside sidebar) ===== */
+.search-page {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.search-page.hidden {
+  display: none;
+}
+
+.search-page .search-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.search-page .search-header input {
+  flex: 1;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  outline: none;
+  transition: all var(--transition);
+}
+
+.search-page .search-header input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.search-page .back-search-btn {
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+
+.search-page .back-search-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Search results (reuse note-list styles) */
+.search-page .search-results {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.search-page .search-results::-webkit-scrollbar {
+  width: 4px;
+}
+
+.search-page .search-results::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+/* Search history */
+.search-page .search-history {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-color);
+  flex-shrink: 0;
+  max-height: 45%;
+  overflow-y: auto;
+}
+
+.search-page .search-history .history-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.search-page .search-history .history-title span {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.search-page .search-history .clear-history-btn {
+  font-size: 0.72rem;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.search-page .search-history .clear-history-btn:hover {
+  background: var(--accent-light);
+}
+
+.search-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+}
+
+.search-history-item:hover {
+  background: var(--bg-hover);
+}
+
+.search-history-item .history-text {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-history-item .history-delete {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+
+.search-history-item .history-delete:hover {
+  background: var(--accent-light);
+  color: var(--accent);
 }
 
 /* ===== Main Content ===== */
@@ -434,6 +634,299 @@ html, body {
   color: var(--accent);
 }
 
+/* ===== Modal / Overlay ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  /* Clicking overlay does NOT close — only buttons */
+}
+
+.modal-overlay.hidden {
+  display: none;
+}
+
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  max-width: 380px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+}
+
+.modal-card .modal-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.modal-card h3 {
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.modal-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.modal-card .modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-card .btn {
+  padding: 8px 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.modal-card .btn-cancel {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.modal-card .btn-cancel:hover {
+  background: var(--bg-active);
+}
+
+.modal-card .btn-danger {
+  background: var(--accent);
+  color: #fff;
+}
+
+.modal-card .btn-danger:hover {
+  background: var(--accent-hover);
+}
+
+.modal-card .btn-primary {
+  background: var(--accent);
+  color: #fff;
+}
+
+.modal-card .btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+/* ===== Profile Overlay ===== */
+.profile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.profile-overlay.hidden {
+  display: none;
+}
+
+.profile-overlay .profile-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.profile-overlay .profile-header-bar h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.profile-overlay .profile-body {
+  flex: 1;
+  padding: 24px 20px;
+  max-width: 500px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Profile avatar section */
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0 28px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.profile-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.2rem;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.profile-nickname {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  border: none;
+  background: none;
+  text-align: center;
+  outline: none;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+  max-width: 200px;
+}
+
+.profile-nickname:focus {
+  background: var(--bg-hover);
+}
+
+.profile-nickname-edit {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Settings list */
+.profile-settings {
+  list-style: none;
+}
+
+.profile-setting-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.profile-setting-item .setting-label {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-setting-item .setting-label .setting-icon {
+  font-size: 1.2rem;
+}
+
+.profile-setting-item .setting-value {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+/* Toggle switch */
+.toggle-switch {
+  position: relative;
+  width: 48px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-switch .slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-hover);
+  border-radius: 28px;
+  transition: all var(--transition);
+}
+
+.toggle-switch .slider::before {
+  content: '';
+  position: absolute;
+  height: 22px;
+  width: 22px;
+  left: 3px;
+  bottom: 3px;
+  background: #fff;
+  border-radius: 50%;
+  transition: all var(--transition);
+}
+
+.toggle-switch input:checked + .slider {
+  background: var(--accent);
+}
+
+.toggle-switch input:checked + .slider::before {
+  transform: translateX(20px);
+}
+
+/* Danger button in settings */
+.btn-setting {
+  padding: 6px 14px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent);
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.btn-setting:hover {
+  background: var(--accent-light);
+}
+
+/* About section */
+.profile-about {
+  margin-top: 12px;
+  padding: 16px 0;
+  text-align: center;
+}
+
+.profile-about .about-version {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.profile-about .about-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
 /* ===== Loading & Error ===== */
 .loading-spinner {
   display: flex;
@@ -513,13 +1006,10 @@ html, body {
     display: flex;
   }
 
-  /* Adjust layout so bottom nav is visible */
   .app {
     padding-bottom: 0;
   }
 
-  /* On mobile, sidebar needs bottom padding to clear the fixed bottom nav.
-     Uses calc() so safe-area-inset is respected on notched devices. */
   .sidebar {
     padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
   }
@@ -570,30 +1060,57 @@ html, body {
 </head>
 <body>
 
+<!-- ===== Hidden file input for upload ===== -->
+<input type="file" id="uploadFileInput" accept=".html" style="display:none">
+
 <!-- ===== App Shell ===== -->
 <div class="app" id="app">
 
   <!-- Sidebar / Note List -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 读书笔记</h1>
+      <div class="sidebar-header-top">
+        <h1>📚 读书笔记</h1>
+        <div class="header-actions">
+          <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
+          <button class="icon-btn" id="uploadBtn" title="上传笔记" aria-label="上传笔记">📤</button>
+          <button class="icon-btn profile-btn-desktop" id="profileBtnDesktop" title="个人中心" aria-label="个人中心">👤</button>
+        </div>
+      </div>
       <p class="subtitle">点击笔记开始阅读</p>
-      <div class="search-box">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="搜索笔记标题…" autocomplete="off">
-      </div>
     </div>
 
-    <div class="toolbar">
-      <span class="count" id="noteCount">共 0 篇</span>
-      <button class="icon-btn" id="themeToggle" title="切换主题" aria-label="切换暗色/亮色主题">🌓</button>
-    </div>
+    <!-- Sidebar Content Area: switches between note list and search page -->
+    <div class="sidebar-content-area" id="sidebarContentArea">
 
-    <div class="note-list" id="noteList">
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        加载笔记中…
+      <!-- Normal: note list -->
+      <div class="sidebar-content" id="sidebarContent">
+        <div class="toolbar">
+          <span class="count" id="noteCount">共 0 篇</span>
+        </div>
+        <div class="note-list" id="noteList">
+          <div class="loading-spinner">
+            <div class="spinner"></div>
+            加载笔记中…
+          </div>
+        </div>
       </div>
+
+      <!-- Search page -->
+      <div class="search-page hidden" id="searchPage">
+        <div class="search-header">
+          <button class="back-search-btn" id="backSearchBtn" aria-label="返回笔记列表">←</button>
+          <input type="text" id="searchPageInput" placeholder="搜索笔记标题…" autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults">
+          <div class="empty-state">
+            <div class="empty-icon">🔍</div>
+            <p>输入关键词搜索笔记</p>
+          </div>
+        </div>
+        <div class="search-history" id="searchHistory"></div>
+      </div>
+
     </div>
   </aside>
 
@@ -623,12 +1140,89 @@ html, body {
       <span class="nav-icon">📄</span>
       <span>预览</span>
     </button>
+    <button class="nav-item" id="navProfile" data-view="profile">
+      <span class="nav-icon">👤</span>
+      <span>我的</span>
+    </button>
   </nav>
+</div>
+
+<!-- ===== Confirmation Modal ===== -->
+<div class="modal-overlay hidden" id="confirmModal">
+  <div class="modal-card">
+    <div class="modal-icon">⚠️</div>
+    <h3 id="confirmModalTitle">确认操作</h3>
+    <p id="confirmModalMessage">确定要执行此操作吗？</p>
+    <div class="modal-actions" id="confirmModalActions">
+      <button class="btn btn-cancel" id="confirmModalCancel">取消</button>
+      <button class="btn btn-danger" id="confirmModalOk">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Profile Overlay ===== -->
+<div class="profile-overlay hidden" id="profileOverlay">
+  <div class="profile-header-bar">
+    <span></span>
+    <h2>个人中心</h2>
+    <button class="icon-btn" id="profileCloseBtn" aria-label="关闭个人中心">✕</button>
+  </div>
+  <div class="profile-body">
+    <!-- Avatar + Nickname -->
+    <div class="profile-avatar-section">
+      <div class="profile-avatar">📖</div>
+      <input type="text" class="profile-nickname" id="profileNickname" maxlength="20" placeholder="设置昵称" value="">
+      <span class="profile-nickname-edit">点击昵称可编辑</span>
+    </div>
+
+    <!-- Settings -->
+    <ul class="profile-settings">
+      <li class="profile-setting-item">
+        <span class="setting-label">
+          <span class="setting-icon">🌓</span>
+          主题切换
+        </span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="profileThemeToggle">
+          <span class="slider"></span>
+        </label>
+      </li>
+      <li class="profile-setting-item">
+        <span class="setting-label">
+          <span class="setting-icon">📊</span>
+          存储管理
+        </span>
+        <span class="setting-value" id="storageSize">计算中…</span>
+      </li>
+      <li class="profile-setting-item">
+        <span class="setting-label">
+          <span class="setting-icon">🗑️</span>
+          清除用户笔记
+        </span>
+        <button class="btn-setting" id="clearUserNotesBtn">清除全部</button>
+      </li>
+      <li class="profile-setting-item">
+        <span class="setting-label">
+          <span class="setting-icon">ℹ️</span>
+          关于
+        </span>
+        <span class="setting-value">v2.0</span>
+      </li>
+    </ul>
+
+    <div class="profile-about">
+      <div class="about-version">📚 笔记预览 v2.0</div>
+      <div class="about-desc">
+        一款简洁优雅的读书笔记浏览与管理工具。<br>
+        支持 HTML 笔记预览、上传管理、搜索历史、暗色模式等功能。
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
 /* ===================================================================
- * 笔记预览 APP — 主逻辑
+ * 笔记预览 APP v2.0 — 主逻辑
  * =================================================================== */
 
 (function() {
@@ -642,9 +1236,7 @@ html, body {
   const sidebar = $('#sidebar');
   const mainContent = $('#mainContent');
   const noteList = $('#noteList');
-  const searchInput = $('#searchInput');
   const noteCount = $('#noteCount');
-  const themeToggle = $('#themeToggle');
   const backBtn = $('#backBtn');
   const previewTitle = $('#previewTitle');
   const previewDate = $('#previewDate');
@@ -652,21 +1244,50 @@ html, body {
   const bottomNav = $('#bottomNav');
   const navListBtn = $('#navList');
   const navPreviewBtn = $('#navPreview');
+  const navProfileBtn = $('#navProfile');
+  const searchBtn = $('#searchBtn');
+  const uploadBtn = $('#uploadBtn');
+  const uploadFileInput = $('#uploadFileInput');
+  const profileBtnDesktop = $('#profileBtnDesktop');
+
+  // Search page
+  const sidebarContent = $('#sidebarContent');
+  const searchPage = $('#searchPage');
+  const searchPageInput = $('#searchPageInput');
+  const searchResults = $('#searchResults');
+  const searchHistoryEl = $('#searchHistory');
+  const backSearchBtn = $('#backSearchBtn');
+
+  // Confirm modal (let for reassignment in showConfirm)
+  const confirmModal = $('#confirmModal');
+  const confirmModalTitle = $('#confirmModalTitle');
+  const confirmModalMessage = $('#confirmModalMessage');
+  let confirmModalOk = $('#confirmModalOk');
+  let confirmModalCancel = $('#confirmModalCancel');
+
+  // Profile overlay
+  const profileOverlay = $('#profileOverlay');
+  const profileCloseBtn = $('#profileCloseBtn');
+  const profileNickname = $('#profileNickname');
+  const profileThemeToggle = $('#profileThemeToggle');
+  const storageSize = $('#storageSize');
+  const clearUserNotesBtn = $('#clearUserNotesBtn');
 
   /* ---- State ---- */
   const STATE = {
-    notes: [],
+    builtInNotes: [],      // from notes.json
+    userNotesIndex: [],    // from localStorage: user-notes-index
+    notes: [],             // merged: [userNotes..., ...builtInNotes]
     selectedId: null,
-    searchQuery: '',
     theme: 'light',
-    readStatus: {},       // { noteId: true } — persisted in localStorage
     isMobile: false,
-    mobileView: 'list',   // 'list' | 'preview'
+    mobileView: 'list',    // 'list' | 'preview' | 'profile'
+    searchHistory: [],     // stored in localStorage
+    previousBlobUrl: null, // track previous blob URL for revocation
   };
 
   /* ---- Helpers ---- */
 
-  /** Generate a consistent color from a string (simple hash → index into palette). */
   const TAG_COLORS = ['#e74c3c', '#e67e22', '#2980b9', '#27ae60', '#8e44ad', '#16a085', '#d35400', '#2c3e50'];
 
   function tagColor(tag) {
@@ -678,7 +1299,6 @@ html, body {
     return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length];
   }
 
-  /** Format date string to a friendlier form. */
   function formatDate(dateStr) {
     if (!dateStr) return '';
     try {
@@ -690,36 +1310,22 @@ html, body {
     }
   }
 
-  /** Detect if we are on a mobile-sized viewport. */
   function checkMobile() {
     STATE.isMobile = window.innerWidth < 768;
   }
 
-  /* ---- Persistence ---- */
-
-  function loadReadStatus() {
-    try {
-      const raw = localStorage.getItem('notes-read-status');
-      if (raw) {
-        STATE.readStatus = JSON.parse(raw);
-      }
-    } catch (_) {
-      STATE.readStatus = {};
-    }
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
   }
 
-  function saveReadStatus() {
-    try {
-      localStorage.setItem('notes-read-status', JSON.stringify(STATE.readStatus));
-    } catch (_) { /* quota exceeded — silently ignore */ }
+  /** Generate a unique id for user notes. */
+  function generateUserId() {
+    return 'user-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
   }
 
-  function markAsRead(noteId) {
-    if (!STATE.readStatus[noteId]) {
-      STATE.readStatus[noteId] = true;
-      saveReadStatus();
-    }
-  }
+  /* ---- Persistence: Theme ---- */
 
   function loadTheme() {
     try {
@@ -741,20 +1347,230 @@ html, body {
 
   function applyTheme() {
     document.documentElement.setAttribute('data-theme', STATE.theme);
+    profileThemeToggle.checked = (STATE.theme === 'dark');
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
       metaTheme.setAttribute('content', STATE.theme === 'dark' ? '#1a1a2e' : '#f5f0e8');
     }
   }
 
-  /* ---- Data Fetching ---- */
+  function toggleTheme() {
+    STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
+    applyTheme();
+    saveTheme();
+  }
 
-  async function loadNotes() {
-    noteList.innerHTML = `
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        加载笔记中…
-      </div>`;
+  /* ---- Persistence: Nickname ---- */
+
+  function loadNickname() {
+    try {
+      const saved = localStorage.getItem('notes-nickname');
+      if (saved) {
+        profileNickname.value = saved;
+      }
+    } catch (_) { /* ignore */ }
+  }
+
+  function saveNickname(name) {
+    try {
+      localStorage.setItem('notes-nickname', name.trim());
+    } catch (_) { /* ignore */ }
+  }
+
+  /* ---- Persistence: Search History ---- */
+
+  function loadSearchHistory() {
+    try {
+      const raw = localStorage.getItem('notes-search-history');
+      if (raw) {
+        STATE.searchHistory = JSON.parse(raw);
+      }
+    } catch (_) {
+      STATE.searchHistory = [];
+    }
+  }
+
+  function saveSearchHistory() {
+    try {
+      localStorage.setItem('notes-search-history', JSON.stringify(STATE.searchHistory));
+    } catch (_) { /* ignore */ }
+  }
+
+  function addSearchHistory(term) {
+    const t = term.trim();
+    if (!t) return;
+    // Deduplicate
+    STATE.searchHistory = STATE.searchHistory.filter(h => h !== t);
+    // Add to front
+    STATE.searchHistory.unshift(t);
+    // Max 20
+    if (STATE.searchHistory.length > 20) {
+      STATE.searchHistory = STATE.searchHistory.slice(0, 20);
+    }
+    saveSearchHistory();
+  }
+
+  function removeSearchHistory(term) {
+    STATE.searchHistory = STATE.searchHistory.filter(h => h !== term);
+    saveSearchHistory();
+  }
+
+  function clearSearchHistory() {
+    STATE.searchHistory = [];
+    saveSearchHistory();
+  }
+
+  /* ---- Persistence: User Notes Index (localStorage) ---- */
+
+  function loadUserNotesIndex() {
+    try {
+      const raw = localStorage.getItem('user-notes-index');
+      if (raw) {
+        STATE.userNotesIndex = JSON.parse(raw);
+      } else {
+        STATE.userNotesIndex = [];
+      }
+    } catch (_) {
+      STATE.userNotesIndex = [];
+    }
+  }
+
+  function saveUserNotesIndex() {
+    try {
+      localStorage.setItem('user-notes-index', JSON.stringify(STATE.userNotesIndex));
+    } catch (_) { /* ignore */ }
+  }
+
+  /* ---- IndexedDB Wrapper ---- */
+
+  const DB = {
+    _db: null,
+
+    async open() {
+      if (this._db) return this._db;
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open('notes-app', 1);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains('user-notes')) {
+            db.createObjectStore('user-notes', { keyPath: 'id' });
+          }
+        };
+        req.onsuccess = (e) => {
+          this._db = e.target.result;
+          resolve(this._db);
+        };
+        req.onerror = (e) => reject(e.target.error);
+      });
+    },
+
+    async put(note) {
+      const db = await this.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('user-notes', 'readwrite');
+        const store = tx.objectStore('user-notes');
+        const req = store.put(note);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      });
+    },
+
+    async get(id) {
+      const db = await this.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('user-notes', 'readonly');
+        const store = tx.objectStore('user-notes');
+        const req = store.get(id);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = (e) => reject(e.target.error);
+      });
+    },
+
+    async getAll() {
+      const db = await this.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('user-notes', 'readonly');
+        const store = tx.objectStore('user-notes');
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = (e) => reject(e.target.error);
+      });
+    },
+
+    async delete(id) {
+      const db = await this.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('user-notes', 'readwrite');
+        const store = tx.objectStore('user-notes');
+        const req = store.delete(id);
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      });
+    },
+
+    async clear() {
+      const db = await this.open();
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction('user-notes', 'readwrite');
+        const store = tx.objectStore('user-notes');
+        const req = store.clear();
+        req.onsuccess = () => resolve();
+        req.onerror = (e) => reject(e.target.error);
+      });
+    },
+
+    /** Estimate total storage size of user notes in bytes. */
+    async estimateSize() {
+      const all = await this.getAll();
+      let total = 0;
+      for (const n of all) {
+        total += (n.content || '').length * 2; // approximate UTF-16 bytes
+      }
+      return total;
+    },
+  };
+
+  /** Format bytes to human-readable string. */
+  function formatBytes(bytes) {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+  }
+
+  /* ---- Confirmation Modal ---- */
+
+  function showConfirm(title, message, onConfirm) {
+    confirmModalTitle.textContent = title;
+    confirmModalMessage.textContent = message;
+    confirmModal.classList.remove('hidden');
+
+    // Clean up previous listeners
+    const newOk = confirmModalOk.cloneNode(true);
+    const newCancel = confirmModalCancel.cloneNode(true);
+    confirmModalOk.parentNode.replaceChild(newOk, confirmModalOk);
+    confirmModalCancel.parentNode.replaceChild(newCancel, confirmModalCancel);
+
+    // Re-assign references
+    confirmModalOk = newOk;
+    confirmModalCancel = newCancel;
+
+    confirmModalOk.focus();
+
+    const close = () => confirmModal.classList.add('hidden');
+
+    confirmModalOk.addEventListener('click', () => {
+      close();
+      onConfirm();
+    });
+
+    confirmModalCancel.addEventListener('click', () => {
+      close();
+    });
+  }
+
+  /* ---- Data Loading ---- */
+
+  async function loadBuiltInNotes() {
     try {
       const resp = await fetch('notes.json');
       if (!resp.ok) {
@@ -764,33 +1580,61 @@ html, body {
       if (!Array.isArray(data)) {
         throw new Error('笔记数据格式错误：期望数组');
       }
-      STATE.notes = data.map((n, i) => ({
+      STATE.builtInNotes = data.map((n, i) => ({
         ...n,
         id: n.id || String(i + 1),
         title: n.title || '未命名笔记',
         file: n.file || '',
         date: n.date || '',
         tags: Array.isArray(n.tags) ? n.tags : [],
+        source: 'builtin',
       }));
-      renderNoteList();
     } catch (err) {
-      console.error('加载笔记失败:', err);
+      console.error('加载内置笔记失败:', err);
+      STATE.builtInNotes = [];
       noteList.innerHTML = `
         <div class="error-banner">
           ⚠️ 加载笔记失败：${err.message}
         </div>`;
-      updateCount();
     }
+  }
+
+  /** Merge user notes index with built-in notes for display. */
+  function mergeNotes() {
+    // User notes first (sorted by date desc), then built-in
+    const userNotes = (STATE.userNotesIndex || []).map(n => ({
+      ...n,
+      source: 'user',
+    }));
+    // Sort user notes by date descending (newest first)
+    userNotes.sort((a, b) => {
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return b.date.localeCompare(a.date);
+    });
+    STATE.notes = [...userNotes, ...STATE.builtInNotes];
+  }
+
+  async function loadAllNotes() {
+    noteList.innerHTML = `
+      <div class="loading-spinner">
+        <div class="spinner"></div>
+        加载笔记中…
+      </div>`;
+    await DB.open();
+    await loadBuiltInNotes();
+    mergeNotes();
+    renderNoteList();
   }
 
   /* ---- Rendering ---- */
 
   function getFilteredNotes() {
-    const q = STATE.searchQuery.trim().toLowerCase();
+    const q = (STATE._searchQuery || '').trim().toLowerCase();
     if (!q) return STATE.notes;
     return STATE.notes.filter(n =>
       n.title.toLowerCase().includes(q) ||
-      n.tags.some(t => t.toLowerCase().includes(q))
+      (n.tags || []).some(t => t.toLowerCase().includes(q))
     );
   }
 
@@ -801,7 +1645,7 @@ html, body {
       noteList.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon">📭</div>
-          <p>${STATE.searchQuery ? '没有匹配的笔记' : '暂无笔记'}</p>
+          <p>${(STATE._searchQuery || '') ? '没有匹配的笔记' : '暂无笔记'}</p>
         </div>`;
       updateCount(filtered.length);
       return;
@@ -809,16 +1653,15 @@ html, body {
 
     noteList.innerHTML = filtered.map(n => {
       const isActive = n.id === STATE.selectedId;
-      const isRead = STATE.readStatus[n.id];
+      const isUser = n.source === 'user';
       return `
         <div class="note-item ${isActive ? 'active' : ''}" data-id="${n.id}" role="button" tabindex="0">
-          <div class="read-dot ${isRead ? 'read' : ''}" title="${isRead ? '已读' : '未读'}"></div>
           <div class="note-info">
             <div class="note-title">${escapeHtml(n.title)}</div>
             <div class="note-meta">
               ${n.date ? `<span class="note-date">${formatDate(n.date)}</span>` : ''}
               <span class="note-tags">
-                ${n.tags.map(t => `
+                ${(n.tags || []).map(t => `
                   <span class="tag-pill">
                     <span class="tag-dot" style="background:${tagColor(t)}"></span>
                     ${escapeHtml(t)}
@@ -827,16 +1670,11 @@ html, body {
               </span>
             </div>
           </div>
+          ${isUser ? `<button class="note-delete" data-action="delete" data-id="${n.id}" title="删除笔记" aria-label="删除笔记">×</button>` : ''}
         </div>`;
     }).join('');
 
     updateCount(filtered.length);
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
   }
 
   function updateCount(count) {
@@ -844,37 +1682,178 @@ html, body {
     noteCount.textContent = `共 ${c} 篇`;
   }
 
+  /* ---- Search Results Rendering (for search page) ---- */
+
+  function renderSearchResults(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      searchResults.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">🔍</div>
+          <p>输入关键词搜索笔记</p>
+        </div>`;
+      return;
+    }
+
+    const filtered = STATE.notes.filter(n =>
+      n.title.toLowerCase().includes(q) ||
+      (n.tags || []).some(t => t.toLowerCase().includes(q))
+    );
+
+    if (filtered.length === 0) {
+      searchResults.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-icon">📭</div>
+          <p>没有匹配的笔记</p>
+        </div>`;
+      return;
+    }
+
+    searchResults.innerHTML = filtered.map(n => `
+      <div class="note-item" data-id="${n.id}" role="button" tabindex="0">
+        <div class="note-info">
+          <div class="note-title">${escapeHtml(n.title)}</div>
+          <div class="note-meta">
+            ${n.date ? `<span class="note-date">${formatDate(n.date)}</span>` : ''}
+            <span class="note-tags">
+              ${(n.tags || []).map(t => `
+                <span class="tag-pill">
+                  <span class="tag-dot" style="background:${tagColor(t)}"></span>
+                  ${escapeHtml(t)}
+                </span>
+              `).join('')}
+            </span>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function renderSearchHistory() {
+    if (STATE.searchHistory.length === 0) {
+      searchHistoryEl.style.display = 'none';
+      return;
+    }
+    searchHistoryEl.style.display = '';
+    searchHistoryEl.innerHTML = `
+      <div class="history-title">
+        <span>🕐 搜索历史</span>
+        <button class="clear-history-btn" id="clearHistoryBtn">清空历史</button>
+      </div>
+      ${STATE.searchHistory.map(h => `
+        <div class="search-history-item" data-term="${escapeHtml(h)}">
+          <span class="history-text">${escapeHtml(h)}</span>
+          <button class="history-delete" data-delete-term="${escapeHtml(h)}" aria-label="删除此条">×</button>
+        </div>
+      `).join('')}
+    `;
+
+    // Event: clear history
+    const clearBtn = $('#clearHistoryBtn', searchHistoryEl);
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        clearSearchHistory();
+        renderSearchHistory();
+      });
+    }
+
+    // Event: click history item
+    $$('.search-history-item', searchHistoryEl).forEach(item => {
+      item.addEventListener('click', (e) => {
+        // Don't trigger if clicking delete button
+        if (e.target.closest('.history-delete')) return;
+        const term = item.getAttribute('data-term');
+        searchPageInput.value = term;
+        renderSearchResults(term);
+      });
+    });
+
+    // Event: delete history item
+    $$('.history-delete', searchHistoryEl).forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const term = btn.getAttribute('data-delete-term');
+        removeSearchHistory(term);
+        renderSearchHistory();
+      });
+    });
+  }
+
+  /* ---- Preview ---- */
+
   function showPreview(note) {
     if (!note) return;
 
     STATE.selectedId = note.id;
-    markAsRead(note.id);
 
     previewTitle.textContent = note.title;
     previewDate.textContent = note.date ? formatDate(note.date) : '';
 
-    // Build iframe wrapper: iframe + hidden error fallback
-    previewBody.innerHTML = `
-      <iframe
-        src="${escapeHtml(note.file)}"
-        title="${escapeHtml(note.title)}"
-        sandbox="allow-same-origin allow-scripts"
-        class="preview-iframe"
-      ></iframe>
-      <div class="welcome preview-error" style="display:none">
-        <div class="welcome-icon">⚠️</div>
-        <h3>笔记加载失败</h3>
-        <p>无法加载「${escapeHtml(note.title)}」，请检查文件 <code>${escapeHtml(note.file)}</code> 是否存在。</p>
-      </div>`;
+    // Revoke previous blob URL if any
+    if (STATE.previousBlobUrl) {
+      URL.revokeObjectURL(STATE.previousBlobUrl);
+      STATE.previousBlobUrl = null;
+    }
 
-    // Attach error handling: if iframe fails to load, show the fallback
-    var iframe = previewBody.querySelector('.preview-iframe');
-    var errorFallback = previewBody.querySelector('.preview-error');
-    if (iframe && errorFallback) {
-      iframe.addEventListener('error', function() {
-        iframe.style.display = 'none';
-        errorFallback.style.display = '';
+    if (note.source === 'user') {
+      // User-uploaded note: load content from IndexedDB, create blob URL
+      DB.get(note.id).then(record => {
+        if (record && record.content) {
+          const blob = new Blob([record.content], { type: 'text/html' });
+          const url = URL.createObjectURL(blob);
+          STATE.previousBlobUrl = url;
+          previewBody.innerHTML = `
+            <iframe
+              src="${url}"
+              title="${escapeHtml(note.title)}"
+              sandbox="allow-same-origin allow-scripts"
+              class="preview-iframe"
+            ></iframe>
+            <div class="welcome preview-error" style="display:none">
+              <div class="welcome-icon">⚠️</div>
+              <h3>笔记加载失败</h3>
+              <p>无法加载「${escapeHtml(note.title)}」。</p>
+            </div>`;
+        } else {
+          previewBody.innerHTML = `
+            <div class="welcome">
+              <div class="welcome-icon">⚠️</div>
+              <h3>笔记内容为空</h3>
+              <p>「${escapeHtml(note.title)}」的内容似乎丢失了。</p>
+            </div>`;
+        }
+      }).catch(err => {
+        console.error('加载用户笔记失败:', err);
+        previewBody.innerHTML = `
+          <div class="welcome">
+            <div class="welcome-icon">⚠️</div>
+            <h3>加载失败</h3>
+            <p>无法从存储中读取「${escapeHtml(note.title)}」。</p>
+          </div>`;
       });
+    } else {
+      // Built-in note: use file path
+      previewBody.innerHTML = `
+        <iframe
+          src="${escapeHtml(note.file)}"
+          title="${escapeHtml(note.title)}"
+          sandbox="allow-same-origin allow-scripts"
+          class="preview-iframe"
+        ></iframe>
+        <div class="welcome preview-error" style="display:none">
+          <div class="welcome-icon">⚠️</div>
+          <h3>笔记加载失败</h3>
+          <p>无法加载「${escapeHtml(note.title)}」，请检查文件 <code>${escapeHtml(note.file)}</code> 是否存在。</p>
+        </div>`;
+
+      const iframe = previewBody.querySelector('.preview-iframe');
+      const errorFallback = previewBody.querySelector('.preview-error');
+      if (iframe && errorFallback) {
+        iframe.addEventListener('error', function() {
+          iframe.style.display = 'none';
+          errorFallback.style.display = '';
+        });
+      }
     }
 
     // Update UI
@@ -914,17 +1893,32 @@ html, body {
   function setMobileView(view) {
     STATE.mobileView = view;
 
+    if (view === 'profile') {
+      // Show profile overlay
+      profileOverlay.classList.remove('hidden');
+      refreshProfileStorageSize();
+      navListBtn.classList.remove('active');
+      navPreviewBtn.classList.remove('active');
+      navProfileBtn.classList.add('active');
+      return;
+    }
+
+    // Hide profile overlay if visible
+    profileOverlay.classList.add('hidden');
+
     if (STATE.isMobile) {
       if (view === 'list') {
         sidebar.classList.remove('hidden');
         mainContent.classList.add('hidden');
         navListBtn.classList.add('active');
         navPreviewBtn.classList.remove('active');
-      } else {
+        navProfileBtn.classList.remove('active');
+      } else if (view === 'preview') {
         sidebar.classList.add('hidden');
         mainContent.classList.remove('hidden');
         navPreviewBtn.classList.add('active');
         navListBtn.classList.remove('active');
+        navProfileBtn.classList.remove('active');
       }
     } else {
       // Desktop: both visible
@@ -933,10 +1927,209 @@ html, body {
     }
   }
 
+  /* ---- Search Page Management ---- */
+
+  function openSearchPage() {
+    sidebarContent.classList.add('hidden');
+    searchPage.classList.remove('hidden');
+    searchPageInput.value = '';
+    renderSearchResults('');
+    renderSearchHistory();
+    // Auto-focus the search input
+    setTimeout(() => searchPageInput.focus(), 50);
+  }
+
+  function closeSearchPage() {
+    sidebarContent.classList.remove('hidden');
+    searchPage.classList.add('hidden');
+    // Reset search query used in main note list
+    STATE._searchQuery = '';
+    renderNoteList();
+  }
+
+  /* ---- Upload Handler ---- */
+
+  async function handleFileUpload(file) {
+    if (!file.name.toLowerCase().endsWith('.html')) {
+      alert('仅支持上传 .html 文件');
+      return;
+    }
+
+    try {
+      const content = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject(e.target.error);
+        reader.readAsText(file, 'UTF-8');
+      });
+
+      // Derive title from filename (remove .html)
+      let title = file.name.replace(/\.html$/i, '').trim() || '未命名笔记';
+
+      // Check for duplicate title, add suffix
+      const allTitles = STATE.notes.map(n => n.title);
+      let finalTitle = title;
+      let counter = 1;
+      while (allTitles.includes(finalTitle)) {
+        finalTitle = title + ' (' + counter + ')';
+        counter++;
+      }
+
+      const id = generateUserId();
+      const now = new Date().toISOString().slice(0, 10);
+
+      const noteRecord = {
+        id: id,
+        title: finalTitle,
+        file: file.name,
+        date: now,
+        tags: [],
+        content: content,
+      };
+
+      const noteIndex = {
+        id: id,
+        title: finalTitle,
+        file: file.name,
+        date: now,
+        tags: [],
+      };
+
+      // Store in IndexedDB
+      await DB.put(noteRecord);
+
+      // Update Index
+      STATE.userNotesIndex.unshift(noteIndex);
+      saveUserNotesIndex();
+
+      // Re-merge and render
+      mergeNotes();
+      renderNoteList();
+    } catch (err) {
+      console.error('上传笔记失败:', err);
+      alert('上传失败：' + err.message);
+    }
+  }
+
+  /* ---- Remove Handler ---- */
+
+  function removeUserNote(noteId) {
+    const note = STATE.notes.find(n => n.id === noteId);
+    if (!note || note.source !== 'user') return;
+
+    showConfirm(
+      '确认删除「' + note.title + '」',
+      '删除后笔记内容将永久丢失，此操作不可撤销。',
+      async () => {
+        try {
+          // Remove from IndexedDB
+          await DB.delete(noteId);
+
+          // Remove from index
+          STATE.userNotesIndex = STATE.userNotesIndex.filter(n => n.id !== noteId);
+          saveUserNotesIndex();
+
+          // If deleted note was selected, switch
+          if (STATE.selectedId === noteId) {
+            mergeNotes();
+            if (STATE.notes.length > 0) {
+              showPreview(STATE.notes[0]);
+            } else {
+              showWelcome();
+            }
+          } else {
+            mergeNotes();
+            renderNoteList();
+          }
+        } catch (err) {
+          console.error('删除笔记失败:', err);
+          alert('删除失败：' + err.message);
+        }
+      }
+    );
+  }
+
+  /* ---- Profile Handlers ---- */
+
+  function openProfile() {
+    profileOverlay.classList.remove('hidden');
+    refreshProfileStorageSize();
+    if (STATE.isMobile) {
+      navListBtn.classList.remove('active');
+      navPreviewBtn.classList.remove('active');
+      navProfileBtn.classList.add('active');
+    }
+  }
+
+  function closeProfile() {
+    profileOverlay.classList.add('hidden');
+    if (STATE.isMobile) {
+      // Restore previous view
+      if (STATE.mobileView === 'preview' && STATE.selectedId) {
+        navPreviewBtn.classList.add('active');
+        navProfileBtn.classList.remove('active');
+      } else {
+        navListBtn.classList.add('active');
+        navProfileBtn.classList.remove('active');
+      }
+    }
+  }
+
+  async function refreshProfileStorageSize() {
+    try {
+      const bytes = await DB.estimateSize();
+      storageSize.textContent = formatBytes(bytes);
+    } catch (_) {
+      storageSize.textContent = '未知';
+    }
+  }
+
+  async function clearAllUserNotes() {
+    try {
+      await DB.clear();
+      STATE.userNotesIndex = [];
+      saveUserNotesIndex();
+
+      // If a user note was selected, switch away
+      if (STATE.selectedId) {
+        const sel = STATE.notes.find(n => n.id === STATE.selectedId);
+        if (sel && sel.source === 'user') {
+          mergeNotes();
+          if (STATE.notes.length > 0) {
+            showPreview(STATE.notes[0]);
+          } else {
+            showWelcome();
+          }
+        } else {
+          mergeNotes();
+          renderNoteList();
+        }
+      } else {
+        mergeNotes();
+        renderNoteList();
+      }
+
+      refreshProfileStorageSize();
+    } catch (err) {
+      console.error('清除笔记失败:', err);
+      alert('清除失败：' + err.message);
+    }
+  }
+
   /* ---- Event Handlers ---- */
 
-  // Note list click delegation
+  // Note list click delegation (main list)
   noteList.addEventListener('click', function(e) {
+    // Delete button
+    const deleteBtn = e.target.closest('[data-action="delete"]');
+    if (deleteBtn) {
+      e.stopPropagation();
+      const noteId = deleteBtn.getAttribute('data-id');
+      removeUserNote(noteId);
+      return;
+    }
+
+    // Note item
     const item = e.target.closest('.note-item');
     if (!item) return;
     const id = item.getAttribute('data-id');
@@ -946,7 +2139,7 @@ html, body {
     }
   });
 
-  // Keyboard support for note items
+  // Note list keyboard support
   noteList.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
       const item = e.target.closest('.note-item');
@@ -959,39 +2152,133 @@ html, body {
     }
   });
 
-  // Search input
-  let searchDebounceTimer = null;
-  searchInput.addEventListener('input', function() {
-    STATE.searchQuery = this.value;
-    clearTimeout(searchDebounceTimer);
-    searchDebounceTimer = setTimeout(() => {
-      renderNoteList();
+  // Search button → open search page
+  searchBtn.addEventListener('click', function() {
+    openSearchPage();
+  });
+
+  // Search page: back button
+  backSearchBtn.addEventListener('click', function() {
+    closeSearchPage();
+  });
+
+  // Search page: input
+  let searchPageDebounce = null;
+  searchPageInput.addEventListener('input', function() {
+    const query = this.value;
+    clearTimeout(searchPageDebounce);
+    searchPageDebounce = setTimeout(() => {
+      renderSearchResults(query);
     }, 150);
   });
 
-  // Back button (mobile)
-  backBtn.addEventListener('click', function() {
-    if (STATE.isMobile) {
-      setMobileView('list');
+  // Search page: click result
+  searchResults.addEventListener('click', function(e) {
+    const item = e.target.closest('.note-item');
+    if (!item) return;
+    const id = item.getAttribute('data-id');
+    const note = STATE.notes.find(n => n.id === id);
+    if (note) {
+      // Save search term to history
+      const term = searchPageInput.value.trim();
+      if (term) {
+        addSearchHistory(term);
+      }
+      // Close search page and show note
+      closeSearchPage();
+      showPreview(note);
     }
   });
 
-  // Bottom nav
+  // Search page: keyboard support
+  searchResults.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const item = e.target.closest('.note-item');
+      if (item) {
+        e.preventDefault();
+        const id = item.getAttribute('data-id');
+        const note = STATE.notes.find(n => n.id === id);
+        if (note) {
+          const term = searchPageInput.value.trim();
+          if (term) addSearchHistory(term);
+          closeSearchPage();
+          showPreview(note);
+        }
+      }
+    }
+  });
+
+  // Upload button
+  uploadBtn.addEventListener('click', function() {
+    uploadFileInput.click();
+  });
+
+  uploadFileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+      handleFileUpload(file);
+      // Reset input so same file can be re-uploaded
+      this.value = '';
+    }
+  });
+
+  // Profile button (desktop)
+  profileBtnDesktop.addEventListener('click', function() {
+    openProfile();
+  });
+
+  // Profile close
+  profileCloseBtn.addEventListener('click', function() {
+    closeProfile();
+  });
+
+  // Profile: nickname save on blur / enter
+  profileNickname.addEventListener('blur', function() {
+    saveNickname(this.value);
+  });
+
+  profileNickname.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      this.blur();
+    }
+  });
+
+  // Profile: theme toggle
+  profileThemeToggle.addEventListener('change', function() {
+    toggleTheme();
+  });
+
+  // Profile: clear user notes
+  clearUserNotesBtn.addEventListener('click', function() {
+    showConfirm(
+      '确认清除全部用户笔记',
+      '此操作将永久删除所有用户上传的笔记内容，内置笔记不受影响。确定继续吗？',
+      () => clearAllUserNotes()
+    );
+  });
+
+  // Bottom nav: list
   navListBtn.addEventListener('click', function() {
     setMobileView('list');
   });
 
+  // Bottom nav: preview
   navPreviewBtn.addEventListener('click', function() {
     if (STATE.selectedId) {
       setMobileView('preview');
     }
   });
 
-  // Theme toggle
-  themeToggle.addEventListener('click', function() {
-    STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
-    applyTheme();
-    saveTheme();
+  // Bottom nav: profile (mobile)
+  navProfileBtn.addEventListener('click', function() {
+    openProfile();
+  });
+
+  // Back button (mobile preview header)
+  backBtn.addEventListener('click', function() {
+    if (STATE.isMobile) {
+      setMobileView('list');
+    }
   });
 
   // Responsive resize
@@ -1006,6 +2293,7 @@ html, body {
           // Moving to desktop — show both panels
           sidebar.classList.remove('hidden');
           mainContent.classList.remove('hidden');
+          profileOverlay.classList.add('hidden');
         } else {
           // Moving to mobile — apply current mobile view
           setMobileView(STATE.mobileView);
@@ -1015,8 +2303,6 @@ html, body {
   });
 
   // Hardware back button support (Android)
-  // Note: popstate is not cancelable; e.preventDefault() has no effect here.
-  // We push a new state to keep the user on the page, effectively trapping the back navigation.
   window.addEventListener('popstate', function(e) {
     if (STATE.isMobile && STATE.mobileView === 'preview') {
       setMobileView('list');
@@ -1026,10 +2312,15 @@ html, body {
 
   /* ---- Initialization ---- */
 
-  function init() {
-    loadReadStatus();
+  async function init() {
     loadTheme();
+    loadNickname();
+    loadSearchHistory();
+    loadUserNotesIndex();
     checkMobile();
+
+    // Set theme toggle initial state
+    profileThemeToggle.checked = (STATE.theme === 'dark');
 
     // On desktop, show both panels immediately
     if (!STATE.isMobile) {
@@ -1049,7 +2340,7 @@ html, body {
     showWelcome();
 
     // Load notes
-    loadNotes();
+    await loadAllNotes();
   }
 
   init();
