@@ -23,7 +23,9 @@
   --accent: #c0392b;
   --accent-hover: #a93226;
   --accent-light: #fce4e4;
-  --tag-colors: #e74c3c, #e67e22, #2980b9, #27ae60, #8e44ad, #16a085, #d35400, #2c3e50;
+  --chip-bg: #e8e2d6;
+  --chip-active-bg: #c0392b;
+  --chip-active-text: #ffffff;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
   --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
   --shadow-lg: 0 4px 16px rgba(0,0,0,0.10);
@@ -47,6 +49,9 @@
   --accent: #ff6b6b;
   --accent-hover: #ee5a5a;
   --accent-light: #3d2025;
+  --chip-bg: #263550;
+  --chip-active-bg: #ff6b6b;
+  --chip-active-text: #fff;
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.20);
   --shadow-md: 0 2px 8px rgba(0,0,0,0.25);
   --shadow-lg: 0 4px 16px rgba(0,0,0,0.35);
@@ -54,2298 +59,925 @@
 
 /* ===== Reset & Base ===== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
 html, body {
-  height: 100%;
-  overflow: hidden;
+  height: 100%; overflow: hidden;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--text-primary);
-  background: var(--bg-primary);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overscroll-behavior: none;
+  font-size: 16px; line-height: 1.6; color: var(--text-primary); background: var(--bg-primary);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overscroll-behavior: none;
 }
 
 /* ===== App Shell ===== */
-.app {
-  display: flex;
-  height: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-}
+.app { display: flex; height: 100%; max-width: 1400px; margin: 0 auto; }
 
 /* ===== Sidebar ===== */
 .sidebar {
-  display: flex;
-  flex-direction: column;
-  width: 340px;
-  min-width: 340px;
-  height: 100%;
-  background: var(--bg-sidebar);
-  border-right: 1px solid var(--border-color);
-  transition: transform var(--transition);
-  z-index: 10;
-  overflow: hidden;
+  display: flex; flex-direction: column;
+  width: 340px; min-width: 340px; height: 100%;
+  background: var(--bg-sidebar); border-right: 1px solid var(--border-color);
+  transition: transform var(--transition); z-index: 10; overflow: hidden;
 }
-
 .sidebar-header {
-  padding: 20px 20px 12px;
-  flex-shrink: 0;
+  padding: 14px 20px 8px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
 }
+.sidebar-header h1 { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; flex: 1; min-width: 0; }
 
-.sidebar-header-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  margin-bottom: 4px;
+/* ===== Desktop Tab Bar ===== */
+.tab-bar {
+  display: flex; padding: 8px 16px 12px; gap: 4px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
 }
+.tab-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
+  padding: 8px 6px; border: none; border-radius: var(--radius-md);
+  background: transparent; color: var(--text-secondary);
+  font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all var(--transition); white-space: nowrap;
+}
+.tab-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.tab-btn.active { background: var(--accent); color: #fff; }
 
-.sidebar-header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-  flex: 1;
-  min-width: 0;
-}
+/* ===== Sidebar Content Area ===== */
+.sidebar-content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
-.header-actions {
-  display: flex;
-  gap: 4px;
-  flex-shrink: 0;
-}
+/* Tab panels */
+.tab-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
+.tab-panel.active { display: flex; }
 
-.header-actions .icon-btn {
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
+/* ===== Category Chips ===== */
+.category-chips {
+  display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; flex-shrink: 0;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
-
-.header-actions .icon-btn:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+.category-chips::-webkit-scrollbar { display: none; }
+.category-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 14px; border: none; border-radius: 20px;
+  background: var(--chip-bg); color: var(--text-secondary);
+  font-size: 0.78rem; font-weight: 500; cursor: pointer;
+  white-space: nowrap; flex-shrink: 0; transition: all var(--transition);
 }
-
-/* Profile button: desktop only */
-.profile-btn-desktop {
-  display: flex;
-}
-
-@media (max-width: 767px) {
-  .profile-btn-desktop {
-    display: none;
-  }
-}
-
-.sidebar-header .subtitle {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-}
+.category-chip:hover { background: var(--bg-hover); color: var(--text-primary); }
+.category-chip.active { background: var(--chip-active-bg); color: var(--chip-active-text); }
+.category-chip .chip-count { font-size: 0.7rem; opacity: 0.7; }
 
 /* Toolbar */
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 20px;
-  flex-shrink: 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.toolbar .count {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  flex: 1;
-}
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 20px; flex-shrink: 0; border-bottom: 1px solid var(--border-color); }
+.toolbar .count { font-size: 0.78rem; color: var(--text-muted); flex: 1; }
 
 .icon-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition);
+  width: 32px; height: 32px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-secondary); font-size: 1rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition);
 }
-
-.icon-btn:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-}
-
-.icon-btn.active {
-  background: var(--accent-light);
-  color: var(--accent);
-}
-
-/* ---- Sidebar Content Area (swappable) ---- */
-.sidebar-content-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.sidebar-content-area .sidebar-content {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-
-.sidebar-content-area .sidebar-content.hidden {
-  display: none;
-}
+.icon-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
 
 /* Note List */
-.note-list {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 12px;
-  -webkit-overflow-scrolling: touch;
-}
-
-.note-list::-webkit-scrollbar {
-  width: 4px;
-}
-
-.note-list::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 2px;
-}
+.note-list { flex: 1; overflow-y: auto; padding: 8px 12px; -webkit-overflow-scrolling: touch; }
+.note-list::-webkit-scrollbar { width: 4px; }
+.note-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
 
 .note-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 12px 14px;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  transition: all var(--transition);
-  margin-bottom: 2px;
-  position: relative;
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 12px 14px; border-radius: var(--radius-md); cursor: pointer;
+  transition: all var(--transition); margin-bottom: 2px; position: relative;
+}
+.note-item:hover { background: var(--bg-hover); }
+.note-item.active { background: var(--bg-active); }
+.note-item .note-info { flex: 1; min-width: 0; }
+.note-item .note-title { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.note-item .note-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; }
+.note-item .note-date { flex-shrink: 0; }
+.note-item .note-tags { display: flex; gap: 6px; flex-wrap: nowrap; overflow: hidden; }
+
+/* Category mini-chip in note item */
+.note-cat-chip {
+  display: inline-flex; padding: 1px 8px; border-radius: 10px;
+  font-size: 0.68rem; font-weight: 500; white-space: nowrap;
+  background: var(--accent-light); color: var(--accent); flex-shrink: 0;
 }
 
-.note-item:hover {
-  background: var(--bg-hover);
-}
-
-.note-item.active {
-  background: var(--bg-active);
-}
-
-.note-item .note-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.note-item .note-title {
-  font-size: 0.88rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1.4;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.note-item .note-meta {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 4px;
-  font-size: 0.75rem;
-  color: var(--text-muted);
-}
-
-.note-item .note-date {
-  flex-shrink: 0;
-}
-
-.note-item .note-tags {
-  display: flex;
-  gap: 6px;
-  flex-wrap: nowrap;
-  overflow: hidden;
-}
-
-/* Delete button on user notes (hover only) */
+/* Delete button */
 .note-item .note-delete {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: all var(--transition);
-  margin-top: 2px;
-  line-height: 1;
+  flex-shrink: 0; width: 24px; height: 24px; border: none; border-radius: 50%;
+  background: transparent; color: var(--text-muted); font-size: 1rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: all var(--transition); margin-top: 2px; line-height: 1;
 }
-
-.note-item:hover .note-delete {
-  opacity: 1;
-}
-
-.note-item .note-delete:hover {
-  background: var(--accent-light);
-  color: var(--accent);
-}
+.note-item:hover .note-delete { opacity: 1; }
+.note-item .note-delete:hover { background: var(--accent-light); color: var(--accent); }
 
 .tag-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 1px 8px;
-  border-radius: 10px;
-  font-size: 0.7rem;
-  font-weight: 500;
-  white-space: nowrap;
-  background: var(--bg-hover);
-  color: var(--text-secondary);
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 1px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 500;
+  white-space: nowrap; background: var(--bg-hover); color: var(--text-secondary);
 }
-
-.tag-pill .tag-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+.tag-pill .tag-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
 /* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
-  color: var(--text-muted);
-}
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; color: var(--text-muted); }
+.empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.6; }
+.empty-state p { font-size: 0.9rem; }
 
-.empty-state .empty-icon {
-  font-size: 3rem;
-  margin-bottom: 12px;
-  opacity: 0.6;
-}
-
-.empty-state p {
-  font-size: 0.9rem;
-}
-
-/* ===== Search Page (inside sidebar) ===== */
-.search-page {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  overflow: hidden;
-}
-
-.search-page.hidden {
-  display: none;
-}
-
-.search-page .search-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
-
+/* ===== Search Page ===== */
+.search-page { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+.search-page.hidden { display: none; }
+.search-page .search-header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
 .search-page .search-header input {
-  flex: 1;
-  height: 38px;
-  padding: 0 14px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background: var(--bg-card);
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  outline: none;
-  transition: all var(--transition);
+  flex: 1; height: 38px; padding: 0 14px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-primary);
+  font-size: 0.9rem; outline: none; transition: all var(--transition);
 }
-
-.search-page .search-header input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-light);
+.search-page .search-header input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.back-search-btn {
+  width: 34px; height: 34px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-secondary); font-size: 1.1rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--transition);
 }
+.back-search-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.search-results { flex: 1; overflow-y: auto; padding: 8px 12px; -webkit-overflow-scrolling: touch; }
+.search-results::-webkit-scrollbar { width: 4px; }
+.search-results::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+.search-history { padding: 12px 16px; border-top: 1px solid var(--border-color); flex-shrink: 0; max-height: 45%; overflow-y: auto; }
+.search-history .history-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.search-history .history-title span { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
+.clear-history-btn { font-size: 0.72rem; color: var(--accent); background: none; border: none; cursor: pointer; padding: 2px 6px; border-radius: var(--radius-sm); transition: all var(--transition); }
+.clear-history-btn:hover { background: var(--accent-light); }
+.search-history-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: background var(--transition); }
+.search-history-item:hover { background: var(--bg-hover); }
+.search-history-item .history-text { font-size: 0.85rem; color: var(--text-secondary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.search-history-item .history-delete { flex-shrink: 0; width: 24px; height: 24px; border: none; border-radius: 50%; background: transparent; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px; }
+.search-history-item .history-delete:hover { background: var(--accent-light); color: var(--accent); }
 
-.search-page .back-search-btn {
-  width: 34px;
-  height: 34px;
-  border: none;
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: all var(--transition);
+/* ===== Upload Form ===== */
+.upload-wrapper { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; -webkit-overflow-scrolling: touch; }
+.upload-card {
+  background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px;
+  box-shadow: var(--shadow-sm); max-width: 400px; width: 100%; align-self: flex-start;
 }
-
-.search-page .back-search-btn:hover {
-  background: var(--bg-hover);
-  color: var(--text-primary);
+.upload-card h2 { font-size: 1.05rem; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; text-align: center; }
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+.form-group label .required { color: var(--accent); }
+.form-group input[type="text"], .form-group select {
+  width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
+  font-size: 0.9rem; outline: none; transition: all var(--transition);
 }
-
-/* Search results (reuse note-list styles) */
-.search-page .search-results {
-  flex: 1;
-  overflow-y: auto;
-  padding: 8px 12px;
-  -webkit-overflow-scrolling: touch;
+.form-group input[type="text"]:focus, .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a9aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+.file-row { display: flex; align-items: center; gap: 10px; }
+.file-row .file-name-display {
+  flex: 1; font-size: 0.85rem; color: var(--text-muted); padding: 8px 12px;
+  border: 1px dashed var(--border-color); border-radius: var(--radius-sm); background: var(--bg-primary);
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
-
-.search-page .search-results::-webkit-scrollbar {
-  width: 4px;
+.btn-browse {
+  display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px;
+  border: 1px solid var(--border-color); border-radius: var(--radius-sm);
+  background: var(--bg-primary); color: var(--text-secondary); font-size: 0.85rem;
+  cursor: pointer; transition: all var(--transition); white-space: nowrap; flex-shrink: 0;
 }
-
-.search-page .search-results::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 2px;
+.btn-browse:hover { background: var(--bg-hover); color: var(--text-primary); }
+.btn-upload-submit {
+  width: 100%; padding: 10px 20px; border: none; border-radius: var(--radius-sm);
+  background: var(--accent); color: #fff; font-size: 0.9rem; font-weight: 600;
+  cursor: pointer; transition: all var(--transition); margin-top: 8px;
 }
+.btn-upload-submit:hover { background: var(--accent-hover); }
+.btn-upload-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.upload-hint { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 12px; }
 
-/* Search history */
-.search-page .search-history {
-  padding: 12px 16px;
-  border-top: 1px solid var(--border-color);
-  flex-shrink: 0;
-  max-height: 45%;
-  overflow-y: auto;
-}
-
-.search-page .search-history .history-title {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.search-page .search-history .history-title span {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.search-page .search-history .clear-history-btn {
-  font-size: 0.72rem;
-  color: var(--accent);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 2px 6px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition);
-}
-
-.search-page .search-history .clear-history-btn:hover {
-  background: var(--accent-light);
-}
-
-.search-history-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: background var(--transition);
-}
-
-.search-history-item:hover {
-  background: var(--bg-hover);
-}
-
-.search-history-item .history-text {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.search-history-item .history-delete {
-  flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-left: 8px;
-}
-
-.search-history-item .history-delete:hover {
-  background: var(--accent-light);
-  color: var(--accent);
-}
-
-/* ===== Main Content ===== */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: var(--bg-primary);
-  min-width: 0;
-}
-
-/* Preview Header */
+/* ===== Main Content (Desktop Preview) ===== */
+.main-content { flex: 1; display: flex; flex-direction: column; height: 100%; background: var(--bg-primary); min-width: 0; }
 .preview-header {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px; padding: 12px 20px;
+  background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); flex-shrink: 0;
 }
+.preview-header .note-title-display { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.preview-header .note-date-display { font-size: 0.78rem; color: var(--text-muted); flex-shrink: 0; }
+.preview-body { flex: 1; position: relative; background: var(--bg-secondary); }
+.preview-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
-.preview-header .back-btn {
-  display: none;
-}
+.welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); text-align: center; padding: 40px; }
+.welcome .welcome-icon { font-size: 5rem; margin-bottom: 20px; opacity: 0.5; }
+.welcome h3 { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
+.welcome p { font-size: 0.85rem; max-width: 300px; }
 
-.preview-header .note-title-display {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.preview-header .note-date-display {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-/* Preview Body */
-.preview-body {
-  flex: 1;
-  position: relative;
-  background: var(--bg-secondary);
-}
-
-.preview-body iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
-  background: #ffffff;
-}
-
-/* Welcome / Empty Preview */
-.welcome {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: var(--text-muted);
-  text-align: center;
-  padding: 40px;
-}
-
-.welcome .welcome-icon {
-  font-size: 5rem;
-  margin-bottom: 20px;
-  opacity: 0.5;
-}
-
-.welcome h3 {
-  font-size: 1.1rem;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-  font-weight: 500;
-}
-
-.welcome p {
-  font-size: 0.85rem;
-  max-width: 300px;
-}
+/* ===== Profile Tab ===== */
+.profile-body { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
+.profile-body-inner { max-width: 400px; margin: 0 auto; }
+.profile-avatar-section { display: flex; flex-direction: column; align-items: center; padding: 16px 0 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px; }
+.profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--bg-hover); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; flex-shrink: 0; }
+.profile-nickname { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); border: none; background: none; text-align: center; outline: none; padding: 4px 8px; border-radius: var(--radius-sm); transition: all var(--transition); max-width: 180px; }
+.profile-nickname:focus { background: var(--bg-hover); }
+.profile-nickname-edit { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+.profile-settings { list-style: none; }
+.profile-setting-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); }
+.profile-setting-item .setting-label { font-size: 0.92rem; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
+.profile-setting-item .setting-label .setting-icon { font-size: 1.15rem; }
+.profile-setting-item .setting-value { font-size: 0.8rem; color: var(--text-muted); }
+.toggle-switch { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; }
+.toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-hover); border-radius: 28px; transition: all var(--transition); }
+.toggle-switch .slider::before { content: ''; position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: all var(--transition); }
+.toggle-switch input:checked + .slider { background: var(--accent); }
+.toggle-switch input:checked + .slider::before { transform: translateX(20px); }
+.btn-setting { padding: 6px 14px; border: 1px solid var(--accent); border-radius: var(--radius-sm); background: transparent; color: var(--accent); font-size: 0.78rem; cursor: pointer; transition: all var(--transition); }
+.btn-setting:hover { background: var(--accent-light); }
+.profile-about { margin-top: 12px; padding: 14px 0; text-align: center; }
+.profile-about .about-version { font-size: 0.82rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 6px; }
+.profile-about .about-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
 
 /* ===== Bottom Nav (Mobile) ===== */
 .bottom-nav {
-  display: none;
-  align-items: center;
-  justify-content: space-around;
-  padding: 8px 16px;
-  padding-bottom: max(8px, env(safe-area-inset-bottom));
-  background: var(--bg-secondary);
-  border-top: 1px solid var(--border-color);
-  flex-shrink: 0;
+  display: none; align-items: center; justify-content: space-around;
+  padding: 6px 12px; padding-bottom: max(6px, env(safe-area-inset-bottom));
+  background: var(--bg-secondary); border-top: 1px solid var(--border-color); flex-shrink: 0;
 }
-
 .bottom-nav .nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-  padding: 6px 16px;
-  border: none;
-  background: none;
-  color: var(--text-muted);
-  font-size: 0.68rem;
-  cursor: pointer;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition);
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 4px 14px; border: none; background: none; color: var(--text-muted);
+  font-size: 0.65rem; cursor: pointer; border-radius: var(--radius-sm); transition: all var(--transition);
+}
+.bottom-nav .nav-item .nav-icon { font-size: 1.25rem; }
+.bottom-nav .nav-item.active { color: var(--accent); }
+
+/* ===== Preview Overlay (Mobile Full-Screen) ===== */
+.preview-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: var(--bg-secondary); z-index: 500; display: flex; flex-direction: column;
+  transform: translateX(0); transition: transform 0.25s ease;
+}
+.preview-overlay.hidden { transform: translateX(100%); pointer-events: none; }
+.preview-overlay .overlay-back-btn {
+  display: flex; align-items: center; gap: 6px; padding: 8px 16px;
+  border: none; border-radius: 20px; background: transparent; color: var(--text-secondary);
+  font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition);
+}
+.preview-overlay .overlay-back-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.preview-overlay .overlay-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top, 12px));
+  background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+}
+.preview-overlay .overlay-header .overlay-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.preview-overlay .overlay-body { flex: 1; position: relative; background: #fff; }
+.preview-overlay .overlay-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
+
+/* Landscape mode: header hidden, semi-transparent floating back button */
+.preview-overlay.landscape .overlay-header { display: none; }
+.preview-overlay.landscape .overlay-body { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 501; }
+.preview-overlay.landscape .landscape-float-back {
+  display: flex; align-items: center; gap: 4px;
+  position: fixed; top: max(12px, env(safe-area-inset-top, 12px)); left: 12px;
+  z-index: 510; padding: 6px 14px; border: none; border-radius: 20px;
+  background: rgba(0,0,0,0.45); color: #fff; font-size: 0.85rem; font-weight: 500;
+  cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 
-.bottom-nav .nav-item .nav-icon {
-  font-size: 1.3rem;
-}
+/* Hide floating back by default, show only in landscape */
+.landscape-float-back { display: none; }
 
-.bottom-nav .nav-item.active {
-  color: var(--accent);
-}
+/* ===== Modal ===== */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal-overlay.hidden { display: none; }
+.modal-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; max-width: 380px; width: 90%; box-shadow: var(--shadow-lg); text-align: center; }
+.modal-card .modal-icon { font-size: 2.5rem; margin-bottom: 12px; }
+.modal-card h3 { font-size: 1.05rem; color: var(--text-primary); margin-bottom: 8px; font-weight: 600; }
+.modal-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
+.modal-card .modal-actions { display: flex; gap: 10px; justify-content: center; }
+.modal-card .btn { padding: 8px 24px; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition); }
+.modal-card .btn-cancel { background: var(--bg-hover); color: var(--text-secondary); }
+.modal-card .btn-cancel:hover { background: var(--bg-active); }
+.modal-card .btn-danger { background: var(--accent); color: #fff; }
+.modal-card .btn-danger:hover { background: var(--accent-hover); }
 
-/* ===== Modal / Overlay ===== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  /* Clicking overlay does NOT close — only buttons */
+/* ===== Toast ===== */
+.toast {
+  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+  background: var(--text-primary); color: var(--bg-primary);
+  padding: 10px 24px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;
+  z-index: 2000; box-shadow: var(--shadow-md);
+  animation: toastIn 0.3s ease, toastOut 0.3s ease 1.7s forwards; pointer-events: none;
 }
+@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@keyframes toastOut { from { opacity: 1; transform: translateX(-50%) translateY(0); } to { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
 
-.modal-overlay.hidden {
-  display: none;
-}
-
-.modal-card {
-  background: var(--bg-card);
-  border-radius: var(--radius-lg);
-  padding: 24px;
-  max-width: 380px;
-  width: 90%;
-  box-shadow: var(--shadow-lg);
-  text-align: center;
-}
-
-.modal-card .modal-icon {
-  font-size: 2.5rem;
-  margin-bottom: 12px;
-}
-
-.modal-card h3 {
-  font-size: 1.05rem;
-  color: var(--text-primary);
-  margin-bottom: 8px;
-  font-weight: 600;
-}
-
-.modal-card p {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-bottom: 20px;
-  line-height: 1.5;
-}
-
-.modal-card .modal-actions {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-.modal-card .btn {
-  padding: 8px 24px;
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.modal-card .btn-cancel {
-  background: var(--bg-hover);
-  color: var(--text-secondary);
-}
-
-.modal-card .btn-cancel:hover {
-  background: var(--bg-active);
-}
-
-.modal-card .btn-danger {
-  background: var(--accent);
-  color: #fff;
-}
-
-.modal-card .btn-danger:hover {
-  background: var(--accent-hover);
-}
-
-.modal-card .btn-primary {
-  background: var(--accent);
-  color: #fff;
-}
-
-.modal-card .btn-primary:hover {
-  background: var(--accent-hover);
-}
-
-/* ===== Profile Overlay ===== */
-.profile-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg-primary);
-  z-index: 900;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.profile-overlay.hidden {
-  display: none;
-}
-
-.profile-overlay .profile-header-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: var(--bg-secondary);
-  border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
-}
-
-.profile-overlay .profile-header-bar h2 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.profile-overlay .profile-body {
-  flex: 1;
-  padding: 24px 20px;
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-/* Profile avatar section */
-.profile-avatar-section {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px 0 28px;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 20px;
-}
-
-.profile-avatar {
-  width: 72px;
-  height: 72px;
-  border-radius: 50%;
-  background: var(--bg-hover);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 2.2rem;
-  margin-bottom: 12px;
-  flex-shrink: 0;
-}
-
-.profile-nickname {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  border: none;
-  background: none;
-  text-align: center;
-  outline: none;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  transition: all var(--transition);
-  max-width: 200px;
-}
-
-.profile-nickname:focus {
-  background: var(--bg-hover);
-}
-
-.profile-nickname-edit {
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  margin-top: 4px;
-}
-
-/* Settings list */
-.profile-settings {
-  list-style: none;
-}
-
-.profile-setting-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.profile-setting-item .setting-label {
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.profile-setting-item .setting-label .setting-icon {
-  font-size: 1.2rem;
-}
-
-.profile-setting-item .setting-value {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-}
-
-/* Toggle switch */
-.toggle-switch {
-  position: relative;
-  width: 48px;
-  height: 28px;
-  flex-shrink: 0;
-}
-
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.toggle-switch .slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--bg-hover);
-  border-radius: 28px;
-  transition: all var(--transition);
-}
-
-.toggle-switch .slider::before {
-  content: '';
-  position: absolute;
-  height: 22px;
-  width: 22px;
-  left: 3px;
-  bottom: 3px;
-  background: #fff;
-  border-radius: 50%;
-  transition: all var(--transition);
-}
-
-.toggle-switch input:checked + .slider {
-  background: var(--accent);
-}
-
-.toggle-switch input:checked + .slider::before {
-  transform: translateX(20px);
-}
-
-/* Danger button in settings */
-.btn-setting {
-  padding: 6px 14px;
-  border: 1px solid var(--accent);
-  border-radius: var(--radius-sm);
-  background: transparent;
-  color: var(--accent);
-  font-size: 0.78rem;
-  cursor: pointer;
-  transition: all var(--transition);
-}
-
-.btn-setting:hover {
-  background: var(--accent-light);
-}
-
-/* About section */
-.profile-about {
-  margin-top: 12px;
-  padding: 16px 0;
-  text-align: center;
-}
-
-.profile-about .about-version {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-  margin-bottom: 6px;
-}
-
-.profile-about .about-desc {
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-/* ===== Loading & Error ===== */
-.loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.loading-spinner .spinner {
-  width: 24px;
-  height: 24px;
-  border: 2.5px solid var(--border-color);
-  border-top-color: var(--accent);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-  margin-right: 10px;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
-
-.error-banner {
-  margin: 12px;
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  background: var(--accent-light);
-  color: var(--accent);
-  font-size: 0.85rem;
-  text-align: center;
-}
+/* Loading */
+.loading-spinner { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; }
+.loading-spinner .spinner { width: 24px; height: 24px; border: 2.5px solid var(--border-color); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 10px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-banner { margin: 12px; padding: 12px 16px; border-radius: var(--radius-md); background: var(--accent-light); color: var(--accent); font-size: 0.85rem; text-align: center; }
 
 /* ===== Responsive: Mobile ===== */
 @media (max-width: 767px) {
-  .app {
-    flex-direction: column;
-    position: relative;
-    height: 100%;
-  }
-
-  .sidebar {
-    width: 100%;
-    min-width: 0;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-right: none;
-  }
-
-  .sidebar.hidden {
-    transform: translateX(-100%);
-    pointer-events: none;
-  }
-
-  .main-content {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  .main-content.hidden {
-    transform: translateX(100%);
-    pointer-events: none;
-    visibility: hidden;
-  }
-
-  .preview-header .back-btn {
-    display: flex;
-  }
-
-  .bottom-nav {
-    display: flex;
-  }
-
-  .app {
-    padding-bottom: 0;
-  }
-
-  .sidebar {
-    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .main-content {
-    display: flex;
-    flex-direction: column;
-    padding-bottom: 0;
-  }
-
-  .preview-body {
-    flex: 1;
-  }
+  .app { flex-direction: column; position: relative; height: 100%; }
+  .sidebar { width: 100%; min-width: 0; height: 100%; position: absolute; top: 0; left: 0; border-right: none; padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
+  .tab-bar { display: none; }
+  .main-content { display: none; }
+  .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; }
 }
-
-/* ===== Responsive: Tablet ===== */
-@media (min-width: 768px) and (max-width: 1023px) {
-  .sidebar {
-    width: 300px;
-    min-width: 300px;
-  }
-
-  .note-item {
-    padding: 10px 12px;
-  }
-}
-
-/* ===== Responsive: Large Screens ===== */
-@media (min-width: 1024px) {
-  .sidebar {
-    width: 360px;
-    min-width: 360px;
-  }
-}
-
-/* ===== Utility ===== */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
+@media (min-width: 768px) and (max-width: 1023px) { .sidebar { width: 300px; min-width: 300px; } .note-item { padding: 10px 12px; } }
+@media (min-width: 1024px) { .sidebar { width: 360px; min-width: 360px; } }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 </style>
 </head>
 <body>
 
-<!-- ===== Hidden file input for upload ===== -->
+<!-- Hidden file input for upload -->
 <input type="file" id="uploadFileInput" accept=".html" style="display:none">
 
-<!-- ===== App Shell ===== -->
 <div class="app" id="app">
 
-  <!-- Sidebar / Note List -->
+  <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-header-top">
-        <h1>📚 读书笔记</h1>
-        <div class="header-actions">
-          <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
-          <button class="icon-btn" id="uploadBtn" title="上传笔记" aria-label="上传笔记">📤</button>
-          <button class="icon-btn profile-btn-desktop" id="profileBtnDesktop" title="个人中心" aria-label="个人中心">👤</button>
-        </div>
-      </div>
-      <p class="subtitle">点击笔记开始阅读</p>
+      <h1>📚 读书笔记</h1>
+      <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
-    <!-- Sidebar Content Area: switches between note list and search page -->
+    <!-- Desktop Tab Bar -->
+    <div class="tab-bar" id="tabBar">
+      <button class="tab-btn active" data-tab="home">🏠 首页</button>
+      <button class="tab-btn" data-tab="upload">📤 上传</button>
+      <button class="tab-btn" data-tab="profile">👤 我的</button>
+    </div>
+
+    <!-- Sidebar Content Area -->
     <div class="sidebar-content-area" id="sidebarContentArea">
 
-      <!-- Normal: note list -->
-      <div class="sidebar-content" id="sidebarContent">
-        <div class="toolbar">
-          <span class="count" id="noteCount">共 0 篇</span>
-        </div>
+      <!-- Home Tab -->
+      <div class="tab-panel active" id="tabHome">
+        <div class="category-chips" id="categoryChips"></div>
+        <div class="toolbar"><span class="count" id="noteCount">共 0 篇</span></div>
         <div class="note-list" id="noteList">
-          <div class="loading-spinner">
-            <div class="spinner"></div>
-            加载笔记中…
+          <div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>
+        </div>
+        <div class="search-page hidden" id="searchPage">
+          <div class="search-header">
+            <button class="back-search-btn" id="backSearchBtn" aria-label="返回笔记列表">←</button>
+            <input type="text" id="searchPageInput" placeholder="搜索笔记标题…" autocomplete="off">
+          </div>
+          <div class="search-results" id="searchResults"><div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索笔记</p></div></div>
+          <div class="search-history" id="searchHistory"></div>
+        </div>
+      </div>
+
+      <!-- Upload Tab -->
+      <div class="tab-panel" id="tabUpload">
+        <div class="upload-wrapper">
+          <div class="upload-card">
+            <h2>📤 上传笔记</h2>
+            <div class="form-group">
+              <label for="uploadTitle">文件名</label>
+              <input type="text" id="uploadTitle" placeholder="自动从文件名提取" maxlength="100">
+            </div>
+            <div class="form-group">
+              <label for="uploadCategory">分类 <span class="required">*</span></label>
+              <select id="uploadCategory"><option value="">请选择分类</option></select>
+            </div>
+            <div class="form-group">
+              <label for="uploadTagsInput">标签（逗号分隔，可选）</label>
+              <input type="text" id="uploadTagsInput" placeholder="例如：笔记, 阅读, 学习" maxlength="200">
+            </div>
+            <div class="form-group">
+              <label>选择文件</label>
+              <div class="file-row">
+                <span class="file-name-display" id="uploadFileDisplay">未选择文件</span>
+                <button type="button" class="btn-browse" id="uploadBrowseBtn">📁 浏览</button>
+              </div>
+            </div>
+            <button class="btn-upload-submit" id="uploadSubmitBtn" disabled>上传笔记</button>
+            <div class="upload-hint">仅支持 .html 文件</div>
           </div>
         </div>
       </div>
 
-      <!-- Search page -->
-      <div class="search-page hidden" id="searchPage">
-        <div class="search-header">
-          <button class="back-search-btn" id="backSearchBtn" aria-label="返回笔记列表">←</button>
-          <input type="text" id="searchPageInput" placeholder="搜索笔记标题…" autocomplete="off">
-        </div>
-        <div class="search-results" id="searchResults">
-          <div class="empty-state">
-            <div class="empty-icon">🔍</div>
-            <p>输入关键词搜索笔记</p>
+      <!-- Profile Tab -->
+      <div class="tab-panel" id="tabProfile">
+        <div class="profile-body">
+          <div class="profile-body-inner">
+            <div class="profile-avatar-section">
+              <div class="profile-avatar">📖</div>
+              <input type="text" class="profile-nickname" id="profileNickname" maxlength="20" placeholder="设置昵称" value="">
+              <span class="profile-nickname-edit">点击昵称可编辑</span>
+            </div>
+            <ul class="profile-settings">
+              <li class="profile-setting-item">
+                <span class="setting-label"><span class="setting-icon">🌓</span>主题切换</span>
+                <label class="toggle-switch"><input type="checkbox" id="profileThemeToggle"><span class="slider"></span></label>
+              </li>
+              <li class="profile-setting-item">
+                <span class="setting-label"><span class="setting-icon">📊</span>存储管理</span>
+                <span class="setting-value" id="storageSize">计算中…</span>
+              </li>
+              <li class="profile-setting-item">
+                <span class="setting-label"><span class="setting-icon">🗑️</span>清除用户笔记</span>
+                <button class="btn-setting" id="clearUserNotesBtn">清除全部</button>
+              </li>
+              <li class="profile-setting-item">
+                <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
+                <span class="setting-value">v3.0</span>
+              </li>
+            </ul>
+            <div class="profile-about">
+              <div class="about-version">📚 笔记预览 v3.0</div>
+              <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
+            </div>
           </div>
         </div>
-        <div class="search-history" id="searchHistory"></div>
       </div>
 
     </div>
   </aside>
 
-  <!-- Main Content / Preview -->
-  <main class="main-content hidden" id="mainContent">
+  <!-- Desktop Preview -->
+  <main class="main-content" id="mainContent">
     <div class="preview-header">
-      <button class="icon-btn back-btn" id="backBtn" title="返回列表" aria-label="返回笔记列表">←</button>
       <span class="note-title-display" id="previewTitle">选择一篇笔记</span>
       <span class="note-date-display" id="previewDate"></span>
     </div>
     <div class="preview-body" id="previewBody">
-      <div class="welcome">
-        <div class="welcome-icon">📖</div>
-        <h3>选择一篇笔记开始阅读</h3>
-        <p>从左侧列表中选择一篇读书笔记，内容将在此显示</p>
-      </div>
+      <div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>
     </div>
   </main>
 
-  <!-- Bottom Nav (Mobile-only) -->
+  <!-- Mobile Bottom Nav -->
   <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" id="navList" data-view="list">
-      <span class="nav-icon">📋</span>
-      <span>列表</span>
-    </button>
-    <button class="nav-item" id="navPreview" data-view="preview" disabled>
-      <span class="nav-icon">📄</span>
-      <span>预览</span>
-    </button>
-    <button class="nav-item" id="navProfile" data-view="profile">
-      <span class="nav-icon">👤</span>
-      <span>我的</span>
-    </button>
+    <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span>首页</span></button>
+    <button class="nav-item" data-tab="upload"><span class="nav-icon">📤</span><span>上传</span></button>
+    <button class="nav-item" data-tab="profile"><span class="nav-icon">👤</span><span>我的</span></button>
   </nav>
 </div>
 
-<!-- ===== Confirmation Modal ===== -->
+<!-- Mobile Full-Screen Preview Overlay -->
+<div class="preview-overlay hidden" id="previewOverlay">
+  <button class="landscape-float-back" id="landscapeFloatBack" aria-label="返回列表">← 返回</button>
+  <div class="overlay-header" id="overlayHeader">
+    <button class="overlay-back-btn" id="overlayBackBtn" aria-label="返回列表">←</button>
+    <span class="overlay-title" id="overlayTitle">选择一篇笔记</span>
+  </div>
+  <div class="overlay-body" id="overlayBody">
+    <div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>
+  </div>
+</div>
+
+<!-- Confirmation Modal -->
 <div class="modal-overlay hidden" id="confirmModal">
   <div class="modal-card">
     <div class="modal-icon">⚠️</div>
     <h3 id="confirmModalTitle">确认操作</h3>
     <p id="confirmModalMessage">确定要执行此操作吗？</p>
-    <div class="modal-actions" id="confirmModalActions">
+    <div class="modal-actions">
       <button class="btn btn-cancel" id="confirmModalCancel">取消</button>
       <button class="btn btn-danger" id="confirmModalOk">确定</button>
     </div>
   </div>
 </div>
 
-<!-- ===== Profile Overlay ===== -->
-<div class="profile-overlay hidden" id="profileOverlay">
-  <div class="profile-header-bar">
-    <span></span>
-    <h2>个人中心</h2>
-    <button class="icon-btn" id="profileCloseBtn" aria-label="关闭个人中心">✕</button>
-  </div>
-  <div class="profile-body">
-    <!-- Avatar + Nickname -->
-    <div class="profile-avatar-section">
-      <div class="profile-avatar">📖</div>
-      <input type="text" class="profile-nickname" id="profileNickname" maxlength="20" placeholder="设置昵称" value="">
-      <span class="profile-nickname-edit">点击昵称可编辑</span>
-    </div>
-
-    <!-- Settings -->
-    <ul class="profile-settings">
-      <li class="profile-setting-item">
-        <span class="setting-label">
-          <span class="setting-icon">🌓</span>
-          主题切换
-        </span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="profileThemeToggle">
-          <span class="slider"></span>
-        </label>
-      </li>
-      <li class="profile-setting-item">
-        <span class="setting-label">
-          <span class="setting-icon">📊</span>
-          存储管理
-        </span>
-        <span class="setting-value" id="storageSize">计算中…</span>
-      </li>
-      <li class="profile-setting-item">
-        <span class="setting-label">
-          <span class="setting-icon">🗑️</span>
-          清除用户笔记
-        </span>
-        <button class="btn-setting" id="clearUserNotesBtn">清除全部</button>
-      </li>
-      <li class="profile-setting-item">
-        <span class="setting-label">
-          <span class="setting-icon">ℹ️</span>
-          关于
-        </span>
-        <span class="setting-value">v2.0</span>
-      </li>
-    </ul>
-
-    <div class="profile-about">
-      <div class="about-version">📚 笔记预览 v2.0</div>
-      <div class="about-desc">
-        一款简洁优雅的读书笔记浏览与管理工具。<br>
-        支持 HTML 笔记预览、上传管理、搜索历史、暗色模式等功能。
-      </div>
-    </div>
-  </div>
-</div>
-
 <script>
 /* ===================================================================
- * 笔记预览 APP v2.0 — 主逻辑
+ * 笔记预览 APP v3.0
  * =================================================================== */
-
 (function() {
   'use strict';
 
-  /* ---- DOM References ---- */
-  const $ = (sel, ctx) => (ctx || document).querySelector(sel);
-  const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
+  /* ---- Shortcuts ---- */
+  const $ = (s, c) => (c || document).querySelector(s);
+  const $$ = (s, c) => Array.from((c || document).querySelectorAll(s));
 
-  const app = $('#app');
-  const sidebar = $('#sidebar');
+  /* ---- DOM Refs ---- */
+  const app         = $('#app');
+  const sidebar     = $('#sidebar');
   const mainContent = $('#mainContent');
-  const noteList = $('#noteList');
-  const noteCount = $('#noteCount');
-  const backBtn = $('#backBtn');
-  const previewTitle = $('#previewTitle');
-  const previewDate = $('#previewDate');
-  const previewBody = $('#previewBody');
-  const bottomNav = $('#bottomNav');
-  const navListBtn = $('#navList');
-  const navPreviewBtn = $('#navPreview');
-  const navProfileBtn = $('#navProfile');
-  const searchBtn = $('#searchBtn');
-  const uploadBtn = $('#uploadBtn');
-  const uploadFileInput = $('#uploadFileInput');
-  const profileBtnDesktop = $('#profileBtnDesktop');
+  const bottomNav   = $('#bottomNav');
+
+  // Tabs
+  const tabBar      = $('#tabBar');
+  const tabHome     = $('#tabHome');
+  const tabUpload   = $('#tabUpload');
+  const tabProfile  = $('#tabProfile');
+
+  // Home — notes
+  const categoryChips = $('#categoryChips');
+  const noteList    = $('#noteList');
+  const noteCount   = $('#noteCount');
+  const searchBtn   = $('#searchBtn');
 
   // Search page
-  const sidebarContent = $('#sidebarContent');
-  const searchPage = $('#searchPage');
+  const searchPage     = $('#searchPage');
   const searchPageInput = $('#searchPageInput');
-  const searchResults = $('#searchResults');
+  const searchResults  = $('#searchResults');
   const searchHistoryEl = $('#searchHistory');
-  const backSearchBtn = $('#backSearchBtn');
+  const backSearchBtn  = $('#backSearchBtn');
 
-  // Confirm modal (let for reassignment in showConfirm)
-  const confirmModal = $('#confirmModal');
-  const confirmModalTitle = $('#confirmModalTitle');
+  // Upload form
+  const uploadTitle     = $('#uploadTitle');
+  const uploadCategory  = $('#uploadCategory');
+  const uploadTagsInput = $('#uploadTagsInput');
+  const uploadFileDisplay = $('#uploadFileDisplay');
+  const uploadBrowseBtn = $('#uploadBrowseBtn');
+  const uploadSubmitBtn = $('#uploadSubmitBtn');
+  const uploadFileInput = $('#uploadFileInput');
+
+  // Desktop preview
+  const previewTitle = $('#previewTitle');
+  const previewDate  = $('#previewDate');
+  const previewBody  = $('#previewBody');
+
+  // Mobile preview overlay
+  const previewOverlay    = $('#previewOverlay');
+  const overlayHeader     = $('#overlayHeader');
+  const overlayBackBtn    = $('#overlayBackBtn');
+  const landscapeFloatBack = $('#landscapeFloatBack');
+  const overlayTitle      = $('#overlayTitle');
+  const overlayBody       = $('#overlayBody');
+
+  // Confirm modal
+  const confirmModal        = $('#confirmModal');
+  const confirmModalTitle   = $('#confirmModalTitle');
   const confirmModalMessage = $('#confirmModalMessage');
-  let confirmModalOk = $('#confirmModalOk');
-  let confirmModalCancel = $('#confirmModalCancel');
+  let confirmModalOk        = $('#confirmModalOk');
+  let confirmModalCancel    = $('#confirmModalCancel');
 
-  // Profile overlay
-  const profileOverlay = $('#profileOverlay');
-  const profileCloseBtn = $('#profileCloseBtn');
-  const profileNickname = $('#profileNickname');
+  // Profile
+  const profileNickname    = $('#profileNickname');
   const profileThemeToggle = $('#profileThemeToggle');
-  const storageSize = $('#storageSize');
-  const clearUserNotesBtn = $('#clearUserNotesBtn');
+  const storageSize        = $('#storageSize');
+  const clearUserNotesBtn  = $('#clearUserNotesBtn');
 
   /* ---- State ---- */
   const STATE = {
-    builtInNotes: [],      // from notes.json
-    userNotesIndex: [],    // from localStorage: user-notes-index
-    notes: [],             // merged: [userNotes..., ...builtInNotes]
+    builtInNotes: [],
+    userNotesIndex: [],
+    notes: [],
     selectedId: null,
     theme: 'light',
     isMobile: false,
-    mobileView: 'list',    // 'list' | 'preview' | 'profile'
-    searchHistory: [],     // stored in localStorage
-    previousBlobUrl: null, // track previous blob URL for revocation
+    activeTab: 'home',
+    searchHistory: [],
+    selectedCategory: '全部',
+    blobUrl: null,
+    overlayBlobUrl: null,
   };
 
   /* ---- Helpers ---- */
-
-  const TAG_COLORS = ['#e74c3c', '#e67e22', '#2980b9', '#27ae60', '#8e44ad', '#16a085', '#d35400', '#2c3e50'];
-
-  function tagColor(tag) {
-    let hash = 0;
-    for (let i = 0; i < tag.length; i++) {
-      hash = ((hash << 5) - hash) + tag.charCodeAt(i);
-      hash |= 0;
-    }
-    return TAG_COLORS[Math.abs(hash) % TAG_COLORS.length];
+  const TAG_COLORS = ['#e74c3c','#e67e22','#2980b9','#27ae60','#8e44ad','#16a085','#d35400','#2c3e50'];
+  function tagColor(t) { let h=0; for(let i=0;i<t.length;i++){h=((h<<5)-h)+t.charCodeAt(i);h|=0;} return TAG_COLORS[Math.abs(h)%TAG_COLORS.length]; }
+  function formatDate(d) { if(!d) return ''; try { const dt=new Date(d); if(isNaN(dt.getTime())) return d; return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; } catch(_){return d;} }
+  function checkMobile() { STATE.isMobile = window.innerWidth < 768; }
+  function escapeHtml(s) { const el=document.createElement('div'); el.textContent=s; return el.innerHTML; }
+  function genId() { return 'user-'+Date.now()+'-'+Math.random().toString(36).slice(2,8); }
+  function showToast(msg) {
+    const e=document.querySelector('.toast'); if(e)e.remove();
+    const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
+    document.body.appendChild(t); setTimeout(()=>t.remove(),2200);
   }
 
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    try {
-      const d = new Date(dateStr);
-      if (isNaN(d.getTime())) return dateStr;
-      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-    } catch (_) {
-      return dateStr;
-    }
-  }
-
-  function checkMobile() {
-    STATE.isMobile = window.innerWidth < 768;
-  }
-
-  function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
-  }
-
-  /** Generate a unique id for user notes. */
-  function generateUserId() {
-    return 'user-' + Date.now() + '-' + Math.random().toString(36).slice(2, 8);
-  }
+  /* ---- Persistence: Categories ---- */
+  const PRESET_CATEGORIES = ['全部','哲学','历史','文学','科技','其他'];
+  function loadCategories() { try { const r=localStorage.getItem('notes-categories'); if(r){ const p=JSON.parse(r); if(Array.isArray(p)&&p.length) return p; } } catch(_){} return [...PRESET_CATEGORIES]; }
+  function saveCategories(c) { try { localStorage.setItem('notes-categories',JSON.stringify(c)); } catch(_){} }
 
   /* ---- Persistence: Theme ---- */
-
-  function loadTheme() {
-    try {
-      const saved = localStorage.getItem('notes-theme');
-      if (saved === 'dark' || saved === 'light') {
-        STATE.theme = saved;
-      }
-    } catch (_) {
-      STATE.theme = 'light';
-    }
-    applyTheme();
-  }
-
-  function saveTheme() {
-    try {
-      localStorage.setItem('notes-theme', STATE.theme);
-    } catch (_) { /* ignore */ }
-  }
-
+  function loadTheme() { try { const s=localStorage.getItem('notes-theme'); if(s==='dark'||s==='light') STATE.theme=s; } catch(_){STATE.theme='light';} applyTheme(); }
+  function saveTheme() { try { localStorage.setItem('notes-theme',STATE.theme); } catch(_){} }
   function applyTheme() {
-    document.documentElement.setAttribute('data-theme', STATE.theme);
-    profileThemeToggle.checked = (STATE.theme === 'dark');
-    const metaTheme = document.querySelector('meta[name="theme-color"]');
-    if (metaTheme) {
-      metaTheme.setAttribute('content', STATE.theme === 'dark' ? '#1a1a2e' : '#f5f0e8');
-    }
+    document.documentElement.setAttribute('data-theme',STATE.theme);
+    profileThemeToggle.checked = (STATE.theme==='dark');
+    const m=document.querySelector('meta[name="theme-color"]');
+    if(m) m.setAttribute('content',STATE.theme==='dark'?'#1a1a2e':'#f5f0e8');
   }
-
-  function toggleTheme() {
-    STATE.theme = STATE.theme === 'light' ? 'dark' : 'light';
-    applyTheme();
-    saveTheme();
-  }
+  function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
 
   /* ---- Persistence: Nickname ---- */
-
-  function loadNickname() {
-    try {
-      const saved = localStorage.getItem('notes-nickname');
-      if (saved) {
-        profileNickname.value = saved;
-      }
-    } catch (_) { /* ignore */ }
-  }
-
-  function saveNickname(name) {
-    try {
-      localStorage.setItem('notes-nickname', name.trim());
-    } catch (_) { /* ignore */ }
-  }
+  function loadNickname() { try { const s=localStorage.getItem('notes-nickname'); if(s) profileNickname.value=s; } catch(_){} }
+  function saveNickname(n) { try { localStorage.setItem('notes-nickname',n.trim()); } catch(_){} }
 
   /* ---- Persistence: Search History ---- */
+  function loadSearchHistory() { try { const r=localStorage.getItem('notes-search-history'); if(r) STATE.searchHistory=JSON.parse(r); } catch(_){STATE.searchHistory=[];} }
+  function saveSearchHistory() { try { localStorage.setItem('notes-search-history',JSON.stringify(STATE.searchHistory)); } catch(_){} }
+  function addSearchHistory(t) { const x=t.trim(); if(!x) return; STATE.searchHistory=STATE.searchHistory.filter(h=>h!==x); STATE.searchHistory.unshift(x); if(STATE.searchHistory.length>20) STATE.searchHistory=STATE.searchHistory.slice(0,20); saveSearchHistory(); }
+  function removeSearchHistory(t) { STATE.searchHistory=STATE.searchHistory.filter(h=>h!==t); saveSearchHistory(); }
+  function clearSearchHistory() { STATE.searchHistory=[]; saveSearchHistory(); }
 
-  function loadSearchHistory() {
-    try {
-      const raw = localStorage.getItem('notes-search-history');
-      if (raw) {
-        STATE.searchHistory = JSON.parse(raw);
-      }
-    } catch (_) {
-      STATE.searchHistory = [];
-    }
-  }
+  /* ---- Persistence: User Notes ---- */
+  function loadUserNotesIndex() { try { const r=localStorage.getItem('user-notes-index'); if(r) STATE.userNotesIndex=JSON.parse(r); else STATE.userNotesIndex=[]; } catch(_){STATE.userNotesIndex=[];} }
+  function saveUserNotesIndex() { try { localStorage.setItem('user-notes-index',JSON.stringify(STATE.userNotesIndex)); } catch(_){} }
 
-  function saveSearchHistory() {
-    try {
-      localStorage.setItem('notes-search-history', JSON.stringify(STATE.searchHistory));
-    } catch (_) { /* ignore */ }
-  }
-
-  function addSearchHistory(term) {
-    const t = term.trim();
-    if (!t) return;
-    // Deduplicate
-    STATE.searchHistory = STATE.searchHistory.filter(h => h !== t);
-    // Add to front
-    STATE.searchHistory.unshift(t);
-    // Max 20
-    if (STATE.searchHistory.length > 20) {
-      STATE.searchHistory = STATE.searchHistory.slice(0, 20);
-    }
-    saveSearchHistory();
-  }
-
-  function removeSearchHistory(term) {
-    STATE.searchHistory = STATE.searchHistory.filter(h => h !== term);
-    saveSearchHistory();
-  }
-
-  function clearSearchHistory() {
-    STATE.searchHistory = [];
-    saveSearchHistory();
-  }
-
-  /* ---- Persistence: User Notes Index (localStorage) ---- */
-
-  function loadUserNotesIndex() {
-    try {
-      const raw = localStorage.getItem('user-notes-index');
-      if (raw) {
-        STATE.userNotesIndex = JSON.parse(raw);
-      } else {
-        STATE.userNotesIndex = [];
-      }
-    } catch (_) {
-      STATE.userNotesIndex = [];
-    }
-  }
-
-  function saveUserNotesIndex() {
-    try {
-      localStorage.setItem('user-notes-index', JSON.stringify(STATE.userNotesIndex));
-    } catch (_) { /* ignore */ }
-  }
-
-  /* ---- IndexedDB Wrapper ---- */
-
+  /* ---- IndexedDB ---- */
   const DB = {
     _db: null,
-
-    async open() {
-      if (this._db) return this._db;
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open('notes-app', 1);
-        req.onupgradeneeded = (e) => {
-          const db = e.target.result;
-          if (!db.objectStoreNames.contains('user-notes')) {
-            db.createObjectStore('user-notes', { keyPath: 'id' });
-          }
-        };
-        req.onsuccess = (e) => {
-          this._db = e.target.result;
-          resolve(this._db);
-        };
-        req.onerror = (e) => reject(e.target.error);
-      });
-    },
-
-    async put(note) {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('user-notes', 'readwrite');
-        const store = tx.objectStore('user-notes');
-        const req = store.put(note);
-        req.onsuccess = () => resolve();
-        req.onerror = (e) => reject(e.target.error);
-      });
-    },
-
-    async get(id) {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('user-notes', 'readonly');
-        const store = tx.objectStore('user-notes');
-        const req = store.get(id);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = (e) => reject(e.target.error);
-      });
-    },
-
-    async getAll() {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('user-notes', 'readonly');
-        const store = tx.objectStore('user-notes');
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = (e) => reject(e.target.error);
-      });
-    },
-
-    async delete(id) {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('user-notes', 'readwrite');
-        const store = tx.objectStore('user-notes');
-        const req = store.delete(id);
-        req.onsuccess = () => resolve();
-        req.onerror = (e) => reject(e.target.error);
-      });
-    },
-
-    async clear() {
-      const db = await this.open();
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction('user-notes', 'readwrite');
-        const store = tx.objectStore('user-notes');
-        const req = store.clear();
-        req.onsuccess = () => resolve();
-        req.onerror = (e) => reject(e.target.error);
-      });
-    },
-
-    /** Estimate total storage size of user notes in bytes. */
-    async estimateSize() {
-      const all = await this.getAll();
-      let total = 0;
-      for (const n of all) {
-        total += (n.content || '').length * 2; // approximate UTF-16 bytes
-      }
-      return total;
-    },
+    async open() { if(this._db) return this._db; return new Promise((res,rej)=>{ const r=indexedDB.open('notes-app',1); r.onupgradeneeded=e=>{ const d=e.target.result; if(!d.objectStoreNames.contains('user-notes')) d.createObjectStore('user-notes',{keyPath:'id'}); }; r.onsuccess=e=>{ this._db=e.target.result; res(this._db); }; r.onerror=e=>rej(e.target.error); }); },
+    async put(n) { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readwrite'); const s=t.objectStore('user-notes'); const r=s.put(n); r.onsuccess=()=>res(); r.onerror=e=>rej(e.target.error); }); },
+    async get(id) { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readonly'); const s=t.objectStore('user-notes'); const r=s.get(id); r.onsuccess=()=>res(r.result); r.onerror=e=>rej(e.target.error); }); },
+    async getAll() { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readonly'); const s=t.objectStore('user-notes'); const r=s.getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=e=>rej(e.target.error); }); },
+    async delete(id) { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readwrite'); const s=t.objectStore('user-notes'); const r=s.delete(id); r.onsuccess=()=>res(); r.onerror=e=>rej(e.target.error); }); },
+    async clear() { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readwrite'); const s=t.objectStore('user-notes'); const r=s.clear(); r.onsuccess=()=>res(); r.onerror=e=>rej(e.target.error); }); },
+    async estimateSize() { const a=await this.getAll(); let t=0; for(const n of a) t+=(n.content||'').length*2; return t; },
   };
+  function formatBytes(b) { if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(2)+' MB'; }
 
-  /** Format bytes to human-readable string. */
-  function formatBytes(bytes) {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-  }
-
-  /* ---- Confirmation Modal ---- */
-
-  function showConfirm(title, message, onConfirm) {
-    confirmModalTitle.textContent = title;
-    confirmModalMessage.textContent = message;
-    confirmModal.classList.remove('hidden');
-
-    // Clean up previous listeners
-    const newOk = confirmModalOk.cloneNode(true);
-    const newCancel = confirmModalCancel.cloneNode(true);
-    confirmModalOk.parentNode.replaceChild(newOk, confirmModalOk);
-    confirmModalCancel.parentNode.replaceChild(newCancel, confirmModalCancel);
-
-    // Re-assign references
-    confirmModalOk = newOk;
-    confirmModalCancel = newCancel;
-
-    confirmModalOk.focus();
-
-    const close = () => confirmModal.classList.add('hidden');
-
-    confirmModalOk.addEventListener('click', () => {
-      close();
-      onConfirm();
-    });
-
-    confirmModalCancel.addEventListener('click', () => {
-      close();
-    });
+  /* ---- Confirm Modal ---- */
+  function showConfirm(title, msg, onConfirm) {
+    confirmModalTitle.textContent=title; confirmModalMessage.textContent=msg; confirmModal.classList.remove('hidden');
+    const nOk=confirmModalOk.cloneNode(true), nCancel=confirmModalCancel.cloneNode(true);
+    confirmModalOk.parentNode.replaceChild(nOk,confirmModalOk); confirmModalCancel.parentNode.replaceChild(nCancel,confirmModalCancel);
+    confirmModalOk=nOk; confirmModalCancel=nCancel; confirmModalOk.focus();
+    const close=()=>confirmModal.classList.add('hidden');
+    confirmModalOk.addEventListener('click',()=>{close();onConfirm();});
+    confirmModalCancel.addEventListener('click',()=>{close();});
   }
 
   /* ---- Data Loading ---- */
-
   async function loadBuiltInNotes() {
     try {
-      const resp = await fetch('notes.json');
-      if (!resp.ok) {
-        throw new Error(`HTTP ${resp.status}: ${resp.statusText}`);
-      }
-      const data = await resp.json();
-      if (!Array.isArray(data)) {
-        throw new Error('笔记数据格式错误：期望数组');
-      }
-      STATE.builtInNotes = data.map((n, i) => ({
-        ...n,
-        id: n.id || String(i + 1),
-        title: n.title || '未命名笔记',
-        file: n.file || '',
-        date: n.date || '',
-        tags: Array.isArray(n.tags) ? n.tags : [],
-        source: 'builtin',
-      }));
-    } catch (err) {
-      console.error('加载内置笔记失败:', err);
-      STATE.builtInNotes = [];
-      noteList.innerHTML = `
-        <div class="error-banner">
-          ⚠️ 加载笔记失败：${err.message}
-        </div>`;
+      const resp=await fetch('notes.json');
+      if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      const data=await resp.json();
+      if(!Array.isArray(data)) throw new Error('数据格式错误');
+      STATE.builtInNotes=data.map((n,i)=>({...n,id:n.id||String(i+1),title:n.title||'未命名笔记',file:n.file||'',date:n.date||'',tags:Array.isArray(n.tags)?n.tags:[],category:n.category||'其他',source:'builtin'}));
+    } catch(err) {
+      console.error(err); STATE.builtInNotes=[];
+      noteList.innerHTML=`<div class="error-banner">⚠️ 加载笔记失败：${err.message}</div>`;
     }
   }
-
-  /** Merge user notes index with built-in notes for display. */
   function mergeNotes() {
-    // User notes first (sorted by date desc), then built-in
-    const userNotes = (STATE.userNotesIndex || []).map(n => ({
-      ...n,
-      source: 'user',
-    }));
-    // Sort user notes by date descending (newest first)
-    userNotes.sort((a, b) => {
-      if (!a.date) return 1;
-      if (!b.date) return -1;
-      return b.date.localeCompare(a.date);
-    });
-    STATE.notes = [...userNotes, ...STATE.builtInNotes];
+    const u=(STATE.userNotesIndex||[]).map(n=>({...n,category:n.category||'其他',source:'user'}));
+    u.sort((a,b)=>{if(!a.date)return 1;if(!b.date)return-1;return b.date.localeCompare(a.date);});
+    STATE.notes=[...u,...STATE.builtInNotes];
   }
-
   async function loadAllNotes() {
-    noteList.innerHTML = `
-      <div class="loading-spinner">
-        <div class="spinner"></div>
-        加载笔记中…
-      </div>`;
-    await DB.open();
-    await loadBuiltInNotes();
-    mergeNotes();
-    renderNoteList();
+    noteList.innerHTML='<div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>';
+    await DB.open(); await loadBuiltInNotes(); mergeNotes();
+    renderCategoryChips(); renderNoteList(); populateUploadCategories();
   }
 
-  /* ---- Rendering ---- */
-
-  function getFilteredNotes() {
-    const q = (STATE._searchQuery || '').trim().toLowerCase();
-    if (!q) return STATE.notes;
-    return STATE.notes.filter(n =>
-      n.title.toLowerCase().includes(q) ||
-      (n.tags || []).some(t => t.toLowerCase().includes(q))
-    );
+  /* ---- Category Chips ---- */
+  function getCatCount(cat) {
+    if(cat==='全部') return STATE.notes.length;
+    if(cat==='其他') return STATE.notes.filter(n=>n.category==='其他').length;
+    return STATE.notes.filter(n=>n.category===cat).length;
   }
-
-  function renderNoteList() {
-    const filtered = getFilteredNotes();
-
-    if (filtered.length === 0) {
-      noteList.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">📭</div>
-          <p>${(STATE._searchQuery || '') ? '没有匹配的笔记' : '暂无笔记'}</p>
-        </div>`;
-      updateCount(filtered.length);
-      return;
-    }
-
-    noteList.innerHTML = filtered.map(n => {
-      const isActive = n.id === STATE.selectedId;
-      const isUser = n.source === 'user';
-      return `
-        <div class="note-item ${isActive ? 'active' : ''}" data-id="${n.id}" role="button" tabindex="0">
-          <div class="note-info">
-            <div class="note-title">${escapeHtml(n.title)}</div>
-            <div class="note-meta">
-              ${n.date ? `<span class="note-date">${formatDate(n.date)}</span>` : ''}
-              <span class="note-tags">
-                ${(n.tags || []).map(t => `
-                  <span class="tag-pill">
-                    <span class="tag-dot" style="background:${tagColor(t)}"></span>
-                    ${escapeHtml(t)}
-                  </span>
-                `).join('')}
-              </span>
-            </div>
-          </div>
-          ${isUser ? `<button class="note-delete" data-action="delete" data-id="${n.id}" title="删除笔记" aria-label="删除笔记">×</button>` : ''}
-        </div>`;
+  function renderCategoryChips() {
+    const cats=loadCategories();
+    categoryChips.innerHTML = cats.map(cat=>{
+      const cnt=getCatCount(cat);
+      const active=STATE.selectedCategory===cat;
+      return `<button class="category-chip${active?' active':''}" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}<span class="chip-count">${cnt}</span></button>`;
     }).join('');
-
-    updateCount(filtered.length);
   }
 
-  function updateCount(count) {
-    const c = count !== undefined ? count : getFilteredNotes().length;
-    noteCount.textContent = `共 ${c} 篇`;
+  /* ---- Note List ---- */
+  function getFilteredNotes() {
+    let f=STATE.notes;
+    if(STATE.selectedCategory!=='全部') {
+      if(STATE.selectedCategory==='其他') { f=f.filter(n=>n.category==='其他'); }
+      else f=f.filter(n=>n.category===STATE.selectedCategory);
+    }
+    const q=(STATE._sq||'').trim().toLowerCase();
+    if(q) f=f.filter(n=>n.title.toLowerCase().includes(q)||(n.tags||[]).some(t=>t.toLowerCase().includes(q)));
+    return f;
   }
-
-  /* ---- Search Results Rendering (for search page) ---- */
-
-  function renderSearchResults(query) {
-    const q = query.trim().toLowerCase();
-    if (!q) {
-      searchResults.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">🔍</div>
-          <p>输入关键词搜索笔记</p>
-        </div>`;
-      return;
-    }
-
-    const filtered = STATE.notes.filter(n =>
-      n.title.toLowerCase().includes(q) ||
-      (n.tags || []).some(t => t.toLowerCase().includes(q))
-    );
-
-    if (filtered.length === 0) {
-      searchResults.innerHTML = `
-        <div class="empty-state">
-          <div class="empty-icon">📭</div>
-          <p>没有匹配的笔记</p>
-        </div>`;
-      return;
-    }
-
-    searchResults.innerHTML = filtered.map(n => `
-      <div class="note-item" data-id="${n.id}" role="button" tabindex="0">
+  function renderNoteList() {
+    const f=getFilteredNotes();
+    if(!f.length) { noteList.innerHTML=`<div class="empty-state"><div class="empty-icon">📭</div><p>${STATE.selectedCategory!=='全部'||(STATE._sq||'')?'没有匹配的笔记':'暂无笔记'}</p></div>`; updateCount(0); return; }
+    noteList.innerHTML = f.map(n=>{
+      const active=n.id===STATE.selectedId;
+      const isUser=n.source==='user';
+      const cat=n.category||'';
+      return `<div class="note-item${active?' active':''}" data-id="${n.id}" role="button" tabindex="0">
         <div class="note-info">
           <div class="note-title">${escapeHtml(n.title)}</div>
           <div class="note-meta">
-            ${n.date ? `<span class="note-date">${formatDate(n.date)}</span>` : ''}
-            <span class="note-tags">
-              ${(n.tags || []).map(t => `
-                <span class="tag-pill">
-                  <span class="tag-dot" style="background:${tagColor(t)}"></span>
-                  ${escapeHtml(t)}
-                </span>
-              `).join('')}
-            </span>
+            ${cat?`<span class="note-cat-chip">${escapeHtml(cat)}</span>`:''}
+            ${n.date?`<span class="note-date">${formatDate(n.date)}</span>`:''}
+            <span class="note-tags">${(n.tags||[]).map(t=>`<span class="tag-pill"><span class="tag-dot" style="background:${tagColor(t)}"></span>${escapeHtml(t)}</span>`).join('')}</span>
           </div>
         </div>
-      </div>
-    `).join('');
+        ${isUser?`<button class="note-delete" data-action="delete" data-id="${n.id}" title="删除">×</button>`:''}
+      </div>`;
+    }).join('');
+    updateCount(f.length);
   }
+  function updateCount(c) { noteCount.textContent = `共 ${c!==undefined?c:getFilteredNotes().length} 篇`; }
 
+  /* ---- Search Page ---- */
+  function renderSearchResults(q) {
+    const t=q.trim().toLowerCase();
+    if(!t) { searchResults.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索笔记</p></div>'; return; }
+    const f=STATE.notes.filter(n=>n.title.toLowerCase().includes(t)||(n.tags||[]).some(tg=>tg.toLowerCase().includes(t)));
+    if(!f.length) { searchResults.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><p>没有匹配的笔记</p></div>'; return; }
+    searchResults.innerHTML=f.map(n=>`<div class="note-item" data-id="${n.id}" role="button" tabindex="0"><div class="note-info"><div class="note-title">${escapeHtml(n.title)}</div><div class="note-meta">${n.category?`<span class="note-cat-chip">${escapeHtml(n.category)}</span>`:''}${n.date?`<span class="note-date">${formatDate(n.date)}</span>`:''}<span class="note-tags">${(n.tags||[]).map(t=>`<span class="tag-pill"><span class="tag-dot" style="background:${tagColor(t)}"></span>${escapeHtml(t)}</span>`).join('')}</span></div></div></div>`).join('');
+  }
   function renderSearchHistory() {
-    if (STATE.searchHistory.length === 0) {
-      searchHistoryEl.style.display = 'none';
-      return;
-    }
-    searchHistoryEl.style.display = '';
-    searchHistoryEl.innerHTML = `
-      <div class="history-title">
-        <span>🕐 搜索历史</span>
-        <button class="clear-history-btn" id="clearHistoryBtn">清空历史</button>
-      </div>
-      ${STATE.searchHistory.map(h => `
-        <div class="search-history-item" data-term="${escapeHtml(h)}">
-          <span class="history-text">${escapeHtml(h)}</span>
-          <button class="history-delete" data-delete-term="${escapeHtml(h)}" aria-label="删除此条">×</button>
-        </div>
-      `).join('')}
-    `;
+    if(!STATE.searchHistory.length) { searchHistoryEl.style.display='none'; return; }
+    searchHistoryEl.style.display='';
+    searchHistoryEl.innerHTML=`<div class="history-title"><span>🕐 搜索历史</span><button class="clear-history-btn" id="clearHistoryBtn">清空历史</button></div>${STATE.searchHistory.map(h=>`<div class="search-history-item" data-term="${escapeHtml(h)}"><span class="history-text">${escapeHtml(h)}</span><button class="history-delete" data-del="${escapeHtml(h)}" aria-label="删除">×</button></div>`).join('')}`;
+    const cb=$('#clearHistoryBtn',searchHistoryEl); if(cb) cb.addEventListener('click',()=>{clearSearchHistory();renderSearchHistory();});
+    $$('.search-history-item',searchHistoryEl).forEach(el=>el.addEventListener('click',e=>{if(e.target.closest('.history-delete'))return;searchPageInput.value=el.getAttribute('data-term');renderSearchResults(el.getAttribute('data-term'));}));
+    $$('.history-delete',searchHistoryEl).forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeSearchHistory(b.getAttribute('data-del'));renderSearchHistory();}));
+  }
+  function openSearchPage() { tabHome.classList.remove('active'); searchPage.classList.remove('hidden'); searchPageInput.value=''; renderSearchResults(''); renderSearchHistory(); setTimeout(()=>searchPageInput.focus(),50); }
+  function closeSearchPage() { tabHome.classList.add('active'); searchPage.classList.add('hidden'); STATE._sq=''; if(STATE.activeTab==='home') { renderNoteList(); renderCategoryChips(); } }
 
-    // Event: clear history
-    const clearBtn = $('#clearHistoryBtn', searchHistoryEl);
-    if (clearBtn) {
-      clearBtn.addEventListener('click', () => {
-        clearSearchHistory();
-        renderSearchHistory();
-      });
-    }
+  /* ---- Tab Switching ---- */
+  function switchTab(name) {
+    if(STATE.activeTab===name && !searchPage.classList.contains('hidden')) { closeSearchPage(); return; }
+    STATE.activeTab=name;
+    tabHome.classList.toggle('active',name==='home');
+    tabUpload.classList.toggle('active',name==='upload');
+    tabProfile.classList.toggle('active',name==='profile');
+    $$('.tab-btn',tabBar).forEach(b=>b.classList.toggle('active',b.getAttribute('data-tab')===name));
+    $$('.nav-item',bottomNav).forEach(b=>b.classList.toggle('active',b.getAttribute('data-tab')===name));
+    if(!searchPage.classList.contains('hidden')) closeSearchPage();
+    if(name==='profile') refreshProfileStorageSize();
+    if(name==='upload') populateUploadCategories();
+  }
 
-    // Event: click history item
-    $$('.search-history-item', searchHistoryEl).forEach(item => {
-      item.addEventListener('click', (e) => {
-        // Don't trigger if clicking delete button
-        if (e.target.closest('.history-delete')) return;
-        const term = item.getAttribute('data-term');
-        searchPageInput.value = term;
-        renderSearchResults(term);
-      });
-    });
+  /* ---- Upload ---- */
+  function populateUploadCategories() {
+    const cats=loadCategories().filter(c=>c!=='全部');
+    uploadCategory.innerHTML=cats.map(c=>`<option value="${escapeHtml(c)}"${c==='其他'?' selected':''}>${escapeHtml(c)}</option>`).join('');
+    if(!cats.length) uploadCategory.innerHTML='<option value="">请选择分类</option>';
+  }
+  function resetUploadForm() {
+    uploadTitle.value=''; uploadTagsInput.value=''; uploadFileDisplay.textContent='未选择文件';
+    uploadFileInput.value=''; uploadSubmitBtn.disabled=true;
+    populateUploadCategories();
+  }
+  function updateUploadBtn() {
+    const hasFile = uploadFileInput.files && uploadFileInput.files.length>0;
+    uploadSubmitBtn.disabled = !(hasFile && uploadCategory.value);
+  }
+  async function handleUpload(file) {
+    if(!file.name.toLowerCase().endsWith('.html')) { showToast('仅支持上传 .html 文件'); return; }
+    const cat=uploadCategory.value; if(!cat) { showToast('请选择分类'); return; }
+    try {
+      const content=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=e=>rej(e.target.error);r.readAsText(file,'UTF-8');});
+      let title=uploadTitle.value.trim()||file.name.replace(/\.html$/i,'').trim()||'未命名笔记';
+      const tags=uploadTagsInput.value.trim().split(',').map(t=>t.trim()).filter(Boolean);
+      const allTitles=STATE.notes.map(n=>n.title); let final=title, c=1;
+      while(allTitles.includes(final)) { final=title+' ('+(c++)+')'; }
+      const id=genId(), now=new Date().toISOString().slice(0,10);
+      await DB.put({id,title:final,file:file.name,date:now,tags,category:cat,content});
+      STATE.userNotesIndex.unshift({id,title:final,file:file.name,date:now,tags,category:cat});
+      saveUserNotesIndex(); mergeNotes(); renderNoteList(); renderCategoryChips(); resetUploadForm();
+      switchTab('home'); showToast('✅ 笔记上传成功！');
+    } catch(err) { console.error(err); showToast('上传失败：'+err.message); }
+  }
 
-    // Event: delete history item
-    $$('.history-delete', searchHistoryEl).forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const term = btn.getAttribute('data-delete-term');
-        removeSearchHistory(term);
-        renderSearchHistory();
-      });
+  /* ---- Delete ---- */
+  function removeUserNote(noteId) {
+    const note=STATE.notes.find(n=>n.id===noteId); if(!note||note.source!=='user') return;
+    showConfirm('确认删除「'+note.title+'」','删除后笔记内容将永久丢失，此操作不可撤销。',async()=>{
+      try {
+        await DB.delete(noteId); STATE.userNotesIndex=STATE.userNotesIndex.filter(n=>n.id!==noteId); saveUserNotesIndex();
+        if(STATE.selectedId===noteId) { mergeNotes(); STATE.notes.length?showPreview(STATE.notes[0]):showWelcome(); }
+        else { mergeNotes(); renderNoteList(); }
+        renderCategoryChips();
+      } catch(err) { console.error(err); showToast('删除失败：'+err.message); }
     });
   }
 
-  /* ---- Preview ---- */
+  /* ---- Profile ---- */
+  async function refreshProfileStorageSize() { try { storageSize.textContent=formatBytes(await DB.estimateSize()); } catch(_){storageSize.textContent='未知';} }
+  async function clearAllUserNotes() {
+    try {
+      await DB.clear(); STATE.userNotesIndex=[]; saveUserNotesIndex();
+      if(STATE.selectedId) { const s=STATE.notes.find(n=>n.id===STATE.selectedId); if(s&&s.source==='user') { mergeNotes(); STATE.notes.length?showPreview(STATE.notes[0]):showWelcome(); } else { mergeNotes(); renderNoteList(); } }
+      else { mergeNotes(); renderNoteList(); }
+      renderCategoryChips(); refreshProfileStorageSize();
+    } catch(err) { console.error(err); showToast('清除失败：'+err.message); }
+  }
+
+  /* ---- Preview (shared logic) ---- */
+  function buildIframeHTML(note, targetBody, blobKey) {
+    if(STATE[blobKey]) { URL.revokeObjectURL(STATE[blobKey]); STATE[blobKey]=null; }
+    if(note.source==='user') {
+      DB.get(note.id).then(rec=>{
+        if(rec&&rec.content) { const b=new Blob([rec.content],{type:'text/html'}); const u=URL.createObjectURL(b); STATE[blobKey]=u; targetBody.innerHTML=`<iframe src="${u}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe>`; }
+        else targetBody.innerHTML=`<div class="welcome"><div class="welcome-icon">⚠️</div><h3>笔记内容为空</h3><p>「${escapeHtml(note.title)}」的内容似乎丢失了。</p></div>`;
+      }).catch(()=>{ targetBody.innerHTML=`<div class="welcome"><div class="welcome-icon">⚠️</div><h3>加载失败</h3><p>无法读取「${escapeHtml(note.title)}」。</p></div>`; });
+    } else {
+      targetBody.innerHTML=`<iframe src="${escapeHtml(note.file)}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe><div class="welcome" style="display:none"><div class="welcome-icon">⚠️</div><h3>笔记加载失败</h3><p>无法加载「${escapeHtml(note.title)}」。</p></div>`;
+      const ifr=targetBody.querySelector('iframe'), err=targetBody.querySelector('.welcome');
+      if(ifr&&err) ifr.addEventListener('error',()=>{ifr.style.display='none';err.style.display='';});
+    }
+  }
 
   function showPreview(note) {
-    if (!note) return;
-
-    STATE.selectedId = note.id;
-
-    previewTitle.textContent = note.title;
-    previewDate.textContent = note.date ? formatDate(note.date) : '';
-
-    // Revoke previous blob URL if any
-    if (STATE.previousBlobUrl) {
-      URL.revokeObjectURL(STATE.previousBlobUrl);
-      STATE.previousBlobUrl = null;
-    }
-
-    if (note.source === 'user') {
-      // User-uploaded note: load content from IndexedDB, create blob URL
-      DB.get(note.id).then(record => {
-        if (record && record.content) {
-          const blob = new Blob([record.content], { type: 'text/html' });
-          const url = URL.createObjectURL(blob);
-          STATE.previousBlobUrl = url;
-          previewBody.innerHTML = `
-            <iframe
-              src="${url}"
-              title="${escapeHtml(note.title)}"
-              sandbox="allow-same-origin allow-scripts"
-              class="preview-iframe"
-            ></iframe>
-            <div class="welcome preview-error" style="display:none">
-              <div class="welcome-icon">⚠️</div>
-              <h3>笔记加载失败</h3>
-              <p>无法加载「${escapeHtml(note.title)}」。</p>
-            </div>`;
-        } else {
-          previewBody.innerHTML = `
-            <div class="welcome">
-              <div class="welcome-icon">⚠️</div>
-              <h3>笔记内容为空</h3>
-              <p>「${escapeHtml(note.title)}」的内容似乎丢失了。</p>
-            </div>`;
-        }
-      }).catch(err => {
-        console.error('加载用户笔记失败:', err);
-        previewBody.innerHTML = `
-          <div class="welcome">
-            <div class="welcome-icon">⚠️</div>
-            <h3>加载失败</h3>
-            <p>无法从存储中读取「${escapeHtml(note.title)}」。</p>
-          </div>`;
-      });
+    if(!note) return; STATE.selectedId=note.id;
+    if(STATE.isMobile) {
+      overlayTitle.textContent=note.title;
+      buildIframeHTML(note, overlayBody, 'overlayBlobUrl');
+      previewOverlay.classList.remove('hidden'); sidebar.classList.add('hidden');
+      checkLandscape();
+      history.pushState({view:'preview',noteId:note.id},'');
     } else {
-      // Built-in note: use file path
-      previewBody.innerHTML = `
-        <iframe
-          src="${escapeHtml(note.file)}"
-          title="${escapeHtml(note.title)}"
-          sandbox="allow-same-origin allow-scripts"
-          class="preview-iframe"
-        ></iframe>
-        <div class="welcome preview-error" style="display:none">
-          <div class="welcome-icon">⚠️</div>
-          <h3>笔记加载失败</h3>
-          <p>无法加载「${escapeHtml(note.title)}」，请检查文件 <code>${escapeHtml(note.file)}</code> 是否存在。</p>
-        </div>`;
-
-      const iframe = previewBody.querySelector('.preview-iframe');
-      const errorFallback = previewBody.querySelector('.preview-error');
-      if (iframe && errorFallback) {
-        iframe.addEventListener('error', function() {
-          iframe.style.display = 'none';
-          errorFallback.style.display = '';
-        });
-      }
+      previewTitle.textContent=note.title; previewDate.textContent=note.date?formatDate(note.date):'';
+      buildIframeHTML(note, previewBody, 'blobUrl');
     }
-
-    // Update UI
     renderNoteList();
-
-    // On mobile, switch to preview view
-    if (STATE.isMobile) {
-      setMobileView('preview');
-    }
-
-    // Enable preview button in bottom nav
-    navPreviewBtn.disabled = false;
-    navPreviewBtn.classList.add('active');
-    navListBtn.classList.remove('active');
   }
 
   function showWelcome() {
-    STATE.selectedId = null;
-    previewTitle.textContent = '选择一篇笔记';
-    previewDate.textContent = '';
-    previewBody.innerHTML = `
-      <div class="welcome">
-        <div class="welcome-icon">📖</div>
-        <h3>选择一篇笔记开始阅读</h3>
-        <p>从列表中选择一篇读书笔记，内容将在此显示</p>
-      </div>`;
-    renderNoteList();
-    if (STATE.isMobile) {
-      setMobileView('list');
-    }
-    navPreviewBtn.disabled = true;
-    navPreviewBtn.classList.remove('active');
-  }
-
-  /* ---- Mobile View Management ---- */
-
-  function setMobileView(view) {
-    STATE.mobileView = view;
-
-    if (view === 'profile') {
-      // Show profile overlay
-      profileOverlay.classList.remove('hidden');
-      refreshProfileStorageSize();
-      navListBtn.classList.remove('active');
-      navPreviewBtn.classList.remove('active');
-      navProfileBtn.classList.add('active');
-      return;
-    }
-
-    // Hide profile overlay if visible
-    profileOverlay.classList.add('hidden');
-
-    if (STATE.isMobile) {
-      if (view === 'list') {
-        sidebar.classList.remove('hidden');
-        mainContent.classList.add('hidden');
-        navListBtn.classList.add('active');
-        navPreviewBtn.classList.remove('active');
-        navProfileBtn.classList.remove('active');
-      } else if (view === 'preview') {
-        sidebar.classList.add('hidden');
-        mainContent.classList.remove('hidden');
-        navPreviewBtn.classList.add('active');
-        navListBtn.classList.remove('active');
-        navProfileBtn.classList.remove('active');
-      }
-    } else {
-      // Desktop: both visible
-      sidebar.classList.remove('hidden');
-      mainContent.classList.remove('hidden');
-    }
-  }
-
-  /* ---- Search Page Management ---- */
-
-  function openSearchPage() {
-    sidebarContent.classList.add('hidden');
-    searchPage.classList.remove('hidden');
-    searchPageInput.value = '';
-    renderSearchResults('');
-    renderSearchHistory();
-    // Auto-focus the search input
-    setTimeout(() => searchPageInput.focus(), 50);
-  }
-
-  function closeSearchPage() {
-    sidebarContent.classList.remove('hidden');
-    searchPage.classList.add('hidden');
-    // Reset search query used in main note list
-    STATE._searchQuery = '';
+    STATE.selectedId=null;
+    previewTitle.textContent='选择一篇笔记'; previewDate.textContent='';
+    previewBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>';
+    overlayBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>';
     renderNoteList();
   }
 
-  /* ---- Upload Handler ---- */
-
-  async function handleFileUpload(file) {
-    if (!file.name.toLowerCase().endsWith('.html')) {
-      alert('仅支持上传 .html 文件');
-      return;
-    }
-
-    try {
-      const content = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = (e) => resolve(e.target.result);
-        reader.onerror = (e) => reject(e.target.error);
-        reader.readAsText(file, 'UTF-8');
-      });
-
-      // Derive title from filename (remove .html)
-      let title = file.name.replace(/\.html$/i, '').trim() || '未命名笔记';
-
-      // Check for duplicate title, add suffix
-      const allTitles = STATE.notes.map(n => n.title);
-      let finalTitle = title;
-      let counter = 1;
-      while (allTitles.includes(finalTitle)) {
-        finalTitle = title + ' (' + counter + ')';
-        counter++;
-      }
-
-      const id = generateUserId();
-      const now = new Date().toISOString().slice(0, 10);
-
-      const noteRecord = {
-        id: id,
-        title: finalTitle,
-        file: file.name,
-        date: now,
-        tags: [],
-        content: content,
-      };
-
-      const noteIndex = {
-        id: id,
-        title: finalTitle,
-        file: file.name,
-        date: now,
-        tags: [],
-      };
-
-      // Store in IndexedDB
-      await DB.put(noteRecord);
-
-      // Update Index
-      STATE.userNotesIndex.unshift(noteIndex);
-      saveUserNotesIndex();
-
-      // Re-merge and render
-      mergeNotes();
-      renderNoteList();
-    } catch (err) {
-      console.error('上传笔记失败:', err);
-      alert('上传失败：' + err.message);
-    }
+  function closePreviewOverlay() {
+    previewOverlay.classList.add('hidden'); sidebar.classList.remove('hidden');
   }
 
-  /* ---- Remove Handler ---- */
-
-  function removeUserNote(noteId) {
-    const note = STATE.notes.find(n => n.id === noteId);
-    if (!note || note.source !== 'user') return;
-
-    showConfirm(
-      '确认删除「' + note.title + '」',
-      '删除后笔记内容将永久丢失，此操作不可撤销。',
-      async () => {
-        try {
-          // Remove from IndexedDB
-          await DB.delete(noteId);
-
-          // Remove from index
-          STATE.userNotesIndex = STATE.userNotesIndex.filter(n => n.id !== noteId);
-          saveUserNotesIndex();
-
-          // If deleted note was selected, switch
-          if (STATE.selectedId === noteId) {
-            mergeNotes();
-            if (STATE.notes.length > 0) {
-              showPreview(STATE.notes[0]);
-            } else {
-              showWelcome();
-            }
-          } else {
-            mergeNotes();
-            renderNoteList();
-          }
-        } catch (err) {
-          console.error('删除笔记失败:', err);
-          alert('删除失败：' + err.message);
-        }
-      }
-    );
-  }
-
-  /* ---- Profile Handlers ---- */
-
-  function openProfile() {
-    profileOverlay.classList.remove('hidden');
-    refreshProfileStorageSize();
-    if (STATE.isMobile) {
-      navListBtn.classList.remove('active');
-      navPreviewBtn.classList.remove('active');
-      navProfileBtn.classList.add('active');
-    }
-  }
-
-  function closeProfile() {
-    profileOverlay.classList.add('hidden');
-    if (STATE.isMobile) {
-      // Restore previous view
-      if (STATE.mobileView === 'preview' && STATE.selectedId) {
-        navPreviewBtn.classList.add('active');
-        navProfileBtn.classList.remove('active');
-      } else {
-        navListBtn.classList.add('active');
-        navProfileBtn.classList.remove('active');
-      }
-    }
-  }
-
-  async function refreshProfileStorageSize() {
-    try {
-      const bytes = await DB.estimateSize();
-      storageSize.textContent = formatBytes(bytes);
-    } catch (_) {
-      storageSize.textContent = '未知';
-    }
-  }
-
-  async function clearAllUserNotes() {
-    try {
-      await DB.clear();
-      STATE.userNotesIndex = [];
-      saveUserNotesIndex();
-
-      // If a user note was selected, switch away
-      if (STATE.selectedId) {
-        const sel = STATE.notes.find(n => n.id === STATE.selectedId);
-        if (sel && sel.source === 'user') {
-          mergeNotes();
-          if (STATE.notes.length > 0) {
-            showPreview(STATE.notes[0]);
-          } else {
-            showWelcome();
-          }
-        } else {
-          mergeNotes();
-          renderNoteList();
-        }
-      } else {
-        mergeNotes();
-        renderNoteList();
-      }
-
-      refreshProfileStorageSize();
-    } catch (err) {
-      console.error('清除笔记失败:', err);
-      alert('清除失败：' + err.message);
-    }
+  /* ---- Landscape Detection ---- */
+  function checkLandscape() {
+    if(!STATE.isMobile||previewOverlay.classList.contains('hidden')) return;
+    const ls=window.matchMedia('(orientation: landscape)').matches;
+    previewOverlay.classList.toggle('landscape',ls);
+    if(ls) landscapeFloatBack.style.display='flex'; else landscapeFloatBack.style.display='none';
   }
 
   /* ---- Event Handlers ---- */
 
-  // Note list click delegation (main list)
-  noteList.addEventListener('click', function(e) {
-    // Delete button
-    const deleteBtn = e.target.closest('[data-action="delete"]');
-    if (deleteBtn) {
-      e.stopPropagation();
-      const noteId = deleteBtn.getAttribute('data-id');
-      removeUserNote(noteId);
-      return;
+  // Tab bar (desktop)
+  tabBar.addEventListener('click',e=>{const b=e.target.closest('.tab-btn'); if(b) switchTab(b.getAttribute('data-tab'));});
+
+  // Bottom nav (mobile)
+  bottomNav.addEventListener('click',e=>{const b=e.target.closest('.nav-item'); if(b){closePreviewOverlay();switchTab(b.getAttribute('data-tab'));}});
+
+  // Category chips
+  categoryChips.addEventListener('click',e=>{
+    const chip=e.target.closest('.category-chip'); if(!chip) return;
+    STATE.selectedCategory=chip.getAttribute('data-cat');
+    renderCategoryChips(); renderNoteList();
+  });
+
+  // Note list
+  noteList.addEventListener('click',e=>{
+    const del=e.target.closest('[data-action="delete"]'); if(del){e.stopPropagation();removeUserNote(del.getAttribute('data-id'));return;}
+    const item=e.target.closest('.note-item'); if(!item) return;
+    const note=STATE.notes.find(n=>n.id===item.getAttribute('data-id')); if(note) showPreview(note);
+  });
+  noteList.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const item=e.target.closest('.note-item'); if(item){e.preventDefault();const note=STATE.notes.find(n=>n.id===item.getAttribute('data-id'));if(note)showPreview(note);}}});
+
+  // Search
+  searchBtn.addEventListener('click',()=>openSearchPage());
+  backSearchBtn.addEventListener('click',()=>closeSearchPage());
+  let sd=null; searchPageInput.addEventListener('input',function(){clearTimeout(sd);sd=setTimeout(()=>renderSearchResults(this.value),150);});
+  searchResults.addEventListener('click',e=>{
+    const item=e.target.closest('.note-item'); if(!item) return;
+    const note=STATE.notes.find(n=>n.id===item.getAttribute('data-id'));
+    if(note){const t=searchPageInput.value.trim();if(t)addSearchHistory(t);closeSearchPage();showPreview(note);}
+  });
+  searchResults.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const item=e.target.closest('.note-item');if(item){e.preventDefault();const note=STATE.notes.find(n=>n.id===item.getAttribute('data-id'));if(note){const t=searchPageInput.value.trim();if(t)addSearchHistory(t);closeSearchPage();showPreview(note);}}}});
+
+  // Upload
+  uploadBrowseBtn.addEventListener('click',()=>uploadFileInput.click());
+  uploadFileInput.addEventListener('change',function(){const f=this.files[0];if(f){uploadFileDisplay.textContent=f.name;if(!uploadTitle.value.trim())uploadTitle.value=f.name.replace(/\.html$/i,'').trim();}else{uploadFileDisplay.textContent='未选择文件';}updateUploadBtn();});
+  uploadCategory.addEventListener('change',()=>updateUploadBtn());
+  uploadSubmitBtn.addEventListener('click',()=>{const f=uploadFileInput.files[0];if(f)handleUpload(f);});
+
+  // Profile
+  profileNickname.addEventListener('blur',function(){saveNickname(this.value);});
+  profileNickname.addEventListener('keydown',function(e){if(e.key==='Enter')this.blur();});
+  profileThemeToggle.addEventListener('change',()=>toggleTheme());
+  clearUserNotesBtn.addEventListener('click',()=>showConfirm('确认清除全部用户笔记','此操作将永久删除所有用户上传的笔记内容，内置笔记不受影响。确定继续吗？',()=>clearAllUserNotes()));
+
+  // Preview overlay back buttons
+  overlayBackBtn.addEventListener('click',()=>closePreviewOverlay());
+  landscapeFloatBack.addEventListener('click',()=>closePreviewOverlay());
+
+  // Orientation change
+  window.matchMedia('(orientation: landscape)').addEventListener('change',()=>checkLandscape());
+
+  // Resize
+  let rt=null;
+  window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
+    const was=STATE.isMobile; checkMobile();
+    if(was!==STATE.isMobile){
+      if(!STATE.isMobile){closePreviewOverlay();mainContent.style.display='';bottomNav.style.display='none';mainContent.classList.remove('hidden');sidebar.classList.remove('hidden');}
+      else{mainContent.style.display='none';bottomNav.style.display='';if(!previewOverlay.classList.contains('hidden')){sidebar.classList.add('hidden');}}
     }
+    checkLandscape();
+  },200);});
 
-    // Note item
-    const item = e.target.closest('.note-item');
-    if (!item) return;
-    const id = item.getAttribute('data-id');
-    const note = STATE.notes.find(n => n.id === id);
-    if (note) {
-      showPreview(note);
-    }
-  });
+  // Android back button
+  window.addEventListener('popstate',e=>{if(STATE.isMobile&&!previewOverlay.classList.contains('hidden')){closePreviewOverlay();history.pushState({view:'home'},'');}});
 
-  // Note list keyboard support
-  noteList.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      const item = e.target.closest('.note-item');
-      if (item) {
-        e.preventDefault();
-        const id = item.getAttribute('data-id');
-        const note = STATE.notes.find(n => n.id === id);
-        if (note) showPreview(note);
-      }
-    }
-  });
-
-  // Search button → open search page
-  searchBtn.addEventListener('click', function() {
-    openSearchPage();
-  });
-
-  // Search page: back button
-  backSearchBtn.addEventListener('click', function() {
-    closeSearchPage();
-  });
-
-  // Search page: input
-  let searchPageDebounce = null;
-  searchPageInput.addEventListener('input', function() {
-    const query = this.value;
-    clearTimeout(searchPageDebounce);
-    searchPageDebounce = setTimeout(() => {
-      renderSearchResults(query);
-    }, 150);
-  });
-
-  // Search page: click result
-  searchResults.addEventListener('click', function(e) {
-    const item = e.target.closest('.note-item');
-    if (!item) return;
-    const id = item.getAttribute('data-id');
-    const note = STATE.notes.find(n => n.id === id);
-    if (note) {
-      // Save search term to history
-      const term = searchPageInput.value.trim();
-      if (term) {
-        addSearchHistory(term);
-      }
-      // Close search page and show note
-      closeSearchPage();
-      showPreview(note);
-    }
-  });
-
-  // Search page: keyboard support
-  searchResults.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter' || e.key === ' ') {
-      const item = e.target.closest('.note-item');
-      if (item) {
-        e.preventDefault();
-        const id = item.getAttribute('data-id');
-        const note = STATE.notes.find(n => n.id === id);
-        if (note) {
-          const term = searchPageInput.value.trim();
-          if (term) addSearchHistory(term);
-          closeSearchPage();
-          showPreview(note);
-        }
-      }
-    }
-  });
-
-  // Upload button
-  uploadBtn.addEventListener('click', function() {
-    uploadFileInput.click();
-  });
-
-  uploadFileInput.addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-      handleFileUpload(file);
-      // Reset input so same file can be re-uploaded
-      this.value = '';
-    }
-  });
-
-  // Profile button (desktop)
-  profileBtnDesktop.addEventListener('click', function() {
-    openProfile();
-  });
-
-  // Profile close
-  profileCloseBtn.addEventListener('click', function() {
-    closeProfile();
-  });
-
-  // Profile: nickname save on blur / enter
-  profileNickname.addEventListener('blur', function() {
-    saveNickname(this.value);
-  });
-
-  profileNickname.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      this.blur();
-    }
-  });
-
-  // Profile: theme toggle
-  profileThemeToggle.addEventListener('change', function() {
-    toggleTheme();
-  });
-
-  // Profile: clear user notes
-  clearUserNotesBtn.addEventListener('click', function() {
-    showConfirm(
-      '确认清除全部用户笔记',
-      '此操作将永久删除所有用户上传的笔记内容，内置笔记不受影响。确定继续吗？',
-      () => clearAllUserNotes()
-    );
-  });
-
-  // Bottom nav: list
-  navListBtn.addEventListener('click', function() {
-    setMobileView('list');
-  });
-
-  // Bottom nav: preview
-  navPreviewBtn.addEventListener('click', function() {
-    if (STATE.selectedId) {
-      setMobileView('preview');
-    }
-  });
-
-  // Bottom nav: profile (mobile)
-  navProfileBtn.addEventListener('click', function() {
-    openProfile();
-  });
-
-  // Back button (mobile preview header)
-  backBtn.addEventListener('click', function() {
-    if (STATE.isMobile) {
-      setMobileView('list');
-    }
-  });
-
-  // Responsive resize
-  let resizeDebounceTimer = null;
-  window.addEventListener('resize', function() {
-    clearTimeout(resizeDebounceTimer);
-    resizeDebounceTimer = setTimeout(() => {
-      const wasMobile = STATE.isMobile;
-      checkMobile();
-      if (wasMobile !== STATE.isMobile) {
-        if (!STATE.isMobile) {
-          // Moving to desktop — show both panels
-          sidebar.classList.remove('hidden');
-          mainContent.classList.remove('hidden');
-          profileOverlay.classList.add('hidden');
-        } else {
-          // Moving to mobile — apply current mobile view
-          setMobileView(STATE.mobileView);
-        }
-      }
-    }, 200);
-  });
-
-  // Hardware back button support (Android)
-  window.addEventListener('popstate', function(e) {
-    if (STATE.isMobile && STATE.mobileView === 'preview') {
-      setMobileView('list');
-      history.pushState({ view: 'preview' }, '');
-    }
-  });
-
-  /* ---- Initialization ---- */
-
+  /* ---- Init ---- */
   async function init() {
-    loadTheme();
-    loadNickname();
-    loadSearchHistory();
-    loadUserNotesIndex();
-    checkMobile();
-
-    // Set theme toggle initial state
-    profileThemeToggle.checked = (STATE.theme === 'dark');
-
-    // On desktop, show both panels immediately
-    if (!STATE.isMobile) {
-      sidebar.classList.remove('hidden');
-      mainContent.classList.remove('hidden');
-    } else {
-      // On mobile, start with list view
-      setMobileView('list');
-    }
-
-    // Push initial history state for back button handling
-    if (STATE.isMobile) {
-      history.pushState({ view: 'list' }, '');
-    }
-
-    // Show welcome state in preview panel
-    showWelcome();
-
-    // Load notes
-    await loadAllNotes();
+    loadTheme(); loadNickname(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
+    profileThemeToggle.checked=(STATE.theme==='dark');
+    if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
+    else{mainContent.style.display='none';history.pushState({view:'home'},'');}
+    showWelcome(); await loadAllNotes();
   }
-
   init();
 })();
 </script>
-
 </body>
 </html>
