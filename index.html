@@ -94,6 +94,23 @@ html, body {
 }
 .sidebar-header h1 { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; flex: 1; min-width: 0; }
 
+/* ===== Home Sub-Tab Bar (笔记/书架) ===== */
+.home-subtab-bar {
+  display: flex; padding: 0 16px; gap: 4px; flex-shrink: 0;
+  border-bottom: 2px solid var(--border-color);
+}
+.home-subtab-btn {
+  padding: 10px 18px; border: none; background: none;
+  font-size: 0.85rem; font-weight: 500; color: var(--text-secondary);
+  cursor: pointer; position: relative; transition: color var(--transition);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+}
+.home-subtab-btn:hover { color: var(--text-primary); }
+.home-subtab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
 /* ===== Desktop Tab Bar ===== */
 .tab-bar {
   display: flex; padding: 8px 16px 12px; gap: 4px; flex-shrink: 0;
@@ -545,7 +562,6 @@ html, body {
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
       <h1>📚 读书笔记</h1>
-      <button class="icon-btn" id="shelfToggleBtn" title="书架" aria-label="书架视图">📚</button>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -561,6 +577,11 @@ html, body {
 
       <!-- Home Tab -->
       <div class="tab-panel active" id="tabHome">
+        <!-- Sub-tab: 笔记 / 书架 -->
+        <div class="home-subtab-bar" id="homeSubtabBar">
+          <button class="home-subtab-btn active" data-subtab="notes">📝 笔记</button>
+          <button class="home-subtab-btn" data-subtab="shelf">📚 书架</button>
+        </div>
         <!-- Notes List View -->
         <div id="notesViewArea">
           <div class="category-chips" id="categoryChips"></div>
@@ -764,7 +785,6 @@ html, body {
   // Home — shelf
   const notesViewArea = $('#notesViewArea');
   const shelfContainer = $('#shelfContainer');
-  const shelfToggleBtn = $('#shelfToggleBtn');
 
   // Search page
   const searchPage     = $('#searchPage');
@@ -884,8 +904,8 @@ html, body {
   function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
 
   /* ---- Persistence: Shelf View ---- */
-  function loadShelfView() { try { const s=localStorage.getItem('notes-shelf-view'); if(s==='true') STATE.isShelfView=true; } catch(_){STATE.isShelfView=false;} }
-  function saveShelfView() { try { localStorage.setItem('notes-shelf-view',STATE.isShelfView?'true':'false'); } catch(_){} }
+  function loadShelfView() { try { const s=localStorage.getItem('notes-home-view'); if(s==='shelf') STATE.isShelfView=true; } catch(_){STATE.isShelfView=false;} }
+  function saveShelfView() { try { localStorage.setItem('notes-home-view',STATE.isShelfView?'shelf':'notes'); } catch(_){} }
 
   /* ---- Persistence: Nickname ---- */
   function loadNickname() { try { const s=localStorage.getItem('notes-nickname'); if(s) profileNickname.value=s; } catch(_){} }
@@ -938,6 +958,9 @@ html, body {
   }
 
   noteList.addEventListener('touchstart', function(e) {
+    // If touching a swipe action button, don't start swipe — let the click handle it
+    if (e.target.closest('.swipe-btn')) return;
+
     const wrapper = e.target.closest('.note-item-wrapper');
     if (!wrapper) { closeAllSwipes(); return; }
 
@@ -1019,9 +1042,10 @@ html, body {
 
   // Click on note list: close swipe or select note
   noteList.addEventListener('click', function(e) {
-    // Swipe action buttons
+    // Swipe action buttons — check for swipe-btn (may be nested via span)
     const sbtn = e.target.closest('.swipe-btn');
     if (sbtn) {
+      e.preventDefault();
       e.stopPropagation();
       const wrapper = sbtn.closest('.note-item-wrapper');
       const noteId = wrapper ? wrapper.getAttribute('data-id') : null;
@@ -1403,19 +1427,19 @@ html, body {
   }
 
   function applyShelfView() {
+    const notesBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="notes"]');
+    const shelfBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="shelf"]');
     if (STATE.isShelfView) {
       notesViewArea.style.display = 'none';
       shelfContainer.classList.remove('hidden');
-      shelfToggleBtn.classList.add('active');
-      shelfToggleBtn.title = '列表视图';
-      shelfToggleBtn.setAttribute('aria-label', '列表视图');
+      if (notesBtn) notesBtn.classList.remove('active');
+      if (shelfBtn) shelfBtn.classList.add('active');
       renderShelf();
     } else {
       notesViewArea.style.display = '';
       shelfContainer.classList.add('hidden');
-      shelfToggleBtn.classList.remove('active');
-      shelfToggleBtn.title = '书架';
-      shelfToggleBtn.setAttribute('aria-label', '书架视图');
+      if (notesBtn) notesBtn.classList.add('active');
+      if (shelfBtn) shelfBtn.classList.remove('active');
       renderCategoryChips();
       renderNoteList();
     }
@@ -1476,9 +1500,9 @@ html, body {
     const pinned = isPinned(n.id);
     return `<div class="note-item-wrapper" data-id="${n.id}">
       <div class="note-item-swipe-actions">
-        <button class="swipe-btn swipe-btn-edit" data-action="edit"><span class="swipe-icon">✏️</span>修改</button>
-        ${isUser ? `<button class="swipe-btn swipe-btn-delete" data-action="delete"><span class="swipe-icon">🗑️</span>删除</button>` : ''}
-        <button class="swipe-btn swipe-btn-pin${pinned?' pinned':''}" data-action="pin"><span class="swipe-icon">${pinned?'📌':'📍'}</span>${pinned?'取消':'置顶'}</button>
+        <button type="button" class="swipe-btn swipe-btn-edit" data-action="edit"><span class="swipe-icon">✏️</span>修改</button>
+        ${isUser ? `<button type="button" class="swipe-btn swipe-btn-delete" data-action="delete"><span class="swipe-icon">🗑️</span>删除</button>` : ''}
+        <button type="button" class="swipe-btn swipe-btn-pin${pinned?' pinned':''}" data-action="pin"><span class="swipe-icon">${pinned?'📌':'📍'}</span>${pinned?'取消':'置顶'}</button>
       </div>
       <div class="note-item${active?' active':''}" role="button" tabindex="0">
         <div class="note-info">
@@ -1641,8 +1665,17 @@ html, body {
     renderCategoryChips(); renderNoteList();
   });
 
-  // Shelf toggle button
-  shelfToggleBtn.addEventListener('click', toggleShelfView);
+  // Home sub-tab bar
+  const homeSubtabBar = $('#homeSubtabBar');
+  homeSubtabBar.addEventListener('click', e => {
+    const btn = e.target.closest('.home-subtab-btn');
+    if (!btn) return;
+    const view = btn.getAttribute('data-subtab');
+    STATE.isShelfView = (view === 'shelf');
+    saveShelfView();
+    closeAllSwipes();
+    applyShelfView();
+  });
 
   // Search
   searchBtn.addEventListener('click',()=>openSearchPage());
