@@ -1433,14 +1433,12 @@ html, body {
     const notesBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="notes"]');
     const shelfBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="shelf"]');
     if (STATE.isShelfView) {
-      homeSubtabBar.style.display = 'flex';
       notesViewArea.style.display = 'none';
       shelfContainer.classList.remove('hidden');
       if (notesBtn) notesBtn.classList.remove('active');
       if (shelfBtn) shelfBtn.classList.add('active');
       renderShelf();
     } else {
-      homeSubtabBar.style.display = 'none';
       notesViewArea.style.display = '';
       shelfContainer.classList.add('hidden');
       if (notesBtn) notesBtn.classList.add('active');
