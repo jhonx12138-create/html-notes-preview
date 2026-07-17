@@ -1,90 +1,1009 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>苏菲的世界 — 哲学入门笔记</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Georgia, serif;
-    font-size: 17px;
-    line-height: 1.85;
-    color: #2c3e50;
-    background: #fffef9;
-    padding: 24px 20px 40px;
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  h1 { font-size: 1.6rem; margin-bottom: 6px; color: #1a1a2e; }
-  .meta { font-size: 0.85rem; color: #888; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 12px; }
-  h2 { font-size: 1.2rem; margin: 28px 0 10px; color: #c0392b; }
-  h3 { font-size: 1.05rem; margin: 20px 0 8px; color: #2c3e50; }
-  p { margin: 10px 0; text-align: justify; }
-  ul, ol { margin: 8px 0 8px 24px; }
-  li { margin: 4px 0; }
-  blockquote {
-    border-left: 3px solid #c0392b;
-    padding: 8px 16px;
-    margin: 16px 0;
-    background: #fdf6f0;
-    color: #5a4a3a;
-    font-style: italic;
-  }
-  .highlight {
-    background: linear-gradient(180deg, transparent 60%, #f9e79f 60%);
-    padding: 0 2px;
-  }
-  hr { border: none; border-top: 1px solid #e8e0d5; margin: 24px 0; }
-  em { color: #c0392b; font-style: normal; }
-</style>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《上帝掷骰子吗》· 知识图谱</title>
+    <style>
+        :root {
+            --bg: #faf8f6;
+            --card-bg: #ffffff;
+            --border: #e0d8cc;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #4a3060;
+            --accent-light: #f6f2f8;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --highlight: #f8f4fc;
+            --radius: 12px;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --font-serif: 'Noto Serif SC', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+        }
+        /* 侧边栏 */
+        .sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            background: #f8f5f0; border-right: 1px solid var(--border);
+            overflow-y: auto; padding: 1.5rem 1rem; z-index: 100;
+            font-family: var(--font-sans); font-size: 0.88rem;
+        }
+        .sidebar h3 {
+            font-size: 0.95rem; color: var(--accent); margin-bottom: 1rem;
+            padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent);
+            letter-spacing: 0.04em;
+        }
+        .sidebar .toc-list { list-style: none; padding: 0; }
+        .sidebar .toc-list li { margin-bottom: 0.08rem; }
+        .sidebar .toc-list a {
+            display: block; padding: 0.3rem 0.5rem; color: #4a3f33;
+            text-decoration: none; border-radius: 4px; transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+        .sidebar .toc-list a:hover { background: #e8ddd0; color: #1a1508; }
+        .sidebar .toc-list a.active { background: var(--accent); color: #fff; font-weight: 600; }
+        .sidebar .toc-l2 { padding-left: 0.8rem; font-size: 0.78rem; }
+        .main {
+            margin-left: var(--sidebar-width); flex: 1;
+            padding: 2rem 2.5rem; max-width: 1050px;
+        }
+        .header {
+            text-align: center; margin-bottom: 3rem;
+            padding-bottom: 2.5rem; border-bottom: 2px solid var(--border);
+        }
+        .header h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 0.3rem; color: #1e1508; }
+        .header .subtitle { font-size: 1.1rem; color: var(--text-muted); font-style: italic; margin-bottom: 1.2rem; }
+        .header .meta { font-size: 0.9rem; color: var(--text-muted); display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.5rem; margin-bottom: 1.4rem; }
+        .framework-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
+        .badge { display: inline-block; background: var(--accent-light); border: 1px solid #c4b0d8; border-radius: 18px; padding: 0.4rem 1.2rem; font-size: 0.82rem; color: var(--accent); font-family: var(--font-sans); }
+        .section {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 1.8rem; margin-bottom: 2rem;
+            box-shadow: var(--shadow); scroll-margin-top: 2rem;
+        }
+        .section h2 { font-size: 1.35rem; border-left: 4px solid var(--accent); padding-left: 0.8rem; margin-bottom: 1.2rem; color: #3a2050; font-weight: 700; }
+        .section h3 { font-size: 1.1rem; margin: 1.8rem 0 0.7rem; padding: 0.3rem 0; border-bottom: 1px solid var(--border); color: #5a3070; font-weight: 700; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; margin-top: 0.7rem; }
+        .info-card {
+            background: #fdfaf6; border-radius: 8px; padding: 0.85rem 1.1rem;
+            border-left: 4px solid #ccc;
+        }
+        .info-card.crisis  { border-color: #c46060; background: #fdf6f6; }
+        .info-card.solution { border-color: #5a9050; background: #f6faf6; }
+        .info-card.debate  { border-color: #5088b0; background: #f6f8fb; }
+        .info-card.insight { border-color: #9060b0; background: #f8f6fa; }
+        .info-card .label { font-weight: 700; font-size: 0.8rem; margin-bottom: 0.35rem; letter-spacing: 0.04em; text-transform: uppercase; font-family: var(--font-sans); color: #3a2a45; }
+        .info-card .content { font-size: 0.9rem; color: #4a3f33; }
+        .info-card .content ul { margin-top: 0.25rem; padding-left: 1.2rem; }
+        .info-card .content li { margin-bottom: 0.2rem; }
+        .info-card .example { margin-top: 0.4rem; padding: 0.4rem 0.7rem; background: #fffef9; border-radius: 4px; font-size: 0.85rem; color: #5c4a2a; border-left: 3px solid #d4b896; }
+        .timeline-track {
+            display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.3rem;
+            margin-bottom: 1.5rem; padding: 1rem 0.5rem;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; overflow-x: auto;
+        }
+        .timeline-node { text-align: center; min-width: 70px; flex: 1; }
+        .timeline-node .era { font-size: 0.7rem; color: var(--text-muted); margin-bottom: 0.15rem; }
+        .timeline-node .dot { width: 12px; height: 12px; background: #7a5a90; border-radius: 50%; margin: 0 auto 0.25rem; }
+        .timeline-node .name { font-weight: 700; font-size: 0.85rem; color: #3a2050; }
+        .timeline-node .tl-sub { font-size: 0.7rem; color: var(--text-muted); line-height: 1.3; }
+        .law-card { background: var(--accent-light); border: 1px solid #d4c8e0; border-radius: 8px; padding: 1rem 1.3rem; margin-bottom: 0.8rem; }
+        .law-card h4 { color: #4a3060; margin-bottom: 0.3rem; font-size: 0.95rem; }
+        .law-card p { font-size: 0.88rem; color: #4a3f33; }
+        blockquote {
+            background: var(--highlight); border-left: 4px solid #8a60b0;
+            margin: 1rem 0; padding: 0.9rem 1.2rem; font-style: italic;
+            border-radius: 0 6px 6px 0; color: #3a2050;
+        }
+        blockquote .source { display: block; margin-top: 0.4rem; font-size: 0.8rem; font-style: normal; color: var(--text-muted); }
+        table.extension { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        table.extension th { background: #f5ede3; padding: 0.5rem 0.8rem; text-align: left; font-weight: 700; color: #5c3d1e; border-bottom: 2px solid var(--border); font-family: var(--font-sans); width: 22%; }
+        table.extension td { padding: 0.5rem 0.8rem; border-bottom: 1px solid var(--border); color: #4a3f33; vertical-align: top; }
+        .back-to-top { position: fixed; bottom: 2rem; right: 2rem; background: var(--accent); color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; font-size: 1.1rem; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 99; transition: background 0.2s; }
+        .back-to-top:hover { background: #5a3a70; }
+        hr.divider { border: none; border-top: 1px dashed var(--border); margin: 2rem 0; }
+
+        /* ========== 问号标签 ========== */
+        .qmark {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px; height: 18px;
+            margin-left: 4px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.72rem;
+            font-weight: 700;
+            font-family: var(--font-sans);
+            cursor: pointer;
+            border: none;
+            vertical-align: middle;
+            transition: all 0.2s;
+            line-height: 1;
+            box-shadow: 0 1px 3px rgba(74,48,96,0.3);
+        }
+        .qmark:hover {
+            background: #6a4080;
+            transform: scale(1.15);
+        }
+
+        /* ========== 弹窗 ========== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(30, 21, 8, 0.55);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            animation: fadeIn 0.25s ease;
+        }
+        .modal-overlay.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-box {
+            background: #fffdf9;
+            border-radius: var(--radius);
+            max-width: 640px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            padding: 2rem 2.2rem;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+            animation: slideUp 0.3s ease;
+            font-family: var(--font-serif);
+        }
+        .modal-close {
+            position: absolute;
+            top: 0.8rem; right: 1rem;
+            background: transparent;
+            border: none;
+            font-size: 1.6rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+        .modal-close:hover { color: var(--accent); }
+        .modal-box h3 {
+            font-size: 1.25rem;
+            color: #3a2050;
+            margin-bottom: 0.3rem;
+            padding-right: 2rem;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+        .modal-box .modal-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-family: var(--font-sans);
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 0.15rem 0.6rem;
+            border-radius: 10px;
+            margin-bottom: 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .modal-box p { font-size: 0.95rem; line-height: 1.85; color: #3a3128; margin-bottom: 0.8rem; }
+        .modal-box p strong { color: var(--accent); }
+        .modal-box .formula {
+            font-family: 'Cambria Math', Georgia, serif;
+            background: #f5eef8;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 1.05rem;
+            margin: 0.7rem 0;
+            color: #2e1a45;
+            border-left: 3px solid var(--accent);
+        }
+        .modal-box .analogy {
+            background: #fffbf0;
+            border-left: 3px solid #d4b896;
+            padding: 0.7rem 1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #5c4a2a;
+            margin: 0.7rem 0;
+        }
+        .modal-box .analogy strong { color: #8a6020; }
+        .modal-box ul { padding-left: 1.3rem; margin: 0.5rem 0; }
+        .modal-box li { font-size: 0.92rem; line-height: 1.7; color: #3a3128; margin-bottom: 0.3rem; }
+
+        @media (max-width: 800px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 1rem; }
+            .info-grid { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.6rem; }
+            .modal-box { padding: 1.5rem 1.3rem; }
+        }
+    </style>
 </head>
-<body>
+<body style="">
+<nav class="sidebar" id="sidebar">
+    <h3>📚 本书图谱导航</h3>
+    <ul class="toc-list">
+        <li><a href="#header" class="">📖 书籍信息</a></li>
+        <li><a href="#timeline" class="">⏳ 历史时间轴</a></li>
+        <li><a href="#part1" class="">🌩️ 第一幕：经典物理的危机</a></li>
+        <li><a href="#part2" class="">💡 第二幕：量子诞生（1900-1913）</a></li>
+        <li><a href="#part3" class="">🌊 第三幕：波粒二象性（1924-1926）</a></li>
+        <li><a href="#part4" class="">📐 第四幕：新量子力学（1925-1927）</a></li>
+        <li><a href="#part5" class="">🧠 第五幕：哥本哈根解释（1927）</a></li>
+        <li><a href="#part6" class="">⚔️ 第六幕：爱因斯坦的反击（1927-1935）</a></li>
+        <li><a href="#part7" class="">🔔 第七幕：贝尔不等式（1964）</a></li>
+        <li><a href="#part8" class="">🌐 第八幕：量子时代</a></li>
+        <li><a href="#laws" class="active">🧠 贯穿规律</a></li>
+        <li><a href="#extension" class="">🔍 延伸与批判</a></li>
+    </ul>
+    <div style="margin-top:1.2rem; padding:0.6rem 0.7rem; background:#f0e8dc; border-radius:6px; font-size:0.74rem; color:#5a4a30; line-height:1.5;">
+        💡 <strong>提示</strong>：文中带 <span style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:var(--accent);color:#fff;border-radius:50%;font-size:0.62rem;font-weight:700;">?</span> 标签的概念可点击查看详细解释
+    </div>
+</nav>
 
-<h1>📖 《苏菲的世界》— 哲学入门笔记</h1>
-<div class="meta">贾德 · 著 | 阅读日期：2024年1月 | 标签：哲学 · 启蒙 · 小说</div>
+<div class="main">
+    <div class="header" id="header">
+        <h1>《上帝掷骰子吗：量子物理史话》</h1>
+        <div class="subtitle">一部关于量子力学波澜壮阔的史诗</div>
+        <div class="meta">
+            <span><strong>作者</strong>：曹天元（Cao Tianyuan）</span>
+            <span><strong>首版</strong>：2006年；新版：2019年</span>
+            <span><strong>出版社</strong>：北京联合出版公司</span>
+            <span><strong>豆瓣评分</strong>：9.2</span>
+        </div>
+        <div class="framework-badges">
+            <span class="badge">📜 历史叙事型</span>
+            <span class="badge">⚛️ 量子物理</span>
+            <span class="badge">🔬 科学史</span>
+        </div>
+        <p style="margin-top:1rem; color:#4a3060; font-size:0.9rem;">
+            <strong>核心叙事</strong>：从经典物理的"两朵乌云"到量子力学的完整建立，再到爱因斯坦与玻尔关于"上帝是否掷骰子"的世纪之辩
+        </p>
+    </div>
 
-<h2>一、全书概览</h2>
-<p>《苏菲的世界》以小说的形式，通过一名哲学导师向一个叫苏菲的女孩传授哲学知识的经过，揭示了西方哲学史发展的历程。它既是小说又是哲学史，是公认的哲学入门经典。</p>
+    <!-- ========== 历史时间轴 ========== -->
+    <div class="section" id="timeline">
+        <h2>历史时间轴：量子物理的关键转折点</h2>
+        <div class="timeline-track">
+            <div class="timeline-node"><div class="era">1900</div><div class="dot"></div><div class="name">普朗克</div><div class="tl-sub">量子假说<br>E=hν</div></div>
+            <div class="timeline-node"><div class="era">1905</div><div class="dot"></div><div class="name">爱因斯坦</div><div class="tl-sub">光量子<br>光电效应</div></div>
+            <div class="timeline-node"><div class="era">1913</div><div class="dot"></div><div class="name">玻尔</div><div class="tl-sub">原子模型<br>能级跃迁</div></div>
+            <div class="timeline-node"><div class="era">1924</div><div class="dot"></div><div class="name">德布罗意</div><div class="tl-sub">物质波<br>λ=h/p</div></div>
+            <div class="timeline-node"><div class="era">1925</div><div class="dot"></div><div class="name">海森堡</div><div class="tl-sub">矩阵力学<br>不确定性</div></div>
+            <div class="timeline-node"><div class="era">1926</div><div class="dot"></div><div class="name">薛定谔</div><div class="tl-sub">波动力学<br>薛定谔方程</div></div>
+            <div class="timeline-node"><div class="era">1927</div><div class="dot"></div><div class="name">玻尔/海森堡</div><div class="tl-sub">哥本哈根解释<br>索尔维会议</div></div>
+            <div class="timeline-node"><div class="era">1935</div><div class="dot"></div><div class="name">爱因斯坦</div><div class="tl-sub">EPR悖论<br>"上帝不掷骰子"</div></div>
+            <div class="timeline-node"><div class="era">1964</div><div class="dot"></div><div class="name">贝尔</div><div class="tl-sub">贝尔不等式<br>实验验证</div></div>
+            <div class="timeline-node"><div class="era">1982</div><div class="dot"></div><div class="name">阿斯佩</div><div class="tl-sub">量子纠缠<br>实验证实</div></div>
+        </div>
+    </div>
 
-<blockquote>
-  "你是谁？" "世界从何而来？" —— 这两个问题开启了苏菲的哲学之旅，也开启了每一个读者的思考。
-</blockquote>
+    <!-- ========== 第一幕 ========== -->
+    <div class="section" id="part1">
+        <h2>第一幕 · 经典物理的危机（1900年之前）</h2>
+        <div class="info-grid">
+            <div class="info-card crisis">
+                <div class="label">时代困境：物理学的"两朵乌云"</div>
+                <div class="content">19世纪末，经典物理学大厦似乎已经建成。开尔文勋爵在1900年的一次演讲中指出：物理学晴朗的天空中只剩下<strong>"两朵乌云"</strong>——一是迈克尔逊-莫雷实验未能探测到以太（后来催生了<strong>相对论</strong>），二是黑体辐射<button class="qmark" data-modal="blackbody" aria-label="查看黑体辐射详细解释">?</button>的实验结果与理论预测严重不符（后来催生了<strong>量子力学</strong>）。这两朵乌云最终掀翻了整个经典物理大厦。</div>
+            </div>
+            <div class="info-card crisis">
+                <div class="label">"紫外灾难"</div>
+                <div class="content">经典物理学用瑞利-金斯公式计算黑体辐射时，在短波（紫外）区域出现了荒谬的结果——辐射能量趋向无穷大。这被埃伦费斯特称为<strong>"紫外灾难"</strong><button class="qmark" data-modal="uvcatastrophe" aria-label="查看紫外灾难详细解释">?</button>。它在经典物理框架内完全无法解决，暴露了能量均分定理在微观领域的根本性失效。</div>
+                <div class="example">💡 <strong>直观理解</strong>：如果按照经典物理，一个烧红的铁块应该瞬间释放无穷大的紫外线能量——这显然不符合现实。大自然用"紫外灾难"告诉物理学家：你们对能量的理解从根本上就错了。</div>
+            </div>
+        </div>
+    </div>
 
-<h2>二、核心哲学脉络</h2>
+    <!-- ========== 第二幕 ========== -->
+    <div class="section" id="part2">
+        <h2>第二幕 · 量子诞生：普朗克、爱因斯坦与玻尔（1900-1913）</h2>
+        <div class="info-grid">
+            <div class="info-card solution">
+                <div class="label">普朗克量子假说（1900年）</div>
+                <div class="content">马克斯·普朗克在研究黑体辐射时，被迫提出了一个"绝望的假设"：<strong>能量不是连续的，而是一份一份的</strong>，每份能量 E = hν<button class="qmark" data-modal="planck" aria-label="查看普朗克公式详细解释">?</button>（其中 h 是普朗克常数，ν 是频率）。他本人认为这只是数学技巧，并不相信其物理意义。但正是这个"数学技巧"<strong>开启了量子时代</strong>。普朗克后来获得1918年诺贝尔物理学奖。</div>
+                <div class="example">💡 <strong>意义</strong>：在此之前，人们认为能量像水流一样连续；普朗克说，能量更像是一粒一粒的沙子。这个观念太反直觉了，以至于普朗克本人花了很多年试图推翻它。</div>
+            </div>
+            <div class="info-card solution">
+                <div class="label">爱因斯坦光量子假说（1905年）</div>
+                <div class="content">爱因斯坦比普朗克走得更远：他认为<strong>光本身就是由一个个粒子（光子）组成的</strong>。他用这个假说完美解释了光电效应<button class="qmark" data-modal="photoelectric" aria-label="查看光电效应详细解释">?</button>——光的能量只取决于频率而非强度，这用波动说完全无法解释。<strong>这是爱因斯坦获得诺贝尔奖的成果</strong>（1921年），而不是他更著名的相对论。爱因斯坦由此成为量子论的奠基人之一，但他后来却成了量子力学最著名的反对者。</div>
+            </div>
+            <div class="info-card solution">
+                <div class="label">玻尔原子模型（1913年）</div>
+                <div class="content">尼尔斯·玻尔将量子概念引入原子结构：电子只能在<strong>特定的"允许轨道"</strong>上运行，不辐射能量；当电子从高能级"跃迁"到低能级时，发射特定频率的光子<button class="qmark" data-modal="bohrmodel" aria-label="查看玻尔模型详细解释">?</button>。这个模型成功解释了<strong>氢原子光谱</strong>的规律，将量子理论与原子结构联系起来。但它仍然是<strong>半经典半量子</strong>的过渡产物，无法解释更复杂的原子。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">"量子"意味着什么？</div>
+                <div class="content">"量子"（quantum）一词来自拉丁语，意为"多少"。量子的核心思想是：在微观世界中，很多物理量（能量、角动量等）<strong>不是连续变化的，而是存在最小单位</strong>——就像你只能一块一块地买东西，不能买半块。这个思想与日常经验完全背离，是理解量子力学的第一道门槛。</div>
+            </div>
+        </div>
+    </div>
 
-<h3>1. 自然派哲学家（古希腊早期）</h3>
-<p>泰勒斯认为<span class="highlight">万物源于水</span>，阿那克西美尼认为是气，赫拉克利特则认为万物处于永恒的流动之中——"人不能两次踏入同一条河流"。</p>
+    <!-- ========== 第三幕 ========== -->
+    <div class="section" id="part3">
+        <h2>第三幕 · 波粒二象性：德布罗意与薛定谔（1924-1926）</h2>
+        <div class="info-grid">
+            <div class="info-card solution">
+                <div class="label">德布罗意物质波（1924年）</div>
+                <div class="content">路易·德布罗意在博士论文中提出了一个惊人想法：如果光既是波又是粒子，那么<strong>电子等物质粒子也应该具有波动性</strong>。他给出公式 λ = h/p（波长等于普朗克常数除以动量）<button class="qmark" data-modal="matterwave" aria-label="查看物质波详细解释">?</button>。这一度被看作疯狂的猜想，但很快被<strong>戴维森-革末实验</strong>（1927年）证实——电子像光一样产生衍射图案。德布罗意因此获得1929年诺贝尔物理学奖。</div>
+                <div class="example">💡 <strong>直观理解</strong>：在宏观世界，一个棒球确实有"物质波"，但其波长小到完全可以忽略。只有在电子这样极微小的尺度上，波动性才变得不可忽视。</div>
+            </div>
+            <div class="info-card solution">
+                <div class="label">薛定谔波动力学（1926年）</div>
+                <div class="content">埃尔温·薛定谔受到德布罗意的启发，创立了<strong>波动力学</strong>。他的核心方程——<strong>薛定谔方程</strong><button class="qmark" data-modal="schrodinger" aria-label="查看薛定谔方程详细解释">?</button>——用波函数 Ψ 来描述粒子的状态，成为量子力学最基本的方程之一。薛定谔本人倾向于将波函数理解为真实的物质波，但玻恩后来给出了概率解释。薛定谔后来对量子力学的概率解释极为不满，提出了著名的<strong>"薛定谔的猫"</strong><button class="qmark" data-modal="schrodingercat" aria-label="查看薛定谔的猫详细解释">?</button>思想实验来讽刺哥本哈根解释。</div>
+            </div>
+        </div>
+    </div>
 
-<h3>2. 苏格拉底、柏拉图与亚里士多德</h3>
-<p><em>苏格拉底</em>的高明之处在于他承认自己的无知。他通过对话和提问来引导人们发现真理（产婆术）。<em>柏拉图</em>提出了"理型论"——我们所见的世界只是理型世界的影子。而<em>亚里士多德</em>则更务实，他关注分类和逻辑，是经验科学的奠基人。</p>
+    <!-- ========== 第四幕 ========== -->
+    <div class="section" id="part4">
+        <h2>第四幕 · 新量子力学：海森堡的矩阵力学（1925-1927）</h2>
+        <div class="info-grid">
+            <div class="info-card solution">
+                <div class="label">海森堡矩阵力学（1925年）</div>
+                <div class="content">维尔纳·海森堡从完全不同的方向出发，创立了<strong>矩阵力学</strong>。他彻底抛弃了电子"轨道"的概念，用矩阵（当时大多数物理学家不熟悉的数学工具）来描述物理量。这种高度的抽象让许多物理学家望而却步。但薛定谔很快证明了<strong>波动力学与矩阵力学在数学上是等价的</strong>——两种完全不同的路径通向同一个理论。</div>
+            </div>
+            <div class="info-card debate">
+                <div class="label">不确定性原理（1927年）</div>
+                <div class="content">海森堡提出了量子力学最著名的原理之一：<strong>Δx · Δp ≥ ℏ/2</strong>（即 h/4π）<button class="qmark" data-modal="uncertainty" aria-label="查看不确定性原理详细解释">?</button>。即一个粒子的位置和动量<strong>不能同时被精确测量</strong>——位置测得越准，动量就越不确定，反之亦然。这不是测量仪器的局限，而是<strong>自然界的本质属性</strong>。不确定性原理从根本上否定了经典物理中"如果我们知道所有初始条件就能预测未来"的决定论信仰。</div>
+                <div class="example">💡 <strong>直观理解</strong>：如果你想"看到"一个电子的确切位置，就需要用光子去"照射"它。但光子一碰到电子，就会改变电子的动量。越精确地测量位置，就需要波长越短（能量越高）的光子，对动量的扰动就越大。这不是技术问题，而是自然的硬性限制。</div>
+            </div>
+        </div>
+    </div>
 
-<h3>3. 中世纪到文艺复兴</h3>
-<p>中世纪哲学围绕着信仰与理性的关系展开。奥古斯丁和阿奎那试图调和基督教与希腊哲学。文艺复兴则唤醒了人文主义精神，人重新成为万物的尺度。</p>
+    <!-- ========== 第五幕 ========== -->
+    <div class="section" id="part5">
+        <h2>第五幕 · 哥本哈根解释：量子力学的正统（1926-1927）</h2>
+        <div class="info-grid">
+            <div class="info-card insight">
+                <div class="label">玻恩的概率解释（1926年）</div>
+                <div class="content">马克斯·玻恩提出：薛定谔的波函数 Ψ 本身不是真实的物理波，而是<strong>概率波</strong>——|Ψ|² 表示在某个位置找到粒子的概率<button class="qmark" data-modal="bornrule" aria-label="查看玻恩规则详细解释">?</button>。这一解释将<strong>概率提升到了物理学的核心位置</strong>。在此之前，概率只是用来处理"信息不完整"的权宜之计；玻恩说，概率本身就是自然界的底层规则。玻恩因此获得1954年诺贝尔物理学奖。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">玻尔的互补原理</div>
+                <div class="content">尼尔斯·玻尔提出了<strong>互补原理</strong>：波和粒子不是互相矛盾的，而是<strong>互补的两种描述方式</strong>——就像一枚硬币的两面。在不同的实验安排下，量子系统会展现出不同的面貌。玻尔认为，我们不应该问"电子到底是波还是粒子"，而应该接受<strong>两种描述都是必要的</strong>，且不能同时使用<button class="qmark" data-modal="complementarity" aria-label="查看互补原理详细解释">?</button>。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">观测导致坍缩</div>
+                <div class="content">哥本哈根解释的核心主张：在测量之前，量子系统处于<strong>叠加态</strong>（所有可能状态的混合）；测量行为本身导致波函数<strong>"坍缩"</strong>到其中一个确定的状态<button class="qmark" data-modal="collapse" aria-label="查看波函数坍缩详细解释">?</button>。这意味着<strong>观测者不再是旁观者，而是参与者</strong>——测量行为改变了被测量的对象。这是量子力学最具哲学冲击力的结论之一。</div>
+            </div>
+            <div class="info-card debate">
+                <div class="label">1927年索尔维会议</div>
+                <div class="content">第五届索尔维会议是物理学史上最著名的会议之一。<strong>29位参会者中有17位是或后来成为诺贝尔奖得主</strong>，包括爱因斯坦、玻尔、普朗克、居里夫人、薛定谔、海森堡、狄拉克、泡利等。这是哥本哈根解释与爱因斯坦之间<strong>世纪之辩的起点</strong>。爱因斯坦每天早餐时提出一个思想实验试图推翻不确定性原理，玻尔在晚餐时就给出反驳。最终爱因斯坦未能推翻量子力学的逻辑自洽性。</div>
+            </div>
+        </div>
+        <blockquote>
+            <strong>"谁要是第一次听到量子理论时没有感到愤怒，那他一定没有听懂。"</strong>
+            <span class="source">——尼尔斯·玻尔（据传，原始出处难以考证）</span>
+        </blockquote>
+    </div>
 
-<h3>4. 理性主义与经验主义</h3>
-<ul>
-  <li><strong>笛卡尔</strong>："我思故我在"——怀疑一切，但无法怀疑"我正在怀疑"这件事本身。</li>
-  <li><strong>斯宾诺莎</strong>：神即自然，一切都在必然性之中。</li>
-  <li><strong>洛克</strong>：心灵是一块白板（tabula rasa），一切知识来自经验。</li>
-  <li><strong>休谟</strong>：因果关系只是习惯性联想，我们无法证明因果的必然性。</li>
-</ul>
+    <!-- ========== 第六幕 ========== -->
+    <div class="section" id="part6">
+        <h2>第六幕 · 爱因斯坦的反击：EPR悖论与"上帝不掷骰子"（1927-1935）</h2>
+        <div class="info-grid">
+            <div class="info-card debate">
+                <div class="label">"上帝不掷骰子"</div>
+                <div class="content">阿尔伯特·爱因斯坦是量子力学的奠基人之一（光量子假说），但他始终不能接受哥本哈根解释将<strong>概率</strong>作为世界的底层规则。他在1926年致玻恩的信中写道<strong>"老头儿不掷骰子"</strong>（Der Alte würfelt nicht）<button class="qmark" data-modal="godquote" aria-label="查看名言出处详细解释">?</button>，凝聚了他的信念：世界在最深层次上应该是<strong>决定论</strong>的，概率只是我们暂时无知的表现。玻尔对此的回应是：<strong>"爱因斯坦，不要告诉上帝该做什么。"</strong></div>
+            </div>
+            <div class="info-card debate">
+                <div class="label">EPR悖论（1935年）</div>
+                <div class="content">爱因斯坦、波多尔斯基和罗森发表了一篇著名论文，提出了<strong>EPR悖论</strong><button class="qmark" data-modal="epr" aria-label="查看EPR悖论详细解释">?</button>：如果量子力学是完备的，那么对一对纠缠粒子中的一个进行测量，会<strong>瞬间</strong>影响另一个粒子的状态——这似乎违反了光速不可超越的因果律（爱因斯坦称之为<strong>"鬼魅般的超距作用"</strong>）。爱因斯坦认为这说明量子力学<strong>不完备</strong>，一定存在尚未发现的"隐变量"<button class="qmark" data-modal="hiddenvar" aria-label="查看隐变量详细解释">?</button>决定了粒子的行为。</div>
+                <div class="example">💡 <strong>直观理解</strong>：想象有一双手套，一只左一只右，随机分别装进两个盒子送到天南海北。你打开其中一个盒子看到是左手套，就立刻知道另一个是右手套——这不违反相对论，因为信息早已在出发时就确定了。爱因斯坦认为量子纠缠也是如此：粒子在分离时就已经带有了确定的状态。但后来的实验证明他是错的。</div>
+            </div>
+        </div>
+    </div>
 
-<h3>5. 康德与启蒙时代</h3>
-<p>康德试图调和理性主义与经验主义。他提出：我们不是认识"物自体"，而是认识经过我们认知框架（时间、空间、因果）组织后的现象。<em>启蒙就是人类脱离自己加之于自己的不成熟状态。</em></p>
+    <!-- ========== 第七幕 ========== -->
+    <div class="section" id="part7">
+        <h2>第七幕 · 贝尔不等式：决定性的实验检验（1964-1982）</h2>
+        <div class="info-grid">
+            <div class="info-card solution">
+                <div class="label">贝尔不等式（1964年）</div>
+                <div class="content">约翰·贝尔提出了一个天才的数学不等式：<strong>如果定域隐变量理论是正确的，那么实验结果必然满足贝尔不等式</strong>；如果量子力学是正确的，贝尔不等式将被违反<button class="qmark" data-modal="bellineq" aria-label="查看贝尔不等式详细解释">?</button>。这个不等式将爱因斯坦与玻尔的哲学之争<strong>转化为可以用实验检验的科学问题</strong>。贝尔本人在哲学上更同情爱因斯坦的实在论立场，但他的不等式却成了检验量子力学的最有力工具。</div>
+            </div>
+            <div class="info-card solution">
+                <div class="label">阿斯佩实验（1982年）</div>
+                <div class="content">法国物理学家阿兰·阿斯佩（Alain Aspect）进行了决定性的实验，结果明确显示：<strong>贝尔不等式被违反</strong>。这意味着定域隐变量理论是错误的，量子纠缠确实是"鬼魅般的超距作用"。爱因斯坦在这场世纪之辩中<strong>输了</strong>——"上帝确实在掷骰子"。但量子纠缠并不违反相对论的因果律，因为它<strong>不能用来传递信息</strong><button class="qmark" data-modal="nosignal" aria-label="查看为何不能超光速通信">?</button>。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">EPR辩论的最终裁决</div>
+                <div class="content">从EPR悖论（1935年）到阿斯佩实验（1982年），这场辩论持续了<strong>47年</strong>。结果是：量子力学在实验检验中全面胜出。但这并不意味着爱因斯坦的质疑没有价值——正是他的深刻质疑推动了量子力学基础的深入探讨，催生了贝尔不等式和量子信息科学。<strong>2022年，阿斯佩、克劳泽（Clauser）、蔡林格（Zeilinger）三位科学家因在量子纠缠方面的贡献获得诺贝尔物理学奖。</strong></div>
+            </div>
+            <div class="info-card debate">
+                <div class="label">量子纠缠与"超距作用"</div>
+                <div class="content">两个纠缠粒子无论相隔多远（哪怕是银河系的两端），对其中一个的测量会<strong>瞬间</strong>影响另一个的状态<button class="qmark" data-modal="entanglement" aria-label="查看量子纠缠详细解释">?</button>。这被爱因斯坦称为"鬼魅般的超距作用"。但它不能用来超光速传递信息——因为你无法控制测量结果，只能观测到随机的结果。量子纠缠不违反因果律，但确实挑战了我们对"实在"的直觉理解。</div>
+            </div>
+        </div>
+        <blockquote>
+            <strong>"爱因斯坦错了，但这并不意味着他是失败者。正是他深刻的质疑，推动了整个领域的发展。"</strong>
+            <span class="source">——曹天元《上帝掷骰子吗》</span>
+        </blockquote>
+    </div>
 
-<h3>6. 浪漫主义到存在主义</h3>
-<p>黑格尔的辩证法（正—反—合）、克尔凯郭尔的存在三阶段（审美→伦理→宗教）、马克思的历史唯物主义、达尔文的进化论（对"人是什么"的重新定义），以及尼采的"上帝已死"和萨特的"存在先于本质"。</p>
+    <!-- ========== 第八幕 ========== -->
+    <div class="section" id="part8">
+        <h2>第八幕 · 量子时代的来临：从理论到应用</h2>
+        <div class="info-grid">
+            <div class="info-card solution">
+                <div class="label">量子电动力学（QED）</div>
+                <div class="content">在量子力学基础上，狄拉克将量子力学与狭义相对论结合，预言了反物质的存在。费曼、施温格和朝永振一郎发展了量子电动力学，精确描述了光和物质的相互作用。QED是<strong>物理学中最精确的理论之一</strong>——电子反常磁矩的理论值与实验值精度达到<strong>十亿分之一以上</strong>。费曼发明了著名的<strong>费曼图</strong>，将复杂的量子计算可视化。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">多世界解释与其他</div>
+                <div class="content">针对哥本哈根解释的"测量难题"，休·埃弗雷特提出了<strong>多世界解释</strong><button class="qmark" data-modal="manyworlds" aria-label="查看多世界解释详细解释">?</button>：每一次量子测量，宇宙就分裂成多个平行世界，每个可能的结果都在不同的世界中实现。此外还有<strong>退相干理论</strong>（解释了为什么宏观世界看不到量子效应）、<strong>隐变量理论</strong>（如德布罗意-玻姆理论）等。量子力学的基础问题至今仍存在多种解释。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">量子信息与量子计算</div>
+                <div class="content">20世纪末以来，量子力学从基础研究走向应用：<strong>量子计算</strong><button class="qmark" data-modal="qcomputing" aria-label="查看量子计算详细解释">?</button>利用叠加态和纠缠实现超强计算能力；<strong>量子通信</strong>利用纠缠实现理论上不可破解的加密；<strong>量子精密测量</strong>突破经典极限。量子力学不再只是物理学家的理论游戏，而是正在改变世界的技术革命。</div>
+            </div>
+        </div>
+    </div>
 
-<h2>三、个人感悟</h2>
-<ol>
-  <li><strong>哲学不是答案，是提问</strong>：好的哲学问题比答案更有价值。</li>
-  <li><strong>保持惊奇</strong>：哲学家就像孩子一样，对世界保持好奇和惊奇之心。</li>
-  <li><strong>兔子毛比喻</strong>：我们大多数人舒适地躺在兔子毛的深处，而哲学家试图爬到毛尖上去看宇宙。</li>
-</ol>
+    <hr class="divider">
 
-<hr>
-<p style="text-align:center; color:#999; font-size:0.85rem;">— 笔记完 —</p>
+    <!-- ========== 贯穿规律 ========== -->
+    <div class="section" id="laws">
+        <h2>贯穿全书的四大规律</h2>
+        <div class="law-card">
+            <h4>规律一：从决定论到概率论——"上帝确实在掷骰子"</h4>
+            <p>经典物理认为，只要知道所有初始条件就能预测整个未来。量子力学宣告了决定论的终结：在最根本的层面上，世界是概率性的。爱因斯坦终其一生无法接受这一点，但实验证明他错了。本书的书名就是对爱因斯坦名言"上帝不掷骰子"的回应。</p>
+        </div>
+        <div class="law-card">
+            <h4>规律二：观测者从旁观者变为参与者</h4>
+            <p>在经典物理中，观测者可以"客观地"测量而不影响被测量对象。量子力学揭示：测量本身就是一种物理操作，会改变被测量的系统。波函数的坍缩意味着观测者的选择决定了实在的呈现。这一思想深刻地影响了哲学——主观与客观的界限变得模糊。</p>
+        </div>
+        <div class="law-card">
+            <h4>规律三：从"非此即彼"到"亦此亦彼"——互补性的胜利</h4>
+            <p>经典的逻辑是非此即彼：一个东西要么是波要么是粒子。量子力学说：它既是波也是粒子，取决于你用什么方式去观察。玻尔的互补原理告诉我们，两种看似矛盾的描述可以同时为真——它们只是同一实在的不同侧面。这种思维方式对东方哲学（如中国阴阳观）有着深刻的呼应。</p>
+        </div>
+        <div class="law-card">
+            <h4>规律四：数学先于理解——"闭嘴，计算！"</h4>
+            <p>量子力学的数学形式极其精确和成功，但它的物理意义至今存在多种解释。"闭嘴，计算！"（Shut up and calculate!）这句名言反映了量子物理学家的一种实用主义态度：我们可能永远无法"理解"量子力学在常识意义上的含义，但这不妨碍我们用它做出精确的预测。这也意味着量子力学的哲学基础仍然是一个开放的问题。</p>
+        </div>
+    </div>
 
-</body>
-</html>
+    <!-- ========== 延伸与比较 ========== -->
+    <div class="section" id="extension">
+        <h2>延伸与比较</h2>
+        <table class="extension">
+            <thead>
+                <tr><th>思考维度</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>本书的写作风格</td>
+                    <td>曹天元以中国武侠小说的叙事风格写量子物理史，将物理学家塑造为江湖高手，将理论对决比作武林交锋。这种"科学武侠"风格在科普领域独树一帜，让艰深的量子力学变得生动可读。笔名"曹天元"意为"谈论宇宙起源"。</td>
+                </tr>
+                <tr>
+                    <td>本书的历史贡献</td>
+                    <td>这是中文世界最成功的量子物理科普读物之一，最早于2003年起在网络（清韵书院）连载，2006年正式出版。它影响了一代中国读者，很多年轻读者表示这本书是他们爱上物理学的起点。它证明了中国作者也能写出世界级的科普作品。</td>
+                </tr>
+                <tr>
+                    <td>量子力学解释的多元性</td>
+                    <td>至今量子力学仍有多种解释并存：哥本哈根解释（正统）、多世界解释（埃弗雷特）、退相干理论、隐变量理论（德布罗意-玻姆）、自发坍缩理论（GRW）、关系性量子力学（罗韦利）等。这说明量子力学的基础问题远未解决。正如书中所说："我们理解了如何计算量子力学，但我们仍然不知道量子力学意味着什么。"</td>
+                </tr>
+                <tr>
+                    <td>推荐对照阅读</td>
+                    <td><strong>布莱恩·格林《宇宙的琴弦》</strong>：从弦论角度讲述量子力学与引力的统一尝试。<br><strong>卡洛·罗韦利《现实不似你所见》</strong>：圈量子引力视角下的量子世界。<br><strong>大卫·林德利《不确定性：爱因斯坦、海森堡、玻尔和科学灵魂的论战》</strong>：聚焦不确定性原理的历史与哲学影响。<br><strong>保罗·哈尔彭《爱因斯坦的骰子和薛定谔的猫》</strong>：详细讲述爱因斯坦与薛定谔如何成为量子力学的"对手"。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem; padding:1.2rem; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">
+        《上帝掷骰子吗：量子物理史话》知识图谱 · 基于曹天元原著整理 · 仅供个人学习回顾使用
+    </div>
+</div>
+
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部" title="返回顶部">↑</button>
+
+<!-- ========== 弹窗容器 ========== -->
+<div class="modal-overlay" id="modalOverlay" role="dialog" aria-modal="true">
+    <div class="modal-box" id="modalBox">
+        <button class="modal-close" id="modalClose" aria-label="关闭">×</button>
+        <div id="modalContent">
+            <h3>紫外灾难（Ultraviolet Catastrophe）</h3>
+            <span class="modal-tag">💥 经典物理危机</span>
+            
+                <p><strong>"紫外灾难"</strong>是经典电磁理论与统计力学结合后得到的一个荒谬结论：黑体在紫外（短波）区域应该辐射出<strong>无穷大的能量</strong>。</p>
+                <p><strong>为什么会这样？</strong>经典理论中的"能量均分定理"认为：每一个振动模式都应该平均分到 kT 的能量。而短波模式的数量是无限的，加起来就是无限的能量。</p>
+                <p><strong>普朗克的解决：</strong>假定振子的能量只能取离散值（E = nhν），高频振子由于需要的最小能量包很大，反而不容易被激发——于是无穷大消失了，理论与实验吻合了。</p>
+                <div class="analogy"><strong>类比：</strong>想象高频振子是高价商品。如果钱可以无限分割，每个商品都能凑齐部分钱去买；但如果钱只能整张支付，高价商品就买不起了——能量自然就被"封印"在低频区。</div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== 概念解释库 ==========
+    const explanations = {
+        blackbody: {
+            tag: '🌑 经典物理危机',
+            title: '黑体辐射',
+            html: `
+                <p><strong>什么是黑体？</strong>理论上完美吸收所有入射光的物体，同时它也是最完美的辐射体。比如一个表面有小孔的封闭空腔，光进去就出不来——这个小孔就近似为黑体。</p>
+                <p><strong>问题在哪？</strong>当物体被加热，会发出特定频谱的光（铁块从红色烧到白色就是个例子）。物理学家想用经典理论计算这个频谱，结果发现：</p>
+                <ul>
+                    <li>维恩公式：在短波（高频）端正确，在长波端失效</li>
+                    <li>瑞利-金斯公式：在长波端正确，但预测高频部分能量趋于无穷大</li>
+                </ul>
+                <p>实验测出的真实曲线明明是一个有限值，理论却给出无穷大——这是经典物理大厦上一道致命裂缝。</p>
+                <div class="analogy"><strong>类比：</strong>就像你按公式计算太阳每秒应该释放无限能量，结果太阳还在那里好端端发光——一定是公式错了。</div>
+            `
+        },
+        uvcatastrophe: {
+            tag: '💥 经典物理危机',
+            title: '紫外灾难（Ultraviolet Catastrophe）',
+            html: `
+                <p><strong>"紫外灾难"</strong>是经典电磁理论与统计力学结合后得到的一个荒谬结论：黑体在紫外（短波）区域应该辐射出<strong>无穷大的能量</strong>。</p>
+                <p><strong>为什么会这样？</strong>经典理论中的"能量均分定理"认为：每一个振动模式都应该平均分到 kT 的能量。而短波模式的数量是无限的，加起来就是无限的能量。</p>
+                <p><strong>普朗克的解决：</strong>假定振子的能量只能取离散值（E = nhν），高频振子由于需要的最小能量包很大，反而不容易被激发——于是无穷大消失了，理论与实验吻合了。</p>
+                <div class="analogy"><strong>类比：</strong>想象高频振子是高价商品。如果钱可以无限分割，每个商品都能凑齐部分钱去买；但如果钱只能整张支付，高价商品就买不起了——能量自然就被"封印"在低频区。</div>
+            `
+        },
+        planck: {
+            tag: '⚛️ 量子诞生',
+            title: '普朗克公式 E = hν',
+            html: `
+                <p><strong>这个公式说了什么？</strong>电磁辐射的能量不能任意取值，而是必须是某个最小单位（"量子"）的整数倍。这个最小单位的大小由频率决定。</p>
+                <div class="formula">E = h · ν<br><span style="font-size:0.85rem;color:#666;">能量 = 普朗克常数 × 频率</span></div>
+                <p><strong>普朗克常数 h ≈ 6.626 × 10⁻³⁴ J·s</strong>，这是一个极小的数。正是因为它如此微小，宏观世界中的能量看起来才像是连续的。</p>
+                <p><strong>普朗克本人的态度：</strong>他把这个假设当作"绝望的妥协"——为了凑出黑体辐射的正确公式而被迫引入。在之后的十几年里，他一直试图找到一种回归连续能量的方式，但最终承认量子是真实的。</p>
+                <div class="analogy"><strong>类比：</strong>就像一个保守的会计被迫承认：钱不能无限分割，必须以"分"为最小单位。这一最小单位虽然小到平时感觉不到，但它的存在彻底改变了金融的底层逻辑。</div>
+            `
+        },
+        photoelectric: {
+            tag: '💡 光电效应',
+            title: '光电效应：光是粒子的证据',
+            html: `
+                <p><strong>什么是光电效应？</strong>当光照射到金属表面时，会击出电子（光电子）。</p>
+                <p><strong>经典理论的预测（错误）：</strong></p>
+                <ul>
+                    <li>光越强 → 电子动能越大</li>
+                    <li>足够强的光，任何频率都能击出电子</li>
+                    <li>弱光需要较长时间才能积累足够能量</li>
+                </ul>
+                <p><strong>实验事实：</strong></p>
+                <ul>
+                    <li>电子动能只取决于光的<strong>频率</strong>，与强度无关</li>
+                    <li>低于某个<strong>阈值频率</strong>，再强的光也击不出电子</li>
+                    <li>只要频率足够，弱光也能<strong>瞬间</strong>击出电子</li>
+                </ul>
+                <p><strong>爱因斯坦的解释：</strong>光是一颗一颗的"光量子"（光子），每个光子的能量是 E = hν。电子要么吸收一整个光子，要么不吸收。光子能量太小（频率太低），就打不出电子；光子能量足够，瞬间就能打出。</p>
+                <div class="analogy"><strong>类比：</strong>把电子想象成停车场里的车，光子是过来撞车的人。一个孩子（低频）就算来一万个，每个人力气都太小，撞不动车；而一个壮汉（高频）哪怕只有一个，也能一下把车撞跑。</div>
+            `
+        },
+        bohrmodel: {
+            tag: '🌀 原子结构',
+            title: '玻尔原子模型',
+            html: `
+                <p><strong>核心假设：</strong></p>
+                <ul>
+                    <li>电子只能在<strong>特定的离散轨道</strong>上绕核运动（"定态"）</li>
+                    <li>电子在定态中<strong>不辐射能量</strong>（这违反了经典电磁理论）</li>
+                    <li>电子在能级之间<strong>跃迁</strong>时，发射或吸收光子，能量差 ΔE = hν</li>
+                    <li>角动量只能取 ℏ 的整数倍（量子化条件）</li>
+                </ul>
+                <p><strong>巨大的成功：</strong>这个模型完美解释了氢原子光谱中那些精确的频率谱线（巴尔末系、莱曼系等），把神秘的"光谱密码"翻译成了原子结构的语言。</p>
+                <p><strong>但它的局限：</strong></p>
+                <ul>
+                    <li>只对单电子原子（氢、氦⁺）成立，多电子原子算不准</li>
+                    <li>无法解释谱线的强度和精细结构</li>
+                    <li>"为什么电子只能在特定轨道？"没有理论根据</li>
+                </ul>
+                <p>玻尔模型是<strong>半经典半量子</strong>的过渡产物。后来海森堡和薛定谔的真正量子力学完全抛弃了"轨道"的概念。</p>
+            `
+        },
+        matterwave: {
+            tag: '🌊 波粒二象性',
+            title: '德布罗意物质波 λ = h/p',
+            html: `
+                <p><strong>核心思想：</strong>既然光既是波又是粒子，那么对称地说，<strong>所有物质粒子也应该具有波动性</strong>。</p>
+                <div class="formula">λ = h / p<br><span style="font-size:0.85rem;color:#666;">波长 = 普朗克常数 / 动量</span></div>
+                <p><strong>为什么宏观看不到？</strong>因为 h 极小，宏观物体的动量 p 极大，算出来的波长比原子还小无数倍，根本无法观测：</p>
+                <ul>
+                    <li>一个 60 kg 的人以 1 m/s 行走，波长 ≈ 10⁻³⁵ 米（远小于原子核！）</li>
+                    <li>一个电子以 10⁶ m/s 运动，波长 ≈ 10⁻⁹ 米（约为原子大小，可观测）</li>
+                </ul>
+                <p><strong>实验证据：</strong>戴维森-革末实验（1927）让电子打在镍晶体上，得到了和X射线衍射完全一样的图案——电子确实在表现得像波！</p>
+                <p><strong>意义：</strong>玻尔模型中"为什么电子只能在特定轨道"有了答案——因为只有当轨道周长是物质波波长整数倍时，波才能形成稳定的驻波，否则就会自我抵消。</p>
+            `
+        },
+        schrodinger: {
+            tag: '📐 核心方程',
+            title: '薛定谔方程',
+            html: `
+                <p>薛定谔方程是量子力学的<strong>"牛顿第二定律"</strong>——它描述波函数 Ψ 如何随时间演化。</p>
+                <div class="formula">iℏ ∂Ψ/∂t = ĤΨ<br><span style="font-size:0.85rem;color:#666;">含时薛定谔方程</span></div>
+                <p><strong>关键概念：</strong></p>
+                <ul>
+                    <li><strong>波函数 Ψ</strong>：包含粒子所有信息的复数函数</li>
+                    <li><strong>哈密顿算符 Ĥ</strong>：对应系统的总能量</li>
+                    <li>方程是<strong>线性的</strong>——这意味着叠加原理成立</li>
+                    <li>方程是<strong>决定论的</strong>——只要给定初值，Ψ 的演化完全确定</li>
+                </ul>
+                <p><strong>哲学疑问：</strong>波函数本身是决定论演化的，但<strong>测量</strong>结果是随机的——这两者如何协调？这正是"测量难题"，至今没有公认答案。</p>
+                <p><strong>薛定谔方程能算什么？</strong>它能精确预测氢原子光谱、化学键、半导体能带、激光、超导……几乎所有微观物理现象。是现代化学和材料科学的理论基石。</p>
+            `
+        },
+        schrodingercat: {
+            tag: '🐱 思想实验',
+            title: '薛定谔的猫：让叠加态变得荒谬',
+            html: `
+                <p><strong>实验设置：</strong>把一只猫关进密闭盒子，盒子里装有：</p>
+                <ul>
+                    <li>一个放射性原子（一小时内有 50% 概率衰变）</li>
+                    <li>一个盖革计数器，检测到衰变就触发机关</li>
+                    <li>机关释放毒气，猫死亡</li>
+                </ul>
+                <p><strong>问题来了：</strong>一小时后，原子处于"已衰变 + 未衰变"的<strong>叠加态</strong>。按照量子力学的线性，连接到原子的猫也应该处于"死 + 活"的叠加态。直到有人打开盒子观测，叠加态才坍缩成"死"或"活"中的一个。</p>
+                <p><strong>薛定谔的真实意图：</strong>他不是支持叠加态，而是用这个例子<strong>反讽哥本哈根解释</strong>——一只半死不活的猫显然是荒谬的，所以哥本哈根解释一定有问题！</p>
+                <p><strong>各种解释的应对：</strong></p>
+                <ul>
+                    <li><strong>哥本哈根</strong>：叠加只针对微观粒子，宏观系统不适用（但界限在哪？）</li>
+                    <li><strong>多世界</strong>：盒子里同时有"死猫世界"和"活猫世界"，打开盒子的你也分裂成两个</li>
+                    <li><strong>退相干理论</strong>：宏观物体与环境快速发生退相干，叠加态在被观察前就已实际坍缩</li>
+                </ul>
+                <div class="analogy"><strong>趣闻：</strong>薛定谔后来抱怨说："我真希望我从来没有听说过那只该死的猫。"</div>
+            `
+        },
+        uncertainty: {
+            tag: '⚡ 量子核心',
+            title: '海森堡不确定性原理',
+            html: `
+                <div class="formula">Δx · Δp ≥ ℏ/2<br><span style="font-size:0.85rem;color:#666;">位置不确定度 × 动量不确定度 ≥ 约化普朗克常数 / 2</span></div>
+                <p><strong>常见误解：</strong>这<strong>不是</strong>"测量仪器精度不够"或"测量时干扰了系统"——这两种解释都太肤浅了。</p>
+                <p><strong>真正的含义：</strong>位置和动量这两个属性<strong>不能同时具有确定值</strong>。这是量子态的内在结构决定的，与测量无关。</p>
+                <p><strong>数学根源：</strong>位置算符 x̂ 和动量算符 p̂ <strong>不对易</strong>——即 x̂p̂ ≠ p̂x̂。两个不对易的可观测量不可能同时具有确定值。</p>
+                <p><strong>更多不确定关系：</strong></p>
+                <ul>
+                    <li>能量与时间：ΔE · Δt ≥ ℏ/2（解释了"虚粒子"和量子涨落）</li>
+                    <li>角动量不同分量之间</li>
+                    <li>电场与磁场某些分量之间</li>
+                </ul>
+                <p><strong>物理后果：</strong>原子中的电子不会掉进原子核——因为如果位置被精确限定（落入核中），动量不确定度就趋于无穷大，能量随之爆炸。原子的稳定性正是量子涨落的结果。</p>
+                <div class="analogy"><strong>类比：</strong>就像一个旋转的硬币，"正面/反面"和"正在旋转"两个属性不能同时成立——它要么停下来呈现一面，要么在旋转中模糊不清。</div>
+            `
+        },
+        bornrule: {
+            tag: '🎲 概率法则',
+            title: '玻恩规则：|Ψ|² 是概率',
+            html: `
+                <p><strong>玻恩的洞见（1926）：</strong>波函数 Ψ 本身没有直接物理意义，但它的<strong>模平方 |Ψ(x)|²</strong> 给出了在位置 x 找到粒子的概率密度。</p>
+                <div class="formula">P(x) = |Ψ(x)|²<br><span style="font-size:0.85rem;color:#666;">在 x 附近找到粒子的概率密度</span></div>
+                <p><strong>这意味着什么？</strong>量子力学不预测"粒子会在哪里"，只预测"在每个位置找到粒子的概率"。运行无数次同样实验，结果分布会精确符合 |Ψ|²。</p>
+                <p><strong>哲学冲击：</strong></p>
+                <ul>
+                    <li>经典物理：概率反映"我们的无知"（如骰子结果取决于我们没测量的初始条件）</li>
+                    <li>量子物理：概率是<strong>本质的</strong>，即使知道一切初始条件，结果仍然随机</li>
+                </ul>
+                <p>这是爱因斯坦无法接受的：他相信"上帝不掷骰子"，认为概率背后一定有更深层的决定论机制（隐变量）。但贝尔不等式的实验否定了这种可能。</p>
+                <p><strong>有趣的事：</strong>玻恩在论文脚注里写下这个解释，多年后才因此获得诺贝尔奖（1954）——这可能是物理学史上影响最大的脚注之一。</p>
+            `
+        },
+        complementarity: {
+            tag: '☯️ 哲学原理',
+            title: '玻尔的互补原理',
+            html: `
+                <p><strong>核心主张：</strong>波动性和粒子性是<strong>互补的</strong>而非矛盾的——它们是同一实在在不同实验情境下呈现的两副面孔。</p>
+                <p><strong>关键点：</strong></p>
+                <ul>
+                    <li>波动性和粒子性不能<strong>同时</strong>显现——选择测什么决定看到什么</li>
+                    <li>双缝实验中，如果你不去看电子走哪条缝，看到干涉条纹（波）；如果你去探测它走哪条缝，干涉消失（粒子）</li>
+                    <li>这种"测量决定实在"是量子力学的核心特征</li>
+                </ul>
+                <p><strong>玻尔的更深思想：</strong>互补原理不仅是物理原理，也是认识论原理。它适用于所有看似对立的概念：</p>
+                <ul>
+                    <li>位置 vs 动量</li>
+                    <li>能量 vs 时间</li>
+                    <li>玻尔甚至认为：生命与机械、理性与情感都可能存在互补关系</li>
+                </ul>
+                <p><strong>东方哲学呼应：</strong>玻尔晚年深受中国阴阳思想影响。1947年他被授予丹麦勋爵，亲自设计的家族纹章正是<strong>太极图</strong>，配以拉丁文铭言：<em>"Contraria sunt complementa"（对立即互补）</em>。</p>
+                <div class="analogy"><strong>类比：</strong>同一座山，从不同角度看是不同形状。哪个才是"真正的山"？答案是：它们都是真正的山，只不过你不能同时从两个角度看。</div>
+            `
+        },
+        collapse: {
+            tag: '⚠️ 测量难题',
+            title: '波函数坍缩',
+            html: `
+                <p><strong>什么是坍缩？</strong>测量前，量子系统处于多个可能状态的叠加（如 Ψ = aΨ₁ + bΨ₂）；测量后，叠加"瞬间"消失，系统呈现为某个确定状态（如 Ψ₁ 或 Ψ₂）。</p>
+                <p><strong>坍缩的奇怪之处：</strong></p>
+                <ul>
+                    <li>它是<strong>瞬时</strong>的（违反相对论中信号速度限制？）</li>
+                    <li>它是<strong>不可逆</strong>的（与薛定谔方程的可逆性矛盾）</li>
+                    <li>它是<strong>随机</strong>的（基本概率，无原因）</li>
+                    <li>"测量"到底是什么？什么算"观察者"？</li>
+                </ul>
+                <p><strong>这就是著名的"测量难题"：</strong>量子系统平时按薛定谔方程演化（决定论的、可逆的、连续的），测量时却突然按玻恩规则坍缩（随机的、不可逆的、瞬时的）——为什么会有两套规则？</p>
+                <p><strong>各种应对方案：</strong></p>
+                <ul>
+                    <li><strong>哥本哈根</strong>：接受这是基本现实，不再追问</li>
+                    <li><strong>多世界</strong>：从来没有坍缩，所有可能都实现，只是在不同分支</li>
+                    <li><strong>退相干</strong>：宏观系统与环境作用使叠加变得不可观测，"看起来"像坍缩</li>
+                    <li><strong>GRW</strong>：粒子有微小概率自发坍缩，宏观聚集后变得明显</li>
+                </ul>
+                <p>测量难题至今未有公认答案——这是现代物理学最深的谜团之一。</p>
+            `
+        },
+        godquote: {
+            tag: '💬 名言考据',
+            title: '"上帝不掷骰子"的真实出处',
+            html: `
+                <p><strong>原始出处：</strong>1926年12月4日，爱因斯坦写给马克斯·玻恩的信中说：</p>
+                <blockquote style="margin:0.5rem 0;">
+                <em>"Die Theorie liefert viel, aber dem Geheimnis des Alten bringt sie uns kaum näher. Jedenfalls bin ich überzeugt, daß der Alte nicht würfelt."</em>
+                </blockquote>
+                <p>翻译：<strong>"量子理论给了我们很多东西，但它几乎没让我们更接近'老头儿'的秘密。无论如何，我确信，老头儿是不掷骰子的。"</strong></p>
+                <p><strong>"老头儿"（der Alte）</strong>是爱因斯坦对上帝/造物主/自然的昵称。在他的语境中并非宗教意义的上帝，而是泛指"宇宙的根本规律"。</p>
+                <p><strong>玻尔的回应（据传）：</strong>"爱因斯坦，不要告诉上帝该做什么。"（"Einstein, stop telling God what to do."）</p>
+                <p><strong>更深的背景：</strong>爱因斯坦一生坚信：</p>
+                <ul>
+                    <li>客观实在独立于观察者存在（实在论）</li>
+                    <li>因果律是宇宙的根本（决定论）</li>
+                    <li>没有超距作用（定域性）</li>
+                </ul>
+                <p>量子力学似乎违反了这三点。爱因斯坦不是不懂量子力学，恰恰相反——正因为太懂，他才不能接受。他至死都认为量子力学是不完备的，背后一定有更深层的真理。</p>
+                <p><strong>讽刺的结局：</strong>2022年的诺贝尔奖证实了量子纠缠的真实性——爱因斯坦"输了"，但正是他的反对推动了量子力学最深入的探索。</p>
+            `
+        },
+        epr: {
+            tag: '🔬 思想实验',
+            title: 'EPR悖论',
+            html: `
+                <p><strong>EPR = Einstein, Podolsky, Rosen</strong>，1935年三人合作论文标题《Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?》（量子力学对物理实在的描述能被认为是完备的吗？）</p>
+                <p><strong>实验构思：</strong>制备一对纠缠粒子 A 和 B，然后让它们分开很远（理论上可以是几光年）。根据量子力学：</p>
+                <ul>
+                    <li>测量 A 的自旋之前，A 和 B 的自旋都处于叠加态</li>
+                    <li>测量 A 后，瞬间得知 B 的自旋（必然与 A 相反）</li>
+                </ul>
+                <p><strong>EPR的论证：</strong></p>
+                <ul>
+                    <li><strong>定域性</strong>（无超距作用）：测 A 不应该影响远处的 B</li>
+                    <li><strong>实在论</strong>：B 的自旋值在测量前就应该是确定的</li>
+                    <li>但量子力学说 B 没有确定值</li>
+                    <li>结论：<strong>量子力学不完备</strong>，必有"隐变量"决定真实结果</li>
+                </ul>
+                <p><strong>玻尔的反驳：</strong>EPR对"实在性"的定义本身就是经典的——量子世界中，独立于测量的"实在"概念可能不再适用。粒子不是"已经有了某个值，等着我们去发现"；测量本身参与了实在的构造。</p>
+                <p><strong>历史意义：</strong>EPR论文当时被视为"爱因斯坦最后的反扑"，但它意外开启了量子信息时代的大门——所有量子通信、量子计算的理论基础都建立在对纠缠的深入研究上。</p>
+                <p><strong>最终裁决：</strong>30年后贝尔（1964）将这场哲学争论变成了可实验检验的不等式；50年后阿斯佩（1982）的实验证明：爱因斯坦的"定域实在论"前提是错的，量子力学是对的。</p>
+            `
+        },
+        hiddenvar: {
+            tag: '🎭 替代解释',
+            title: '隐变量理论',
+            html: `
+                <p><strong>核心思想：</strong>量子力学的随机性是表面的，背后存在我们不知道的"隐变量"——一旦了解了它们，世界又回到决定论的图景。</p>
+                <p><strong>类比：</strong>掷骰子看似随机，其实只要知道骰子的初速度、角速度、空气阻力等所有"隐藏信息"，结果完全可以预测。爱因斯坦相信量子的随机性也是这种意义上的"无知导致的随机"。</p>
+                <p><strong>两类隐变量理论：</strong></p>
+                <ul>
+                    <li><strong>定域隐变量</strong>：粒子分离时各自带有确定值，相互独立——爱因斯坦倾向的版本</li>
+                    <li><strong>非定域隐变量</strong>：粒子分离后仍以某种方式"瞬时联系"——德布罗意-玻姆理论属于此类</li>
+                </ul>
+                <p><strong>贝尔的判决：</strong>贝尔不等式只针对"定域隐变量"。1982年起的一系列实验证明这类理论被排除——爱因斯坦的版本死了。</p>
+                <p><strong>非定域隐变量还活着：</strong>德布罗意-玻姆理论（导航波理论）至今是数学上自洽的另一种解释——粒子有真实的位置和轨迹，但被一个非定域的"量子势"引导。它给出和标准量子力学完全相同的预测，但更"实在论"。</p>
+                <p><strong>为什么主流不接受？</strong>奥卡姆剃刀——既然标准量子力学已经够用，引入"隐藏的量子势"就显得多余。但作为哲学立场，玻姆理论仍有支持者。</p>
+            `
+        },
+        bellineq: {
+            tag: '🔔 革命性发现',
+            title: '贝尔不等式：把哲学变成科学',
+            html: `
+                <p><strong>贝尔的天才贡献：</strong>把爱因斯坦和玻尔之间看似纯哲学的争论，<strong>变成了可以用实验回答的问题</strong>。</p>
+                <p><strong>简化版本（CHSH 不等式）：</strong>对纠缠粒子对在不同方向上测量自旋，构造一个相关性的组合 S。</p>
+                <ul>
+                    <li>定域隐变量理论必然预测：<strong>|S| ≤ 2</strong></li>
+                    <li>量子力学预测：<strong>|S| 可达 2√2 ≈ 2.83</strong>（违反贝尔不等式）</li>
+                </ul>
+                <p><strong>论证逻辑（极简化）：</strong>如果粒子分开时各自携带确定的"指令表"（隐变量），那么两边测量结果的统计相关性受到一个数学上的硬性上限制约。这个上限就是贝尔不等式。</p>
+                <p><strong>关键意义：</strong></p>
+                <ul>
+                    <li>这是物理学史上罕见的"哲学问题→物理实验"的转化</li>
+                    <li>不再依赖任何具体的隐变量模型——只要满足"定域+实在论"，就必须服从贝尔不等式</li>
+                    <li>实验只要观察到违反，就一劳永逸地排除了一整类理论</li>
+                </ul>
+                <p><strong>历次实验：</strong></p>
+                <ul>
+                    <li>1972 克劳泽：首次实验验证，违反贝尔不等式</li>
+                    <li>1982 阿斯佩：堵住了"定域性漏洞"</li>
+                    <li>2015 代尔夫特/NIST/维也纳：同时堵住所有主要漏洞的"无漏洞贝尔实验"</li>
+                </ul>
+                <p>结果一致：<strong>定域隐变量理论被实验严格排除</strong>。世界要么不是定域的，要么不是实在论的——你必须放弃一个。</p>
+            `
+        },
+        nosignal: {
+            tag: '🚫 重要澄清',
+            title: '为什么纠缠不能超光速通信？',
+            html: `
+                <p>这是一个常见误解。虽然测量一边瞬间影响了另一边的状态，但<strong>无法用来传递信息</strong>。</p>
+                <p><strong>关键原因：</strong>你<strong>不能控制</strong>测量结果是什么。</p>
+                <p><strong>详细说明：</strong>假设 Alice 和 Bob 各持一对纠缠粒子的一边：</p>
+                <ul>
+                    <li>Alice 测量自己的粒子，得到的结果是<strong>完全随机的</strong>（50% 自旋上，50% 自旋下）</li>
+                    <li>Bob 测量自己的粒子，结果也完全随机</li>
+                    <li>两边的结果<strong>相关</strong>（总是相反），但都没有规律</li>
+                </ul>
+                <p>Bob 看自己的结果，只能看到一串随机数——他根本不知道 Alice 是否测量过、什么时候测的。只有当 Alice 通过<strong>普通通信渠道（≤ 光速）</strong>把她的结果告诉 Bob，Bob 才能比对，发现两人的结果是相关的。</p>
+                <p><strong>这叫"无信号定理"（No-signaling theorem）</strong>：量子纠缠产生的相关性可以违反贝尔不等式，但不能用来传递任何信息。这巧妙地保护了相对论的因果律不被打破。</p>
+                <p><strong>那纠缠到底有什么用？</strong></p>
+                <ul>
+                    <li>量子隐形传态（必须配合经典通信）</li>
+                    <li>量子密钥分发（窃听必然破坏纠缠，被发现）</li>
+                    <li>量子计算（多个比特的纠缠提供并行计算能力）</li>
+                </ul>
+                <div class="analogy"><strong>类比：</strong>就像两人各拿一只总是颜色相反的"魔法手套"，无论分多远，你看到自己是红的，立刻知道对方是蓝的。但你无法<strong>选择</strong>自己看到红还是蓝——这种相关性无法用来通信。</div>
+            `
+        },
+        entanglement: {
+            tag: '👻 量子核心',
+            title: '量子纠缠：鬼魅般的超距作用',
+            html: `
+                <p><strong>什么是纠缠？</strong>当两个或多个粒子的量子态<strong>无法被独立描述</strong>时，它们就处于纠缠态。整体的状态明确，但每个粒子单独都没有确定的状态。</p>
+                <p><strong>典型例子（贝尔态）：</strong></p>
+                <div class="formula">|Ψ⟩ = (|↑↓⟩ - |↓↑⟩) / √2</div>
+                <p>这个态的意思是：两个电子，要么 A 上 B 下，要么 A 下 B 上，但每个单独都没有确定值。一旦测量 A 得到"上"，B 必然是"下"，反之亦然——无论它们相距多远，反应都是瞬时的。</p>
+                <p><strong>纠缠的奇特性质：</strong></p>
+                <ul>
+                    <li><strong>非定域性</strong>：相关性的产生不需要时间</li>
+                    <li><strong>整体性</strong>：纠缠系统的信息存储在整体中，不在各部分</li>
+                    <li><strong>独占性</strong>（单配性）：A 与 B 强纠缠，就不能同时与 C 强纠缠</li>
+                    <li><strong>脆弱性</strong>：与环境作用会破坏纠缠（退相干）</li>
+                </ul>
+                <p><strong>纠缠从哪里来？</strong>当两个粒子有过相互作用，或来自共同的源（如原子衰变），它们就可能处于纠缠态。光子对的产生通常用"自发参量下转换"晶体。</p>
+                <p><strong>实际应用：</strong></p>
+                <ul>
+                    <li><strong>量子隐形传态</strong>：把量子态从 A 传到 B（不是物质传送！）</li>
+                    <li><strong>量子加密</strong>：BB84、E91 协议</li>
+                    <li><strong>量子计算</strong>：多比特纠缠是量子加速的核心资源</li>
+                    <li><strong>"墨子号"卫星</strong>：实现千公里级别量子密钥分发</li>
+                </ul>
+                <p>纠缠从一个哲学谜题，变成了 21 世纪量子信息技术的核心资源——这是科学史上最戏剧性的逆转之一。</p>
+            `
+        },
+        manyworlds: {
+            tag: '🌌 多元宇宙',
+            title: '多世界解释（MWI）',
+            html: `
+                <p><strong>核心思想：</strong>休·埃弗雷特（Hugh Everett, 1957）提出：从来没有"波函数坍缩"这回事——薛定谔方程<strong>始终成立</strong>。每次量子测量发生时，宇宙就<strong>分裂</strong>成多个分支，每个可能的结果都在某个分支中真实发生。</p>
+                <p><strong>薛定谔的猫怎么解？</strong></p>
+                <ul>
+                    <li>在分支 A 的世界里，原子未衰变，猫活着，你看到活猫</li>
+                    <li>在分支 B 的世界里，原子衰变了，猫死了，你看到死猫</li>
+                    <li>"你"也分裂成两个，每个"你"都觉得自己看到了唯一的结果</li>
+                </ul>
+                <p><strong>优点：</strong></p>
+                <ul>
+                    <li>没有神秘的"坍缩"，理论极简</li>
+                    <li>不需要区分"观察者"和"系统"——观察者只是另一个量子系统</li>
+                    <li>完全决定论：整个宇宙的波函数按薛定谔方程确定演化</li>
+                </ul>
+                <p><strong>代价：</strong></p>
+                <ul>
+                    <li>存在<strong>无穷多个平行宇宙</strong>——本体论代价巨大</li>
+                    <li>"概率"的含义变得模糊：所有结果都发生了，怎么解释 |Ψ|²？</li>
+                    <li>分支何时发生、如何识别——技术细节复杂</li>
+                </ul>
+                <p><strong>当代支持者：</strong>大卫·多伊奇（量子计算先驱）、肖恩·卡罗尔（宇宙学家）等。多伊奇的论证是：量子计算机的并行计算能力，最自然的解释就是它在多个平行世界中同时计算。</p>
+                <p><strong>哲学震撼：</strong>如果多世界为真，那么每个量子事件都在创造新世界——你做的每个选择背后，都有无数个"另一个你"做了不同的选择。这是科幻吗？还是物理学？</p>
+            `
+        },
+        qcomputing: {
+            tag: '💻 前沿应用',
+            title: '量子计算：利用叠加和纠缠',
+            html: `
+                <p><strong>经典 vs 量子：</strong></p>
+                <ul>
+                    <li><strong>经典比特</strong>：要么 0 要么 1</li>
+                    <li><strong>量子比特（qubit）</strong>：可以是 α|0⟩ + β|1⟩ 的叠加态</li>
+                </ul>
+                <p><strong>量子优势从哪来？</strong>n 个量子比特可以同时处于 2ⁿ 个基态的叠加。一次量子操作相当于对 2ⁿ 个状态同时进行计算——这是经典计算无法企及的并行性。</p>
+                <p><strong>但有限制：</strong>测量时叠加态会坍缩成单一结果。所以量子算法的设计精髓是：让"正确答案"对应的振幅相干增强，"错误答案"的振幅相互抵消，最后测量大概率得到正确答案。</p>
+                <p><strong>著名量子算法：</strong></p>
+                <ul>
+                    <li><strong>Shor 算法（1994）</strong>：多项式时间分解大整数——RSA 加密的杀手</li>
+                    <li><strong>Grover 算法（1996）</strong>：无序搜索加速 √N 倍</li>
+                    <li><strong>HHL 算法</strong>：求解线性方程组的指数加速</li>
+                    <li><strong>VQE / QAOA</strong>：化学/优化问题的近期应用</li>
+                </ul>
+                <p><strong>当前进展（2024）：</strong></p>
+                <ul>
+                    <li>谷歌 Sycamore（2019）首次"量子优越性"演示</li>
+                    <li>IBM 1000+ 量子比特处理器</li>
+                    <li>中国"九章"光量子计算机</li>
+                    <li>但容错通用量子计算机仍未实现，主要瓶颈是<strong>退相干</strong>和<strong>纠错</strong></li>
+                </ul>
+                <p><strong>意义：</strong>从"上帝掷骰子吗"的哲学争论，到今天 IBM/Google/中国量子团队的工程竞争——量子力学完成了从理论玄学到产业革命的蜕变。这是百年科学史上最壮观的故事之一。</p>
+            `
+        }
+    };
+
+    // ========== 弹窗逻辑 ==========
+    const overlay = document.getElementById('modalOverlay');
+    const modalContent = document.getElementById('modalContent');
+    const modalClose = document.getElementById('modalClose');
+
+    function openModal(key) {
+        const data = explanations[key];
+        if (!data) return;
+        modalContent.innerHTML = `
+            <h3>${data.title}</h3>
+            <span class="modal-tag">${data.tag}</span>
+            ${data.html}
+        `;
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        overlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+    document.querySelectorAll('.qmark').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.stopPropagation();
+            openModal(btn.dataset.modal);
+        });
+    });
+    modalClose.addEventListener('click', closeModal);
+    overlay.addEventListener('click', e => {
+        if (e.target === overlay) closeModal();
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && overlay.classList.contains('active')) closeModal();
+    });
+
+    // ========== 侧边栏滚动高亮 ==========
+    document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('.sidebar a');
+        const sections = [];
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const target = document.getElementById(href.substring(1));
+                if (target) sections.push({ link, target });
+            }
+        });
+
+        let ticking = false;
+        function updateActive() {
+            let current = null;
+            const scrollTop = window.scrollY + 120;
+            for (let i = sections.length - 1; i >= 0; i--) {
+                if (sections[i].target.offsetTop <= scrollTop) {
+                    current = sections[i].link;
+                    break;
+                }
+            }
+            if (current && !current.classList.contains('active')) {
+                links.forEach(l => l.classList.remove('active'));
+                current.classList.add('active');
+            }
+            ticking = false;
+        }
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(updateActive);
+                ticking = true;
+            }
+        });
+    });
+</script>
+
+
+</body></html>

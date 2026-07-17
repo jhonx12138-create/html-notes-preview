@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《吴军数学通识讲义》· 完整知识图谱</title>
+    <style>
+        :root {
+            --bg: #fdfdf9;
+            --sidebar-bg: #f5f0e8;
+            --card-bg: #ffffff;
+            --border: #e0d8cc;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #1a5276;
+            --accent-light: #eaf2f8;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --highlight: #eaf2f8;
+            --radius: 10px;
+            --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+        }
+
+        /* ========== 侧边栏 ========== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 100;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+        .sidebar h3 {
+            font-size: 1rem;
+            color: #1a5276;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #1a5276;
+            letter-spacing: 0.04em;
+        }
+        .sidebar .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar .toc-list li {
+            margin-bottom: 0.15rem;
+        }
+        .sidebar .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            color: #4a3f33;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .sidebar .toc-list a:hover {
+            background: #d4c8b0;
+            color: #1a1508;
+        }
+        .sidebar .toc-list a.active {
+            background: #1a5276;
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar .toc-list .toc-l2 {
+            padding-left: 0.8rem;
+            font-size: 0.83rem;
+        }
+        .sidebar .toc-list .toc-l3 {
+            padding-left: 1.6rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        /* ========== 主内容区 ========== */
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 2rem 2rem 2.5rem;
+            max-width: 1100px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+            color: #1e1508;
+        }
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.4rem;
+        }
+        .header .meta {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.6rem;
+        }
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #85a5c0;
+            border-radius: 20px;
+            padding: 0.5rem 1.4rem;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-family: var(--font-sans);
+        }
+
+        /* Section */
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2.2rem;
+            box-shadow: var(--shadow);
+            scroll-margin-top: 1rem;
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.9rem;
+            margin-bottom: 1.3rem;
+            color: #0d2b40;
+            font-weight: 700;
+        }
+        .section h3 {
+            font-size: 1.2rem;
+            margin: 2rem 0 0.8rem;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid var(--border);
+            color: #1a5276;
+            font-weight: 700;
+        }
+        .section h4 {
+            font-size: 1.05rem;
+            margin: 1.5rem 0 0.6rem;
+            color: #2a6280;
+            font-weight: 600;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        .info-card {
+            background: #fdfaf6;
+            border-radius: 8px;
+            padding: 1rem 1.3rem;
+            border-left: 4px solid #ccc;
+        }
+        .info-card.concept  { border-color: #1a5276; background: #eaf2f8; }
+        .info-card.case     { border-color: #b8956a; background: #fdf8f2; }
+        .info-card.tool     { border-color: #7a9f7a; background: #f5faf5; }
+        .info-card.history  { border-color: #8b7aaa; background: #f8f5fb; }
+        .info-card .label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: var(--font-sans);
+            color: #1a3a50;
+        }
+        .info-card .content {
+            font-size: 0.94rem;
+            color: #4a3f33;
+        }
+        .info-card .content ul {
+            margin-top: 0.3rem;
+            padding-left: 1.3rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.3rem;
+        }
+        .info-card .example {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            background: #fffef9;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #5c4a2a;
+            border-left: 3px solid #d4b896;
+        }
+
+        /* Insight Cards */
+        .insight-card {
+            background: var(--highlight);
+            border: 1px solid #b0c8d8;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .insight-card h4 {
+            color: #1a5276;
+            margin-bottom: 0.4rem;
+            font-size: 1.05rem;
+        }
+        .insight-card p { font-size: 0.94rem; color: #4a3f33; }
+
+        /* Two column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Blockquote */
+        blockquote {
+            background: var(--highlight);
+            border-left: 4px solid #5f9ea0;
+            margin: 1.2rem 0;
+            padding: 1rem 1.4rem;
+            font-style: italic;
+            border-radius: 0 6px 6px 0;
+            color: #1a3a50;
+        }
+        blockquote .cite {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-style: normal;
+            color: var(--text-muted);
+        }
+
+        /* Table */
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.94rem;
+        }
+        table.extension th {
+            background: #eaf2f8;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #1a5276;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
+        }
+        table.extension td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
+        }
+        table.extension tr:hover td {
+            background: #fdfaf6;
+        }
+        hr.divider {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 2.5rem 0;
+        }
+
+        /* Back to top */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a5276;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 99;
+        }
+        .back-to-top:hover {
+            background: #0d2b40;
+        }
+
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .info-grid, .two-col { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ==================== 侧边栏目录 ==================== -->
+<nav class="sidebar" id="sidebar">
+    <h3>📚 全书章节目录</h3>
+    <ul class="toc-list">
+        <li><a href="#header">📖 书籍信息</a></li>
+        <li><a href="#knowledge-tree">🌳 全书知识结构树</a></li>
+        <li><a href="#part1">📐 基础篇（第1-3章）</a></li>
+        <li><a href="#ch1" class="toc-l2">第1章 数学是什么</a></li>
+        <li><a href="#ch2" class="toc-l2">第2章 勾股定理与逻辑</a></li>
+        <li><a href="#ch3" class="toc-l2">第3章 数列与级数</a></li>
+        <li><a href="#part2">🔢 数字篇（第4-5章）</a></li>
+        <li><a href="#ch4" class="toc-l2">第4章 方程与函数</a></li>
+        <li><a href="#ch5" class="toc-l2">第5章 无穷与极限</a></li>
+        <li><a href="#part3">📏 几何篇（第6-7章）</a></li>
+        <li><a href="#ch6" class="toc-l2">第6章 公理化体系</a></li>
+        <li><a href="#ch7" class="toc-l2">第7章 解析几何</a></li>
+        <li><a href="#part4">📊 代数篇（第8-9章）</a></li>
+        <li><a href="#ch8" class="toc-l2">第8章 函数与向量</a></li>
+        <li><a href="#ch9" class="toc-l2">第9章 矩阵与线性代数</a></li>
+        <li><a href="#part5">∫ 微积分篇（第10-11章）</a></li>
+        <li><a href="#ch10" class="toc-l2">第10章 导数与微分</a></li>
+        <li><a href="#ch11" class="toc-l2">第11章 积分</a></li>
+        <li><a href="#part6">🎲 概率统计篇（第12-15章）</a></li>
+        <li><a href="#ch12" class="toc-l2">第12章 概率论起源</a></li>
+        <li><a href="#ch13" class="toc-l2">第13章 泊松与高斯分布</a></li>
+        <li><a href="#ch14" class="toc-l2">第14章 贝叶斯公式</a></li>
+        <li><a href="#ch15" class="toc-l2">第15章 统计学</a></li>
+        <li><a href="#part7">🌐 终篇（第16章）</a></li>
+        <li><a href="#ch16" class="toc-l2">第16章 数学的位置</a></li>
+        <li><a href="#cognition">🧠 认知升级主线</a></li>
+        <li><a href="#extension">🔍 延伸与比较</a></li>
+    </ul>
+</nav>
+
+<!-- ==================== 主内容区 ==================== -->
+<div class="main">
+
+    <!-- ==================== 头部 ==================== -->
+    <div class="header" id="header">
+        <h1>《吴军数学通识讲义》</h1>
+        <div class="subtitle">原来数学可以这样用 —— 一本写给所有人的数学通识讲义</div>
+        <div class="meta">
+            <span><strong>作者</strong>：吴军</span>
+            <span><strong>出版年份</strong>：2021年4月</span>
+            <span><strong>出版社</strong>：新星出版社（得到图书出品）</span>
+            <span><strong>豆瓣评分</strong>：8.5</span>
+        </div>
+        <div class="framework-badges">
+            <span class="badge">📐 数学思维</span>
+            <span class="badge">🎓 通识教育</span>
+            <span class="badge">🧠 认知升级</span>
+        </div>
+        <p style="margin-top:1rem; color:#1a5276; font-size:0.92rem;">
+            <strong>贯穿主线</strong>：从直观到抽象，从静态到动态，从宏观到微观，从确定到随机
+        </p>
+    </div>
+
+    <!-- ==================== 全书知识结构树 ==================== -->
+    <div class="section" id="knowledge-tree">
+        <h2>全书知识结构树</h2>
+        <div style="background:var(--accent-light); border-radius:8px; padding:1.5rem 2rem; font-family:var(--font-sans); line-height:2.2;">
+            <div style="font-weight:700; color:#0d2b40; font-size:1.05rem;">《吴军数学通识讲义》七篇 × 16章</div>
+            <div style="border-top:1px dashed #b0c8d8; margin:0.6rem 0;"></div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 基础篇（第1-3章）—— 数学是什么</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 毕达哥拉斯定理 · 逻辑证明 vs 经验证实</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 无理数与黄金分割 · 数学的预见性与美学</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 数列与级数 · 趋势比当下重要</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 数字篇（第4-5章）—— 从静态数值到动态趋势</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 方程 · 逆向思维的工具</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 虚数与无穷 · 虚构概念的现实力量</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 几何篇（第6-7章）—— 公理化体系</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 欧几里得几何 · 5条公理构建世界</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 非欧几何与解析几何 · 创新的路径</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 代数篇（第8-9章）—— 从个体到整体</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 函数 · 从静态到动态的认知升级</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 向量与矩阵 · 多元思维的工具</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 微积分篇（第10-11章）—— 理解变化</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 导数 · 微观变化看宏观趋势</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 积分 · 从微观累积到宏观总量</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 概率统计篇（第12-15章）—— 把握不确定性</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 古典概率与伯努利试验</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 泊松分布与高斯分布</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 贝叶斯公式与统计学</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">└─ 终篇（第16章）—— 数学的位置</div>
+        </div>
+    </div>
+
+    <!-- ==================== 基础篇 ==================== -->
+    <div class="section" id="part1">
+        <h2>基础篇 · 数学是什么（第1-3章）</h2>
+
+        <!-- 第1章 -->
+        <h3 id="ch1">第1章 · 数学与自然科学的本质区别</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">核心区别一：测量 vs 逻辑推理</div>
+                <div class="content">
+                    自然科学依靠实验和测量来证实结论——比如伽利略在比萨斜塔上扔铁球，用实验验证自由落体规律。但数学不同，数学的结论只能从定义和公理出发，使用逻辑严格证明，不能靠实验。<br>
+                    <strong>为什么重要</strong>：这意味着数学的结论具有绝对性——一旦被证明，就永远为真，不会像科学结论那样被新的实验推翻。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：在数学上证明了“不存在最大的素数”，这个结论就永远不会被推翻。而物理学中，“地球是宇宙中心”曾经也是被“证实”的——但它后来被推翻了。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">核心区别二：用事实证明 vs 用逻辑证明</div>
+                <div class="content">
+                    科学可以用大量事实来支撑一个理论——看到1000只白天鹅，就倾向于相信“所有天鹅都是白的”。但数学不行：一个反例就足以推翻整个定理。如果一个命题声称对所有自然数成立，那么只要找到一个反例，整个命题就是假的。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：费马大定理——费马在1637年写下“我找到了一个美妙的证明”，但后来的数学家花了358年才真正证明它。在这358年中，尽管验证了无数个具体的n值都成立，数学家们仍然不认为它已经得证——直到1994年安德鲁·怀尔斯给出了完整的逻辑证明。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学定理的确立过程</div>
+                <div class="content">
+                    特例 → 发现规律 → 提出猜想 → 严格证明 → 成为定理 → 产生推论 → 新的定理与新的应用。<br>
+                    <strong>关键</strong>：猜想和定理的区别在于有没有经过严格证明。哥德巴赫猜想（任何一个大于2的偶数都可以写成两个素数之和）至今没有被证明，所以它仍然是“猜想”，不是“定理”。
+                </div>
+            </div>
+            <div class="info-card history">
+                <div class="label">数学预见性：无理数的发现</div>
+                <div class="content">
+                    毕达哥拉斯学派信奉“万物皆数”（有理数）。但希帕索斯用毕达哥拉斯定理（勾股定理）本身，严格证明了√2不是有理数。这个发现是颠覆性的，因为它是<strong>从体系内部用逻辑推出</strong>的，不依赖任何外部经验。<br>
+                    这体现了数学的强大力量：它能看到人类直觉和经验无法触及的盲区。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：现代数学中，四维空间、高维球体、虚数——这些都无法“看见”或“触摸”，但数学可以用逻辑严格研究它们的性质。爱因斯坦后来发现，四维时空的数学模型恰好描述了我们所在的宇宙。</div>
+            </div>
+        </div>
+
+        <!-- 第2章 -->
+        <h3 id="ch2">第2章 · 勾股定理与逻辑的力量</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">毕达哥拉斯定理（勾股定理）</div>
+                <div class="content">
+                    <strong>内容</strong>：直角三角形两条直角边的平方和等于斜边的平方（a² + b² = c²）。<br>
+                    中国古代的勾股定理（勾三股四弦五）是经验总结。毕达哥拉斯则给出了<strong>逻辑证明</strong>——这是质的飞跃。<br>
+                    该定理有超过400种证明方法，包括欧几里得的面积法、印度数学家婆什迦罗的图解法、美国第20任总统加菲尔德的梯形证明。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">黄金分割：数学与美学的桥梁</div>
+                <div class="content">
+                    <strong>黄金分割比例</strong> φ = (1+√5)/2 ≈ 1.618。<br>
+                    美感来自几何图形的<strong>相似性</strong>——将一个矩形切掉一个正方形后，剩下的小矩形与原矩形相似，这个比例就是黄金分割。<br>
+                    <strong>等角螺旋线</strong>：蜗牛壳、台风、银河系的旋臂都呈现这种形状——每转过一个固定角度，到中心的距离就乘以一个固定比例（φ）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：华罗庚推广的<strong>优选法</strong>——在生产实验中寻找最佳配比时，每次在黄金分割点做实验，可以最快逼近最优解。比如调试咖啡豆的烘焙温度，用优选法可以用最少的实验次数找到最佳温度。</div>
+            </div>
+        </div>
+
+        <!-- 第3章 -->
+        <h3 id="ch3">第3章 · 数列与级数：趋势比当下重要</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">数列与级数的核心思维</div>
+                <div class="content">
+                    <strong>数列</strong>帮助我们“从孤立事件中发现规律”。<br>
+                    <strong>斐波那契数列</strong>：1, 1, 2, 3, 5, 8, 13, 21…——每一项是前两项之和。相邻两项的比值越来越接近黄金分割（1.618）。这个数列广泛出现在自然界中：花瓣数量（百合3瓣、梅花5瓣、雏菊34或55瓣）、菠萝表皮的螺旋线数。
+                </div>
+                <div class="example">💡 <strong>例子：传销骗局与等比级数</strong>——如果一个传销组织要求每人发展5个下线，只需12层就能覆盖2.4亿人（比全中国人口还多）。这说明任何承诺指数增长的商业模式都必然不可持续——识别庞氏骗局不需要懂金融，只需要懂等比数列。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学边界：希尔伯特第十问题</div>
+                <div class="content">
+                    1900年，希尔伯特提出23个数学问题。第十问题：是否存在一个通用算法，可以判断任意一个多项式方程是否有整数解？1970年，马蒂亚塞维奇证明：<strong>不存在</strong>这样的算法——有些数学问题是不可判定的。<br>
+                    <strong>启示</strong>：数学不是万能的，承认局限性恰恰是理性的标志。哥德尔不完备定理同样指出：任何足够强大的数学体系中，都存在既不能证明也不能证伪的命题。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 数字篇 ==================== -->
+    <div class="section" id="part2">
+        <h2>数字篇 · 从静态数值到动态趋势（第4-5章）</h2>
+
+        <h3 id="ch4">第4章 · 方程与虚数</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">方程：逆向思维的工具</div>
+                <div class="content">
+                    <strong>方程的本质</strong>是逆向思维——对要求解的问题先存疑，把已知条件和未知量之间的关系用等式表达清楚，然后反向推理，一步步得到答案。<br>
+                    <strong>鸡兔同笼问题</strong>：用方程解，设鸡x只、兔y只，列出“x+y=35, 2x+4y=94”，一步到位。用算术凑数法只能解决特定问题，方程则是通用的。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：笛卡尔方法论——把任何复杂问题分解为若干简单问题，用方程表示未知量之间的关系，然后逐步求解。这种思维方式不仅用于数学，也适用于商业分析、工程规划等任何需要“从已知推导未知”的场景。</div>
+            </div>
+            <div class="info-card history">
+                <div class="label">虚数的诞生与意义</div>
+                <div class="content">
+                    <strong>i² = -1</strong>——在解一元三次方程的过程中，数学家发现公式中出现了负数开根号，这在当时被认为是无意义的。<br>
+                    但数学家没有放弃，而是创造性地定义了虚数i = √(-1)。从实数到虚数再到复数，人类对数的理解“从形象具体真实的对象，上升到了纯粹理性的抽象认识”。<br>
+                    今天，虚数是电子工程、量子力学和信号处理的基础——这些“虚构”的数字支撑着整个现代科技。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch5">第5章 · 无穷大、无穷小与极限</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">无穷大的本质</div>
+                <div class="content">
+                    <strong>无穷大不是一个具体的数</strong>，它反映的是“一种无限增加的趋势”。在无穷大的世界里，部分可以完全和整体等价——比如正整数（1,2,3…）和正偶数（2,4,6…）虽然看起来后者是前者的一半，但它们的“个数”实际上一样多（因为它们之间可以建立一一对应关系）。<br>
+                    <strong>希尔伯特旅馆</strong>：一个有无穷多个房间的旅馆即使住满了，也能通过让每位客人移到下一个房间，给新来的客人腾出空间。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">极限与第二次数学危机</div>
+                <div class="content">
+                    <strong>芝诺悖论</strong>：阿喀琉斯永远追不上乌龟——每次到达乌龟之前的位置，乌龟又前进了一点。这个悖论的破解需要极限理论：无穷多段距离之和可以是一个有限值。<br>
+                    <strong>0.999… = 1</strong>：不是约等于，而是严格等于。1/3 = 0.333…，两边乘3得到0.999… = 1。这是极限概念的直观体现。<br>
+                    牛顿和莱布尼茨发明微积分后，贝克莱主教批评无穷小量“既是零又不是零”。后来数学家通过ε-δ的严格定义彻底解决了这个问题。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 几何篇 ==================== -->
+    <div class="section" id="part3">
+        <h2>几何篇 · 公理化体系的建立与发展（第6-7章）</h2>
+
+        <h3 id="ch6">第6章 · 欧几里得几何与非欧几何</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">公理化体系：5条公理构建世界</div>
+                <div class="content">
+                    欧几里得《几何原本》只用<strong>5条公理</strong>（如“两点之间可以画一条直线”“所有直角都相等”等）加上5条公设，推导出了整个几何学大厦——400多条定理，无一例外地从这几条公理逻辑推导出来。<br>
+                    <strong>核心启示</strong>：“有什么样的公理，就有什么样的结果，这就如同有什么样的DNA就会得到什么样的物种一样。”
+                </div>
+                <div class="example">💡 <strong>例子：法律体系与公理化</strong>——宪法就是法律体系的“公理”，所有下位法都必须从宪法原则出发。宪法的细微差异会导致整个法律体系的不同（比如美国的言论自由法系 vs 德国的诽谤罪优先体系）。</div>
+            </div>
+            <div class="info-card history">
+                <div class="label">非欧几何：换一条公理会怎样</div>
+                <div class="content">
+                    欧几里得的第五公理（平行公理）看起来不那么“自明”：过直线外一点有且只有一条平行线。<br>
+                    罗巴切夫斯基修改了这条公理——允许过一点做多条平行线——结果推导出了一套完全不同但逻辑自洽的几何体系（双曲几何）。后来黎曼又发展了椭圆几何（没有平行线）。<br>
+                    非欧几何在发明之时被认为“毫无实际用处”，但后来成为爱因斯坦广义相对论的数学基础——时空在大质量天体附近是弯曲的，用黎曼几何来描述。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch7">第7章 · 解析几何</h3>
+        <div class="info-grid">
+            <div class="info-card tool">
+                <div class="label">解析几何：代数与几何的融合</div>
+                <div class="content">
+                    笛卡尔发明坐标系，将几何问题转化为代数方程——这是人类认知史上一次重大的跨领域融合。一条曲线不再是“画出来的那个形状”，而是一个方程 f(x, y) = 0。<br>
+                    <strong>方法论意义</strong>：“工具能弥补理解力和记忆力的不足。”——当你遇到一个很难直观想象的几何问题，把它转化为方程，用代数工具来解决。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：判断卫星轨道是否与某个天体相交——用几何方法需要画图、测量、估算。用解析几何，只需要把轨道方程和天体方程联立，看方程组有没有解。</div>
+            </div>
+            <div class="info-card case">
+                <div class="label">公理化思维的实际意义</div>
+                <div class="content">
+                    公理化的精髓不是“记住那几条公理”，而是：<strong>1. 明确你的基本假设</strong>（你默认了什么前提）；<strong>2. 从这些假设出发进行逻辑推理</strong>；<strong>3. 如果结论有问题，检查假设是否正确。</strong><br>
+                    这种思维方式适用于政策制定、商业决策、软件架构设计等所有需要逻辑一致性的领域。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 代数篇 ==================== -->
+    <div class="section" id="part4">
+        <h2>代数篇 · 从数量到趋势，从个体到整体（第8-9章）</h2>
+
+        <h3 id="ch8">第8章 · 函数与向量</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">函数：从静态到动态的认知升级</div>
+                <div class="content">
+                    “理解函数，我们就从小学思维上升到中学思维了。”小学关注的是具体的数（1+2=3），函数关注的是<strong>变量之间的关系</strong>和<strong>变化趋势</strong>。<br>
+                    函数的本质：给一个输入x，对应一个确定的输出f(x)。这与因果关系区分开来：<strong>决定性关系</strong>（函数：给定x必有确定的y）vs <strong>相关性关系</strong>（x和y统计上相关，但不是确定的）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：学习时间与考试成绩是相关性关系（不是函数关系）——你不能说“学习10小时就一定考95分”。但自由落体距离是时间的函数：h = 1/2gt²，给定t就有确定的h。理解这两种关系的区别，是科学思维的基础。</div>
+            </div>
+            <div class="info-card tool">
+                <div class="label">向量：多元思维的工具</div>
+                <div class="content">
+                    <strong>向量</strong>是既有大小又有方向的量——不是单一的数值，而是一组数值的组合。两个人拉一辆车，力的大小和方向不同，合力由向量加法确定。<br>
+                    <strong>高维向量</strong>：一个人的信用评分可以是多维的（收入、资产、历史还款记录、消费习惯），这是一个高维空间中的向量。余弦定理可以计算两个向量的夹角，用来判断相似度。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch9">第9章 · 矩阵与线性代数</h3>
+        <div class="info-grid">
+            <div class="info-card tool">
+                <div class="label">矩阵：从个体思维到整体思维</div>
+                <div class="content">
+                    “矩阵是一个让我们对事物的理解从个体到整体的工具。”一个矩阵可以同时描述多个对象在多个维度上的属性。<br>
+                    <strong>核心应用：线性方程组</strong>——几十个变量、几十个方程的方程组，用矩阵来描述和求解非常简洁。今天几乎所有工程计算都在与矩阵打交道。
+                </div>
+                <div class="example">💡 <strong>例子：余弦定理与文本分类</strong>——将每篇文档表示为词频向量（每个词出现的次数构成的向量），计算两篇文档向量的余弦值：余弦值越接近1，两篇文档内容越相似。搜索引擎、推荐系统、垃圾邮件分类都基于这个原理。</div>
+            </div>
+            <div class="info-card case">
+                <div class="label">简历筛选的数学原理</div>
+                <div class="content">
+                    将每个候选人表示为一个向量（学历、工作经验、技能匹配度等维度），将职位要求也表示为向量，计算两个向量的余弦相似度。得分最高者即为最佳匹配。<br>
+                    这不是“拍脑袋”，而是有严格数学基础的决策方法。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 微积分篇 ==================== -->
+    <div class="section" id="part5">
+        <h2>微积分篇 · 理解变化与积累（第10-11章）</h2>
+
+        <h3 id="ch10">第10章 · 导数与微分</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">导数：从宏观深入到微观</div>
+                <div class="content">
+                    <strong>导数的本质</strong>：揭示事物变化的<strong>瞬时速率</strong>。不是你走了多远（距离），而是你正在以多快的速度走（瞬时速度）。不是你赚了多少钱（总量），而是你赚钱的速度正在加快还是放慢（增长率的变化）。<br>
+                    <strong>极值问题</strong>：利润最大化的产量是多少？导数等于零的点就是可能的极值点——边际收益等于边际成本。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：企业决策——如果每多生产一件产品的额外成本（边际成本）高于额外收入（边际收益），就不应该继续增产。最优产量恰好是边际成本等于边际收益的那个点。这种分析方法来自微积分。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">微积分的认知价值</div>
+                <div class="content">
+                    吴军指出，微积分能够“帮助一个年轻人把自己对世界、对变化、对规律的理解，从静态的、孤立的和具体的层面，上升到动态的、连续的和规律性的层面”。<br>
+                    你不一定需要会算复杂的微积分题，但理解“变化率”“累积效应”和“最优化”这三个概念，已经能让你用完全不同的视角看世界。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch11">第11章 · 积分：从微观到宏观</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">积分的本质</div>
+                <div class="content">
+                    积分是微分的逆运算——从无数个微小的瞬时变化，累积出宏观的总量。<br>
+                    <strong>一个生动的类比</strong>：“能力是努力的积分，成绩是能力的积分，好形象是成绩的积分。”每一个微小的努力积累起来，最终决定一个人的能力水平。
+                </div>
+                <div class="example">💡 <strong>例子：求不规则图形的面积</strong>——切成无数个细长的矩形，每个矩形的面积趋近于0，但无穷多个加起来就是精确的总面积。这就是定积分的直观理解：把一个复杂的宏观问题分解为无数个简单的微观问题，再汇总。</div>
+            </div>
+            <div class="info-card history">
+                <div class="label">牛顿与莱布尼茨之争</div>
+                <div class="content">
+                    两人几乎同时独立发明微积分，牛顿可能是先发明者，但莱布尼茨的符号系统（dy/dx、∫）更优越，一直沿用至今。这场争论导致英国数学界与欧洲大陆隔绝了将近100年——教训是，一个好的符号系统和表达方式，有时候比发明本身还重要。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 概率统计篇 ==================== -->
+    <div class="section" id="part6">
+        <h2>概率和数理统计篇 · 把握不确定性（第12-15章）</h2>
+
+        <h3 id="ch12">第12章 · 概率论起源：来自赌徒的学问</h3>
+        <div class="info-grid">
+            <div class="info-card history">
+                <div class="label">古典概率</div>
+                <div class="content">
+                    概率论起源于17世纪的赌博问题：两个赌徒在赌博中途被迫停止，如何公平分配赌注？帕斯卡和费马的通信奠定了概率论的基础。<br>
+                    拉普拉斯系统化了<strong>古典概率</strong>：基于所有可能结果的等可能性进行计算。比如掷一枚公平的骰子，每个面朝上的概率都是1/6。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">伯努利试验与大数定律</div>
+                <div class="content">
+                    <strong>伯努利试验</strong>：在相同条件下重复进行只有两种可能结果（成功/失败）的实验。<br>
+                    <strong>大数定律</strong>：实验次数足够多时，事件发生的频率会趋近于其真实概率。抛硬币10次可能是7次正面，抛10000次则正面比例非常接近50%。<br>
+                    <strong>启示</strong>：随机事件在单次实验中不可预测，但在大量实验中呈现出确定的规律。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch13">第13章 · 泊松分布与高斯分布</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">泊松分布：稀有事件的规律</div>
+                <div class="content">
+                    <strong>描述什么</strong>：在固定时间或空间内，稀有事件发生次数的概率分布。比如一天内交通事故的数量、一本书中的错别字数、一个呼叫中心每小时接到的电话数。<br>
+                    <strong>实际应用</strong>：保险公司为什么必须有足够大的客户群？因为如果只有100个客户，一次大的理赔就可能让公司破产。当客户数量达到百万级，每年的总赔付额就非常稳定可预测了。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">高斯分布（正态分布）：大概率事件的规律</div>
+                <div class="content">
+                    自然界和社会中大量现象都近似服从正态分布——身高、体重、考试成绩、测量误差。分布的形状是钟形曲线：大多数数据集中在均值附近，离均值越远出现的概率越低。<br>
+                    <strong>均值与方差</strong>：均值描述“理想状态”（中心在哪里），方差描述“现实与理想的差距”（数据有多分散）。标准差σ刻画了波动的幅度。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：质量控制——工厂生产螺丝，目标直径10mm。如果实际直径服从均值为10mm、标准差为0.01mm的正态分布，那么99.7%的螺丝直径在9.97mm到10.03mm之间（±3σ）。质检人员据此设置合格范围。</div>
+            </div>
+        </div>
+
+        <h3 id="ch14">第14章 · 贝叶斯公式：机器翻译的原理</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">贝叶斯公式</div>
+                <div class="content">
+                    <strong>P(A|B) = P(B|A) × P(A) / P(B)</strong><br>
+                    <strong>白话解读</strong>：在观察到新证据B之后，我们对假说A的信念应该如何更新。新信念 = 旧信念 × 证据的力度。<br>
+                    <strong>先验概率</strong>P(A)：在看到任何证据之前，我们对A的初始信念。<strong>后验概率</strong>P(A|B)：看到证据B之后更新过的信念。
+                </div>
+                <div class="example">💡 <strong>例子：机器翻译</strong>——给定英文句子E，计算中文句子C的翻译概率P(C|E)。这个概率难以直接计算，但贝叶斯公式将其转化为P(E|C)×P(C)/P(E)。P(C)是中文句子本身的自然程度（语言模型），P(E|C)是翻译回英文的准确性（翻译模型）。现代机器翻译系统（如谷歌翻译）的核心思想就源于此。</div>
+            </div>
+            <div class="info-card case">
+                <div class="label">贝叶斯思维的实际价值</div>
+                <div class="content">
+                    贝叶斯主义的核心是<strong>不断根据新信息更新信念</strong>。你不需要算出精确的后验概率，只需要养成“看到新证据后调整自己的判断”的习惯。这与固执己见相反——贝叶斯主义者永远是开放的、可修正的。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch15">第15章 · 统计学：方法论与世界观</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">概率是世界观，统计是方法论</div>
+                <div class="content">
+                    <strong>概率论</strong>：已知概率分布，推断事件发生的可能性（从因到果）。<br>
+                    <strong>统计学</strong>：已知观测到的数据，推断背后的概率分布（从果到因）。<br>
+                    比如：已知硬币公平（概率50%），推算连抛10次正面朝上的概率——这是概率论。抛了1000次得到530次正面，推断这枚硬币是否公平——这是统计学。
+                </div>
+            </div>
+            <div class="info-card tool">
+                <div class="label">古德-图灵折扣估计：防范黑天鹅</div>
+                <div class="content">
+                    如果你从未见过某种事件发生，应该给它的概率分配多少？0吗？那如果它真的发生了，你的模型就彻底崩溃。<br>
+                    <strong>古德-图灵方法</strong>：将一部分概率“预算”留给从未发生过的事件，这样当罕见事件发生时，模型不会完全失效。这在金融风险管理（应对市场崩盘）和自然语言处理（遇到从未见过的词）中都有重要应用。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 终篇 ==================== -->
+    <div class="section" id="part7">
+        <h2>终篇 · 数学在人类知识体系中的位置（第16章）</h2>
+        <h3 id="ch16">第16章 · 数学与哲学、科学、逻辑的关系</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">数学与哲学：一头一尾</div>
+                <div class="content">
+                    哲学追问最根本的问题（存在是什么？知识是什么？），数学提供最根本的工具（如何严格地推理？）。<br>
+                    吴军指出：“无用之用是为大用，一个人只有在深刻理解了人类知识的普遍性原理之后，才能站在一个制高点往下俯视。”
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学与自然科学</div>
+                <div class="content">
+                    数学是自然科学的语言——牛顿用微积分描述力学，爱因斯坦用黎曼几何描述引力，海森堡用矩阵描述量子力学。每一次物理学革命背后，都或前或后地伴随着数学工具的革新。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学是更底层的工具</div>
+                <div class="content">
+                    数学不能直接解决实际问题，但能提供思路。“数学思维不是指算小账算得清楚，而是说善于基于数学知识，使用逻辑发现问题，或者预见到不得不做的事情。”<br>
+                    学好数学的目的不是会解题，而是“让我们变成更好的人”。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">通识教育的本质</div>
+                <div class="content">
+                    “通识教育的本质，即能够将这些知识用于许多地方，而不仅仅是直接用来做具体的事情。”——你不需要记住所有公式，但你应该知道数学有哪些分支、每个分支解决什么问题、以及这套思维方式如何迁移到生活中。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 认知升级主线 ==================== -->
+    <div class="section" id="cognition">
+        <h2>贯穿全书的认知升级主线</h2>
+        <div class="two-col">
+            <div>
+                <div class="insight-card">
+                    <h4>升级一：从直观到抽象</h4>
+                    <p>无理数→虚数→无穷大→高维空间。数学不断超越感官经验，训练纯理性的抽象思维能力。“虚构”的概念（虚数、四维空间）反而成为理解真实世界最强大的工具。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>升级二：从静态到动态</h4>
+                    <p>数字→方程→函数→微积分。从关注“是什么”到关注“怎么变”，从单个数值到变化趋势。“趋势比当下重要”——斐波那契数列、导数、增长率都是动态思维的体现。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>升级三：从宏观到微观</h4>
+                    <p>导数让我们看到宏观现象背后的微观机制（瞬时速度），积分让我们从微观变化累积出宏观趋势（总路程）。两者互为逆运算，形成一个完整的认知循环。</p>
+                </div>
+            </div>
+            <div>
+                <div class="insight-card">
+                    <h4>升级四：从确定到随机</h4>
+                    <p>从决定论（经典数学：给定初始条件就确定结果）到概率论（承认不确定性，用概率分布描述世界）。这并非放弃理性，而是更高级的理性——承认“不知道”恰恰是智慧的起点。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>数学思维的核心定义</h4>
+                    <p style="font-style:italic;">“数学思维不是指算小账算得清楚，而是说善于基于数学知识，使用逻辑发现问题，或者预见到不得不做的事情。”</p>
+                </div>
+                <div class="insight-card">
+                    <h4>核心金句</h4>
+                    <p style="font-style:italic;">“数学的本质，是一种高级的常识。”</p>
+                    <p style="font-style:italic;">“无用之用是为大用。”</p>
+                    <p style="font-style:italic;">“通识教育的本质，是能够将这些知识用于许多地方，而不仅仅是直接用来做具体的事情。”</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 延伸与比较 ==================== -->
+    <div class="section" id="extension">
+        <h2>延伸与比较</h2>
+        <table class="extension">
+            <thead>
+                <tr><th>思考维度</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>本书的核心定位</td>
+                    <td>不是数学教科书，而是数学思维启蒙书。不讲难题、不考计算，而是让你理解数学的底层逻辑和思维方式。吴军强调：“学好数学的目的不是会解题，而是让我们变成更好的人。”</td>
+                </tr>
+                <tr>
+                    <td>通识教育理念</td>
+                    <td>通识教育的本质是“将这些知识用于许多地方，而不仅仅是直接用来做具体的事情”。数学的通识意义在于：训练抽象思维、逻辑推理、建模能力和对不确定性的理解——这些能力迁移到任何领域都有价值。</td>
+                </tr>
+                <tr>
+                    <td>本书可能的局限</td>
+                    <td>有书评指出：前半部分（基础篇到代数篇）与生活联系紧密，后半部分（微积分到概率统计）与教科书的差异变小，公式密度增大，可能对非专业读者造成阅读负担。部分数学史细节存在争议（如毕达哥拉斯是否真的“证明”了勾股定理）。</td>
+                </tr>
+                <tr>
+                    <td>推荐对照阅读</td>
+                    <td><strong>吴军《数学之美》</strong>：更侧重数学在计算机科学（搜索、自然语言处理）中的应用，可作为本书的应用深化版。<br><strong>米卡埃尔·洛奈《万物皆数》</strong>：从数学史和美学的角度展示数学的感性之美，与本书的“实用理性”视角形成互补。<br><strong>刘嘉《概率论通识讲义》</strong>：同为得到讲义系列，对概率论专题有更深入的展开。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem; padding:1.5rem; color:var(--text-muted); font-size:0.85rem; border-top:1px solid var(--border);">
+        《吴军数学通识讲义》完整知识图谱 · 基于吴军原著整理 · 仅供个人学习回顾使用
+    </div>
+
+</div>
+
+<!-- 返回顶部按钮 -->
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<!-- 侧边栏高亮当前位置的脚本 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const sections = [];
+
+        // 收集所有锚点目标
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const target = document.getElementById(href.substring(1));
+                if (target) {
+                    sections.push({ link: link, target: target });
+                }
+            }
+        });
+
+        // 点击高亮
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // 滚动高亮
+        window.addEventListener('scroll', function() {
+            let current = null;
+            const scrollTop = window.scrollY + 100;
+
+            sections.forEach(section => {
+                if (section.target.offsetTop <= scrollTop) {
+                    current = section.link;
+                }
+            });
+
+            if (current) {
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                current.classList.add('active');
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

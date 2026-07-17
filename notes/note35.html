@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSS 入门 · 给完全没接触过编程的你</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fg:      #3d2a5c;
+  --mute:    #6a5a8d;
+  --accent:  #7c4dff;
+  --accent2: #ff70a6;
+  --accent3: #7ad1ff;
+  --accent4: #ffb951;
+  --accent5: #4ade80;
+  --grad:    linear-gradient(135deg,#ff70a6,#7c4dff);
+  --grad2:   linear-gradient(135deg,#7ad1ff,#7c4dff);
+  --grad3:   linear-gradient(135deg,#ffb951,#ff70a6);
+  --card:    #ffffff;
+  --clay-sh: 0 12px 28px rgba(124,77,255,.16), 0 2px 6px rgba(124,77,255,.10), inset 0 2px 4px rgba(255,255,255,.9);
+  --clay-sh-hi: 0 18px 40px rgba(124,77,255,.24), 0 4px 10px rgba(124,77,255,.14), inset 0 2px 4px rgba(255,255,255,.9);
+  --ui-font: 'Quicksand','PingFang SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:    'JetBrains Mono','Cascadia Code','Fira Code',monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;color:var(--fg);
+  font-family:var(--ui-font);font-weight:500;
+  background:linear-gradient(135deg,#d4f7e5 0%,#c7d8ff 45%,#ffd6e8 100%);
+  overflow:hidden;
+}
+
+body::before,body::after{
+  content:'';position:fixed;border-radius:50%;
+  pointer-events:none;z-index:0;filter:blur(45px);opacity:.5;
+}
+body::before{
+  width:400px;height:400px;top:-100px;left:-60px;
+  background:radial-gradient(circle,#4ade80 0%,transparent 70%);
+  animation:blob 18s ease-in-out infinite alternate;
+}
+body::after{
+  width:360px;height:360px;bottom:-60px;right:-60px;
+  background:radial-gradient(circle,#ff70a6 0%,transparent 70%);
+  animation:blob 22s ease-in-out infinite alternate-reverse;
+}
+@keyframes blob{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(50px,36px) scale(1.1)}
+}
+
+.stage{position:fixed;inset:0;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:block;padding:70px 7vw 60px;
+  opacity:0;visibility:hidden;transform:translateY(20px);
+  transition:opacity .55s cubic-bezier(.7,0,.2,1),transform .55s cubic-bezier(.7,0,.2,1),visibility .55s;
+  overflow-y:auto;overflow-x:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.canvas{
+  width:100%;max-width:1100px;margin:0 auto;
+  min-height:calc(100vh - 160px);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+.slide.active .reveal{animation:rise .7s cubic-bezier(.7,0,.2,1) both}
+.slide.active .reveal:nth-child(1){animation-delay:.04s}
+.slide.active .reveal:nth-child(2){animation-delay:.16s}
+.slide.active .reveal:nth-child(3){animation-delay:.28s}
+.slide.active .reveal:nth-child(4){animation-delay:.40s}
+.slide.active .reveal:nth-child(5){animation-delay:.52s}
+.slide.active .reveal:nth-child(6){animation-delay:.64s}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+/* ── chrome ─────────────────────────────────────────── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:46px;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--mute);border-bottom:1px solid rgba(124,77,255,.08);
+}
+.topbar .brand{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footbar{
+  position:fixed;bottom:0;left:0;right:0;height:38px;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  font-size:11px;letter-spacing:.15em;font-weight:600;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--mute);border-top:1px solid rgba(124,77,255,.08);
+}
+.footbar .pg{font-variant-numeric:tabular-nums;font-weight:700;color:var(--fg)}
+.progress{position:fixed;bottom:0;left:0;height:3px;width:0;z-index:11;background:var(--grad);transition:width .55s cubic-bezier(.7,0,.2,1)}
+.nav-arrow{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:48px;height:48px;border-radius:50%;
+  display:grid;place-items:center;font-size:22px;cursor:pointer;
+  z-index:10;color:var(--accent);background:#fff;border:none;outline:none;
+  box-shadow:var(--clay-sh);transition:all .25s;
+}
+.nav-arrow:hover{transform:translateY(-50%) scale(1.08);box-shadow:var(--clay-sh-hi)}
+.nav-arrow.prev{left:14px}.nav-arrow.next{right:14px}
+
+/* ── typography ─────────────────────────────────────── */
+.eyebrow{
+  display:inline-block;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+  margin-bottom:18px;font-weight:700;color:var(--accent2);
+}
+h1{font-size:clamp(40px,5.5vw,68px);font-weight:700;line-height:1.1;margin-bottom:18px;letter-spacing:-.01em}
+h1 b{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+h2{font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.15;margin-bottom:16px}
+h2 b{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+h3{font-size:19px;font-weight:700;margin-bottom:9px}
+h4{font-size:16px;font-weight:700;margin-bottom:5px}
+.lead{font-size:18px;line-height:1.85;color:var(--mute);max-width:780px;margin-bottom:26px;font-weight:500}
+p{line-height:1.75;font-size:15px;color:var(--mute);font-weight:500}
+.deck{font-size:18px;color:var(--mute);line-height:1.7;max-width:560px;margin-bottom:32px;font-weight:500}
+code{font-family:var(--mono);font-size:.9em;background:rgba(124,77,255,.1);padding:2px 7px;border-radius:6px;color:var(--accent);font-weight:600}
+
+/* ── meta row ───────────────────────────────────────── */
+.meta{display:flex;gap:36px;margin-top:28px;flex-wrap:wrap}
+.meta>div{display:flex;flex-direction:column;gap:4px}
+.meta b{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);font-weight:700}
+.meta span{font-size:15px;font-weight:600;color:var(--fg)}
+
+/* ── clay card ──────────────────────────────────────── */
+.clay{background:#fff;border-radius:22px;padding:26px;box-shadow:var(--clay-sh);transition:all .3s}
+.clay:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
+
+/* ── toc ────────────────────────────────────────────── */
+.toc{display:flex;flex-direction:column;gap:12px;margin-top:24px;max-width:760px}
+.toc-item{
+  display:grid;grid-template-columns:52px 1fr 28px;
+  align-items:center;gap:18px;padding:16px 22px;
+  border-radius:18px;background:#fff;cursor:pointer;
+  box-shadow:var(--clay-sh);transition:all .25s;
+}
+.toc-item:hover{transform:translateX(6px);box-shadow:var(--clay-sh-hi)}
+.ti-num{
+  width:42px;height:42px;border-radius:12px;
+  display:grid;place-items:center;font-weight:700;font-size:15px;color:#fff;
+  background:var(--grad);box-shadow:0 4px 10px rgba(124,77,255,.28);
+}
+.ti-t{font-size:16px;font-weight:600;color:var(--fg)}
+.ti-a{color:var(--accent);font-size:20px;font-weight:700}
+
+/* ── 两栏 ───────────────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;align-items:start}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+
+/* ── 代码块 ─────────────────────────────────────────── */
+.code-block{
+  background:#2d1b4e;color:#fff;border-radius:18px;padding:22px 20px;
+  font-family:var(--mono);font-size:13px;line-height:1.9;
+  box-shadow:var(--clay-sh);
+}
+.code-block .sel{color:#ffb951}   /* selector */
+.code-block .prop{color:#7ad1ff}  /* property */
+.code-block .val{color:#a3e635}   /* value */
+.code-block .pun{color:#9b8fb8}   /* punctuation */
+.code-block .cmt{color:#6b5fa8;font-style:italic} /* comment */
+.code-block .tag{color:#ff8fab}   /* html tag */
+.code-block .attr{color:#7ad1ff}  /* html attr */
+.code-block .str{color:#a3e635}   /* string */
+
+/* ── 预览框 ─────────────────────────────────────────── */
+.preview-box{
+  background:#fff;border-radius:18px;padding:28px 24px;
+  box-shadow:var(--clay-sh);
+}
+.preview-label{
+  font-size:10px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--accent2);font-weight:700;margin-bottom:14px;
+}
+
+/* ── 属性演示卡 ─────────────────────────────────────── */
+.prop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
+.prop-card{
+  background:#fff;border-radius:18px;padding:20px;
+  box-shadow:var(--clay-sh);text-align:center;
+  transition:all .25s;
+}
+.prop-card:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
+.prop-card .emoji{font-size:34px;display:block;margin-bottom:10px;line-height:1}
+.prop-card .prop-name{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  color:var(--accent);margin-bottom:8px;display:block;
+  background:rgba(124,77,255,.09);padding:4px 8px;border-radius:8px;
+}
+.prop-card h4{font-size:14px;color:var(--fg);margin-bottom:6px}
+.prop-card p{font-size:12px;color:var(--mute);line-height:1.65}
+
+/* ── 盒模型可视化 ────────────────────────────────────── */
+.box-model{
+  display:flex;align-items:center;justify-content:center;
+  margin-top:24px;
+}
+.bm-margin{
+  background:rgba(255,185,81,.25);border:2px dashed var(--accent4);
+  border-radius:24px;padding:20px;display:flex;align-items:center;justify-content:center;
+  position:relative;
+}
+.bm-border{
+  background:rgba(255,112,166,.2);border:3px solid var(--accent2);
+  border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:center;
+}
+.bm-padding{
+  background:rgba(74,222,128,.2);border:2px solid var(--accent5);
+  border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center;
+}
+.bm-content{
+  background:#fff;border-radius:6px;padding:14px 22px;
+  font-weight:700;font-size:15px;color:var(--fg);
+  box-shadow:var(--clay-sh);text-align:center;
+}
+.bm-label{
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
+  background:#fff;padding:2px 10px;border-radius:20px;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(124,77,255,.12);
+}
+.bm-margin .bm-label{color:var(--accent4)}
+.bm-border .bm-label{color:var(--accent2)}
+.bm-padding .bm-label{color:var(--accent5)}
+.bm-content .bm-label{color:var(--accent);position:absolute;top:-12px;font-size:10px}
+.bm-border{position:relative}
+.bm-padding{position:relative}
+.bm-margin{position:relative}
+
+.bm-legend{
+  display:flex;flex-direction:column;gap:10px;margin-left:36px;
+}
+.bm-legend-item{display:flex;align-items:center;gap:10px}
+.bm-legend-dot{width:14px;height:14px;border-radius:4px;flex-shrink:0}
+
+/* ── 选择器演示 ─────────────────────────────────────── */
+.selector-rows{display:flex;flex-direction:column;gap:12px;margin-top:18px}
+.selector-row{
+  display:grid;grid-template-columns:180px 1fr 1fr;gap:16px;
+  align-items:center;padding:14px 18px;
+  background:#fff;border-radius:16px;box-shadow:var(--clay-sh);
+}
+.selector-tag{
+  font-family:var(--mono);font-size:13px;font-weight:700;
+  color:#fff;background:var(--grad);
+  padding:5px 12px;border-radius:10px;display:inline-block;text-align:center;
+}
+.selector-explain{font-size:14px;color:var(--mute);line-height:1.5}
+.selector-example{font-size:13px;font-family:var(--mono);color:var(--accent);background:rgba(124,77,255,.08);padding:4px 10px;border-radius:8px}
+
+/* ── 如何连接 ────────────────────────────────────────── */
+.connect-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+.connect-card{
+  background:#fff;border-radius:20px;padding:24px 20px;
+  box-shadow:var(--clay-sh);text-align:center;transition:all .25s;
+}
+.connect-card:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
+.connect-card .emoji{font-size:40px;display:block;margin-bottom:12px;line-height:1}
+.connect-card h3{font-size:16px;color:var(--fg);margin-bottom:10px}
+.connect-card p{font-size:13px;color:var(--mute);line-height:1.7}
+.connect-card .rec{
+  margin-top:12px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;display:inline-block;
+}
+.rec-best{background:rgba(74,222,128,.2);color:#16a34a}
+.rec-ok{background:rgba(124,77,255,.12);color:var(--accent)}
+.rec-bad{background:rgba(255,112,166,.15);color:#e11d48}
+
+/* ── before/after 卡对比 ────────────────────────────── */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
+.ba-card{
+  background:#fff;border-radius:20px;padding:24px;
+  box-shadow:var(--clay-sh);
+}
+.ba-label{
+  font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
+  margin-bottom:14px;
+}
+.ba-label.before-l{color:#94a3b8}
+.ba-label.after-l{color:var(--accent2)}
+
+/* ── live demo card (styled) ────────────────────────── */
+.demo-card-plain{
+  border:1px solid #e2e8f0;border-radius:4px;padding:16px;
+  font-family:sans-serif;
+}
+.demo-card-plain h3{font-size:15px;color:#1a1a1a;margin-bottom:6px}
+.demo-card-plain p{font-size:13px;color:#555;line-height:1.5}
+
+.demo-card-styled{
+  background:linear-gradient(135deg,#ffd6e8,#c7d8ff);
+  border-radius:22px;padding:24px;
+  box-shadow:0 12px 28px rgba(124,77,255,.18);
+}
+.demo-card-styled h3{font-size:20px;font-weight:700;color:#3d2a5c;margin-bottom:8px}
+.demo-card-styled p{font-size:14px;color:#6a5a8d;line-height:1.7}
+.demo-card-styled .tag-pill{
+  display:inline-block;background:#7c4dff;color:#fff;
+  font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:12px;
+}
+
+/* ── end ────────────────────────────────────────────── */
+.end-line{width:60px;height:4px;background:var(--grad);border-radius:2px;margin:22px 0}
+.e-tag{font-size:17px;color:var(--mute);margin-bottom:30px;line-height:1.75;max-width:620px}
+.next-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:4px}
+.next-cards .clay{padding:20px}
+.next-cards .emoji{font-size:30px;display:block;margin-bottom:10px}
+.next-cards h4{font-size:14px;color:var(--fg);margin-bottom:5px}
+.next-cards p{font-size:12px;color:var(--mute);line-height:1.65}
+
+@media print{
+  @page{size:1280px 800px;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff}
+  .topbar,.footbar,.progress,.nav-arrow{display:none !important}
+  .stage{position:static}
+  .slide{
+    position:relative;inset:auto;width:100%;height:800px;
+    page-break-after:always;break-after:page;
+    opacity:1!important;visibility:visible!important;transform:none!important;
+    transition:none!important;animation:none!important;overflow:hidden;
+  }
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .slide *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">CSS 入门 · Lite</div>
+  <div id="topCh"></div>
+</div>
+
+<div class="stage" id="stage">
+
+  <!-- P1 封面 -->
+  <section class="slide active" data-name="封面">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">For Absolute Beginners · 零基础友好版</span></div>
+      <h1 class="reveal">给网页<br><b>穿衣服的那门课</b></h1>
+      <p class="deck reveal">HTML 搭好了骨架，接下来用 CSS 决定颜色、字体、间距、卡片——一切"好不好看"的事，都在这里。</p>
+      <div class="meta reveal">
+        <div><b>难度</b><span>⭐ 入门</span></div>
+        <div><b>页数</b><span>8 页</span></div>
+        <div><b>结尾</b><span>能给自己的网页换颜色和样式</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P2 目录 -->
+  <section class="slide" data-name="目录">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Index · 今天聊这 6 件事</span></div>
+      <h1 class="reveal">我们要<b>聊什么</b></h1>
+      <div class="toc reveal">
+        <div class="toc-item" onclick="goto(2)"><div class="ti-num">01</div><div class="ti-t">CSS 是个啥，怎么和 HTML 搭档</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(3)"><div class="ti-num">02</div><div class="ti-t">一句 CSS 长什么样</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(4)"><div class="ti-num">03</div><div class="ti-t">最常用的 9 个属性</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(5)"><div class="ti-num">04</div><div class="ti-t">盒模型：每个元素都是个盒子</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(6)"><div class="ti-num">05</div><div class="ti-t">同一个 HTML，换一套 CSS 就换了脸</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(7)"><div class="ti-num">06</div><div class="ti-t">下一步学什么</div><div class="ti-a">→</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P3 CSS 是什么 + 三种连接方式 -->
+  <section class="slide" data-name="CSS 是什么">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 01</span></div>
+      <h2 class="reveal">CSS 是<b>造型师</b>，HTML 是<b>模特</b></h2>
+      <p class="lead reveal">CSS（层叠样式表）专门告诉浏览器"怎么画"。HTML 只管&ldquo;有什么&rdquo;，CSS 才管&ldquo;好不好看&rdquo;。它们是永远搭档的两个人。</p>
+
+      <div class="connect-cards reveal">
+        <div class="connect-card">
+          <span class="emoji">📄</span>
+          <h3>写在单独文件里</h3>
+          <p>新建 <code>style.css</code>，在 HTML 里用 <code>&lt;link&gt;</code> 引入。</p>
+          <div class="rec rec-best">✅ 推荐做法</div>
+          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:14px 16px">
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="str">"stylesheet"</span>
+      <span class="attr">href</span>=<span class="str">"style.css"</span><span class="tag">&gt;</span>
+          </div>
+        </div>
+        <div class="connect-card">
+          <span class="emoji">🏷️</span>
+          <h3>写在 &lt;style&gt; 标签里</h3>
+          <p>直接放在 HTML 的 <code>&lt;head&gt;</code> 里，不用额外文件。</p>
+          <div class="rec rec-ok">⚡ 快速测试用</div>
+          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:14px 16px">
+<span class="tag">&lt;style&gt;</span>
+  <span class="sel">h1</span> <span class="pun">{</span> <span class="prop">color</span><span class="pun">:</span> <span class="val">red</span><span class="pun">; }</span>
+<span class="tag">&lt;/style&gt;</span>
+          </div>
+        </div>
+        <div class="connect-card">
+          <span class="emoji">✍️</span>
+          <h3>直接写在标签上</h3>
+          <p>用 <code>style="..."</code> 属性，直接给某个元素设样式。</p>
+          <div class="rec rec-bad">⚠️ 不建议滥用</div>
+          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:14px 16px">
+<span class="tag">&lt;p</span> <span class="attr">style</span>=<span class="str">"color:red"</span><span class="tag">&gt;</span>
+  文字
+<span class="tag">&lt;/p&gt;</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P4 一句 CSS 的解剖 + 选择器 -->
+  <section class="slide" data-name="CSS 语法解剖">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 02</span></div>
+      <h2 class="reveal">一句 CSS 由<b>三个部分</b>组成</h2>
+
+      <div class="two-col reveal">
+        <div>
+          <div class="preview-box" style="text-align:center;padding:36px 28px">
+            <div style="font-family:var(--mono);font-size:clamp(18px,2.8vw,32px);font-weight:700;line-height:1.9;color:var(--fg)">
+              <span style="color:#ffb951">h1</span>
+              <span style="color:var(--mute)"> { </span><br>
+              &nbsp;&nbsp;<span style="color:#7ad1ff">color</span><span style="color:var(--mute)">: </span><span style="color:#a3e635">purple</span><span style="color:var(--mute)">;</span><br>
+              <span style="color:var(--mute)">}</span>
+            </div>
+            <div style="display:flex;justify-content:space-around;margin-top:28px;gap:10px">
+              <div style="text-align:center">
+                <div style="width:12px;height:12px;background:var(--accent4);border-radius:50%;margin:0 auto 6px"></div>
+                <div style="font-size:12px;font-weight:700;color:var(--accent4)">选择器</div>
+                <div style="font-size:11px;color:var(--mute);margin-top:3px">"要打扮谁"</div>
+              </div>
+              <div style="text-align:center">
+                <div style="width:12px;height:12px;background:var(--accent3);border-radius:50%;margin:0 auto 6px"></div>
+                <div style="font-size:12px;font-weight:700;color:var(--accent3)">属性</div>
+                <div style="font-size:11px;color:var(--mute);margin-top:3px">"打扮什么"</div>
+              </div>
+              <div style="text-align:center">
+                <div style="width:12px;height:12px;background:var(--accent5);border-radius:50%;margin:0 auto 6px"></div>
+                <div style="font-size:12px;font-weight:700;color:var(--accent5)">值</div>
+                <div style="font-size:11px;color:var(--mute);margin-top:3px">"打扮成啥样"</div>
+              </div>
+            </div>
+          </div>
+
+          <p style="font-size:13px;color:var(--mute);text-align:center;margin-top:14px">💡 每条声明末尾都有分号 <code>;</code>，别忘了</p>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom:14px;color:var(--fg)">三种最常用的选择器</h3>
+          <div class="selector-rows">
+            <div class="selector-row">
+              <span class="selector-tag">标签名</span>
+              <div class="selector-explain">选中页面上所有这个标签<br><span style="font-size:12px;opacity:.8">比如所有 h1 都变红</span></div>
+              <span class="selector-example">h1 { color: red; }</span>
+            </div>
+            <div class="selector-row">
+              <span class="selector-tag">.class 名</span>
+              <div class="selector-explain">选中带这个 class 的元素<br><span style="font-size:12px;opacity:.8">精准点名，推荐用这个</span></div>
+              <span class="selector-example">.card { ... }</span>
+            </div>
+            <div class="selector-row">
+              <span class="selector-tag">#id 名</span>
+              <div class="selector-explain">选中这个唯一 id 的元素<br><span style="font-size:12px;opacity:.8">全页面只有一个目标</span></div>
+              <span class="selector-example">#logo { ... }</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P5 最常用的 9 个属性 -->
+  <section class="slide" data-name="9 个常用属性">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 03</span></div>
+      <h2 class="reveal">先记住<b>这 9 个属性</b>就能玩转样式</h2>
+
+      <div class="prop-grid reveal">
+        <div class="prop-card">
+          <span class="emoji">🎨</span>
+          <span class="prop-name">color</span>
+          <h4>文字颜色</h4>
+          <p><code>color: red;</code><br><code>color: #7c4dff;</code><br>颜色名或十六进制码</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">🖼️</span>
+          <span class="prop-name">background</span>
+          <h4>背景颜色/图片</h4>
+          <p><code>background: pink;</code><br><code>background: #fff;</code><br>也可以放渐变或图片</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">🔤</span>
+          <span class="prop-name">font-size</span>
+          <h4>字号大小</h4>
+          <p><code>font-size: 16px;</code><br><code>font-size: 1.5rem;</code><br>px 是像素，最直观</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">💪</span>
+          <span class="prop-name">font-weight</span>
+          <h4>文字粗细</h4>
+          <p><code>font-weight: bold;</code><br><code>font-weight: 700;</code><br>400 = 正常，700 = 粗</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">📐</span>
+          <span class="prop-name">padding</span>
+          <h4>内边距</h4>
+          <p><code>padding: 20px;</code><br>内容和边框之间的空白<br>像给礼物盒子加泡沫</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">🏕️</span>
+          <span class="prop-name">margin</span>
+          <h4>外边距</h4>
+          <p><code>margin: 16px auto;</code><br>元素和元素之间的距离<br>auto 可以实现居中</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">🔲</span>
+          <span class="prop-name">border-radius</span>
+          <h4>圆角</h4>
+          <p><code>border-radius: 12px;</code><br>数值越大越圆<br>50% = 变成圆形</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">🌫️</span>
+          <span class="prop-name">box-shadow</span>
+          <h4>投影</h4>
+          <p><code>box-shadow: 0 4px 12px rgba(0,0,0,.15);</code><br>让卡片"浮"起来</p>
+        </div>
+        <div class="prop-card">
+          <span class="emoji">📏</span>
+          <span class="prop-name">width / height</span>
+          <h4>宽 / 高</h4>
+          <p><code>width: 300px;</code><br><code>width: 100%;</code><br>% 是相对父元素的比例</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P6 盒模型 -->
+  <section class="slide" data-name="盒模型">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 04 · Box Model</span></div>
+      <h2 class="reveal">每个元素都是一个<b>嵌套的盒子</b></h2>
+      <p class="lead reveal">这是 CSS 最重要的概念。看懂这张图，布局就不再玄学了。</p>
+
+      <div class="two-col reveal" style="align-items:center">
+        <div class="box-model">
+          <div class="bm-margin">
+            <div class="bm-label">Margin · 外边距</div>
+            <div class="bm-border">
+              <div class="bm-label">Border · 边框</div>
+              <div class="bm-padding">
+                <div class="bm-label">Padding · 内边距</div>
+                <div class="bm-content" style="position:relative">
+                  <div class="bm-label">Content · 内容</div>
+                  你好
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="clay" style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div style="width:14px;height:14px;border-radius:4px;background:rgba(255,185,81,.6);border:2px dashed var(--accent4)"></div>
+              <h4 style="color:var(--accent4)">Margin — 外边距</h4>
+            </div>
+            <p style="font-size:13px">元素和其它元素之间的距离。就像两栋楼之间的间隔。</p>
+            <div style="font-family:var(--mono);font-size:12px;background:rgba(124,77,255,.07);padding:8px 12px;border-radius:8px;margin-top:10px;color:var(--accent)">margin: 上 右 下 左;</div>
+          </div>
+          <div class="clay" style="margin-bottom:16px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div style="width:14px;height:14px;border-radius:4px;background:rgba(255,112,166,.3);border:2px solid var(--accent2)"></div>
+              <h4 style="color:var(--accent2)">Border — 边框</h4>
+            </div>
+            <p style="font-size:13px">元素的外框线。可以设粗细、颜色、实线/虚线。</p>
+            <div style="font-family:var(--mono);font-size:12px;background:rgba(124,77,255,.07);padding:8px 12px;border-radius:8px;margin-top:10px;color:var(--accent)">border: 2px solid #ccc;</div>
+          </div>
+          <div class="clay">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+              <div style="width:14px;height:14px;border-radius:4px;background:rgba(74,222,128,.3);border:2px solid var(--accent5)"></div>
+              <h4 style="color:#16a34a">Padding — 内边距</h4>
+            </div>
+            <p style="font-size:13px">内容和边框之间的呼吸空间。让文字不贴着边框，像礼盒里的泡沫。</p>
+            <div style="font-family:var(--mono);font-size:12px;background:rgba(124,77,255,.07);padding:8px 12px;border-radius:8px;margin-top:10px;color:var(--accent)">padding: 16px 24px;</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P7 Before / After 对比 -->
+  <section class="slide" data-name="样式前后对比">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 05 · Before vs After</span></div>
+      <h2 class="reveal">同一个 HTML，换一套 CSS <b>就换了脸</b></h2>
+      <p class="lead reveal" style="margin-bottom:16px">这是你上次写的那个 HTML 卡片，左边没有 CSS，右边加了 12 行 CSS。</p>
+
+      <div class="ba-grid reveal">
+        <div class="ba-card">
+          <div class="ba-label before-l">▼ 没有 CSS 的样子</div>
+          <div class="demo-card-plain">
+            <h3>我最喜欢的书</h3>
+            <p>《活着》——余华。读完合上书，很久说不出话来。</p>
+          </div>
+          <div class="code-block" style="margin-top:16px;font-size:12px;padding:16px">
+<span class="cmt">/* 什么都没写 */</span><br>
+<span class="cmt">/* 浏览器默认样式 */</span>
+          </div>
+        </div>
+
+        <div class="ba-card">
+          <div class="ba-label after-l">✨ 加了 12 行 CSS 的样子</div>
+          <div class="demo-card-styled">
+            <h3>我最喜欢的书</h3>
+            <p>《活着》——余华。读完合上书，很久说不出话来。</p>
+            <span class="tag-pill">📚 文学</span>
+          </div>
+          <div class="code-block" style="margin-top:16px;font-size:11.5px;padding:16px;line-height:1.8">
+<span class="sel">.card</span> <span class="pun">{</span>
+  <span class="prop">background</span><span class="pun">:</span> <span class="val">linear-gradient(135deg,#ffd6e8,#c7d8ff)</span><span class="pun">;</span>
+  <span class="prop">border-radius</span><span class="pun">:</span> <span class="val">22px</span><span class="pun">;</span>
+  <span class="prop">padding</span><span class="pun">:</span> <span class="val">24px</span><span class="pun">;</span>
+  <span class="prop">box-shadow</span><span class="pun">:</span> <span class="val">0 12px 28px rgba(124,77,255,.18)</span><span class="pun">;</span>
+<span class="pun">}</span>
+<span class="sel">.card h3</span> <span class="pun">{</span>
+  <span class="prop">font-size</span><span class="pun">:</span> <span class="val">20px</span><span class="pun">;</span>
+  <span class="prop">color</span><span class="pun">:</span> <span class="val">#3d2a5c</span><span class="pun">;</span>
+<span class="pun">}</span>
+<span class="sel">.card p</span> <span class="pun">{</span>
+  <span class="prop">color</span><span class="pun">:</span> <span class="val">#6a5a8d</span><span class="pun">;</span>
+  <span class="prop">line-height</span><span class="pun">:</span> <span class="val">1.7</span><span class="pun">;</span>
+<span class="pun">}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P8 结尾 -->
+  <section class="slide" data-name="结尾">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">The End · 你已经会化妆了</span></div>
+      <h1 class="reveal">骨架有了，<br><b>造型也会了</b></h1>
+      <div class="end-line reveal"></div>
+      <p class="e-tag reveal">HTML 是搭骨架，CSS 是化妆——这两件事加在一起，你已经能做出一个真实的静态网页了。接下来加点动作？</p>
+
+      <div class="reveal">
+        <h3 style="color:var(--fg);margin-bottom:14px;font-size:17px">下一步可以看的</h3>
+        <div class="next-cards">
+          <div class="clay">
+            <span class="emoji">⚡</span>
+            <h4>学一点 JavaScript</h4>
+            <p>骨架 + 化妆都有了，加点动作——点击、动画、弹窗</p>
+          </div>
+          <div class="clay">
+            <span class="emoji">📐</span>
+            <h4>CSS 布局进阶</h4>
+            <p>Flexbox 和 Grid：把卡片排成一排、两排，做响应式</p>
+          </div>
+          <div class="clay">
+            <span class="emoji">🛝</span>
+            <h4>直接去玩</h4>
+            <p>打开 codepen.io，左边敲代码，右边实时看效果——最快的学法</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button class="nav-arrow prev" onclick="goto(current-1)" aria-label="上一页">‹</button>
+<button class="nav-arrow next" onclick="goto(current+1)" aria-label="下一页">›</button>
+
+<div class="footbar">
+  <div>CSS 零基础入门 · Lite Edition</div>
+  <div class="pg"><span id="curr">1</span> / <span id="total">8</span></div>
+</div>
+<div class="progress" id="progress"></div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const totalEl = document.getElementById('total');
+  const currEl = document.getElementById('curr');
+  const progress = document.getElementById('progress');
+  const topCh = document.getElementById('topCh');
+  if(totalEl) totalEl.textContent = total;
+  let current = 0, locked = false;
+
+  function setHeader(i){
+    if(!topCh) return;
+    topCh.textContent = slides[i].dataset.name || '';
+  }
+  function goto(i){
+    if(locked || i===current || i<0 || i>=total) return;
+    locked = true;
+    slides[current].classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    if(progress) progress.style.width = ((current+1)/total*100)+'%';
+    if(currEl) currEl.textContent = current+1;
+    setHeader(current);
+    setTimeout(()=>locked=false, 600);
+  }
+  Object.defineProperty(window,'current',{get:()=>current,set:(v)=>{current=v}});
+  window.goto = goto;
+
+  document.addEventListener('keydown', e => {
+    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();goto(current+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();goto(current-1);}
+    else if(e.key==='Home') goto(0);
+    else if(e.key==='End') goto(total-1);
+    else if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+
+  let wheelLock = false;
+  document.addEventListener('wheel', e => {
+    if(wheelLock) return;
+    wheelLock = true;
+    if(e.deltaY>30) goto(current+1);
+    else if(e.deltaY<-30) goto(current-1);
+    setTimeout(()=>wheelLock=false, 800);
+  },{passive:true});
+
+  let touchY=0,touchX=0;
+  document.addEventListener('touchstart', e=>{touchY=e.touches[0].clientY;touchX=e.touches[0].clientX;});
+  document.addEventListener('touchend', e=>{
+    const dy=touchY-e.changedTouches[0].clientY;
+    const dx=touchX-e.changedTouches[0].clientX;
+    if(Math.abs(dy)>50&&Math.abs(dy)>Math.abs(dx)) goto(current+(dy>0?1:-1));
+    else if(Math.abs(dx)>50) goto(current+(dx>0?1:-1));
+  });
+
+  if(progress) progress.style.width=(1/total*100)+'%';
+  setHeader(0);
+})();
+</script>
+<script type="text/javascript" src="/accessproxy_statics/h5_fp.js" defer></script>
+<script type="text/javascript" src="/accessproxy_statics/wm.js" defer></script>
+</body>
+</html>

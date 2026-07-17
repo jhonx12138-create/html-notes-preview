@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>云上书阁 · 我的书架</title>
+    <style>
+        :root {
+            --bg: #faf8f5;
+            --surface: #ffffff;
+            --border: #e8e2d8;
+            --text: #2c2416;
+            --text-secondary: #6b6052;
+            --text-muted: #9b8e7c;
+            --accent: #8b5a3c;
+            --accent-light: #f5efe6;
+            --accent-hover: #a07050;
+            --danger: #c45555;
+            --danger-light: #fdf5f5;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
+            --radius-sm: 8px;
+            --radius: 12px;
+            --radius-lg: 16px;
+            --font: 'Segoe UI', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            line-height: 1.6;
+        }
+
+        /* ========== 布局 ========== */
+        .app { display: flex; min-height: 100vh; }
+
+        /* ========== 侧边栏 ========== */
+        .sidebar {
+            width: 220px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .sidebar-logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+        .sidebar-logo .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-light);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+        }
+        .sidebar-nav {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .sidebar-nav button {
+            width: 100%;
+            text-align: left;
+            padding: 0.6rem 0.8rem;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-family: inherit;
+            color: var(--text-secondary);
+            transition: all var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sidebar-nav button:hover {
+            background: var(--accent-light);
+            color: var(--text);
+        }
+        .sidebar-nav button.active {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+        .sidebar-nav .count {
+            margin-left: auto;
+            font-size: 0.72rem;
+            opacity: 0.7;
+            background: rgba(0, 0, 0, 0.06);
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+        }
+        .sidebar-nav button.active .count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* ========== 主内容区 ========== */
+        .main {
+            flex: 1;
+            padding: 1.5rem 2rem;
+            overflow-y: auto;
+            max-width: 1400px;
+        }
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        .main-header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 0.45rem 1rem;
+            transition: all var(--transition);
+        }
+        .search-box:focus-within {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(139, 90, 60, 0.08);
+        }
+        .search-box input {
+            border: none;
+            outline: none;
+            font-size: 0.85rem;
+            background: transparent;
+            font-family: inherit;
+            color: var(--text);
+            width: 180px;
+        }
+        .search-box input::placeholder { color: var(--text-muted); }
+        .search-icon { color: var(--text-muted); font-size: 0.9rem; }
+
+        .btn {
+            padding: 0.5rem 1.2rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-family: inherit;
+            font-weight: 500;
+            color: var(--text);
+            transition: all var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            white-space: nowrap;
+        }
+        .btn:hover {
+            background: var(--accent-light);
+            border-color: #d4c4b0;
+        }
+        .btn.primary {
+            background: var(--accent);
+            color: #fff;
+            border-color: var(--accent);
+        }
+        .btn.primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+            box-shadow: 0 2px 8px rgba(139, 90, 60, 0.25);
+        }
+        .btn.danger {
+            background: transparent;
+            border-color: transparent;
+            color: var(--danger);
+        }
+        .btn.danger:hover {
+            background: var(--danger-light);
+            border-color: #e8c8c8;
+        }
+        .btn.small {
+            padding: 0.3rem 0.7rem;
+            font-size: 0.75rem;
+            border-radius: 16px;
+        }
+
+        /* ========== 书籍网格（新卡片样式） ========== */
+        .book-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem;
+        }
+        .book-card {
+            position: relative;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.2rem 1.2rem 1rem 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            min-height: 240px;
+            overflow: hidden;
+        }
+        /* 左侧书脊 */
+        .book-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            background: var(--card-spine);
+            box-shadow: inset -1px 0 2px rgba(0, 0, 0, 0.08);
+        }
+        /* 右下折角 */
+        .book-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 0 0 18px 18px;
+            border-color: transparent transparent var(--card-corner) transparent;
+            opacity: 0.5;
+            transition: opacity 0.25s;
+        }
+        .book-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            border-color: var(--card-spine);
+        }
+        .book-card:hover::after { opacity: 0.9; }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.8rem;
+        }
+        .card-category {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--card-spine);
+            background: var(--card-badge-bg);
+            padding: 0.2rem 0.65rem;
+            border-radius: 10px;
+            letter-spacing: 0.3px;
+            border: 1px solid var(--card-badge-border);
+        }
+        .card-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .book-card:hover .card-actions { opacity: 1; }
+        .card-actions button {
+            width: 26px;
+            height: 26px;
+            border: 1px solid #e8e2d8;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: #6b6052;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .card-actions button:hover {
+            background: #fff;
+            border-color: var(--card-spine);
+            color: var(--card-spine);
+        }
+        .card-actions button.delete-btn:hover {
+            color: var(--danger);
+            border-color: #e0c0c0;
+        }
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #2c2416;
+            line-height: 1.35;
+            margin-bottom: 0.4rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .card-author {
+            font-size: 0.78rem;
+            color: #6b6052;
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .card-author::before {
+            content: '✍️';
+            font-size: 0.7rem;
+            opacity: 0.7;
+        }
+        .card-description {
+            font-size: 0.78rem;
+            color: #6b6052;
+            line-height: 1.55;
+            margin-bottom: 0.8rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            background: var(--card-desc-bg);
+            padding: 0.5rem 0.7rem;
+            border-radius: 6px;
+            border-left: 2px solid var(--card-spine);
+            flex-shrink: 0;
+        }
+        .card-description.empty {
+            color: #b5a896;
+            font-style: italic;
+        }
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 0.6rem;
+        }
+        .card-tag {
+            font-size: 0.68rem;
+            color: var(--card-spine);
+            background: transparent;
+            border: 1px solid var(--card-tag-border);
+            padding: 0.12rem 0.5rem;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        .card-tag.more {
+            background: var(--card-badge-bg);
+            border-color: transparent;
+            font-weight: 600;
+        }
+        .card-bottom {
+            margin-top: auto;
+            padding-top: 0.6rem;
+            border-top: 1px dashed var(--card-divider);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.7rem;
+            color: #9b8e7c;
+        }
+        .card-date {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .card-readcount {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 0.68rem;
+            color: #b5a896;
+            opacity: 0.85;
+        }
+
+        /* 7 套分类配色 */
+        .book-card.cat-econ {
+            --card-bg: linear-gradient(135deg, #f4f8f0 0%, #ebf2e4 100%);
+            --card-border: #d8e3cc;
+            --card-spine: #5a7a4a;
+            --card-badge-bg: #e6efdb;
+            --card-badge-border: #c8d6b6;
+            --card-desc-bg: rgba(255, 255, 255, 0.5);
+            --card-tag-border: #c8d6b6;
+            --card-divider: #d8e3cc;
+            --card-corner: #c8d6b6;
+        }
+        .book-card.cat-hist {
+            --card-bg: linear-gradient(135deg, #faf3ea 0%, #f3e8d6 100%);
+            --card-border: #e0d0b8;
+            --card-spine: #a87042;
+            --card-badge-bg: #f0e2cc;
+            --card-badge-border: #d8c4a4;
+            --card-desc-bg: rgba(255, 255, 255, 0.55);
+            --card-tag-border: #d8c4a4;
+            --card-divider: #e0d0b8;
+            --card-corner: #d8c4a4;
+        }
+        .book-card.cat-math {
+            --card-bg: linear-gradient(135deg, #f0f4f9 0%, #e4ecf4 100%);
+            --card-border: #cdd9e6;
+            --card-spine: #4a6b8a;
+            --card-badge-bg: #dde6f0;
+            --card-badge-border: #b8c8d8;
+            --card-desc-bg: rgba(255, 255, 255, 0.55);
+            --card-tag-border: #b8c8d8;
+            --card-divider: #cdd9e6;
+            --card-corner: #b8c8d8;
+        }
+        .book-card.cat-phil {
+            --card-bg: linear-gradient(135deg, #f5f1f7 0%, #ede5f0 100%);
+            --card-border: #dccfe0;
+            --card-spine: #6a5a7a;
+            --card-badge-bg: #e8dfec;
+            --card-badge-border: #cdbfd2;
+            --card-desc-bg: rgba(255, 255, 255, 0.55);
+            --card-tag-border: #cdbfd2;
+            --card-divider: #dccfe0;
+            --card-corner: #cdbfd2;
+        }
+        .book-card.cat-soc {
+            --card-bg: linear-gradient(135deg, #f8f5e8 0%, #f0ead4 100%);
+            --card-border: #ddd3b0;
+            --card-spine: #8a7a3a;
+            --card-badge-bg: #ede5c8;
+            --card-badge-border: #cdc096;
+            --card-desc-bg: rgba(255, 255, 255, 0.55);
+            --card-tag-border: #cdc096;
+            --card-divider: #ddd3b0;
+            --card-corner: #cdc096;
+        }
+        .book-card.cat-lit {
+            --card-bg: linear-gradient(135deg, #faf0f2 0%, #f3e3e7 100%);
+            --card-border: #e6cdd2;
+            --card-spine: #a85a6a;
+            --card-badge-bg: #f0d8de;
+            --card-badge-border: #dab5bd;
+            --card-desc-bg: rgba(255, 255, 255, 0.55);
+            --card-tag-border: #dab5bd;
+            --card-divider: #e6cdd2;
+            --card-corner: #dab5bd;
+        }
+        .book-card.cat-other {
+            --card-bg: linear-gradient(135deg, #f5f2ed 0%, #ebe6dc 100%);
+            --card-border: #d8d0c2;
+            --card-spine: #6b6052;
+            --card-badge-bg: #e3ddd0;
+            --card-badge-border: #c5bba8;
+            --card-desc-bg: rgba(255, 255, 255, 0.55);
+            --card-tag-border: #c5bba8;
+            --card-divider: #d8d0c2;
+            --card-corner: #c5bba8;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+        .empty-state .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 0.8rem;
+            opacity: 0.5;
+        }
+        .empty-state p { font-size: 0.9rem; }
+
+        /* ========== 弹窗 ========== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.15s ease;
+        }
+        .modal-overlay.hidden { display: none; }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .modal {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            width: 480px;
+            max-width: 94vw;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        .modal h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+        .modal .drop-zone {
+            border: 2px dashed #d8c8b4;
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-bottom: 1rem;
+            background: #fdfaf6;
+            color: var(--text-secondary);
+        }
+        .modal .drop-zone:hover {
+            border-color: var(--accent);
+            background: #fef8f2;
+            color: var(--text);
+        }
+        .modal .drop-zone.dragover {
+            border-color: var(--accent);
+            background: #fef6ec;
+            box-shadow: 0 0 0 3px rgba(139, 90, 60, 0.08);
+        }
+        .modal .drop-zone .drop-icon {
+            font-size: 2rem;
+            margin-bottom: 0.4rem;
+        }
+        .modal .drop-zone .drop-hint {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+        .modal .form-group { margin-bottom: 0.7rem; }
+        .modal .form-group label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.25rem;
+        }
+        .modal .form-group input,
+        .modal .form-group select,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 0.5rem 0.7rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fdfaf6;
+            font-family: inherit;
+            font-size: 0.85rem;
+            color: var(--text);
+            outline: none;
+            transition: all var(--transition);
+            resize: vertical;
+        }
+        .modal .form-group textarea {
+            min-height: 70px;
+            line-height: 1.5;
+        }
+        .modal .form-group input:focus,
+        .modal .form-group select:focus,
+        .modal .form-group textarea:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(139, 90, 60, 0.06);
+        }
+        .modal .form-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 0.2rem;
+        }
+        .modal .btn-row {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        /* ========== 查看弹窗 ========== */
+        .viewer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.15s ease;
+        }
+        .viewer-overlay.hidden { display: none; }
+        .viewer {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            width: 88vw;
+            height: 88vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+            overflow: hidden;
+        }
+        .viewer-header {
+            padding: 0.7rem 1.2rem;
+            background: var(--accent);
+            color: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        .viewer-header button {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.3rem;
+            cursor: pointer;
+            padding: 0.2rem 0.5rem;
+            border-radius: 6px;
+            transition: all var(--transition);
+            line-height: 1;
+        }
+        .viewer-header button:hover { background: rgba(255, 255, 255, 0.15); }
+        .viewer-body { flex: 1; overflow: auto; }
+        .viewer-body iframe { width: 100%; height: 100%; border: none; }
+
+        /* ========== Toast ========== */
+        .toast-container {
+            position: fixed;
+            bottom: 1.2rem;
+            right: 1.2rem;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            pointer-events: none;
+        }
+        .toast {
+            background: #2c2416;
+            color: #f0e8d8;
+            padding: 0.6rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            animation: toastIn 0.3s ease, toastOut 0.35s 2.2s ease forwards;
+            pointer-events: auto;
+        }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; }
+            to { opacity: 0; transform: translateY(-6px); }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 140px;
+                padding: 1rem 0.5rem;
+            }
+            .sidebar-logo { font-size: 1rem; }
+            .sidebar-nav button {
+                font-size: 0.75rem;
+                padding: 0.45rem 0.5rem;
+            }
+            .main { padding: 1rem; }
+            .book-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 0.8rem;
+            }
+            .search-box input { width: 100px; }
+        }
+    </style>
+</head>
+<body style="">
+    <div class="app">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-logo">
+                <span class="logo-icon">📚</span>我的云书架<br></div>
+            <ul class="sidebar-nav" id="sidebarNav">
+                <li><button class="active" data-category="全部">📖 全部书籍 <span class="count" id="countAll">1</span></button></li>
+                <li><button data-category="经济·商业">💼 经济·商业 <span class="count" id="countEcon">0</span></button></li>
+                <li><button data-category="历史·文明">🏛️ 历史·文明 <span class="count" id="countHist">0</span></button></li>
+                <li><button data-category="数学·科学">🔬 数学·科学 <span class="count" id="countMath">0</span></button></li>
+                <li><button data-category="哲学·思维">💭 哲学·思维 <span class="count" id="countPhil">0</span></button></li>
+                <li><button data-category="社会·文化">🌍 社会·文化 <span class="count" id="countSoc">1</span></button></li>
+                <li><button data-category="文学·艺术">🎨 文学·艺术 <span class="count" id="countLit">0</span></button></li>
+                <li><button data-category="其他">📁 其他 <span class="count" id="countOther">0</span></button></li>
+            </ul>
+            <div class="sidebar-footer">数据存储于浏览器</div>
+        </aside>
+
+        <!-- 主内容 -->
+        <main class="main">
+            <div class="main-header">
+                <h1 id="mainTitle">📖 全部书籍</h1>
+                <div class="header-actions">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="搜索书名、作者或标签...">
+                    </div>
+                    <button class="btn primary" id="uploadBtn">📤 上传图谱</button>
+                </div>
+            </div>
+            <div class="book-grid" id="bookGrid">
+                    <div class="book-card cat-soc" data-id="bk-1779975864657-digwe">
+                        <div class="card-top">
+                            <span class="card-category">🌍 社会·文化</span>
+                            <div class="card-actions">
+                                <button class="edit-btn" title="编辑" data-action="edit" data-id="bk-1779975864657-digwe">✎</button>
+                                <button class="delete-btn" title="删除" data-action="delete" data-id="bk-1779975864657-digwe">🗑</button>
+                            </div>
+                        </div>
+                        <h3 class="card-title">王立铭进化论讲义</h3>
+                        <div class="card-author">未知作者</div>
+                        <div class="card-description " title="第一部分这是全书理论框架的核心。王立铭认为，纷繁复杂的进化论学说可以归结为三条最底层的逻辑前提，从它们出发，进化论的全部内容都可以被严格推导出来——就像几何学从几条公理出发构建整座大厦一样。">
+                            第一部分这是全书理论框架的核心。王立铭认为，纷繁复杂的进化论学说可以归结为三条最底层的逻辑前提，从它们出发，进化论的全部内容都可以被严格推导出来——就像几何学从几条公理出发构建整座大厦一样。
+                        </div>
+                        
+                            <div class="card-tags">
+                                <span class="card-tag">🔗 跨书印证</span><span class="card-tag">🔗 跨书冲突</span><span class="card-tag">📖 知识图谱</span>
+                                <span class="card-tag more">+2</span>
+                            </div>
+                        
+                        <div class="card-bottom">
+                            <span class="card-date">📅 刚刚</span>
+                            
+                        </div>
+                    </div>
+                </div>
+        </main>
+    </div>
+
+    <!-- 上传弹窗 -->
+    <div class="modal-overlay hidden" id="uploadModal">
+        <div class="modal">
+            <h3 id="uploadModalTitle">📤 添加书籍到书架</h3>
+            <div class="drop-zone" id="dropZone">
+                <div class="drop-icon">📂</div>
+                <p>拖拽知识图谱 HTML 文件到此处</p>
+                <p class="drop-hint">或点击选择文件</p>
+                <input type="file" id="fileInput" accept=".html,.htm" style="display:none;">
+            </div>
+            <div class="form-group">
+                <label>书名</label>
+                <input type="text" id="uploadTitle" placeholder="书名...">
+                <div class="form-hint">系统会从 HTML 中自动提取，可手动调整</div>
+            </div>
+            <div class="form-group">
+                <label>作者</label>
+                <input type="text" id="uploadAuthor" placeholder="作者...">
+            </div>
+            <div class="form-group">
+                <label>核心内容简介</label>
+                <textarea id="uploadDescription" placeholder="一两句话描述这本书的核心内容..."></textarea>
+            </div>
+            <div class="form-group">
+                <label>内容标签</label>
+                <input type="text" id="uploadTags" placeholder="用逗号分隔，如：经济学, 行为学, 心理">
+                <div class="form-hint">最多展示前 3 个，多余会折叠</div>
+            </div>
+            <div class="form-group">
+                <label>内容分类</label>
+                <select id="uploadCategory">
+                    <option value="经济·商业">经济·商业</option>
+                    <option value="历史·文明">历史·文明</option>
+                    <option value="数学·科学">数学·科学</option>
+                    <option value="哲学·思维">哲学·思维</option>
+                    <option value="社会·文化">社会·文化</option>
+                    <option value="文学·艺术">文学·艺术</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="btn-row">
+                <button class="btn" id="cancelUploadBtn">取消</button>
+                <button class="btn primary" id="confirmUploadBtn">📥 放入书架</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <div class="modal-overlay hidden" id="editModal">
+        <div class="modal">
+            <h3>✎ 编辑书籍信息</h3>
+            <div class="form-group">
+                <label>书名</label>
+                <input type="text" id="editTitle">
+            </div>
+            <div class="form-group">
+                <label>作者</label>
+                <input type="text" id="editAuthor">
+            </div>
+            <div class="form-group">
+                <label>核心内容简介</label>
+                <textarea id="editDescription"></textarea>
+            </div>
+            <div class="form-group">
+                <label>内容标签</label>
+                <input type="text" id="editTags" placeholder="用逗号分隔">
+            </div>
+            <div class="form-group">
+                <label>内容分类</label>
+                <select id="editCategory">
+                    <option value="经济·商业">经济·商业</option>
+                    <option value="历史·文明">历史·文明</option>
+                    <option value="数学·科学">数学·科学</option>
+                    <option value="哲学·思维">哲学·思维</option>
+                    <option value="社会·文化">社会·文化</option>
+                    <option value="文学·艺术">文学·艺术</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <div class="btn-row">
+                <button class="btn" id="cancelEditBtn">取消</button>
+                <button class="btn primary" id="confirmEditBtn">💾 保存修改</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 查看弹窗 -->
+    <div class="viewer-overlay hidden" id="viewerOverlay">
+        <div class="viewer">
+            <div class="viewer-header">
+                <span id="viewerTitle">📄 知识图谱</span>
+                <button id="closeViewerBtn">✕</button>
+            </div>
+            <div class="viewer-body">
+                <iframe id="viewerIframe" srcdoc=""></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast容器 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        (function() {
+            // ============ 配置 ============
+            const DB_NAME = 'BookGraphLibraryV5';
+            const DB_VERSION = 1;
+            const STORE_NAME = 'books';
+            let db = null;
+
+            const CATEGORIES = ['经济·商业', '历史·文明', '数学·科学', '哲学·思维', '社会·文化', '文学·艺术', '其他'];
+            const CATEGORY_CLASS_MAP = {
+                '经济·商业': 'cat-econ',
+                '历史·文明': 'cat-hist',
+                '数学·科学': 'cat-math',
+                '哲学·思维': 'cat-phil',
+                '社会·文化': 'cat-soc',
+                '文学·艺术': 'cat-lit',
+                '其他': 'cat-other'
+            };
+            const CATEGORY_ICON_MAP = {
+                '经济·商业': '💼',
+                '历史·文明': '🏛️',
+                '数学·科学': '🔬',
+                '哲学·思维': '💭',
+                '社会·文化': '🌍',
+                '文学·艺术': '🎨',
+                '其他': '📁'
+            };
+
+            // ============ IndexedDB ============
+            function openDB() {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open(DB_NAME, DB_VERSION);
+                    req.onupgradeneeded = (e) => {
+                        const d = e.target.result;
+                        if (!d.objectStoreNames.contains(STORE_NAME)) {
+                            const store = d.createObjectStore(STORE_NAME, { keyPath: 'id' });
+                            store.createIndex('category', 'category', { unique: false });
+                            store.createIndex('title', 'title', { unique: false });
+                            store.createIndex('uploadTime', 'uploadTime', { unique: false });
+                        }
+                    };
+                    req.onsuccess = (e) => { db = e.target.result; resolve(db); };
+                    req.onerror = (e) => reject(e.target.error);
+                });
+            }
+
+            async function saveBook(book) {
+                if (!db) await openDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    tx.objectStore(STORE_NAME).put(book);
+                    tx.oncomplete = resolve;
+                    tx.onerror = (e) => reject(e.target.error);
+                });
+            }
+
+            async function getAllBooks() {
+                if (!db) await openDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE_NAME, 'readonly');
+                    const req = tx.objectStore(STORE_NAME).getAll();
+                    req.onsuccess = () => resolve(req.result || []);
+                    req.onerror = (e) => reject(e.target.error);
+                });
+            }
+
+            async function deleteBookFromDB(id) {
+                if (!db) await openDB();
+                return new Promise((resolve, reject) => {
+                    const tx = db.transaction(STORE_NAME, 'readwrite');
+                    tx.objectStore(STORE_NAME).delete(id);
+                    tx.oncomplete = resolve;
+                    tx.onerror = (e) => reject(e.target.error);
+                });
+            }
+
+            // ============ 状态 ============
+            let allBooks = [];
+            let currentFilter = '全部';
+            let pendingFileData = null;
+            let pendingExtracted = null;
+            let editingBookId = null;
+
+            // ============ HTML 信息提取 ============
+            /**
+             * 综合提取 HTML 中的元数据
+             * @returns {title, author, description, tags}
+             */
+            function extractMetadata(html, fallbackFileName) {
+                const result = {
+                    title: '',
+                    author: '',
+                    description: '',
+                    tags: []
+                };
+                let doc;
+                try {
+                    doc = new DOMParser().parseFromString(html, 'text/html');
+                } catch (e) {
+                    result.title = fallbackFileName.replace(/\.html?$/i, '').replace(/[-_]/g, ' ');
+                    return result;
+                }
+
+                // ========= 提取书名 =========
+                result.title = extractTitle(doc, fallbackFileName);
+
+                // ========= 提取作者 =========
+                result.author = extractAuthor(doc);
+
+                // ========= 提取核心内容描述 =========
+                result.description = extractDescription(doc);
+
+                // ========= 提取标签 =========
+                result.tags = extractTags(doc);
+
+                return result;
+            }
+
+            function extractTitle(doc, fallbackFileName) {
+                // 1. h1 标签
+                const h1 = doc.querySelector('h1');
+                if (h1) {
+                    let t = h1.textContent.trim()
+                        .replace(/《|》/g, '')
+                        .replace(/知识图谱|思维导图|读书笔记/g, '')
+                        .replace(/[·•|\-—]\s*.*$/, '')
+                        .trim();
+                    if (t.length >= 2 && t.length <= 50) return t;
+                }
+                // 2. title 标签
+                const tt = doc.querySelector('title');
+                if (tt) {
+                    let t = tt.textContent.trim()
+                        .replace(/《|》/g, '')
+                        .replace(/知识图谱|思维导图|读书笔记/g, '')
+                        .replace(/[·•|\-—]\s*.*$/, '')
+                        .trim();
+                    if (t.length >= 2 && t.length <= 50) return t;
+                }
+                // 3. meta 标签
+                const metaTitle = doc.querySelector('meta[name="title"], meta[property="og:title"]');
+                if (metaTitle) {
+                    const t = (metaTitle.getAttribute('content') || '').trim();
+                    if (t.length >= 2) return t;
+                }
+                // 4. 兜底文件名
+                return fallbackFileName.replace(/\.html?$/i, '').replace(/[-_]/g, ' ');
+            }
+
+            function extractAuthor(doc) {
+                // 1. meta author
+                const metaAuthor = doc.querySelector('meta[name="author"]');
+                if (metaAuthor) {
+                    const t = (metaAuthor.getAttribute('content') || '').trim();
+                    if (t) return t;
+                }
+                // 2. 常见类名
+                const authorEl = doc.querySelector('.author, [data-author], .book-author, .meta-author');
+                if (authorEl) {
+                    const t = authorEl.textContent.trim().replace(/^作者[：:]\s*/, '').replace(/\s*著$/, '');
+                    if (t && t.length < 50) return t;
+                }
+                // 3. meta / subtitle / header 中的文本，用正则匹配
+                const candidates = doc.querySelectorAll('.meta, .subtitle, .header, .info, .book-info, p');
+                for (const el of candidates) {
+                    const text = el.textContent;
+                    if (!text || text.length > 300) continue;
+                    // 匹配 "作者：XXX" 或 "作者: XXX"
+                    let m = text.match(/作者[：:]\s*([^\s,，;；·•\n\r]{2,30})/);
+                    if (m) return m[1].trim();
+                    // 匹配 "XXX 著"
+                    m = text.match(/([^\s,，;；·•\n\r]{2,20})\s*著(?:[^\u4e00-\u9fa5]|$)/);
+                    if (m) return m[1].trim();
+                    // 匹配 "by XXX"
+                    m = text.match(/by\s+([A-Za-z\u4e00-\u9fa5·\.\s]{2,30})/i);
+                    if (m) return m[1].trim();
+                }
+                return '';
+            }
+
+            function extractDescription(doc) {
+                // 1. meta description
+                const metaDesc = doc.querySelector('meta[name="description"], meta[property="og:description"]');
+                if (metaDesc) {
+                    const t = (metaDesc.getAttribute('content') || '').trim();
+                    if (t.length >= 10) return truncate(t, 120);
+                }
+                // 2. 摘要类元素
+                const summaryEl = doc.querySelector('.summary, .abstract, .intro, .description, .book-intro, .book-summary, .overview');
+                if (summaryEl) {
+                    const t = summaryEl.textContent.trim().replace(/\s+/g, ' ');
+                    if (t.length >= 10) return truncate(t, 120);
+                }
+                // 3. 第一个有意义的 p 标签
+                const paragraphs = doc.querySelectorAll('p');
+                for (const p of paragraphs) {
+                    const t = p.textContent.trim().replace(/\s+/g, ' ');
+                    if (t.length >= 20 && t.length <= 500 && !/^作者|^出版|^©|^版权/.test(t)) {
+                        return truncate(t, 120);
+                    }
+                }
+                // 4. body 文本兜底（去除标签后的纯文本前 100 字）
+                const bodyText = (doc.body?.textContent || '').trim().replace(/\s+/g, ' ');
+                if (bodyText.length >= 30) {
+                    // 跳过开头可能的标题和作者信息，取 50 字之后的内容
+                    return truncate(bodyText.substring(Math.min(50, Math.floor(bodyText.length * 0.1))), 120);
+                }
+                return '';
+            }
+
+            function extractTags(doc) {
+                const tags = new Set();
+
+                // 1. meta keywords
+                const metaKeywords = doc.querySelector('meta[name="keywords"]');
+                if (metaKeywords) {
+                    const t = metaKeywords.getAttribute('content') || '';
+                    t.split(/[,，、;；\s]+/).forEach(k => {
+                        const tag = k.trim();
+                        if (tag.length >= 2 && tag.length <= 12) tags.add(tag);
+                    });
+                }
+
+                // 2. 显式标签元素
+                doc.querySelectorAll('.tag, .tags span, .keyword, .label, [data-tag]').forEach(el => {
+                    const t = el.textContent.trim().replace(/^#/, '');
+                    if (t.length >= 2 && t.length <= 12) tags.add(t);
+                });
+
+                // 3. 如果不够 3 个，从 h2/h3 提取关键词
+                if (tags.size < 3) {
+                    const headings = doc.querySelectorAll('h2, h3');
+                    for (const h of headings) {
+                        if (tags.size >= 5) break;
+                        let t = h.textContent.trim()
+                            .replace(/^[\d一二三四五六七八九十]+[\.、\s]/, '')
+                            .replace(/[：:].*$/, '')
+                            .trim();
+                        if (t.length >= 2 && t.length <= 10) {
+                            tags.add(t);
+                        }
+                    }
+                }
+
+                return Array.from(tags).slice(0, 5);
+            }
+
+            function truncate(str, maxLen) {
+                if (!str) return '';
+                str = str.trim();
+                if (str.length <= maxLen) return str;
+                return str.substring(0, maxLen) + '...';
+            }
+
+            // ============ 渲染 ============
+            function getFilteredBooks() {
+                const searchTerm = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
+                let filtered = allBooks;
+                if (currentFilter !== '全部') {
+                    filtered = filtered.filter(b => b.category === currentFilter);
+                }
+                if (searchTerm) {
+                    filtered = filtered.filter(b => {
+                        const inTitle = (b.title || '').toLowerCase().includes(searchTerm);
+                        const inAuthor = (b.author || '').toLowerCase().includes(searchTerm);
+                        const inTags = (b.tags || []).some(t => t.toLowerCase().includes(searchTerm));
+                        const inDesc = (b.description || '').toLowerCase().includes(searchTerm);
+                        return inTitle || inAuthor || inTags || inDesc;
+                    });
+                }
+                // 默认按上传时间倒序
+                filtered.sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime));
+                return filtered;
+            }
+
+            function renderBookGrid() {
+                const grid = document.getElementById('bookGrid');
+                const filtered = getFilteredBooks();
+                if (filtered.length === 0) {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <div class="empty-icon">📭</div>
+                            <p>书架空空如也</p>
+                            <p style="font-size:0.8rem;margin-top:0.3rem;">点击右上角「上传图谱」添加第一本书吧</p>
+                        </div>`;
+                } else {
+                    grid.innerHTML = filtered.map(book => renderBookCard(book)).join('');
+                }
+                updateSidebarCounts();
+                bindCardEvents();
+            }
+
+            function renderBookCard(book) {
+                const catClass = CATEGORY_CLASS_MAP[book.category] || 'cat-other';
+                const catIcon = CATEGORY_ICON_MAP[book.category] || '📁';
+                const tags = book.tags || [];
+                const visibleTags = tags.slice(0, 3);
+                const hiddenCount = Math.max(0, tags.length - 3);
+                const description = book.description || '';
+                const readCount = book.readCount || 0;
+                const author = book.author || '未知作者';
+
+                return `
+                    <div class="book-card ${catClass}" data-id="${book.id}">
+                        <div class="card-top">
+                            <span class="card-category">${catIcon} ${escapeHtml(book.category)}</span>
+                            <div class="card-actions">
+                                <button class="edit-btn" title="编辑" data-action="edit" data-id="${book.id}">✎</button>
+                                <button class="delete-btn" title="删除" data-action="delete" data-id="${book.id}">🗑</button>
+                            </div>
+                        </div>
+                        <h3 class="card-title">${escapeHtml(book.title)}</h3>
+                        <div class="card-author">${escapeHtml(author)}</div>
+                        <div class="card-description ${description ? '' : 'empty'}" title="${escapeHtml(description)}">
+                            ${description ? escapeHtml(description) : '暂无简介，点击编辑按钮补充'}
+                        </div>
+                        ${tags.length > 0 ? `
+                            <div class="card-tags">
+                                ${visibleTags.map(t => `<span class="card-tag">${escapeHtml(t)}</span>`).join('')}
+                                ${hiddenCount > 0 ? `<span class="card-tag more">+${hiddenCount}</span>` : ''}
+                            </div>
+                        ` : ''}
+                        <div class="card-bottom">
+                            <span class="card-date">📅 ${formatDate(book.uploadTime)}</span>
+                            ${readCount >= 1 ? `<span class="card-readcount">👁 已读 ${readCount} 次</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+
+            function bindCardEvents() {
+                document.querySelectorAll('.book-card').forEach(card => {
+                    card.addEventListener('click', (e) => {
+                        if (e.target.closest('[data-action]')) return;
+                        const bookId = card.dataset.id;
+                        const book = allBooks.find(b => b.id === bookId);
+                        if (book) openViewer(book);
+                    });
+                });
+                document.querySelectorAll('[data-action="delete"]').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const bookId = btn.dataset.id;
+                        const book = allBooks.find(b => b.id === bookId);
+                        if (!book) return;
+                        if (confirm(`确定要从书架中移除《${book.title}》吗？`)) {
+                            await deleteBookFromDB(bookId);
+                            allBooks = allBooks.filter(b => b.id !== bookId);
+                            renderBookGrid();
+                            showToast('已从书架移除');
+                        }
+                    });
+                });
+                document.querySelectorAll('[data-action="edit"]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const bookId = btn.dataset.id;
+                        openEditModal(bookId);
+                    });
+                });
+            }
+
+            function updateSidebarCounts() {
+                const counts = { '全部': allBooks.length };
+                CATEGORIES.forEach(c => counts[c] = 0);
+                allBooks.forEach(b => {
+                    if (counts[b.category] !== undefined) counts[b.category]++;
+                    else counts['其他']++;
+                });
+                document.getElementById('countAll').textContent = counts['全部'];
+                document.getElementById('countEcon').textContent = counts['经济·商业'];
+                document.getElementById('countHist').textContent = counts['历史·文明'];
+                document.getElementById('countMath').textContent = counts['数学·科学'];
+                document.getElementById('countPhil').textContent = counts['哲学·思维'];
+                document.getElementById('countSoc').textContent = counts['社会·文化'];
+                document.getElementById('countLit').textContent = counts['文学·艺术'];
+                document.getElementById('countOther').textContent = counts['其他'];
+            }
+
+            function formatDate(isoStr) {
+                if (!isoStr) return '未知';
+                const d = new Date(isoStr);
+                const now = new Date();
+                const diff = now - d;
+                if (diff < 60000) return '刚刚';
+                if (diff < 3600000) return Math.floor(diff / 60000) + '分钟前';
+                if (diff < 86400000) return '今天';
+                if (diff < 172800000) return '昨天';
+                if (diff < 604800000) return Math.floor(diff / 86400000) + '天前';
+                return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            }
+
+            // ============ 查看器（带阅读次数追踪） ============
+            async function openViewer(book) {
+                document.getElementById('viewerTitle').textContent = `📄 《${book.title}》 · ${book.category}`;
+                document.getElementById('viewerIframe').srcdoc = book.htmlContent;
+                document.getElementById('viewerOverlay').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+
+                // 追踪阅读次数
+                book.readCount = (book.readCount || 0) + 1;
+                book.lastReadTime = new Date().toISOString();
+                try {
+                    await saveBook(book);
+                    // 更新内存中的引用
+                    const idx = allBooks.findIndex(b => b.id === book.id);
+                    if (idx >= 0) allBooks[idx] = book;
+                    // 重新渲染卡片以更新阅读次数显示
+                    renderBookGrid();
+                } catch (err) {
+                    console.warn('阅读计数更新失败', err);
+                }
+            }
+
+            function closeViewer() {
+                document.getElementById('viewerOverlay').classList.add('hidden');
+                document.body.style.overflow = '';
+                document.getElementById('viewerIframe').srcdoc = '';
+            }
+            document.getElementById('closeViewerBtn').addEventListener('click', closeViewer);
+            document.getElementById('viewerOverlay').addEventListener('click', function(e) {
+                if (e.target === this) closeViewer();
+            });
+
+            // ============ 上传弹窗 ============
+            function openUploadModal() {
+                document.getElementById('uploadModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeUploadModal() {
+                document.getElementById('uploadModal').classList.add('hidden');
+                document.body.style.overflow = '';
+                pendingFileData = null;
+                pendingExtracted = null;
+                document.getElementById('uploadTitle').value = '';
+                document.getElementById('uploadAuthor').value = '';
+                document.getElementById('uploadDescription').value = '';
+                document.getElementById('uploadTags').value = '';
+                document.getElementById('dropZone').classList.remove('dragover');
+            }
+            document.getElementById('uploadBtn').addEventListener('click', openUploadModal);
+            document.getElementById('cancelUploadBtn').addEventListener('click', closeUploadModal);
+            document.getElementById('uploadModal').addEventListener('click', function(e) {
+                if (e.target === this) closeUploadModal();
+            });
+
+            const dropZone = document.getElementById('dropZone');
+            const fileInput = document.getElementById('fileInput');
+            dropZone.addEventListener('click', () => fileInput.click());
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+                handleFiles(e.dataTransfer.files);
+            });
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+                fileInput.value = '';
+            });
+
+            function handleFiles(files) {
+                if (!files || files.length === 0) return;
+                const file = files[0];
+                if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) {
+                    showToast('⚠️ 请选择HTML文件');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    pendingFileData = e.target.result;
+                    pendingExtracted = extractMetadata(pendingFileData, file.name);
+
+                    // 自动填充表单
+                    document.getElementById('uploadTitle').value = pendingExtracted.title || '';
+                    document.getElementById('uploadAuthor').value = pendingExtracted.author || '';
+                    document.getElementById('uploadDescription').value = pendingExtracted.description || '';
+                    document.getElementById('uploadTags').value = (pendingExtracted.tags || []).join(', ');
+
+                    showToast('📂 已自动提取信息，请确认或调整');
+                };
+                reader.readAsText(file);
+            }
+
+            document.getElementById('confirmUploadBtn').addEventListener('click', async () => {
+                if (!pendingFileData) {
+                    showToast('⚠️ 请先选择HTML文件');
+                    return;
+                }
+                const title = document.getElementById('uploadTitle').value.trim() || '未命名';
+                const author = document.getElementById('uploadAuthor').value.trim() || '未知作者';
+                const description = document.getElementById('uploadDescription').value.trim();
+                const tagsStr = document.getElementById('uploadTags').value.trim();
+                const tags = tagsStr ? tagsStr.split(/[,，、;；]+/).map(t => t.trim()).filter(t => t) : [];
+                const category = document.getElementById('uploadCategory').value;
+
+                const book = {
+                    id: 'bk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+                    title,
+                    author,
+                    description,
+                    tags,
+                    category,
+                    htmlContent: pendingFileData,
+                    uploadTime: new Date().toISOString(),
+                    readCount: 0,
+                    lastReadTime: null
+                };
+
+                try {
+                    await saveBook(book);
+                    allBooks.push(book);
+                    renderBookGrid();
+                    closeUploadModal();
+                    showToast('✅ 已放入书架！');
+                } catch (err) {
+                    console.error(err);
+                    showToast('❌ 保存失败，请重试');
+                }
+            });
+
+            // ============ 编辑弹窗 ============
+            function openEditModal(bookId) {
+                const book = allBooks.find(b => b.id === bookId);
+                if (!book) return;
+                editingBookId = bookId;
+                document.getElementById('editTitle').value = book.title || '';
+                document.getElementById('editAuthor').value = book.author || '';
+                document.getElementById('editDescription').value = book.description || '';
+                document.getElementById('editTags').value = (book.tags || []).join(', ');
+                document.getElementById('editCategory').value = book.category || '其他';
+                document.getElementById('editModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeEditModal() {
+                document.getElementById('editModal').classList.add('hidden');
+                document.body.style.overflow = '';
+                editingBookId = null;
+            }
+            document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
+            document.getElementById('editModal').addEventListener('click', function(e) {
+                if (e.target === this) closeEditModal();
+            });
+
+            document.getElementById('confirmEditBtn').addEventListener('click', async () => {
+                if (!editingBookId) return;
+                const idx = allBooks.findIndex(b => b.id === editingBookId);
+                if (idx < 0) return;
+                const book = allBooks[idx];
+
+                book.title = document.getElementById('editTitle').value.trim() || '未命名';
+                book.author = document.getElementById('editAuthor').value.trim() || '未知作者';
+                book.description = document.getElementById('editDescription').value.trim();
+                const tagsStr = document.getElementById('editTags').value.trim();
+                book.tags = tagsStr ? tagsStr.split(/[,，、;；]+/).map(t => t.trim()).filter(t => t) : [];
+                book.category = document.getElementById('editCategory').value;
+
+                try {
+                    await saveBook(book);
+                    renderBookGrid();
+                    closeEditModal();
+                    showToast('✅ 已保存修改');
+                } catch (err) {
+                    console.error(err);
+                    showToast('❌ 保存失败');
+                }
+            });
+
+            // ============ 搜索 ============
+            document.getElementById('searchInput').addEventListener('input', () => {
+                renderBookGrid();
+            });
+
+            // ============ 侧边栏导航 ============
+            function setFilter(category) {
+                currentFilter = category;
+                document.querySelectorAll('.sidebar-nav button').forEach(btn => {
+                    btn.classList.remove('active');
+                    if (btn.dataset.category === category) btn.classList.add('active');
+                });
+                document.getElementById('mainTitle').textContent =
+                    category === '全部' ? '📖 全部书籍' : `📖 ${category}`;
+                renderBookGrid();
+            }
+            document.querySelectorAll('.sidebar-nav button').forEach(btn => {
+                btn.addEventListener('click', () => setFilter(btn.dataset.category));
+            });
+
+            // ============ Toast ============
+            function showToast(msg) {
+                const container = document.getElementById('toastContainer');
+                const toast = document.createElement('div');
+                toast.className = 'toast';
+                toast.textContent = msg;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 2600);
+            }
+
+            // ============ 键盘快捷键 ============
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (!document.getElementById('viewerOverlay').classList.contains('hidden')) closeViewer();
+                    else if (!document.getElementById('uploadModal').classList.contains('hidden')) closeUploadModal();
+                    else if (!document.getElementById('editModal').classList.contains('hidden')) closeEditModal();
+                }
+                if (e.ctrlKey && e.key === 'u') { e.preventDefault(); openUploadModal(); }
+                if (e.ctrlKey && e.key === 'f') {
+                    e.preventDefault();
+                    document.getElementById('searchInput').focus();
+                }
+            });
+
+            function escapeHtml(s) {
+                const d = document.createElement('div');
+                d.textContent = s || '';
+                return d.innerHTML;
+            }
+
+            // ============ 数据迁移：兼容旧数据 ============
+            function migrateBookData(book) {
+                // 旧数据可能没有这些字段，补齐默认值
+                if (book.tags === undefined) book.tags = [];
+                if (book.description === undefined) book.description = '';
+                if (book.readCount === undefined) book.readCount = 0;
+                if (book.lastReadTime === undefined) book.lastReadTime = null;
+                if (!book.author) book.author = '未知作者';
+
+                // 如果旧数据没有 description 和 tags，尝试从 htmlContent 提取
+                if (!book.description && !book.tags.length && book.htmlContent) {
+                    try {
+                        const extracted = extractMetadata(book.htmlContent, book.title || '');
+                        if (!book.description && extracted.description) book.description = extracted.description;
+                        if (!book.tags.length && extracted.tags.length) book.tags = extracted.tags;
+                        if ((book.author === '未知作者' || !book.author) && extracted.author) book.author = extracted.author;
+                    } catch (e) {
+                        console.warn('迁移数据时提取失败', e);
+                    }
+                }
+                return book;
+            }
+
+            // ============ 初始化 ============
+            async function init() {
+                try {
+                    await openDB();
+                    const books = await getAllBooks();
+                    // 迁移旧数据
+                    allBooks = books.map(migrateBookData);
+                    // 静默保存迁移后的数据
+                    for (const book of allBooks) {
+                        try { await saveBook(book); } catch(e) {}
+                    }
+                    renderBookGrid();
+                    console.log('📚 云上书阁 V2 已就绪');
+                    console.log('   分类：' + CATEGORIES.join(' · '));
+                    console.log('   快捷键：Ctrl+U 上传 | Ctrl+F 搜索 | Esc 关闭弹窗');
+                    console.log('   书架现存：' + allBooks.length + ' 本');
+                } catch (err) {
+                    console.error('初始化失败:', err);
+                    showToast('⚠️ 存储初始化失败，请检查浏览器IndexedDB支持');
+                }
+            }
+            init();
+        })();
+    </script>
+
+
+</body></html>

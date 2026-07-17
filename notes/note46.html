@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transformer 自注意力 · 增强版分步可视化</title>
+    <style>
+        :root {
+            --bg: #0b0e14;
+            --surface: #161a22;
+            --surface2: #1f2430;
+            --border: #2b3040;
+            --text: #e4e8f0;
+            --text2: #9ba3b5;
+            --accent: #f0a050;
+            --blue: #5b9cf5;
+            --green: #4caf84;
+            --pink: #e05570;
+            --purple: #9b7ed8;
+            --q: #5b9cf5;
+            --k: #f0a050;
+            --v: #4caf84;
+            --softmax: #e05570;
+            --ffn: #9b7ed8;
+            --radius: 14px;
+            --radius-sm: 10px;
+            --font: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: var(--font);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 24px 16px 60px;
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1150px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .header {
+            text-align: center;
+        }
+        .header .badge {
+            display: inline-block;
+            background: var(--surface2);
+            color: var(--accent);
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            padding: 5px 14px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            border: 1px solid var(--border);
+        }
+        .header h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #fff;
+            margin: 4px 0;
+        }
+        .header .subtitle {
+            font-size: 0.9rem;
+            color: var(--text2);
+        }
+        .header .example-text {
+            margin-top: 12px;
+            font-size: 1.2rem;
+            font-weight: 500;
+            background: var(--surface);
+            display: inline-block;
+            padding: 8px 24px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            letter-spacing: 0.04em;
+        }
+        .header .example-text .hl {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .step-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        .step-dots {
+            display: flex;
+            gap: 8px;
+        }
+        .step-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            background: var(--surface2);
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .step-dot.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 14px rgba(240, 160, 80, 0.45);
+            transform: scale(1.3);
+        }
+        .step-dot.done {
+            background: #e07040;
+            border-color: #e07040;
+            opacity: 0.7;
+        }
+        .step-labels {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            font-size: 0.78rem;
+            color: var(--text2);
+        }
+        .step-labels span {
+            cursor: pointer;
+            padding: 3px 10px;
+            border-radius: 10px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .step-labels span.active {
+            color: #fff;
+            font-weight: 600;
+            background: var(--surface2);
+        }
+
+        .main-panel {
+            display: flex;
+            gap: 22px;
+            flex-wrap: wrap;
+        }
+        @media (max-width: 860px) {
+            .main-panel {
+                flex-direction: column;
+            }
+        }
+
+        .visual-card {
+            flex: 1 1 560px;
+            min-width: 400px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        @media (max-width: 500px) {
+            .visual-card {
+                min-width: auto;
+                padding: 16px 12px;
+            }
+        }
+        .visual-card .card-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .visual-stage {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            min-height: 280px;
+        }
+        .visual-panel {
+            display: none;
+            width: 100%;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .visual-panel.active {
+            display: flex;
+        }
+
+        .token-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+        }
+        .token-chip {
+            padding: 10px 14px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: var(--surface2);
+            border: 2px solid transparent;
+            transition: var(--transition);
+            color: #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.2;
+        }
+        .token-chip .pos {
+            font-size: 0.6rem;
+            font-weight: 400;
+            color: var(--text2);
+        }
+        .token-chip.highlight {
+            border-color: #fff !important;
+            color: #fff;
+            background: #2a2e3d;
+            transform: scale(1.06);
+        }
+        .token-chip.q-token {
+            border-color: var(--q);
+            background: rgba(91, 156, 245, 0.12);
+            color: #fff;
+        }
+        .token-chip.k-token {
+            border-color: var(--k);
+            background: rgba(240, 160, 80, 0.12);
+            color: #fff;
+        }
+        .token-chip.v-token {
+            border-color: var(--v);
+            background: rgba(76, 175, 132, 0.12);
+            color: #fff;
+        }
+
+        .vector-bars {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 36px;
+            flex-wrap: wrap;
+        }
+        .vector-bar {
+            width: 5px;
+            border-radius: 2px;
+            background: #555;
+            transition: var(--transition);
+        }
+
+        /* 位置编码条纹样式 */
+        .pos-encode-bar {
+            background-image: repeating-linear-gradient(
+                45deg,
+                var(--k),
+                var(--k) 1px,
+                #2a2e3d 1px,
+                #2a2e3d 4px
+            ) !important;
+            opacity: 0.9;
+            border: 1px solid rgba(240, 160, 80, 0.3);
+        }
+
+        .embed-grid {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .embed-card {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            border: 1px solid var(--border);
+            transition: var(--transition);
+            min-width: 90px;
+        }
+        .embed-card.focus {
+            border-color: #fff;
+            box-shadow: 0 0 14px rgba(255, 255, 255, 0.12);
+        }
+        .embed-section-title {
+            font-size: 0.7rem;
+            color: var(--text2);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .qkv-block {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .qkv-column {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            text-align: center;
+            border: 1px solid var(--border);
+            min-width: 90px;
+            transition: var(--transition);
+        }
+        .qkv-column.q-col {
+            border-color: var(--q);
+        }
+        .qkv-column.k-col {
+            border-color: var(--k);
+        }
+        .qkv-column.v-col {
+            border-color: var(--v);
+        }
+
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+            max-width: 420px;
+        }
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+        .bar-label {
+            width: 48px;
+            text-align: right;
+            font-weight: 600;
+            color: #fff;
+            flex-shrink: 0;
+        }
+        .bar-track {
+            flex: 1;
+            height: 22px;
+            background: var(--surface2);
+            border-radius: 11px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 11px;
+            background: var(--k);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-weight: 700;
+            font-size: 0.7rem;
+            color: #111;
+            min-width: 36px;
+            white-space: nowrap;
+        }
+        .bar-fill.high {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(240, 160, 80, 0.4);
+        }
+        .bar-fill.pred-high {
+            background: var(--green);
+            color: #fff;
+            box-shadow: 0 0 14px rgba(76, 175, 132, 0.4);
+        }
+
+        .sum-illustration {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .sum-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.7rem;
+            gap: 2px;
+        }
+        .sum-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            background: var(--surface2);
+            border: 2px solid #555;
+        }
+        .sum-plus {
+            font-weight: 300;
+            font-size: 1.4rem;
+            color: var(--text2);
+        }
+        .sum-result {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--surface2);
+            border: 3px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.8rem;
+            box-shadow: 0 0 18px rgba(255, 255, 255, 0.15);
+        }
+
+        /* FFN 流动动画 */
+        .ffn-flow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .ffn-node {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 14px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .ffn-node.highlight {
+            border-color: var(--purple);
+            background: rgba(155, 126, 216, 0.12);
+            box-shadow: 0 0 14px rgba(155, 126, 216, 0.3);
+        }
+        .ffn-arrow {
+            color: var(--text2);
+            font-size: 1.3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .ffn-arrow.animated::after {
+            content: "";
+            position: absolute;
+            left: -50%;
+            top: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(155, 126, 216, 0.5), transparent);
+            animation: flow 1.5s infinite linear;
+        }
+        @keyframes flow {
+            0% {
+                left: -50%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .feature-grid {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .feature-box {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            min-width: 140px;
+            text-align: center;
+        }
+        .feature-box .title {
+            font-weight: 700;
+            color: var(--purple);
+            margin-bottom: 8px;
+            font-size: 0.8rem;
+        }
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            justify-content: center;
+        }
+        .feature-tag {
+            background: rgba(155, 126, 216, 0.18);
+            color: #d4c5f9;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .feature-tag.active {
+            background: var(--purple);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(155, 126, 216, 0.5);
+        }
+
+        .prediction-badge {
+            background: var(--surface2);
+            border: 2px solid var(--green);
+            border-radius: 20px;
+            padding: 12px 28px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(76, 175, 132, 0.3);
+        }
+        .prediction-badge .word {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--green);
+        }
+
+        /* 新增加部分：温度对比条与解码策略卡片 */
+        .temp-compare {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .temp-case {
+            text-align: center;
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 10px;
+            border: 1px solid var(--border);
+            min-width: 100px;
+        }
+        .temp-case .temp-label {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+        .temp-bar-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .temp-bar-row {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.65rem;
+        }
+        .temp-bar-row .tname {
+            width: 30px;
+            text-align: right;
+            color: var(--text2);
+        }
+        .temp-track {
+            flex: 1;
+            height: 14px;
+            background: var(--surface);
+            border-radius: 7px;
+            overflow: hidden;
+        }
+        .temp-fill {
+            height: 100%;
+            border-radius: 7px;
+            background: var(--green);
+            transition: width 0.4s;
+        }
+
+        .decode-card {
+            background: var(--surface2);
+            border-radius: var(--radius-sm);
+            padding: 12px;
+            border: 1px solid var(--border);
+            font-size: 0.75rem;
+            line-height: 1.5;
+        }
+        .decode-card .dtitle {
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 6px;
+        }
+        .decode-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.7rem;
+        }
+        .decode-table th, .decode-table td {
+            border-bottom: 1px solid var(--border);
+            padding: 6px 4px;
+            text-align: left;
+        }
+        .decode-table th {
+            color: var(--text2);
+            font-weight: 600;
+        }
+
+        .detail-card {
+            flex: 0 0 340px;
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px 18px;
+            border: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 260px;
+        }
+        .detail-card .card-title {
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text2);
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .detail-desc {
+            font-size: 0.9rem;
+            color: var(--text);
+            line-height: 1.6;
+            background: var(--surface2);
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            border-left: 3px solid var(--accent);
+            min-height: 80px;
+            transition: var(--transition);
+        }
+        .detail-desc .tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 2px 7px;
+            border-radius: 4px;
+            margin: 0 2px;
+        }
+        .tag-q {
+            background: var(--q);
+            color: #fff;
+        }
+        .tag-k {
+            background: var(--k);
+            color: #111;
+        }
+        .tag-v {
+            background: var(--v);
+            color: #fff;
+        }
+        .tag-softmax {
+            background: var(--softmax);
+            color: #fff;
+        }
+        .tag-ffn {
+            background: var(--ffn);
+            color: #fff;
+        }
+
+        .extra-info {
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .extra-info.active {
+            display: flex;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 22px;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: #fff;
+            cursor: pointer;
+            font-size: 0.88rem;
+            font-weight: 600;
+            transition: var(--transition);
+            font-family: var(--font);
+            white-space: nowrap;
+        }
+        .btn:hover {
+            background: var(--surface2);
+            border-color: #fff4;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn.primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #111;
+            font-weight: 700;
+        }
+        .btn.primary:hover {
+            background: #f5b860;
+            box-shadow: 0 4px 18px rgba(240, 160, 80, 0.35);
+        }
+        .btn:disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        .step-counter {
+            font-size: 0.9rem;
+            color: var(--text2);
+            font-weight: 500;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        /* 移动端微调 */
+        @media (max-width: 500px) {
+            .token-chip {
+                padding: 6px 10px;
+                font-size: 0.8rem;
+            }
+            .bar-label {
+                width: 40px;
+                font-size: 0.7rem;
+            }
+            .bar-track {
+                height: 18px;
+            }
+            .qkv-column {
+                padding: 10px;
+                min-width: 70px;
+            }
+            .embed-card {
+                padding: 8px 10px;
+                min-width: 70px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="badge">Transformer · 逐词预测过程</div>
+            <h1>自注意力机制：Q / K / V 逐步可视化</h1>
+            <p class="subtitle">输入：<strong>"我很喜欢苹果我爱吃"</strong> → 预测下一个词</p>
+            <div class="example-text">
+                重点位置 <span class="hl">「吃₇」</span> 如何融合前文信息
+            </div>
+        </div>
+
+        <div class="step-area">
+            <div class="step-dots" id="stepDots">
+                <span class="step-dot" data-step="0"></span>
+                <span class="step-dot" data-step="1"></span>
+                <span class="step-dot" data-step="2"></span>
+                <span class="step-dot" data-step="3"></span>
+                <span class="step-dot" data-step="4"></span>
+                <span class="step-dot" data-step="5"></span>
+                <span class="step-dot" data-step="6"></span>
+                <span class="step-dot" data-step="7"></span>
+            </div>
+            <div class="step-labels" id="stepLabels">
+                <span data-step="0">📋 概览</span>
+                <span data-step="1">1️⃣ 嵌入+位置编码</span>
+                <span data-step="2">2️⃣ 生成 Q/K/V</span>
+                <span data-step="3">3️⃣ 注意力分数</span>
+                <span data-step="4">4️⃣ Softmax 权重</span>
+                <span data-step="5">5️⃣ 加权V→输出</span>
+                <span data-step="6">6️⃣ 输入FFN</span>
+                <span data-step="7">7️⃣ 概率预测</span>
+            </div>
+        </div>
+
+        <div class="main-panel">
+            <div class="visual-card">
+                <div class="card-title" id="visualTitle">🔍 当前步骤视图</div>
+                <div class="visual-stage" id="visualStage">
+                    <!-- Step 0: Overview -->
+                    <div class="visual-panel" data-step="0">
+                        <div class="token-row" id="overviewTokens"></div>
+                        <p style="color:var(--text2);font-size:0.85rem;max-width:400px;text-align:center;">
+                            模型采用<strong>自回归因果注意力</strong>，我们将以最后一个词 <strong>「吃₇」</strong>为例，
+                            因为它能看到所有前文，最能体现完整的信息融合过程。
+                        </p>
+                    </div>
+                    <!-- Step 1: Embedding + Position -->
+                    <div class="visual-panel" data-step="1">
+                        <div id="embedPosContainer" style="width:100%;"></div>
+                        <p style="color:var(--text2);font-size:0.78rem;">
+                            词嵌入 + 位置编码 = 模型输入向量。位置编码赋予序列顺序感。
+                        </p>
+                    </div>
+                    <!-- Step 2: Q/K/V generation -->
+                    <div class="visual-panel" data-step="2">
+                        <div class="qkv-block" id="qkvBlock"></div>
+                        <p style="color:var(--text2);font-size:0.78rem;">基座模型用 Wq, Wk, Wv 矩阵为每个词生成 Q/K/V（重点显示「吃₇」的向量）</p>
+                    </div>
+                    <!-- Step 3: Attention Scores -->
+                    <div class="visual-panel" data-step="3">
+                        <div class="bar-chart" id="scoreChart"></div>
+                        <p style="color:var(--text2);font-size:0.78rem;">「吃₇」的 Q 与前文所有 K 做点积；分数越高越相关（除以√dₖ缩放）</p>
+                    </div>
+                    <!-- Step 4: Softmax Weights -->
+                    <div class="visual-panel" data-step="4">
+                        <div class="bar-chart" id="weightChart"></div>
+                        <p style="color:var(--text2);font-size:0.78rem;">Softmax 转为概率分布（总和=1），「苹果₄」获得最高权重 <strong>0.55</strong></p>
+                    </div>
+                    <!-- Step 5: Weighted V sum -->
+                    <div class="visual-panel" data-step="5">
+                        <div class="sum-illustration" id="sumIllustration"></div>
+                        <p style="color:var(--text2);font-size:0.78rem;">h_attn₇ = Σ w_i · v_i ，融合了整句话的上下文信息</p>
+                    </div>
+                    <!-- Step 6: FFN only -->
+                    <div class="visual-panel" data-step="6" id="ffnPanel">
+                        <!-- 动态生成 -->
+                    </div>
+                    <!-- Step 7: Prediction -->
+                    <div class="visual-panel" data-step="7" id="predPanel">
+                        <!-- 动态生成 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <div class="card-title">📖 步骤说明</div>
+                <div class="detail-desc" id="detailDesc"></div>
+                <div class="extra-info" id="extraInfo"></div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="btn" id="btnPrev" disabled>◀ 上一步</button>
+            <span class="step-counter" id="stepCounter">步骤 1/8</span>
+            <button class="btn primary" id="btnNext">下一步 ▶</button>
+            <button class="btn" id="btnReset">↺ 重置</button>
+            <button class="btn" id="btnAuto">▶ 自动播放</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            const tokens = ['我', '很', '喜欢', '苹果', '我', '爱', '吃'];
+            const tokenLabels = ['我₁', '很₂', '喜欢₃', '苹果₄', '我₅', '爱₆', '吃₇'];
+            const scores = [0.8, 0.3, 2.1, 5.5, 0.9, 3.8, 0.4];
+            const weights = [0.03, 0.02, 0.10, 0.55, 0.03, 0.25, 0.02];
+
+            let currentStep = 0;
+            const totalSteps = 8;
+            let autoInterval = null;
+            let isAuto = false;
+
+            const stage = document.getElementById('visualStage');
+            const visualTitle = document.getElementById('visualTitle');
+            const detailDesc = document.getElementById('detailDesc');
+            const extraInfo = document.getElementById('extraInfo');
+            const stepCounter = document.getElementById('stepCounter');
+            const btnPrev = document.getElementById('btnPrev');
+            const btnNext = document.getElementById('btnNext');
+            const btnReset = document.getElementById('btnReset');
+            const btnAuto = document.getElementById('btnAuto');
+            const stepDots = document.getElementById('stepDots');
+            const stepLabels = document.getElementById('stepLabels');
+
+            function buildOverviewTokens() {
+                const container = document.getElementById('overviewTokens');
+                container.innerHTML = '';
+                tokens.forEach((t, i) => {
+                    const chip = document.createElement('div');
+                    chip.className = 'token-chip';
+                    if (i === 6) chip.classList.add('highlight');
+                    chip.innerHTML = `${t}<span class="pos">${i+1}</span>`;
+                    container.appendChild(chip);
+                });
+            }
+
+            function createVectorBars(count, colorFn, usePosEncoding = false) {
+                const vecDiv = document.createElement('div');
+                vecDiv.className = 'vector-bars';
+                for (let j = 0; j < count; j++) {
+                    const bar = document.createElement('div');
+                    bar.className = 'vector-bar';
+                    if (usePosEncoding) bar.classList.add('pos-encode-bar');
+                    const height = 10 + Math.random() * 26;
+                    bar.style.height = height + 'px';
+                    if (colorFn) bar.style.background = colorFn(j);
+                    vecDiv.appendChild(bar);
+                }
+                return vecDiv;
+            }
+
+            function buildEmbedPosPanel() {
+                const container = document.getElementById('embedPosContainer');
+                container.innerHTML = '';
+                const sectionTitles = ['词嵌入向量', '位置编码向量', '叠加后输入'];
+                const colorSchemes = [
+                    (j) => `hsl(${j*30}, 60%, 55%)`,
+                    (j) => `hsl(38, 80%, 55%)`,
+                    (j) => `hsl(${j*30}, 50%, 65%)`
+                ];
+                const usePosFlags = [false, true, false];
+
+                const grid = document.createElement('div');
+                grid.style.display = 'flex';
+                grid.style.flexDirection = 'column';
+                grid.style.gap = '16px';
+                grid.style.width = '100%';
+
+                for (let sec = 0; sec < 3; sec++) {
+                    const section = document.createElement('div');
+                    section.style.textAlign = 'center';
+                    const title = document.createElement('div');
+                    title.className = 'embed-section-title';
+                    title.textContent = sectionTitles[sec];
+                    section.appendChild(title);
+
+                    const row = document.createElement('div');
+                    row.className = 'embed-grid';
+                    tokens.forEach((t, i) => {
+                        const card = document.createElement('div');
+                        card.className = 'embed-card';
+                        if (i === 6) card.classList.add('focus');
+                        const label = document.createElement('div');
+                        label.style.fontWeight = '700';
+                        label.textContent = `${t} (${i+1})`;
+                        card.appendChild(label);
+                        card.appendChild(createVectorBars(12, colorSchemes[sec], usePosFlags[sec]));
+                        row.appendChild(card);
+                    });
+                    section.appendChild(row);
+                    grid.appendChild(section);
+
+                    if (sec === 0) {
+                        const plus = document.createElement('div');
+                        plus.style.textAlign = 'center';
+                        plus.style.fontSize = '1.5rem';
+                        plus.style.color = 'var(--text2)';
+                        plus.textContent = '+';
+                        grid.appendChild(plus);
+                    }
+                    if (sec === 1) {
+                        const eq = document.createElement('div');
+                        eq.style.textAlign = 'center';
+                        eq.style.fontSize = '1.5rem';
+                        eq.style.color = 'var(--text2)';
+                        eq.textContent = '=';
+                        grid.appendChild(eq);
+                    }
+                }
+                container.appendChild(grid);
+                const legend = document.createElement('div');
+                legend.style.fontSize = '0.65rem';
+                legend.style.color = 'var(--text2)';
+                legend.style.marginTop = '8px';
+                legend.innerHTML = '* 不同颜色代表不同维度，位置编码以条纹样式显示';
+                container.appendChild(legend);
+            }
+
+            function buildQKV() {
+                const block = document.getElementById('qkvBlock');
+                block.innerHTML = '';
+                const colors = ['var(--q)', 'var(--k)', 'var(--v)'];
+                const labels = ['Q (查询)', 'K (键)', 'V (值)'];
+                const classes = ['q-col', 'k-col', 'v-col'];
+                labels.forEach((lab, idx) => {
+                    const col = document.createElement('div');
+                    col.className = `qkv-column ${classes[idx]}`;
+                    const title = document.createElement('div');
+                    title.style.fontWeight = '700';
+                    title.style.marginBottom = '8px';
+                    title.style.color = colors[idx];
+                    title.textContent = lab;
+                    col.appendChild(title);
+                    col.appendChild(createVectorBars(12, () => colors[idx]));
+                    const label2 = document.createElement('div');
+                    label2.style.fontSize = '0.7rem';
+                    label2.style.color = 'var(--text2)';
+                    label2.textContent = '吃₇ 的向量';
+                    col.appendChild(label2);
+                    block.appendChild(col);
+                });
+                const arrow = document.createElement('div');
+                arrow.style.fontSize = '1.3rem';
+                arrow.style.color = 'var(--text2)';
+                arrow.textContent = '← x₇ × Wq / Wk / Wv';
+                block.appendChild(arrow);
+            }
+
+            function buildBarChart(containerId, data, labels, highlightIdx, isWeight = false, extraClass = '') {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                container.innerHTML = '';
+                const maxVal = Math.max(...data, 0.1);
+                data.forEach((val, i) => {
+                    const row = document.createElement('div');
+                    row.className = 'bar-row';
+                    const label = document.createElement('span');
+                    label.className = 'bar-label';
+                    label.textContent = labels[i];
+                    const track = document.createElement('div');
+                    track.className = 'bar-track';
+                    const fill = document.createElement('div');
+                    fill.className = 'bar-fill';
+                    if (i === highlightIdx) fill.classList.add('high');
+                    if (extraClass) fill.classList.add(extraClass);
+                    const widthPercent = (val / maxVal) * 100;
+                    fill.style.width = widthPercent + '%';
+                    fill.textContent = isWeight ? val.toFixed(2) : val.toFixed(1);
+                    track.appendChild(fill);
+                    row.appendChild(label);
+                    row.appendChild(track);
+                    container.appendChild(row);
+                });
+            }
+
+            function buildSumIllustration() {
+                const container = document.getElementById('sumIllustration');
+                container.innerHTML = '';
+                const items = [
+                    { label: '苹果₄', w: 0.55 },
+                    { label: '爱₆', w: 0.25 },
+                    { label: '喜欢₃', w: 0.10 },
+                    { label: '我₁', w: 0.03 },
+                    { label: '其他', w: 0.07 },
+                ];
+                items.forEach((item, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'sum-item';
+                    const circle = document.createElement('div');
+                    circle.className = 'sum-circle';
+                    circle.style.borderColor = item.w > 0.2 ? 'var(--accent)' : '#555';
+                    circle.textContent = 'V';
+                    const label = document.createElement('span');
+                    label.textContent = `${item.label} (×${item.w})`;
+                    div.appendChild(circle);
+                    div.appendChild(label);
+                    container.appendChild(div);
+                    if (idx < items.length - 1) {
+                        const plus = document.createElement('span');
+                        plus.className = 'sum-plus';
+                        plus.textContent = '+';
+                        container.appendChild(plus);
+                    }
+                });
+                const eq = document.createElement('span');
+                eq.className = 'sum-plus';
+                eq.textContent = '=';
+                container.appendChild(eq);
+                const result = document.createElement('div');
+                result.className = 'sum-result';
+                result.textContent = 'h₇';
+                container.appendChild(result);
+            }
+
+            function buildFFNPanel() {
+                const panel = document.getElementById('ffnPanel');
+                panel.innerHTML = `
+                    <div class="ffn-flow" id="ffnFlow">
+                        <div class="ffn-node">h_attn₇<br><small>768维</small></div>
+                        <span class="ffn-arrow animated">→</span>
+                        <div class="ffn-node highlight">W₁ 膨胀<br><small>768→3072</small></div>
+                        <span class="ffn-arrow animated">→</span>
+                        <div class="ffn-node">GELU<br><small>激活</small></div>
+                        <span class="ffn-arrow animated">→</span>
+                        <div class="ffn-node highlight">W₂ 压缩<br><small>3072→768</small></div>
+                        <span class="ffn-arrow animated">→</span>
+                        <div class="ffn-node">输出向量<br><small>768维</small></div>
+                    </div>
+                    <div class="feature-grid">
+                        <div class="feature-box">
+                            <div class="title">🧠 膨胀后激活的特征（示意）</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag active">可食用</span>
+                                <span class="feature-tag active">水果</span>
+                                <span class="feature-tag active">甜</span>
+                                <span class="feature-tag active">固体</span>
+                                <span class="feature-tag">运动</span>
+                                <span class="feature-tag">电器</span>
+                                <span class="feature-tag">抽象</span>
+                            </div>
+                            <div style="font-size:0.65rem;color:var(--text2);margin-top:6px;">高亮 = 当前上下文激活</div>
+                        </div>
+                        <div class="feature-box">
+                            <div class="title">📦 压缩后增强的向量</div>
+                            <div class="feature-tags">
+                                <span class="feature-tag active">吃+苹果</span>
+                                <span class="feature-tag active">合理行为</span>
+                                <span class="feature-tag active">日常场景</span>
+                                <span class="feature-tag">烹饪</span>
+                                <span class="feature-tag">餐具</span>
+                            </div>
+                            <div style="font-size:0.65rem;color:var(--text2);margin-top:6px;">注入了参数化知识与关系</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            function buildPredPanel() {
+                const panel = document.getElementById('predPanel');
+                const candidates = [
+                    { word: '苹果', prob: 0.55, from: '上下文直推' },
+                    { word: '水果', prob: 0.15, from: '参数化联想' },
+                    { word: '米饭', prob: 0.08, from: '参数化联想' },
+                    { word: '东西', prob: 0.06, from: '参数化联想' },
+                    { word: '苹果公司', prob: 0.04, from: '参数化联想' },
+                    { word: '香蕉', prob: 0.03, from: '参数化联想' },
+                ];
+                const labels = candidates.map(c => `${c.word} (${c.from})`);
+                const probs = candidates.map(c => c.prob);
+                panel.innerHTML = `
+                    <div class="bar-chart" id="predBarChart"></div>
+                    <div class="prediction-badge" style="margin-top:8px;">
+                        <div class="word">🍎 苹果</div>
+                        <div style="font-size:0.75rem;color:var(--text2);">概率最高 (55%) · 模型预测下一个词</div>
+                    </div>
+                `;
+                setTimeout(() => {
+                    buildBarChart('predBarChart', probs, labels, 0, true, 'pred-high');
+                }, 20);
+            }
+
+            // 初始化所有静态部分
+            buildOverviewTokens();
+            buildEmbedPosPanel();
+            buildQKV();
+            buildBarChart('scoreChart', scores, tokenLabels, 3, false);
+            buildBarChart('weightChart', weights, tokenLabels, 3, true);
+            buildSumIllustration();
+            buildFFNPanel();
+            buildPredPanel();
+
+            function updateVisualPanel() {
+                const panels = stage.querySelectorAll('.visual-panel');
+                panels.forEach(p => p.classList.remove('active'));
+                const activePanel = stage.querySelector(`[data-step="${currentStep}"]`);
+                if (activePanel) activePanel.classList.add('active');
+
+                const titles = [
+                    '📋 概览：输入序列与任务',
+                    '1️⃣ 嵌入 + 位置编码：将词变为带顺序的向量',
+                    '2️⃣ 生成 Q / K / V：线性变换',
+                    '3️⃣ 注意力分数：Q 与所有 K 点积',
+                    '4️⃣ Softmax 权重：概率分布',
+                    '5️⃣ 加权 V 求和：输出向量',
+                    '6️⃣ FFN 前馈网络：注入参数化知识',
+                    '7️⃣ Softmax + 最终预测',
+                ];
+                visualTitle.textContent = titles[currentStep] || '';
+            }
+
+            function updateDetail() {
+                const descs = [
+                    `输入序列 <strong>"我很喜欢苹果我爱吃"</strong>，共7个Token。采用<strong>自回归因果注意力</strong>，我们以最后一个token <strong>「吃₇」</strong>为例，因为它能看到所有前文，最能体现完整融合过程。`,
+                    `每个Token通过<strong>词嵌入矩阵</strong>转换为稠密向量，并<strong>加上位置编码</strong>（条纹）。位置编码赋予模型序列顺序的感知能力，两者逐元素相加，得到最终输入。`,
+                    `基座模型用训练好的参数矩阵 <span class="tag tag-q">Wq</span>、<span class="tag tag-k">Wk</span>、<span class="tag tag-v">Wv</span> 为每个位置生成Q/K/V。<br>「吃₇」的向量 x₇ 分别乘以三个矩阵，得到 <span class="tag tag-q">q₇</span>、<span class="tag tag-k">k₇</span>、<span class="tag tag-v">v₇</span>。<br><strong>Q 像是“搜索钥匙”，K 是每把“锁的标签”，V 是锁中存储的真实内容。</strong>`,
+                    `「吃₇」的 <span class="tag tag-q">q₇</span> 与前文所有位置的 <span class="tag tag-k">k</span> 做点积。<br>• q₇·k₄(苹果) = <strong>5.5</strong>（最高）<br>• q₇·k₆(爱) = 3.8<br>点积后除以 √dₖ 缩放，避免分数过大导致Softmax梯度消失，让分布更平滑。`,
+                    `分数经过 <span class="tag tag-softmax">Softmax</span> 转为总和为1的权重。<br>「苹果₄」获得 <strong>0.55</strong> 的最高权重，「吃」把55%的注意力放在了「苹果」上。`,
+                    `用上一步的权重对所有 <span class="tag tag-v">V</span> 加权求和：<br>h_attn₇ = 0.55·v₄ + 0.25·v₆ + 0.10·v₃ + ...<br>得到的新向量 <strong>融合了整句话的上下文语义</strong>。`,
+                    `h_attn₇ 进入 <span class="tag tag-ffn">前馈网络（FFN）</span> 进行深度加工：<br>768维 → W₁膨胀至3072维 → GELU激活 → W₂压缩回768维。<br>FFN <strong>并非查询外部知识库</strong>，而是通过其预训练参数隐性激发与上下文相关的特征（如“苹果可食用”等常识），完成记忆与联想。`,
+                    `最终输出向量与<strong>词表中所有50,000个token的嵌入做点积</strong>，得到logits，再经Softmax转为概率。<br>除“苹果”外，模型还从<strong>参数化知识</strong>中联想出“水果”“米饭”等合理候选，但“苹果”因上下文直接暗示而概率最高（55%）。<br>下方额外展示了<strong>解码策略</strong>与<strong>温度</strong>如何影响最终选词。`,
+                ];
+                detailDesc.innerHTML = descs[currentStep];
+
+                // 根据步骤展示不同的extraInfo
+                if (currentStep === 6) {
+                    extraInfo.classList.add('active');
+                    extraInfo.innerHTML = `
+                        <div style="font-weight:600;margin-bottom:4px;">🏭 FFN “车间”比喻</div>
+                        <div style="font-size:0.75rem;color:var(--text2);line-height:1.6;">
+                            <strong>1. 膨胀层 (W₁)</strong>：把紧凑的向量“摊开”到4倍空间，让潜在特征（可食用、水果、甜等）分别显现。<br>
+                            <strong>2. GELU 激活</strong>：像智能开关，只让强相关的特征通过，过滤掉不相关或弱信号。<br>
+                            <strong>3. 压缩层 (W₂)</strong>：将激活后的特征重新总结成一个富含常识的新向量，注入“苹果常被吃”这类参数化知识。
+                        </div>
+                    `;
+                } else if (currentStep === 7) {
+                    extraInfo.classList.add('active');
+                    extraInfo.innerHTML = `
+                        <div style="font-weight:600;margin-bottom:8px;">⚙️ 解码策略与温度</div>
+                        <div class="decode-card">
+                            <table class="decode-table">
+                                <tr><th>策略</th><th>描述</th></tr>
+                                <tr><td>贪心解码</td><td>直接选概率最大的token，确定性强但易重复</td></tr>
+                                <tr><td>束搜索</td><td>保留多条最优路径，适合机器翻译</td></tr>
+                                <tr><td>Top‑k 采样</td><td>从概率最高的k个token中随机抽取</td></tr>
+                                <tr><td>Top‑p 采样</td><td>从累积概率≥p的最小集合中抽取，动态调整</td></tr>
+                            </table>
+                        </div>
+                        <div style="font-weight:600;margin:6px 0 4px;">🌡️ 温度对比 (候选词：苹果/水果/米饭)</div>
+                        <div class="temp-compare">
+                            <div class="temp-case">
+                                <div class="temp-label">T = 0.5</div>
+                                <div class="temp-bar-group" id="tempBars05"></div>
+                            </div>
+                            <div class="temp-case">
+                                <div class="temp-label">T = 1.0</div>
+                                <div class="temp-bar-group" id="tempBars10"></div>
+                            </div>
+                            <div class="temp-case">
+                                <div class="temp-label">T = 1.5</div>
+                                <div class="temp-bar-group" id="tempBars15"></div>
+                            </div>
+                        </div>
+                        <div style="font-size:0.65rem;color:var(--text2);margin-top:4px;">温度越低分布越尖（趋近贪心），越高越平滑（增加多样性）</div>
+                    `;
+                    // 动态填充温度对比条
+                    setTimeout(() => {
+                        const tempData = {
+                            'tempBars05': { '苹果': 0.72, '水果': 0.17, '米饭': 0.06 },
+                            'tempBars10': { '苹果': 0.55, '水果': 0.15, '米饭': 0.08 },
+                            'tempBars15': { '苹果': 0.40, '水果': 0.25, '米饭': 0.15 }
+                        };
+                        for (const [id, data] of Object.entries(tempData)) {
+                            const container = document.getElementById(id);
+                            if (!container) continue;
+                            container.innerHTML = '';
+                            for (const [name, prob] of Object.entries(data)) {
+                                const row = document.createElement('div');
+                                row.className = 'temp-bar-row';
+                                const nameSpan = document.createElement('span');
+                                nameSpan.className = 'tname';
+                                nameSpan.textContent = name;
+                                const track = document.createElement('div');
+                                track.className = 'temp-track';
+                                const fill = document.createElement('div');
+                                fill.className = 'temp-fill';
+                                fill.style.width = (prob * 100) + '%';
+                                track.appendChild(fill);
+                                row.appendChild(nameSpan);
+                                row.appendChild(track);
+                                container.appendChild(row);
+                            }
+                        }
+                    }, 10);
+                } else if (currentStep === 4 || currentStep === 5) {
+                    extraInfo.classList.add('active');
+                    extraInfo.innerHTML = `
+                        <div style="font-weight:600;margin-bottom:4px;">📊 「吃₇」的注意力权重</div>
+                        <div class="bar-chart" id="extraWeightChart"></div>
+                    `;
+                    setTimeout(() => {
+                        buildBarChart('extraWeightChart', weights, tokenLabels, 3, true);
+                    }, 10);
+                } else if (currentStep === 3) {
+                    extraInfo.classList.add('active');
+                    extraInfo.innerHTML = `
+                        <div style="font-weight:600;margin-bottom:4px;">📈 点积分数 (缩放前示意)</div>
+                        <div class="bar-chart" id="extraScoreChart"></div>
+                    `;
+                    setTimeout(() => {
+                        buildBarChart('extraScoreChart', scores, tokenLabels, 3, false);
+                    }, 10);
+                } else {
+                    extraInfo.classList.remove('active');
+                    extraInfo.innerHTML = '';
+                }
+            }
+
+            function updateStepUI() {
+                const dots = stepDots.querySelectorAll('.step-dot');
+                dots.forEach((d, i) => {
+                    d.classList.remove('active', 'done');
+                    if (i === currentStep) d.classList.add('active');
+                    else if (i < currentStep) d.classList.add('done');
+                });
+                const labels = stepLabels.querySelectorAll('span');
+                labels.forEach((l, i) => {
+                    l.classList.remove('active');
+                    if (i === currentStep) l.classList.add('active');
+                });
+                stepCounter.textContent = `步骤 ${currentStep+1} / ${totalSteps}`;
+                btnPrev.disabled = currentStep === 0;
+                btnNext.disabled = currentStep === totalSteps - 1;
+            }
+
+            function goToStep(step) {
+                if (step < 0 || step >= totalSteps) return;
+                currentStep = step;
+                updateVisualPanel();
+                updateDetail();
+                updateStepUI();
+                if (step === totalSteps - 1 && isAuto) stopAuto();
+            }
+
+            function nextStep() {
+                if (currentStep < totalSteps - 1) goToStep(currentStep + 1);
+                else if (isAuto) stopAuto();
+            }
+            function prevStep() {
+                if (currentStep > 0) goToStep(currentStep - 1);
+            }
+            function resetAll() {
+                stopAuto();
+                goToStep(0);
+            }
+            function startAuto() {
+                if (isAuto) return;
+                isAuto = true;
+                btnAuto.textContent = '⏸ 停止';
+                btnAuto.style.background = 'var(--pink)';
+                btnAuto.style.borderColor = 'var(--pink)';
+                btnAuto.style.color = '#fff';
+                if (currentStep >= totalSteps - 1) goToStep(0);
+                autoInterval = setInterval(() => {
+                    if (currentStep < totalSteps - 1) nextStep();
+                    else stopAuto();
+                }, 3000);
+            }
+            function stopAuto() {
+                isAuto = false;
+                if (autoInterval) { clearInterval(autoInterval); autoInterval = null; }
+                btnAuto.textContent = '▶ 自动播放';
+                btnAuto.style.background = 'var(--surface)';
+                btnAuto.style.borderColor = 'var(--border)';
+                btnAuto.style.color = '#fff';
+            }
+            function toggleAuto() { isAuto ? stopAuto() : startAuto(); }
+
+            btnNext.addEventListener('click', nextStep);
+            btnPrev.addEventListener('click', prevStep);
+            btnReset.addEventListener('click', resetAll);
+            btnAuto.addEventListener('click', toggleAuto);
+
+            stepDots.addEventListener('click', (e) => {
+                const dot = e.target.closest('.step-dot');
+                if (!dot) return;
+                const step = parseInt(dot.dataset.step);
+                if (!isNaN(step)) { stopAuto(); goToStep(step); }
+            });
+            stepLabels.addEventListener('click', (e) => {
+                const label = e.target.closest('span[data-step]');
+                if (!label) return;
+                const step = parseInt(label.dataset.step);
+                if (!isNaN(step)) { stopAuto(); goToStep(step); }
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextStep(); }
+                else if (e.key === 'ArrowLeft') { e.preventDefault(); prevStep(); }
+                else if (e.key === 'r' || e.key === 'R') { resetAll(); }
+                else if (e.key === 'a' || e.key === 'A') { toggleAuto(); }
+            });
+
+            goToStep(0);
+        })();
+    </script>
+</body>
+</html>

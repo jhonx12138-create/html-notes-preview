@@ -1,0 +1,1155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Transformer 底层原理 · 格物致知</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-deep: #050816;
+            --bg-mid: #0a0f24;
+            --primary: #00d9ff;
+            --primary-2: #6366f1;
+            --accent: #a855f7;
+            --accent-2: #ec4899;
+            --text: #e2e8f0;
+            --text-dim: #94a3b8;
+            --text-bright: #f8fafc;
+            --card-bg: rgba(15, 23, 42, 0.6);
+            --card-border: rgba(99, 102, 241, 0.25);
+            --glow: 0 0 40px rgba(0, 217, 255, 0.15);
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            background: var(--bg-deep);
+        }
+
+        /* 背景 */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 10%, rgba(99, 102, 241, 0.25), transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.18), transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 217, 255, 0.1), transparent 60%),
+                linear-gradient(180deg, #050816 0%, #0a0f24 50%, #050816 100%);
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.06) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.06) 1px, transparent 1px);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            box-shadow: 0 0 10px var(--primary);
+            transition: width 0.4s ease;
+            z-index: 100;
+            width: 0;
+        }
+
+        .presentation-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+            min-height: 0;
+        }
+
+        .slides-wrapper {
+            height: 100%;
+            width: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, visibility 0.5s, transform 0.5s ease;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 0;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(99, 102, 241, 0.4) transparent;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .slide::-webkit-scrollbar { width: 6px; }
+        .slide::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.4);
+            border-radius: 3px;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            z-index: 10;
+        }
+
+        /* 全屏卡片：最小高度 100vh，flex 列布局居中 */
+        .slide-card {
+            width: 100%;
+            min-height: 100vh;
+            margin: 0;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-radius: 0;
+            box-shadow:
+                0 20px 60px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(99, 102, 241, 0.08),
+                inset 0 1px 0 rgba(255, 255, 255, 0.06);
+            padding: 2.5rem 2.5rem 2rem;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+            opacity: 0.6;
+        }
+
+        .slide-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.8rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.78rem;
+            color: var(--primary);
+            letter-spacing: 0.15em;
+            opacity: 0.7;
+        }
+        .slide-number::before {
+            content: "// ";
+            color: var(--text-dim);
+        }
+
+        /* 封面 */
+        .cover-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            text-align: center;
+            background:
+                radial-gradient(ellipse at center, rgba(99, 102, 241, 0.15), transparent 70%),
+                var(--card-bg);
+        }
+
+        .cover-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            background: rgba(0, 217, 255, 0.08);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            margin-bottom: 1.8rem;
+            letter-spacing: 0.05em;
+        }
+        .cover-tag::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--primary);
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        h1 {
+            font-size: 3.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #00d9ff 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 1.2rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            text-shadow: 0 0 40px rgba(0, 217, 255, 0.2);
+        }
+
+        h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 1.8rem 0;
+            color: var(--text-bright);
+            text-align: center;
+            letter-spacing: -0.01em;
+            position: relative;
+            padding-bottom: 0.8rem;
+        }
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            box-shadow: 0 0 12px rgba(0, 217, 255, 0.5);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin: 2rem 0 1.2rem 0;
+            color: var(--primary);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        h3::before, h3::after {
+            content: "";
+            flex: 0 0 30px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.5));
+        }
+        h3::after {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.5), transparent);
+        }
+
+        p {
+            line-height: 1.7;
+            color: var(--text);
+            margin-bottom: 1.2rem;
+            font-size: 1.05rem;
+            text-align: center;
+        }
+
+        p.text-left {
+            text-align: left;
+            max-width: 92%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        strong {
+            color: var(--text-bright);
+            font-weight: 600;
+        }
+
+        blockquote {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.05));
+            border-left: 3px solid var(--primary);
+            padding: 1.2rem 1.5rem;
+            margin: 1.4rem auto;
+            border-radius: 0.5rem 0.75rem 0.75rem 0.5rem;
+            color: var(--text);
+            text-align: left;
+            max-width: 92%;
+        }
+        blockquote p { text-align: left; margin-bottom: 0.6rem; color: var(--text-dim); }
+        blockquote p:last-child { margin-bottom: 0; }
+
+        code {
+            background: rgba(0, 217, 255, 0.1);
+            padding: 0.15rem 0.45rem;
+            border-radius: 5px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.88em;
+            color: var(--primary);
+            border: 1px solid rgba(0, 217, 255, 0.2);
+        }
+
+        /* 表格 */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        table {
+            width: 100%;
+            min-width: 560px;
+            border-collapse: collapse;
+            background: rgba(10, 15, 36, 0.4);
+        }
+
+        th {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.15));
+            padding: 0.9rem 1rem;
+            font-weight: 600;
+            color: var(--text-bright);
+            text-align: left;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        td {
+            padding: 0.9rem 1rem;
+            border-top: 1px solid rgba(99, 102, 241, 0.1);
+            color: var(--text);
+            font-size: 0.98rem;
+            vertical-align: top;
+        }
+
+        tbody tr { transition: background 0.2s; }
+        tbody tr:hover { background: rgba(99, 102, 241, 0.06); }
+
+        /* 列表 */
+        ul, ol {
+            margin: 1.2rem auto;
+            text-align: left;
+            max-width: 92%;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        ul li, ol li {
+            margin: 0.8rem 0;
+            line-height: 1.6;
+            color: var(--text);
+            padding-left: 1.8rem;
+            position: relative;
+        }
+
+        ul li::before {
+            content: "";
+            position: absolute;
+            left: 0.4rem;
+            top: 0.7em;
+            width: 6px;
+            height: 6px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--primary);
+        }
+
+        ol { counter-reset: item; }
+        ol li {
+            counter-increment: item;
+            padding-left: 2.2rem;
+        }
+        ol li::before {
+            content: counter(item, decimal-leading-zero);
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            background: rgba(0, 217, 255, 0.08);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 6px;
+            padding: 0.05rem 0.4rem;
+            line-height: 1.4;
+        }
+
+        /* 网格特性卡片 */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0;
+            width: 100%;
+            max-width: 1100px;
+            align-self: center;
+        }
+        .feature-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(168, 85, 247, 0.04));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 0.85rem;
+            padding: 1.5rem 1.2rem;
+            text-align: left;
+            transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 24px rgba(0, 217, 255, 0.12);
+        }
+        .feature-card .fc-icon { font-size: 1.8rem; margin-bottom: 0.6rem; display: inline-block; }
+        .feature-card .fc-title { font-weight: 700; color: var(--primary); font-size: 1.05rem; margin-bottom: 0.4rem; }
+        .feature-card .fc-desc { color: var(--text-dim); font-size: 0.9rem; line-height: 1.55; }
+
+        /* 流程步骤 */
+        .flow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 1.8rem 0;
+        }
+        .flow-step {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: var(--primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .flow-step .step-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--primary);
+            opacity: 0.8;
+        }
+        .flow-arrow { color: var(--primary); align-self: center; font-size: 1.1rem; opacity: 0.7; }
+
+        /* 图片上传容器 */
+        .image-upload-box {
+            position: relative;
+            background: rgba(10, 15, 36, 0.5);
+            border-radius: 0.85rem;
+            padding: 0.8rem;
+            margin: 1.2rem auto;
+            max-width: 92%;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.25s;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .image-upload-box:hover {
+            border-color: rgba(0, 217, 255, 0.5);
+            box-shadow: 0 0 30px rgba(0, 217, 255, 0.1);
+        }
+
+        .image-upload-box.dragover {
+            border-color: var(--primary);
+            background: rgba(0, 217, 255, 0.08);
+            box-shadow: 0 0 40px rgba(0, 217, 255, 0.2);
+        }
+
+        .image-upload-box img {
+            max-width: 100%;
+            border-radius: 0.6rem;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .image-upload-box::after {
+            content: "🔄 点击或拖拽替换图片";
+            position: absolute;
+            top: 1.2rem;
+            right: 1.2rem;
+            background: rgba(10, 15, 36, 0.85);
+            backdrop-filter: blur(8px);
+            color: var(--primary);
+            padding: 0.35rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            opacity: 0;
+            transform: translateY(-5px);
+            transition: all 0.25s;
+            pointer-events: none;
+            z-index: 3;
+        }
+
+        .image-upload-box:hover::after {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .img-placeholder-upload {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 1.5rem;
+            border-radius: 0.7rem;
+            border: 2px dashed rgba(99, 102, 241, 0.35);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(168, 85, 247, 0.04));
+            text-align: center;
+            gap: 0.5rem;
+            transition: all 0.25s;
+        }
+
+        .image-upload-box:hover .img-placeholder-upload {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08), rgba(168, 85, 247, 0.06));
+        }
+
+        .upload-icon { font-size: 2.5rem; margin-bottom: 0.3rem; opacity: 0.8; }
+        .upload-title { font-size: 1rem; font-weight: 600; color: var(--text-bright); }
+        .upload-hint { font-size: 0.82rem; color: var(--text-dim); letter-spacing: 0.02em; }
+
+        .upload-input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        /* 书单 */
+        .book-list { margin-top: 1.8rem; text-align: center; }
+        .book-list-title { font-weight: 600; margin-bottom: 1rem; color: var(--text-bright); }
+        .books {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.7rem;
+            list-style: none;
+            padding: 0;
+            max-width: 100%;
+        }
+        .books li {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(168, 85, 247, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            font-size: 0.95rem;
+            color: var(--text-bright);
+            margin: 0;
+            padding-left: 1.2rem !important;
+        }
+        .books li::before { display: none; }
+
+        /* 封面 meta */
+        .cover-meta {
+            margin-top: 2rem;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .cover-meta-item { display: flex; flex-direction: column; align-items: center; gap: 0.3rem; }
+        .cover-meta-label {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .cover-meta-value { font-size: 1rem; color: var(--text-bright); font-weight: 500; }
+
+        .cover-decoration {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: rgba(99, 102, 241, 0.4);
+            letter-spacing: 0.1em;
+        }
+        .cover-decoration.tl { top: 1.2rem; left: 1.5rem; }
+        .cover-decoration.br { bottom: 1.2rem; right: 1.5rem; }
+
+        /* 高亮文本块 */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.08), rgba(168, 85, 247, 0.06));
+            border: 1px solid rgba(0, 217, 255, 0.25);
+            border-radius: 0.85rem;
+            padding: 1.2rem 1.5rem;
+            margin: 1.4rem auto;
+            max-width: 92%;
+            text-align: left;
+            position: relative;
+        }
+        .highlight-box::before {
+            content: "✦";
+            position: absolute;
+            top: -0.6rem;
+            left: 1rem;
+            background: var(--bg-mid);
+            color: var(--primary);
+            padding: 0 0.4rem;
+            font-size: 0.9rem;
+        }
+        .highlight-box p { color: var(--text-bright); }
+        .highlight-box strong { color: var(--primary); }
+
+        /* 导航栏 */
+        .nav-controls {
+            background: rgba(10, 15, 36, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            padding: 0.6rem 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            margin: 0 1rem 1rem 1rem;
+            border-radius: 60px;
+            flex-shrink: 0;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+
+        button {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            color: var(--text-bright);
+            font-family: inherit;
+            font-weight: 500;
+            padding: 0.5rem 1.3rem;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        button:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-2), var(--accent));
+            border-color: transparent;
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+        button:active:not(:disabled) { transform: translateY(0); }
+        button:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .page-indicator {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: var(--primary);
+            min-width: 80px;
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .presentation-container { padding: 0; }
+            .slide-card {
+                padding: 1.5rem 1.2rem 1.2rem;
+            }
+            .slide-number { top: 0.8rem; right: 1rem; font-size: 0.7rem; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.5rem; }
+            h3 { font-size: 1.15rem; }
+            p, li { font-size: 0.95rem; }
+            blockquote, ul, ol, .highlight-box { max-width: 100%; }
+            .feature-grid { grid-template-columns: 1fr; }
+            .cover-meta { gap: 1rem; }
+            .nav-controls { gap: 0.5rem; margin: 0 0.5rem 0.5rem; }
+            button { padding: 0.4rem 0.9rem; font-size: 0.82rem; }
+            .image-upload-box::after { font-size: 0.7rem; padding: 0.3rem 0.6rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<main class="presentation-container">
+    <div class="slides-wrapper" id="slidesWrapper">
+
+        <!-- 封面 -->
+        <div class="slide active" data-index="0">
+            <div class="slide-card cover-card">
+                <span class="cover-decoration tl">[ 01 / SYSTEM ]</span>
+                <span class="cover-decoration br">v.2026.05</span>
+                <span class="cover-tag">物格而后知致</span>
+                <h1>基于 Transformer 架构下的<br>AI 模型底层原理分享</h1>
+                <p style="color: var(--text-dim); max-width: 600px; margin-top: 0.5rem;">
+                    从注意力机制到 Agent 时代，理解 AI 的底层逻辑
+                </p>
+                <div class="cover-meta">
+                    <div class="cover-meta-item">
+                        <span class="cover-meta-label">SPEAKER</span>
+                        <span class="cover-meta-value">XZY</span>
+                    </div>
+                    <div class="cover-meta-item">
+                        <span class="cover-meta-label">DATE</span>
+                        <span class="cover-meta-value">2026.05.15</span>
+                    </div>
+                    <div class="cover-meta-item">
+                        <span class="cover-meta-label">TOPIC</span>
+                        <span class="cover-meta-value">AI · Transformer</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏1：左右并排 -->
+        <div class="slide" data-index="1">
+            <div class="slide-card">
+                <span class="slide-number">01</span>
+                <h2>这是最好的时代，这是最坏的时代</h2>
+                <div class="feature-grid" style="grid-template-columns: 1fr 1fr; max-width: 800px;">
+                    <div class="feature-card">
+                        <span class="fc-icon">🚀</span>
+                        <div class="fc-title">最好的时代</div>
+                        <div class="fc-desc">AI 带来前所未有的机遇，技术民主化、生产力爆炸性增长</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">⚠️</span>
+                        <div class="fc-title">最坏的时代</div>
+                        <div class="fc-desc">金融监管政策的不确定性、行业下行的大趋势、个人价值被重新定义</div>
+                    </div>
+                </div>
+                <div class="highlight-box" style="text-align:center; max-width: 700px;">
+                    <p>在剧变的时代，唯有理解底层规律，才能找到属于自己的航向。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏2 -->
+        <div class="slide" data-index="2">
+            <div class="slide-card">
+                <span class="slide-number">02</span>
+                <h2>你是否因为 AI 的发展而感到焦虑？</h2>
+                <div class="highlight-box">
+                    <p style="margin-bottom:0.5rem;"><strong>【一个事实】</strong>2017 年 Google 团队提出 Transformer 架构，距今 9 年时间，没有底层架构上的升级。</p>
+                    <p style="margin:0;"><strong>【格物致知】</strong>底层原理的了解，是后续应用、分析、评价、创造的地基；也是缓解焦虑最有效的途径。</p>
+                </div>
+                <h3>分享结构</h3>
+                <div class="feature-grid" style="max-width: 900px;">
+                    <div class="feature-card">
+                        <span class="fc-icon">🔬</span>
+                        <div class="fc-title">第一部分 · 原理介绍</div>
+                        <div class="fc-desc">AI 架构 → Transformer 多头注意力机制 → AI Agent 运行流程</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">🌐</span>
+                        <div class="fc-title">第二部分 · 未来发展</div>
+                        <div class="fc-desc">Agent 短期路径 + 长期看 AI 发展的三大流派</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">💼</span>
+                        <div class="fc-title">第三部分 · 影响</div>
+                        <div class="fc-desc">工作范式重构 → 个人能力模型升级</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">🛠️</span>
+                        <div class="fc-title">第四部分 · 实践</div>
+                        <div class="fc-desc">Markdown & HTML、马里奥 & Qclaw 等常用工具与场景</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏3 -->
+        <div class="slide" data-index="3">
+            <div class="slide-card">
+                <span class="slide-number">03</span>
+                <h2>AI 架构一览</h2>
+                <p style="color: var(--text-dim);">自上而下，从应用到硬件的五层架构</p>
+                <div class="feature-grid" style="max-width: 1000px;">
+                    <div class="feature-card">
+                        <span class="fc-icon">📱</span>
+                        <div class="fc-title">应用层</div>
+                        <div class="fc-desc">封装成对话、搜索、代码生成等终端产品</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">🧠</span>
+                        <div class="fc-title">模型层</div>
+                        <div class="fc-desc">Transformer 为核心，引入注意力机制</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">📚</span>
+                        <div class="fc-title">训练层</div>
+                        <div class="fc-desc">海量文本 → 自回归预测</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">⚙️</span>
+                        <div class="fc-title">框架层</div>
+                        <div class="fc-desc">自动微分 + 计算图（PyTorch / TensorFlow）</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">💾</span>
+                        <div class="fc-title">硬件层</div>
+                        <div class="fc-desc">提供算力基础（矩阵乘法、张量运算）</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏4 -->
+        <div class="slide" data-index="4">
+            <div class="slide-card">
+                <span class="slide-number">04</span>
+                <h2>Transformer 自注意力机制演示</h2>
+                <div class="highlight-box">
+                    <p style="margin:0;"><strong>输入句子：</strong><code>"我 很 喜欢 苹果，我 爱 吃"</code> &nbsp;→&nbsp; 预测下一个词</p>
+                </div>
+                <h3>计算步骤</h3>
+                <ol style="max-width: 750px; margin-left: auto; margin-right: auto;">
+                    <li><strong>Token化</strong>：将输入文本拆分为 token 序列</li>
+                    <li><strong>嵌入</strong>：每个 token 转为向量（如 512 维）</li>
+                    <li><strong>位置编码</strong>：加入位置信息</li>
+                    <li><strong>多头注意力计算</strong>：每个头独立计算 Query、Key、Value → Q·K<sup>T</sup> → Softmax → 加权求和</li>
+                    <li><strong>多个头并联</strong>：头 1 关注语法、头 2 关注语义、头 3 关注位置邻近 …… 拼接后线性变换</li>
+                    <li><strong>前馈网络</strong> + <strong>残差连接</strong> + <strong>层归一化</strong></li>
+                    <li><strong>输出</strong>：下一个词的概率分布（蛋糕 0.4，香蕉 0.3 ……）</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 屏5 -->
+        <div class="slide" data-index="5">
+            <div class="slide-card">
+                <span class="slide-number">05</span>
+                <h2>当前架构存在的核心问题</h2>
+                <div class="table-wrapper" style="max-width: 950px; margin-left: auto; margin-right: auto;">
+                    <table>
+                        <thead>
+                            <tr><th style="width:28%;">⚠️ 问题</th><th>说明</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>计算复杂度高</strong></td><td>自注意力机制需要计算每个 token 与其他所有 token 的关系，复杂度随序列长度平方增长</td></tr>
+                            <tr><td><strong>上下文长度限制</strong></td><td>受显存、位置编码限制，以及注意力稀释问题，上下文窗口有限</td></tr>
+                            <tr><td><strong>可解释性差</strong></td><td>只能看到输入输出，看不到模型决策过程，也无法理解高维空间的语义</td></tr>
+                            <tr><td><strong>AI 幻觉</strong></td><td>模型解决的是&ldquo;概率最优&rdquo;，而非&ldquo;事实最优&rdquo;。它学会的是&ldquo;什么样的文本看起来合理&rdquo;，而不是&ldquo;什么是真的&rdquo;</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="highlight-box" style="max-width: 950px;">
+                    <p style="margin-bottom:0.5rem;"><strong>🧠 Transformer 架构下 LLM 的本质：</strong>基于贝叶斯推断（条件概率）的逐个 token 预测</p>
+                    <p style="margin:0;"><strong>✨ 为什么这么强 —— 涌现性：</strong>模型在规模（数据、参数、计算量）跨越某个临界点后，突然获得了其组成部分或小模型中未曾出现、也未被明确训练过的能力，比如思维链、上下文理解、代码编辑……</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏6 -->
+        <div class="slide" data-index="6">
+            <div class="slide-card">
+                <span class="slide-number">06</span>
+                <h2>AI Agent 介绍</h2>
+                <h3>运行流程</h3>
+                <div class="flow-steps">
+                    <div class="flow-step"><span class="step-num">01</span>用户输入</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step"><span class="step-num">02</span>LLM 理解意图</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step"><span class="step-num">03</span>规划子任务</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step"><span class="step-num">04</span>调用工具</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step"><span class="step-num">05</span>观察结果</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step"><span class="step-num">06</span>循环调整</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step"><span class="step-num">07</span>输出答案</div>
+                </div>
+                <h3>发展阶段</h3>
+                <div class="flow-steps">
+                    <div class="flow-step">LLM 原生</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step">工具调用</div>
+                    <span class="flow-arrow">→</span>
+                    <div class="flow-step">Agent 框架</div>
+                </div>
+                <h3>AI 发展的三大流派</h3>
+                <div class="table-wrapper" style="max-width: 900px; margin-left: auto; margin-right: auto;">
+                    <table>
+                        <thead>
+                            <tr><th>流派</th><th>核心思想</th><th>代表技术</th><th>当前地位</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>符号主义</strong></td><td>符号逻辑推理</td><td>专家系统、知识图谱</td><td>辅助 LLM（事实校验）</td></tr>
+                            <tr><td><strong>连接主义</strong></td><td>神经元网络学习</td><td>深度学习、Transformer</td><td><span style="color:var(--primary);">★ 绝对主流</span></td></tr>
+                            <tr><td><strong>行为主义</strong></td><td>环境交互 + 奖惩</td><td>强化学习（RLHF）</td><td>重要补充（微调 / 决策）</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="highlight-box" style="text-align:center; max-width: 900px;">
+                    <p>💡 现代 LLM = 连接主义为主 + 符号主义（思维链逻辑）+ 行为主义（RLHF）</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏7 -->
+        <div class="slide" data-index="7">
+            <div class="slide-card">
+                <span class="slide-number">07</span>
+                <h2>未来工作范式会变成什么样</h2>
+                <h3>工作范式的调整</h3>
+                <div class="table-wrapper" style="max-width: 1000px; margin-left: auto; margin-right: auto;">
+                    <table>
+                        <thead>
+                            <tr><th>维度</th><th>旧范式</th><th>AI Agent 时代新范式</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>工作发起</strong></td><td>人操作工具，一步步执行</td><td>人设定目标与约束，Agent 自主执行</td></tr>
+                            <tr><td><strong>流程形态</strong></td><td>固定流程，人跑衔接</td><td>动态编排，Agent 协调系统与人</td></tr>
+                            <tr><td><strong>信息处理</strong></td><td>人搜集、筛选、汇总信息</td><td>Agent 整合信息，推送给人做决策</td></tr>
+                            <tr><td><strong>组织形态</strong></td><td>标准架构，固定团队</td><td>超级个体 + AI 军团 + 按需组队</td></tr>
+                            <tr><td><strong>决策方式</strong></td><td>经验驱动，依赖个人经验</td><td>假设驱动，Agent 并行模拟验证</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="highlight-box" style="text-align:center; max-width: 900px;">
+                    <p>⚡ 与组织结构、组织文化、组织制度的滞后性产生冲突</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏8 -->
+        <div class="slide" data-index="8">
+            <div class="slide-card">
+                <span class="slide-number">08</span>
+                <h2>个人层面如何提升能力应对冲击</h2>
+                <h3>🧠 能力层面 · 认知层次理论</h3>
+                <div class="image-upload-box" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <img id="cognitionImg" src="cognition_levels.png" alt="认知层次图">
+                    <div class="img-placeholder-upload">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-title">点击上传 认知层次图</div>
+                        <div class="upload-hint">支持 PNG / JPG / WebP · 或拖拽图片到此处</div>
+                    </div>
+                    <input type="file" accept="image/*" class="upload-input" data-img="cognitionImg">
+                </div>
+                <p class="text-left" style="max-width: 750px;">浅层的<strong>记忆、理解</strong>已经被 AI 替代；中间层的<strong>应用、分析</strong>正在被 AI 冲击；深层的<strong>评价、创造</strong>能力越来越重要。</p>
+                <h3>📌 能力模型迁移（以产品经理为例）</h3>
+                <div class="image-upload-box" style="max-width: 800px; margin-left: auto; margin-right: auto;">
+                    <img id="abilityImg" src="ability_migration.png" alt="能力模型迁移图">
+                    <div class="img-placeholder-upload">
+                        <div class="upload-icon">📷</div>
+                        <div class="upload-title">点击上传 能力模型迁移图</div>
+                        <div class="upload-hint">支持 PNG / JPG / WebP · 或拖拽图片到此处</div>
+                    </div>
+                    <input type="file" accept="image/*" class="upload-input" data-img="abilityImg">
+                </div>
+                <div class="highlight-box" style="text-align:center; max-width: 750px;">
+                    <p>🎯 用新的坐标审视能力模型：增加哪些、修改哪些、删除哪些？</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏9 -->
+        <div class="slide" data-index="9">
+            <div class="slide-card">
+                <span class="slide-number">09</span>
+                <h2>个人常用的格式、AI Agent 产品和场景</h2>
+                <div class="feature-grid" style="max-width: 1000px;">
+                    <div class="feature-card">
+                        <span class="fc-icon">📝</span>
+                        <div class="fc-title">格式选择</div>
+                        <div class="fc-desc"><code>Markdown</code> 用于编辑、记忆、AI 输入；<code>HTML</code> 用于输出和演示</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">🍄</span>
+                        <div class="fc-title">内部 Agent</div>
+                        <div class="fc-desc"><strong>马里奥</strong>：Skill 编写、多角色交互</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">🤖</span>
+                        <div class="fc-title">外部 Agent</div>
+                        <div class="fc-desc"><strong>Qclaw</strong>：定时任务、知识文档梳理、外部工具调用</div>
+                    </div>
+                    <div class="feature-card">
+                        <span class="fc-icon">⚡</span>
+                        <div class="fc-title">Vibe Coding</div>
+                        <div class="fc-desc">谷歌 Gemini → 字节扣子 → 阿里灵光</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 屏10 -->
+        <div class="slide" data-index="10">
+            <div class="slide-card cover-card">
+                <span class="cover-decoration tl">[ END / SYSTEM ]</span>
+                <span class="cover-decoration br">THANK YOU</span>
+                <span class="cover-tag">Q&amp;A 时间</span>
+                <h1>感谢倾听</h1>
+                <p style="color: var(--text-dim); margin-top:0.5rem;">🙋 欢迎自由交流与提问</p>
+                <div class="book-list">
+                    <div class="book-list-title">📚 推荐书单</div>
+                    <ul class="books">
+                        <li>《吴军数学通识讲义》</li>
+                        <li>《贝叶斯的博弈》</li>
+                        <li>《为什么——关于因果关系的新科学》</li>
+                        <li>《芯片简史》</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+
+<nav class="nav-controls">
+    <button type="button" id="prevBtn">◀ 上一页</button>
+    <span class="page-indicator" id="pageIndicator">01 / 11</span>
+    <button type="button" id="nextBtn">下一页 ▶</button>
+</nav>
+
+<script>
+    (function () {
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indicator = document.getElementById('pageIndicator');
+        const progressBar = document.getElementById('progressBar');
+        const total = slides.length;
+        let currentIdx = 0;
+
+        const pad = (n) => String(n).padStart(2, '0');
+
+        function updateSlides() {
+            slides.forEach((s, i) => {
+                s.classList.toggle('active', i === currentIdx);
+                if (i === currentIdx) s.scrollTop = 0;
+            });
+            indicator.textContent = pad(currentIdx + 1) + ' / ' + pad(total);
+            prevBtn.disabled = currentIdx === 0;
+            nextBtn.disabled = currentIdx === total - 1;
+            progressBar.style.width = ((currentIdx + 1) / total * 100) + '%';
+        }
+
+        function next() { if (currentIdx < total - 1) { currentIdx++; updateSlides(); } }
+        function prev() { if (currentIdx > 0) { currentIdx--; updateSlides(); } }
+
+        nextBtn.addEventListener('click', next);
+        prevBtn.addEventListener('click', prev);
+
+        window.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT') return;
+            if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+            if (e.key === 'ArrowLeft'  || e.key === 'PageUp')   { e.preventDefault(); prev(); }
+            if (e.key === 'Home') { currentIdx = 0; updateSlides(); }
+            if (e.key === 'End')  { currentIdx = total - 1; updateSlides(); }
+        });
+
+        // 触摸滑动
+        let touchStartX = 0, touchStartY = 0;
+        const SWIPE_THRESHOLD = 50;
+        document.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].clientX;
+            touchStartY = e.changedTouches[0].clientY;
+        }, { passive: true });
+        document.addEventListener('touchend', (e) => {
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
+                if (dx < 0) next(); else prev();
+            }
+        }, { passive: true });
+
+        // 图片上传
+        function loadImage(file, imgEl, placeholderEl) {
+            if (!file || !file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgEl.src = e.target.result;
+                imgEl.style.display = 'block';
+                placeholderEl.style.display = 'none';
+                try {
+                    localStorage.setItem('slide_img_' + imgEl.id, e.target.result);
+                } catch (err) {
+                    console.warn('图片过大，无法保存到本地缓存', err);
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function setupImageUpload() {
+            const boxes = document.querySelectorAll('.image-upload-box');
+            boxes.forEach(box => {
+                const input = box.querySelector('.upload-input');
+                const img = box.querySelector('img');
+                const placeholder = box.querySelector('.img-placeholder-upload');
+
+                img.addEventListener('error', () => {
+                    img.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                });
+                img.addEventListener('load', () => {
+                    img.style.display = 'block';
+                    placeholder.style.display = 'none';
+                });
+
+                if (!img.getAttribute('src') || img.complete && img.naturalWidth === 0) {
+                    img.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                }
+
+                input.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) loadImage(file, img, placeholder);
+                });
+
+                box.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    box.classList.add('dragover');
+                });
+                box.addEventListener('dragleave', () => {
+                    box.classList.remove('dragover');
+                });
+                box.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    box.classList.remove('dragover');
+                    const file = e.dataTransfer.files[0];
+                    if (file) loadImage(file, img, placeholder);
+                });
+            });
+        }
+
+        function restoreImages() {
+            document.querySelectorAll('.image-upload-box img').forEach(img => {
+                const saved = localStorage.getItem('slide_img_' + img.id);
+                if (saved) img.src = saved;
+            });
+        }
+
+        restoreImages();
+        setupImageUpload();
+        updateSlides();
+    })();
+</script>
+</body>
+</html>

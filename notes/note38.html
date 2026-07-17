@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>前端三件套完全入门 · HTML + CSS + JavaScript</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── Glassmorphism 主题 ───────────────────────────── */
+:root{
+  --fg:       #1e293b;
+  --mute:     #64748b;
+  --html-c:   #f97316;
+  --css-c:    #8b5cf6;
+  --js-c:     #3b82f6;
+  --card:     rgba(255,255,255,0.72);
+  --card-bd:  rgba(255,255,255,0.85);
+  --card-sh:  0 8px 32px rgba(0,0,0,0.08);
+  --code-bg:  #1a1f35;
+  --code-fg:  #e2e8f0;
+  --ui-font:  'Quicksand','PingFang SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:     'JetBrains Mono','Cascadia Code','Fira Code',monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;color:var(--fg);
+  font-family:var(--ui-font);font-weight:500;
+  background:linear-gradient(135deg,#e0e7ff 0%,#f0fdf4 40%,#fef9c3 100%);
+  overflow:hidden;
+}
+
+/* ── Background blobs ──────────────────────────────── */
+.blob1,.blob2{
+  content:'';position:fixed;border-radius:50%;
+  pointer-events:none;z-index:0;filter:blur(60px);opacity:.45;
+}
+.blob1{
+  width:480px;height:480px;top:-120px;right:-100px;
+  background:radial-gradient(circle,#f97316 0%,transparent 70%);
+  animation:blob 18s ease-in-out infinite alternate;
+}
+.blob2{
+  width:420px;height:420px;bottom:-80px;left:-80px;
+  background:radial-gradient(circle,#8b5cf6 0%,transparent 70%);
+  animation:blob 22s ease-in-out infinite alternate-reverse;
+}
+@keyframes blob{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(50px,40px) scale(1.15)}
+}
+
+/* ── Stage & Slides ───────────────────────────────── */
+.stage{position:fixed;inset:0;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:block;padding:60px 6vw 56px;
+  opacity:0;visibility:hidden;transform:translateY(18px);
+  transition:opacity .5s cubic-bezier(.7,0,.2,1),transform .5s cubic-bezier(.7,0,.2,1),visibility .5s;
+  overflow-y:auto;overflow-x:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.canvas{
+  width:100%;max-width:1120px;margin:0 auto;
+  min-height:calc(100vh - 140px);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+
+.slide.active .reveal{animation:rise .65s cubic-bezier(.7,0,.2,1) both}
+.slide.active .reveal:nth-child(1){animation-delay:.04s}
+.slide.active .reveal:nth-child(2){animation-delay:.14s}
+.slide.active .reveal:nth-child(3){animation-delay:.24s}
+.slide.active .reveal:nth-child(4){animation-delay:.34s}
+.slide.active .reveal:nth-child(5){animation-delay:.44s}
+.slide.active .reveal:nth-child(6){animation-delay:.54s}
+.slide.active .reveal:nth-child(7){animation-delay:.64s}
+.slide.active .reveal:nth-child(8){animation-delay:.74s}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* ── Chrome ────────────────────────────────────────── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:42px;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  font-size:11px;letter-spacing:.18em;text-transform:uppercase;font-weight:700;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--mute);border-bottom:1px solid rgba(0,0,0,.06);
+}
+.topbar .brand{
+  background:linear-gradient(135deg,var(--html-c),var(--css-c),var(--js-c));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.footbar{
+  position:fixed;bottom:0;left:0;right:0;height:34px;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  font-size:11px;letter-spacing:.12em;font-weight:600;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--mute);border-top:1px solid rgba(0,0,0,.06);
+}
+.footbar .pg{font-variant-numeric:tabular-nums;font-weight:700;color:var(--fg)}
+.progress{position:fixed;bottom:0;left:0;height:3px;width:0;z-index:11;
+  background:linear-gradient(90deg,var(--html-c),var(--css-c),var(--js-c));
+  transition:width .5s cubic-bezier(.7,0,.2,1)}
+.nav-arrow{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:44px;height:44px;border-radius:50%;
+  display:grid;place-items:center;font-size:20px;cursor:pointer;
+  z-index:10;color:var(--fg);background:rgba(255,255,255,.72);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.85);
+  box-shadow:var(--card-sh);transition:all .25s;
+}
+.nav-arrow:hover{transform:translateY(-50%) scale(1.08);box-shadow:0 12px 40px rgba(0,0,0,.12)}
+.nav-arrow.prev{left:16px}
+.nav-arrow.next{right:16px}
+
+/* ── Glass Card ────────────────────────────────────── */
+.gcard{
+  background:var(--card);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--card-bd);
+  border-radius:20px;
+  box-shadow:var(--card-sh);
+  padding:24px;
+}
+
+/* ── Typography ───────────────────────────────────── */
+h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;line-height:1.15;margin-bottom:.3em}
+h2{font-size:clamp(1.5rem,3.5vw,2.2rem);font-weight:700;line-height:1.2;margin-bottom:.35em}
+h3{font-size:clamp(1.1rem,2vw,1.4rem);font-weight:600;line-height:1.3;margin-bottom:.25em}
+.eyebrow{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.2em;
+  text-transform:uppercase;padding:4px 12px;border-radius:6px;margin-bottom:10px;
+}
+.eyebrow.html-e{background:rgba(249,115,22,.12);color:var(--html-c)}
+.eyebrow.css-e{background:rgba(139,92,246,.12);color:var(--css-c)}
+.eyebrow.js-e{background:rgba(59,130,246,.12);color:var(--js-c)}
+.muted{color:var(--mute);font-size:13px;line-height:1.5}
+.pro-note{color:var(--mute);font-size:12px;line-height:1.5;font-style:italic;margin-top:6px}
+.pro-note::before{content:'专业说法：';font-weight:600;font-style:normal}
+
+/* ── Code ──────────────────────────────────────────── */
+pre.code{
+  background:var(--code-bg);color:var(--code-fg);border-radius:14px;
+  padding:16px 18px;font-family:var(--mono);font-size:12.5px;line-height:1.6;
+  overflow-x:auto;white-space:pre;margin:0;
+}
+pre.code .tag{color:#f97316}
+pre.code .attr{color:#a78bfa}
+pre.code .str{color:#4ade80}
+pre.code .kw{color:#60a5fa}
+pre.code .fn{color:#fbbf24}
+pre.code .cm{color:#64748b;font-style:italic}
+pre.code .prop{color:#c084fc}
+pre.code .sel{color:#f97316}
+pre.code .val{color:#4ade80}
+pre.code .punc{color:#94a3b8}
+.code-label{
+  font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--mute);margin-bottom:6px;
+}
+
+/* ── Badge / Chip ─────────────────────────────────── */
+.badge{
+  display:inline-block;padding:2px 10px;border-radius:8px;
+  font-family:var(--mono);font-size:12px;font-weight:500;
+  margin:2px 3px;
+}
+.badge.html-b{background:rgba(249,115,22,.1);color:var(--html-c)}
+.badge.css-b{background:rgba(139,92,246,.1);color:var(--css-c)}
+.badge.js-b{background:rgba(59,130,246,.1);color:var(--js-c)}
+
+/* ── Table ─────────────────────────────────────────── */
+.data-table{
+  width:100%;border-collapse:separate;border-spacing:0;
+  font-size:13px;
+}
+.data-table th{
+  background:rgba(0,0,0,.04);font-weight:700;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:8px 12px;text-align:left;border-bottom:1px solid rgba(0,0,0,.08);
+}
+.data-table td{
+  padding:7px 12px;border-bottom:1px solid rgba(0,0,0,.05);vertical-align:top;
+}
+.data-table tr:last-child td{border-bottom:none}
+.data-table code{font-family:var(--mono);font-size:12px;background:rgba(0,0,0,.06);padding:1px 5px;border-radius:4px}
+
+/* ── Grid helpers ──────────────────────────────────── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.grid-2x2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.flex-row{display:flex;gap:20px;align-items:stretch}
+.flex-col{display:flex;flex-direction:column;gap:12px}
+.flex-center{display:flex;align-items:center;justify-content:center}
+.gap-sm{gap:8px}.gap-md{gap:16px}.gap-lg{gap:24px}
+.w-50{width:50%}.w-48{width:48%}.w-52{width:52%}
+.ml-auto{margin-left:auto}
+.mt-sm{margin-top:8px}.mt-md{margin-top:16px}.mt-lg{margin-top:24px}
+.mb-sm{margin-bottom:8px}.mb-md{margin-bottom:16px}
+
+/* ── Section cover styles ──────────────────────────── */
+.section-cover{
+  display:flex;align-items:center;justify-content:center;min-height:60vh;
+}
+.section-num{
+  position:absolute;right:-2vw;bottom:0;
+  font-size:clamp(8rem,18vw,14rem);font-weight:800;
+  line-height:1;opacity:.06;pointer-events:none;
+  font-family:var(--mono);
+}
+.section-cover h2{
+  font-size:clamp(3rem,8vw,5.5rem);font-weight:800;line-height:1;
+}
+
+/* ── Box Model visual ─────────────────────────────── */
+.box-visual{
+  width:100%;max-width:320px;aspect-ratio:1;
+  display:grid;place-items:center;
+  border-radius:16px;overflow:hidden;
+}
+.bx-margin{background:rgba(249,115,22,.18);padding:16px;border-radius:14px;display:grid;place-items:center}
+.bx-border{background:rgba(139,92,246,.22);padding:12px;border-radius:10px;display:grid;place-items:center}
+.bx-padding{background:rgba(59,130,246,.18);padding:10px;border-radius:7px;display:grid;place-items:center}
+.bx-content{background:rgba(255,255,255,.85);padding:12px 18px;border-radius:5px;font-weight:700;font-size:13px;text-align:center}
+
+/* ── Todo demo ─────────────────────────────────────── */
+#todo-input{
+  width:100%;padding:10px 14px;border:2px solid rgba(0,0,0,.1);
+  border-radius:10px;font-family:var(--ui-font);font-size:14px;
+  outline:none;transition:border-color .2s;
+  background:rgba(255,255,255,.8);
+}
+#todo-input:focus{border-color:var(--js-c)}
+#todo-list{list-style:none;padding:0;margin:8px 0 0}
+#todo-list li{
+  padding:8px 12px;border-radius:8px;cursor:pointer;
+  font-size:14px;margin-bottom:4px;
+  background:rgba(255,255,255,.5);
+  transition:all .2s;
+  user-select:none;
+}
+#todo-list li:hover{background:rgba(59,130,246,.08)}
+#todo-list li.done{text-decoration:line-through;color:var(--mute);opacity:.6}
+
+/* ── Arrow ─────────────────────────────────────────── */
+.big-arrow{
+  font-size:2.5rem;color:var(--css-c);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+
+/* ── Flow step ────────────────────────────────────── */
+.flow-step{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;border-radius:12px;
+  background:rgba(59,130,246,.06);
+  font-size:14px;font-weight:600;
+}
+.flow-arrow{font-size:18px;color:var(--js-c);margin:0 2px}
+
+/* ── Resource card ─────────────────────────────────── */
+.res-card{
+  text-align:center;padding:14px 10px;border-radius:14px;
+  background:rgba(255,255,255,.6);
+  border:1px solid rgba(255,255,255,.8);
+}
+.res-card .res-name{font-weight:700;font-size:15px;margin-bottom:2px}
+.res-card .res-desc{font-size:12px;color:var(--mute)}
+
+/* ── Chapter dot nav ──────────────────────────────── */
+.ch-dot{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;border-radius:10px;cursor:pointer;
+  font-size:13px;font-weight:600;
+  transition:all .2s;
+}
+.ch-dot:hover{transform:scale(1.04)}
+.ch-dot.html-d{background:rgba(249,115,22,.1);color:var(--html-c)}
+.ch-dot.css-d{background:rgba(139,92,246,.1);color:var(--css-c)}
+.ch-dot.js-d{background:rgba(59,130,246,.1);color:var(--js-c)}
+.ch-dot .dot{width:8px;height:8px;border-radius:50%}
+.ch-dot.html-d .dot{background:var(--html-c)}
+.ch-dot.css-d .dot{background:var(--css-c)}
+.ch-dot.js-d .dot{background:var(--js-c)}
+
+/* ── Before/After preview ─────────────────────────── */
+.preview-box{
+  padding:20px;border-radius:12px;min-height:120px;
+  display:flex;flex-direction:column;justify-content:center;align-items:center;
+}
+.preview-ugly{background:#fff;border:1px solid #ddd;color:#333;font-family:serif;font-size:14px}
+.preview-pretty{
+  background:linear-gradient(135deg,#8b5cf6,#3b82f6);color:#fff;
+  font-family:var(--ui-font);font-size:15px;font-weight:600;
+  border-radius:14px;padding:28px;
+  box-shadow:0 8px 24px rgba(139,92,246,.3);
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media(max-width:768px){
+  .grid-2,.grid-3,.grid-2x2,.flex-row{grid-template-columns:1fr;flex-direction:column}
+  .w-50,.w-48,.w-52{width:100%}
+  .slide{padding:56px 4vw 50px}
+  h1{font-size:1.8rem}
+  h2{font-size:1.5rem}
+  .section-num{font-size:6rem}
+}
+
+/* ── Knowledge map ────────────────────────────────── */
+.kmap-group{padding:18px;border-radius:16px;margin-bottom:12px}
+.kmap-group.html-g{background:rgba(249,115,22,.06);border:1px solid rgba(249,115,22,.15)}
+.kmap-group.css-g{background:rgba(139,92,246,.06);border:1px solid rgba(139,92,246,.15)}
+.kmap-group.js-g{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.15)}
+.kmap-title{font-weight:700;font-size:14px;margin-bottom:8px}
+.kmap-group.html-g .kmap-title{color:var(--html-c)}
+.kmap-group.css-g .kmap-title{color:var(--css-c)}
+.kmap-group.js-g .kmap-title{color:var(--js-c)}
+
+/* ── Roadmap steps ────────────────────────────────── */
+.road-step{
+  display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;
+}
+.road-num{
+  width:32px;height:32px;border-radius:50%;
+  display:grid;place-items:center;
+  font-weight:800;font-size:14px;color:#fff;flex-shrink:0;
+}
+.road-step:nth-child(1) .road-num{background:var(--html-c)}
+.road-step:nth-child(2) .road-num{background:var(--css-c)}
+.road-step:nth-child(3) .road-num{background:var(--js-c)}
+.road-label{font-weight:700;font-size:14px}
+.road-desc{font-size:12px;color:var(--mute)}
+
+/* DOM tree visual */
+.dom-tree{font-family:var(--mono);font-size:12px;line-height:1.7;color:var(--code-fg)}
+.dom-tree .node{color:#60a5fa;font-weight:600}
+.dom-tree .branch{color:#64748b}
+</style>
+</head>
+<body>
+
+<!-- Background blobs -->
+<div class="blob1"></div>
+<div class="blob2"></div>
+
+<!-- Chrome -->
+<div class="topbar">
+  <span class="brand">FRONTEND TRILOGY</span>
+  <span>HTML · CSS · JavaScript</span>
+</div>
+<div class="progress" id="progress"></div>
+<div class="footbar">
+  <span>前端三件套完全入门</span>
+  <span class="pg" id="pg">1 / 20</span>
+</div>
+
+<!-- Nav arrows -->
+<button class="nav-arrow prev" id="prevBtn" onclick="go(-1)">←</button>
+<button class="nav-arrow next" id="nextBtn" onclick="go(1)">→</button>
+
+<!-- ═══════════════════════ STAGE ═══════════════════════ -->
+<div class="stage" id="stage">
+
+<!-- ──────────── P1 · 封面 ──────────── -->
+<div class="slide active" id="s1">
+<div class="canvas" style="align-items:center;text-align:center">
+  <div class="reveal">
+    <div style="display:flex;justify-content:center;gap:8px;margin-bottom:24px">
+      <span style="width:48px;height:4px;border-radius:2px;background:var(--html-c)"></span>
+      <span style="width:48px;height:4px;border-radius:2px;background:var(--css-c)"></span>
+      <span style="width:48px;height:4px;border-radius:2px;background:var(--js-c)"></span>
+    </div>
+  </div>
+  <div class="reveal">
+    <h1>前端三件套<br>完全入门</h1>
+  </div>
+  <div class="reveal">
+    <p style="font-size:clamp(1rem,2.5vw,1.3rem);color:var(--mute);margin-top:8px;font-weight:600">
+      骨架 · 造型 · 动作——从零到第一个会动的网页
+    </p>
+  </div>
+  <div class="reveal" style="margin-top:36px;display:flex;gap:24px;justify-content:center;flex-wrap:wrap">
+    <div class="gcard" style="padding:12px 20px;text-align:center">
+      <div style="font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.15em;margin-bottom:2px">难度</div>
+      <div style="font-weight:700">零基础</div>
+    </div>
+    <div class="gcard" style="padding:12px 20px;text-align:center">
+      <div style="font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.15em;margin-bottom:2px">页数</div>
+      <div style="font-weight:700">20 页</div>
+    </div>
+    <div class="gcard" style="padding:12px 20px;text-align:center">
+      <div style="font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.15em;margin-bottom:2px">目标</div>
+      <div style="font-weight:700">写出会动的网页</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P2 · 三人组总览 ──────────── -->
+<div class="slide" id="s2">
+<div class="canvas">
+  <div class="reveal" style="text-align:center;margin-bottom:20px">
+    <h2>三个角色，一台戏</h2>
+    <p class="muted">网页 = 骨架 + 造型 + 动作</p>
+  </div>
+  <div class="reveal grid-3" style="align-items:stretch">
+    <!-- HTML -->
+    <div class="gcard" style="border-top:3px solid var(--html-c)">
+      <div style="font-size:2.2rem;margin-bottom:6px">🦴</div>
+      <h3 style="color:var(--html-c)">HTML</h3>
+      <p style="font-size:15px;font-weight:600;margin-bottom:4px">骨架 · 名词</p>
+      <p class="muted" style="margin-bottom:10px">网页里"有什么"——标题、段落、图片、按钮，都是它定义的。</p>
+      <p class="pro-note">HyperText Markup Language，用标签描述文档结构的标记语言。</p>
+      <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap">
+        <span class="badge html-b">标签</span>
+        <span class="badge html-b">元素</span>
+        <span class="badge html-b">DOM</span>
+      </div>
+    </div>
+    <!-- CSS -->
+    <div class="gcard" style="border-top:3px solid var(--css-c)">
+      <div style="font-size:2.2rem;margin-bottom:6px">🎨</div>
+      <h3 style="color:var(--css-c)">CSS</h3>
+      <p style="font-size:15px;font-weight:600;margin-bottom:4px">造型 · 形容词</p>
+      <p class="muted" style="margin-bottom:10px">网页"长什么样"——颜色、大小、间距、动画，都归它管。</p>
+      <p class="pro-note">Cascading Style Sheets，层叠样式表，用选择器+属性值对控制呈现。</p>
+      <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap">
+        <span class="badge css-b">选择器</span>
+        <span class="badge css-b">盒模型</span>
+        <span class="badge css-b">优先级</span>
+      </div>
+    </div>
+    <!-- JS -->
+    <div class="gcard" style="border-top:3px solid var(--js-c)">
+      <div style="font-size:2.2rem;margin-bottom:6px">⚡</div>
+      <h3 style="color:var(--js-c)">JavaScript</h3>
+      <p style="font-size:15px;font-weight:600;margin-bottom:4px">动作 · 动词</p>
+      <p class="muted" style="margin-bottom:10px">网页"能干什么"——点击响应、数据计算、动态更新，全靠它。</p>
+      <p class="pro-note">脚本语言，通过操作 DOM API 实现页面的动态交互。</p>
+      <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap">
+        <span class="badge js-b">变量</span>
+        <span class="badge js-b">函数</span>
+        <span class="badge js-b">事件</span>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P3 · 目录 ──────────── -->
+<div class="slide" id="s3">
+<div class="canvas" style="justify-content:center">
+  <div class="reveal" style="text-align:center;margin-bottom:28px">
+    <h2>目录</h2>
+    <p class="muted">点击跳转到对应章节</p>
+  </div>
+  <div class="reveal" style="max-width:600px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+    <!-- HTML section -->
+    <div onclick="goTo(3)" class="ch-dot html-d" style="cursor:pointer">
+      <span class="dot"></span>
+      <span>Part 1 · HTML</span>
+      <span style="font-size:12px;color:var(--mute);margin-left:auto">P4–P8</span>
+    </div>
+    <div style="padding-left:32px;display:flex;flex-wrap:wrap;gap:4px;font-size:12px;color:var(--mute)">
+      <span>文档结构</span>·<span>元素分类</span>·<span>标签速查</span>·<span>表单</span>
+    </div>
+    <!-- CSS section -->
+    <div onclick="goTo(8)" class="ch-dot css-d" style="cursor:pointer;margin-top:6px">
+      <span class="dot"></span>
+      <span>Part 2 · CSS</span>
+      <span style="font-size:12px;color:var(--mute);margin-left:auto">P9–P13</span>
+    </div>
+    <div style="padding-left:32px;display:flex;flex-wrap:wrap;gap:4px;font-size:12px;color:var(--mute)">
+      <span>三要素</span>·<span>盒模型</span>·<span>核心属性</span>·<span>Before/After</span>
+    </div>
+    <!-- JS section -->
+    <div onclick="goTo(13)" class="ch-dot js-d" style="cursor:pointer;margin-top:6px">
+      <span class="dot"></span>
+      <span>Part 3 · JavaScript</span>
+      <span style="font-size:12px;color:var(--mute);margin-left:auto">P14–P18</span>
+    </div>
+    <div style="padding-left:32px;display:flex;flex-wrap:wrap;gap:4px;font-size:12px;color:var(--mute)">
+      <span>四个积木</span>·<span>DOM</span>·<span>事件</span>·<span>待办清单</span>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ PART 1 · HTML ══════════════ -->
+
+<!-- ──────────── P4 · HTML 章节封面 ──────────── -->
+<div class="slide" id="s4">
+<div class="canvas section-cover" style="position:relative">
+  <div class="section-num" style="color:var(--html-c)">01</div>
+  <div class="reveal" style="text-align:center">
+    <span class="eyebrow html-e">Part 1</span>
+    <h2 style="color:var(--html-c)">HTML</h2>
+    <p style="font-size:clamp(1rem,2.5vw,1.3rem);color:var(--mute);font-weight:600;margin-top:4px">
+      骨架——告诉浏览器这里有什么
+    </p>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P5 · 文档结构 ──────────── -->
+<div class="slide" id="s5">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow html-e">Part 1 · HTML</span></div>
+  <div class="reveal"><h2>文档结构——网页的骨架</h2></div>
+  <div class="reveal flex-row" style="margin-top:16px;align-items:flex-start">
+    <div class="w-48">
+      <div class="code-label">完整 HTML 骨架</div>
+      <pre class="code"><span class="punc">&lt;!</span><span class="kw">DOCTYPE</span> <span class="attr">html</span><span class="punc">&gt;</span>
+<span class="punc">&lt;</span><span class="tag">html</span> <span class="attr">lang</span>=<span class="str">"zh-CN"</span><span class="punc">&gt;</span>
+<span class="punc">&lt;</span><span class="tag">head</span><span class="punc">&gt;</span>
+  <span class="punc">&lt;</span><span class="tag">meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="punc">&gt;</span>
+  <span class="punc">&lt;</span><span class="tag">title</span><span class="punc">&gt;</span>我的网页<span class="punc">&lt;/</span><span class="tag">title</span><span class="punc">&gt;</span>
+<span class="punc">&lt;/</span><span class="tag">head</span><span class="punc">&gt;</span>
+<span class="punc">&lt;</span><span class="tag">body</span><span class="punc">&gt;</span>
+  <span class="cm">&lt;!-- 页面内容写这里 --&gt;</span>
+<span class="punc">&lt;/</span><span class="tag">body</span><span class="punc">&gt;</span>
+<span class="punc">&lt;/</span><span class="tag">html</span><span class="punc">&gt;</span></pre>
+    </div>
+    <div class="w-52 flex-col gap-sm">
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--html-c)">
+        <h3 style="font-size:14px;color:var(--html-c)">&lt;!DOCTYPE html&gt;</h3>
+        <p class="muted">告诉浏览器"我是 HTML5 文档"，避免怪异渲染模式。</p>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--html-c)">
+        <h3 style="font-size:14px;color:var(--html-c)">&lt;html&gt;</h3>
+        <p class="muted">根元素，整个页面的一切都在它里面。lang 属性帮助搜索引擎和屏幕阅读器识别语言。</p>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--html-c)">
+        <h3 style="font-size:14px;color:var(--html-c)">&lt;head&gt;</h3>
+        <p class="muted">元数据区——字符编码、标题、CSS 引用、SEO 信息。用户看不到这些内容。</p>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--html-c)">
+        <h3 style="font-size:14px;color:var(--html-c)">&lt;body&gt;</h3>
+        <p class="muted">可见内容区——你看到的一切文字、图片、按钮，都在 body 里。</p>
+      </div>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:12px">
+    浏览器解析 HTML 后生成 DOM 树（Document Object Model），这是一切的起点——CSS 和 JS 都基于它工作。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P6 · 元素三分类 ──────────── -->
+<div class="slide" id="s6">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow html-e">Part 1 · HTML</span></div>
+  <div class="reveal"><h2>元素三分类</h2></div>
+  <div class="reveal grid-3" style="margin-top:16px;align-items:stretch">
+    <!-- 块级 -->
+    <div class="gcard" style="border-top:3px solid var(--html-c)">
+      <div style="font-size:1.8rem">🧱</div>
+      <h3>块级元素</h3>
+      <p style="font-size:12px;color:var(--html-c);font-weight:600;margin-bottom:6px">Block-level</p>
+      <p class="muted">独占一行，像段落一样铺满宽度。可以设宽高。</p>
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px">
+        <span class="badge html-b">&lt;div&gt;</span>
+        <span class="badge html-b">&lt;p&gt;</span>
+        <span class="badge html-b">&lt;h1&gt;</span>
+        <span class="badge html-b">&lt;ul&gt;</span>
+      </div>
+    </div>
+    <!-- 内联 -->
+    <div class="gcard" style="border-top:3px solid var(--html-c)">
+      <div style="font-size:1.8rem">🔗</div>
+      <h3>内联元素</h3>
+      <p style="font-size:12px;color:var(--html-c);font-weight:600;margin-bottom:6px">Inline</p>
+      <p class="muted">和文字同行，只占内容宽度。设宽高无效。</p>
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px">
+        <span class="badge html-b">&lt;span&gt;</span>
+        <span class="badge html-b">&lt;a&gt;</span>
+        <span class="badge html-b">&lt;strong&gt;</span>
+        <span class="badge html-b">&lt;em&gt;</span>
+      </div>
+    </div>
+    <!-- 空元素 -->
+    <div class="gcard" style="border-top:3px solid var(--html-c)">
+      <div style="font-size:1.8rem">👻</div>
+      <h3>空元素</h3>
+      <p style="font-size:12px;color:var(--html-c);font-weight:600;margin-bottom:6px">Void / Self-closing</p>
+      <p class="muted">没有子内容，不需要闭合标签。功能全靠属性携带。</p>
+      <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:3px">
+        <span class="badge html-b">&lt;img&gt;</span>
+        <span class="badge html-b">&lt;br&gt;</span>
+        <span class="badge html-b">&lt;input&gt;</span>
+        <span class="badge html-b">&lt;meta&gt;</span>
+      </div>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:12px">
+    CSS 的 display 属性可以强制改变元素的渲染类型——块级可以变内联，内联也可以变块级。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P7 · 核心标签速查 ──────────── -->
+<div class="slide" id="s7">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow html-e">Part 1 · HTML</span></div>
+  <div class="reveal"><h2>核心标签速查表</h2></div>
+  <div class="reveal gcard" style="margin-top:14px;padding:16px;overflow-x:auto">
+    <table class="data-table">
+      <thead><tr><th>标签</th><th>用途</th><th>关键属性</th><th>小提示</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;h1&gt;~&lt;h6&gt;</code></td><td>标题层级</td><td>—</td><td>每页只一个 h1，SEO 权重递减</td></tr>
+        <tr><td><code>&lt;p&gt;</code></td><td>段落</td><td>—</td><td>自动有上下 margin</td></tr>
+        <tr><td><code>&lt;a&gt;</code></td><td>超链接</td><td>href, target</td><td>target="_blank" 新标签页打开</td></tr>
+        <tr><td><code>&lt;img&gt;</code></td><td>图片</td><td>src, alt</td><td>alt 是无障碍必填项</td></tr>
+        <tr><td><code>&lt;ul&gt;&lt;li&gt;</code></td><td>无序列表</td><td>—</td><td>ol 是有序列表</td></tr>
+        <tr><td><code>&lt;div&gt;</code></td><td>通用容器</td><td>—</td><td>无语义，纯布局用</td></tr>
+        <tr><td><code>&lt;span&gt;</code></td><td>行内容器</td><td>—</td><td>给文字片段加样式</td></tr>
+        <tr><td><code>&lt;main&gt;</code></td><td>主内容区</td><td>—</td><td>每页只能一个</td></tr>
+        <tr><td><code>&lt;article&gt;</code></td><td>独立文章</td><td>—</td><td>可单独分发的内容块</td></tr>
+        <tr><td><code>&lt;section&gt;</code></td><td>内容分区</td><td>—</td><td>应有标题 heading</td></tr>
+        <tr><td><code>&lt;nav&gt;</code></td><td>导航区</td><td>—</td><td>通常含 a 链接列表</td></tr>
+        <tr><td><code>&lt;header&gt;</code></td><td>头部区</td><td>—</td><td>可复用于 article 内</td></tr>
+        <tr><td><code>&lt;footer&gt;</code></td><td>底部区</td><td>—</td><td>版权、联系信息等</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="reveal pro-note" style="margin-top:10px">
+    语义标签不只是"好看"——它影响 SEO 排名和无障碍访问（屏幕阅读器据此导航），div 没有这些能力。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P8 · 表单系统 ──────────── -->
+<div class="slide" id="s8">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow html-e">Part 1 · HTML</span></div>
+  <div class="reveal"><h2>表单系统——数据入口</h2></div>
+  <div class="reveal flex-row" style="margin-top:14px;align-items:flex-start">
+    <div class="w-48">
+      <div class="code-label">完整表单代码</div>
+      <pre class="code"><span class="punc">&lt;</span><span class="tag">form</span> <span class="attr">action</span>=<span class="str">"/submit"</span>
+      <span class="attr">method</span>=<span class="str">"POST"</span><span class="punc">&gt;</span>
+
+  <span class="cm">&lt;!-- 文本输入 --&gt;</span>
+  <span class="punc">&lt;</span><span class="tag">label</span><span class="punc">&gt;</span>姓名<span class="punc">&lt;/</span><span class="tag">label</span><span class="punc">&gt;</span>
+  <span class="punc">&lt;</span><span class="tag">input</span> <span class="attr">type</span>=<span class="str">"text"</span>
+         <span class="attr">name</span>=<span class="str">"username"</span>
+         <span class="attr">required</span><span class="punc">&gt;</span>
+
+  <span class="cm">&lt;!-- 邮箱输入 --&gt;</span>
+  <span class="punc">&lt;</span><span class="tag">input</span> <span class="attr">type</span>=<span class="str">"email"</span>
+         <span class="attr">name</span>=<span class="str">"email"</span><span class="punc">&gt;</span>
+
+  <span class="cm">&lt;!-- 提交按钮 --&gt;</span>
+  <span class="punc">&lt;</span><span class="tag">button</span> <span class="attr">type</span>=<span class="str">"submit"</span><span class="punc">&gt;</span>
+    提交
+  <span class="punc">&lt;/</span><span class="tag">button</span><span class="punc">&gt;</span>
+
+<span class="punc">&lt;/</span><span class="tag">form</span><span class="punc">&gt;</span></pre>
+    </div>
+    <div class="w-52 flex-col gap-sm">
+      <div class="gcard" style="padding:14px">
+        <h3 style="font-size:14px">input type 速查</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;font-size:12px">
+          <div><code>text</code> <span class="muted">单行文本</span></div>
+          <div><code>email</code> <span class="muted">邮箱验证</span></div>
+          <div><code>password</code> <span class="muted">密码遮罩</span></div>
+          <div><code>number</code> <span class="muted">数字输入</span></div>
+          <div><code>checkbox</code> <span class="muted">多选框</span></div>
+          <div><code>radio</code> <span class="muted">单选组</span></div>
+          <div><code>file</code> <span class="muted">文件上传</span></div>
+          <div><code>range</code> <span class="muted">滑块</span></div>
+        </div>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--html-c)">
+        <p class="muted"><strong style="color:var(--fg)">action</strong> = 数据提交到哪个 URL</p>
+        <p class="muted"><strong style="color:var(--fg)">method</strong> = GET（URL 可见）或 POST（请求体传输）</p>
+        <p class="muted"><strong style="color:var(--fg)">name</strong> = 每个字段的标识名，后端据此取值</p>
+      </div>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:10px">
+    表单是前端收集数据、传给后端的标准通道。method=POST 表示数据通过请求体提交到服务器，比 GET 更安全（不会暴露在 URL 里）。
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ PART 2 · CSS ══════════════ -->
+
+<!-- ──────────── P9 · CSS 章节封面 ──────────── -->
+<div class="slide" id="s9">
+<div class="canvas section-cover" style="position:relative">
+  <div class="section-num" style="color:var(--css-c)">02</div>
+  <div class="reveal" style="text-align:center">
+    <span class="eyebrow css-e">Part 2</span>
+    <h2 style="color:var(--css-c)">CSS</h2>
+    <p style="font-size:clamp(1rem,2.5vw,1.3rem);color:var(--mute);font-weight:600;margin-top:4px">
+      造型——告诉浏览器长什么样
+    </p>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P10 · CSS 三要素 + 优先级 ──────────── -->
+<div class="slide" id="s10">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow css-e">Part 2 · CSS</span></div>
+  <div class="reveal"><h2>CSS 三要素 + 优先级</h2></div>
+  <div class="reveal flex-row" style="margin-top:14px;align-items:flex-start">
+    <div class="w-48">
+      <div class="code-label">解剖一行 CSS</div>
+      <pre class="code"><span class="sel">h1</span> <span class="punc">{</span>
+  <span class="prop">color</span><span class="punc">:</span> <span class="val">#8b5cf6</span><span class="punc">;</span>
+  <span class="prop">font-size</span><span class="punc">:</span> <span class="val">2rem</span><span class="punc">;</span>
+<span class="punc">}</span></pre>
+      <div style="margin-top:10px;display:flex;gap:8px;font-size:12px">
+        <span style="padding:3px 10px;border-radius:6px;background:rgba(249,115,22,.12);color:var(--html-c);font-weight:700">选择器 h1</span>
+        <span style="padding:3px 10px;border-radius:6px;background:rgba(139,92,246,.12);color:var(--css-c);font-weight:700">属性 color</span>
+        <span style="padding:3px 10px;border-radius:6px;background:rgba(59,130,246,.12);color:var(--js-c);font-weight:700">值 #8b5cf6</span>
+      </div>
+      <div style="margin-top:16px">
+        <div class="code-label">三种选择器</div>
+        <pre class="code"><span class="cm">/* 标签选择器 */</span>
+<span class="sel">p</span> <span class="punc">{</span> <span class="prop">color</span><span class="punc">:</span> <span class="val">gray</span><span class="punc">;</span> <span class="punc">}</span>
+
+<span class="cm">/* 类选择器 */</span>
+<span class="sel">.card</span> <span class="punc">{</span> <span class="prop">padding</span><span class="punc">:</span> <span class="val">16px</span><span class="punc">;</span> <span class="punc">}</span>
+
+<span class="cm">/* ID 选择器 */</span>
+<span class="sel">#hero</span> <span class="punc">{</span> <span class="prop">font-size</span><span class="punc">:</span> <span class="val">3rem</span><span class="punc">;</span> <span class="punc">}</span></pre>
+      </div>
+    </div>
+    <div class="w-52 flex-col gap-sm">
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--css-c)">
+        <h3 style="font-size:14px;color:var(--css-c)">三种写法</h3>
+        <div style="font-size:12px;margin-top:6px">
+          <p><strong>行内样式</strong> <code>style="..."</code> — 最高优先级</p>
+          <p><strong>style 标签</strong> <code>&lt;style&gt;</code> — 页面内部</p>
+          <p><strong>外部文件</strong> <code>&lt;link&gt;</code> — 最推荐 ✅</p>
+        </div>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--css-c)">
+        <h3 style="font-size:14px;color:var(--css-c)">优先级规则</h3>
+        <div style="font-size:13px;margin-top:6px;line-height:1.8">
+          <p><strong>行内</strong> &gt; <strong>ID</strong> &gt; <strong>类</strong> &gt; <strong>标签</strong></p>
+          <p class="muted" style="font-size:12px">同优先级时，后写的覆盖先写的（就近原则）</p>
+        </div>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--css-c)">
+        <h3 style="font-size:14px;color:var(--css-c)">为什么推荐外部文件？</h3>
+        <p class="muted">多个页面可以复用同一份 CSS，浏览器还能缓存它——加载更快，维护更方便。</p>
+      </div>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:10px">
+    这叫 Specificity（特异性），浏览器按特异性分值决定哪条规则生效——ID(100) > Class(10) > Tag(1)，分值高的覆盖低的。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P11 · 盒模型 ──────────── -->
+<div class="slide" id="s11">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow css-e">Part 2 · CSS</span></div>
+  <div class="reveal"><h2>盒模型——每个元素都是个盒子</h2></div>
+  <div class="reveal flex-row" style="margin-top:14px;align-items:flex-start">
+    <div class="w-48" style="display:flex;justify-content:center">
+      <div class="box-visual">
+        <div class="bx-margin">
+          <div style="font-size:10px;color:#f97316;font-weight:700;text-align:center;margin-bottom:4px">margin</div>
+          <div class="bx-border">
+            <div style="font-size:10px;color:#8b5cf6;font-weight:700;text-align:center;margin-bottom:4px">border</div>
+            <div class="bx-padding">
+              <div style="font-size:10px;color:#3b82f6;font-weight:700;text-align:center;margin-bottom:4px">padding</div>
+              <div class="bx-content">content</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="w-52 flex-col gap-sm">
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--html-c)">
+        <h3 style="font-size:14px;color:var(--html-c)">🟧 Margin 外边距</h3>
+        <p class="muted">盒子与外界的距离。可以是负值。auto 可实现水平居中。</p>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--css-c)">
+        <h3 style="font-size:14px;color:var(--css-c)">🟪 Border 边框</h3>
+        <p class="muted">盒子的边线。有三个子属性：width / style / color。</p>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--js-c)">
+        <h3 style="font-size:14px;color:var(--js-c)">🟦 Padding 内边距</h3>
+        <p class="muted">内容与边框之间的空间。不可以是负值。</p>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--mute)">
+        <h3 style="font-size:14px">⬜ Content 内容</h3>
+        <p class="muted">文字、图片等实际内容区域。width/height 默认控制这里。</p>
+      </div>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:10px">
+    默认盒模型（content-box）的 width 不含 padding 和 border，加上 box-sizing: border-box 后 width 包含两者，更符合直觉——全局设置 * { box-sizing: border-box } 是最佳实践。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P12 · 核心属性速查 ──────────── -->
+<div class="slide" id="s12">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow css-e">Part 2 · CSS</span></div>
+  <div class="reveal"><h2>核心属性速查</h2></div>
+  <div class="reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px">
+    <!-- Row 1 -->
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">color</div>
+      <div style="font-size:1.3rem">🎨</div>
+      <div class="muted" style="font-size:12px">文字颜色</div>
+      <code style="font-size:11px;color:var(--css-c)">#8b5cf6</code>
+    </div>
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">background</div>
+      <div style="font-size:1.3rem">🌈</div>
+      <div class="muted" style="font-size:12px">背景色/渐变/图</div>
+      <code style="font-size:11px;color:var(--css-c)">linear-gradient(...)</code>
+    </div>
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">font-size</div>
+      <div style="font-size:1.3rem">🔤</div>
+      <div class="muted" style="font-size:12px">文字大小</div>
+      <code style="font-size:11px;color:var(--css-c)">16px / 1.2rem</code>
+    </div>
+    <!-- Row 2 -->
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">font-weight</div>
+      <div style="font-size:1.3rem">💪</div>
+      <div class="muted" style="font-size:12px">文字粗细</div>
+      <code style="font-size:11px;color:var(--css-c)">400 / 700</code>
+    </div>
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">padding</div>
+      <div style="font-size:1.3rem">📦</div>
+      <div class="muted" style="font-size:12px">内边距</div>
+      <code style="font-size:11px;color:var(--css-c)">16px 24px</code>
+    </div>
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">margin</div>
+      <div style="font-size:1.3rem">↔️</div>
+      <div class="muted" style="font-size:12px">外边距</div>
+      <code style="font-size:11px;color:var(--css-c)">0 auto</code>
+    </div>
+    <!-- Row 3 -->
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">border-radius</div>
+      <div style="font-size:1.3rem">⬭</div>
+      <div class="muted" style="font-size:12px">圆角</div>
+      <code style="font-size:11px;color:var(--css-c)">12px / 50%</code>
+    </div>
+    <div class="gcard" style="padding:14px;text-align:center">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">box-shadow</div>
+      <div style="font-size:1.3rem">🌑</div>
+      <div class="muted" style="font-size:12px">阴影</div>
+      <code style="font-size:11px;color:var(--css-c)">0 4px 12px rgba(...)</code>
+    </div>
+    <div class="gcard" style="padding:14px;text-align:center;border:2px solid var(--css-c)">
+      <div style="font-family:var(--mono);font-size:13px;color:var(--css-c);font-weight:600">display</div>
+      <div style="font-size:1.3rem">📐</div>
+      <div class="muted" style="font-size:12px">布局模式</div>
+      <code style="font-size:11px;color:var(--css-c)">flex / grid / block</code>
+      <div style="margin-top:4px;padding:2px 8px;border-radius:4px;background:rgba(139,92,246,.12);font-size:10px;font-weight:700;color:var(--css-c)">
+        ⬆ Flexbox 布局进阶必学
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P13 · Before/After ──────────── -->
+<div class="slide" id="s13">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow css-e">Part 2 · CSS</span></div>
+  <div class="reveal"><h2>CSS 的魔法——Before &amp; After</h2></div>
+  <div class="reveal flex-row" style="margin-top:18px;align-items:stretch">
+    <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+      <div style="font-weight:700;font-size:14px;color:var(--mute);text-align:center">❌ 无 CSS</div>
+      <div class="preview-box preview-ugly">
+        <h3 style="font-family:serif;margin:0 0 8px">Hello World</h3>
+        <p style="font-family:serif;font-size:13px;margin:0">这只是一个普通的段落，浏览器默认样式，没有任何装饰。</p>
+      </div>
+      <pre class="code" style="font-size:11.5px"><span class="cm">/* 浏览器默认样式 */</span>
+<span class="cm">/* 什么都没写 */</span>
+<span class="punc">&lt;</span><span class="tag">h3</span><span class="punc">&gt;</span>Hello World<span class="punc">&lt;/</span><span class="tag">h3</span><span class="punc">&gt;</span>
+<span class="punc">&lt;</span><span class="tag">p</span><span class="punc">&gt;</span>这只是一个普通的段落<span class="punc">&lt;/</span><span class="tag">p</span><span class="punc">&gt;</span></pre>
+    </div>
+    <div class="big-arrow" style="flex:0 0 50px">→</div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+      <div style="font-weight:700;font-size:14px;color:var(--css-c);text-align:center">✅ 加了 CSS</div>
+      <div class="preview-box preview-pretty">
+        <h3 style="margin:0 0 8px">Hello World</h3>
+        <p style="font-size:13px;margin:0;opacity:.9">同样的内容，瞬间不一样了。</p>
+      </div>
+      <pre class="code" style="font-size:11.5px"><span class="sel">.card</span> <span class="punc">{</span>
+  <span class="prop">background</span><span class="punc">:</span> <span class="val">linear-gradient(135deg, #8b5cf6, #3b82f6)</span><span class="punc">;</span>
+  <span class="prop">color</span><span class="punc">:</span> <span class="val">#fff</span><span class="punc">;</span>
+  <span class="prop">padding</span><span class="punc">:</span> <span class="val">28px</span><span class="punc">;</span>
+  <span class="prop">border-radius</span><span class="punc">:</span> <span class="val">14px</span><span class="punc">;</span>
+  <span class="prop">box-shadow</span><span class="punc">:</span> <span class="val">0 8px 24px rgba(139,92,246,.3)</span><span class="punc">;</span>
+<span class="punc">}</span></pre>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════ PART 3 · JavaScript ══════════════ -->
+
+<!-- ──────────── P14 · JS 章节封面 ──────────── -->
+<div class="slide" id="s14">
+<div class="canvas section-cover" style="position:relative">
+  <div class="section-num" style="color:var(--js-c)">03</div>
+  <div class="reveal" style="text-align:center">
+    <span class="eyebrow js-e">Part 3</span>
+    <h2 style="color:var(--js-c)">JavaScript</h2>
+    <p style="font-size:clamp(1rem,2.5vw,1.3rem);color:var(--mute);font-weight:600;margin-top:4px">
+      动作——告诉浏览器能干什么
+    </p>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P15 · 四个积木 ──────────── -->
+<div class="slide" id="s15">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow js-e">Part 3 · JavaScript</span></div>
+  <div class="reveal"><h2>四个积木——JS 的基础组件</h2></div>
+  <div class="reveal grid-2x2" style="margin-top:14px;gap:14px">
+    <!-- 变量 -->
+    <div class="gcard" style="padding:16px;border-top:3px solid var(--js-c)">
+      <div style="font-size:1.4rem">📦</div>
+      <h3 style="font-size:15px">变量 Variable</h3>
+      <p class="muted" style="font-size:13px">像贴了标签的盒子——存东西，随时取。</p>
+      <pre class="code" style="font-size:11.5px;margin-top:8px"><span class="kw">let</span> name <span class="punc">=</span> <span class="str">"小明"</span><span class="punc">;</span>  <span class="cm">// 可变</span>
+<span class="kw">const</span> PI <span class="punc">=</span> <span class="val">3.14</span><span class="punc">;</span>   <span class="cm">// 不可变</span></pre>
+      <p class="pro-note">let/const 是块级作用域声明，var 是函数作用域（已不推荐）。</p>
+    </div>
+    <!-- 函数 -->
+    <div class="gcard" style="padding:16px;border-top:3px solid var(--js-c)">
+      <div style="font-size:1.4rem">🔧</div>
+      <h3 style="font-size:15px">函数 Function</h3>
+      <p class="muted" style="font-size:13px">像菜谱——把步骤包起来，需要时调用。</p>
+      <pre class="code" style="font-size:11.5px;margin-top:8px"><span class="kw">function</span> <span class="fn">greet</span>(name) {
+  <span class="kw">return</span> <span class="str">`你好，${name}！`</span><span class="punc">;</span>
+}
+<span class="fn">greet</span>(<span class="str">"小明"</span>)<span class="punc">;</span> <span class="cm">// 调用它</span></pre>
+      <p class="pro-note">箭头函数 const greet = (name) => ... 是更简短的写法。</p>
+    </div>
+    <!-- 条件 -->
+    <div class="gcard" style="padding:16px;border-top:3px solid var(--js-c)">
+      <div style="font-size:1.4rem">🔀</div>
+      <h3 style="font-size:15px">条件 Conditional</h3>
+      <p class="muted" style="font-size:13px">像岔路口——满足条件走这边，否则走那边。</p>
+      <pre class="code" style="font-size:11.5px;margin-top:8px"><span class="kw">if</span> (age <span class="punc">>=</span> <span class="val">18</span>) {
+  <span class="cm">// 成年人逻辑</span>
+} <span class="kw">else</span> {
+  <span class="cm">// 未成年人逻辑</span>
+}</pre>
+      <p class="pro-note">条件表达式会被隐式转换为布尔值（truthy / falsy）。</p>
+    </div>
+    <!-- 循环 -->
+    <div class="gcard" style="padding:16px;border-top:3px solid var(--js-c)">
+      <div style="font-size:1.4rem">🔄</div>
+      <h3 style="font-size:15px">循环 Loop</h3>
+      <p class="muted" style="font-size:13px">像唱片机——重复执行，直到满足退出条件。</p>
+      <pre class="code" style="font-size:11.5px;margin-top:8px"><span class="kw">for</span> (<span class="kw">let</span> i <span class="punc">=</span> <span class="val">0</span><span class="punc">;</span> i <span class="punc">&lt;</span> <span class="val">5</span><span class="punc">;</span> i<span class="punc">++</span>) {
+  <span class="cm">// 执行 5 次</span>
+}</pre>
+      <p class="pro-note">for...of 遍历可迭代对象，for...in 遍历对象键名。</p>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P16 · DOM 操控 ──────────── -->
+<div class="slide" id="s16">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow js-e">Part 3 · JavaScript</span></div>
+  <div class="reveal"><h2>DOM 操控——让 JS 读写页面</h2></div>
+  <div class="reveal flex-row" style="margin-top:14px;align-items:flex-start">
+    <div class="w-48">
+      <div class="code-label">DOM 树可视化</div>
+      <div class="gcard" style="padding:16px;background:var(--code-bg);border-radius:14px">
+        <div class="dom-tree">
+<span class="node">document</span>
+ <span class="branch">└──</span> <span class="node">&lt;html&gt;</span>
+      <span class="branch">├──</span> <span class="node">&lt;head&gt;</span>
+      <span class="branch">│   └──</span> <span class="node">&lt;title&gt;</span>
+      <span class="branch">└──</span> <span class="node">&lt;body&gt;</span>
+            <span class="branch">├──</span> <span class="node">&lt;h1&gt;</span>
+            <span class="branch">├──</span> <span class="node">&lt;p&gt;</span>
+            <span class="branch">└──</span> <span class="node">&lt;button&gt;</span>
+        </div>
+      </div>
+      <p class="muted" style="font-size:12px;margin-top:8px">DOM 树：浏览器把 HTML 解析成的对象结构，每个标签是一个节点（Node）。</p>
+    </div>
+    <div class="w-52 flex-col gap-sm">
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--js-c)">
+        <h3 style="font-size:14px;color:var(--js-c)">① 找元素</h3>
+        <pre class="code" style="font-size:11.5px;margin-top:6px"><span class="kw">const</span> el <span class="punc">=</span> document.<span class="fn">querySelector</span>(<span class="str">'.card'</span>)<span class="punc">;</span>
+<span class="cm">// 返回第一个匹配的元素</span></pre>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--js-c)">
+        <h3 style="font-size:14px;color:var(--js-c)">② 改内容</h3>
+        <pre class="code" style="font-size:11.5px;margin-top:6px">el.<span class="prop">textContent</span> <span class="punc">=</span> <span class="str">'新内容'</span><span class="punc">;</span>  <span class="cm">// 纯文本</span>
+el.<span class="prop">innerHTML</span> <span class="punc">=</span> <span class="str">'&lt;strong&gt;加粗&lt;/strong&gt;'</span><span class="punc">;</span></pre>
+      </div>
+      <div class="gcard" style="padding:14px;border-left:3px solid var(--js-c)">
+        <h3 style="font-size:14px;color:var(--js-c)">③ 改样式</h3>
+        <pre class="code" style="font-size:11.5px;margin-top:6px">el.<span class="prop">style</span>.<span class="prop">color</span> <span class="punc">=</span> <span class="str">'#3b82f6'</span><span class="punc">;</span>
+el.<span class="prop">classList</span>.<span class="fn">add</span>(<span class="str">'active'</span>)<span class="punc">;</span>
+<span class="cm">// classList 比 style 更灵活</span></pre>
+      </div>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:10px">
+    DOM（Document Object Model）是浏览器暴露给 JS 的接口，让代码能读写页面上的任何元素——本质上是在操作一棵由节点组成的树。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P17 · 事件系统 ──────────── -->
+<div class="slide" id="s17">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow js-e">Part 3 · JavaScript</span></div>
+  <div class="reveal"><h2>事件系统——用户动，页面响应</h2></div>
+  <div class="reveal" style="margin-top:14px">
+    <!-- Flow -->
+    <div style="display:flex;align-items:center;gap:6px;justify-content:center;flex-wrap:wrap;margin-bottom:16px">
+      <div class="flow-step"><span>🖱️</span> 用户动作</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step" style="background:rgba(59,130,246,.1)"><span>📡</span> 事件触发</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step" style="background:rgba(139,92,246,.1)"><span>⚙️</span> 监听函数执行</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-step" style="background:rgba(249,115,22,.1)"><span>✨</span> 页面响应</div>
+    </div>
+  </div>
+  <div class="reveal flex-row" style="align-items:flex-start">
+    <div class="w-48">
+      <div class="gcard" style="padding:16px">
+        <h3 style="font-size:14px;color:var(--js-c)">常用事件</h3>
+        <table class="data-table" style="margin-top:8px;font-size:12px">
+          <thead><tr><th>事件</th><th>触发时机</th></tr></thead>
+          <tbody>
+            <tr><td><code>click</code></td><td>鼠标点击</td></tr>
+            <tr><td><code>keydown</code></td><td>键盘按下</td></tr>
+            <tr><td><code>input</code></td><td>输入框内容变化</td></tr>
+            <tr><td><code>submit</code></td><td>表单提交</td></tr>
+            <tr><td><code>DOMContentLoaded</code></td><td>DOM 加载完毕</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="w-52">
+      <div class="code-label">完整事件监听示例</div>
+      <pre class="code"><span class="kw">const</span> btn <span class="punc">=</span> document.<span class="fn">querySelector</span>(<span class="str">'#myBtn'</span>)<span class="punc">;</span>
+
+<span class="cm">// 添加点击监听</span>
+btn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, <span class="kw">function</span>() {
+  <span class="cm">// 点击时执行这段代码</span>
+  document.<span class="fn">querySelector</span>(<span class="str">'#output'</span>)
+    .<span class="prop">textContent</span> <span class="punc">=</span> <span class="str">'按钮被点了！'</span><span class="punc">;</span>
+})<span class="punc">;</span></pre>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:10px">
+    addEventListener 是标准的事件绑定方式。事件会从目标元素向上冒泡（bubbling），可以在祖先元素上统一监听——这叫事件委托。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P18 · 待办清单 Demo ──────────── -->
+<div class="slide" id="s18">
+<div class="canvas">
+  <div class="reveal"><span class="eyebrow js-e">Part 3 · JavaScript</span></div>
+  <div class="reveal"><h2>综合 Demo——待办清单</h2></div>
+  <div class="reveal flex-row" style="margin-top:14px;align-items:flex-start">
+    <div class="w-48">
+      <div class="code-label">完整代码（HTML + JS）</div>
+      <pre class="code"><span class="cm">&lt;!-- HTML 结构 --&gt;</span>
+<span class="punc">&lt;</span><span class="tag">input</span> <span class="attr">id</span>=<span class="str">"todo-input"</span>
+       <span class="attr">placeholder</span>=<span class="str">"输入任务，回车添加"</span><span class="punc">&gt;</span>
+<span class="punc">&lt;</span><span class="tag">ul</span> <span class="attr">id</span>=<span class="str">"todo-list"</span><span class="punc">&gt;&lt;/</span><span class="tag">ul</span><span class="punc">&gt;</span>
+
+<span class="cm">&lt;!-- JavaScript 逻辑 --&gt;</span>
+<span class="kw">const</span> input <span class="punc">=</span> document.<span class="fn">querySelector</span>(
+  <span class="str">'#todo-input'</span>
+)<span class="punc">;</span>
+<span class="kw">const</span> list <span class="punc">=</span> document.<span class="fn">querySelector</span>(
+  <span class="str">'#todo-list'</span>
+)<span class="punc">;</span>
+
+input.<span class="fn">addEventListener</span>(<span class="str">'keydown'</span>,
+  <span class="kw">function</span>(e) {
+    <span class="kw">if</span> (e.<span class="prop">key</span> <span class="punc">===</span> <span class="str">'Enter'</span>
+        <span class="punc">&&</span> input.<span class="prop">value</span>) {
+      <span class="kw">if</span> (list.children.length <span class="punc">>=</span> <span class="val">6</span>) {
+        <span class="kw">return</span> alert(<span class="str">'最多6条'</span>)<span class="punc">;</span>
+      }
+      <span class="kw">const</span> li <span class="punc">=</span> document.<span class="fn">createElement</span>(<span class="str">'li'</span>)<span class="punc">;</span>
+      li.<span class="prop">textContent</span> <span class="punc">=</span> input.<span class="prop">value</span><span class="punc">;</span>
+      li.<span class="fn">addEventListener</span>(<span class="str">'click'</span>,
+        () <span class="punc">=></span> li.<span class="prop">classList</span>.<span class="fn">toggle</span>(<span class="str">'done'</span>));
+      list.<span class="fn">appendChild</span>(li)<span class="punc">;</span>
+      input.<span class="prop">value</span> <span class="punc">=</span> <span class="str">''</span><span class="punc">;</span>
+    }
+  }
+)<span class="punc">;</span></pre>
+    </div>
+    <div class="w-52">
+      <div class="gcard" style="padding:18px">
+        <h3 style="font-size:14px;margin-bottom:10px">🧪 试一试：输入任务，回车添加</h3>
+        <input id="todo-input" type="text" placeholder="输入任务，回车添加">
+        <ul id="todo-list"></ul>
+        <p class="muted" style="font-size:11px;margin-top:8px">点击条目可以划掉 ✅</p>
+      </div>
+    </div>
+  </div>
+  <div class="reveal pro-note" style="margin-top:10px">
+    这就是一个完整的交互功能：DOM 操作（创建元素）+ 事件监听（keydown/click）+ 条件判断（Enter 键 / 6 条限制）。
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P19 · 知识地图 ──────────── -->
+<div class="slide" id="s19">
+<div class="canvas">
+  <div class="reveal" style="text-align:center;margin-bottom:16px">
+    <h2>知识地图</h2>
+    <p class="muted">把关键词串起来，形成完整认知</p>
+  </div>
+  <div class="reveal">
+    <div class="kmap-group html-g">
+      <div class="kmap-title">🦴 HTML</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="badge html-b">DOCTYPE</span>
+        <span class="badge html-b">html</span>
+        <span class="badge html-b">head</span>
+        <span class="badge html-b">body</span>
+        <span class="badge html-b">块级元素</span>
+        <span class="badge html-b">内联元素</span>
+        <span class="badge html-b">空元素</span>
+        <span class="badge html-b">语义标签</span>
+        <span class="badge html-b">DOM 树</span>
+        <span class="badge html-b">form</span>
+        <span class="badge html-b">input type</span>
+        <span class="badge html-b">method</span>
+        <span class="badge html-b">SEO</span>
+        <span class="badge html-b">无障碍</span>
+      </div>
+    </div>
+    <div class="kmap-group css-g">
+      <div class="kmap-title">🎨 CSS</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="badge css-b">选择器</span>
+        <span class="badge css-b">属性</span>
+        <span class="badge css-b">值</span>
+        <span class="badge css-b">标签选择器</span>
+        <span class="badge css-b">类选择器</span>
+        <span class="badge css-b">ID 选择器</span>
+        <span class="badge css-b">Specificity</span>
+        <span class="badge css-b">盒模型</span>
+        <span class="badge css-b">margin</span>
+        <span class="badge css-b">border</span>
+        <span class="badge css-b">padding</span>
+        <span class="badge css-b">content</span>
+        <span class="badge css-b">border-box</span>
+        <span class="badge css-b">Flexbox</span>
+        <span class="badge css-b">渐变</span>
+        <span class="badge css-b">圆角</span>
+        <span class="badge css-b">阴影</span>
+      </div>
+    </div>
+    <div class="kmap-group js-g">
+      <div class="kmap-title">⚡ JavaScript</div>
+      <div style="display:flex;flex-wrap:wrap;gap:4px">
+        <span class="badge js-b">let / const</span>
+        <span class="badge js-b">function</span>
+        <span class="badge js-b">if / else</span>
+        <span class="badge js-b">for</span>
+        <span class="badge js-b">DOM</span>
+        <span class="badge js-b">querySelector</span>
+        <span class="badge js-b">textContent</span>
+        <span class="badge js-b">classList</span>
+        <span class="badge js-b">addEventListener</span>
+        <span class="badge js-b">click</span>
+        <span class="badge js-b">keydown</span>
+        <span class="badge js-b">事件冒泡</span>
+        <span class="badge js-b">createElement</span>
+        <span class="badge js-b">appendChild</span>
+      </div>
+    </div>
+  </div>
+  <div class="reveal" style="text-align:center;margin-top:14px">
+    <p style="font-size:15px;font-weight:600;color:var(--fg)">把这些词都能用自己话解释清楚，你就真的入门了。</p>
+  </div>
+</div>
+</div>
+
+<!-- ──────────── P20 · 结尾 ──────────── -->
+<div class="slide" id="s20">
+<div class="canvas" style="justify-content:center">
+  <div class="reveal flex-row" style="align-items:center">
+    <div style="flex:1">
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <span style="width:40px;height:4px;border-radius:2px;background:var(--html-c)"></span>
+        <span style="width:40px;height:4px;border-radius:2px;background:var(--css-c)"></span>
+        <span style="width:40px;height:4px;border-radius:2px;background:var(--js-c)"></span>
+      </div>
+      <h2>骨架·造型·动作，<br>集齐了</h2>
+      <p class="muted" style="margin-top:8px">你已经掌握了前端三件套的核心概念，接下来就是不断练习。</p>
+      <div style="margin-top:24px">
+        <div class="road-step">
+          <div class="road-num">1</div>
+          <div>
+            <div class="road-label">初级：做 3 个练习项目</div>
+            <div class="road-desc">个人主页 / 待办清单 / 简单计算器</div>
+          </div>
+        </div>
+        <div class="road-step">
+          <div class="road-num">2</div>
+          <div>
+            <div class="road-label">中级：布局 + 框架入门</div>
+            <div class="road-desc">Flexbox / Grid 布局 → Vue 或 React 入门</div>
+          </div>
+        </div>
+        <div class="road-step">
+          <div class="road-num">3</div>
+          <div>
+            <div class="road-label">进阶：工程化</div>
+            <div class="road-desc">打包工具 (Vite) / 组件化 / 部署上线</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:0 0 40px"></div>
+    <div style="flex:0 0 200px;display:flex;flex-direction:column;gap:12px">
+      <div class="res-card">
+        <div class="res-name">📘 MDN</div>
+        <div class="res-desc">最权威的 Web 文档</div>
+      </div>
+      <div class="res-card">
+        <div class="res-name">💻 CodePen</div>
+        <div class="res-desc">在线写代码即看效果</div>
+      </div>
+      <div class="res-card">
+        <div class="res-name">🎓 FreeCodeCamp</div>
+        <div class="res-desc">免费闯关式课程</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div><!-- /stage -->
+
+<!-- ═══════════════════════ SCRIPT ═══════════════════════ -->
+<script>
+// ── Slideshow engine ─────────────────────────────
+const slides = document.querySelectorAll('.slide');
+const total  = slides.length;
+let cur = 0;
+
+function show(n) {
+  if (n < 0 || n >= total) return;
+  slides[cur].classList.remove('active');
+  cur = n;
+  slides[cur].classList.add('active');
+  document.getElementById('pg').textContent = (cur + 1) + ' / ' + total;
+  document.getElementById('progress').style.width = ((cur + 1) / total * 100) + '%';
+}
+
+function go(d) { show(cur + d); }
+function goTo(n) { show(n); } // 0-based
+
+// Keyboard
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(1); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); go(-1); }
+});
+
+// Touch
+let tx = 0;
+document.addEventListener('touchstart', function(e) { tx = e.touches[0].clientX; });
+document.addEventListener('touchend', function(e) {
+  const dx = e.changedTouches[0].clientX - tx;
+  if (Math.abs(dx) > 50) go(dx < 0 ? 1 : -1);
+});
+
+// ── Todo demo (P18) ──────────────────────────────
+(function() {
+  const input = document.getElementById('todo-input');
+  const list  = document.getElementById('todo-list');
+  if (!input || !list) return;
+
+  input.addEventListener('keydown', function(e) {
+    if (e.key !== 'Enter' || !input.value.trim()) return;
+    if (list.children.length >= 6) {
+      alert('最多 6 条任务哦！');
+      return;
+    }
+    const li = document.createElement('li');
+    li.textContent = input.value.trim();
+    li.addEventListener('click', function() {
+      li.classList.toggle('done');
+    });
+    list.appendChild(li);
+    input.value = '';
+  });
+})();
+</script>
+<script type="text/javascript" src="/accessproxy_statics/h5_fp.js" defer></script>
+<script type="text/javascript" src="/accessproxy_statics/wm.js" defer></script>
+</body>
+</html>

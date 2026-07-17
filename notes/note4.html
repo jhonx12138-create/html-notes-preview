@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《以利为利》· 知识图谱</title>
+<style>
+/* ===== CSS 变量主题 ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 棕褐色系（人文历史） */
+[data-theme="history"] {
+  --primary: #6b3a1f; --primary-light: #fdf2e9; --primary-dark: #4a2511;
+  --accent: #935116; --accent-deep: #6b3a1f;
+  --bg: #fefaf6; --bg-card: #ffffff; --bg-soft: #faf3eb; --bg-softer: #f5e6d3;
+  --bg-tag: #fdebd0;
+  --text: #3e2723; --text-heading: #2c1810; --text-muted: #8d6e63; --text-light: #a1887f;
+  --border: #d7ccc8; --border-soft: #e8d5c4;
+  --highlight: #fdf2e9; --highlight-strong: #fdebd0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6b3a1f; --color-tool: #935116; --color-case: #7d6608;
+  --color-history: #b9770e; --color-insight: #6b3a1f; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #935116;
+  --color-effect: #7d3c98; --color-core: #4a2511;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #fdfaf6;
+  --reflect-bg: #f5ede1; --quote-border: #935116;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 14px;
+  font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+.sidebar-divider { height: 1px; background: var(--border-soft); margin: 10px 0; }
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 220px;
+  max-width: 900px;
+  padding: 36px 40px 120px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 4px;
+  padding-left: 14px;
+  border-left: 5px solid var(--primary);
+  line-height: 1.3;
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 16px;
+  padding-left: 2px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 24px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: 16px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  font-size: 14px;
+  color: var(--primary-dark);
+  line-height: 1.7;
+  padding: 12px 16px;
+  background: var(--highlight);
+  border-radius: var(--radius);
+  border-left: 4px solid var(--accent);
+}
+.header .core-narrative strong { color: var(--primary-dark); }
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 32px; }
+.section h2 {
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.75;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+/* 左侧彩色条 */
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 14px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.75;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 10px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 12px;
+}
+.law-card h4 {
+  font-size: 14px; font-weight: 700;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.law-card p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+/* ===== 规律网格 ===== */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px;
+  font-style: italic;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 16px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.75;
+  margin-bottom: 6px;
+}
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 20px 0;
+  padding: 18px 24px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ===== 两栏布局 ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 14px 0;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 16%;
+  white-space: nowrap;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.7;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 论点链 ===== */
+.argument-chain {
+  margin: 14px 0;
+}
+.argument-node {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 6px;
+  position: relative;
+}
+.argument-node .arg-num {
+  display: inline-block;
+  width: 26px; height: 26px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 13px; font-weight: 700;
+  text-align: center; line-height: 26px;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+.argument-node .arg-head {
+  display: flex; align-items: center;
+  margin-bottom: 8px;
+}
+.argument-node .arg-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--text-heading);
+}
+.argument-node .arg-body {
+  font-size: 13px; color: var(--text);
+  line-height: 1.75; margin-left: 36px;
+}
+.argument-arrow {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 18px;
+  margin: 2px 0;
+  line-height: 1;
+}
+
+/* ===== 术语弹窗系统 ===== */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 2px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 540px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 {
+  font-size: 16px; font-weight: 700;
+  color: var(--text-heading); margin-bottom: 10px;
+}
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; margin-bottom: 4px; }
+
+/* ===== 标签行 ===== */
+.tag-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 10px 0;
+}
+.tag {
+  background: var(--bg-softer);
+  color: var(--text-muted);
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+/* ===== 水平分割线 ===== */
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 32px 0; }
+
+/* ===== 页脚 ===== */
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+}
+</style>
+</head>
+<body data-theme="history">
+
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar">
+  <h3>📖 本书图谱</h3>
+  <ul class="toc-list">
+    <li><a href="#header">总览</a></li>
+    <li><a href="#core-question">核心问题</a></li>
+    <li><a href="#arg1">论点一：财政关系</a></li>
+    <li class="toc-l2"><a href="#arg1-evidence">历史演变</a></li>
+    <li><a href="#arg2">论点二：分税制改革</a></li>
+    <li class="toc-l2"><a href="#arg2-mechanism">运行机制</a></li>
+    <li><a href="#arg3">论点三：土地财政</a></li>
+    <li class="toc-l2"><a href="#arg3-effect">结构效应</a></li>
+    <li><a href="#arg4">论点四：项目制</a></li>
+    <li class="toc-l2"><a href="#arg4-tension">张力与局限</a></li>
+    <li><a href="#insights">贯穿论点</a></li>
+    <li><a href="#patterns">反复规律</a></li>
+    <li><a href="#reflection">延伸思辨</a></li>
+    <li><a href="#memory">记忆钩子</a></li>
+    <li><a href="#extension">延伸与比较</a></li>
+  </ul>
+</nav>
+
+<!-- 主内容 -->
+<div class="main">
+
+  <!-- 页头 -->
+  <div class="header" id="header">
+    <h1>《以利为利》</h1>
+    <div class="subtitle">财政关系与地方政府行为 · 周飞舟 著</div>
+    <div class="meta">
+      <span><strong>作者</strong> 周飞舟（北京大学社会学系）</span>
+      <span><strong>出版</strong> 2012年，上海三联书店</span>
+      <span><strong>类型</strong> 模板A · 论点论证链</span>
+      <span><strong>主题</strong> 政治社会学 · 财政社会学</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">财政联邦主义</span>
+      <span class="badge">分税制</span>
+      <span class="badge">土地财政</span>
+      <span class="badge">项目制</span>
+      <span class="badge">国家治理</span>
+      <span class="badge">央地关系</span>
+    </div>
+    <div class="core-narrative">
+      <strong>核心叙事：</strong>理解中国地方政府为什么热衷"以利为利"——重视 GDP 和财税收入而非公共服务——必须从 1994 年分税制改革之后的财政结构变化出发。财政关系不是背景，而是塑造地方政府行为动机的核心变量。
+    </div>
+  </div>
+
+  <!-- 核心问题 -->
+  <div class="section" id="core-question">
+    <h2>核心问题</h2>
+    <blockquote class="quote-block">
+      <p>"地方政府何以'以利为利'？要从财政关系的变迁中寻找答案。财政关系决定激励，激励决定行为。"</p>
+      <span class="cite">——周飞舟，《以利为利》核心论题</span>
+    </blockquote>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">中心命题：财政关系是关键变量</div>
+        <div class="content">地方政府的行为模式（偏向经济增长、追求土地收益、依赖项目制输送资源）并非源于官员个人贪腐动机，而是被财政结构系统性塑造的理性反应。理解行为，需先理解财政激励。</div>
+        <div class="example">💡 <strong>类比</strong>：就像公司的薪酬考核体系决定员工行为，财政制度决定了地方政府的"努力方向"。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">何为"以利为利"<button class="glossary-trigger" onclick="openModal('yili')">?</button></div>
+        <div class="content">语出《礼记·大学》"以义为利"的反义。周飞舟用此概念批判地方政府将经济利益（GDP、财税收入）视为目标本身，而非视为服务社会的手段。其背后是财政压力传导机制的内在逻辑。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点一 -->
+  <div class="section" id="arg1">
+    <h2>论点一：财政关系是理解地方政府行为的核心变量</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">改革开放以来，央地财政关系经历数次重构，每次重构都系统性地改变了地方政府的激励结构。</p>
+
+    <div id="arg1-evidence"></div>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">改革前：统收统支（1949–1978）</div>
+        <div class="content">计划经济体制下，地方财政收入全额上缴中央，支出由中央统一分配。地方无自主财力，无独立利益，行政逻辑是政治服从而非经济竞争。</div>
+        <div class="example">💡 地方官员的晋升依赖政治忠诚度，而非经济产出——没有财政激励，就没有GDP冲动。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">财政包干制（1980–1993）：地方主动性的激发</div>
+        <div class="content">改革开放初期，中央对地方实行"划分收支、分级包干"，地方超额完成财政任务后可留存更多收入。这一制度激活了地方发展经济的积极性，但也造成中央财政收入占比持续下降（1993年降至22%），触发了分税制改革的必要性。</div>
+        <div class="example">💡 <strong>类比</strong>：包干制类似"承包制"，地方像包工头，完成基本上缴任务后多干多得——但这也导致中央财政"缩水"。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">1994年分税制：激励结构的根本转向<button class="glossary-trigger" onclick="openModal('fenshuizhi')">?</button></div>
+        <div class="content">1994年改革将税种分为中央税（如消费税）、地方税（如营业税）、共享税（如增值税75%归中央）。中央财政收入占比迅速从22%反弹至55%。地方失去了大部分生产型税收，但财政支出责任（教育、医疗、基础设施）却未同步上移，由此形成系统性的"财政缺口"。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">分税制后的"财政饥渴"困境</div>
+        <div class="content">分税制后，地方政府面临收入下降而支出责任不减的双重压力。这一结构性缺口迫使地方必须寻找体制外收入来源，土地财政由此成为系统性选择，而非个别地方的"偶然发明"。</div>
+        <div class="example">💡 <strong>数据</strong>：2000年代多个省份财政自给率低于50%，意味着超过一半的支出依赖上级转移支付或土地收入。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨：制度设计的意外后果</div>
+      <p>分税制的初衷是强化中央财力、遏制地方"诸侯化"，却意外催生了"土地财政"这一新的地方财政自救模式。这提示我们：任何制度改革都会产生行为者的适应性反应，且这种反应往往偏离设计初衷。</p>
+    </div>
+  </div>
+
+  <!-- 论点二 -->
+  <div class="section" id="arg2">
+    <h2>论点二：1994年分税制改革重塑了央地博弈格局</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">分税制不只是一次税种划分，而是对央地权力关系和激励结构的根本性重塑。</p>
+
+    <div id="arg2-mechanism"></div>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">增值税分成逻辑：为何地方偏爱工业</div>
+        <div class="content">增值税是中国最大税种，分税制规定75%归中央，25%留地方。这一比例设计直接驱动地方偏好发展工业（增值税主要来源），因为工业增加值直接转化为地方税收。而农业、服务业贡献的流转税少，吸引力天然低于工业。</div>
+        <div class="example">💡 <strong>解释力</strong>：这解释了为何无数县市都热衷招商引资办工厂，而公共服务、环境保护则长期欠账。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">转移支付：中央调控地方的新工具</div>
+        <div class="content">分税制后，中央通过转移支付（一般性转移支付+专项转移支付）向地方"补血"。但专项转移支付附带特定用途要求，地方需配套资金，这进一步压缩了地方财政自主空间，并形成了"跑部钱进"的制度逻辑。</div>
+        <div class="example">💡 <strong>类比</strong>：专项资金就像带条件的奖学金——你能拿到，但必须按指定方向花，且自己还要配套。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">财政联邦主义 vs. 中国现实的张力<button class="glossary-trigger" onclick="openModal('fiscalFed')">?</button></div>
+        <div class="content">西方财政联邦主义理论预测，财政分权能提升公共品供给效率，因为地方政府更了解本地需求。但中国实证研究发现，财政分权在某些条件下反而强化了地方政府的逐利行为，而非公共服务导向——政治集权与财政分权的组合产生了西方理论未预料的行为逻辑。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">财政压力的"漏斗效应"</div>
+        <div class="content">中央收走大头税收，但教育、基础设施、社会保障等支出压力向下传递。省转市、市转县，财政压力层层放大，越到基层财政缺口越大，"以利为利"的冲动越强烈。县乡级财政困难是中国地方治理诸多问题的结构性根源。</div>
+        <div class="example">💡 2000年代初农村税费问题的根源之一，正是基层政府财政压力下的"摊派"行为。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点三 -->
+  <div class="section" id="arg3">
+    <h2>论点三：土地财政是分税制压力的结构性产物</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">土地出让金不在分税制的分成框架内，成为地方政府弥补财政缺口的"体制外金库"。</p>
+
+    <div id="arg3-effect"></div>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">土地财政的运作机制</div>
+        <div class="content">地方政府垄断土地一级市场，以低价征收农村土地，再以高价出让给房地产开发商，差价（土地出让金）全部留归地方，不用与中央分成。这一机制自1990年代末快速膨胀，2010年代土地出让金一度超过地方财政预算收入的50%以上。</div>
+        <div class="example">💡 <strong>类比</strong>：地方政府扮演的是"土地中间商"——低买高卖，赚取差价，且这笔收入游离于分税制约束之外。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">城市化与土地财政的共生关系</div>
+        <div class="content">土地出让金依赖城市扩张和地价上涨，而城市扩张需要基础设施投资（以吸引人口和产业），基础设施投资又要靠土地出让金融资——这构成了中国城镇化的"土地-资本循环"。城投公司（地方融资平台）是这一循环的制度载体。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">"以地生财"的内在脆弱性</div>
+        <div class="content">土地财政高度依赖房地产市场的持续繁荣和城市化进程的持续推进。一旦房价下行、人口流入放缓，土地出让收入急剧萎缩，而以土地为抵押的债务（城投债）却已固化为刚性偿债义务，形成财政悬崖风险。2021年后的房地产调整已验证这一脆弱性。</div>
+        <div class="example">💡 <strong>现实印证</strong>：2022年以来多省土地出让收入腰斩，而城投债务规模仍居高不下，财政压力转化为债务危机。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">土地财政的社会后果</div>
+        <div class="content">土地财政的持续运转需要不断推高地价，这直接拉高了住房成本，加剧城市居住不平等；被征地农民的补偿往往低于市场价值，造成权益受损；大量财政资源流向基础设施"形象工程"而非公共服务，进一步固化"以利为利"的政府行为模式。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点四 -->
+  <div class="section" id="arg4">
+    <h2>论点四：项目制是中央重建控制权的新机制</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">面对"财政联邦化"的风险，中央通过"专项转移支付+项目制"重建对地方的政策渗透能力。</p>
+
+    <div id="arg4-tension"></div>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">项目制：什么是"项目制"<button class="glossary-trigger" onclick="openModal('xiangmuZhi')">?</button></div>
+        <div class="content">项目制是指中央以专项资金"打包"政策目标，要求地方按申请-审批-执行-验收的流程操作。项目资金专款专用，并要求地方配套。与统一性财政转移支付相比，项目制让中央得以绕过地方常规财政体系，直接将资金和政策意图输送至基层，是一种"穿透式"治理工具。</div>
+        <div class="example">💡 <strong>类比</strong>：项目制像定向投资，而不是无条件的现金转移——中央掌握"项目目录"，地方去申请，中央审核批准，然后监督执行。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">项目制的双重功能</div>
+        <div class="content">一方面，项目制让中央能精准传导政策优先级（如扶贫、农业、环保），弥补常规财政渠道的政策失灵；另一方面，"跑项目"成为地方政府官员的核心工作之一，大量行政资源消耗在申报、公关、包装项目上，而非实质性公共服务改善。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">项目制的争议：精准治理还是新型软约束</div>
+        <div class="content">支持者认为项目制解决了一刀切转移支付"跑冒滴漏"的问题，让中央政策精准落地。批评者（如折晓叶、陈婴婴）指出，项目制催生了新的"依赖症"——地方政府倾向于把资源争取能力（而非本地财政能力）视为核心竞争力，形成了新型的央地博弈格局。</div>
+        <div class="example">💡 "跑部钱进"这一民间说法，精准刻画了项目制语境下的地方政府行为逻辑。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">项目制与基层治理能力的矛盾</div>
+        <div class="content">项目资金要求配套、要求专账核算、要求留痕，这对财政能力弱的农村基层政府是极大负担。项目多了，基层反而陷入"接不住"的困境——有项目没能力执行，或执行走形变样。这与"以利为利"逻辑类似：都是对制度激励的理性适应，而非政策目标的实现。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 贯穿论点 -->
+  <div class="section" id="insights">
+    <h2>贯穿全书的核心论点</h2>
+
+    <div class="insight-card">
+      <div class="insight-title">论点A：财政制度是行为的"源代码"</div>
+      <div class="insight-body">地方政府行为（GDP崇拜、土地依赖、项目追逐）看似各异，实则共享同一逻辑——财政结构决定了什么是合理的、有利可图的行为。改变行为，必须先改变激励结构，而非仅靠道德规劝或惩腐运动。</div>
+      <div class="insight-evidence">证据链：包干制→地方积极性↑；分税制→财政缺口↑→土地财政↑；专项转移支付→项目制→跑部钱进</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">论点B：央地关系是动态博弈而非固定结构</div>
+      <div class="insight-body">分税制不是一劳永逸的制度安排，而是中央与地方持续博弈的产物。中央通过改变分成比例、引入转移支付、推行项目制等手段不断调整控制边界；地方通过土地财政、隐性债务、政策包装等方式寻找制度套利空间。这种动态博弈是理解中国治理的核心线索。</div>
+      <div class="insight-evidence">证据：1994年强化中央→地方发明土地财政补缺；2000年代专项资金扩张→地方发展项目申报专业化</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">论点C：财政压力向下传递，治理矛盾在基层集聚</div>
+      <div class="insight-body">财政体制每往下一级，收支缺口放大一次，"以利为利"的压力随之递增。农村基层（乡镇级）往往是矛盾最集中处——既无独立财源，又承担最多面向居民的公共职能，是中国治理张力的压力测试场。</div>
+      <div class="insight-evidence">证据：2000年代农村税费改革背景正是基层财政极度困难；取消农业税后反而引发乡镇空心化问题</div>
+    </div>
+  </div>
+
+  <!-- 反复规律 -->
+  <div class="section" id="patterns">
+    <h2>反复出现的历史规律</h2>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">制度改革→意外适应→新问题</div>
+        <div class="pattern-desc">每次财政制度改革（包干制、分税制、项目制）都激发了地方政府的适应性行为，并产生改革者未预料的新问题。制度演化是一个不断出现意外后果、再次修补的循环。</div>
+        <div class="pattern-examples">包干制→地方诸侯化；分税制→土地财政；专项制→跑部钱进</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">权力集中与财政压力下放的结构矛盾</div>
+        <div class="pattern-desc">中国治理的长期张力：政治权力（人事任命）高度集中于中央和上级，但财政支出责任（公共服务）持续向下分散。这一矛盾产生了"以利为利"的系统性动因，无论个别官员道德水准高低。</div>
+        <div class="pattern-examples">历代地方"留存"问题；清代"摊派"与"陋规"；1980-2020年地方自筹资金冲动</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">经济增长与公共服务的内在张力</div>
+        <div class="pattern-desc">在现行财政激励结构下，地方政府优先投资能"变现"的领域（工业园区、基础设施），而在难以产生直接财税收益的公共服务（基础教育、医疗、社保）上欠账。"GDP增长"与"公共服务供给"之间存在系统性错位。</div>
+        <div class="pattern-examples">教育经费占GDP长期低于4%；农村公共卫生长期欠账；城镇化速度远快于公共服务均等化</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">财政工具创新的制度套利逻辑</div>
+        <div class="pattern-desc">每当中央设立新的财政约束，地方就会发明新的制度套利工具。土地财政是对分税制约束的套利；城投债是对预算法约束的套利；项目申报包装是对专项资金约束的套利。这一规律揭示了"上有政策，下有对策"的内在制度逻辑。</div>
+        <div class="pattern-examples">隐性债务；地方融资平台；PPP模式的滥用</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection">
+    <h2>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">财政社会学的研究视角：为什么从财政切入？</div>
+      <p>周飞舟的独特贡献在于将财政制度作为理解国家-社会关系的中介变量。相比将地方政府行为归因于"官员腐败"或"政治文化"的解释路径，财政结构视角更具可操作性——它将问题从道德判断转向制度分析，为改革提供了可操作的政策着力点。</p>
+      <p>这与历史社会学传统（如布迪厄的场域理论、诺斯的制度经济学）高度契合：行为者的选择不是自由意志的产物，而是制度约束与激励下的理性适应。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">2020年后的新变量：政策调整是否改变了激励结构？</div>
+      <p>2021年起的房地产调控与土地市场降温，2022年以来城投债风险的集中暴露，正在检验周飞舟的分析框架。如果土地财政不可持续，地方政府的激励结构将如何调整？"以利为利"会转向何种新形式？这是该书框架最需要延伸的新议题。</p>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="memory">
+    <h2>记忆钩子</h2>
+    <blockquote class="quote-block">
+      <p>一句话记住全书逻辑链：<br>
+      <strong>分税制→财政缺口→土地财政（体制外收入）→项目制（中央再控制）→基层依赖→以利为利的持续再生产。</strong></p>
+      <span class="cite">——《以利为利》核心逻辑提炼</span>
+    </blockquote>
+    <div class="two-col">
+      <div class="law-card">
+        <h4>核心公式</h4>
+        <p>财政激励 → 行为模式 → 治理后果<br>
+        要改变后果，必须改变激励；要改变激励，必须改革财政制度。</p>
+      </div>
+      <div class="law-card">
+        <h4>类比记忆</h4>
+        <p>地方政府 ≈ 被KPI绑架的员工：<br>
+        分税制设定了"考核指标"（GDP、财税），土地财政是"副业补贴"，项目制是"老板派下来的任务"——员工的行为完全理性，问题在考核体系设计。</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 延伸与比较 -->
+  <div class="section" id="extension">
+    <h2>延伸与比较</h2>
+    <table class="extension">
+      <thead>
+        <tr><th>思考维度</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>中国财政社会学的奠基性著作之一。以1994年分税制改革为核心节点，用实证研究（问卷、田野、财政数据）而非纯粹理论演绎，构建了理解中国地方政府行为的财政制度分析框架。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>结构主义视角，强调制度对行为的塑造作用，对官员个体的道德评判持克制态度。倾向改革财政制度而非只追究官员责任。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+            <strong>时效性</strong>：核心案例集中在2000-2010年代，房地产调控与土地市场新变化（2021年后）需要补充分析。<br>
+            <strong>地区差异</strong>：以东部省份为主的研究视角，对中西部欠发达地区的财政逻辑覆盖不足。<br>
+            <strong>中央决策机制</strong>：偏重分析地方行为，对中央如何形成财政政策的内部过程着墨不多。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《中国国家治理的制度逻辑》（曹正汉）</strong>：同样关注央地关系，侧重"分权-集权"的历史博弈逻辑，与本书形成互补。<br>
+            <strong>《历代经济变革得失》（吴晓波）</strong>：以历史叙事视角呈现中国财政-经济制度演变，本书提供了更严格的社会学分析框架。<br>
+            <strong>《强国之路：中国地方政府行为分析》（Yuen Yuen Ang）</strong>：英文学界的对话文本，将中国地方政府比作"创业型官僚"，与周飞舟的"财政压力"解释形成张力。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>与《中国国家治理的制度逻辑》共享"央地博弈"分析框架；与《历代经济变革得失》在"财政制度演变"主题上互为补充；与任何关于中国房地产市场的文献都构成因果前传。</td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            理解为何地方政府热衷"招商引资"而非改善公共服务；<br>
+            分析城投债风险的制度根源；<br>
+            评估"共同富裕"政策的财政制度配套是否充分；<br>
+            预判地方政府在土地财政枯竭后可能发展的新激励适应模式。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer-note">
+    《以利为利：财政关系与地方政府行为》· 周飞舟 著 · 知识图谱基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<!-- 术语弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- 返回顶部 -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// 术语词典
+const glossary = {
+  yili: {
+    title: '"以利为利"的语义溯源',
+    content: '<p>原句出自《礼记·大学》："国不以利为利，以义为利也。"意指国家不应以财利为目标，而应以仁义为利。</p><p>周飞舟反用此语，称中国地方政府行为为"以利为利"——以财税增长和GDP增速作为施政目标本身，而非将其视为服务公众的手段。这一命名包含了规范性批判：地方政府偏离了"以义为利"的公共性角色。</p>'
+  },
+  fenshuizhi: {
+    title: '1994年分税制改革',
+    content: '<p>1994年，国务院推行分税制改革，将税种分为三类：</p><ul><li><strong>中央税</strong>：关税、消费税等，全额归中央</li><li><strong>地方税</strong>：营业税（2016年被增值税取代）等，全额归地方</li><li><strong>共享税</strong>：增值税（75%中央/25%地方）、个人所得税（60%中央/40%地方）</li></ul><p>改革后，中央财政收入占全国财政收入的比例从22%迅速提升至55%以上，实现了"财政集权"的政策目标。但地方的支出责任未同步上收，形成持久的财政缺口。</p>'
+  },
+  fiscalFed: {
+    title: '财政联邦主义（Fiscal Federalism）',
+    content: '<p>由经济学家蒂布特（Tiebout, 1956）和奥茨（Oates, 1972）奠基的理论框架，核心主张是：将公共品供给权力下放给地方政府，能提升效率，因为地方政府更了解本地居民需求，且居民可以"用脚投票"选择最优地方政府。</p><p>在中国研究中，以钱颖一为代表的学者曾将中国改革开放的成功部分归因于"市场维护型财政联邦主义"。但周飞舟的研究指出，中国的政治集权与财政分权的组合，产生了西方理论未预料的逐利行为而非公共品导向。</p>'
+  },
+  xiangmuZhi: {
+    title: '项目制（Project System）',
+    content: '<p>中国特有的一种资源分配和政策执行机制，指中央政府通过专项资金"项目化"的方式向地方传导政策目标。主要特征：</p><ul><li><strong>申报制</strong>：地方主动申请，中央/省审批批准</li><li><strong>专款专用</strong>：资金必须用于项目规定用途，不可挪用</li><li><strong>地方配套</strong>：要求地方政府提供配套资金，通常为项目总额的20%-50%</li><li><strong>绩效评估</strong>：项目执行后须接受审计和绩效验收</li></ul><p>项目制是分税制后中央重建政策渗透能力的核心工具，但也催生了"跑项目"的地方行为逻辑和新的资源依赖关系。</p>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// 侧边栏滚动高亮
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+// 返回顶部显隐
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Aurora · Product Deck 2026</title>
+<style>
+:root{--bg-1:#0a0e1a;--bg-2:#131a2e;--fg:#eef2ff;--mute:#8b94b8;--dim:#5a6480;--accent:#6366f1;--accent2:#22d3ee;--grad:linear-gradient(135deg,#6366f1,#22d3ee);--card:rgba(255,255,255,.04);--line:rgba(255,255,255,.08);--ease:cubic-bezier(.7,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif;color:var(--fg);background:radial-gradient(circle at 20% 0%,#1e2a4a 0%,var(--bg-1) 50%);-webkit-font-smoothing:antialiased;user-select:none}
+.stage{position:fixed;inset:0}
+.slide{position:absolute;inset:0;padding:80px 7vw;opacity:0;visibility:hidden;transform:translateY(20px);transition:opacity .55s var(--ease),transform .55s var(--ease),visibility .55s;overflow:auto}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.canvas{width:100%;max-width:1180px;margin:0 auto;min-height:calc(100vh - 160px);display:flex;flex-direction:column;justify-content:center;position:relative;z-index:2}
+.blob{position:absolute;border-radius:50%;filter:blur(100px);opacity:.35;pointer-events:none;z-index:0}
+.b1{width:500px;height:500px;background:var(--accent);top:-100px;right:-100px;animation:float 14s infinite ease-in-out}
+.b2{width:380px;height:380px;background:var(--accent2);bottom:-100px;left:-100px;animation:float 18s infinite ease-in-out reverse}
+@keyframes float{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,-40px) scale(1.1)}}
+.eyebrow{display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.3em;color:var(--accent2);text-transform:uppercase;margin-bottom:18px;padding:6px 14px;border:1px solid var(--line);border-radius:99px;background:var(--card);backdrop-filter:blur(8px)}
+h1{font-size:clamp(40px,5.5vw,72px);font-weight:700;line-height:1.05;letter-spacing:-.02em;margin-bottom:18px}
+h1 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:inherit}
+h2{font-size:clamp(30px,3.6vw,46px);font-weight:600;line-height:1.15;letter-spacing:-.01em;margin-bottom:16px}
+h2 b{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:inherit}
+.lead{color:var(--mute);max-width:680px;line-height:1.7;font-size:16px}
+.btn{padding:12px 26px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-weight:600;cursor:pointer;font-size:14px;transition:transform .2s}
+.btn:hover{transform:translateY(-2px)}
+.slide.active .reveal{animation:rise .7s var(--ease) both}
+.slide.active .reveal:nth-child(1){animation-delay:.05s}
+.slide.active .reveal:nth-child(2){animation-delay:.15s}
+.slide.active .reveal:nth-child(3){animation-delay:.25s}
+.slide.active .reveal:nth-child(4){animation-delay:.35s}
+.slide.active .reveal:nth-child(5){animation-delay:.45s}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+/* 封面 */
+.cover .canvas{justify-content:center}
+.cover h1{font-size:clamp(56px,8vw,108px);line-height:.95}
+.cover .sub{color:var(--mute);font-size:18px;max-width:560px;line-height:1.7;margin:24px 0 50px}
+.cover .meta{display:flex;gap:50px;padding-top:30px;border-top:1px solid var(--line)}
+.cover .meta .lbl{font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+.cover .meta .val{font-size:16px;color:#fff}
+/* 目录 */
+.toc{display:flex;flex-direction:column;gap:4px;margin-top:30px}
+.toc-item{display:grid;grid-template-columns:60px 1fr auto auto;align-items:center;gap:20px;padding:18px 16px;border-radius:14px;background:var(--card);border:1px solid var(--line);cursor:pointer;transition:all .3s;backdrop-filter:blur(8px)}
+.toc-item:hover{border-color:var(--accent);transform:translateX(6px);background:rgba(99,102,241,.08)}
+.ti-num{font-size:24px;color:var(--accent2);font-weight:600;font-variant-numeric:tabular-nums}
+.ti-t{font-size:18px;font-weight:600}
+.ti-p{color:var(--dim);font-size:13px}
+.ti-a{color:var(--mute);transition:transform .3s}
+.toc-item:hover .ti-a{transform:translateX(6px);color:var(--accent2)}
+/* 章节封面 */
+.ch-cover .canvas{justify-content:center}
+.ch-cover .ch-num{font-size:clamp(120px,18vw,220px);font-weight:800;line-height:.9;letter-spacing:-.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:-30px}
+.ch-cover .ch-lbl{font-size:12px;letter-spacing:.4em;color:var(--accent2);margin-bottom:16px;text-transform:uppercase}
+.ch-cover h1{font-size:clamp(48px,6vw,80px)}
+.ch-cover .ch-desc{color:var(--mute);max-width:560px;line-height:1.8;font-size:16px;border-left:2px solid var(--accent);padding-left:18px;margin-top:24px}
+/* 三模块 */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+.card{padding:28px;background:var(--card);border:1px solid var(--line);border-radius:18px;backdrop-filter:blur(10px);transition:all .3s;display:flex;flex-direction:column;gap:14px;min-height:240px}
+.card:hover{transform:translateY(-4px);border-color:var(--accent);background:rgba(99,102,241,.08)}
+.card .ico{width:44px;height:44px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-size:20px}
+.card h3{font-size:19px;font-weight:600}
+.card p{color:var(--mute);font-size:13px;line-height:1.7;margin-top:auto}
+.card .num{font-size:24px;font-weight:700;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+/* 关键数据 */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
+.stat{padding:28px;background:var(--card);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(10px)}
+.stat .lbl{font-size:11px;letter-spacing:.25em;color:var(--mute);text-transform:uppercase;margin-bottom:14px}
+.stat .num{font-size:48px;font-weight:700;line-height:1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat .num .u{font-size:16px;color:var(--mute);margin-left:4px;background:none;-webkit-text-fill-color:var(--mute)}
+.stat .trend{font-size:12px;color:#34d399;margin-top:8px;font-weight:600}
+.stat .trend.dn{color:#f87171}
+/* 引言 */
+.quote .canvas{justify-content:center;align-items:center;text-align:center}
+.quote .qm{font-size:80px;line-height:.6;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:24px;font-weight:800}
+.quote .qt{font-size:clamp(24px,3vw,38px);line-height:1.45;color:#fff;font-weight:300;max-width:840px;margin-bottom:28px;letter-spacing:-.01em}
+.quote .qa-line{width:50px;height:2px;background:var(--grad);margin:0 auto 14px}
+.quote .qn{font-size:14px;color:var(--accent2);letter-spacing:.2em;text-transform:uppercase;font-weight:600}
+.quote .qj{font-size:12px;color:var(--dim);margin-top:4px;letter-spacing:.1em}
+/* 结尾 */
+.end .canvas{justify-content:center;align-items:center;text-align:center}
+.end h1{font-size:clamp(72px,10vw,140px);line-height:1}
+.end .e-line{width:80px;height:2px;background:var(--grad);margin:30px 0}
+.end .e-tag{color:var(--mute);font-size:18px;max-width:520px;line-height:1.7;margin-bottom:46px}
+.end .e-c{display:grid;grid-template-columns:repeat(3,auto);gap:50px;padding-top:30px;border-top:1px solid var(--line)}
+.end .e-c .lbl{font-size:10px;letter-spacing:.3em;color:var(--dim);text-transform:uppercase;margin-bottom:6px}
+.end .e-c .val{font-size:14px;color:#fff}
+/* 控件 */
+.topbar{position:fixed;top:0;left:0;right:0;height:46px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:var(--dim);font-size:11px;letter-spacing:.2em;text-transform:uppercase;z-index:10}
+.topbar .brand{color:var(--accent2);font-weight:700}
+.footbar{position:fixed;bottom:0;left:0;right:0;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:var(--dim);font-size:11px;letter-spacing:.15em;z-index:10}
+.footbar .pg{color:var(--accent2);font-weight:600;font-variant-numeric:tabular-nums}
+.progress{position:fixed;bottom:0;left:0;height:2px;background:var(--grad);width:0;transition:width .55s var(--ease);z-index:11}
+.nav-arrow{position:fixed;top:50%;transform:translateY(-50%);width:40px;height:40px;border:1px solid var(--line);background:var(--card);color:var(--accent2);cursor:pointer;display:grid;place-items:center;font-size:18px;z-index:10;border-radius:50%;transition:all .25s;backdrop-filter:blur(8px)}
+.nav-arrow:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+.nav-arrow.prev{left:20px}.nav-arrow.next{right:20px}
+@media(max-width:900px){.cards,.stats{grid-template-columns:1fr 1fr}.end .e-c{grid-template-columns:1fr;gap:18px}}
+</style>
+</head><body>
+<div class="topbar"><div class="brand">✦ AURORA · TECH</div><div id="topCh">PROLOGUE</div></div>
+<div class="stage" id="stage">
+<section class="slide cover active" data-name="封面"><div class="blob b1"></div><div class="blob b2"></div><div class="canvas">
+<div class="reveal"><span class="eyebrow">Product Deck · 2026 Q2</span></div>
+<h1 class="reveal">下一代 AI 引擎<br><b>Aurora 4.0</b></h1>
+<p class="sub reveal">重新定义企业级智能工作流——更快的推理、更深的上下文、更安全的私有化部署。</p>
+<div class="meta reveal"><div><div class="lbl">Date</div><div class="val">May 2026</div></div><div><div class="lbl">By</div><div class="val">Product Strategy</div></div><div><div class="lbl">Version</div><div class="val">Final · Public</div></div></div>
+</div></section>
+<section class="slide" data-name="目录"><div class="canvas">
+<div class="reveal"><span class="eyebrow">Table of Contents</span></div>
+<h1 class="reveal">目录 · <b>Contents</b></h1>
+<div class="toc reveal">
+<div class="toc-item" onclick="goto(2)"><div class="ti-num">01</div><div class="ti-t">产品愿景与里程碑</div><div class="ti-p">P. 03</div><div class="ti-a">→</div></div>
+<div class="toc-item" onclick="goto(3)"><div class="ti-num">02</div><div class="ti-t">核心能力</div><div class="ti-p">P. 04</div><div class="ti-a">→</div></div>
+<div class="toc-item" onclick="goto(4)"><div class="ti-num">03</div><div class="ti-t">关键指标与表现</div><div class="ti-p">P. 05</div><div class="ti-a">→</div></div>
+<div class="toc-item" onclick="goto(5)"><div class="ti-num">04</div><div class="ti-t">客户证言</div><div class="ti-p">P. 06</div><div class="ti-a">→</div></div>
+<div class="toc-item" onclick="goto(6)"><div class="ti-num">05</div><div class="ti-t">下一步</div><div class="ti-p">P. 07</div><div class="ti-a">→</div></div>
+</div>
+</div></section>
+<section class="slide ch-cover" data-name="章节"><div class="blob b1"></div><div class="canvas">
+<div class="reveal"><div class="ch-lbl">Chapter 01</div></div>
+<div class="reveal"><div class="ch-num">01</div></div>
+<h1 class="reveal">产品<b>愿景</b></h1>
+<p class="ch-desc reveal">让每一个团队都能用上世界级的智能能力——这是 Aurora 自创立第一天起就没变过的目标。</p>
+</div></section>
+<section class="slide" data-name="核心能力"><div class="canvas">
+<div class="reveal"><span class="eyebrow">Section 02 · Capabilities</span></div>
+<h2 class="reveal">三大<b>核心能力</b></h2>
+<p class="lead reveal">在推理速度、上下文理解、安全合规三个维度上，Aurora 4.0 全面领先。</p>
+<div class="cards reveal">
+<div class="card"><div class="ico">⚡</div><h3>极速推理</h3><div class="num">3.2× 提速</div><p>自研 MoE 路由 + KV cache 优化，长上下文延迟降低 68%。</p></div>
+<div class="card"><div class="ico">✦</div><h3>深度理解</h3><div class="num">1M tokens</div><p>百万 token 上下文窗口，跨文档检索准确率 94.2%。</p></div>
+<div class="card"><div class="ico">◆</div><h3>私有部署</h3><div class="num">SOC2 · ISO</div><p>VPC / 本地化全套合规，国密算法支持，零数据外流。</p></div>
+</div>
+</div></section>
+<section class="slide" data-name="关键数据"><div class="canvas">
+<div class="reveal"><span class="eyebrow">Section 03 · Metrics</span></div>
+<h2 class="reveal">关键<b>表现指标</b></h2>
+<p class="lead reveal">数据来源：2026 Q1 全量客户运行数据 + 第三方独立评测。</p>
+<div class="stats reveal">
+<div class="stat"><div class="lbl">DAU 增长</div><div class="num">+184<span class="u">%</span></div><div class="trend">▲ 同比 YoY</div></div>
+<div class="stat"><div class="lbl">企业客户</div><div class="num">2,840</div><div class="trend">▲ +62 / 月</div></div>
+<div class="stat"><div class="lbl">推理成本</div><div class="num">−68<span class="u">%</span></div><div class="trend dn">▼ 同比下降</div></div>
+<div class="stat"><div class="lbl">NPS 评分</div><div class="num">71</div><div class="trend">▲ 行业 Top3</div></div>
+</div>
+</div></section>
+<section class="slide quote" data-name="引言"><div class="blob b1"></div><div class="canvas">
+<div class="reveal"><div class="qm">"</div></div>
+<p class="qt reveal">Aurora 让我们的工程师从重复劳动里被解放出来——他们终于可以把时间花在真正有创造力的事情上。</p>
+<div class="reveal"><div class="qa-line"></div><div class="qn">Sarah Chen</div><div class="qj">VP Engineering · Northpoint Labs</div></div>
+</div></section>
+<section class="slide end" data-name="结尾"><div class="blob b1"></div><div class="blob b2"></div><div class="canvas">
+<div class="reveal"><span class="eyebrow">Thank You</span></div>
+<h1 class="reveal">让我们<b>开始吧.</b></h1>
+<div class="reveal"><div class="e-line"></div></div>
+<p class="e-tag reveal">联系我们获取试用名额，或预约一次产品演示。</p>
+<div class="e-c reveal"><div><div class="lbl">Sales</div><div class="val">sales@aurora.ai</div></div><div><div class="lbl">Demo</div><div class="val">aurora.ai/demo</div></div><div><div class="lbl">Twitter</div><div class="val">@aurora_ai</div></div></div>
+</div></section>
+</div>
+<button class="nav-arrow prev" onclick="goto(current-1)">‹</button>
+<button class="nav-arrow next" onclick="goto(current+1)">›</button>
+<div class="footbar"><div>AURORA · PRODUCT DECK 2026</div><div class="pg"><span id="curr">1</span> / <span id="total">7</span></div></div>
+<div class="progress" id="progress"></div>
+<script>
+const slides=document.querySelectorAll('.slide');document.getElementById('total').textContent=slides.length;
+let current=0,locked=false;const progress=document.getElementById('progress'),curr=document.getElementById('curr'),topCh=document.getElementById('topCh');
+function setHeader(i){const map=['PROLOGUE','CONTENTS','CHAPTER I','SECTION 02','SECTION 03','VOICES','EPILOGUE'];topCh.textContent=(map[i]||'')+' · '+slides[i].dataset.name}
+function goto(i){if(locked||i===current||i<0||i>=slides.length)return;locked=true;slides[current].classList.remove('active');const o=current;current=i;slides[current].classList.add('active');progress.style.width=((current+1)/slides.length*100)+'%';curr.textContent=current+1;setHeader(current);setTimeout(()=>locked=false,600)}
+window.goto=goto;
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;if(e.key==='ArrowRight'||e.key===' ')goto(current+1);else if(e.key==='ArrowLeft')goto(current-1);else if(e.key==='Home')goto(0);else if(e.key==='End')goto(slides.length-1);else if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen()}});
+let wl=false;document.addEventListener('wheel',e=>{if(wl)return;wl=true;if(e.deltaY>30)goto(current+1);else if(e.deltaY<-30)goto(current-1);setTimeout(()=>wl=false,800)},{passive:true});
+progress.style.width=(1/slides.length*100)+'%';setHeader(0);
+</script>
+<script type="text/javascript" src="/accessproxy_statics/h5_fp.js" defer></script>
+<script type="text/javascript" src="/accessproxy_statics/wm.js" defer></script>
+</body></html>

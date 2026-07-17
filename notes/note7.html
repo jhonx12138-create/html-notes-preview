@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《历代经济变革得失》· 完整知识图谱</title>
+    <style>
+        :root {
+            --bg: #fdfdf9;
+            --card-bg: #ffffff;
+            --border: #e8e4d9;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #8b5a2b;
+            --accent-light: #f9f4ec;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --highlight: #fdf3e0;
+            --radius: 10px;
+            --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', 'STSong', Georgia, serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            padding: 2rem 1.5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+            color: #1e1508;
+        }
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.4rem;
+        }
+        .header .meta {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.6rem;
+        }
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #d4b896;
+            border-radius: 20px;
+            padding: 0.5rem 1.4rem;
+            font-size: 0.9rem;
+            color: #6b3a1f;
+            font-family: var(--font-sans);
+        }
+
+        /* Sections */
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2.2rem;
+            box-shadow: var(--shadow);
+        }
+        .section h2 {
+            font-size: 1.4rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.9rem;
+            margin-bottom: 1.3rem;
+            color: #3e2e1a;
+            font-weight: 700;
+        }
+        .section h3 {
+            font-size: 1.15rem;
+            margin: 2rem 0 0.8rem;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid var(--border);
+            color: #5c3d1e;
+            font-weight: 700;
+        }
+        .section h4 {
+            font-size: 1rem;
+            margin: 1.5rem 0 0.6rem;
+            color: #6b3a1f;
+            font-weight: 600;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        .info-card {
+            background: #fdfaf6;
+            border-radius: 8px;
+            padding: 0.9rem 1.2rem;
+            border-left: 4px solid #ccc;
+        }
+        .info-card.context   { border-color: #b8956a; background: #fdf8f2; }
+        .info-card.design    { border-color: #7a9f7a; background: #f5faf5; }
+        .info-card.stake     { border-color: #8b7aaa; background: #f8f5fb; }
+        .info-card.outcome   { border-color: #5f8fa8; background: #f3f8fb; }
+        .info-card.cost      { border-color: #c46666; background: #fdf5f5; }
+        .info-card .label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: var(--font-sans);
+            color: #4a3520;
+        }
+        .info-card .content {
+            font-size: 0.94rem;
+            color: #4a3f33;
+        }
+        .info-card .content ul {
+            margin-top: 0.3rem;
+            padding-left: 1.3rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.25rem;
+        }
+        .data-note {
+            margin-top: 0.6rem;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            font-style: italic;
+            border-top: 1px dotted #d8d0c4;
+            padding-top: 0.4rem;
+        }
+
+        /* Law Cards */
+        .law-card {
+            background: var(--accent-light);
+            border: 1px solid #e8ddd0;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .law-card h4 {
+            color: #6b3a1f;
+            margin-bottom: 0.4rem;
+            font-size: 1.05rem;
+        }
+        .law-card p { font-size: 0.94rem; color: #4a3f33; }
+
+        /* Two column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        .three-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        /* Blockquote */
+        blockquote {
+            background: var(--highlight);
+            border-left: 4px solid #d4a55a;
+            margin: 1.2rem 0;
+            padding: 1rem 1.4rem;
+            font-style: italic;
+            border-radius: 0 6px 6px 0;
+            color: #5c3d1e;
+        }
+        blockquote .cite {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-style: normal;
+            color: var(--text-muted);
+        }
+
+        /* Table */
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.94rem;
+        }
+        table.extension th {
+            background: #f5ede3;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #5c3d1e;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
+        }
+        table.extension td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
+        }
+        table.extension tr:hover td {
+            background: #fdfaf6;
+        }
+        hr.divider {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 2.5rem 0;
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: var(--accent-light);
+            border: 1px solid #d4b896;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .summary-box p {
+            margin-bottom: 0.5rem;
+            font-size: 0.94rem;
+        }
+        .summary-box ul {
+            padding-left: 1.4rem;
+            font-size: 0.94rem;
+        }
+        .summary-box li {
+            margin-bottom: 0.3rem;
+        }
+
+        @media (max-width: 700px) {
+            .info-grid, .two-col, .three-col { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ==================== 头部：文献信息 ==================== -->
+    <div class="header">
+        <h1>《历代经济变革得失》</h1>
+        <div class="subtitle">一部基于“四大利益集团博弈”分析框架的中国经济变革通史</div>
+        <div class="meta">
+            <span><strong>作者</strong>：吴晓波</span>
+            <span><strong>出版年份</strong>：2013年8月（首版）；典藏版：2016年</span>
+            <span><strong>出版社</strong>：浙江大学出版社</span>
+            <span><strong>页数</strong>：约246页</span>
+        </div>
+        <div class="framework-badges">
+            <span class="badge">🏛️ 中央政府</span>
+            <span class="badge">🏘️ 地方政府</span>
+            <span class="badge">💰 有产阶层</span>
+            <span class="badge">👥 无产阶层</span>
+        </div>
+        <p style="margin-top:1rem; color:#6b3a1f; font-size:0.92rem;">
+            <strong>分析工具</strong>：四大利益集团博弈法 · 四大基本制度分析法（郡县制度、尊儒制度、科举制度、国有专营）
+        </p>
+    </div>
+
+    <!-- ==================== 导论：研究中国的方法 ==================== -->
+    <div class="section">
+        <h2>导论：研究中国的方法</h2>
+
+        <h3>一、崛起或崩溃，是一个问题</h3>
+        <p>中国历史上反复出现的“分久必合，合久必分”现象，其背后的经济规律是什么？本书试图回答：为什么中国的经济变革总是在“繁荣—崩溃—重建”中循环，而始终未能走出这一历史闭环？</p>
+
+        <h3>二、两大研究工具</h3>
+        <div class="two-col">
+            <div class="law-card">
+                <h4>工具一：四大利益集团博弈法</h4>
+                <p>发生于历史以及当下的所有中国问题，都是<strong>中央政府、地方政府、有产阶层和无产阶层</strong>四大利益集团相互斗争、博弈和妥协的结果。任何改革的成败，都取决于这四方力量的此消彼长和合纵连横。</p>
+            </div>
+            <div class="law-card">
+                <h4>工具二：四大基本制度分析法</h4>
+                <p><strong>郡县制度</strong>（避免地方割据）、<strong>尊儒制度</strong>（意识形态大一统）、<strong>科举制度</strong>（吸纳社会精英）、<strong>国有专营</strong>（经济上垄断控制国计民生），这四大制度是支撑起大一统国家集权政体的四块基石，缺一不可。</p>
+            </div>
+        </div>
+
+        <h3>三、两大结论</h3>
+        <div class="summary-box">
+            <p><strong>结论一：</strong>中国最近三十多年的经济崛起，是2000多年经济变革史的一次合理性演进，但迄今仍有陷入历史闭环逻辑的危险。</p>
+            <p><strong>结论二：</strong>中国经济制度上的“结构性缺陷”，是一个“建设性结果”，与维持千年统一的中央集权制度有密不可分的重大关系。</p>
+        </div>
+
+        <h3>四、全书结构概览</h3>
+        <div class="three-col">
+            <div class="info-card context">
+                <div class="label">奠基时代</div>
+                <div class="content">管仲变法（重商典范）<br>商鞅变法（命令型经济鼻祖）</div>
+            </div>
+            <div class="info-card design">
+                <div class="label">帝国试验</div>
+                <div class="content">汉武帝变法（顶层设计）<br>王莽变法（理想主义悲剧）<br>唐太宗治国（小政府模式）</div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">技术修正与锁定</div>
+                <div class="content">刘晏改革（温和干预）<br>王安石变法（最后配套改革）<br>明清停滞（路径锁定）</div>
+            </div>
+            <div class="info-card outcome">
+                <div class="label">外部冲击与转型</div>
+                <div class="content">洋务运动（缺乏现代性）<br>两个民国（权贵资本主义）</div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">当代实验</div>
+                <div class="content">计划经济（自负到自毁）<br>改革开放（增量到整体）</div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第一讲：管仲变法 ==================== -->
+    <div class="section">
+        <h2>第一讲 · 管仲变法——两千多年前的“凯恩斯主义”</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与核心困境</div>
+                <div class="content">
+                    齐国地处山东半岛，地薄人稀，在诸侯争霸格局中居于弱势。齐桓公即位后，急需在短期内迅速增强国力，实现“富国强兵”，避免被他国兼并。<br>
+                    <strong>核心矛盾</strong>：如何在资源有限的情况下，以最快速度将齐国打造成霸主之国？
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 改革蓝图与制度设计</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>四民分业定居</strong>：将国民按职业（士农工商）分区居住，实现专业化分工和技艺世代传承。这是中国早期文明领先世界的重要制度安排。</li>
+                        <li><strong>“放活微观，管制宏观”</strong>：对内鼓励商品经济发展，对外降低关税吸引各国商人前来贸易；同时建立国家粮食储备制度，运用价格杠杆调控市场。</li>
+                        <li><strong>盐铁专营（官山海）</strong>：首创“寓税于价”的间接税模式。国家控制矿山和盐场资源，但允许民间生产，政府负责统购统销，通过垄断定价权获取财政收入。<br><em>具体操作</em>：铁器生产“民得其七，君得其三”，政府仅通过控制流通环节获利。</li>
+                        <li><strong>鼓励消费</strong>：倡导奢侈消费以拉动生产和就业，并在灾年通过修建宫殿等公共工程提供就业机会，是古典凯恩斯主义的雏形。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益博弈与调整</div>
+                <div class="content">
+                    在<strong>中央政府（齐桓公）</strong>与<strong>有产阶层（商人、手工业者）</strong>之间形成利益联盟。国家获得巨额专营收入以支撑霸业，商人则获得稳定的经营环境和贸易便利。<br>
+                    <strong>管仲模式的核心</strong>：国家与商人形成分工合作，而非零和博弈。管仲本人出身商贾，深知商业逻辑。
+                </div>
+            </div>
+            <div class="info-card outcome">
+                <div class="label">Ⅳ 短期成效</div>
+                <div class="content">
+                    齐国由此一跃成为春秋首霸，“九合诸侯，一匡天下”。首都临淄发展为当时世界上规模最大、最繁华的商业都市之一，居民超过30万。<br>
+                    管仲被后世尊为“商祖”，其思想收录于《管子》一书。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅴ 长期代价与历史阴影</div>
+                <div class="content">
+                    开创了国家干预经济的先河，其“盐铁专营”、“轻重之术”成为后世王朝敛财的范本。然而，后世统治者多学其“术”（国家垄断经营）而弃其“道”（尊重商业规律、鼓励自由贸易）。<br>
+                    管仲的“以商止战”模式“一世而衰”，但其经济思想实为古典市场经济的雏形，却被后来的儒家和法家共同排斥。
+                </div>
+            </div>
+        </div>
+        <div class="data-note">📖 资料与评注：管仲思想后被儒法两家共同排斥。儒家认为其重利轻义，法家认为其不够彻底。但管仲的重商主义思想在两千多年后的今天，仍然具有惊人的现代性。</div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第二讲：商鞅变法 ==================== -->
+    <div class="section">
+        <h2>第二讲 · 商鞅变法——命令型计划经济的鼻祖</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与核心困境</div>
+                <div class="content">
+                    战国时期兼并战争日益加剧，秦国偏居西陲，被中原各国视为“戎狄”，国力贫弱。秦孝公痛感“诸侯卑秦，丑莫大焉”，决心变法图强。<br>
+                    <strong>核心矛盾</strong>：如何在极短时间内，最大限度地将整个国家动员成一部高效的战争机器？
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 改革蓝图与制度设计</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>以农立国，废井田开阡陌</strong>：承认土地私有，允许自由买卖，极大激发农民生产积极性。同时推行<strong>重农抑商</strong>政策，控制粮矿、征收重税、限制商人人口流动，甚至取缔货币。</li>
+                        <li><strong>军功爵制（二十等爵）</strong>：彻底取消贵族世袭特权，按斩首数量授予爵位和田宅。打破阶层固化，打造了一个高度激励的“平民社会”，使“秦人闻战，顿足徒裼，唯恐居后”。</li>
+                        <li><strong>郡县制度与连坐法</strong>：在全国推行县制，县令由国君直接任免，加强中央对地方的垂直控制。什伍编制，邻里互相监督，一人犯法四邻连坐。</li>
+                        <li><strong>统一度量衡</strong>：为全国统一的经济管理奠定基础。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益博弈与调整</div>
+                <div class="content">
+                    系统性剥夺<strong>旧贵族</strong>的世袭特权，将其利益重新分配给<strong>中央政府</strong>和有军功的<strong>平民（无产阶层）</strong>。打造了“中央—平民”的直接联盟，地方势力和商业资本则被系统性摧毁。<br>
+                    商鞅的变法是一场彻底的革命：用“农战”二元结构取代了多元的社会结构。
+                </div>
+            </div>
+            <div class="info-card outcome">
+                <div class="label">Ⅳ 短期成效</div>
+                <div class="content">
+                    秦国从一个边陲弱国一跃成为战国最强大的战争机器，“兵革大强，诸侯畏惧”。经历代经营后，秦始皇“奋六世余烈”，最终灭六国、统一天下，建立了中国历史上第一个大一统的中央集权帝国。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅴ 长期代价与历史阴影</div>
+                <div class="content">
+                    形成了强大的“命令型经济”的制度基因：国家可以随时征调一切人力物力；民间商业活力被制度性压制，此后两千年中国始终未能发育出独立于政治权力的商业阶层。<br>
+                    <strong>毛泽东曾评：“百代都行秦政法”。</strong>商鞅本人被车裂，成为“改革者宿命”的早期注脚。<br>
+                    <strong>后世评价</strong>：“自汉以来，学者耻言商鞅、桑弘羊，而世主独甘心焉，皆阳讳其名而阴用其实。”
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第三讲：汉武帝变法 ==================== -->
+    <div class="section">
+        <h2>第三讲 · 汉武帝变法——顶层设计的集大成者</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与核心困境</div>
+                <div class="content">
+                    文景之治后，自由商人集团崛起，控制国家经济命脉；地方诸侯势力强大；权商勾结败坏吏治。同时，汉武帝连年对匈奴用兵，导致国库空虚，“府库并虚”“天下困弊”。<br>
+                    <strong>前提条件</strong>：政治集权（推恩令）和思想统一（独尊儒术）已为经济改革铺平了道路。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 改革蓝图与制度设计</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>产业改革（三榷）</strong>：将利润最丰厚的铸钱、煮盐、冶铁、酿酒四业全面收归国营，由国家直接经营。</li>
+                        <li><strong>流通改革</strong>：推行“均输”（各地贡赋由中央统一调配，在价高处卖出）与“平准”（中央设平准令，低价买入高价卖出以平抑物价并获利），建立由中央直接掌控的全国性商业网络。</li>
+                        <li><strong>税收改革</strong>：颁布“算缗令”（向商人征收10%财产税）和“告缗令”（鼓励举报隐匿财产者，政府没收全部财产并与举报者平分）。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益博弈与调整</div>
+                <div class="content">
+                    这是一场对<strong>有产阶层</strong>的全面战争。通过“告缗令”，“商贾中家以上大率破”，中等以上的商贾之家几乎全部破产，财富被强行转移至<strong>中央政府</strong>。政府信用严重透支，契约精神荡然无存。
+                </div>
+            </div>
+            <div class="info-card outcome">
+                <div class="label">Ⅳ 短期成效</div>
+                <div class="content">
+                    政府财政空前充实，有力地支撑了汉武帝的长期对外征伐。全国人口突破五千万，形成中国历史上第一个“半亿帝国”。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅴ 长期代价与历史阴影</div>
+                <div class="content">
+                    民营经济遭受毁灭性打击，工商业动力丧失殆尽；国营经济效率低下、产品低劣的弊端开始显现。<br>
+                    <strong>核心影响</strong>：开创了“战时财政—国有扩张”的路径依赖，此后每逢财政危机，政府便本能地扩张国有、打击民营。“桑弘羊模式”成为后世争议两千年的焦点。
+                </div>
+            </div>
+        </div>
+        <blockquote>
+            <strong>“桑弘羊之问”</strong>：如果不执行国营化政策，战争的开支从哪里出？国家的财政收入从哪里得？地方割据的景象如何化解？——这是贯穿中国两千年经济史的核心辩题。
+            <span class="cite">——桑弘羊在“盐铁会议”上对群儒的诘问，公元前81年</span>
+        </blockquote>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第四讲：王莽变法 ==================== -->
+    <div class="section">
+        <h2>第四讲 · 王莽变法——第一个社会主义者的改革</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与核心困境</div>
+                <div class="content">
+                    西汉末年，土地兼并极其严重，大量农民沦为流民或奴婢，世族豪强经济威胁中央集权，社会矛盾空前尖锐，民间“均贫富”的呼声日益高涨。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 改革蓝图与制度设计</div>
+                <div class="content">
+                    <strong>吴晓波称之为“第一个社会主义者的改革”。</strong>核心是三大战场：<br>
+                    <strong>财政上</strong>：推行“王田制”，将全国土地收归国有，禁止买卖，恢复“井田制”；<strong>货币上</strong>：四次改革币制，发行大面额货币，严重扰乱经济秩序，造成恶性通胀；<strong>土地与奴隶</strong>：禁止奴婢买卖，试图恢复西周礼制。此外还推行“五均六筦”，全面管制市场。
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益博弈与调整</div>
+                <div class="content">
+                    改革同时得罪了<strong>有产阶层（地主、豪强）</strong>和<strong>无产阶层（农民）</strong>。地主被剥夺土地，农民被货币改革洗劫一空。四大利益集团无一支持王莽。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅳ 最终结局</div>
+                <div class="content">
+                    改革完全脱离现实，在短时间内导致经济崩溃、天下大乱。新朝仅存15年即告灭亡，王莽本人被起义军杀死。<br>
+                    吴晓波的评价：这是历史上“最惨烈的改革结果”，是儒家理想主义在现实政治中的彻底失败。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第五讲：世民治国 ==================== -->
+    <div class="section">
+        <h2>第五讲 · 世民治国——最盛的王朝与最小的政府</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景</div>
+                <div class="content">
+                    经过隋末大动乱，唐初人口锐减，百废待兴。唐太宗李世民吸取隋炀帝“过度动员”的教训，采取与民休息的治国方略。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 治国方略</div>
+                <div class="content">
+                    通过<strong>科举制</strong>打击世族势力，吸纳寒门精英。在经济上，唐朝初期实行“小政府”模式，中央官员精简至643人，对商业和专营政策的管制较为宽松，税负极低。
+                </div>
+            </div>
+            <div class="info-card outcome">
+                <div class="label">Ⅲ “贞观之治”与“开元盛世”</div>
+                <div class="content">
+                    中国历史上最开放的时期之一。长安成为国际化大都市，丝绸之路繁荣空前。但吴晓波指出，这种“小政府”模式本质上是建立在人口稀少、资源充裕的特殊历史条件之上的。
+                </div>
+            </div>
+        </div>
+
+        <h4>重要人物：刘晏改革（唐·肃宗、代宗时期，约760—780年）</h4>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">时代背景</div>
+                <div class="content">安史之乱后，唐朝中央财政彻底崩溃，北方经济被严重破坏，首都长安的粮食供应依赖南方漕运，但旧漕运体系已瘫痪。</div>
+            </div>
+            <div class="info-card design">
+                <div class="label">改革措施</div>
+                <div class="content">
+                    <strong>技术与制度创新并重。</strong>
+                    <ul>
+                        <li><strong>漕运改革</strong>：改直运为分段转运，由政府雇船而非征调徭役，极大提高效率。</li>
+                        <li><strong>盐法改革</strong>：实行“民产—官收—商销”模式，政府仅在统购环节获利，将生产和销售开放给民间。</li>
+                        <li><strong>信息与调控</strong>：建立经济情报网络，及时掌握各地物价，通过吞吐物资平抑市场。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card outcome">
+                <div class="label">成效与评价</div>
+                <div class="content">在不增加百姓赋税的情况下，奇迹般恢复了国家财政。盐利收入一度占中央财政一半以上。被吴晓波赞为“低社会代价改革”的典范，证明了官商可以形成有效分工。</div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第六讲：王安石变法 ==================== -->
+    <div class="section">
+        <h2>第六讲 · 王安石变法——最后的整体配套改革</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与核心困境</div>
+                <div class="content">
+                    北宋中期“三冗”（冗官、冗兵、冗费）问题积重难返，国家财政连年赤字，对外受制于辽和西夏，内部农民负担沉重，形成“积贫积弱”的局面。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 改革蓝图与制度设计</div>
+                <div class="content">
+                    <strong>以“开源”为核心，进行全面配套改革。</strong>
+                    <ul>
+                        <li><strong>青苗法</strong>：国家在青黄不接时向农民发放低息贷款，抑制高利贷盘剥，增加财政收入。</li>
+                        <li><strong>免役法</strong>：百姓交钱免服差役，政府用此钱雇人，将劳役货币化。</li>
+                        <li><strong>市易法</strong>：政府直接经营商业贸易，平抑物价并从中获利。</li>
+                        <li><strong>方田均税法</strong>：重新丈量土地，按实际面积和肥瘠征税，打击地主逃税。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益博弈与调整</div>
+                <div class="content">
+                    国家权力全面介入信贷、贸易等市场核心领域，直接损害了<strong>大商人和地主</strong>的利益。引发以司马光为代表的保守派激烈反对，形成著名的“新旧党争”。<br>
+                    <strong>核心分歧</strong>：王安石主张“开源”（做大蛋糕），司马光主张“节流”（节省开支），认为“理财”不过是变相搜刮民财。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅳ 失败原因与历史地位</div>
+                <div class="content">
+                    1. <strong>执行严重走样</strong>：如青苗法在基层变成强制摊派，利息甚至高于民间借贷。<br>
+                    2. <strong>人亡政息</strong>：神宗去世后，保守派上台，新法被全盘废除。<br>
+                    <strong>历史地位</strong>：中国古代最后一次全面、系统的整体配套改革。此后，历代统治者对根本性变革愈发保守。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第七讲：明清停滞 ==================== -->
+    <div class="section">
+        <h2>第七讲 · 明清停滞——大陆孤立主义的后果</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与核心困境</div>
+                <div class="content">
+                    元末大动乱之后，人口锐减，社会秩序亟待重建。同时，外部世界正处于大航海时代的开端，全球贸易网络开始形成。然而中国的统治者选择了完全相反的方向。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 制度锁定：铁桶阵与散沙术</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>海禁（铁桶阵）</strong>：朱元璋于1371年下达“禁濒海民不得私出海”，后演变为“片板不许下海”的闭关政策，彻底退出大航海时代和全球贸易体系。</li>
+                        <li><strong>匠籍制</strong>：工匠被编入特殊户籍，世代为官府服役，人身自由受限，技术创新停滞。</li>
+                        <li><strong>里甲制度（散沙术）</strong>：以110户为一里，百姓互相监督，被牢牢锁定在土地上。</li>
+                        <li><strong>宝钞制度</strong>：国家发行不可兑换的纸币，通过超发变相掠夺民间财富。</li>
+                        <li><strong>窝本制度</strong>：将盐、外贸等垄断权以特许方式授予特定家族，催生了依附于权力的晋商、徽商和十三行商人。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅲ 严重后果</div>
+                <div class="content">
+                    经济结构被锁定于自给自足的小农经济，工商业和海外贸易被全面压制。中国与西方的技术、制度差距急剧拉大。<br>
+                    <strong>吴晓波特别指出</strong>：郑和下西洋（1405—1433年）比哥伦布到达美洲早了近90年，但此后中国的海洋探索戛然而止，制度性的封闭成为近代落后的深层根源。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第八讲：洋务运动 ==================== -->
+    <div class="section">
+        <h2>第八讲 · 洋务运动——缺乏现代性的现代化变革</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与核心困境</div>
+                <div class="content">
+                    两次鸦片战争惨败，内有太平天国运动，清王朝面临李鸿章所感叹的“三千年未有之大变局”。与日本明治维新几乎同时起步，但路径截然不同。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 改革蓝图与制度设计</div>
+                <div class="content">
+                    <strong>“中体西用”，核心模式为“官督商办”。</strong><br>
+                    创办江南制造总局等军事工业；建立轮船招商局等民用企业；建设铁路电报等近代基础设施；派遣留学生出国学习西方技术。
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益调整与制度缺陷</div>
+                <div class="content">
+                    在体制内开明派（李鸿章、张之洞等地方督抚）主导下，让渡部分经营权给买办商人和民间资本。但核心权力——人事任命、利润分配、经营决策——仍牢牢掌握在官僚手中。<br>
+                    <strong>根本缺陷</strong>：只学习器物技术，拒绝变革政治和法律制度。“官督”压制“商办”，产权不明，导致腐败和效率低下。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅳ 失败与中日分流</div>
+                <div class="content">
+                    甲午战争（1894—1895年）一役，北洋水师全军覆没，宣告洋务运动破产。<br>
+                    <strong>中日对比</strong>：日本明治维新（1868年开始）几乎同时起步，但选择了全面改革政治、法律和教育制度的路径，最终两国在甲午战场上分出胜负。吴晓波指出：只改技术不改制度，是洋务运动失败的根本原因。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第九讲：两个民国 ==================== -->
+    <div class="section">
+        <h2>第九讲 · 两个民国——从极度自由到“统制经济”</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景</div>
+                <div class="content">
+                    辛亥革命后，四大基本制度（郡县、尊儒、科举、国有专营）全面崩坏，中国进入一个空前自由但也极其混乱的时期。北洋时期民营经济一度空前强大，地方自治试验兴起。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 从自由到统制</div>
+                <div class="content">
+                    南京国民政府成立后，转向“统制经济”。以四大家族（蒋宋孔陈）为代表的<strong>官僚资本</strong>，以国家名义控制金融、重工业、交通等国民经济命脉。资源委员会垄断重要物资的生产和分配。
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益调整</div>
+                <div class="content">
+                    权力与资本高度结合，形成“权贵资本主义”。民间民族资本在官僚垄断和恶性通胀的双重挤压下艰难求生。名义上是现代国家，本质上是“权力变现”的工具。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅳ 崩溃与教训</div>
+                <div class="content">
+                    1948年法币崩溃，通胀失控，经济全面瓦解。吴晓波指出，国民党在大陆的失败，军事因素是表象，经济治理的彻底失败——尤其是无法解决土地问题因而失去农民支持——才是深层根源。<br>
+                    <strong>历史教训</strong>：在缺乏法治和权力制衡的条件下，国家垄断必然滑向权贵垄断。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第十讲：计划经济 ==================== -->
+    <div class="section">
+        <h2>第十讲 · 计划经济——从自负到自毁的大试验</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代背景与制度选择</div>
+                <div class="content">
+                    新中国成立后，百废待兴。为了迅速实现工业化，巩固政权，中国借鉴苏联模式，选择了高度集中的计划经济体制。这一选择既有意识形态的驱动，也有应对冷战封锁和战争威胁的现实考量。通过土地改革、没收官僚资本等措施，国家迅速掌握了经济命脉。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 制度蓝图与推进步骤</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>“上海试验”</strong>：通过打击投机、稳定物价、统一财经（“银元之战”“米棉之战”），初步建立了国家对市场的控制力，证明了行政手段可以在短期内平定经济混乱。</li>
+                        <li><strong>社会主义改造（1953—1956）</strong>：通过合作化运动和公私合营，在短短七年间基本消灭了私营经济，建立了单一的公有制。吴晓波指出，这一速度远超预期，甚至让决策者都感到意外。</li>
+                        <li><strong>第一个五年计划（1953—1957）</strong>：以156个苏联援建项目为核心，集中力量发展重工业，建立起现代工业体系的雏形。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益调整与权力集中</div>
+                <div class="content">
+                    计划经济本质上是将资源配置的权力彻底收归<strong>中央政府</strong>。地方政府、企业和个人的经济自主权几乎被完全剥夺。通过户籍制度、统购统销和人民公社，<strong>无产阶层</strong>被完全纳入国家管控体系。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅳ 两次自毁与惨痛代价</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>大跃进（1958—1961）</strong>：基于“超英赶美”的主观意志，发动全民炼钢、虚报产量，导致经济结构严重失衡，农业生产急剧倒退，随后发生三年严重困难。这是典型的“命令型经济”在狂热意志驱动下的失控。</li>
+                        <li><strong>文化大革命（1966—1976）</strong>：经济秩序再次被彻底打乱，国民经济几近崩溃边缘。这十年不仅拉大了与世界的差距，更摧毁了法治、教育和社会信任的基础。</li>
+                    </ul>
+                    吴晓波指出，计划经济试验从早期的“自负”（认为可以超越市场规律）最终走向了“自毁”。其根本原因在于：缺乏信息反馈机制、对人性自利动机的根本否定，以及权力不受制约。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第十一讲：改革开放（上） ==================== -->
+    <div class="section">
+        <h2>第十一讲 · 改革开放（上）——没有蓝图的改革</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 时代困境与启动契机</div>
+                <div class="content">
+                    1978年，“文革”结束两年后，中国国民经济濒临崩溃：人均GDP不到非洲国家平均水平的一半，两亿多人口处于绝对贫困线以下。华国锋的“洋跃进”受挫后，邓小平主导的改革在“真理标准大讨论”的思想破冰中拉开帷幕。<br>
+                    <strong>改革的启动并非出自完美蓝图，而是源于生存危机。</strong>吴晓波强调，这是中国历代改革的一个共同特征：往往是被逼到墙角之后的绝地反击。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 增量改革的具体路径</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>农村突破</strong>：小岗村18户农民秘密签订“大包干”协议，得到中央默认后，家庭联产承包责任制迅速推广。农民获得生产自主权，农业产量大幅提升，乡镇企业异军突起。</li>
+                        <li><strong>特区试验</strong>：设立深圳、珠海、汕头、厦门等经济特区，在计划经济之外开辟出市场经济的实验空间。“不管黑猫白猫，抓住老鼠就是好猫”。</li>
+                        <li><strong>价格双轨制</strong>：同一商品有计划内价格和市场调节价格。虽然催生了“倒爷”和腐败，但避免了休克式改革带来的社会震荡，逐步将市场机制引入经济肌体。</li>
+                    </ul>
+                    <strong>核心逻辑</strong>：在计划体制的“存量”旁边大力发展“增量”——乡镇企业、个体户和外资企业。不触动既得利益，先做大蛋糕。
+                </div>
+            </div>
+            <div class="info-card stake">
+                <div class="label">Ⅲ 利益联盟的形成</div>
+                <div class="content">
+                    改革初期成功地构建了支持改革的广泛联盟：<strong>中央政府</strong>通过放权让利维持合法性；<strong>地方政府</strong>在财政包干和乡镇企业发展中获得巨大财权；<strong>无产阶层</strong>（农民）率先受益于承包制；新的<strong>有产阶层</strong>（个体户、乡镇企业家）开始萌芽成长。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 第十二讲：改革开放（下） ==================== -->
+    <div class="section">
+        <h2>第十二讲 · 改革开放（下）——集权主义的回归</h2>
+        <div class="info-grid">
+            <div class="info-card context">
+                <div class="label">Ⅰ 背景与转折</div>
+                <div class="content">
+                    20世纪90年代初，国际形势剧变（苏联解体、东欧剧变），国内改革陷入短暂停滞。1992年邓小平南巡讲话重新定调“发展是硬道理”，中国经济从此驶入快车道。但改革的路径也开始从“分权让利”悄然转向“集权调控”。
+                </div>
+            </div>
+            <div class="info-card design">
+                <div class="label">Ⅱ 整体改革与制度攻坚</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>1994年分税制改革</strong>：重新划分中央与地方的财权关系。中央财政收入占比大幅提升，为后来的宏观调控和大国崛起奠定财力基础，但也逐渐形成“中央富、地方穷”的局面，催生了地方政府对土地财政的深度依赖。</li>
+                        <li><strong>1998年三驾马车攻坚</strong>：<strong>国企改革</strong>（“抓大放小”，数千万职工下岗，打破铁饭碗）、<strong>金融改革</strong>（成立四大资产管理公司剥离银行坏账、央行设立大区分行）、<strong>行政改革</strong>（取消福利分房、为加入WTO做准备），为经济高速增长扫清了制度障碍。</li>
+                        <li><strong>国进民退现象</strong>：进入21世纪后，国有经济在能源、金融、交通、通信等关键领域的控制力重新加强。部分行业出现“玻璃门”和“弹簧门”，民营经济的生存空间受到挤压。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="info-card outcome">
+                <div class="label">Ⅲ 空前成就</div>
+                <div class="content">
+                    2010年中国GDP跃居世界第二，成为“世界工厂”和全球第一大贸易国。数亿人口摆脱贫困，这是人类历史上最大规模、最快速度的工业化进程。
+                </div>
+            </div>
+            <div class="info-card cost">
+                <div class="label">Ⅳ 双重困境与吴晓波的忧思</div>
+                <div class="content">
+                    <ul>
+                        <li><strong>发展困境</strong>：过度依赖投资和出口，国内消费不足，环境代价沉重，地方政府债务高企。</li>
+                        <li><strong>公平困境</strong>：贫富差距悬殊，权力寻租严重，社会阶层固化，“改革进入深水区”。</li>
+                    </ul>
+                    <strong>吴晓波在本讲中的核心忧思</strong>：当“增量改革”的增量空间变小，“存量改革”迟迟难以推动，中国是否会重新陷入“一管就死，一放就乱”的历史周期律？
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ==================== 作者核心论断：四大历史规律 ==================== -->
+    <div class="section">
+        <h2>贯穿全书的历史规律（吴晓波核心发现）</h2>
+
+        <div class="law-card">
+            <h4>规律一：分权—集权循环律</h4>
+            <p>地方分权 → 经济繁荣、民间活力迸发 → 贫富分化加剧、地方势力坐大 → 中央收权 → 社会趋于稳定但经济僵化 → 财政压力积累 → 被迫再次放权。两千年，这条曲线反复震荡，从未走出。</p>
+        </div>
+
+        <div class="law-card">
+            <h4>规律二：国有—民营钟摆律</h4>
+            <p>国家财政充裕时，倾向于放松管制，放手民营发展；一旦财政出现危机（因战争、挥霍或灾荒），立刻转向打压民营、扩大国有专营范围。每一次大规模国有化浪潮的背后，几乎都能找到财政危机的影子。</p>
+        </div>
+
+        <div class="law-card">
+            <h4>规律三：改革者宿命律</h4>
+            <p>重大改革无一例外需要强权人物推动——管仲依附齐桓公，商鞅依附秦孝公，王安石依附宋神宗。强权人物一旦失势或去世，改革便立刻遭遇清算和全面倒退。“人存政举，人亡政息”的循环，根源在于改革从来依靠个人权威而非制度保障。</p>
+        </div>
+
+        <div class="law-card">
+            <h4>规律四：四大利益集团博弈律</h4>
+            <p>成功改革 = 至少获得两个利益集团支持；失败改革 = 四个集团全部反对（如王莽）；最脆弱的改革 = 仅靠中央意志孤军推进，没有任何一个其他集团的真心拥护（如王安石变法的后期）。</p>
+        </div>
+    </div>
+
+    <!-- ==================== 结语与延伸思辨 ==================== -->
+    <div class="section">
+        <h2>结语：回到历史的基本面</h2>
+
+        <div class="two-col">
+            <div>
+                <h3>💡 吴晓波的“医治”方案</h3>
+                <div class="summary-box">
+                    <ul>
+                        <li><strong>一个不容置疑的前提</strong>：“统一文化”是一切自由化改革的边界，任何变革都不能以分裂国家为代价。</li>
+                        <li><strong>两个永恒性的主题</strong>：分权与均富。如何处理中央与地方、贫与富的关系，是贯穿中国历史的核心挑战。</li>
+                        <li><strong>三个最特殊的战场</strong>：国有经济、土地和金融业。这三个领域是利益集团博弈的焦点，也是改革能否突破的关键。</li>
+                        <li><strong>四股前所未见的新势力</strong>：互联网、非政府组织、企业家群体和自由知识分子。这些力量正在改变中国的政治生态，能否形成制度化的表达渠道，关乎未来走向。</li>
+                    </ul>
+                    <p style="margin-top:1rem;"><strong>最终方案</strong>：从“集权—分权”的钟摆运动，走向<strong>法治化的现代治理</strong>。建立有限政府，保护私有产权，让市场在资源配置中起决定性作用，从而打破两千年的历史循环。</p>
+                </div>
+            </div>
+
+            <div>
+                <h3>🔍 批判与延伸思辨</h3>
+                <div class="law-card">
+                    <h4>费正清之问</h4>
+                    <p>一个西方人对于全部中国历史所要问的最迫切的问题之一是：中国商人阶级为什么不能摆脱对官场的依赖，而建立一支工业的或经营企业的独立力量？</p>
+                </div>
+                <div class="law-card">
+                    <h4>框架的局限与风险</h4>
+                    <ul>
+                        <li><strong>过度简化之嫌</strong>：“四大利益集团”模型以现代政治学概念套用古代社会，不同时代的“有产者”性质完全不同。</li>
+                        <li><strong>材料选择</strong>：存在“结论先行”的倾向，对不符合框架的历史事实有所忽略。</li>
+                        <li><strong>历史类比的危险性</strong>：将当代问题直接套用古代案例，容易陷入机械史观。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <table class="extension" style="margin-top:1.5rem;">
+            <thead>
+                <tr><th>思考维度</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>与费正清“冲击—回应”模式比较</td>
+                    <td>费正清以“冲击—回应”解释中国近代史（西方冲击→中国被动回应）；吴晓波更强调内部结构（四大利益集团的博弈）的主动作用，但某种程度上可能低估了19世纪以来外部冲击对中国现代化路径的颠覆性影响。</td>
+                </tr>
+                <tr>
+                    <td>理解当代经济政策</td>
+                    <td>用“钟摆律”和“利益集团博弈”框架来观察历次宏观调控——何时放、何时收、谁受益、谁受损——可以发现惊人的历史相似性。但需警惕历史类比的局限性，现代经济的复杂度远超古代。</td>
+                </tr>
+                <tr>
+                    <td>本书局限与争议</td>
+                    <td>① 用四大利益集团框架一刀切横跨两千年，有过度简化之嫌；② 材料选择存在“结论先行”的倾向；③ 对当代改革的解读至2013年为止，近年变化未及涵盖。</td>
+                </tr>
+                <tr>
+                    <td>推荐对照阅读</td>
+                    <td><strong>钱穆《中国历代政治得失》</strong>：从制度史内部逻辑出发，提供更富历史温情的理解，避免单一的经济决定论。<br><strong>黄仁宇《万历十五年》</strong>：以“数目字管理”的缺失解释中国困境，可作为分析框架层面的补充。<br><strong>费正清《美国与中国》</strong>：经典的“冲击-回应”范式，提供国际比较视角。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem; padding:1.5rem; color:var(--text-muted); font-size:0.85rem; border-top:1px solid var(--border);">
+        《历代经济变革得失》完整知识图谱 · 基于吴晓波原著整理 · 仅供个人学习回顾使用
+    </div>
+
+</div>
+</body>
+</html>

@@ -1,37 +1,417 @@
 [
   {
     "id": "1",
-    "title": "《苏菲的世界》— 哲学入门笔记",
+    "title": "《上帝掷骰子吗》· 知识图谱 2026-06-07",
     "file": "notes/note1.html",
-    "date": "2024-01-15",
-    "tags": ["哲学", "小说", "启蒙"]
+    "date": "2026-06-07",
+    "category": "科技",
+    "tags": [
+      "物理学",
+      "知识图谱"
+    ]
   },
   {
     "id": "2",
-    "title": "《人类简史》— 认知革命与农业革命",
+    "title": "《中国国家治理的制度逻辑》",
     "file": "notes/note2.html",
-    "date": "2024-02-20",
-    "tags": ["历史", "人类学", "科普"]
+    "date": "2026-06-08",
+    "category": "历史",
+    "tags": [
+      "历史"
+    ]
   },
   {
     "id": "3",
-    "title": "《百年孤独》— 魔幻现实主义赏析",
-    "file": "notes/note1.html",
-    "date": "2024-03-08",
-    "tags": ["文学", "拉美", "经典"]
+    "title": "《为什么——关于因果关系的新科学》",
+    "file": "notes/note3.html",
+    "date": "2026-05-14",
+    "category": "哲学",
+    "tags": [
+      "哲学"
+    ]
   },
   {
     "id": "4",
-    "title": "《思考，快与慢》— 行为经济学要点",
-    "file": "notes/note2.html",
-    "date": "2024-04-12",
-    "tags": ["心理学", "经济学", "思维"]
+    "title": "《以利为利》",
+    "file": "notes/note4.html",
+    "date": "2026-06-09",
+    "category": "其他",
+    "tags": [
+      "笔记"
+    ]
   },
   {
     "id": "5",
-    "title": "《局外人》— 加缪与荒诞哲学",
-    "file": "notes/note1.html",
-    "date": "2024-05-20",
-    "tags": ["哲学", "文学", "存在主义"]
+    "title": "《以日为鉴》-知识图谱",
+    "file": "notes/note5.html",
+    "date": "2026-06-01",
+    "category": "历史",
+    "tags": [
+      "知识图谱"
+    ]
+  },
+  {
+    "id": "6",
+    "title": "《具身智能》",
+    "file": "notes/note6.html",
+    "date": "2026-06-01",
+    "category": "科技",
+    "tags": [
+      "知识"
+    ]
+  },
+  {
+    "id": "7",
+    "title": "《历代经济变革得失》",
+    "file": "notes/note7.html",
+    "date": "2026-05-23",
+    "category": "历史",
+    "tags": [
+      "历史"
+    ]
+  },
+  {
+    "id": "8",
+    "title": "《吴军数学通识讲义》",
+    "file": "notes/note8.html",
+    "date": "2026-05-24",
+    "category": "科技",
+    "tags": [
+      "数学"
+    ]
+  },
+  {
+    "id": "9",
+    "title": "《心智简史》",
+    "file": "notes/note9.html",
+    "date": "2026-07-14",
+    "category": "哲学",
+    "tags": [
+      "哲学"
+    ]
+  },
+  {
+    "id": "10",
+    "title": "《文明的比较》",
+    "file": "notes/note10.html",
+    "date": "2026-05-24",
+    "category": "历史",
+    "tags": [
+      "历史"
+    ]
+  },
+  {
+    "id": "11",
+    "title": "《王立铭进化论讲义》",
+    "file": "notes/note11.html",
+    "date": "2026-05-25",
+    "category": "科技",
+    "tags": [
+      "生物学"
+    ]
+  },
+  {
+    "id": "12",
+    "title": "《科学革命的结构》",
+    "file": "notes/note12.html",
+    "date": "2026-07-13",
+    "category": "哲学",
+    "tags": [
+      "哲学"
+    ]
+  },
+  {
+    "id": "13",
+    "title": "《芯片简史》",
+    "file": "notes/note13.html",
+    "date": "2026-05-30",
+    "category": "科技",
+    "tags": [
+      "半导体"
+    ]
+  },
+  {
+    "id": "14",
+    "title": "《贝叶斯的博弈》",
+    "file": "notes/note14.html",
+    "date": "2026-05-23",
+    "category": "哲学",
+    "tags": [
+      "哲学"
+    ]
+  },
+  {
+    "id": "15",
+    "title": "《通用人工智能》· 知识图谱 2026-06-16 1618",
+    "file": "notes/note15.html",
+    "date": "2026-06-16",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "知识图谱"
+    ]
+  },
+  {
+    "id": "16",
+    "title": "《金融学》（人大版）",
+    "file": "notes/note16.html",
+    "date": "2026-05-29",
+    "category": "其他",
+    "tags": [
+      "金融",
+      "经济学"
+    ]
+  },
+  {
+    "id": "17",
+    "title": "费曼学习法",
+    "file": "notes/note21.html",
+    "date": "2026-06-07",
+    "category": "文学",
+    "tags": [
+      "学习方法"
+    ]
+  },
+  {
+    "id": "18",
+    "title": "AI社会学探讨",
+    "file": "notes/note22.html",
+    "date": "2026-05-26",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "社会学"
+    ]
+  },
+  {
+    "id": "19",
+    "title": "AI时代管理幅度",
+    "file": "notes/note23.html",
+    "date": "2026-06-15",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "组织管理"
+    ]
+  },
+  {
+    "id": "20",
+    "title": "组织行为学 — 知识体系",
+    "file": "notes/note24.html",
+    "date": "2026-05-11",
+    "category": "科技",
+    "tags": [
+      "组织管理",
+      "知识体系"
+    ]
+  },
+  {
+    "id": "21",
+    "title": "组织行为学内容详细介绍-0522",
+    "file": "notes/note25.html",
+    "date": "2026-05-22",
+    "category": "科技",
+    "tags": [
+      "组织管理"
+    ]
+  },
+  {
+    "id": "22",
+    "title": "组织行为学内容详细介绍",
+    "file": "notes/note26.html",
+    "date": "2026-05-11",
+    "category": "科技",
+    "tags": [
+      "组织管理"
+    ]
+  },
+  {
+    "id": "23",
+    "title": "组织行为学知识概览-0523-deepseek版",
+    "file": "notes/note27.html",
+    "date": "2026-05-23",
+    "category": "科技",
+    "tags": [
+      "组织管理",
+      "知识体系"
+    ]
+  },
+  {
+    "id": "24",
+    "title": "政治经济学与传统经济学的区别",
+    "file": "notes/note28.html",
+    "date": "2026-05-13",
+    "category": "历史",
+    "tags": [
+      "经济学"
+    ]
+  },
+  {
+    "id": "25",
+    "title": "辜朝明-资产负债表衰退理论",
+    "file": "notes/note29.html",
+    "date": "2026-06-27",
+    "category": "历史",
+    "tags": [
+      "经济学",
+      "历史"
+    ]
+  },
+  {
+    "id": "26",
+    "title": "金融学 — 测试版",
+    "file": "notes/note30.html",
+    "date": "2026-05-18",
+    "category": "其他",
+    "tags": [
+      "经济学",
+      "金融"
+    ]
+  },
+  {
+    "id": "27",
+    "title": "AI agent 发展阶段-移动端",
+    "file": "notes/note31.html",
+    "date": "2026-05-07",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "Agent"
+    ]
+  },
+  {
+    "id": "28",
+    "title": "AI agent 发展阶段介绍-网页版",
+    "file": "notes/note32.html",
+    "date": "2026-05-07",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "Agent"
+    ]
+  },
+  {
+    "id": "29",
+    "title": "AI agent 运行流程图",
+    "file": "notes/note33.html",
+    "date": "2026-04-30",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "Agent"
+    ]
+  },
+  {
+    "id": "30",
+    "title": "css guide clay lite deck",
+    "file": "notes/note35.html",
+    "date": "2026-05-20",
+    "category": "科技",
+    "tags": [
+      "前端",
+      "CSS"
+    ]
+  },
+  {
+    "id": "31",
+    "title": "js guide clay lite deck",
+    "file": "notes/note37.html",
+    "date": "2026-05-21",
+    "category": "科技",
+    "tags": [
+      "前端",
+      "JavaScript"
+    ]
+  },
+  {
+    "id": "32",
+    "title": "汇总HTML-CSS-JS介绍",
+    "file": "notes/note38.html",
+    "date": "2026-05-21",
+    "category": "科技",
+    "tags": [
+      "前端",
+      "CSS",
+      "JavaScript",
+      "HTML"
+    ]
+  },
+  {
+    "id": "33",
+    "title": "HTML在线编辑器",
+    "file": "notes/note39.html",
+    "date": "2026-05-25",
+    "category": "科技",
+    "tags": [
+      "前端",
+      "HTML"
+    ]
+  },
+  {
+    "id": "34",
+    "title": "HTML在线编辑器-V2",
+    "file": "notes/note40.html",
+    "date": "2026-05-31",
+    "category": "科技",
+    "tags": [
+      "前端",
+      "HTML"
+    ]
+  },
+  {
+    "id": "35",
+    "title": "世界模型理解-0606",
+    "file": "notes/note43.html",
+    "date": "2026-06-06",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "世界模型"
+    ]
+  },
+  {
+    "id": "36",
+    "title": "从算力到模型到应用 — AI7层架构 — xuezhiyong — 0515",
+    "file": "notes/note44.html",
+    "date": "2026-04-29",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "架构"
+    ]
+  },
+  {
+    "id": "37",
+    "title": "基于transformer架构下的AI模型底层原理分享 — xuezhiyong — 0515",
+    "file": "notes/note45.html",
+    "date": "2026-05-13",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "Transformer",
+      "架构"
+    ]
+  },
+  {
+    "id": "38",
+    "title": "基于transformer架构的模型-预测逻辑演示 — xuezhiyong — 0515",
+    "file": "notes/note46.html",
+    "date": "2026-05-14",
+    "category": "科技",
+    "tags": [
+      "AI",
+      "Transformer",
+      "架构"
+    ]
+  },
+  {
+    "id": "39",
+    "title": "格罗斯伯格-统一心智理论",
+    "file": "notes/note47.html",
+    "date": "2026-07-03",
+    "category": "哲学",
+    "tags": [
+      "哲学"
+    ]
   }
 ]

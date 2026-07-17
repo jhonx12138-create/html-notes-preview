@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组织行为学全景：深度拆解 · 模块化精讲</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --c-intro: #2c7da0;
+            --c-intro-dark: #1a4b6e;
+            --c-individual: #2a9d8f;
+            --c-individual-dark: #1d6e64;
+            --c-group: #6a4c93;
+            --c-group-dark: #4a3469;
+            --c-leader: #e76f51;
+            --c-leader-dark: #b04e35;
+            --c-org: #8e44ad;
+            --c-org-dark: #62307a;
+            --c-env: #d68c45;
+            --c-env-dark: #a06228;
+            --c-method: #4a6fa5;
+            --c-method-dark: #2f4a73;
+            --c-future: #c9184a;
+            --c-future-dark: #8a0d33;
+        }
+
+        body {
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #eef2f5;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            color: #2c4254;
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--c-intro), var(--c-future));
+            z-index: 1001;
+            transition: width 0.25s ease;
+            width: 0%;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .slides-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            background: #f8fafc;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+            position: relative;
+        }
+        .slide:nth-child(odd) {
+            background: #ffffff;
+        }
+        .slide:nth-child(even) {
+            background: #f4f8fb;
+        }
+
+        .slide[data-module="intro"] {
+            --accent: var(--c-intro);
+            --accent-dark: var(--c-intro-dark);
+        }
+        .slide[data-module="individual"] {
+            --accent: var(--c-individual);
+            --accent-dark: var(--c-individual-dark);
+        }
+        .slide[data-module="group"] {
+            --accent: var(--c-group);
+            --accent-dark: var(--c-group-dark);
+        }
+        .slide[data-module="leader"] {
+            --accent: var(--c-leader);
+            --accent-dark: var(--c-leader-dark);
+        }
+        .slide[data-module="org"] {
+            --accent: var(--c-org);
+            --accent-dark: var(--c-org-dark);
+        }
+        .slide[data-module="env"] {
+            --accent: var(--c-env);
+            --accent-dark: var(--c-env-dark);
+        }
+        .slide[data-module="method"] {
+            --accent: var(--c-method);
+            --accent-dark: var(--c-method-dark);
+        }
+        .slide[data-module="future"] {
+            --accent: var(--c-future);
+            --accent-dark: var(--c-future-dark);
+        }
+
+        .slide-card {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 1.8rem;
+            box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.03);
+            padding: 2.4rem 2.8rem;
+            border-top: 5px solid var(--accent, #2c7da0);
+        }
+
+        .module-tag {
+            display: inline-block;
+            background: var(--accent, #2c7da0);
+            color: white;
+            padding: 0.25rem 0.9rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .slide-title {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--accent-dark, #1a4b6e);
+            margin-bottom: 0.6rem;
+            letter-spacing: -0.5px;
+            border-left: 6px solid var(--accent, #2c7da0);
+            padding-left: 1.2rem;
+            line-height: 1.2;
+        }
+
+        .slide-sub {
+            color: #5c7f8e;
+            margin-bottom: 1.8rem;
+            font-size: 1rem;
+            font-weight: 400;
+            border-bottom: 1px dashed #cbdde6;
+            padding-bottom: 0.8rem;
+            margin-left: 1.4rem;
+        }
+
+        .two-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.2rem 0;
+        }
+        .three-columns {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.4rem;
+            margin: 1.2rem 0;
+        }
+        .four-columns {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin: 1.2rem 0;
+        }
+
+        .info-box {
+            background: #fefefe;
+            border-radius: 1.2rem;
+            padding: 1.3rem 1.5rem;
+            border-left: 4px solid var(--accent, #2c7da0);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .info-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
+        }
+        .info-box h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-dark, #1f5e7e);
+            margin-bottom: 0.7rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .info-box h3 i {
+            color: var(--accent, #2c7da0);
+            background: color-mix(in srgb, var(--accent, #2c7da0) 12%, transparent);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.95rem;
+        }
+        .info-box ul,
+        .info-box p {
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: #2c4254;
+        }
+        .info-box ul {
+            margin-left: 1.2rem;
+        }
+        .info-box p+p {
+            margin-top: 0.5rem;
+        }
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0 0;
+        }
+        .badge-item {
+            background: color-mix(in srgb, var(--accent, #2c7da0) 12%, white);
+            color: var(--accent-dark, #1f5e7e);
+            padding: 0.3rem 0.95rem;
+            border-radius: 2rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid color-mix(in srgb, var(--accent, #2c7da0) 25%, transparent);
+        }
+
+        .timeline-horizontal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin: 1.5rem 0;
+        }
+        .timeline-node {
+            flex: 1;
+            background: linear-gradient(135deg, color-mix(in srgb, var(--accent, #2c7da0) 8%, white), white);
+            border-radius: 1rem;
+            padding: 1rem 0.8rem;
+            text-align: center;
+            min-width: 130px;
+            font-weight: 500;
+            font-size: 0.88rem;
+            border: 1px solid color-mix(in srgb, var(--accent, #2c7da0) 18%, transparent);
+            line-height: 1.4;
+        }
+        .timeline-node strong {
+            color: var(--accent-dark, #1a4b6e);
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        .quote {
+            background: color-mix(in srgb, var(--accent, #2c7da0) 8%, white);
+            border-radius: 1rem;
+            padding: 1rem 1.5rem;
+            margin: 1.2rem 0;
+            font-weight: 500;
+            border-left: 5px solid var(--accent, #2c7da0);
+            color: var(--accent-dark, #1a4b6e);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .cover-card {
+            text-align: center;
+            padding: 4rem 3rem;
+            background: linear-gradient(135deg, #1a4b6e 0%, #2c7da0 50%, #c9184a 100%);
+            color: white;
+            border-top: none;
+            box-shadow: 0 30px 60px -20px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .cover-card h1 {
+            font-size: 3.4rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            line-height: 1.15;
+        }
+        .cover-card .cover-sub {
+            font-size: 1.3rem;
+            opacity: 0.92;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+        }
+        .cover-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2.5rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+            font-size: 0.95rem;
+            opacity: 0.85;
+        }
+        .cover-meta div i {
+            margin-right: 6px;
+        }
+        .cover-signature {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            font-size: 0.65rem;
+            opacity: 0.6;
+            font-weight: 400;
+            text-align: right;
+            line-height: 1.3;
+            pointer-events: none;
+        }
+        @media (max-width: 700px) {
+            .cover-signature {
+                bottom: 0.6rem;
+                right: 0.8rem;
+                font-size: 0.55rem;
+            }
+        }
+
+        .toc-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .toc-item {
+            background: #fff;
+            border-radius: 1rem;
+            padding: 1.1rem 1.2rem;
+            border-left: 4px solid var(--toc-c, #2c7da0);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .toc-item:hover {
+            transform: translateX(4px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+        .toc-item .toc-num {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--toc-c, #2c7da0);
+            letter-spacing: 1px;
+        }
+        .toc-item h4 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #1a4b6e;
+            margin: 0.3rem 0;
+        }
+        .toc-item p {
+            font-size: 0.82rem;
+            color: #6b8290;
+            line-height: 1.4;
+        }
+
+        .ending-card {
+            text-align: center;
+            background: linear-gradient(135deg, #c9184a 0%, #8a0d33 100%);
+            color: white;
+            border-top: none;
+        }
+        .ending-card h2 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+        .ending-card p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        .book-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0 1rem;
+            text-align: left;
+        }
+        .book-item {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(8px);
+            padding: 1rem 1.2rem;
+            border-radius: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            font-size: 0.9rem;
+        }
+        .book-item strong {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-size: 1rem;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            height: 1px;
+            background: #e0edf3;
+        }
+
+        .nav-fixed {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(12px);
+            border-radius: 60px;
+            padding: 0.55rem 1.1rem;
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(0, 0, 0, 0.06);
+        }
+        .nav-btn {
+            background: #2c7da0;
+            border: none;
+            color: white;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .nav-btn:hover {
+            background: #165a78;
+            transform: scale(1.08);
+        }
+        .page-indicator {
+            font-size: 0.88rem;
+            color: #1e4b6e;
+            font-weight: 700;
+            min-width: 55px;
+            text-align: center;
+        }
+
+        @media (max-width: 900px) {
+            .slide {
+                padding: 2rem 1rem;
+            }
+            .slide-card {
+                padding: 1.5rem 1.3rem;
+                border-radius: 1.2rem;
+            }
+            .two-columns,
+            .three-columns,
+            .four-columns {
+                grid-template-columns: 1fr;
+                gap: 0.9rem;
+            }
+            .slide-title {
+                font-size: 1.7rem;
+            }
+            .cover-card h1 {
+                font-size: 2.2rem;
+            }
+            .cover-card .cover-sub {
+                font-size: 1rem;
+            }
+            .ending-card h2 {
+                font-size: 2rem;
+            }
+            .nav-fixed {
+                bottom: 12px;
+                right: 12px;
+                padding: 0.4rem 0.8rem;
+            }
+            .nav-btn {
+                width: 34px;
+                height: 34px;
+            }
+        }
+        @media (min-width: 901px) and (max-width: 1100px) {
+            .three-columns {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .four-columns {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media print {
+            .slide {
+                page-break-after: always;
+                min-height: auto;
+                padding: 1rem;
+            }
+            .nav-fixed,
+            .progress-bar {
+                display: none;
+            }
+            .slide-card {
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slides-container" id="slidesContainer">
+
+        <!-- 封面 -->
+        <div class="slide" data-module="intro">
+            <div class="slide-card cover-card">
+                <h1>组织行为学全景</h1>
+                <div class="cover-sub">深度拆解 · 模块化精讲 · 从经典理论到算法时代</div>
+                <div style="font-size: 4rem; opacity: 0.85; margin: 1.5rem 0;"><i class="fas fa-sitemap"></i></div>
+                <div class="cover-meta">
+                    <div><i class="fas fa-layer-group"></i> 10 大模块</div>
+                    <div><i class="fas fa-file-alt"></i> 23 屏精讲</div>
+                    <div><i class="fas fa-microchip"></i> 含 AI 时代前沿</div>
+                </div>
+                <div class="cover-signature" id="coverDateSig">
+                    <span id="todayDate"></span><br>作者：XZY
+                </div>
+            </div>
+        </div>
+
+        <!-- 目录 -->
+        <div class="slide" data-module="intro">
+            <div class="slide-card">
+                <span class="module-tag">CONTENTS</span>
+                <div class="slide-title">📑 目录 · 学习路线图</div>
+                <div class="slide-sub">从学科基础 → 个体 → 群体 → 领导力 → 组织 → 环境 → 整合前沿</div>
+                <div class="toc-grid">
+                    <div class="toc-item" style="--toc-c: var(--c-intro);" data-target="2"><div class="toc-num">PART 01</div><h4>学科定位</h4><p>OB是什么？多学科交叉与多层次分析</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-intro);" data-target="3"><div class="toc-num">PART 02</div><h4>历史演进</h4><p>从科学管理到算法时代的范式变迁</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-individual);" data-target="5"><div class="toc-num">PART 03</div><h4>个体层 (5屏)</h4><p>人格、知觉、决策、动机、情绪压力</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-group);" data-target="10"><div class="toc-num">PART 04</div><h4>群体与团队 (3屏)</h4><p>群体动力、团队过程、决策陷阱</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-leader);" data-target="13"><div class="toc-num">PART 05</div><h4>领导力理论 (2屏)</h4><p>经典脉络与当代前沿</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-org);" data-target="15"><div class="toc-num">PART 06</div><h4>组织层 (3屏)</h4><p>结构、文化、权力与HRM</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-env);" data-target="18"><div class="toc-num">PART 07</div><h4>环境层</h4><p>跨文化、制度同构、ESG</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-method);" data-target="19"><div class="toc-num">PART 08</div><h4>理论流派</h4><p>核心透镜与新兴框架</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-method);" data-target="20"><div class="toc-num">PART 09</div><h4>研究方法论</h4><p>定量、定性、混合与新兴技术</p></div>
+                    <div class="toc-item" style="--toc-c: var(--c-future);" data-target="21"><div class="toc-num">PART 10</div><h4>整合与前沿</h4><p>AI时代的OB重塑</p></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1. 学科定位 -->
+        <div class="slide" data-module="intro">
+            <div class="slide-card">
+                <span class="module-tag">PART 01 · 学科基础</span>
+                <div class="slide-title">📖 一、学科定位 · 组织行为学是什么？</div>
+                <div class="slide-sub">定义 | 核心特征 | 多学科交叉属性 | 多层次分析框架</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-bullseye"></i> 标准定义与目标</h3>
+                        <p><strong>组织行为学（Organizational Behavior, OB）</strong>是系统研究组织中人的心理与行为规律的学科，探讨个体、群体、结构对行为的影响，并运用知识改善组织效能。</p>
+                        <p><strong>四大核心目标：</strong>描述（是什么）→ 解释（为什么）→ 预测（将会怎样）→ 控制/干预（如何改善）。OB不仅是描述性科学，更是以证据为基础的管理实践指南。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-shapes"></i> 三大根本特征</h3>
+                        <ul>
+                            <li><strong>多学科根基：</strong>心理学（个体）、社会学（群体/制度）、人类学（文化）、政治学（权力）、经济学（激励）五大学科交叉融合。</li>
+                            <li><strong>多层次分析：</strong>个体层→群体/团队层→组织层→环境层，四层嵌套，高层约束低层，低层涌现高层现象。</li>
+                            <li><strong>双元目标：</strong>科学性（追求严谨理论）与应用性（解决管理问题）并重，强调循证管理。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="quote"><i class="fas fa-quote-left"></i> <strong>组织行为学的终极使命：</strong>让人性化的管理成为竞争优势，让组织成为个体意义与效率的共生体。正如彼得·德鲁克所言："管理的本质，是激发和释放每一个人的善意与潜能。"</div>
+                <div class="badge-list"><span class="badge-item"><i class="fas fa-brain"></i> 心理学</span><span class="badge-item"><i class="fas fa-users"></i> 社会学</span><span class="badge-item"><i class="fas fa-globe"></i> 人类学</span><span class="badge-item"><i class="fas fa-landmark"></i> 政治学</span><span class="badge-item"><i class="fas fa-chart-line"></i> 经济学</span></div>
+            </div>
+        </div>
+
+        <!-- 2. 历史演进上 -->
+        <div class="slide" data-module="intro">
+            <div class="slide-card">
+                <span class="module-tag">PART 02 · 历史脉络</span>
+                <div class="slide-title">⏳ 二、历史演进 (上) · 从科学管理到人际关系革命</div>
+                <div class="slide-sub">1880s–1950s：效率至上 → 社会人觉醒 | 泰勒制 · 霍桑实验 · 人际关系学派</div>
+                <div class="timeline-horizontal">
+                    <div class="timeline-node"><strong>1880s–1900s</strong>古典管理萌芽<br><small>亚当·斯密分工论、巴比奇</small></div>
+                    <div class="timeline-node"><strong>1900s–1910s</strong>科学管理运动<br><small>泰勒《科学管理原理》</small></div>
+                    <div class="timeline-node"><strong>1924–1932</strong>霍桑实验<br><small>梅奥、罗特利斯伯格</small></div>
+                    <div class="timeline-node"><strong>1940s–1950s</strong>人际关系学派<br><small>马斯洛、麦格雷戈</small></div>
+                </div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-industry"></i> 科学管理 (Taylor, 1911)</h3>
+                        <p>弗雷德里克·泰勒通过时间-动作研究将工作分解为标准化动作，推行计件工资制。核心理念：<strong>"经济人"假设</strong>——员工主要受金钱驱动。贡献在于大幅提升生产效率，但缺陷明显：将人视为机器的延伸，忽视情感与社会需求，引发工人抵制。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-handshake"></i> 人际关系运动 (Mayo, 1933)</h3>
+                        <p>霍桑实验意外发现：<strong>非正式组织</strong>中的群体规范、社会归属感和管理者关注（即"霍桑效应"）比物质条件更能影响产出。提出<strong>"社会人"假设</strong>，标志着管理思想从"机器模型"转向"有机体模型"，重视沟通、参与和员工导向管理。</p>
+                    </div>
+                </div>
+                <div class="quote">📌 <strong>范式初变：</strong>从"机器模型"转向"有机体模型"，管理开始重视沟通、参与和群体关系。霍桑实验被誉为组织行为学的奠基性研究。</div>
+            </div>
+        </div>
+
+        <!-- 3. 历史演进下 -->
+        <div class="slide" data-module="intro">
+            <div class="slide-card">
+                <span class="module-tag">PART 02 · 历史脉络</span>
+                <div class="slide-title">⚡ 二、历史演进 (下) · 现代OB奠基 → 算法时代</div>
+                <div class="slide-sub">1950s–2020s：复杂人假设 · 权变理论 · 积极OB · 数字化转型</div>
+                <div class="timeline-horizontal">
+                    <div class="timeline-node"><strong>1950–1970</strong>现代OB奠基<br><small>西蒙、麦格雷戈、赫兹伯格</small></div>
+                    <div class="timeline-node"><strong>1980–1990</strong>战略与认知转向<br><small>波特、卡尼曼、沙因</small></div>
+                    <div class="timeline-node"><strong>2000–2010</strong>积极OB兴起<br><small>心理资本、真实型领导</small></div>
+                    <div class="timeline-node"><strong>2020–今</strong>数字化与算法时代<br><small>AI管理、人机协作、神经OB</small></div>
+                </div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-user-cog"></i> 人性假设演变</h3>
+                        <p>经济人（科学管理）→ 社会人（霍桑实验）→ <strong>自我实现人</strong>（马斯洛、麦格雷戈Y理论）→ <strong>复杂人</strong>（沙因，1965；强调个体差异与情境权变）→ <strong>数字人</strong>（算法时代，人被数据化与算法调控）。每一次假设变迁都深刻改变了管理实践。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-star"></i> 近年里程碑贡献</h3>
+                        <ul>
+                            <li><strong>情境强度理论</strong> (Mischel, 1977)：强情境压制人格差异，弱情境释放个体特质。</li>
+                            <li><strong>情感事件理论</strong> (Weiss & Cropanzano, 1996)：工作事件→情感反应→态度与行为。</li>
+                            <li><strong>心理资本 (PsyCap)</strong> (Luthans, 2004)：自我效能、希望、韧性、乐观——可测量、可开发。</li>
+                            <li><strong>大数据与神经科学OB</strong>：可穿戴设备、fMRI用于测量员工状态。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 个体层 1/5 人格 -->
+        <div class="slide" data-module="individual">
+            <div class="slide-card">
+                <span class="module-tag">PART 03 · 个体层 (1/5)</span>
+                <div class="slide-title">🧬 三、个体差异：人格、能力与价值观</div>
+                <div class="slide-sub">大五人格 (OCEAN) · 核心自我评价 · 情绪智力 · 能力分类</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-dna"></i> 大五人格 (OCEAN)</h3>
+                        <ul>
+                            <li><strong>尽责性 (Conscientiousness)：</strong>自律、有条理、成就导向——元分析表明是跨职业<strong>最强绩效预测因子</strong> (ρ≈0.25)。</li>
+                            <li><strong>情绪稳定性 (低神经质)：</strong>情绪平稳、抗压能力强——预测工作满意度与低倦怠。</li>
+                            <li><strong>外向性 (Extraversion)：</strong>社交活跃、积极情感——与<strong>领导涌现</strong>和销售岗位绩效相关。</li>
+                            <li><strong>开放性 (Openness)：</strong>好奇心、想象力——预测<strong>创造力</strong>和培训效果，尤其在变革情境下价值凸显。</li>
+                            <li><strong>宜人性 (Agreeableness)：</strong>合作、信任——预测<strong>团队合作</strong>与组织公民行为，但不宜过高（可能回避冲突）。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-brain"></i> 能力与自我评价</h3>
+                        <ul>
+                            <li><strong>一般心理能力 (GMA)：</strong>即认知能力或"g因素"，是复杂工作中绩效的最强预测因子之一 (ρ≈0.51)。</li>
+                            <li><strong>情绪智力 (EI)：</strong>Mayer-Salovey四分支模型——感知、使用、理解、管理情绪。在需要高情绪劳动的工作中预测力显著。</li>
+                            <li><strong>核心自我评价 (CSE)：</strong>Judge整合四特质——自尊、一般自我效能、控制点、情绪稳定性。高CSE者更满意、更投入、绩效更高。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-globe-asia"></i> 价值观与文化嵌入</h3>
+                    <p>工作价值观（如成就、安全、自主）深刻影响职业选择与组织匹配。霍夫斯泰德文化维度（权力距离、个人主义等）塑造员工对权威、团队合作和激励方式的偏好——在一个高权力距离文化中有效的管理方式，可能在低权力距离文化中引发抵触。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 个体层 2/5 知觉归因 -->
+        <div class="slide" data-module="individual">
+            <div class="slide-card">
+                <span class="module-tag">PART 03 · 个体层 (2/5)</span>
+                <div class="slide-title">👁️ 三、社会知觉与归因理论</div>
+                <div class="slide-sub">选择性知觉 · 晕轮效应 · Kelley归因三维理论 · 基本归因错误</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-glasses"></i> 社会知觉偏差</h3>
+                        <ul>
+                            <li><strong>选择性知觉：</strong>人们只看到自己期望看到的信息，过滤掉不一致的线索。</li>
+                            <li><strong>晕轮效应：</strong>对某人某一特质的评价泛化到其他特质（如"长得好看的人能力也强"）。</li>
+                            <li><strong>对比效应：</strong>评价受前后对比影响（面试中前一个候选人差，后一个普通也被高估）。</li>
+                            <li><strong>刻板印象：</strong>基于群体归属快速判断个体，忽略个体差异。</li>
+                            <li><strong>首因/近因效应：</strong>最先或最后接收的信息对判断影响最大。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-balance-scale"></i> Kelley归因三维理论 (1967)</h3>
+                        <ul>
+                            <li><strong>一致性 (Consensus)：</strong>其他人面对同样情境是否也这样？（高→外归因）</li>
+                            <li><strong>一贯性 (Consistency)：</strong>此人平时是否总是这样？（高→内归因）</li>
+                            <li><strong>区别性 (Distinctiveness)：</strong>此人只在特定情境下这样？（高→外归因）</li>
+                        </ul>
+                        <p><strong>基本归因错误：</strong>解释他人行为时高估个人因素、低估情境因素。<strong>自利偏差：</strong>将自己的成功归因于内部因素，失败归因于外部因素。</p>
+                    </div>
+                </div>
+                <div class="quote">⚠️ <strong>管理警示：</strong>管理者常因基本归因错误将下属绩效问题归结为能力或态度问题，忽略了制度障碍、资源不足或情境压力——这正是绩效面谈中最常见的认知陷阱。</div>
+            </div>
+        </div>
+
+        <!-- 个体层 3/5 决策 -->
+        <div class="slide" data-module="individual">
+            <div class="slide-card">
+                <span class="module-tag">PART 03 · 个体层 (3/5)</span>
+                <div class="slide-title">🎲 三、决策与判断模型</div>
+                <div class="slide-sub">有限理性 · 双系统理论 · 前景理论 · 决策偏差 · 纠偏工具</div>
+                <div class="three-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-chess"></i> 有限理性 (Simon, 1947)</h3>
+                        <p>赫伯特·西蒙提出"行政人"假设：受限于信息不完整、认知能力有限和时间压力，决策者追求<strong>"满意解"而非最优解</strong>。这一理论颠覆了古典经济学的"完全理性"假设，为行为经济学奠定了微观基础，西蒙因此获1978年诺贝尔经济学奖。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-brain"></i> 双系统理论 (Kahneman, 2011)</h3>
+                        <p>丹尼尔·卡尼曼区分两种思维模式：<strong>系统1</strong>（直觉、快速、自动化、情感驱动）和<strong>系统2</strong>（分析、缓慢、需要意志努力）。启发式偏差（如可得性启发、锚定效应）源于系统1的过度依赖。卡尼曼因此获2002年诺贝尔经济学奖。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-chart-bar"></i> 前景理论 (Kahneman & Tversky, 1979)</h3>
+                        <p>三大核心概念：<strong>损失厌恶</strong>（损失的心理权重约为同等收益的2-2.5倍）、<strong>参照依赖</strong>（评价基于参照点而非绝对值）、<strong>框架效应</strong>（同一问题因表述方式不同而改变选择）。深刻解释了组织变革中员工为何过度抗拒损失。</p>
+                    </div>
+                </div>
+                <div class="quote">🔍 <strong>组织决策病灶：</strong>承诺升级（为已失败的项目继续投入资源，因不愿承认损失）、确认偏误（只搜索支持已有观点的信息）。<strong>解毒：</strong>事前剖析（预先设想失败原因）、红队对抗（指定专人扮演反对者）、决策检查清单。</div>
+            </div>
+        </div>
+
+        <!-- 个体层 4/5 动机 -->
+        <div class="slide" data-module="individual">
+            <div class="slide-card">
+                <span class="module-tag">PART 03 · 个体层 (4/5)</span>
+                <div class="slide-title">⚙️ 三、动机与激励深度解析</div>
+                <div class="slide-sub">内容理论 · 过程理论 · 自我决定理论 (SDT) · 算法时代的动机挑战</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-layer-group"></i> 内容理论（What 激励什么）</h3>
+                        <ul>
+                            <li><strong>马斯洛需求层次 (1943)：</strong>生理→安全→归属→尊重→自我实现，底层需求未满足时高层激励失效。</li>
+                            <li><strong>赫兹伯格双因素 (1959)：</strong>保健因素（薪资、工作条件）消除不满但不激励；<strong>激励因素</strong>（认可、成长、成就）才真正驱动工作热情。</li>
+                            <li><strong>麦克利兰三种需要 (1961)：</strong>成就需要(nAch)、权力需要(nPow)、归属需要(nAff)——高成就需要者偏好中等难度、快速反馈的任务。</li>
+                            <li><strong>ERG理论 (Alderfer, 1969)：</strong>生存-关系-成长三层，允许"挫折-回归"（高层受挫时退而求低层满足）。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-cogs"></i> 过程理论（How 如何激励）</h3>
+                        <ul>
+                            <li><strong>期望理论 (Vroom, 1964)：</strong>激励力 = 期望×工具性×效价。员工需相信努力能达成绩效、绩效能带来结果、结果是自己想要的——<strong>三者缺一不可</strong>。</li>
+                            <li><strong>公平理论 (Adams, 1965)：</strong>员工比较投入-产出比与他人。不公平感知导致行为调整（减少努力、要求加薪、改变比较对象、离职）。</li>
+                            <li><strong>目标设置理论 (Locke & Latham, 1990)：</strong>明确且有挑战性的目标（配合反馈）最能提升绩效——目标承诺和任务复杂性是关键调节变量。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-shield-alt"></i> 自我决定理论 (SDT, Deci & Ryan, 2000)</h3>
+                    <p><strong>三大基本心理需求：</strong>自主（掌控自己行为的感受）、胜任（有效应对环境的体验）、归属（与他人建立有意义的联结）。当三者被满足时，内在动机蓬勃发展；当被削弱时，动机外化甚至消失。<strong>AI管理挑战：</strong>算法控制（如自动排班、实时行为监控）削弱自主需求，需透明可解释的算法设计来维护员工动机。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 个体层 5/5 情绪压力 -->
+        <div class="slide" data-module="individual">
+            <div class="slide-card">
+                <span class="module-tag">PART 03 · 个体层 (5/5)</span>
+                <div class="slide-title">😤 三、情绪劳动 · 工作态度 · 压力与倦怠</div>
+                <div class="slide-sub">情感事件理论 · 组织承诺三成分 · JD-R模型 · 倦怠 · AI监控</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-theater-masks"></i> 情绪劳动 (Hochschild, 1983)</h3>
+                        <ul>
+                            <li><strong>表层扮演：</strong>调整外在表情，内心感受不变——长期使用导致情绪失调和倦怠。</li>
+                            <li><strong>深层扮演：</strong>主动调整内心感受以匹配角色要求——更可持续，但消耗认知资源。</li>
+                            <li><strong>情感事件理论 (AET, 1996)：</strong>工作中的具体事件触发情绪反应（积极/消极），累积为长期态度，进而影响判断驱动行为。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-heart"></i> 态度与承诺</h3>
+                        <ul>
+                            <li><strong>工作满意度：</strong>受工作本身、薪酬、晋升、上司、同事五大因素影响。满意度-绩效关系虽弱于直觉预期但稳定存在 (r≈0.30)。</li>
+                            <li><strong>组织承诺三成分 (Meyer & Allen, 1991)：</strong>情感承诺（想留下）、持续承诺（需要留下，因沉没成本）、规范承诺（应该留下，因义务感）。情感承诺与绩效和OCB最强正相关。</li>
+                            <li><strong>员工敬业度：</strong>活力、奉献、专注三位一体，超越满意度，直接预测绩效与留任。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-battery-empty"></i> 压力与职业倦怠</h3>
+                    <ul>
+                        <li><strong>挑战性/阻碍性压力源：</strong>挑战性压力（高工作负荷、时间紧迫）可激发成长；阻碍性压力（角色模糊、官僚障碍）始终有害。</li>
+                        <li><strong>JD-R模型 (Demerouti, 2001)：</strong>工作要求消耗能量→健康损害路径；工作资源提供支持→动机激发路径。双路径同时运作。</li>
+                        <li><strong>倦怠三成分 (Maslach)：</strong>情绪耗竭、去人格化（冷漠对待服务对象）、个人成就感降低。</li>
+                        <li><strong>AI监控的双刃剑：</strong>算法监控提升透明度但也可能制造"全景监狱"效应，加剧心理压力。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 群体层 1/3 基础 -->
+        <div class="slide" data-module="group">
+            <div class="slide-card">
+                <span class="module-tag">PART 04 · 群体与团队 (1/3)</span>
+                <div class="slide-title">👥 四、群体基础与凝聚力</div>
+                <div class="slide-sub">正式/非正式群体 · 塔克曼五阶段模型 · 群体属性 · 凝聚力双刃剑</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-users-cog"></i> 群体类型与发展阶段</h3>
+                        <ul>
+                            <li><strong>正式群体：</strong>组织架构规定的命令组、任务组——以完成组织目标为存在目的。</li>
+                            <li><strong>非正式群体：</strong>基于共同兴趣或友谊自发形成——满足社交需求，对组织文化有强大塑造力。</li>
+                            <li><strong>塔克曼五阶段 (1965)：</strong>形成（礼貌试探）→ 震荡/风暴（冲突浮现，权力争夺）→ 规范（角色澄清，凝聚力初建）→ 执行（高效协作，聚焦任务）→ 解散（任务完成，情感收束）。并非所有团队线性经历，可能循环或跳跃。</li>
+                            <li><strong>群体属性：</strong>角色（任务/维护/个体角色）、规范（共享行为标准）、地位（正式与非正式层级）、规模（与社会惰化成正比）。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-link"></i> 凝聚力：绩效的助推器还是绊脚石？</h3>
+                        <ul>
+                            <li><strong>社会凝聚力：</strong>因人际吸引而在一起——与绩效关系不稳定。</li>
+                            <li><strong>任务凝聚力：</strong>因共同目标和任务承诺而凝聚——与绩效中度正相关 (ρ≈0.25)。</li>
+                            <li><strong>关键调节变量：</strong>群体规范的方向。高凝聚力+高绩效规范=卓越团队；高凝聚力+低绩效规范=集体怠工。</li>
+                            <li><strong>风险警示：</strong>过度凝聚力引发群体思维，压制异议，导致灾难性决策（如挑战者号灾难、猪湾入侵）。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 群体层 2/3 过程 -->
+        <div class="slide" data-module="group">
+            <div class="slide-card">
+                <span class="module-tag">PART 04 · 群体与团队 (2/3)</span>
+                <div class="slide-title">⚙️ 四、团队过程与心理机制</div>
+                <div class="slide-sub">心理安全感 · 共享心智模型 · 团队冲突类型 · 过程损耗</div>
+                <div class="info-box">
+                    <h3><i class="fas fa-shield-heart"></i> 心理安全感 (Edmondson, 1999)</h3>
+                    <p><strong>定义：</strong>团队成员相信在团队中承担人际风险是安全的——可以提问、承认错误、提出不同意见而不必担心被惩罚或羞辱。Google"亚里士多德计划"（2015，历时2年研究180个团队）发现：<strong>心理安全感是高效团队的第一预测因子</strong>，超越个人能力、资源等其他所有变量。培养方法：领导示范脆弱性、邀请不同声音、对错误采取学习取向而非责备。</p>
+                </div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-sync-alt"></i> 共享心智模型</h3>
+                        <p>团队成员对任务、设备、角色互动和队友能力形成的<strong>共同知识表征系统</strong>。当共享心智模型高度一致时，团队可以"不必说就懂"——减少过程损耗，提升协调效率。可通过交叉培训、事后回顾(AAR)等方法培养。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-bolt"></i> 团队冲突 (Jehn, 1995)</h3>
+                        <ul>
+                            <li><strong>任务冲突：</strong>关于工作内容和目标的意见分歧——在非常规任务中适度有益，激发创新；但强度过高时破坏性上升。</li>
+                            <li><strong>关系冲突：</strong>人际间的情感摩擦和敌意——<strong>始终有害</strong>，降低满意度、合作与绩效。</li>
+                            <li><strong>过程冲突：</strong>关于任务分配和资源调配的分歧——需及时干预，否则滑向关系冲突。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 群体层 3/3 决策陷阱 -->
+        <div class="slide" data-module="group">
+            <div class="slide-card">
+                <span class="module-tag">PART 04 · 群体与团队 (3/3)</span>
+                <div class="slide-title">⚠️ 四、团队决策陷阱与纠偏工具箱</div>
+                <div class="slide-sub">群体思维 · 群体极化 · 隐藏信息 · 社会惰化 · 阿比林悖论</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-exclamation-triangle"></i> 群体思维 (Janis, 1972)</h3>
+                        <p>高凝聚力团队为追求共识而<strong>压制异议、忽略替代方案</strong>，导致灾难性决策。八大症状：无懈可击幻觉、集体合理化、对群体道德深信不疑、对外部刻板印象、自我审查、一致同意幻觉、对异议者直接施压、自封的"思想警卫"。经典案例：猪湾入侵、挑战者号航天飞机灾难。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-arrow-trend-up"></i> 群体极化</h3>
+                        <p>群体讨论后成员的观点<strong>比讨论前更极端</strong>——倾向风险者更冒险，倾向保守者更保守。原因：社会比较（想显得"坚定"）和信息影响（听到更多支持己方观点的论据）。在社交媒体时代，算法推荐加剧了这一效应。</p>
+                    </div>
+                </div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-eye-slash"></i> 隐藏信息范式 (Stasser & Titus, 1985)</h3>
+                        <p>团队讨论时，成员倾向于反复讨论<strong>共享信息</strong>（大家都知道的信息），而忽略<strong>独有信息</strong>（只有个别人知道的关键信息）。结果是团队决策并未比个体更优——"集体智慧"被浪费。解决：事先列出各自掌握的信息、指定"信息侦探"角色。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-ghost"></i> 社会惰化 & 阿比林悖论</h3>
+                        <p><strong>社会惰化 (Latané, 1979)：</strong>个人在群体中投入减少——"搭便车"现象。随群体规模增大而加剧。对策：个人贡献可识别、任务有意义。</p>
+                        <p><strong>阿比林悖论 (Harvey, 1974)：</strong>群体集体同意了一个<strong>没有人真正想要</strong>的决定——每个人都以为别人想要，于是违心附和。破解之道：鼓励真实表达。</p>
+                    </div>
+                </div>
+                <div class="quote">✅ <strong>缓解工具箱：</strong>魔鬼代言人（指定人专门反对）| 匿名意见收集 | 德尔菲法（多轮匿名专家咨询）| 事前剖析（"假如失败，原因是什么？"）| 分组并行讨论后对比 | 领导最后发言。</div>
+            </div>
+        </div>
+
+        <!-- 领导力 1/2 经典 -->
+        <div class="slide" data-module="leader">
+            <div class="slide-card">
+                <span class="module-tag">PART 05 · 领导力 (1/2)</span>
+                <div class="slide-title">👑 五、领导力理论 · 经典脉络</div>
+                <div class="slide-sub">特质理论 → 行为理论 → 权变模型 → 领导-成员交换 (LMX)</div>
+                <div class="three-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-crown"></i> 特质理论</h3>
+                        <p>早期研究试图寻找"天生领导者"的独特特质。现代元分析证实：大五外向性、尽责性和情绪稳定性与领导涌现及效能相关，但<strong>情境重要性远超纯粹特质</strong>。Judge (2002) 元分析：外向性是最一致的领导涌现预测因子 (ρ≈0.31)。结论：特质提供潜力，情境决定发挥。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-tasks"></i> 行为理论</h3>
+                        <p><strong>俄亥俄州立大学研究：</strong>定规（任务导向，明确角色和目标）与关怀（关系导向，信任与尊重）两个独立维度。<strong>密歇根大学研究：</strong>员工导向（关注人际关系）vs. 生产导向（关注任务完成）。<strong>管理方格 (Blake & Mouton, 1964)：</strong>9,9团队型管理（高任务+高关系）理论上最优，但实际效果仍取决于情境。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-random"></i> 权变理论</h3>
+                        <p><strong>费德勒LPC模型 (1967)：</strong>领导有效性取决于领导风格（任务/关系导向）与情境有利性的匹配——非常有利或非常不利时任务导向更有效，中等有利时关系导向更佳。<strong>路径-目标理论 (House, 1971)：</strong>领导的任务是清除障碍、提供路径，根据下属特征和环境调整风格（指令型、支持型、参与型、成就导向型）。<strong>情境领导 (Hersey & Blanchard)：</strong>根据下属成熟度调整告知-推销-参与-授权风格。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 领导力 2/2 当代 -->
+        <div class="slide" data-module="leader">
+            <div class="slide-card">
+                <span class="module-tag">PART 05 · 领导力 (2/2)</span>
+                <div class="slide-title">✨ 五、当代领导力前沿 · 超越交易型</div>
+                <div class="slide-sub">变革型领导 (4I) · 真实型 · 伦理型 · 共享型 · e-leadership</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-rocket"></i> 变革型领导 (Bass, 1985)</h3>
+                        <ul>
+                            <li><strong>4I维度：</strong>理想化影响（成为榜样，赢得信任）、<strong>智力激发</strong>（鼓励创新思维和挑战假设）、<strong>个性化关怀</strong>（关注每个下属的成长需求）、<strong>鼓舞激励</strong>（描绘愿景，赋予意义）。</li>
+                            <li>元分析 (Judge & Piccolo, 2004) 表明变革型领导与下属满意度 (ρ≈0.58)、动机 (ρ≈0.53) 和绩效 (ρ≈0.26) 显著正相关。</li>
+                            <li>与<strong>交易型领导</strong>（基于交换和例外管理）互补而非对立——最有效的领导者两者并用。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-balance-scale-right"></i> 真实型与伦理型领导</h3>
+                        <ul>
+                            <li><strong>真实型领导 (Avolio, 2004)：</strong>自我意识清晰、透明的关系、内化的道德观、平衡的信息处理。在不确定时代，真实型领导能建立深度信任。</li>
+                            <li><strong>伦理型领导 (Brown, 2005)：</strong>通过榜样示范和奖惩系统强化道德规范——"道德的人+道德的管理者"双重角色。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-robot"></i> 数字化与算法领导</h3>
+                    <p><strong>共享型领导：</strong>领导职能分散于团队成员，根据任务需求动态转移——在敏捷团队和自组织团队中尤为重要。<strong>e-leadership：</strong>在虚拟和混合办公环境中通过技术媒介施加影响，需要算法素养和数字沟通能力。<strong>人机共治：</strong>算法辅助决策（如人才甄选、绩效评估）需确保透明、公平和人类监督——这是未来领导力的核心命题。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 组织层 1/3 结构 -->
+        <div class="slide" data-module="org">
+            <div class="slide-card">
+                <span class="module-tag">PART 06 · 组织层 (1/3)</span>
+                <div class="slide-title">🏛️ 六、组织结构与设计</div>
+                <div class="slide-sub">机械式/有机式 · 当代结构形态 · 权变设计变量</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-sitemap"></i> 经典结构连续带</h3>
+                        <ul>
+                            <li><strong>机械式：</strong>高度分工、严格的层级链、高正式化、集权决策——适合稳定环境和大规模标准化生产。优势：效率；劣势：僵化。</li>
+                            <li><strong>有机式：</strong>扁平化、跨职能团队、低正式化、分权决策——适合动态环境和创新驱动。优势：灵活；劣势：协调成本高。</li>
+                            <li><strong>当代形态：</strong>矩阵结构（双重汇报）、网络组织（核心+外包）、平台型组织（海尔"人单合一"）、无边界组织（GE的"无边界"实践）。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-sliders-h"></i> 权变设计变量</h3>
+                        <ul>
+                            <li><strong>战略追随结构 (钱德勒, 1962)：</strong>结构是战略的延伸——多元化战略需要事业部制，成本领先战略需要职能制效率。</li>
+                            <li><strong>环境不确定性：</strong>稳定→机械式；动荡→有机式。Burns & Stalker (1961) 的经典研究。</li>
+                            <li><strong>技术 (伍德沃德, 1965)：</strong>单件小批量→有机；大批量生产→机械；连续流程→有机。技术复杂性决定最优管理层级跨度。</li>
+                            <li><strong>规模：</strong>组织越大，正式化程度越高——但超过一定阈值后，回归有机以保持创新。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 组织层 2/3 文化 -->
+        <div class="slide" data-module="org">
+            <div class="slide-card">
+                <span class="module-tag">PART 06 · 组织层 (2/3)</span>
+                <div class="slide-title">🎨 六、组织文化深度</div>
+                <div class="slide-sub">沙因三层模型 · 竞争价值框架 · 文化强度 · 变革阻力 · 科特八步法</div>
+                <div class="info-box">
+                    <h3><i class="fas fa-iceberg"></i> 沙因文化三层模型 (Schein, 1985)</h3>
+                    <p>文化如同冰山：<strong>① 人工饰物（表层）</strong>——可见的物理布局、着装、仪式、口号，易于观察但不易解读；<strong>② 倡导的价值观（中层）</strong>——组织宣称的使命、战略、行为准则，可能与实际行为不一致；<strong>③ 基本隐性假设（深层核心）</strong>——关于人性、关系、现实和时间的无意识信念，是文化的真正根源，最难改变。文化的本质力量在于这层"理所当然"的假设。</p>
+                </div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-compass"></i> 竞争价值框架 (Cameron & Quinn, 1999)</h3>
+                        <p>两大维度（灵活vs稳定、内部vs外部）交叉形成四种文化类型：<strong>部落型</strong>（灵活+内部，如初创公司）、<strong>灵活型</strong>（灵活+外部，如广告公司）、<strong>市场型</strong>（稳定+外部，如投资银行）、<strong>层级型</strong>（稳定+内部，如政府机构）。健康组织通常四者兼具，随生命周期调整主导类型。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-sync-alt"></i> 文化变革与阻力</h3>
+                        <p><strong>强文化：</strong>价值观广泛共享、行为一致——降低不确定性但可能僵化，成为"成功的囚徒"。<strong>适应性文化：</strong>鼓励冒险、实验和学习——在VUCA时代更具竞争力。变革最大阻力来自深层假设的动摇，需要<strong>科特八步法</strong>：紧迫感→联盟→愿景→沟通→赋权→短期胜利→巩固→制度化。文化变革以年为单位，没有捷径。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 组织层 3/3 权力政治与HR -->
+        <div class="slide" data-module="org">
+            <div class="slide-card">
+                <span class="module-tag">PART 06 · 组织层 (3/3)</span>
+                <div class="slide-title">⚖️ 六、权力政治与人力资源系统</div>
+                <div class="slide-sub">French & Raven权力五来源 · 组织政治 · 印象管理 · HPWS/AMO</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-bolt"></i> French & Raven 权力五来源 (1959)</h3>
+                        <ul>
+                            <li><strong>强制权：</strong>基于惩罚能力——引发抵抗，与承诺负相关。</li>
+                            <li><strong>奖赏权：</strong>基于分配奖励能力——引发服从，但不一定产生承诺。</li>
+                            <li><strong>合法权：</strong>基于正式职位——引发服从，与职位权威绑定。</li>
+                            <li><strong>专家权：</strong>基于专业技能和知识——<strong>与承诺最强正相关</strong>，超越层级。</li>
+                            <li><strong>参照权：</strong>基于个人魅力和认同——与承诺强正相关，是影响力的最高形式。</li>
+                        </ul>
+                        <p>核心洞见：前三种依赖职位（会随职位消失），后两种源于个人（可持续）。</p>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-mask"></i> 组织政治与印象管理</h3>
+                        <ul>
+                            <li><strong>政治知觉：</strong>感知到组织政治的员工满意度低、离职倾向高、绩效受损——政治知觉本身就是一种压力源。</li>
+                            <li><strong>政治技能 (Ferris, 2005)：</strong>社交敏锐度、人际影响力、关系网络能力、外显真诚——高政治技能者能在政治环境中游刃有余而不被负面评价。</li>
+                            <li><strong>印象管理策略：</strong>逢迎、自我推销、示范、恳求——效果取决于策略与情境的匹配以及感知的真诚度。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3><i class="fas fa-chart-pie"></i> 高绩效工作系统 (HPWS) 与 AMO 框架</h3>
+                    <p><strong>HPWS：</strong>一组相互协同的人力资源实践（选拔、培训、激励、参与）形成的系统，整体效应大于单项之和。元分析 (Combs, 2006) 证实HPWS与组织绩效显著正相关。<strong>AMO框架：</strong>能力（选拔+培训）× 动机（激励+绩效管理）× 机会（参与+授权）= 员工绩效。<strong>人力资源分析 (People Analytics)：</strong>用数据驱动人才决策，但需警惕算法偏见和隐私边界——技术是工具，伦理是底线。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 环境层 -->
+        <div class="slide" data-module="env">
+            <div class="slide-card">
+                <span class="module-tag">PART 07 · 环境层</span>
+                <div class="slide-title">🌐 七、环境层 · 跨文化与制度压力</div>
+                <div class="slide-sub">霍夫斯泰德6维 · GLOBE项目 · 制度同构 · CSR与ESG</div>
+                <div class="three-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-globe-americas"></i> 文化维度</h3>
+                        <ul>
+                            <li><strong>霍夫斯泰德6维 (1980, 2010)：</strong>权力距离、个人主义/集体主义、阳刚/阴柔、不确定性规避、长期/短期导向、放纵/约束——为跨国管理提供比较框架。</li>
+                            <li><strong>GLOBE项目 (House, 2004)：</strong>扩展霍夫斯泰德框架至9维度，区分"现实"与"理想"文化价值观，覆盖62个国家，是迄今最大规模的跨文化领导力研究。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-building-columns"></i> 制度理论</h3>
+                        <ul>
+                            <li><strong>Scott三大支柱 (1995)：</strong>规制（法律规则）、规范（社会期待）、文化-认知（共享信念）——三根支柱共同塑造组织行为。</li>
+                            <li><strong>制度同构 (DiMaggio & Powell, 1983)：</strong>强制同构（法律压力）、模仿同构（不确定性下模仿成功者）、规范同构（专业化标准）——解释了为什么同一领域的组织越来越像。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-leaf"></i> CSR与ESG</h3>
+                        <p>企业社会责任 (CSR) 影响组织认同和人才吸引——千禧一代和Z世代将CSR视为择业关键因素。ESG（环境、社会、治理）已成为投资者评估组织长期价值的重要维度。组织行为学视角：CSR通过增强员工意义感和自豪感，提升敬业度与留任率。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 理论流派 -->
+        <div class="slide" data-module="method">
+            <div class="slide-card">
+                <span class="module-tag">PART 08 · 理论透镜</span>
+                <div class="slide-title">📚 八、核心理论流派总览</div>
+                <div class="slide-sub">解读组织行为的七大主要透镜 · 新兴整合框架</div>
+                <div class="badge-list" style="justify-content:center;">
+                    <span class="badge-item">认知流派</span><span class="badge-item">社会学习</span><span class="badge-item">社会交换</span><span class="badge-item">社会认同</span><span class="badge-item">制度理论</span><span class="badge-item">批判理论</span><span class="badge-item">复杂性理论</span>
+                </div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-microscope"></i> 主要视角</h3>
+                        <ul>
+                            <li><strong>社会交换理论：</strong>人际关系基于互惠成本-收益分析——LMX（领导-成员交换）和POS（感知组织支持）均根植于此。布劳 (Blau, 1964) 区分经济交换与社会交换。</li>
+                            <li><strong>社会认同理论 (Tajfel & Turner, 1979)：</strong>个体通过群体归属定义自我——组织认同强的员工更可能为组织利益付出额外努力。</li>
+                            <li><strong>认知流派：</strong>关注信息加工过程——知觉、归因、决策均属此范畴，为理解偏差提供了系统框架。</li>
+                            <li><strong>社会学习理论 (Bandura, 1977)：</strong>观察、模仿、自我效能——行为不仅由奖惩塑造，也由榜样示范习得。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-puzzle-piece"></i> 新兴整合框架</h3>
+                        <ul>
+                            <li><strong>资源保存理论 (COR, Hobfoll, 1989)：</strong>人们努力获取、保持和保护资源——压力源于资源损失威胁或实际损失。整合压力、倦怠、工作-家庭冲突等研究。</li>
+                            <li><strong>自我决定理论 (SDT)：</strong>自主-胜任-归属——整合动机理论，从内在动机到外在动机的连续体。</li>
+                            <li><strong>JD-R模型：</strong>工作要求-资源双路径——整合工作设计、压力、动机和倦怠研究。</li>
+                            <li><strong>积极组织行为学 (POB)：</strong>聚焦优势而非缺陷——心理资本(PsyCap)是可测量、可开发、与绩效相关的核心构念。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 研究方法 -->
+        <div class="slide" data-module="method">
+            <div class="slide-card">
+                <span class="module-tag">PART 09 · 方法论</span>
+                <div class="slide-title">🔬 九、研究方法论与设计严谨性</div>
+                <div class="slide-sub">定量 · 定性 · 混合方法 · 新兴技术 | 因果推断与伦理</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-chart-scatter"></i> 定量方法</h3>
+                        <ul>
+                            <li><strong>问卷法：</strong>最常用，需关注共同方法偏差 (CMV) 和社会称许性——Podsakoff (2003) 提供了系统解决方案。</li>
+                            <li><strong>实验法：</strong>实验室实验（高内部效度）和现场实验（高外部效度）——因果推断的金标准。</li>
+                            <li><strong>纵向设计：</strong>多时间点测量，可检验因果关系和变化轨迹——但成本高、样本流失是主要挑战。</li>
+                            <li><strong>元分析：</strong>统计整合多项研究结果，提供更精确的效应量估计——OB领域高度依赖元分析建立知识共识。</li>
+                            <li><strong>统计工具：</strong>结构方程模型(SEM)、多层线性模型(HLM)——处理潜变量和嵌套数据。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-book-open"></i> 定性方法与前沿技术</h3>
+                        <ul>
+                            <li><strong>案例研究 (Eisenhardt, 1989)：</strong>深入理解组织现象，适合构建新理论——理论抽样是关键。</li>
+                            <li><strong>扎根理论 (Glaser & Strauss, 1967)：</strong>从数据中涌现理论，避免预设框架。</li>
+                            <li><strong>民族志：</strong>长期沉浸式观察，揭示深层文化模式。</li>
+                            <li><strong>经验取样法 (ESM)：</strong>实时捕捉日常体验波动——智能手机使ESM大规模实施成为可能。</li>
+                            <li><strong>社会网络分析 (SNA)：</strong>量化关系结构和信息流动——识别关键节点和结构洞。</li>
+                            <li><strong>大数据文本分析 & 可穿戴设备：</strong>从邮件、聊天记录中挖掘行为模式；生理数据补充自我报告。</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 整合前沿 -->
+        <div class="slide" data-module="future">
+            <div class="slide-card">
+                <span class="module-tag">PART 10 · 整合与前沿</span>
+                <div class="slide-title">🔮 十、整合逻辑 · 从经典走向算法时代</div>
+                <div class="slide-sub">多层次交互 · 贯穿变量 · AI重塑组织行为学</div>
+                <div class="quote"><strong>全局嵌套模型：</strong>宏观环境（制度、文化、技术）→ 组织设计/文化 → 团队过程/领导力 → 个体动机/行为。上层约束下层，下层涌现上层——理解组织行为需要同时佩戴四层镜片。<br><strong>贯穿变量：</strong>权力、信任、公平、意义感——它们在不同层次反复出现，是理解组织行为的通用货币。</div>
+                <div class="two-columns">
+                    <div class="info-box">
+                        <h3><i class="fas fa-robot"></i> 人工智能与OB新命题</h3>
+                        <ul>
+                            <li><strong>算法管理冲击SDT自主需求：</strong>自动排班、实时监控削弱员工自主感——透明可解释的算法是缓解之道。</li>
+                            <li><strong>人机团队信任与责任：</strong>当AI参与决策，信任如何建立？责任如何分配？——"算法厌恶"与"自动化偏见"并存。</li>
+                            <li><strong>一人公司(OPC)与微组织：</strong>AI赋能个体创业者，传统组织边界模糊化——OB的研究对象正在扩展。</li>
+                            <li><strong>生成式AI重塑知识工作：</strong>写作、编程、设计被AI辅助——工作设计、技能需求、职业认同都在重构。</li>
+                        </ul>
+                    </div>
+                    <div class="info-box">
+                        <h3><i class="fas fa-telescope"></i> 未来研究方向</h3>
+                        <ul>
+                            <li><strong>AI伦理与透明领导力：</strong>算法决策的公平性、可解释性和问责机制。</li>
+                            <li><strong>混合办公心理契约：</strong>远程工作如何影响员工-组织关系？"数字在场"如何管理？</li>
+                            <li><strong>数据隐私与员工福祉：</strong>监控技术的生产力收益与心理代价如何权衡？</li>
+                            <li><strong>DEI（多元、公平、包容）与算法偏见：</strong>AI招聘工具可能放大既有偏见——需要组织行为学家的深度介入。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="badge-list">
+                    <span class="badge-item">算法组织行为学</span><span class="badge-item">神经OB</span><span class="badge-item">积极OB 2.0</span><span class="badge-item">可持续组织</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 结尾页 -->
+        <div class="slide" data-module="future">
+            <div class="slide-card ending-card">
+                <h2>🎓 总结与延伸阅读</h2>
+                <p>组织行为学的本质：在复杂人性与制度约束的张力中，寻找个体、群体与组织的共生之道。</p>
+                <div class="book-list">
+                    <div class="book-item"><strong>📘 罗宾斯 《组织行为学》</strong>全球最畅销OB教科书，体系完整，案例丰富，适合系统入门与教学参考。</div>
+                    <div class="book-item"><strong>📕 巴纳德 《经理人员的职能》</strong>现代管理理论奠基之作，深刻论述组织协作系统与权威的本质来源。</div>
+                    <div class="book-item"><strong>📗 卡尼曼 《思考，快与慢》</strong>决策双系统与认知偏差的必读经典，重塑对理性决策的理解。</div>
+                    <div class="book-item"><strong>📙 沙因 《组织文化与领导力》</strong>文化三层模型开创之作，领导者如何创建、管理、变革组织文化。</div>
+                    <div class="book-item"><strong>📓 戴维·迈尔斯 《社会心理学》</strong>群体动力、社会认知、归因理论——OB的社会心理学根基。</div>
+                    <div class="book-item"><strong>📔 德鲁克 《管理的实践》</strong>目标管理与组织效能的开创性经典，被誉为"现代管理学之父"的奠基之作。</div>
+                </div>
+                <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
+                    <div style="font-size: 1.4rem; margin-bottom: 0.5rem;">💬 Thank You</div>
+                    <p style="font-size: 0.9rem; opacity: 0.8;">理解组织 · 重塑工作 · 成就个体</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="nav-fixed">
+        <button class="nav-btn" id="prevBtn" aria-label="上一页"><i class="fas fa-chevron-left"></i></button>
+        <span class="page-indicator" id="pageIndicator">1 / 23</span>
+        <button class="nav-btn" id="nextBtn" aria-label="下一页"><i class="fas fa-chevron-right"></i></button>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const indicator = document.getElementById('pageIndicator');
+        const progressBar = document.getElementById('progressBar');
+        const total = slides.length;
+        let currentIdx = 0;
+
+        function updateUI() {
+            indicator.textContent = `${currentIdx + 1} / ${total}`;
+            progressBar.style.width = `${((currentIdx + 1) / total) * 100}%`;
+        }
+
+        function scrollToSlide(index) {
+            index = Math.max(0, Math.min(index, total - 1));
+            slides[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
+            currentIdx = index;
+            updateUI();
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+            let bestEntry = null;
+            let maxRatio = 0;
+            entries.forEach(entry => {
+                if (entry.intersectionRatio > maxRatio) {
+                    maxRatio = entry.intersectionRatio;
+                    bestEntry = entry;
+                }
+            });
+            if (bestEntry && bestEntry.intersectionRatio >= 0.5) {
+                const idx = Array.from(slides).indexOf(bestEntry.target);
+                if (idx !== -1 && idx !== currentIdx) {
+                    currentIdx = idx;
+                    updateUI();
+                }
+            }
+        }, { threshold: [0.5, 0.6, 0.7, 0.8, 0.9, 1.0] });
+        slides.forEach(slide => observer.observe(slide));
+
+        prevBtn.addEventListener('click', () => scrollToSlide(currentIdx - 1));
+        nextBtn.addEventListener('click', () => scrollToSlide(currentIdx + 1));
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault();
+                scrollToSlide(currentIdx - 1); }
+            if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault();
+                scrollToSlide(currentIdx + 1); }
+            if (e.key === 'Home') { e.preventDefault();
+                scrollToSlide(0); }
+            if (e.key === 'End') { e.preventDefault();
+                scrollToSlide(total - 1); }
+        });
+
+        document.querySelectorAll('.toc-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const target = parseInt(item.dataset.target, 10);
+                if (!isNaN(target)) scrollToSlide(target);
+            });
+        });
+
+        const todayElem = document.getElementById('todayDate');
+        if (todayElem) {
+            const today = new Date();
+            const yyyy = today.getFullYear();
+            const mm = String(today.getMonth() + 1).padStart(2, '0');
+            const dd = String(today.getDate()).padStart(2, '0');
+            todayElem.textContent = `时间：${yyyy}.${mm}.${dd}`;
+        }
+
+        updateUI();
+    </script>
+</body>
+</html>

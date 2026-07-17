@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>组织行为学全景 · The Editorial Review</title>
+<style>
+:root{--bg:#fafaf7;--paper:#fff;--ink:#1a1a1a;--muted:#555;--dim:#999;--accent:#c8102e;--gold:#a87c2e;--line:#1a1a1a;--rule:#ddd;--soft:#ececea;--serif:Georgia,'Times New Roman','Noto Serif SC',serif;--sans:'Helvetica Neue',Arial,'PingFang SC',sans-serif;--ease:cubic-bezier(.7,0,.2,1)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{height:100%;overflow:hidden}
+body{font-family:var(--serif);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;user-select:none}
+.stage{position:fixed;inset:0}
+.slide{position:absolute;inset:0;padding:64px 6vw 56px;opacity:0;visibility:hidden;transform:translateY(20px);transition:opacity .55s var(--ease),transform .55s var(--ease),visibility .55s;background:var(--bg);overflow:auto}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.canvas{width:100%;max-width:1240px;margin:0 auto;min-height:calc(100vh - 120px);display:flex;flex-direction:column;justify-content:center}
+.eyebrow{font-family:var(--sans);font-size:11px;letter-spacing:.4em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:18px;padding:6px 0;border-top:2px solid var(--accent);border-bottom:2px solid var(--accent);display:inline-block}
+h1{font-family:var(--serif);font-size:clamp(40px,6vw,84px);font-weight:900;line-height:.98;letter-spacing:-.025em;margin-bottom:18px;color:var(--ink)}
+h1 b{font-style:italic;font-weight:inherit;color:var(--accent)}
+h2{font-family:var(--serif);font-size:clamp(28px,3.4vw,46px);font-weight:900;line-height:1.05;letter-spacing:-.02em;margin-bottom:14px}
+h2 b{font-style:italic;font-weight:inherit;color:var(--accent)}
+.lead{color:var(--muted);max-width:760px;line-height:1.6;font-size:17px;font-style:italic;border-left:3px solid var(--ink);padding-left:18px;margin-bottom:30px}
+.slide.active .reveal{animation:rise .7s var(--ease) both}
+.slide.active .reveal:nth-child(1){animation-delay:.05s}
+.slide.active .reveal:nth-child(2){animation-delay:.13s}
+.slide.active .reveal:nth-child(3){animation-delay:.22s}
+.slide.active .reveal:nth-child(4){animation-delay:.30s}
+.slide.active .reveal:nth-child(5){animation-delay:.38s}
+.slide.active .reveal:nth-child(6){animation-delay:.46s}
+@keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* 封面 */
+.cover .canvas{justify-content:flex-start;padding-top:30px}
+.cover .masthead{font-family:var(--sans);font-weight:900;font-size:13px;letter-spacing:.4em;border-bottom:4px double var(--ink);padding-bottom:12px;margin-bottom:22px;display:flex;justify-content:space-between;align-items:flex-end}
+.cover .masthead b{font-size:18px;letter-spacing:.05em}
+.cover h1{font-size:clamp(60px,9.5vw,140px);line-height:.92;margin-top:36px}
+.cover .deck{font-family:var(--sans);font-size:14px;color:var(--muted);max-width:560px;line-height:1.65;font-style:italic;margin-top:24px;padding-top:18px;border-top:1px solid var(--ink)}
+.cover .byline{font-family:var(--sans);margin-top:38px;display:flex;gap:50px;font-size:12px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);flex-wrap:wrap}
+.cover .byline b{display:block;color:var(--ink);font-size:13px;margin-top:4px;letter-spacing:.05em;text-transform:none;font-style:italic;font-family:var(--serif)}
+
+/* 目录 */
+.toc{margin-top:18px;border-top:2px solid var(--ink)}
+.toc-item{display:grid;grid-template-columns:90px 1fr auto;align-items:baseline;gap:30px;padding:16px 0;border-bottom:1px solid var(--rule);cursor:pointer;transition:all .25s}
+.toc-item:hover{padding-left:10px}
+.toc-item:hover .ti-t{color:var(--accent);font-style:italic}
+.ti-num{font-family:var(--sans);font-weight:900;font-size:12px;color:var(--accent);letter-spacing:.1em}
+.ti-t{font-size:20px;font-weight:700;transition:all .3s}
+.ti-t span{color:var(--muted);font-style:italic;font-weight:400;margin-left:8px;font-size:15px}
+.ti-p{font-family:var(--sans);font-size:11px;color:var(--dim);letter-spacing:.15em}
+
+/* 章节封面 */
+.ch-cover .canvas{justify-content:center}
+.ch-cover .ch-rule{font-family:var(--sans);font-size:11px;letter-spacing:.4em;color:var(--accent);font-weight:700;margin-bottom:10px}
+.ch-cover .ch-num{font-family:var(--serif);font-style:italic;font-size:clamp(120px,17vw,240px);color:var(--accent);font-weight:400;line-height:.85;letter-spacing:-.04em;margin-bottom:-12px}
+.ch-cover h1{margin-top:0;font-size:clamp(48px,7vw,96px)}
+.ch-cover .ch-desc{font-family:var(--serif);font-style:italic;color:var(--muted);max-width:620px;line-height:1.65;font-size:18px;margin-top:22px;padding-top:18px;border-top:1px solid var(--ink)}
+.ch-cover .ch-tags{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.ch-cover .ch-tag{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:6px 12px;border:1px solid var(--rule);background:var(--paper)}
+
+/* 单栏正文（左 2/3 + 右 1/3 KPI） */
+.body-grid{display:grid;grid-template-columns:2fr 1fr;gap:50px;margin-top:18px;padding-top:24px;border-top:2px solid var(--ink)}
+.body-grid .col-text p{font-size:16px;line-height:1.8;color:var(--ink);margin-bottom:14px;text-indent:2em}
+.body-grid .col-text p strong{color:var(--accent);font-style:italic;font-weight:700}
+.aside-kpi{padding:22px 20px;background:var(--paper);border-top:3px solid var(--accent);border-bottom:1px solid var(--rule)}
+.aside-kpi .kpi-label{font-family:var(--sans);font-size:11px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:8px}
+.aside-kpi .kpi-num{font-family:var(--serif);font-size:54px;line-height:1;font-weight:900;color:var(--ink);letter-spacing:-.03em;font-style:italic}
+.aside-kpi .kpi-trend{font-family:var(--sans);font-size:12px;color:var(--accent);margin-top:8px;font-weight:700;letter-spacing:.05em}
+.aside-kpi .kpi-list{margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}
+.aside-kpi .kpi-list-item{font-size:14px;line-height:1.7;color:var(--muted);font-style:italic;display:flex;gap:8px}
+.aside-kpi .kpi-list-item:before{content:'§';color:var(--accent);font-weight:700;font-style:normal}
+
+/* 三栏 */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:18px;padding-top:24px;border-top:2px solid var(--ink)}
+.card{padding-right:24px;border-right:1px solid var(--rule);transition:all .25s}
+.card:last-child{border-right:none;padding-right:0}
+.card:hover h3{color:var(--accent);font-style:italic}
+.card .ico{font-family:var(--sans);font-size:11px;letter-spacing:.3em;color:var(--accent);margin-bottom:10px;font-weight:700;text-transform:uppercase}
+.card h3{font-size:20px;font-weight:700;margin-bottom:8px;line-height:1.25;transition:all .25s}
+.card .num{font-family:var(--serif);font-style:italic;font-size:24px;color:var(--accent);font-weight:700;margin:6px 0 8px;letter-spacing:-.02em}
+.card p{color:var(--muted);font-size:14px;line-height:1.65;margin-bottom:8px}
+.card ul{margin:8px 0 0 18px;color:var(--muted);font-size:13.5px;line-height:1.75}
+.card ul li{margin-bottom:3px}
+.card ul li b{color:var(--ink);font-style:italic}
+
+/* 四栏（数据 / 标签密集型） */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:24px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule)}
+.stat{padding:24px 18px;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:none}
+.stat .lbl{font-family:var(--sans);font-size:11px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;font-weight:700}
+.stat .num{font-family:var(--serif);font-size:44px;color:var(--ink);font-weight:900;line-height:1;letter-spacing:-.03em;font-variant-numeric:tabular-nums;font-style:italic}
+.stat .num .u{font-size:18px;font-weight:400;color:var(--muted);font-style:italic;margin-left:4px}
+.stat .trend{font-family:var(--sans);font-size:12px;color:var(--accent);margin-top:8px;font-weight:700;letter-spacing:.05em}
+.stat p{font-size:13px;color:var(--muted);font-style:italic;line-height:1.55;margin-top:8px}
+.footnote{font-family:var(--serif);font-style:italic;color:var(--dim);font-size:13px;margin-top:14px}
+
+/* 时间线（横向蛇形） */
+.timeline{margin-top:18px;padding-top:24px;border-top:2px solid var(--ink);position:relative}
+.tl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-left:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.tl-item{padding:18px 18px 22px;border-right:1px solid var(--rule);border-top:1px solid var(--rule);background:var(--paper);position:relative;transition:all .25s}
+.tl-item:hover{background:#fff8f7}
+.tl-item .tl-dot{width:9px;height:9px;background:var(--accent);border-radius:50%;position:absolute;top:-5px;left:18px}
+.tl-item .tl-date{font-family:var(--sans);font-size:11px;letter-spacing:.2em;color:var(--accent);font-weight:700;margin-bottom:6px;margin-top:6px}
+.tl-item h4{font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.3}
+.tl-item p{font-size:13px;color:var(--muted);line-height:1.55;font-style:italic}
+
+/* 四象限 SWOT */
+.quadrants{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:18px;padding-top:24px;border-top:2px solid var(--ink);border-left:1px solid var(--rule)}
+.quadrant{padding:22px 22px 26px;border-right:1px solid var(--rule);border-bottom:1px solid var(--rule);background:var(--paper);transition:all .25s}
+.quadrant:hover{background:#fffaf6}
+.quadrant .q-tag{font-family:var(--sans);font-size:11px;letter-spacing:.3em;color:var(--accent);font-weight:700;margin-bottom:8px;text-transform:uppercase}
+.quadrant h4{font-size:19px;font-weight:700;margin-bottom:8px;line-height:1.25}
+.quadrant h4 b{color:var(--accent);font-style:italic}
+.quadrant p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:8px;font-style:italic}
+.quadrant ul{margin-left:18px;color:var(--ink);font-size:14px;line-height:1.7}
+.quadrant ul li{margin-bottom:3px}
+
+/* 流程步骤（横向） */
+.process{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:18px;padding-top:24px;border-top:2px solid var(--ink);position:relative}
+.step{padding:20px 16px;border-right:1px solid var(--rule);position:relative;background:var(--paper);text-align:left}
+.step:last-child{border-right:none}
+.step:before{content:'';position:absolute;top:36px;right:-7px;width:14px;height:14px;background:var(--bg);border-top:1px solid var(--rule);border-right:1px solid var(--rule);transform:rotate(45deg);z-index:2}
+.step:last-child:before{display:none}
+.step .step-num{font-family:var(--serif);font-style:italic;font-size:42px;color:var(--accent);font-weight:900;line-height:1;letter-spacing:-.03em;margin-bottom:8px}
+.step h4{font-size:16px;font-weight:700;margin-bottom:6px}
+.step p{font-size:13px;color:var(--muted);line-height:1.55;font-style:italic}
+
+/* 引言 */
+.quote .canvas{justify-content:center;align-items:center;text-align:center}
+.quote .qm{font-family:var(--serif);font-size:140px;color:var(--accent);line-height:.5;margin-bottom:30px;font-weight:900}
+.quote .qt{font-family:var(--serif);font-style:italic;font-size:clamp(24px,3.4vw,42px);line-height:1.45;color:var(--ink);font-weight:400;max-width:980px;margin-bottom:30px;letter-spacing:-.01em}
+.quote .qa-line{width:60px;height:2px;background:var(--accent);margin:0 auto 14px}
+.quote .qn{font-family:var(--sans);font-size:13px;letter-spacing:.25em;text-transform:uppercase;font-weight:700;color:var(--ink)}
+.quote .qj{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--muted);margin-top:6px}
+.quote .q-tags{margin-top:36px;padding-top:24px;border-top:1px solid var(--rule);display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-width:780px;margin-left:auto;margin-right:auto}
+.quote .q-tag{font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;padding:5px 12px;background:var(--paper);border:1px solid var(--rule);color:var(--muted)}
+
+/* 标签密集型（理论流派） */
+.tag-grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:18px;padding-top:24px;border-top:2px solid var(--ink)}
+.tag-block{padding:0}
+.tag-block h4{font-family:var(--sans);font-size:11px;letter-spacing:.3em;color:var(--accent);font-weight:700;margin-bottom:14px;text-transform:uppercase;padding-bottom:10px;border-bottom:1px solid var(--rule)}
+.tag-block .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.tag-block .badge{font-family:var(--sans);font-size:12px;padding:5px 12px;background:var(--paper);border:1px solid var(--ink);color:var(--ink);font-weight:700;letter-spacing:.05em}
+.tag-block .badge.alt{background:var(--ink);color:var(--paper)}
+.tag-block .badge.accent{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+.tag-block ul{margin-left:18px;color:var(--muted);font-size:14px;line-height:1.75;font-style:italic}
+.tag-block ul li b{color:var(--ink);font-style:normal;font-weight:700}
+
+/* 结尾 */
+.end .canvas{justify-content:center;align-items:flex-start}
+.end .e-mast{font-family:var(--sans);font-weight:900;font-size:12px;letter-spacing:.4em;border-top:4px double var(--ink);padding-top:14px;display:flex;justify-content:space-between;width:100%;margin-bottom:36px}
+.end h1{font-size:clamp(60px,10vw,140px)}
+.end .e-tag{font-family:var(--serif);font-style:italic;color:var(--muted);font-size:20px;max-width:720px;line-height:1.6;margin:24px 0 36px;padding-top:20px;border-top:1px solid var(--ink)}
+.end .e-c{display:grid;grid-template-columns:repeat(3,1fr);gap:36px;width:100%;padding-top:24px;border-top:2px solid var(--ink)}
+.end .e-c .lbl{font-family:var(--sans);font-size:11px;letter-spacing:.25em;color:var(--muted);text-transform:uppercase;margin-bottom:6px;font-weight:700}
+.end .e-c .val{font-family:var(--serif);font-size:16px;font-weight:700;line-height:1.5}
+.end .e-c .val span{display:block;font-style:italic;font-weight:400;font-size:13px;color:var(--muted);margin-top:3px}
+
+/* 控件 */
+.topbar{position:fixed;top:0;left:0;right:0;height:38px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:var(--muted);font-family:var(--sans);font-size:11px;letter-spacing:.2em;text-transform:uppercase;z-index:10;background:var(--bg);border-bottom:1px solid var(--rule)}
+.topbar .brand{color:var(--accent);font-weight:900}
+.footbar{position:fixed;bottom:0;left:0;right:0;height:32px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;color:var(--dim);font-family:var(--sans);font-size:11px;letter-spacing:.15em;z-index:10;background:var(--bg);border-top:1px solid var(--rule)}
+.footbar .pg{color:var(--accent);font-weight:900;font-variant-numeric:tabular-nums}
+.progress{position:fixed;bottom:0;left:0;height:2px;background:var(--accent);width:0;transition:width .55s var(--ease);z-index:11}
+.nav-arrow{position:fixed;top:50%;transform:translateY(-50%);width:36px;height:36px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:18px;z-index:10;transition:all .25s;font-family:var(--serif)}
+.nav-arrow:hover{background:var(--ink);color:var(--paper)}
+.nav-arrow.prev{left:14px}.nav-arrow.next{right:14px}
+
+@media(max-width:1100px){.cards,.tl-grid,.process{grid-template-columns:repeat(2,1fr)}.body-grid{grid-template-columns:1fr}}
+@media(max-width:760px){.cards,.stats,.end .e-c,.tl-grid,.quadrants,.process,.tag-grid{grid-template-columns:1fr}.card,.stat{border-right:none;border-bottom:1px solid var(--rule);padding-bottom:20px}.step:before{display:none}}
+</style>
+</head><body>
+<div class="topbar"><div class="brand">THE EDITORIAL REVIEW</div><div id="topCh">— Cover —</div></div>
+<div class="stage" id="stage">
+
+<!-- P1 封面 -->
+<section class="slide cover active" data-name="封面"><div class="canvas">
+<div class="masthead reveal"><b>THE EDITORIAL REVIEW</b><span>Vol. OB · Issue 01 · A Field Guide</span></div>
+<div class="reveal"><span class="eyebrow">— Organizational Behavior —</span></div>
+<h1 class="reveal">组织<b>行为学</b></h1>
+<h1 class="reveal" style="font-size:clamp(28px,4.2vw,60px);margin-top:-6px;color:var(--muted);font-weight:400;font-style:italic;letter-spacing:-.01em">A Field Guide to People at Work</h1>
+<p class="deck reveal">从泰勒的秒表到算法的仪表盘，组织行为学跨越百年试图回答同一个问题——人，为什么会以那样的方式工作？本期回顾按八大模块展开，带你走过这门学科的全部主干。</p>
+<div class="byline reveal"><div>Theme<b>Modular Deep Dive</b></div><div>Sections<b>VIII Chapters · 23 Pages</b></div><div>Read Time<b>~ 25 min</b></div></div>
+</div></section>
+
+<!-- P2 目录 -->
+<section class="slide" data-name="目录"><div class="canvas">
+<div class="reveal"><span class="eyebrow">Table of Contents</span></div>
+<h1 class="reveal">In This <b>Issue</b></h1>
+<div class="toc reveal">
+<div class="toc-item" onclick="goto(2)"><div class="ti-num">CHAPTER I</div><div class="ti-t">学科基础<span>What is OB · 定义 · 历史脉络</span></div><div class="ti-p">P. 03</div></div>
+<div class="toc-item" onclick="goto(5)"><div class="ti-num">CHAPTER II</div><div class="ti-t">个体层<span>Individuals · 人格 · 知觉 · 决策 · 动机 · 情绪</span></div><div class="ti-p">P. 06</div></div>
+<div class="toc-item" onclick="goto(8)"><div class="ti-num">CHAPTER III</div><div class="ti-t">群体与团队<span>Groups · 塔克曼五阶段 · 决策陷阱</span></div><div class="ti-p">P. 09</div></div>
+<div class="toc-item" onclick="goto(11)"><div class="ti-num">CHAPTER IV</div><div class="ti-t">领导力<span>Leadership · 从特质论到算法领导</span></div><div class="ti-p">P. 12</div></div>
+<div class="toc-item" onclick="goto(14)"><div class="ti-num">CHAPTER V</div><div class="ti-t">组织层<span>Organization · 结构 · 文化 · 权力</span></div><div class="ti-p">P. 15</div></div>
+<div class="toc-item" onclick="goto(16)"><div class="ti-num">CHAPTER VI</div><div class="ti-t">环境层<span>Environment · 跨文化 · 制度 · ESG</span></div><div class="ti-p">P. 17</div></div>
+<div class="toc-item" onclick="goto(18)"><div class="ti-num">CHAPTER VII</div><div class="ti-t">理论与方法<span>Lenses · 流派透镜 · 研究范式</span></div><div class="ti-p">P. 19</div></div>
+<div class="toc-item" onclick="goto(20)"><div class="ti-num">CHAPTER VIII</div><div class="ti-t">整合与前沿<span>Synthesis · 算法时代 · OB 新命题</span></div><div class="ti-p">P. 21</div></div>
+</div>
+</div></section>
+
+<!-- P3 章节封面 I -->
+<section class="slide ch-cover" data-name="章节I"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter I —</div></div>
+<div class="reveal"><div class="ch-num">I.</div></div>
+<h1 class="reveal">学科<b>基础</b></h1>
+<p class="ch-desc reveal">在我们谈论"人在组织中如何行为"之前，先得问清楚——这门学问到底研究什么、它是怎么走到今天的？</p>
+<div class="ch-tags reveal"><span class="ch-tag">Definition</span><span class="ch-tag">Multi-disciplinary</span><span class="ch-tag">1880s — 2020s</span></div>
+</div></section>
+
+<!-- P4 单栏正文：定义 + 三大特征 -->
+<section class="slide" data-name="定义与特征"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— I · Definition —</span></div>
+<h2 class="reveal">学科定位 · <b>组织行为学是什么</b></h2>
+<p class="lead reveal">系统研究组织中人的心理与行为规律，探讨个体、群体、结构对行为的影响——并据此改善组织效能。</p>
+<div class="body-grid reveal">
+<div class="col-text">
+<p>组织行为学（Organizational Behavior, <strong>OB</strong>）是一门以"人在组织情境中的行为"为研究对象的应用社会科学。它不满足于"描述发生了什么"——它的野心更大：在描述之上去<strong>解释为什么</strong>，进而<strong>预测会发生什么</strong>，最终为管理者提供干预的杠杆。</p>
+<p>它的根扎在多个学科里：心理学贡献了关于动机、人格、知觉的微观工具；社会学和人类学带来了群体规范、文化、权力的视角；经济学和政治学则提供了选择与博弈的语言。这种"杂交"是 OB 的特质，也是它常被误解为"什么都讲、什么都不深"的原因。</p>
+<p>OB 的另一个鲜明特征是<strong>多层次嵌套</strong>——同一个现象，在个体层是动机，在团队层是凝聚力，在组织层是文化，在环境层是制度同构。把层次混淆，是新人最常踩的坑。</p>
+</div>
+<div class="aside-kpi">
+<div class="kpi-label">Four Goals of OB</div>
+<div class="kpi-num">4</div>
+<div class="kpi-trend">Describe · Explain · Predict · Control</div>
+<div class="kpi-list">
+<div class="kpi-list-item">描述：现象是什么</div>
+<div class="kpi-list-item">解释：为什么发生</div>
+<div class="kpi-list-item">预测：将走向何处</div>
+<div class="kpi-list-item">干预：如何改变</div>
+</div>
+</div>
+</div>
+</div></section>
+
+<!-- P5 时间线 -->
+<section class="slide" data-name="历史演进"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— I · Historical Currents —</span></div>
+<h2 class="reveal">历史演进 · <b>从秒表到算法</b></h2>
+<p class="lead reveal">人性假设的迁移，是 OB 一百四十年最浓缩的注脚——经济人 → 社会人 → 自我实现人 → 复杂人 → 数字人。</p>
+<div class="timeline reveal">
+<div class="tl-grid">
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1880s — 1920s</div><h4>科学管理</h4><p>泰勒的动作研究与计件工资制；"经济人"假设；效率至上，但忽视情感与社会需要。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1920s — 1940s</div><h4>人际关系运动</h4><p>霍桑实验揭示非正式组织与群体规范，"社会人"假设登场，员工导向管理崛起。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1950s — 1970s</div><h4>行为科学奠基</h4><p>马斯洛、赫兹伯格、麦格雷戈 X/Y；自我实现人；权变理论开始挑战"一刀切"。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1980s — 1990s</div><h4>组织文化与认知转向</h4><p>沙因、夏因；情境强度概念；社会认知与社会认同理论拓展个体—组织联结。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2000s</div><h4>积极组织行为学</h4><p>POB 与心理资本（PsyCap）、情感事件理论 AET、JD-R 模型；从"修问题"转向"建优势"。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2010s</div><h4>大数据与组织神经科学</h4><p>People Analytics、ESM 经验取样、可穿戴设备、fMRI 验证组织决策的神经机制。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2020s</div><h4>算法时代</h4><p>"数字人"假设；算法管理与零工经济；混合办公心理契约；生成式 AI 重塑知识工作。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Looking Ahead</div><h4>人机共治</h4><p>AI 伦理、透明领导、DEI 与算法偏见——下一个十年的 OB 命题正在被改写。</p></div>
+</div>
+</div>
+</div></section>
+
+<!-- P6 章节封面 II -->
+<section class="slide ch-cover" data-name="章节II"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter II —</div></div>
+<div class="reveal"><div class="ch-num">II.</div></div>
+<h1 class="reveal">个体<b>层</b></h1>
+<p class="ch-desc reveal">最微观的那一层，也是最难驯服的那一层——人格、知觉、决策、动机、情绪。一切组织故事，都从这里发轫。</p>
+<div class="ch-tags reveal"><span class="ch-tag">OCEAN</span><span class="ch-tag">Cognitive Bias</span><span class="ch-tag">Self-Determination</span><span class="ch-tag">JD-R</span></div>
+</div></section>
+
+<!-- P7 三模块：人格/知觉/决策 -->
+<section class="slide" data-name="个体差异"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— II · Person, Perception, Decision —</span></div>
+<h2 class="reveal">个体差异 · <b>三组核心透镜</b></h2>
+<p class="lead reveal">人格塑造倾向，知觉决定信号怎么被解码，决策模型决定信号最终如何变成行动。</p>
+<div class="cards reveal">
+<div class="card">
+<div class="ico">Personality · I</div>
+<h3>大五人格 OCEAN</h3>
+<div class="num">5 dimensions</div>
+<p>跨文化稳定的人格分类法，绩效预测的金标准之一。</p>
+<ul>
+<li><b>尽责性</b>：最强绩效预测因子</li>
+<li><b>情绪稳定性</b>：抗压与恢复力</li>
+<li><b>外向性</b>：领导涌现高相关</li>
+<li><b>开放性</b>：创造力与学习</li>
+<li><b>宜人性</b>：团队合作润滑剂</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Perception · II</div>
+<h3>社会知觉与归因</h3>
+<div class="num">Kelley 三维</div>
+<p>我们看到的不是事实，而是被偏差过滤后的事实。</p>
+<ul>
+<li><b>常见偏差</b>：晕轮、刻板、首因/近因</li>
+<li><b>三维归因</b>：一致性 · 一贯性 · 区别性</li>
+<li><b>FAE</b>：高估个人，低估情境</li>
+<li><b>自利偏差</b>：成功内归因，失败外归因</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Decision · III</div>
+<h3>决策与判断</h3>
+<div class="num">Bounded Rationality</div>
+<p>从西蒙的"满意"到卡尼曼的"双系统"，理性是稀缺资源。</p>
+<ul>
+<li><b>有限理性</b>：满意原则替代最优</li>
+<li><b>双系统</b>：快直觉 / 慢分析</li>
+<li><b>前景理论</b>：损失厌恶 · 框架效应</li>
+<li><b>解毒剂</b>：事前剖析 · 红队对抗</li>
+</ul>
+</div>
+</div>
+</div></section>
+
+<!-- P8 三模块：动机+情绪+压力 -->
+<section class="slide" data-name="动机情绪压力"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— II · Motivation, Emotion, Strain —</span></div>
+<h2 class="reveal">动机 · 情绪 · <b>压力与倦怠</b></h2>
+<p class="lead reveal">"为什么愿意做"、"在做的时候感受到什么"、"做久了会怎样"——这是个体层最贴近肉身的三个问题。</p>
+<div class="cards reveal">
+<div class="card">
+<div class="ico">Motivation · I</div>
+<h3>动机：内容 + 过程 + SDT</h3>
+<div class="num">3 families</div>
+<p>从"需要什么"到"如何选择"，再到"什么是真正的内驱"。</p>
+<ul>
+<li><b>内容理论</b>：马斯洛 / 双因素 / 三种需要 / ERG</li>
+<li><b>过程理论</b>：期望（Vroom） / 公平（Adams） / 目标（Locke）</li>
+<li><b>SDT 自我决定</b>：自主 · 胜任 · 归属</li>
+<li><b>AI 挑战</b>：算法控制削弱自主，需透明可解释</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Emotion · II</div>
+<h3>情绪劳动 & 工作态度</h3>
+<div class="num">AET</div>
+<p>笑容也是一种劳动——而且会消耗心理资源。</p>
+<ul>
+<li><b>表层 / 深层扮演</b>：面具与重塑</li>
+<li><b>情感事件理论 AET</b>：事件 → 情绪 → 态度</li>
+<li><b>满意度五因素</b>：工作 / 报酬 / 晋升 / 上级 / 同事</li>
+<li><b>组织承诺</b>：情感 / 持续 / 规范三成分</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Strain · III</div>
+<h3>压力与职业倦怠</h3>
+<div class="num">JD-R Model</div>
+<p>不是所有压力都是坏事，但坏的那种会把人耗空。</p>
+<ul>
+<li><b>挑战性 vs 阻碍性</b>：动机 vs 损耗</li>
+<li><b>JD-R</b>：要求—资源平衡决定结局</li>
+<li><b>Maslach 倦怠三成分</b>：情绪枯竭 · 去人格化 · 低效能</li>
+<li><b>AI 监控双刃剑</b>：可见性 ≠ 信任</li>
+</ul>
+</div>
+</div>
+</div></section>
+
+<!-- P9 章节封面 III -->
+<section class="slide ch-cover" data-name="章节III"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter III —</div></div>
+<div class="reveal"><div class="ch-num">III.</div></div>
+<h1 class="reveal">群体<b>与团队</b></h1>
+<p class="ch-desc reveal">单个个体加在一起，不会自动得到"团队"。中间隔着一系列结构、过程、心理机制——以及一组反复出现的陷阱。</p>
+<div class="ch-tags reveal"><span class="ch-tag">Tuckman 5</span><span class="ch-tag">Psychological Safety</span><span class="ch-tag">Groupthink</span></div>
+</div></section>
+
+<!-- P10 流程：塔克曼 -->
+<section class="slide" data-name="塔克曼"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— III · Group Development —</span></div>
+<h2 class="reveal">塔克曼五阶段 · <b>团队是怎么"长"出来的</b></h2>
+<p class="lead reveal">健康的团队不是没有冲突，而是穿过冲突——风暴期不是事故，是必经之路。</p>
+<div class="process reveal">
+<div class="step"><div class="step-num">01</div><h4>形成 Forming</h4><p>试探阶段：礼貌、依赖领导、目标模糊；表面和谐但真问题没浮现。</p></div>
+<div class="step"><div class="step-num">02</div><h4>风暴 Storming</h4><p>分歧爆发：角色冲突、权力争夺、抵制规则；这是团队"成不成"的分水岭。</p></div>
+<div class="step"><div class="step-num">03</div><h4>规范 Norming</h4><p>建立默契：规则成形、信任开始、心理安全感生根；冲突学会被建设性地处理。</p></div>
+<div class="step"><div class="step-num">04</div><h4>执行 Performing</h4><p>高产出区：自主协作、共享心智模型、领导退居教练；过程损耗大幅降低。</p></div>
+<div class="step"><div class="step-num">05</div><h4>解散 Adjourning</h4><p>项目落幕：复盘、告别、知识传承；不被仪式化的解散，会让下一个团队重蹈覆辙。</p></div>
+</div>
+<p class="footnote reveal">Google 亚里士多德计划证实：决定团队效能的第一变量不是成员能力，而是 <i>心理安全感</i>（Psychological Safety, Edmondson）。</p>
+</div></section>
+
+<!-- P11 SWOT/四象限：决策陷阱 -->
+<section class="slide" data-name="决策陷阱"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— III · Pathologies & Antidotes —</span></div>
+<h2 class="reveal">团队决策的四大<b>陷阱</b></h2>
+<p class="lead reveal">越是凝聚力强的团队，越容易掉进这些陷阱——因为每一个陷阱的根都是"我们想保持一致"。</p>
+<div class="quadrants reveal">
+<div class="quadrant">
+<div class="q-tag">Trap I</div>
+<h4>群体<b>思维</b> · Groupthink</h4>
+<p>Janis 经典命题：高凝聚力压制异议，导致灾难性决策。</p>
+<ul>
+<li>无懈可击错觉 / 集体合理化</li>
+<li>对外群体的刻板印象</li>
+<li>自我审查 / 一致幻觉</li>
+<li>"思想守门人"压制异议</li>
+</ul>
+</div>
+<div class="quadrant">
+<div class="q-tag">Trap II</div>
+<h4>群体<b>极化</b> · Polarization</h4>
+<p>讨论之后，群体的观点比讨论前更极端——谨慎的更谨慎，冒险的更冒险。</p>
+<ul>
+<li>社会比较：希望比平均更"对"</li>
+<li>说服性论证：单边证据被放大</li>
+<li>常见于网络回音室</li>
+</ul>
+</div>
+<div class="quadrant">
+<div class="q-tag">Trap III</div>
+<h4>隐藏<b>信息</b>范式</h4>
+<p>团队倾向于讨论"大家都已经知道"的信息，而忽略每个成员独有的关键线索。</p>
+<ul>
+<li>共享信息偏差（Stasser）</li>
+<li>独有信息被系统性遗漏</li>
+<li>多元背景反而加剧此问题</li>
+</ul>
+</div>
+<div class="quadrant">
+<div class="q-tag">Trap IV</div>
+<h4>社会<b>惰化</b> & 阿比林悖论</h4>
+<p>人多了反而更不上心；又或者，所有人都同意了一个所有人都不想要的决定。</p>
+<ul>
+<li>责任分散与搭便车</li>
+<li>阿比林悖论：沉默的从众</li>
+<li>解药：明确个人贡献 + 匿名表达</li>
+</ul>
+</div>
+</div>
+<p class="footnote reveal">✦ 缓解工具箱：魔鬼代言人 · 匿名意见 · 德尔菲法 · 事前剖析（Pre-mortem） · 红队对抗。</p>
+</div></section>
+
+<!-- P12 章节封面 IV -->
+<section class="slide ch-cover" data-name="章节IV"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter IV —</div></div>
+<div class="reveal"><div class="ch-num">IV.</div></div>
+<h1 class="reveal">领导<b>力</b></h1>
+<p class="ch-desc reveal">从"领导者具备什么特质"到"算法可以替代领导吗"——这一百年里，关于领导力的提问方式已经被彻底改写了几次。</p>
+<div class="ch-tags reveal"><span class="ch-tag">Trait → Behavior → Contingency</span><span class="ch-tag">Transformational</span><span class="ch-tag">e-Leadership</span></div>
+</div></section>
+
+<!-- P13 时间线：领导力理论演进 -->
+<section class="slide" data-name="领导力演进"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— IV · Lineage of Leadership Theory —</span></div>
+<h2 class="reveal">领导力理论 · <b>八十年六次范式跃迁</b></h2>
+<p class="lead reveal">每一次理论跃迁，都对应一次"领导者"角色的重新定义——从天选之人到情境演员，再到价值观锚点，最后是人机共治者。</p>
+<div class="timeline reveal">
+<div class="tl-grid">
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1940s</div><h4>特质理论</h4><p>"伟人论"延续；大五的外向性与尽责性显示弱相关，但情境差异巨大。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1950s — 1960s</div><h4>行为理论</h4><p>俄亥俄学派：定规 + 关怀；密歇根：员工导向 vs 生产导向；Blake-Mouton 管理方格 9,9 最优。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1960s — 1980s</div><h4>权变理论</h4><p>Fiedler LPC、House 路径-目标、Hersey-Blanchard 情境领导——"看场景定打法"。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">1980s — 2000s</div><h4>变革型 / 交易型</h4><p>Bass 的 4I 模型；变革型领导对绩效、OCB、创造力均有显著正向作用。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2000s — 2010s</div><h4>真实型 & 伦理型</h4><p>Avolio、Walumbwa；自我意识 + 透明 + 内化道德；伦理型通过榜样与奖惩塑造规范。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2010s</div><h4>共享型 & 服务型</h4><p>领导被解构为"功能"而非"位置"；Greenleaf 服务型领导回归被强调。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2020s</div><h4>e-Leadership · 数字化</h4><p>远程领导、算法素养、虚拟团队信任建构成为核心议题。</p></div>
+<div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Frontier</div><h4>人机共治领导</h4><p>算法决策与人类判断的协同；AI 推荐 + 人类承担"为什么这么做"的解释责任。</p></div>
+</div>
+</div>
+</div></section>
+
+<!-- P14 三模块：变革型/真实型/算法领导 -->
+<section class="slide" data-name="当代领导力"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— IV · Contemporary Frontiers —</span></div>
+<h2 class="reveal">当代领导力 · <b>超越交易型</b></h2>
+<p class="lead reveal">"管理者把事情做对，领导者做对的事"——德鲁克这句话被反复引用，但它的具体形态正在被三股新潮流改写。</p>
+<div class="cards reveal">
+<div class="card">
+<div class="ico">Transformational</div>
+<h3>变革型领导 · Bass</h3>
+<div class="num">4 I 模型</div>
+<p>把追随者从"做交易"拉到"做事业"。</p>
+<ul>
+<li><b>Idealized Influence</b>：理想化影响</li>
+<li><b>Inspirational Motivation</b>：鼓舞激励</li>
+<li><b>Intellectual Stimulation</b>：智力激发</li>
+<li><b>Individualized Consideration</b>：个性化关怀</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Authentic / Ethical</div>
+<h3>真实型 & 伦理型</h3>
+<div class="num">Self-aware</div>
+<p>当外部压力让一切都失真时，领导力的锚点必须在内部。</p>
+<ul>
+<li><b>真实型</b>：自我意识 / 透明 / 内化道德 / 平衡处理</li>
+<li><b>伦理型</b>：榜样行为 + 奖惩强化规范</li>
+<li><b>POS 影响</b>：组织支持感与员工敬业度高相关</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Digital / Algorithmic</div>
+<h3>e-Leadership · 算法时代</h3>
+<div class="num">Hybrid</div>
+<p>当一半团队是远程的、一半决策是算法做的，领导意味着什么？</p>
+<ul>
+<li><b>算法素养</b>：理解模型边界</li>
+<li><b>共享型领导</b>：在没有面对面时分布</li>
+<li><b>e-Leadership</b>：信任与可见性的再平衡</li>
+<li><b>解释责任</b>：人类为算法决定背书</li>
+</ul>
+</div>
+</div>
+</div></section>
+
+<!-- P15 章节封面 V -->
+<section class="slide ch-cover" data-name="章节V"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter V —</div></div>
+<div class="reveal"><div class="ch-num">V.</div></div>
+<h1 class="reveal">组织<b>层</b></h1>
+<p class="ch-desc reveal">个体与团队在更大的容器里运转——这个容器有结构，有文化，也有不那么体面但永远存在的权力。</p>
+<div class="ch-tags reveal"><span class="ch-tag">Mechanistic ↔ Organic</span><span class="ch-tag">Schein 3 Levels</span><span class="ch-tag">HPWS</span></div>
+</div></section>
+
+<!-- P16 三模块：结构/文化/权力 -->
+<section class="slide" data-name="组织三件套"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— V · Structure, Culture, Power —</span></div>
+<h2 class="reveal">组织的三件套 · <b>骨骼 · 血液 · 暗流</b></h2>
+<p class="lead reveal">结构是骨骼——决定谁向谁汇报；文化是血液——决定大家"默认这样做事"；权力是暗流——决定真正的事情如何被推动。</p>
+<div class="cards reveal">
+<div class="card">
+<div class="ico">Structure</div>
+<h3>组织结构 · 设计</h3>
+<div class="num">Mechanistic ↔ Organic</div>
+<p>从韦伯科层到平台型组织，结构在不断"拍扁"。</p>
+<ul>
+<li><b>机械式</b>：高分工、层级、集权</li>
+<li><b>有机式</b>：扁平、跨职能、低正式化</li>
+<li><b>当代形态</b>：矩阵 / 网络 / 平台 / 无边界</li>
+<li><b>权变变量</b>：战略 / 环境 / 技术 / 规模</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Culture</div>
+<h3>组织文化 · Schein 三层</h3>
+<div class="num">Artifacts → Assumptions</div>
+<p>"一群人在解决适应外部 + 整合内部问题时所形成的共享假设。"</p>
+<ul>
+<li><b>① 人工饰物</b>：可见的 logo / 仪式 / 装修</li>
+<li><b>② 倡导价值观</b>：嘴上说的</li>
+<li><b>③ 基本隐性假设</b>：真正信的</li>
+<li><b>变革</b>：科特八步法</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Power</div>
+<h3>权力 · 政治 · HPWS</h3>
+<div class="num">French & Raven 5</div>
+<p>组织里发生的事，一半是流程的结果，一半是政治的结果。</p>
+<ul>
+<li><b>五权力来源</b>：强制 / 奖赏 / 合法 / 专家 / 参照</li>
+<li><b>专家权 + 参照权</b>：与组织承诺最相关</li>
+<li><b>政治知觉</b>：降低满意度，需印象管理对冲</li>
+<li><b>HPWS · AMO</b>：能力 + 动机 + 机会三件套</li>
+</ul>
+</div>
+</div>
+</div></section>
+
+<!-- P17 章节封面 VI -->
+<section class="slide ch-cover" data-name="章节VI"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter VI —</div></div>
+<div class="reveal"><div class="ch-num">VI.</div></div>
+<h1 class="reveal">环境<b>层</b></h1>
+<p class="ch-desc reveal">把镜头拉到最远——组织从来不是真空里的存在。文化、制度、社会期待，三股力量持续地塑形它。</p>
+<div class="ch-tags reveal"><span class="ch-tag">Hofstede & GLOBE</span><span class="ch-tag">Institutional</span><span class="ch-tag">CSR · ESG</span></div>
+</div></section>
+
+<!-- P18 三模块：跨文化/制度/CSR -->
+<section class="slide" data-name="环境三视角"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— VI · Cultural · Institutional · Societal —</span></div>
+<h2 class="reveal">环境层 · <b>三道外部约束</b></h2>
+<p class="lead reveal">同一套管理实践，跨过国境就可能走样——不是技术失败，是它撞上了你看不见的文化、制度与社会期待。</p>
+<div class="cards reveal">
+<div class="card">
+<div class="ico">Cross-Cultural</div>
+<h3>跨文化 · Hofstede & GLOBE</h3>
+<div class="num">6 Dimensions</div>
+<p>"一种文化能容忍多大的不平等"是管理实践能不能跨国移植的第一变量。</p>
+<ul>
+<li><b>权力距离</b>：决定授权空间</li>
+<li><b>个体—集体</b>：决定激励设计</li>
+<li><b>不确定性规避</b>：决定流程偏好</li>
+<li><b>男性—女性气质</b>、<b>长期取向</b>、<b>放纵—克制</b></li>
+<li><b>GLOBE 项目</b>：62 国 9 维拓展</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Institutional</div>
+<h3>制度理论 · Scott 三支柱</h3>
+<div class="num">3 Pillars</div>
+<p>"组织为什么彼此越来越像"——DiMaggio & Powell 的经典命题。</p>
+<ul>
+<li><b>规制性</b>：法律法规约束</li>
+<li><b>规范性</b>：行业准则与专业期望</li>
+<li><b>认知—文化性</b>：理所当然的认知图式</li>
+<li><b>三种同构</b>：强制 · 模仿 · 规范</li>
+</ul>
+</div>
+<div class="card">
+<div class="ico">Societal</div>
+<h3>CSR · ESG · 利益相关者</h3>
+<div class="num">Beyond Shareholder</div>
+<p>当社会成为隐形股东，组织的"成功"被重新定义。</p>
+<ul>
+<li><b>CSR</b>：影响组织认同与人才吸引</li>
+<li><b>ESG 指标</b>：从合规变成估值因子</li>
+<li><b>利益相关者理论</b>：不止股东</li>
+<li><b>声誉资本</b>：危机中的护城河</li>
+</ul>
+</div>
+</div>
+</div></section>
+
+<!-- P19 章节封面 VII -->
+<section class="slide ch-cover" data-name="章节VII"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter VII —</div></div>
+<div class="reveal"><div class="ch-num">VII.</div></div>
+<h1 class="reveal">理论<b>透镜</b><br>与方法</h1>
+<p class="ch-desc reveal">同一个组织现象，换一副镜片就会看到完全不同的世界——这一章把 OB 最常用的几副镜片摊开。</p>
+<div class="ch-tags reveal"><span class="ch-tag">Theoretical Lenses</span><span class="ch-tag">Quant + Qual</span><span class="ch-tag">ESM · SNA · Neuro</span></div>
+</div></section>
+
+<!-- P20 标签集：理论流派 + 方法论 -->
+<section class="slide" data-name="理论与方法"><div class="canvas">
+<div class="reveal"><span class="eyebrow">— VII · Lenses & Methods —</span></div>
+<h2 class="reveal">流派与方法 · <b>OB 的工具箱</b></h2>
+<p class="lead reveal">理论是看问题的角度，方法是抓证据的手段。两者必须配套使用——错配会让结论"听起来很对，其实站不住"。</p>
+<div class="tag-grid reveal">
+<div class="tag-block">
+<h4>Theoretical Lenses · 主要透镜</h4>
+<div class="badges">
+<span class="badge accent">认知流派</span><span class="badge">社会学习</span><span class="badge">社会交换 · LMX/POS</span><span class="badge">社会认同</span><span class="badge">制度理论</span><span class="badge">批判理论</span><span class="badge">复杂性理论</span>
+</div>
+<ul>
+<li><b>社会交换：</b>关系建立在互惠预期上——LMX 与 POS 是其代表</li>
+<li><b>社会认同：</b>"我是谁"决定"我会为谁出力"</li>
+<li><b>认知流派：</b>把人当作信息加工系统</li>
+<li><b>社会学习：</b>Bandura 自我效能 + 替代学习</li>
+<li><b>新兴整合：</b>COR 资源保存 / SDT / JD-R / POB 心理资本</li>
+</ul>
+</div>
+<div class="tag-block">
+<h4>Methods · 研究方法谱系</h4>
+<div class="badges">
+<span class="badge">问卷</span><span class="badge">实验</span><span class="badge">纵向追踪</span><span class="badge">元分析</span><span class="badge alt">案例研究</span><span class="badge alt">扎根理论</span><span class="badge alt">民族志</span><span class="badge accent">ESM</span><span class="badge accent">SNA</span><span class="badge accent">文本/大数据</span><span class="badge accent">神经科学</span>
+</div>
+<ul>
+<li><b>定量进阶：</b>结构方程（SEM） / 多层线性（HLM）</li>
+<li><b>定性深描：</b>案例 / 扎根 / 民族志互补使用</li>
+<li><b>经验取样法 ESM：</b>每天多点测量，捕捉情绪—行为动态</li>
+<li><b>社会网络分析 SNA：</b>把"关系"变成可测变量</li>
+<li><b>组织神经科学：</b>fMRI / 心率变异验证决策机制</li>
+</ul>
+</div>
+</div>
+</div></section>
+
+<!-- P21 章节封面 VIII -->
+<section class="slide ch-cover" data-name="章节VIII"><div class="canvas">
+<div class="reveal"><div class="ch-rule">— Chapter VIII —</div></div>
+<div class="reveal"><div class="ch-num">VIII.</div></div>
+<h1 class="reveal">整合<b>与前沿</b></h1>
+<p class="ch-desc reveal">把所有镜片摞在一起看——经典模型如何嵌套、贯穿变量是什么、AI 如何重写这门学科的下一个十年。</p>
+<div class="ch-tags reveal"><span class="ch-tag">Multi-level Nesting</span><span class="ch-tag">Trust · Power · Fairness · Meaning</span><span class="ch-tag">Algorithmic OB</span></div>
+</div></section>
+
+<!-- P22 引言金句 + 标签 -->
+<section class="slide quote" data-name="整合金句"><div class="canvas">
+<div class="reveal"><div class="qm">"</div></div>
+<p class="qt reveal">宏观环境塑造组织设计与文化，<br>组织设计与文化塑造团队过程与领导力，<br>团队过程与领导力塑造个体动机与行为——<br><b>而权力、信任、公平、意义感，是贯穿四层的暗线。</b></p>
+<div class="reveal"><div class="qa-line"></div><div class="qn">A Synthesis</div><div class="qj">— Multi-level Nested Model of Organizational Behavior</div></div>
+<div class="q-tags reveal">
+<span class="q-tag">算法组织行为学</span><span class="q-tag">神经 OB</span><span class="q-tag">积极 OB 2.0</span><span class="q-tag">可持续组织</span><span class="q-tag">人机团队</span><span class="q-tag">一人公司 OPC</span><span class="q-tag">混合办公心理契约</span><span class="q-tag">数据隐私 & DEI</span>
+</div>
+</div></section>
+
+<!-- P23 结尾 -->
+<section class="slide end" data-name="结尾"><div class="canvas">
+<div class="e-mast reveal"><span>THE EDITORIAL REVIEW</span><span>—— END OF VOLUME ——</span></div>
+<div class="reveal"><span class="eyebrow">Until Next Volume</span></div>
+<h1 class="reveal">Stay <b>Curious.</b></h1>
+<p class="e-tag reveal">这门学科最迷人的地方在于——它从不给"标准答案"，它只把一组又一组更好的问题递到你手上。下一卷我们将聚焦"算法时代的工作意义"，一起看人和系统如何重新协商边界。</p>
+<div class="e-c reveal">
+<div><div class="lbl">Foundational</div><div class="val">Robbins · Judge<span>Organizational Behavior, 19e</span></div></div>
+<div><div class="lbl">Frontier</div><div class="val">Edmondson · Grant<span>Fearless Organization · Think Again</span></div></div>
+<div><div class="lbl">Method & Insight</div><div class="val">Kahneman · Tversky<span>Thinking, Fast and Slow</span></div></div>
+</div>
+</div></section>
+
+</div>
+<button class="nav-arrow prev" onclick="goto(current-1)">‹</button>
+<button class="nav-arrow next" onclick="goto(current+1)">›</button>
+<div class="footbar"><div>VOL. OB · A FIELD GUIDE TO PEOPLE AT WORK</div><div class="pg"><span id="curr">1</span> / <span id="total">N</span></div></div>
+<div class="progress" id="progress"></div>
+<script>
+const slides=document.querySelectorAll('.slide');document.getElementById('total').textContent=slides.length;
+let current=0,locked=false;const progress=document.getElementById('progress'),curr=document.getElementById('curr'),topCh=document.getElementById('topCh');
+const headerMap=['— Cover —','— Contents —','— Chapter I · Foundations —','— I · Definition —','— I · Historical Currents —','— Chapter II · Individuals —','— II · Person, Perception, Decision —','— II · Motivation, Emotion, Strain —','— Chapter III · Groups —','— III · Group Development —','— III · Pathologies & Antidotes —','— Chapter IV · Leadership —','— IV · Lineage of Theory —','— IV · Contemporary Frontiers —','— Chapter V · Organization —','— V · Structure, Culture, Power —','— Chapter VI · Environment —','— VI · Cultural · Institutional · Societal —','— Chapter VII · Lenses & Methods —','— VII · Toolbox —','— Chapter VIII · Synthesis —','— VIII · Closing Statement —','— End —'];
+function setHeader(i){topCh.textContent=headerMap[i]||''}
+function goto(i){if(locked||i===current||i<0||i>=slides.length)return;locked=true;slides[current].classList.remove('active');current=i;slides[current].classList.add('active');progress.style.width=((current+1)/slides.length*100)+'%';curr.textContent=current+1;setHeader(current);setTimeout(()=>locked=false,600);slides[current].scrollTop=0}
+window.goto=goto;
+document.addEventListener('keydown',e=>{if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown')goto(current+1);else if(e.key==='ArrowLeft'||e.key==='PageUp')goto(current-1);else if(e.key==='Home')goto(0);else if(e.key==='End')goto(slides.length-1);else if(e.key==='f'||e.key==='F'){if(!document.fullscreenElement)document.documentElement.requestFullscreen();else document.exitFullscreen()}});
+let wl=false;document.addEventListener('wheel',e=>{const cur=slides[current];if(cur.scrollHeight>cur.clientHeight+5){const atTop=cur.scrollTop<=2,atBottom=cur.scrollTop+cur.clientHeight>=cur.scrollHeight-2;if(e.deltaY>0&&!atBottom)return;if(e.deltaY<0&&!atTop)return}if(wl)return;wl=true;if(e.deltaY>30)goto(current+1);else if(e.deltaY<-30)goto(current-1);setTimeout(()=>wl=false,800)},{passive:true});
+progress.style.width=(1/slides.length*100)+'%';setHeader(0);
+</script>
+<script type="text/javascript" src="/accessproxy_statics/h5_fp.js" defer></script>
+<script type="text/javascript" src="/accessproxy_statics/wm.js" defer></script>
+</body></html>

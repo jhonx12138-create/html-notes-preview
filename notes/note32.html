@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent 三阶段演进对比 · 时间线修正版</title>
+    <style>
+        :root {
+            --bg: #f7faf8;
+            --card-bg: #ffffff;
+            --text: #3a4a3f;
+            --text-secondary: #5f6d63;
+            --stage1: #97b5c3;
+            --stage1-light: #eaf1f5;
+            --stage1-bg: #f5f8fa;
+            --stage2: #d8a65c;
+            --stage2-light: #fef8ef;
+            --stage2-bg: #fefaf5;
+            --stage3: #66b89a;
+            --stage3-light: #eaf6f1;
+            --stage3-bg: #f5faf7;
+            --future: #8b7dba;
+            --future-light: #f1eff8;
+            --future-bg: #f9f7fc;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.09);
+            --radius: 14px;
+            --radius-sm: 10px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(160deg, #f0f5f2 0%, #f7f9f8 30%, #f5f6f9 60%, #f9f8f5 100%);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 24px 14px 48px;
+            min-height: 100vh;
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+        .container {
+            width: 100%;
+            max-width: 1060px;
+            background: var(--card-bg);
+            border-radius: 22px;
+            box-shadow: var(--shadow-lg);
+            padding: 30px 24px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg,
+                    var(--stage1) 0%, var(--stage1) 32%,
+                    var(--stage2) 35%, var(--stage2) 62%,
+                    var(--stage3) 65%, var(--stage3) 100%);
+            border-radius: 22px 22px 0 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 4px;
+            padding-top: 6px;
+        }
+        .header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #2c3e33;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.5;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+        .header .subtitle strong {
+            color: #3a6b55;
+            font-weight: 600;
+        }
+        .header .note {
+            font-size: 0.7rem;
+            color: #8a9a8f;
+            margin-top: 2px;
+            line-height: 1.4;
+        }
+
+        /* ========== SVG 时间线 ========== */
+        .timeline-wrap {
+            width: 100%;
+            overflow-x: auto;
+            margin: 8px 0 4px;
+            border-radius: var(--radius-sm);
+            background: #fcfdfc;
+            border: 1px solid #eef3ef;
+            padding: 6px 2px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: center;
+        }
+        .timeline-wrap svg {
+            display: block;
+            width: 100%;
+            min-width: 650px;
+            max-width: 900px;
+            height: auto;
+        }
+
+        /* ========== 状态图例 ========== */
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 22px;
+            justify-content: center;
+            align-items: center;
+            margin: 12px 0 4px;
+            font-size: 0.72rem;
+            color: #5a6b5f;
+            font-weight: 500;
+        }
+        .leg-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .leg-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 700;
+        }
+        .leg-dot.l-full {
+            background: #e8f5ef;
+            color: #3a7a5a;
+        }
+        .leg-dot.l-partial {
+            background: #fef7ec;
+            color: #8a6528;
+        }
+        .leg-dot.l-none {
+            background: #faf6f6;
+            color: #b0a0a0;
+        }
+
+        /* ========== 表格容器 ========== */
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 6px 0 4px;
+            border-radius: var(--radius-sm);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #e8efe9;
+            background: #fff;
+            background:
+                linear-gradient(to right, #fff 30%, rgba(255, 255, 255, 0)),
+                linear-gradient(to right, rgba(255, 255, 255, 0), #fff 70%) 100% 0,
+                linear-gradient(to right, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0)),
+                linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.04)) 100% 0;
+            background-repeat: no-repeat;
+            background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+            background-attachment: local, local, scroll, scroll;
+        }
+
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            min-width: 720px;
+            table-layout: fixed;
+        }
+
+        .compare-table thead th {
+            padding: 14px 12px 12px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #fff;
+            letter-spacing: 0.02em;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            border-top: none;
+        }
+        .compare-table thead th.col-stage1 {
+            background: var(--stage1);
+            border-radius: 10px 0 0 0;
+        }
+        .compare-table thead th.col-stage2 {
+            background: var(--stage2);
+        }
+        .compare-table thead th.col-stage3 {
+            background: var(--stage3);
+            border-radius: 0 10px 0 0;
+        }
+        .compare-table thead th .th-sub {
+            font-size: 0.68rem;
+            font-weight: 400;
+            opacity: 0.92;
+            display: block;
+            margin-top: 3px;
+            letter-spacing: 0.01em;
+        }
+        .compare-table thead th .th-rep {
+            font-size: 0.64rem;
+            font-weight: 400;
+            opacity: 0.85;
+            display: inline-block;
+            margin-top: 4px;
+            letter-spacing: 0.01em;
+            background: rgba(255, 255, 255, 0.22);
+            border-radius: 10px;
+            padding: 3px 10px;
+        }
+
+        .compare-table .dim-label {
+            font-weight: 700;
+            color: #3a4a3f;
+            text-align: left;
+            padding-left: 18px;
+            background: #fafcfb;
+            white-space: nowrap;
+            width: 105px;
+            font-size: 0.76rem;
+            letter-spacing: 0.02em;
+            border-right: 2px solid #eef3ef;
+        }
+
+        .compare-table tbody td {
+            padding: 10px 12px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 1.45;
+            border-bottom: 1px solid #f0f4f1;
+            color: #4a5a4f;
+            font-weight: 500;
+            transition: filter 0.15s, background 0.15s;
+        }
+        .compare-table tbody tr.row-dim td.col-stage1 {
+            background: #fafcfc;
+        }
+        .compare-table tbody tr.row-dim td.col-stage2 {
+            background: #fdfaf7;
+        }
+        .compare-table tbody tr.row-dim td.col-stage3 {
+            background: #f9fcfa;
+        }
+
+        .compare-table tbody tr.row-dim:hover td {
+            filter: brightness(0.94);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.73rem;
+            letter-spacing: 0.01em;
+        }
+        .status-full {
+            background: #e8f5ef;
+            color: #3a7a5a;
+        }
+        .status-partial {
+            background: #fef7ec;
+            color: #8a6528;
+        }
+        .status-none {
+            background: #faf6f6;
+            color: #b0a0a0;
+        }
+        .status-icon {
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .compare-table tbody tr.row-essence td {
+            padding: 14px 12px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            letter-spacing: 0.01em;
+            border-bottom: none;
+        }
+        .compare-table tbody tr.row-essence .col-stage1 {
+            background: #eef3f6;
+            color: #4a5f68;
+        }
+        .compare-table tbody tr.row-essence .col-stage2 {
+            background: #fdf5ea;
+            color: #7a5622;
+        }
+        .compare-table tbody tr.row-essence .col-stage3 {
+            background: #eaf6f1;
+            color: #2d5a44;
+        }
+        .compare-table tbody tr.row-essence .dim-label {
+            background: #fafcfb;
+            font-weight: 800;
+            color: #2c3e33;
+            font-size: 0.78rem;
+        }
+
+        /* ========== 总结条 ========== */
+        .diff-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            justify-content: center;
+            align-items: center;
+            background: #f9fbf9;
+            border: 1px solid #e4ece6;
+            border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+            padding: 12px 16px;
+            margin: 0 0 8px;
+            font-size: 0.78rem;
+            color: #4a5a4f;
+            position: relative;
+            top: -5px;
+            border-top: 1px dashed #dce4dd;
+        }
+        .diff-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+        }
+        .diff-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .diff-dot.d1 {
+            background: var(--stage1);
+        }
+        .diff-dot.d2 {
+            background: var(--stage2);
+        }
+        .diff-dot.d3 {
+            background: var(--stage3);
+        }
+
+        /* ========== 发展方向 ========== */
+        .future-section {
+            margin-top: 6px;
+            background: var(--future-bg);
+            border: 1px solid #e1dcf0;
+            border-radius: var(--radius);
+            padding: 16px 18px 12px;
+            border-left: 4px solid var(--future);
+        }
+        .future-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .future-header h2 {
+            font-size: 0.98rem;
+            font-weight: 700;
+            color: #3e3570;
+            margin: 0;
+        }
+        .future-badge {
+            font-size: 0.64rem;
+            background: #8b7dba;
+            color: #fff;
+            padding: 2px 9px;
+            border-radius: 12px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+        .future-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+        }
+        .future-card {
+            background: #fff;
+            border-radius: var(--radius-sm);
+            padding: 12px 12px 8px;
+            box-shadow: var(--shadow-sm);
+            border-left: 3px solid #8b7dba;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .future-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        .future-card .fc-icon {
+            font-size: 1.2rem;
+            margin-bottom: 3px;
+        }
+        .future-card h4 {
+            font-size: 0.74rem;
+            font-weight: 700;
+            color: #3e3570;
+            margin: 0 0 3px;
+        }
+        .future-card p {
+            font-size: 0.68rem;
+            color: #5a5f6b;
+            line-height: 1.45;
+            margin: 0;
+        }
+
+        @media (max-width: 820px) {
+            .container {
+                padding: 16px 10px 14px;
+                border-radius: 14px;
+            }
+            .header h1 {
+                font-size: 1.3rem;
+            }
+            .compare-table {
+                font-size: 0.72rem;
+                min-width: 560px;
+            }
+            .compare-table thead th {
+                font-size: 0.76rem;
+                padding: 10px 6px 8px;
+            }
+            .compare-table tbody td {
+                padding: 8px 8px;
+            }
+            .diff-strip {
+                font-size: 0.72rem;
+                gap: 6px 10px;
+            }
+            .future-cards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .timeline-wrap svg {
+                min-width: 480px;
+            }
+        }
+        @media (max-width: 480px) {
+            .future-cards {
+                grid-template-columns: 1fr;
+            }
+            .compare-table {
+                font-size: 0.66rem;
+                min-width: 460px;
+            }
+            .compare-table .dim-label {
+                width: 75px;
+                font-size: 0.7rem;
+                padding-left: 8px;
+            }
+            .status-badge {
+                font-size: 0.66rem;
+                padding: 3px 7px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <h1>
+                <span>🧬</span> AI Agent 三阶段演进对比
+                <span style="font-size:1.3rem;">📊</span>
+            </h1>
+            <p class="subtitle">
+                从<strong>纯语言模型</strong>到<strong>工具调用</strong>再到<strong>自主框架</strong>，AI Agent 经历了三次关键能力跃迁。
+            </p>
+            <p class="note">
+                ※ 实际时间轴：Function Calling (2023.6) → Tool Use / MCP (2024) → A2A / OpenClaw (2025) 逐步演进
+            </p>
+        </div>
+
+        <!-- 横向时间线 SVG -->
+        <div class="timeline-wrap">
+            <svg viewBox="0 0 860 105" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Agent三阶段时间线">
+                <defs>
+                    <marker id="arrowTimeline" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                        <path d="M0,0 L10,4 L0,8 L1.5,4 Z" fill="#7a9a8a" />
+                    </marker>
+                    <filter id="shadowNode" x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000018" />
+                    </filter>
+                </defs>
+                <line x1="50" y1="42" x2="810" y2="42" stroke="#c8d6cc" stroke-width="2" stroke-linecap="round" />
+                <line x1="220" y1="42" x2="295" y2="42" stroke="#7a9a8a" stroke-width="1.6" marker-end="url(#arrowTimeline)" opacity="0.75" />
+                <line x1="495" y1="42" x2="570" y2="42" stroke="#7a9a8a" stroke-width="1.6" marker-end="url(#arrowTimeline)" opacity="0.75" />
+
+                <circle cx="120" cy="42" r="24" fill="#97b5c3" stroke="#fff" stroke-width="3" filter="url(#shadowNode)" />
+                <text x="120" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">阶段一</text>
+                <text x="120" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#4a6a5a">LLM 原生</text>
+                <text x="120" y="93" text-anchor="middle" font-size="8.5" fill="#8a9a8f">2022–2023 初</text>
+
+                <circle cx="400" cy="42" r="24" fill="#d8a65c" stroke="#fff" stroke-width="3" filter="url(#shadowNode)" />
+                <text x="400" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">阶段二</text>
+                <text x="400" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#4a6a5a">工具调用</text>
+                <text x="400" y="93" text-anchor="middle" font-size="8.5" fill="#8a9a8f">2023 中 – 2025</text>
+
+                <circle cx="680" cy="42" r="24" fill="#66b89a" stroke="#fff" stroke-width="3" filter="url(#shadowNode)" />
+                <text x="680" y="46" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">阶段三</text>
+                <text x="680" y="78" text-anchor="middle" font-size="11" font-weight="700" fill="#4a6a5a">Agent 框架</text>
+                <text x="680" y="93" text-anchor="middle" font-size="8.5" fill="#8a9a8f">"Harness" · 2024 底 – 至今</text>
+            </svg>
+        </div>
+
+        <!-- 状态图例 -->
+        <div class="legend-bar">
+            <span class="leg-item"><span class="leg-dot l-full">✓</span> 完善支持</span>
+            <span class="leg-item"><span class="leg-dot l-partial">△</span> 部分/弱支持</span>
+            <span class="leg-item"><span class="leg-dot l-none">✗</span> 不支持/无</span>
+        </div>
+
+        <!-- 对比表格 -->
+        <div class="table-wrapper">
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th style="background:#f5f8f5;width:105px;border-radius:10px 0 0 0;"></th>
+                        <th class="col-stage1">
+                            阶段一 · LLM 原生
+                            <span class="th-sub">2022 – 2023 年初</span>
+                            <span class="th-rep">ChatGPT · GPT-3.5</span>
+                        </th>
+                        <th class="col-stage2">
+                            阶段二 · 工具调用
+                            <span class="th-sub">2023 中 – 2025</span>
+                            <span class="th-rep">OpenAI FC · Claude Tool Use · Gemini FC · MCP</span>
+                        </th>
+                        <th class="col-stage3">
+                            阶段三 · Agent 框架
+                            <span class="th-sub">2024 底 – 至今</span>
+                            <span class="th-rep">LangGraph · CrewAI · AutoGen · OpenClaw · A2A</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="row-dim">
+                        <td class="dim-label">🔧 工具调用</td>
+                        <td class="col-stage1"><span class="status-badge status-none"><span class="status-icon">✗</span> 不支持，纯文本</span></td>
+                        <td class="col-stage2"><span class="status-badge status-partial"><span class="status-icon">△</span> 单步/简单循环</span></td>
+                        <td class="col-stage3"><span class="status-badge status-full"><span class="status-icon">✓</span> 多步编排 + MCP 标准化</span></td>
+                    </tr>
+                    <tr class="row-dim">
+                        <td class="dim-label">📋 任务规划</td>
+                        <td class="col-stage1"><span class="status-badge status-none"><span class="status-icon">✗</span> 仅靠 prompt</span></td>
+                        <td class="col-stage2"><span class="status-badge status-partial"><span class="status-icon">△</span> 弱，需人工拆分</span></td>
+                        <td class="col-stage3"><span class="status-badge status-full"><span class="status-icon">✓</span> 自动分解子任务</span></td>
+                    </tr>
+                    <tr class="row-dim">
+                        <td class="dim-label">🧠 记忆管理</td>
+                        <td class="col-stage1"><span class="status-badge status-none"><span class="status-icon">✗</span> 无，对话独立</span></td>
+                        <td class="col-stage2"><span class="status-badge status-partial"><span class="status-icon">△</span> 拼接上下文</span></td>
+                        <td class="col-stage3"><span class="status-badge status-full"><span class="status-icon">✓</span> 短期+长期+向量</span></td>
+                    </tr>
+                    <tr class="row-dim">
+                        <td class="dim-label">⚠️ 错误处理</td>
+                        <td class="col-stage1"><span class="status-badge status-none"><span class="status-icon">✗</span> 幻觉不可控</span></td>
+                        <td class="col-stage2"><span class="status-badge status-partial"><span class="status-icon">△</span> 手动重试</span></td>
+                        <td class="col-stage3"><span class="status-badge status-full"><span class="status-icon">✓</span> 重试/降级/超时</span></td>
+                    </tr>
+                    <tr class="row-dim">
+                        <td class="dim-label">🛡️ 安全护栏</td>
+                        <td class="col-stage1"><span class="status-badge status-none"><span class="status-icon">✗</span> 基本没有</span></td>
+                        <td class="col-stage2"><span class="status-badge status-partial"><span class="status-icon">△</span> 开发者自行过滤</span></td>
+                        <td class="col-stage3"><span class="status-badge status-full"><span class="status-icon">✓</span> 框架级校验</span></td>
+                    </tr>
+                    <tr class="row-dim">
+                        <td class="dim-label">🤝 多Agent协作</td>
+                        <td class="col-stage1"><span class="status-badge status-none"><span class="status-icon">✗</span> 不支持</span></td>
+                        <td class="col-stage2"><span class="status-badge status-none"><span class="status-icon">✗</span> 不支持</span></td>
+                        <td class="col-stage3"><span class="status-badge status-full"><span class="status-icon">✓</span> CrewAI / AutoGen / A2A</span></td>
+                    </tr>
+                    <tr class="row-dim">
+                        <td class="dim-label">👤 人机协同</td>
+                        <td class="col-stage1"><span class="status-badge status-none"><span class="status-icon">✗</span> 无</span></td>
+                        <td class="col-stage2"><span class="status-badge status-none"><span class="status-icon">✗</span> 无</span></td>
+                        <td class="col-stage3"><span class="status-badge status-full"><span class="status-icon">✓</span> 暂停确认机制</span></td>
+                    </tr>
+                    <tr class="row-essence">
+                        <td class="dim-label">💡 本质</td>
+                        <td class="col-stage1">有脑无手：模型是大脑，但没有手脚。</td>
+                        <td class="col-stage2">有工具但靠人驱动：给模型工具，开发者写 while 循环。</td>
+                        <td class="col-stage3">有缰绳自主奔跑：完整自我管理系统，自主规划·执行·纠错。</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 总结条 -->
+        <div class="diff-strip">
+            <span class="diff-item"><span class="diff-dot d1"></span> 阶段一：<strong>只有脑，没有手脚</strong></span>
+            <span style="color:#bcc8c0;">→</span>
+            <span class="diff-item"><span class="diff-dot d2"></span> 阶段二：<strong>有工具，但靠人驱动</strong></span>
+            <span style="color:#bcc8c0;">→</span>
+            <span class="diff-item"><span class="diff-dot d3"></span> 阶段三：<strong>有缰绳，自主奔跑</strong></span>
+        </div>
+
+        <!-- 发展方向 -->
+        <div class="future-section">
+            <div class="future-header">
+                <h2>🚀 Agent 框架类（Harness）的发展方向</h2>
+                <span class="future-badge">正在发生</span>
+            </div>
+            <div class="future-cards">
+                <div class="future-card">
+                    <div class="fc-icon">🔌</div>
+                    <h4>MCP 协议标准化</h4>
+                    <p>像 USB-C 统一外设，MCP 让工具接口标准化，Agent 可动态发现并调用兼容工具。</p>
+                </div>
+                <div class="future-card">
+                    <div class="fc-icon">🤝</div>
+                    <h4>多 Agent 协作</h4>
+                    <p>多个 Agent 分工完成复杂项目：规划、执行、审查，形成团队化工作流。</p>
+                </div>
+                <div class="future-card">
+                    <div class="fc-icon">🧠</div>
+                    <h4>长期记忆 + RAG</h4>
+                    <p>Agent 跨会话记住偏好与经验，结合向量检索实现真正的"学习"与"成长"。</p>
+                </div>
+                <div class="future-card">
+                    <div class="fc-icon">💻</div>
+                    <h4>代码生成 + 沙箱</h4>
+                    <p>不仅能调工具，还能现场写代码解决新问题，在安全沙箱中扩展能力边界。</p>
+                </div>
+                <div class="future-card">
+                    <div class="fc-icon">🛡️</div>
+                    <h4>安全护栏完善</h4>
+                    <p>多层输入输出过滤，在受限环境中运行 Agent，防止毁灭性操作。</p>
+                </div>
+                <div class="future-card">
+                    <div class="fc-icon">👤</div>
+                    <h4>人机协同深化</h4>
+                    <p>高风险操作自动暂停等待批准，人与 Agent 形成"监督-执行"协作模式。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

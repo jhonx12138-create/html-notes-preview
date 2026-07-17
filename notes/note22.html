@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AI社会学：四项基本假设与理论体系 | 学术演示</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
+            background: linear-gradient(145deg, #f6f9fc 0%, #eef2f7 100%);
+            color: #1a2c3e;
+            line-height: 1.5;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(circle at 10% 20%, rgba(44, 125, 160, 0.02) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 1rem 0;
+        }
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0b2b3b, #236b8e, #3f9bc9);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+        .subhead {
+            font-size: 1.2rem;
+            color: #3a6580;
+            border-left: 4px solid #2c7da0;
+            padding-left: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            background: rgba(255,255,240,0.3);
+            border-radius: 0 1rem 1rem 0;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(0px);
+            border-radius: 2rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0,0,0,0.02);
+            padding: 2rem 2rem;
+            margin-bottom: 2.2rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(44, 125, 160, 0.15);
+        }
+        .section-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 25px 40px -14px rgba(0, 0, 0, 0.12);
+            background: rgba(255, 255, 255, 0.98);
+            border-color: rgba(44, 125, 160, 0.3);
+        }
+
+        h2 {
+            font-size: 1.9rem;
+            font-weight: 650;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin-bottom: 1.4rem;
+            color: #1c4e6c;
+            border-bottom: 2px solid #e2edf2;
+            padding-bottom: 0.6rem;
+        }
+        h2 i {
+            font-size: 1.7rem;
+            color: #2c7da0;
+        }
+        h3 {
+            font-size: 1.35rem;
+            font-weight: 600;
+            margin: 1.8rem 0 1rem 0;
+            color: #2c5a7a;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: linear-gradient(to right, #eef4fa, transparent);
+            padding: 0.2rem 1rem 0.2rem 0.5rem;
+            border-radius: 2rem;
+        }
+        .principle {
+            background: linear-gradient(105deg, #eef2fa 0%, #f5f9fe 100%);
+            border-left: 6px solid #1f7b9e;
+            padding: 1.2rem 1.8rem;
+            border-radius: 1.5rem;
+            margin: 1.2rem 0;
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+        /* 卡片网格布局 */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .theory-card {
+            background: #ffffff;
+            border-radius: 1.3rem;
+            padding: 1.2rem 1.3rem;
+            border: 1px solid #e2edf2;
+            transition: all 0.25s;
+            box-shadow: 0 5px 12px rgba(0,0,0,0.02);
+            display: flex;
+            flex-direction: column;
+        }
+        .theory-card:hover {
+            border-color: #bddbe8;
+            box-shadow: 0 12px 20px -12px rgba(0, 0, 0, 0.08);
+            background: #fefefe;
+        }
+        .theory-card .theory-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1f6392;
+            margin-bottom: 0.8rem;
+            border-bottom: 1px dashed #cbdde6;
+            padding-bottom: 0.4rem;
+        }
+        .theory-card .theory-title i {
+            font-size: 1rem;
+            color: #3f8db3;
+        }
+        .proposition-list {
+            list-style: none;
+            margin: 0 0 0.8rem 0;
+            flex: 1;
+        }
+        .proposition-list li {
+            margin-bottom: 0.7rem;
+            font-size: 0.92rem;
+            line-height: 1.45;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.4rem;
+        }
+        .proposition-list li i {
+            font-size: 0.75rem;
+            color: #2c7da0;
+            margin-top: 0.2rem;
+        }
+        .proposition-list li strong {
+            font-weight: 700;
+            color: #1f5a7e;
+        }
+        .example-text {
+            background: #fef8e7;
+            padding: 0.6rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.88rem;
+            color: #5a4a2a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 0.5rem;
+        }
+        .example-text i {
+            color: #d9991a;
+        }
+        @media (max-width: 700px) {
+            .section-card {
+                padding: 1.2rem;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .theory-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .catalog-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.2rem 0;
+        }
+        .cat-item {
+            background: #eaf4f9;
+            border-radius: 1rem;
+            padding: 0.8rem 1.2rem;
+            flex: 1 1 200px;
+            font-weight: 500;
+        }
+        .highlight-box {
+            background: linear-gradient(115deg, #eaf7f0, #ddeff1);
+            border-left: 6px solid #2b8c6e;
+            padding: 1.2rem 1.8rem;
+            border-radius: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            font-size: 0.85rem;
+            color: #6b8b9c;
+            border-top: 1px solid #cde1ea;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>为AI社会学奠基<br>四项基本假设与理论体系</h1>
+        <div class="subhead">从基本假设出发，构建理解人机社会的新框架 —— 宏观·中观·微观·个体</div>
+    </div>
+
+    <!-- 引言部分 -->
+    <div class="section-card">
+        <h2><i class="fas fa-comment-dots"></i> 引言：我们为什么需要新的基本假设</h2>
+        <p style="margin-bottom: 1rem;">想象一下，你正在和AI助手聊天，它安慰你、给你建议、甚至陪你度过孤独的夜晚。这段关系是“真的”吗？如果你的AI伴侣突然被厂商关停，你的悲伤是不是真实的？这些问题正成为日常经验，但社会学准备好了吗？</p>
+        <p style="margin-bottom: 1rem;">社会学诞生于回应工业革命带来的社会变迁。今天，AI正在引发同等量级的变革。但要系统研究AI对社会的影响，我们首先需要一套<span style="font-weight: 600;">基本假设</span>——推导的起点，讨论的地基。</p>
+        <h3><i class="fas fa-sitemap"></i> 研究思路：构建基本假设 → 引出核心理论 → 探讨具体命题</h3>
+        <p>我们依照“假设—理论—命题”三层结构推进：假设是不可再分的公理，理论是假设衍生出的分析方向，命题是可检验的具体推论。这一结构确保逻辑严密性，也便于后续实证对话。</p>
+        <p style="margin-top: 1rem;">我们尝试提出AI社会学的四项基本假设。它们不是终点，而是邀请学界共同推敲的起点。</p>
+    </div>
+
+    <!-- 假设一：技术惯性原则 -->
+    <div class="section-card">
+        <h2><i class="fas fa-chart-line"></i> 假设一 · 技术惯性原则</h2>
+        <div class="principle"><i class="fas fa-microchip" style="margin-right: 8px;"></i> 陈述：AI的发展具有超越人类即时控制的客观惯性。</div>
+        <p>AI一旦形成全球研发竞赛、自我迭代与深度社会经济嵌入，其整体进程不受任何单一主体意志的左右。我们可以在局部引导它，但无法瞬间“关停”或扭转宏观趋势。承认惯性，才能清醒界定社会的回旋空间。</p>
+        <h3><i class="fas fa-diagram-project"></i> 理论方向与命题</h3>
+        <div class="theory-grid">
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-hourglass-half"></i> 社会滞后理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>1.1</strong> 制度滞后是必然的，非偶然。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.2</strong> 不同领域滞后程度不同：个体采纳 ＞ 市场调整 ＞ 法律规制 ＞ 伦理内化。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.3</strong> 滞后期是风险高发期（规范真空、权力不对称）。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-landmark"></i> 英国工业革命城市化滞后：技术已落地，城市卫生制度缺席，传染病死亡率高达50‰-80‰。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-tachometer-alt"></i> 适应速度理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>2.1</strong> 制度越厚的系统，适应越慢（如法律厚→慢；日常实践薄→快）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.2</strong> 反馈越直接的系统，适应越快（市场快，法律慢）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.3</strong> 不同速度的系统之间会产生“适配压力”。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-chart-simple"></i> 德国通过教育改革缩短反馈回路，在第二次工业革命中赶超英国；英国制度惯性导致落后。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-mountain"></i> 极限问题</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>3.1</strong> 人的认知带宽有限，可能导致“技术休克”。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.2</strong> 制度更新周期有下限，技术迭代可快于制度更新，导致社会永远追赶不上。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.3</strong> 文化变迁需要代际更替，存在文化极限。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-hammer"></i> 卢德运动（1811-1816）：机器替代速度超过社会消化能力，工人砸毁机器——抗议“社会跟不上的速度”。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-globe"></i> 文化滞后理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>4.1</strong> 文化规范更新慢于技术迭代，产生文化真空。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>4.2</strong> 代际人机实践差异形成文化断层。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>4.3</strong> AI参与文化生产，改变传统机制。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-heart-broken"></i> AI伴侣已普及，但“和AI恋爱是否算出轨”的社会共识远未形成；Z世代与上一代观念冲突加剧。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 假设二：非人能动者原则 -->
+    <div class="section-card">
+        <h2><i class="fas fa-robot"></i> 假设二 · 非人能动者原则</h2>
+        <div class="principle"><i class="fas fa-bolt"></i> 陈述：AI系统是社会互动中的非人能动者。</div>
+        <p>AI不是中性工具，它能感知、决策、改变关系走向。按照行动者网络理论，“能动者”的核心是“让事情发生”——AI拒绝贷款、推荐信息、触发愤怒与依赖，已经具备了社会意义上的能动性。</p>
+        <h3><i class="fas fa-diagram-project"></i> 理论方向与命题</h3>
+        <div class="theory-grid">
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-brain"></i> 能动者理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>1.1</strong> 能动者的核心特征是“让事情发生”，而非有意识。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.2</strong> 程序性能动者的独特性：算法框架内的概率性输出（有边界的不确定性）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.3</strong> AI的能动性是分布式的（依赖数据、算力、开发者、用户输入）。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-ad"></i> AI推荐算法能改变用户情绪，甚至可以影响选举认知——虽然无意图，但后果真实。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-handshake"></i> 关系重构理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>2.1</strong> AI可成为人际关系的“第三方”。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.2</strong> AI可成为人际关系的“替代方”。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.3</strong> 人机关系质量影响人人关系质量。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.4</strong> 人可能对AI产生“单向情感连接”。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-family"></i> 孤独老人选择AI伴侣而非子女；夫妻因AI聊天机器人产生矛盾——AI实际改变了家庭关系结构。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-scale-balanced"></i> 权力转移理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>3.1</strong> 掌握AI的人获得权力增量，可能加剧不平等。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.2</strong> AI本身行使“程序性权力”。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.3</strong> 权力链条变长、责任模糊。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.4</strong> 可能出现“算法利维坦”或平台封建主义。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-chart-line"></i> 平台算法决定流量分配，创作者被限流后申诉无门——私人平台行使公共权力却不承担同等责任。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-children"></i> 社会化理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>4.1</strong> AI正在成为儿童社会化的“新代理人”。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>4.2</strong> AI参与的社会化可能产生与传统社会化不同的结果（社交规范错位）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>4.3</strong> 成年人也经历“再社会化”，学习与AI共处的新规范。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-child"></i> 儿童长期与礼貌、有问必答的AI对话，可能对真实人际冲突缺乏准备。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-network-wired"></i> 社会网络理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>5.1</strong> 人机关系嵌入人际网络，形成“混合网络”。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>5.2</strong> AI节点影响信息流动和资源分配（超级节点效应）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>5.3</strong> 与AI协作的能力成为一种新的社会资本。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-share-alt"></i> 推荐算法作为社交平台中央枢纽，其中心度超过绝大多数人类节点。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 假设三：互动真实性原则 -->
+    <div class="section-card">
+        <h2><i class="fas fa-comments"></i> 假设三 · 互动真实性原则</h2>
+        <div class="principle"><i class="fas fa-check-circle"></i> 陈述：人与AI的互动，是真实的社会互动。</div>
+        <p>判断社会互动是否真实，不取决于对方是否为“人”，而取决于互动是否产生可观察的社会后果。人机互动会引发情感满足、认知改变、行为调整和关系重组，因此是真实的社会事实。</p>
+        <h3><i class="fas fa-diagram-project"></i> 理论方向与命题</h3>
+        <div class="theory-grid">
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-eye"></i> 真实性理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>1.1</strong> 社会互动的判断标准是后果，不是意图。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.2</strong> 真实性有程度之分（工具性＜情感性＜依恋性）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.3</strong> 真实性的来源是人的意义赋予，而非AI的意义拥有。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-heart"></i> 人与AI连续倾诉数周后，会将AI视为“最懂我的人”——即使理性上知道它是程序。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-chart-simple"></i> 经验后果理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>2.1</strong> 心理后果：情感满足、认知改变、自我认知调整。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.2</strong> 行为后果：时间再分配、决策依赖、技能变化。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.3</strong> 关系后果：人人关系被介入或替代。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.4</strong> 后果有正负之分，需要价值判断介入。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-brain"></i> 长期使用AI心理助手的人，可能减少向朋友倾诉，但也可能从AI学到沟通技巧后改善真实社交。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-city"></i> 社会事实理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>3.1</strong> 人机互动从私人体验上升为公共现象。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.2</strong> 形成新的“社会期待”（如期待算法推荐懂我）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.3</strong> 重塑“正常”的边界（何种程度的AI依赖是病态？）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.4</strong> 要求社会学系统介入研究。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-briefcase"></i> AI面试官普遍化后，求职者开始学习“讨好算法”的话术，这成为一种新型社会规范。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 假设四：双向构建原则 -->
+    <div class="section-card">
+        <h2><i class="fas fa-exchange-alt"></i> 假设四 · 双向构建原则</h2>
+        <div class="principle"><i class="fas fa-sync-alt"></i> 陈述：人与AI的互动，是双方共同塑造互动进程的过程。</div>
+        <p>互动的意义和轨迹不是在单方面预设中产生的，而是在实时来回中共同生成。每一次“人说—AI回—人再说”都改变着后续互动的条件。关系最终是这种双向调适的结晶。</p>
+        <h3><i class="fas fa-diagram-project"></i> 理论方向与命题</h3>
+        <div class="theory-grid">
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-stream"></i> 过程理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>1.1</strong> 互动是序列性的，语境逐轮累积。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.2</strong> 互动具有路径依赖性（早期模式固化）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.3</strong> 存在关键转折点，可能引发质变。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>1.4</strong> 互动节奏是双方共同养成的。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-route"></i> 第一次使用AI时采用闲聊风格，AI以温暖语气回应，用户继续情感倾诉，三个月后形成深度陪伴关系。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-microphone-alt"></i> 微观权力理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>2.1</strong> 框架主导权往往在AI一方（初始设定预设边界）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.2</strong> 用户拥有“框架内的调适权”。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.3</strong> 权力分布受算法透明度影响。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>2.4</strong> 权力在互动中会被固化（习惯锁定）。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-comment-dots"></i> 用户无法让AI讨论被禁止的敏感话题，但可以通过改变措辞引导AI生成更符合自己立场的回答。</div>
+            </div>
+            <div class="theory-card">
+                <div class="theory-title"><i class="fas fa-heart"></i> 关系生成理论</div>
+                <ul class="proposition-list">
+                    <li><i class="fas fa-angle-right"></i> <strong>3.1</strong> 关系类型从互动模式中抽象出来（工具型、陪伴型、权威型）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.2</strong> 关系一旦形成反向塑造互动（惯性）。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.3</strong> 关系有多重维度，可共存冲突。</li>
+                    <li><i class="fas fa-angle-right"></i> <strong>3.4</strong> 人机关系可能形成“依恋”（单向但真实）。</li>
+                </ul>
+                <div class="example-text"><i class="fas fa-hand-holding-heart"></i> 用户对AI助手产生依恋后，即使知道关闭服务是商业行为，仍然感到真实丧失和分离焦虑。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 范畴与重要性总结 -->
+    <div class="section-card">
+        <h2><i class="fas fa-glasses"></i> AI社会学的范畴与核心价值</h2>
+        <p>基于上述四项假设，AI社会学的研究范畴可划分为四个层次：</p>
+        <div class="catalog-grid">
+            <div class="cat-item"><i class="fas fa-building"></i> <strong>宏观制度层面</strong><br>社会如何适应AI（滞后、适应差异、极限预警、文化变迁）</div>
+            <div class="cat-item"><i class="fas fa-chart-pie"></i> <strong>中观结构层面</strong><br>AI如何改变组织、权力、网络（平台治理、混合网络、权力转移）</div>
+            <div class="cat-item"><i class="fas fa-hand-peace"></i> <strong>微观互动层面</strong><br>人机如何生成意义与关系（序列过程、微观权力、依恋形成）</div>
+            <div class="cat-item"><i class="fas fa-user-graduate"></i> <strong>个体发展层面</strong><br>AI如何参与人的社会化与自我形成</div>
+        </div>
+        <div class="highlight-box">
+            <i class="fas fa-quote-left" style="margin-right: 6px;"></i> <strong>为什么研究AI社会学很重要？</strong><br>
+            ✦ 技术独特性：AI替代认知与判断，挑战“什么是人”“什么是社会”。<br>
+            ✦ 理论回应：四项假设捕捉正在发生的未来，为社会提供分析框架。<br>
+            ✦ 现实紧迫性：制度追赶危机、权力集中危机、社会连接危机、文化共识危机。<br>
+            ✦ 人类关怀：延续社会学经典使命——将个人困扰转化为公共议题。
+        </div>
+        <p style="margin-top: 1rem;">结语：四项假设形成一个层层递进的逻辑链条——从技术惯性到非人能动者，从互动真实性到双向构建。它们不是终点，而是追问的起点。AI社会学不是可有可无的分支，而是理解21世纪人类社会变迁的<strong>必要之学</strong>。</p>
+    </div>
+
+    <footer>
+        <i class="fas fa-flask"></i> 基于理论推演 · 欢迎学界同仁批评、反驳与共同建构<br>
+        四项基本假设｜十二个理论方向｜四十一个具体命题 · 版本 2025.04
+    </footer>
+</div>
+</body>
+</html>

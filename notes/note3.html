@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>《为什么》· 因果关系新科学 | 知识梳理</title>
+    <style>
+        /* ============ 设计 Token ============ */
+        :root {
+            --bg-page: #f5f3f0;
+            --bg-card: #fffcf9;
+            --bg-soft: #f4ede8;
+            --bg-softer: #faf7f2;
+            --bg-code: #f7f3ed;
+            --bg-tag: #ede3d7;
+
+            --color-text: #2c2b28;
+            --color-heading: #1e1b18;
+            --color-muted: #5e5b56;
+            --color-mute-2: #6b6259;
+            --color-accent: #c44f4f;
+            --color-accent-deep: #b34444;
+            --color-accent-2: #b76e4a;
+            --color-code: #b1492c;
+
+            --border-soft: #e2d9cf;
+            --border-card: #dfd5c8;
+
+            /* 因果图颜色（亮色） */
+            --graph-chain: #7d5a3c;
+            --graph-fork: #9b6b4a;
+            --graph-collider: #b34444;
+            --graph-chain-bg: #f3ede6;
+            --graph-fork-bg: #f5efe8;
+            --graph-collider-bg: #faf0f0;
+
+            --radius-xl: 2.5rem;
+            --radius-lg: 2rem;
+            --radius-md: 1rem;
+            --radius-sm: 0.5rem;
+
+            --shadow-card: 0 20px 40px rgba(0, 0, 0, .08), 0 8px 20px rgba(0, 0, 0, .05);
+            --shadow-soft: 0 8px 18px rgba(0, 0, 0, .04);
+
+            --font-sans: 'Segoe UI', 'Roboto', 'Noto Sans SC', 'Helvetica Neue', system-ui, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+        }
+
+        /* 暗色模式 */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-page: #1a1815;
+                --bg-card: #25221e;
+                --bg-soft: #2e2a25;
+                --bg-softer: #2a2622;
+                --bg-code: #2d2924;
+                --bg-tag: #3a342d;
+
+                --color-text: #e8e3dc;
+                --color-heading: #f5f0e8;
+                --color-muted: #b8afa5;
+                --color-mute-2: #a0988d;
+                --color-accent: #e07474;
+                --color-accent-deep: #d96363;
+                --color-accent-2: #d18b65;
+                --color-code: #e69274;
+
+                --border-soft: #3d3730;
+                --border-card: #423b33;
+
+                /* 因果图颜色（暗色）—— 提高亮度和饱和度 */
+                --graph-chain: #c99a6b;
+                --graph-fork: #d4a575;
+                --graph-collider: #e07474;
+                --graph-chain-bg: #2a2520;
+                --graph-fork-bg: #2c2722;
+                --graph-collider-bg: #2d2424;
+
+                --shadow-card: 0 20px 40px rgba(0, 0, 0, .4), 0 8px 20px rgba(0, 0, 0, .3);
+                --shadow-soft: 0 8px 18px rgba(0, 0, 0, .2);
+            }
+        }
+
+        /* ============ Reset ============ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg-page);
+            font-family: var(--font-sans);
+            color: var(--color-text);
+            line-height: 1.7;
+            padding: 2rem 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            * {
+                transition: none !important;
+                animation: none !important;
+            }
+        }
+
+        /* ============ 容器与排版 ============ */
+        .container {
+            max-width: 960px;
+            width: 100%;
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-card);
+            padding: 2.8rem 2.5rem;
+        }
+
+        h1 {
+            font-size: clamp(1.8rem, 5vw, 2.4rem);
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            color: var(--color-heading);
+            border-left: 6px solid var(--color-accent);
+            padding-left: 1.2rem;
+            line-height: 1.2;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--color-muted);
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        h2 {
+            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            font-weight: 700;
+            margin-top: 2.8rem;
+            margin-bottom: 1.2rem;
+            color: var(--color-heading);
+            border-bottom: 2px solid var(--border-soft);
+            padding-bottom: 0.4rem;
+            letter-spacing: -0.2px;
+            scroll-margin-top: 1rem;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 2rem 0 0.8rem;
+            color: var(--color-heading);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .icon-num {
+            background: var(--bg-tag);
+            color: var(--color-heading);
+            border-radius: 50%;
+            width: 1.8rem;
+            height: 1.8rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        p {
+            margin-bottom: 1.1rem;
+            font-size: 1.02rem;
+        }
+        strong {
+            color: var(--color-heading);
+            font-weight: 700;
+        }
+        ul,
+        ol {
+            margin-left: 1.6rem;
+            margin-bottom: 1.3rem;
+        }
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* ============ 元信息 ============ */
+        .book-meta {
+            background: var(--bg-soft);
+            padding: 1.3rem 1.8rem;
+            border-radius: var(--radius-lg);
+            margin: 1.5rem 0 2.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem 2rem;
+            font-size: 0.98rem;
+            border: 1px solid var(--border-soft);
+        }
+        .book-meta dt {
+            font-weight: 700;
+            color: var(--color-accent-deep);
+            display: inline;
+            margin-right: 0.4rem;
+        }
+        .book-meta dd {
+            display: inline;
+            margin: 0;
+        }
+        .book-meta .meta-item {
+            display: flex;
+            align-items: baseline;
+            gap: 0.3rem;
+        }
+
+        /* 作者简介 */
+        .author-bio {
+            background: var(--bg-softer);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+            color: var(--color-muted);
+            line-height: 1.6;
+        }
+        .author-bio strong {
+            color: var(--color-heading);
+        }
+
+        /* ============ 目录 ============ */
+        .toc {
+            background: var(--bg-softer);
+            border: 1px solid var(--border-soft);
+            border-radius: var(--radius-md);
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .toc-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: var(--color-heading);
+            font-size: 1rem;
+        }
+        .toc-list {
+            list-style: none;
+            margin: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 1rem;
+        }
+        .toc-list a {
+            color: var(--color-accent-2);
+            text-decoration: none;
+            font-size: 0.93rem;
+            border-bottom: 1px dashed transparent;
+            transition: border-color .2s;
+        }
+        .toc-list a:hover,
+        .toc-list a:focus-visible {
+            border-bottom-color: var(--color-accent-2);
+            outline: none;
+        }
+
+        /* ============ 引用块 ============ */
+        blockquote.quote-block {
+            background: var(--bg-softer);
+            border-left: 5px solid var(--color-accent-2);
+            padding: 1.2rem 1.6rem;
+            margin: 1.8rem 0;
+            font-style: italic;
+            border-radius: 0 var(--radius-md) var(--radius-md) 0;
+            box-shadow: var(--shadow-soft);
+        }
+
+        /* ============ 因果关系之梯 ============ */
+        .ladder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 2.2rem 0 1rem;
+            gap: 1rem;
+        }
+        .rung {
+            background: var(--bg-card);
+            border: 1px solid var(--border-card);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem 1.8rem;
+            box-shadow: var(--shadow-soft);
+            width: 100%;
+        }
+        .rung-3 {
+            width: 65%;
+            background: var(--bg-soft);
+            border-left: 6px solid #9b6b5a;
+        }
+        .rung-2 {
+            width: 82%;
+            background: var(--bg-softer);
+            border-left: 6px solid #b3815d;
+        }
+        .rung-1 {
+            width: 100%;
+            border-left: 6px solid #c79a6e;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            .rung-3 {
+                border-left-color: #b8896f;
+            }
+            .rung-2 {
+                border-left-color: #c9976e;
+            }
+            .rung-1 {
+                border-left-color: #d4aa7e;
+            }
+        }
+
+        .rung-header {
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .rung-title {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--color-heading);
+        }
+        .rung-sub {
+            font-weight: 600;
+            color: var(--color-heading);
+            font-size: 0.92rem;
+            background: var(--bg-tag);
+            padding: 0.2rem 0.9rem;
+            border-radius: 999px;
+        }
+        .rung-desc {
+            font-size: 0.98rem;
+        }
+        .rung-desc dl {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.3rem 0.8rem;
+            margin: 0.5rem 0;
+        }
+        .rung-desc dt {
+            font-weight: 700;
+            color: var(--color-heading);
+            white-space: nowrap;
+        }
+        .rung-desc dd {
+            margin: 0;
+        }
+        .ladder-caption {
+            text-align: center;
+            font-weight: 500;
+            color: var(--color-muted);
+            margin-bottom: 2rem;
+        }
+
+        /* ============ 数学高亮 ============ */
+        .math {
+            background: var(--bg-code);
+            padding: 0.15rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 0.92rem;
+            color: var(--color-code);
+            font-weight: 500;
+        }
+
+        .formula-box {
+            background: var(--bg-code);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            border: 1px dashed var(--border-card);
+            white-space: nowrap;
+        }
+
+        /* ============ 因果结构图 ============ */
+        .causal-graphs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin: 1.5rem 0 1.8rem;
+        }
+        .graph-card {
+            border-radius: var(--radius-md);
+            padding: 1.3rem 1.2rem;
+            text-align: center;
+            border: 1px solid var(--border-soft);
+            transition: background .2s;
+        }
+        .graph-card--chain {
+            background: var(--graph-chain-bg);
+            color: var(--graph-chain);
+        }
+        .graph-card--fork {
+            background: var(--graph-fork-bg);
+            color: var(--graph-fork);
+        }
+        .graph-card--collider {
+            background: var(--graph-collider-bg);
+            color: var(--graph-collider);
+        }
+
+        .graph-card h4 {
+            font-size: 1rem;
+            margin-bottom: 0.6rem;
+            color: inherit;
+        }
+        .graph-card svg {
+            display: block;
+            margin: 0.5rem auto 0.8rem;
+            width: 100%;
+            max-width: 220px;
+            height: auto;
+        }
+        .graph-card p {
+            font-size: 0.9rem;
+            margin: 0;
+            color: var(--color-muted);
+        }
+
+        /* SVG 节点样式 */
+        .node-circle {
+            fill: var(--bg-card);
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+        @media (prefers-color-scheme: dark) {
+            .node-circle {
+                fill: var(--bg-card);
+                stroke-width: 2.5;
+            }
+        }
+        .node-text {
+            font-family: var(--font-sans);
+            font-size: 14px;
+            font-weight: 700;
+            fill: currentColor;
+        }
+        .edge {
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        /* ============ 章节网格 ============ */
+        .chapter-grid {
+            list-style: none;
+            margin: 1.2rem 0 1.8rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.7rem;
+        }
+        .chapter-grid li {
+            background: var(--bg-softer);
+            border-radius: var(--radius-md);
+            padding: 0.7rem 1.1rem;
+            font-size: 0.92rem;
+            border: 1px solid var(--border-soft);
+            margin: 0;
+        }
+
+        /* ============ 其他 ============ */
+        hr {
+            margin: 2.4rem 0 1.8rem;
+            border: 0;
+            height: 1px;
+            background: linear-gradient(to right, var(--border-soft), transparent);
+        }
+        .footnote {
+            font-size: 0.9rem;
+            color: var(--color-mute-2);
+        }
+
+        /* ============ 响应式 ============ */
+        @media (max-width: 600px) {
+            body {
+                padding: 1rem 0.5rem;
+            }
+            .container {
+                padding: 1.6rem 1.1rem;
+                border-radius: var(--radius-lg);
+            }
+            .rung-1,
+            .rung-2,
+            .rung-3 {
+                width: 100%;
+            }
+            h1 {
+                padding-left: 0.9rem;
+                border-left-width: 4px;
+            }
+            .rung-desc dl {
+                grid-template-columns: 1fr;
+                gap: 0.15rem 0;
+            }
+        }
+
+        /* ============ 打印 ============ */
+        @media print {
+            body {
+                background: #fff;
+                padding: 0;
+                color: #000;
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+                background: #fff;
+            }
+            .toc {
+                display: none;
+            }
+            h2,
+            h3 {
+                page-break-after: avoid;
+            }
+            .rung,
+            .graph-card,
+            blockquote.quote-block {
+                page-break-inside: avoid;
+            }
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            /* 打印时用不同边框样式区分三层 */
+            .rung-3 {
+                border-left-style: double;
+                border-left-width: 4px;
+                background: #f9f9f9;
+            }
+            .rung-2 {
+                border-left-style: dashed;
+                border-left-width: 3px;
+                background: #fcfcfc;
+            }
+            .rung-1 {
+                border-left-style: solid;
+                border-left-width: 2px;
+                background: #fff;
+            }
+            .graph-card {
+                border: 1px solid #ccc;
+            }
+            .graph-card svg .node-circle {
+                fill: #fff;
+            }
+        }
+    </style>
+</head>
+<body>
+    <article class="container">
+
+        <!-- ========== Header ========== -->
+        <header>
+            <h1>《为什么》</h1>
+            <p class="subtitle">关于因果关系的新科学 · 知识梳理</p>
+
+            <dl class="book-meta" aria-label="书籍信息">
+                <div class="meta-item"><dt>作者</dt><dd>朱迪亚·珀尔 (Judea Pearl) &amp; 达纳·麦肯齐</dd></div>
+                <div class="meta-item"><dt>出版</dt><dd>2018 (英文) / 2019 (中信)</dd></div>
+                <div class="meta-item"><dt>核心命题</dt><dd>思维胜于数据</dd></div>
+            </dl>
+
+            <div class="author-bio">
+                <strong>朱迪亚·珀尔</strong>（1936—），以色列裔美国计算机科学家与哲学家，加州大学洛杉矶分校教授，被誉为"贝叶斯网络之父"。2011 年因"通过发展概率和因果推理演算对人工智能做出的基础性贡献"荣获<strong>图灵奖</strong>。本书是他近 25 年因果推断研究的总结性科普著作。
+            </div>
+        </header>
+
+        <!-- ========== 目录 ========== -->
+        <nav class="toc" aria-label="目录">
+            <div class="toc-title">📑 目录</div>
+            <ul class="toc-list">
+                <li><a href="#core-thesis">核心命题</a></li>
+                <li><a href="#history">历史背景</a></li>
+                <li><a href="#ladder">因果关系之梯</a></li>
+                <li><a href="#tools">核心工具与方法</a></li>
+                <li><a href="#paradox">基本结构与悖论</a></li>
+                <li><a href="#applications">应用领域</a></li>
+                <li><a href="#chapters">章节结构</a></li>
+                <li><a href="#summary">总结与意义</a></li>
+            </ul>
+        </nav>
+
+        <!-- ========== 核心命题 ========== -->
+        <section aria-labelledby="core-thesis">
+            <h2 id="core-thesis" tabindex="-1">核心命题：思维胜于数据</h2>
+            <p>珀尔认为，当前机器学习（包括深度学习）本质上是"曲线拟合"<sup>*</sup>，仅停留在相关关系层面，被困于因果关系之梯的最低层级。要实现强人工智能，必须让机器学会问<strong>"为什么"</strong>，即掌握因果推理。书中格言："你比你的数据更聪明"——数据不了解因果，而人类了解。本书正是将人类的因果直觉提炼为精确的数学语言与计算工具。</p>
+            <p style="font-size:0.85rem;color:var(--color-muted)"><sup>*</sup> 曲线拟合：指模型在大量数据中寻找统计模式，但无法理解变量间的因果方向。</p>
+        </section>
+
+        <!-- ========== 历史背景 ========== -->
+        <section aria-labelledby="history">
+            <h2 id="history" tabindex="-1">历史背景：因果推断的科学化之路</h2>
+            <p>20 世纪大部分时间，因果研究被高尔顿、皮尔逊建立的统计学传统排除在外，相关性被视为科学语言的边界。直到 20 世纪 90 年代，一场"因果革命"兴起：休厄尔·赖特的路径图、珀尔的因果图与结构因果模型，为严肃的因果研究提供了数学工具。</p>
+        </section>
+
+        <!-- ========== 因果关系之梯 ========== -->
+        <section aria-labelledby="ladder">
+            <h2 id="ladder" tabindex="-1">核心理论框架：因果关系之梯</h2>
+            <p>因果关系之梯是全书最重要的理论架构，将认知能力分为三个严格层级。每一层都依赖于下层，且下层无法自动跃升到上层。仅靠大数据无法攀登此梯。</p>
+
+            <div class="ladder">
+                <div class="rung rung-3">
+                    <div class="rung-header">
+                        <span class="rung-title"><span aria-hidden="true">🔮</span> 第三层 · 反事实</span>
+                        <span class="rung-sub">想象 (Imagining)</span>
+                    </div>
+                    <div class="rung-desc">
+                        <dl>
+                            <dt>核心问题</dt><dd>假如当时情况不同，结果会怎样？</dd>
+                            <dt>数学对象</dt><dd>反事实语句 <span class="math">Y<sub>X=x</sub>(u) = y</span></dd>
+                            <dt>典型表述</dt><dd>"如果奥斯瓦尔德没有杀死肯尼迪，他还会活着吗？"</dd>
+                            <dt>能力本质</dt><dd>归因、责任认定与道德判断的基础。需要运行已发生世界的"修改版模型"。反事实公式：<em>反事实 = 现实 + 结构模型 + 对现实的修正</em>。这是人类独有的高级认知能力，也是强人工智能的关键。</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="rung rung-2">
+                    <div class="rung-header">
+                        <span class="rung-title"><span aria-hidden="true">⚡</span> 第二层 · 干预</span>
+                        <span class="rung-sub">行动 (Doing)</span>
+                    </div>
+                    <div class="rung-desc">
+                        <dl>
+                            <dt>核心问题</dt><dd>如果我改变 X，Y 会发生什么变化？</dd>
+                            <dt>数学对象</dt><dd>干预分布 <span class="math">P(Y | do(X=x))</span></dd>
+                            <dt>典型表述</dt><dd>"吸烟会增加我患肺癌的几率吗？"</dd>
+                            <dt>能力本质</dt><dd>预测行动后果。需超越观测数据，理解数据生成机制。区分 <span class="math">P(Y|X)</span> 与 <span class="math">P(Y|do(X))</span> 至关重要——看到气压计下降可预测风暴，但拨动气压计指针却不会带来风暴。</dd>
+                        </dl>
+                    </div>
+                </div>
+
+                <div class="rung rung-1">
+                    <div class="rung-header">
+                        <span class="rung-title"><span aria-hidden="true">👁️</span> 第一层 · 关联</span>
+                        <span class="rung-sub">观察 (Seeing)</span>
+                    </div>
+                    <div class="rung-desc">
+                        <dl>
+                            <dt>核心问题</dt><dd>变量之间如何共变？</dd>
+                            <dt>数学对象</dt><dd>联合概率分布 <span class="math">P(X, Y, ...)</span></dd>
+                            <dt>典型表述</dt><dd>"看到公鸡打鸣，如何改变我对日出的预测？"（但无法回答"让公鸡不叫太阳还会升起吗"）</dd>
+                            <dt>能力本质</dt><dd>被动观察下的统计学习。当前深度学习处于此层，它无法回答任何"改变"的问题。</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            <p class="ladder-caption">⬆️ 层级递进：每一层都需要下一层不具备的因果知识 ⬆️</p>
+        </section>
+
+        <!-- ========== 核心工具 ========== -->
+        <section aria-labelledby="tools">
+            <h2 id="tools" tabindex="-1">核心工具与方法</h2>
+            <p>珀尔锻造了从关联攀向反事实的精密数学工具。</p>
+
+            <h3><span class="icon-num" aria-hidden="true">1</span>贝叶斯网络</h3>
+            <p>用<strong>有向无环图 (DAG)</strong> 和<strong>条件概率表 (CPT)</strong> 紧凑表示高维分布，借助马尔科夫条件高效推理。但本质仍是关联工具——它表达条件独立，而非因果关系。要迈向干预，必须对其进行因果化改造。</p>
+
+            <h3><span class="icon-num" aria-hidden="true">2</span>结构因果模型 (SCM)</h3>
+            <p>因果革命的基石，将因果关系表示为方程组：</p>
+            <div class="formula-box" role="math" aria-label="X下标i 赋值 f下标i 左括号 PA下标i 逗号 U下标i 右括号">X<sub>i</sub> := f<sub>i</sub>(PA<sub>i</sub>, U<sub>i</sub>)</div>
+            <p>其中 <strong>PA<sub>i</sub></strong> 是直接原因，<strong>U<sub>i</sub></strong> 是未观测的外生变量。等号是<strong>赋值符号 (:=)</strong>，表示因果方向。通过修改结构函数，可形式化定义干预。</p>
+
+            <h3><span class="icon-num" aria-hidden="true">3</span>do 算子与 do 演算</h3>
+            <p><strong>do 算子</strong> <span class="math">do(X=x)</span> 表示主动干预，对应"图手术"：删除指向 X 的所有箭头，将 X 设为常数。do 演算是一套完备推理规则，能将包含 do 的表达式转化为普通观测概率，是从第一层迈向第二层的<strong>数学桥梁</strong>。</p>
+
+            <h3><span class="icon-num" aria-hidden="true">4</span>后门调整与前门调整</h3>
+            <p><strong>后门调整：</strong>消除混杂因子 Z（同时影响 X 和 Y）造成的偏差。关闭后门路径：</p>
+            <div class="formula-box" role="math" aria-label="P 左括号 Y 竖线 do 左括号 X 等于 x 右括号 右括号 等于 求和下标 z P 左括号 Y 竖线 X 等于 x 逗号 Z 等于 z 右括号 乘以 P 左括号 Z 等于 z 右括号">P(Y | do(X=x)) = ∑<sub>z</sub> P(Y | X=x, Z=z) · P(Z=z)</div>
+            <p><strong>前门调整：</strong>当混杂因子不可观测时，若存在中介变量 M（且满足特定条件），可分两步去除混杂。吸烟与肺癌之争正是经典应用：不可测的"吸烟基因"为混杂，而"肺部焦油沉积"为前门变量。</p>
+            <div class="formula-box" role="math" aria-label="P 左括号 Y 竖线 do 左括号 X 右括号 右括号 等于 求和下标 m P 左括号 M 等于 m 竖线 X 右括号 乘以 求和下标 x撇 P 左括号 Y 竖线 M 等于 m 逗号 X 等于 x撇 右括号 乘以 P 左括号 X 等于 x撇 右括号">P(Y | do(X)) = ∑<sub>m</sub> P(M=m | X) · ∑<sub>x′</sub> P(Y | M=m, X=x′) · P(X=x′)</div>
+            <p style="font-size:0.9rem;color:var(--color-muted)">注：x′ 表示 X 在求和时的取值，区别于干预值 x。</p>
+
+            <h3><span class="icon-num" aria-hidden="true">5</span>反事实推理的算法化</h3>
+            <p>SCM 将"想象"变为三步算法：<strong>溯因</strong>（根据证据更新外生变量 U 的分布）→ <strong>修正</strong>（对模型进行 do 手术，假设 X 取反事实值）→ <strong>预测</strong>（在修正模型下计算 Y）。这套流程使机器能够进行"后悔"与归因思考。</p>
+        </section>
+
+        <!-- ========== 基本结构与悖论 ========== -->
+        <section aria-labelledby="paradox">
+            <h2 id="paradox" tabindex="-1">因果关系的基本结构与悖论</h2>
+            <p>理解三种基本接合，是避免因果谬误的关键。</p>
+
+            <div class="causal-graphs">
+                <!-- 链 -->
+                <div class="graph-card graph-card--chain">
+                    <h4>🔗 链 (Chain)</h4>
+                    <svg viewBox="0 0 200 60" role="img" aria-label="X 指向 Y，Y 指向 Z">
+                        <defs>
+                            <marker id="arrow-chain" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+                            </marker>
+                        </defs>
+                        <line class="edge" x1="32" y1="30" x2="78" y2="30" marker-end="url(#arrow-chain)"/>
+                        <line class="edge" x1="112" y1="30" x2="158" y2="30" marker-end="url(#arrow-chain)"/>
+                        <circle class="node-circle" cx="20" cy="30" r="14"/>
+                        <text class="node-text" x="20" y="35" text-anchor="middle">X</text>
+                        <circle class="node-circle" cx="100" cy="30" r="14"/>
+                        <text class="node-text" x="100" y="35" text-anchor="middle">Y</text>
+                        <circle class="node-circle" cx="180" cy="30" r="14"/>
+                        <text class="node-text" x="180" y="35" text-anchor="middle">Z</text>
+                    </svg>
+                    <p>Y 是中介变量。控制 Y 会切断 X→Z 的因果流。</p>
+                </div>
+
+                <!-- 叉 -->
+                <div class="graph-card graph-card--fork">
+                    <h4>🔀 叉 (Fork)</h4>
+                    <svg viewBox="0 0 200 80" role="img" aria-label="Z 同时指向 X 和 Y">
+                        <defs>
+                            <marker id="arrow-fork" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+                            </marker>
+                        </defs>
+                        <line class="edge" x1="92" y1="22" x2="38" y2="58" marker-end="url(#arrow-fork)"/>
+                        <line class="edge" x1="108" y1="22" x2="162" y2="58" marker-end="url(#arrow-fork)"/>
+                        <circle class="node-circle" cx="100" cy="15" r="14"/>
+                        <text class="node-text" x="100" y="20" text-anchor="middle">Z</text>
+                        <circle class="node-circle" cx="25" cy="65" r="14"/>
+                        <text class="node-text" x="25" y="70" text-anchor="middle">X</text>
+                        <circle class="node-circle" cx="175" cy="65" r="14"/>
+                        <text class="node-text" x="175" y="70" text-anchor="middle">Y</text>
+                    </svg>
+                    <p>Z 是共同原因（混杂）。控制 Z 可消除虚假相关。</p>
+                </div>
+
+                <!-- 对撞 -->
+                <div class="graph-card graph-card--collider">
+                    <h4>💥 对撞 (Collider)</h4>
+                    <svg viewBox="0 0 200 80" role="img" aria-label="X 和 Y 同时指向 Z">
+                        <defs>
+                            <marker id="arrow-collider" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                <path d="M0,0 L10,5 L0,10 z" fill="currentColor"/>
+                            </marker>
+                        </defs>
+                        <line class="edge" x1="38" y1="22" x2="92" y2="58" marker-end="url(#arrow-collider)"/>
+                        <line class="edge" x1="162" y1="22" x2="108" y2="58" marker-end="url(#arrow-collider)"/>
+                        <circle class="node-circle" cx="25" cy="15" r="14"/>
+                        <text class="node-text" x="25" y="20" text-anchor="middle">X</text>
+                        <circle class="node-circle" cx="175" cy="15" r="14"/>
+                        <text class="node-text" x="175" y="20" text-anchor="middle">Y</text>
+                        <circle class="node-circle" cx="100" cy="65" r="14"/>
+                        <text class="node-text" x="100" y="70" text-anchor="middle">Z</text>
+                    </svg>
+                    <p>Z 是共同结果。控制 Z 会<em>打开</em>虚假路径，导致选择偏差。</p>
+                </div>
+            </div>
+
+            <p><strong>经典悖论解析：</strong></p>
+            <ul>
+                <li><strong>辛普森悖论：</strong>总体趋势与分组趋势相反。决策应看总效应还是分组效应，完全取决于分组变量在因果图中的角色（混杂/中介），数据本身无法回答。</li>
+                <li><strong>蒙蒂·霍尔悖论：</strong>主持人开门的行为形成对撞结构，观察到特定门打开即选择了对撞节点，从而改变概率。</li>
+                <li><strong>伯克利招生悖论：</strong>表面上性别歧视的录取率差异，实为中介效应造成的统计假象。</li>
+            </ul>
+        </section>
+
+        <!-- ========== 应用 ========== -->
+        <section aria-labelledby="applications">
+            <h2 id="applications" tabindex="-1">重要应用领域</h2>
+
+            <h3><span aria-hidden="true">🤖</span> 人工智能：从曲线拟合到理解世界</h3>
+            <p>当前 AI 困在第一层。嵌入因果模型的系统将具备<strong>迁移学习</strong>（干预不变性）、<strong>可解释性</strong>（基于因果路径的解释）和<strong>反思与归因</strong>（"我本应换一个策略"的反事实推理），这是强人工智能的必经之路。</p>
+
+            <h3><span aria-hidden="true">🏥</span> 流行病学与医学</h3>
+            <p>统一了混杂、选择偏倚等概念。在新冠疫情期间，因果图与 do 演算为无法进行随机试验的问题提供了推断框架。在精准医疗中，医生可反事实询问："如果这位患者使用药物 A 而非 B，生存率会提高多少？"</p>
+
+            <h3><span aria-hidden="true">📈</span> 经济学与社会科学</h3>
+            <p>2021 年诺贝尔经济学奖授予自然实验因果识别学者。双重差分 (DID) 的"平行趋势"、工具变量 (IV) 的"排斥性限制"均可表达为因果图结构。经济学中的因果推断与计算机科学中的因果发现正在加速融合，生成新一代方法论。</p>
+        </section>
+
+        <!-- ========== 章节结构 ========== -->
+        <section aria-labelledby="chapters">
+            <h2 id="chapters" tabindex="-1">章节结构概览</h2>
+            <ul class="chapter-grid">
+                <li><strong>引言</strong> 思维胜于数据</li>
+                <li><strong>第1章</strong> 因果关系之梯</li>
+                <li><strong>第2章</strong> 因果推断的起源</li>
+                <li><strong>第3章</strong> 贝叶斯与因果图</li>
+                <li><strong>第4章</strong> 混杂和去混杂</li>
+                <li><strong>第5章</strong> 吸烟与肺癌之争</li>
+                <li><strong>第6章</strong> 大量的悖论！</li>
+                <li><strong>第7章</strong> 征服干预之峰</li>
+                <li><strong>第8章</strong> 反事实的世界</li>
+                <li><strong>第9章</strong> 中介与作用机制</li>
+                <li><strong>第10章</strong> 大数据、AI 与大问题</li>
+            </ul>
+        </section>
+
+        <hr>
+
+        <!-- ========== 总结 ========== -->
+        <section aria-labelledby="summary">
+            <h2 id="summary" tabindex="-1">总结与意义</h2>
+            <blockquote class="quote-block">
+                <p>"真正理解因果，不在于我们看到多少数据，而在于我们能否想象那些未曾发生却可能发生的世界。"</p>
+            </blockquote>
+            <p>珀尔不仅提供了从贝叶斯网络到 do 演算的严谨数学语言，更重新确立了因果关系在科学中的核心地位。本书面向所有渴望"在数据日益主宰世界的时候，超越数据去看世界"的读者，为强人工智能、社会科学及人类自我理解铺设了因果革命的基石。</p>
+        </section>
+
+        <footer>
+            <p class="footnote">—— 知识梳理基于《为什么：关于因果关系的新科学》(The Book of Why) 朱迪亚·珀尔 &amp; 达纳·麦肯齐 著</p>
+        </footer>
+
+    </article>
+
+    <!-- ========== 目录跳转焦点管理 ========== -->
+    <script>
+        (function() {
+            const tocLinks = document.querySelectorAll('.toc-list a[href^="#"]');
+            tocLinks.forEach(function(link) {
+                link.addEventListener('click', function(e) {
+                    const targetId = this.getAttribute('href').substring(1);
+                    const target = document.getElementById(targetId);
+                    if (target) {
+                        // 确保目标可获得焦点
+                        if (!target.hasAttribute('tabindex')) {
+                            target.setAttribute('tabindex', '-1');
+                        }
+                        target.focus({ preventScroll: true });
+                        // 如果浏览器支持，滚动到目标
+                        if (typeof target.scrollIntoView === 'function') {
+                            // 让浏览器的默认锚点行为处理滚动，这里只管理焦点
+                        }
+                    }
+                });
+            });
+        })();
+    </script>
+</body>
+</html>

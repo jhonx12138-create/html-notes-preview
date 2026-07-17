@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>AI 基础架构七层全景图 · 结构化完整版</title>
+    <style>
+        :root {
+            --l1: #81b29a;
+            --l1-bg: #f4f9f6;
+            --l1-light: #eaf3ef;
+            --l2: #6d8ea6;
+            --l2-bg: #f4f7fa;
+            --l2-light: #e7eff5;
+            --l3: #7fa9c7;
+            --l3-bg: #f4f8fb;
+            --l3-light: #e5f0f7;
+            --l4: #b0a1d6;
+            --l4-bg: #f8f6fc;
+            --l4-light: #efeaf7;
+            --l5: #74b9c6;
+            --l5-bg: #f4fafb;
+            --l5-light: #e4f4f6;
+            --l6: #f4a261;
+            --l6-bg: #fef9f4;
+            --l6-light: #fdf0e3;
+            --l7: #e9b77b;
+            --l7-bg: #fefbf6;
+            --l7-light: #fdf3e5;
+            --bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --text-sub: #475569;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.04);
+            --shadow-md: 0 8px 24px rgba(0,0,0,0.05), 0 2px 6px rgba(0,0,0,0.03);
+            --shadow-lg: 0 20px 40px rgba(0,0,0,0.08), 0 6px 16px rgba(0,0,0,0.04);
+            --radius-sm: 10px;
+            --radius-md: 16px;
+            --radius-lg: 22px;
+            --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(180deg, #eef2f7 0%, #f5f7fb 30%, #f0f4f8 100%);
+            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 3rem 1.2rem 5rem;
+            color: var(--text);
+            min-height: 100vh;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: -200px;
+            right: -200px;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(176,161,214,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -150px;
+            left: -150px;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(116,185,198,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1120px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header-area {
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.6rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            justify-content: center;
+        }
+        h1 .icon {
+            display: inline-block;
+            background: linear-gradient(135deg, #b0a1d6, #7fa9c7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            font-weight: 400;
+            letter-spacing: 0.03em;
+        }
+
+        .architecture {
+            display: flex;
+            flex-direction: column-reverse;
+            gap: 0;
+            width: 100%;
+            position: relative;
+        }
+
+        .layer {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            transition: transform var(--transition), box-shadow var(--transition);
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .layer:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .layer-header {
+            padding: 1.1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            position: relative;
+        }
+        .layer-number {
+            font-weight: 800;
+            font-size: 0.95rem;
+            background: rgba(255,255,255,0.85);
+            border-radius: 30px;
+            padding: 0.3rem 1.1rem;
+            color: #334155;
+            white-space: nowrap;
+            letter-spacing: 0.03em;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .layer-title {
+            font-weight: 750;
+            font-size: 1.2rem;
+            letter-spacing: 0.01em;
+            color: #1e293b;
+        }
+        .layer-desc {
+            margin-left: auto;
+            font-size: 0.82rem;
+            font-weight: 500;
+            opacity: 0.7;
+            white-space: nowrap;
+            letter-spacing: 0.02em;
+        }
+
+        .layer-body {
+            padding: 1.3rem 2rem 1.6rem;
+        }
+
+        .sub-module-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .sub-module-card {
+            background: #fcfdfe;
+            border: 1px solid #eef2f6;
+            border-radius: var(--radius-md);
+            padding: 1rem 1.15rem;
+            flex: 1 1 180px;
+            min-width: 160px;
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition);
+        }
+        .sub-module-card:hover {
+            background: #ffffff;
+            border-color: #d0d8e0;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+            transform: translateY(-1px);
+        }
+        .sub-module-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: #334155;
+            letter-spacing: 0.02em;
+            text-align: center;
+        }
+        .badge-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            align-items: center;
+            justify-content: center; /* 标签居中 */
+        }
+        .badge {
+            background: #ffffff;
+            border: 1px solid #e5e9ef;
+            border-radius: 24px;
+            padding: 0.25rem 0.8rem;
+            font-size: 0.72rem;
+            font-weight: 500;
+            color: #334155;
+            white-space: nowrap;
+            line-height: 1.5;
+            cursor: default;
+            position: relative;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .badge.with-tip {
+            cursor: help;
+            border-bottom: 1.5px dashed #bcc7d4;
+        }
+        .badge.with-tip:hover {
+            background: #f8fafc;
+            border-color: #94a3b8;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+        }
+        .badge.warn {
+            border-color: #fcd34d;
+            background: #fffbeb;
+            color: #92400e;
+        }
+
+        .tip-text {
+            display: none;
+            position: absolute;
+            background: #1e293b;
+            color: #f1f5f9;
+            font-size: 0.7rem;
+            padding: 0.4rem 0.7rem;
+            border-radius: 8px;
+            white-space: normal;
+            width: 210px;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 20;
+            line-height: 1.55;
+            text-align: center;
+            pointer-events: none;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+            letter-spacing: 0.02em;
+        }
+        .tip-text::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: #1e293b;
+        }
+        .badge.with-tip:hover .tip-text {
+            display: block;
+            animation: fadeIn 0.15s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(-50%) translateY(4px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .dataflow-mini {
+            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+            border-radius: 12px;
+            padding: 0.6rem 0.9rem;
+            font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+            font-size: 0.7rem;
+            color: #475569;
+            text-align: center;
+            line-height: 1.8;
+            margin-top: 0.4rem;
+            border: 1px solid #e9eef3;
+            letter-spacing: 0.02em;
+            white-space: nowrap;
+            overflow-x: auto;
+        }
+
+        .model-section {
+            margin-bottom: 0.9rem;
+        }
+        .model-section:last-child {
+            margin-bottom: 0;
+        }
+        .model-section-title {
+            font-weight: 700;
+            font-size: 0.78rem;
+            letter-spacing: 0.06em;
+            color: #6d28d9;
+            margin-bottom: 0.5rem;
+            padding-left: 0.4rem;
+            border-left: 3px solid #c4b5e3;
+            text-transform: uppercase;
+        }
+
+        .l4-section {
+            margin-bottom: 1rem;
+        }
+        .l4-section:last-child {
+            margin-bottom: 0;
+        }
+        .l4-section-title {
+            font-weight: 750;
+            font-size: 0.82rem;
+            letter-spacing: 0.06em;
+            color: #0f766e;
+            margin-bottom: 0.6rem;
+            padding-left: 0.4rem;
+            border-left: 3px solid #5eb9b3;
+            text-transform: uppercase;
+        }
+
+        .flow-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        .flow-step {
+            background: #f8fafc;
+            border: 1px solid #e5e9ef;
+            border-radius: 30px;
+            padding: 0.5rem 1.1rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #1e293b;
+            white-space: nowrap;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+        .flow-step:hover {
+            background: #fff;
+            border-color: #cbd5e1;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+        }
+        .flow-arrow {
+            font-size: 1rem;
+            color: #94a3b8;
+            font-weight: 300;
+        }
+
+        .step-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.9rem;
+        }
+        .step-marker {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.1rem;
+        }
+        .step-circle {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.75rem;
+            color: #475569;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .step-item:hover .step-circle {
+            border-color: #f4a261;
+            background: #fef9f4;
+        }
+        .step-line {
+            width: 2px;
+            height: 20px;
+            background: #e2e8f0;
+            border-radius: 1px;
+        }
+        .step-content {
+            background: #fcfdfe;
+            border: 1px solid #eef2f6;
+            border-radius: var(--radius-md);
+            padding: 0.7rem 1rem;
+            flex: 1;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+        .step-content:hover {
+            border-color: #d0d8e0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+        }
+        .step-content strong {
+            display: block;
+            margin-bottom: 0.35rem;
+            font-size: 0.88rem;
+            letter-spacing: 0.02em;
+        }
+
+        .layer-connector {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.55rem 0;
+            color: var(--text-muted);
+            font-size: 0.78rem;
+            gap: 0.1rem;
+            font-weight: 500;
+            position: relative;
+        }
+        .layer-connector::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #e2e8f0 0%, #cbd5e1 50%, #e2e8f0 100%);
+            border-radius: 1px;
+            z-index: -1;
+        }
+        .layer-connector .arrow-icon {
+            font-size: 1.3rem;
+            opacity: 0.65;
+            background: #f0f4f8;
+            padding: 0 0.5rem;
+        }
+        .layer-connector span:last-child {
+            background: #f0f4f8;
+            padding: 0 0.8rem;
+            border-radius: 20px;
+        }
+
+        .layer-1 .layer-header { background: linear-gradient(135deg, var(--l1-bg), var(--l1-light)); border-left: 6px solid var(--l1); }
+        .layer-1 .layer-desc { color: var(--l1); }
+        .layer-2 .layer-header { background: linear-gradient(135deg, var(--l2-bg), var(--l2-light)); border-left: 6px solid var(--l2); }
+        .layer-2 .layer-desc { color: var(--l2); }
+        .layer-3 .layer-header { background: linear-gradient(135deg, var(--l3-bg), var(--l3-light)); border-left: 6px solid var(--l3); }
+        .layer-3 .layer-desc { color: var(--l3); }
+        .layer-4 .layer-header { background: linear-gradient(135deg, var(--l4-bg), var(--l4-light)); border-left: 6px solid var(--l4); }
+        .layer-4 .layer-desc { color: #8b7bb5; }
+        .layer-5 .layer-header { background: linear-gradient(135deg, var(--l5-bg), var(--l5-light)); border-left: 6px solid var(--l5); }
+        .layer-5 .layer-desc { color: var(--l5); }
+        .layer-6 .layer-header { background: linear-gradient(135deg, var(--l6-bg), var(--l6-light)); border-left: 6px solid var(--l6); }
+        .layer-6 .layer-desc { color: var(--l6); }
+        .layer-7 .layer-header { background: linear-gradient(135deg, var(--l7-bg), var(--l7-light)); border-left: 6px solid var(--l7); }
+        .layer-7 .layer-desc { color: #c8954a; }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.1rem;
+            justify-content: center;
+            font-size: 0.78rem;
+            color: var(--text-sub);
+            margin-top: 0.6rem;
+            font-weight: 500;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+            display: inline-block;
+            margin-right: 0.35rem;
+        }
+        .footer-note {
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            margin-top: 0.3rem;
+            letter-spacing: 0.02em;
+        }
+
+        @media (max-width: 700px) {
+            .layer-body {
+                padding: 1rem;
+            }
+            .sub-module-card {
+                min-width: 130px;
+            }
+            .layer-desc {
+                display: none;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+        .wide-card {
+            flex: 2 1 350px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-area">
+        <h1><span class="icon">🧠</span> AI 基础架构全景图</h1>
+        <p class="subtitle">从算力到交互 · 七层结构化视图</p>
+    </div>
+
+    <div class="architecture">
+
+        <!-- L7 交互与产品层 -->
+        <div class="layer layer-7">
+            <div class="layer-header">
+                <span class="layer-number">L7</span>
+                <span class="layer-title">交互与产品层</span>
+                <span class="layer-desc">价值呈现的最后一公里</span>
+            </div>
+            <div class="layer-body">
+                <div class="sub-module-grid">
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">💬 基础交互范式</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">ChatUI<span class="tip-text">以对话为核心界面的交互形态</span></span>
+                            <span class="badge with-tip">流式生成<span class="tip-text">逐词输出，降低等待感，模拟思考过程</span></span>
+                            <span class="badge">多模态输入输出</span>
+                            <span class="badge">对话引导设计</span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">🤝 人机协同模式</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">渐进式生成<span class="tip-text">AI先给大纲，用户确认后再生成详细内容</span></span>
+                            <span class="badge">划词交互</span>
+                            <span class="badge">控制权让渡</span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">🔍 信任与透明</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">可解释性展示<span class="tip-text">展示推理过程、引用来源，让用户验证</span></span>
+                            <span class="badge">引用溯源</span>
+                            <span class="badge">优雅错误处理</span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">🧠 个性化与情感</div>
+                        <div class="badge-list">
+                            <span class="badge">偏好记忆</span>
+                            <span class="badge">长期使用适配</span>
+                            <span class="badge">情感化设计</span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">⚙️ 技术支撑</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">流式 SSE<span class="tip-text">服务器推送事件，实现实时数据流传输</span></span>
+                            <span class="badge">Markdown渲染</span>
+                            <span class="badge">多端适配</span>
+                            <span class="badge">会话管理</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layer-connector"><span class="arrow-icon">⬇️</span><span>L7 依赖 L6 智能体能力</span></div>
+
+        <!-- L6 智能体与协作层 -->
+        <div class="layer layer-6">
+            <div class="layer-header">
+                <span class="layer-number">L6</span>
+                <span class="layer-title">智能体与协作层</span>
+                <span class="layer-desc">从单体感知到多体协作</span>
+            </div>
+            <div class="layer-body">
+                <div class="step-vertical">
+                    <div class="step-item">
+                        <div class="step-marker"><div class="step-circle">①</div><div class="step-line"></div></div>
+                        <div class="step-content">
+                            <strong>🧩 单体Agent核心能力</strong>
+                            <div class="badge-list">
+                                <span class="badge">LLM 推理引擎</span>
+                                <span class="badge with-tip">ReAct / CoT / ToT<span class="tip-text">ReAct：思考-行动-观察循环；CoT：思维链逐步推理；ToT：树状探索多条路径</span></span>
+                                <span class="badge with-tip">工具调用<span class="tip-text">调用外部API、数据库、代码解释器扩展能力</span></span>
+                                <span class="badge with-tip">记忆系统<span class="tip-text">维持短期会话上下文和长期用户画像</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-marker"><div class="step-circle">②</div><div class="step-line"></div></div>
+                        <div class="step-content">
+                            <strong>📦 标准化Agent单元封装</strong>
+                            <div class="badge-list">
+                                <span class="badge with-tip">角色 + Skill包<span class="tip-text">角色定义身份与语气，Skill是可插拔能力模块</span></span>
+                                <span class="badge">工具 + 知识文件</span>
+                                <span class="badge">权限边界</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-marker"><div class="step-circle">③</div><div class="step-line"></div></div>
+                        <div class="step-content">
+                            <strong>⚙️ 多智能体协作系统</strong>
+                            <div class="badge-list">
+                                <span class="badge with-tip">编排框架<span class="tip-text">定义Agent执行顺序、消息路由和状态管理(LangGraph等)</span></span>
+                                <span class="badge with-tip">MCP协议<span class="tip-text">Model Context Protocol：Agent与外部工具/数据源的标准连接协议</span></span>
+                                <span class="badge with-tip">Agent.md<span class="tip-text">每个Agent的能力说明书：角色、技能、权限、协作接口</span></span>
+                                <span class="badge with-tip">人机协同回路<span class="tip-text">关键节点保留人工审核与干预的流程设计</span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="step-item">
+                        <div class="step-marker"><div class="step-circle">⚠️</div></div>
+                        <div class="step-content">
+                            <strong>关键挑战</strong>
+                            <div class="badge-list">
+                                <span class="badge warn">幻觉在长链路中放大</span>
+                                <span class="badge warn">错误传播与累积</span>
+                                <span class="badge warn">安全边界 (代码/网络执行)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layer-connector"><span class="arrow-icon">⬇️</span><span>L6 依赖 L5 工具调用与模型服务</span></div>
+
+        <!-- L5 模型服务与应用构建层 -->
+        <div class="layer layer-5">
+            <div class="layer-header">
+                <span class="layer-number">L5</span>
+                <span class="layer-title">模型服务与应用构建层</span>
+                <span class="layer-desc">让模型下地干活</span>
+            </div>
+            <div class="layer-body">
+                <div class="l4-section">
+                    <div class="l4-section-title">📡 模型服务交付</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card">
+                            <div class="badge-list">
+                                <span class="badge with-tip">公有 API<span class="tip-text">通过网络调用，按Token量付费，无需管理硬件</span></span>
+                                <span class="badge with-tip">私有化部署<span class="tip-text">模型部署在自有服务器，数据不出域，成本可控</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="l4-section">
+                    <div class="l4-section-title">🔧 应用构建技术</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card">
+                            <div class="sub-module-title">📥 输入侧</div>
+                            <div class="badge-list">
+                                <span class="badge with-tip">上下文窗口管理<span class="tip-text">处理长对话的策略：滑动窗口、自动摘要等</span></span>
+                                <span class="badge with-tip">提示词工程<span class="tip-text">设计系统指令、示例、约束让模型输出稳定</span></span>
+                                <span class="badge with-tip">RAG<span class="tip-text">检索增强生成：先检索相关知识再生成，降低幻觉</span></span>
+                            </div>
+                        </div>
+                        <div class="sub-module-card">
+                            <div class="sub-module-title">📤 输出侧</div>
+                            <div class="badge-list">
+                                <span class="badge with-tip">JSON 模式<span class="tip-text">强制模型输出结构化JSON，便于程序解析</span></span>
+                                <span class="badge with-tip">函数调用<span class="tip-text">模型输出指令触发外部API，执行实际操作</span></span>
+                            </div>
+                        </div>
+                        <div class="sub-module-card">
+                            <div class="sub-module-title">🧠 记忆管理</div>
+                            <div class="badge-list">
+                                <span class="badge">短期会话记忆</span>
+                                <span class="badge with-tip">长期持久化记忆<span class="tip-text">用户偏好存入外部库，跨会话持续生效</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="l4-section">
+                    <div class="l4-section-title">🛡️ 运营治理</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card">
+                            <div class="badge-list">
+                                <span class="badge with-tip">离线/在线评估<span class="tip-text">用标准测试集或用户反馈评估模型效果</span></span>
+                                <span class="badge with-tip">安全护栏<span class="tip-text">输入输出敏感词过滤，防止有害内容</span></span>
+                                <span class="badge">成本监控</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layer-connector"><span class="arrow-icon">⬇️</span><span>L5 依赖 L4 模型推理</span></div>
+
+        <!-- L4 模型层 -->
+        <div class="layer layer-4">
+            <div class="layer-header">
+                <span class="layer-number">L4</span>
+                <span class="layer-title">模型层</span>
+                <span class="layer-desc">Transformer · 条件概率预测器</span>
+            </div>
+            <div class="layer-body">
+                <div class="model-section">
+                    <div class="model-section-title">① Transformer 架构核心</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card" style="flex: 2 1 300px;">
+                            <div class="sub-module-title">📐 Block 数据流</div>
+                            <div class="dataflow-mini">
+                                输入 → 层归一化 → 多头自注意力 → 残差连接(+) → 层归一化 → 前馈网络(FFN) → 残差连接(+) → 输出 （重复 N 层堆叠）
+                            </div>
+                            <div class="badge-list" style="margin-top:0.5rem;">
+                                <span class="badge with-tip">Q/K/V 注意力<span class="tip-text">查询/键/值：动态计算词间相关性，提取上下文信息</span></span>
+                                <span class="badge with-tip">多头注意力<span class="tip-text">多组QKV并行，从不同语义空间捕捉关系</span></span>
+                                <span class="badge with-tip">位置编码<span class="tip-text">给每个词注入位置信号，弥补注意力机制的乱序缺陷</span></span>
+                                <span class="badge with-tip">残差连接<span class="tip-text">输入原样加到输出上，防止深层网络梯度消失</span></span>
+                                <span class="badge with-tip">前馈网络 FFN<span class="tip-text">对每个位置独立进行深度信息加工的全连接层</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-section">
+                    <div class="model-section-title">② 训练机制</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card wide-card">
+                            <div class="sub-module-title">📈 核心训练要素</div>
+                            <div class="badge-list">
+                                <span class="badge with-tip">损失函数 (交叉熵)<span class="tip-text">衡量预测词与真实词差异，训练目标是最小化它</span></span>
+                                <span class="badge with-tip">反向传播 + 梯度下降<span class="tip-text">从输出向输入逐层计算误差梯度，更新参数</span></span>
+                                <span class="badge with-tip">优化器 (Adam/AdamW)<span class="tip-text">自适应调整学习率的优化算法</span></span>
+                                <span class="badge">学习率调度</span>
+                                <span class="badge with-tip">分布式训练<span class="tip-text">将模型和数据切分到多张GPU上协同训练</span></span>
+                            </div>
+                        </div>
+                        <div class="sub-module-card">
+                            <div class="sub-module-title">🔄 训练流程</div>
+                            <div class="badge-list">
+                                <span class="badge with-tip">预训练<span class="tip-text">海量文本上做填空题，获得基础语言能力</span></span>
+                                <span class="badge with-tip">SFT 监督微调<span class="tip-text">用高质量问答对教会模型遵循指令</span></span>
+                                <span class="badge with-tip">RLHF / DPO 对齐<span class="tip-text">依据人类偏好优化，让模型更安全、更有帮助</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-section">
+                    <div class="model-section-title">③ 多模态与 Token 化</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card">
+                            <div class="badge-list">
+                                <span class="badge with-tip">Tokenizer 分词器<span class="tip-text">将文本切成最小单元(Token)并映射为数字，是模型输入基础</span></span>
+                                <span class="badge">图像 Token</span>
+                                <span class="badge">语音 Token</span>
+                                <span class="badge">视频 Token</span>
+                                <span class="badge with-tip">跨模态对齐<span class="tip-text">让文字、图像等不同模态在向量空间中语义一致</span></span>
+                                <span class="badge">统一序列建模</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-section">
+                    <div class="model-section-title">④ 关键超参</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card">
+                            <div class="badge-list">
+                                <span class="badge with-tip">上下文窗口<span class="tip-text">模型一次能处理的最大Token数，超出部分会遗忘</span></span>
+                                <span class="badge with-tip">温度 Temperature<span class="tip-text">控制随机性：低则确定保守，高则创意奔放</span></span>
+                                <span class="badge">Top-P / Top-K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="model-section">
+                    <div class="model-section-title">⑤ 模型家族</div>
+                    <div class="sub-module-grid">
+                        <div class="sub-module-card">
+                            <div class="badge-list">
+                                <span class="badge with-tip">Decoder-Only (GPT, LLaMA)<span class="tip-text">自回归逐词生成，擅长对话与文本续写</span></span>
+                                <span class="badge with-tip">Encoder-Only (BERT)<span class="tip-text">双向理解上下文，适合分类、抽取等理解任务</span></span>
+                                <span class="badge with-tip">Encoder-Decoder (T5, Whisper)<span class="tip-text">输入编码→输出解码，适合翻译、语音识别</span></span>
+                                <span class="badge with-tip">Diffusion 扩散模型<span class="tip-text">从噪声逐步去噪生成图像/视频，Stable Diffusion为代表</span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layer-connector"><span class="arrow-icon">⬇️</span><span>L4 由 L3 产出的数据训练而成</span></div>
+
+        <!-- L3 数据工程层 -->
+        <div class="layer layer-3">
+            <div class="layer-header">
+                <span class="layer-number">L3</span>
+                <span class="layer-title">数据工程层</span>
+                <span class="layer-desc">知识原材料的加工流水线</span>
+            </div>
+            <div class="layer-body">
+                <div class="flow-row">
+                    <div class="flow-step">📥 采集 (公开/内部/合成)</div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-step">🧹 清洗 (去重/过滤/脱敏)</div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-step">🏷️ 标注 (SFT问答/RLHF偏好)</div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-step">🔤 Token化 (文本分割)</div>
+                    <span class="flow-arrow">➔</span>
+                    <div class="flow-step">🧮 向量化 (Embedding)</div>
+                </div>
+                <div style="margin-top:0.9rem; display:flex; flex-wrap:wrap; gap:0.45rem; justify-content:center;">
+                    <span class="badge with-tip">数据配比策略<span class="tip-text">预训练时各类型数据的占比，决定模型能力分布</span></span>
+                    <span class="badge with-tip">合成数据生成<span class="tip-text">用AI自动生成训练数据，Self-Instruct等范式</span></span>
+                    <span class="badge with-tip">数据质量评估<span class="tip-text">用打分模型筛选高质量数据，过滤低质噪声</span></span>
+                    <span class="badge with-tip">数据安全与合规<span class="tip-text">隐私脱敏、版权审查，确保数据合法使用</span></span>
+                </div>
+            </div>
+        </div>
+        <div class="layer-connector"><span class="arrow-icon">⬇️</span><span>L3 依赖 L2 计算框架</span></div>
+
+        <!-- L2 系统软件与计算框架层 -->
+        <div class="layer layer-2">
+            <div class="layer-header">
+                <span class="layer-number">L2</span>
+                <span class="layer-title">系统软件与计算框架层</span>
+                <span class="layer-desc">连接硬件与算法的桥梁</span>
+            </div>
+            <div class="layer-body">
+                <div class="sub-module-grid">
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">⚙️ GPU 编程接口</div>
+                        <div class="badge-list">
+                            <span class="badge">GPU 驱动</span>
+                            <span class="badge with-tip">CUDA<span class="tip-text">NVIDIA的并行编程平台，让GPU可被通用程序调用</span></span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">📐 数学加速库</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">cuBLAS<span class="tip-text">GPU上的基础线性代数运算加速库</span></span>
+                            <span class="badge with-tip">cuDNN<span class="tip-text">GPU上的深度学习原语加速，优化卷积、池化等</span></span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">🧩 深度学习框架</div>
+                        <div class="badge-list">
+                            <span class="badge">PyTorch / TensorFlow</span>
+                            <span class="badge with-tip">自动微分<span class="tip-text">自动计算梯度，是反向传播的核心实现</span></span>
+                            <span class="badge">张量计算抽象</span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">🌐 分布式训练策略</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">数据并行<span class="tip-text">每张卡保有完整模型副本，分配不同数据块训练</span></span>
+                            <span class="badge with-tip">模型并行<span class="tip-text">将模型参数切分到不同GPU上，解决单卡装不下的问题</span></span>
+                            <span class="badge">流水线并行</span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">🚀 模型优化与推理</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">量化<span class="tip-text">用更低精度表示参数，大幅降低显存占用</span></span>
+                            <span class="badge">知识蒸馏</span>
+                            <span class="badge">vLLM / TensorRT-LLM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layer-connector"><span class="arrow-icon">⬇️</span><span>L2 依赖 L1 物理算力</span></div>
+
+        <!-- L1 基础设施层 -->
+        <div class="layer layer-1">
+            <div class="layer-header">
+                <span class="layer-number">L1</span>
+                <span class="layer-title">基础设施层</span>
+                <span class="layer-desc">算力之源</span>
+            </div>
+            <div class="layer-body">
+                <div class="sub-module-grid">
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">⚡ 核心算力单元</div>
+                        <div class="badge-list">
+                            <span class="badge">CPU (串行逻辑)</span>
+                            <span class="badge with-tip">GPU (并行计算)<span class="tip-text">拥有数千核心，擅长同时处理大量简单运算</span></span>
+                            <span class="badge with-tip">显存<span class="tip-text">GPU的高速片上缓存，决定模型加载上限与批次大小</span></span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">🔗 算力组合</div>
+                        <div class="badge-list">
+                            <span class="badge">单卡推理</span>
+                            <span class="badge with-tip">多卡并行 (NVLink)<span class="tip-text">单机内多GPU高速互联技术</span></span>
+                            <span class="badge with-tip">万卡集群 (InfiniBand)<span class="tip-text">跨服务器的高速互联网络，用于超大规模训练</span></span>
+                        </div>
+                    </div>
+                    <div class="sub-module-card">
+                        <div class="sub-module-title">💸 使用场景</div>
+                        <div class="badge-list">
+                            <span class="badge with-tip">训练<span class="tip-text">用海量数据反复调整参数，耗时数月，成本极高</span></span>
+                            <span class="badge with-tip">推理<span class="tip-text">用训练好的模型生成回答，按Token计费</span></span>
+                            <span class="badge">云 / 私有化</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="legend">
+        <span><span class="legend-dot" style="background:var(--l1);"></span> L1 基础设施</span>
+        <span><span class="legend-dot" style="background:var(--l2);"></span> L2 系统软件</span>
+        <span><span class="legend-dot" style="background:var(--l3);"></span> L3 数据工程</span>
+        <span><span class="legend-dot" style="background:var(--l4);"></span> L4 模型</span>
+        <span><span class="legend-dot" style="background:var(--l5);"></span> L5 服务与应用</span>
+        <span><span class="legend-dot" style="background:var(--l6);"></span> L6 智能体</span>
+        <span><span class="legend-dot" style="background:var(--l7);"></span> L7 交互与产品</span>
+    </div>
+    <p class="footer-note">⬇️ 箭头方向表示上层对下层的依赖关系</p>
+</div>
+</body>
+</html>

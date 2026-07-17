@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JavaScript 入门 · 给完全没接触过编程的你</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --fg:      #2a3a5c;
+  --mute:    #4a5a8d;
+  --accent:  #3b82f6;
+  --accent2: #f59e0b;
+  --accent3: #10b981;
+  --accent4: #f97316;
+  --accent5: #8b5cf6;
+  --grad:    linear-gradient(135deg,#f59e0b,#3b82f6);
+  --grad2:   linear-gradient(135deg,#10b981,#3b82f6);
+  --grad3:   linear-gradient(135deg,#f97316,#8b5cf6);
+  --clay-sh: 0 12px 28px rgba(59,130,246,.16), 0 2px 6px rgba(59,130,246,.10), inset 0 2px 4px rgba(255,255,255,.9);
+  --clay-sh-hi: 0 18px 40px rgba(59,130,246,.24), 0 4px 10px rgba(59,130,246,.14), inset 0 2px 4px rgba(255,255,255,.9);
+  --ui-font: 'Quicksand','PingFang SC',-apple-system,BlinkMacSystemFont,sans-serif;
+  --mono:    'JetBrains Mono','Cascadia Code','Fira Code',monospace;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  width:100%;height:100%;color:var(--fg);
+  font-family:var(--ui-font);font-weight:500;
+  background:linear-gradient(135deg,#dbeafe 0%,#fef3c7 45%,#d1fae5 100%);
+  overflow:hidden;
+}
+body::before,body::after{
+  content:'';position:fixed;border-radius:50%;
+  pointer-events:none;z-index:0;filter:blur(50px);opacity:.5;
+}
+body::before{
+  width:420px;height:420px;top:-100px;right:-80px;
+  background:radial-gradient(circle,#f59e0b 0%,transparent 70%);
+  animation:blob 17s ease-in-out infinite alternate;
+}
+body::after{
+  width:380px;height:380px;bottom:-70px;left:-60px;
+  background:radial-gradient(circle,#3b82f6 0%,transparent 70%);
+  animation:blob 21s ease-in-out infinite alternate-reverse;
+}
+@keyframes blob{
+  0%{transform:translate(0,0) scale(1)}
+  100%{transform:translate(48px,34px) scale(1.1)}
+}
+
+.stage{position:fixed;inset:0;overflow:hidden}
+.slide{
+  position:absolute;inset:0;
+  display:block;padding:70px 7vw 60px;
+  opacity:0;visibility:hidden;transform:translateY(20px);
+  transition:opacity .55s cubic-bezier(.7,0,.2,1),transform .55s cubic-bezier(.7,0,.2,1),visibility .55s;
+  overflow-y:auto;overflow-x:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.canvas{
+  width:100%;max-width:1100px;margin:0 auto;
+  min-height:calc(100vh - 160px);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+.slide.active .reveal{animation:rise .7s cubic-bezier(.7,0,.2,1) both}
+.slide.active .reveal:nth-child(1){animation-delay:.04s}
+.slide.active .reveal:nth-child(2){animation-delay:.16s}
+.slide.active .reveal:nth-child(3){animation-delay:.28s}
+.slide.active .reveal:nth-child(4){animation-delay:.40s}
+.slide.active .reveal:nth-child(5){animation-delay:.52s}
+.slide.active .reveal:nth-child(6){animation-delay:.64s}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+/* ── chrome ─────────────────────────────────────────── */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:46px;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--mute);border-bottom:1px solid rgba(59,130,246,.1);
+}
+.topbar .brand{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.footbar{
+  position:fixed;bottom:0;left:0;right:0;height:38px;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
+  font-size:11px;letter-spacing:.15em;font-weight:600;
+  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  color:var(--mute);border-top:1px solid rgba(59,130,246,.1);
+}
+.footbar .pg{font-variant-numeric:tabular-nums;font-weight:700;color:var(--fg)}
+.progress{position:fixed;bottom:0;left:0;height:3px;width:0;z-index:11;background:var(--grad);transition:width .55s cubic-bezier(.7,0,.2,1)}
+.nav-arrow{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:48px;height:48px;border-radius:50%;
+  display:grid;place-items:center;font-size:22px;cursor:pointer;
+  z-index:10;color:var(--accent);background:#fff;border:none;outline:none;
+  box-shadow:var(--clay-sh);transition:all .25s;
+}
+.nav-arrow:hover{transform:translateY(-50%) scale(1.08);box-shadow:var(--clay-sh-hi)}
+.nav-arrow.prev{left:14px}.nav-arrow.next{right:14px}
+
+/* ── type ───────────────────────────────────────────── */
+.eyebrow{
+  display:inline-block;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
+  margin-bottom:18px;font-weight:700;color:var(--accent2);
+}
+h1{font-size:clamp(40px,5.5vw,68px);font-weight:700;line-height:1.1;margin-bottom:18px;letter-spacing:-.01em}
+h1 b{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+h2{font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.15;margin-bottom:16px}
+h2 b{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
+h3{font-size:19px;font-weight:700;margin-bottom:9px}
+h4{font-size:16px;font-weight:700;margin-bottom:5px}
+.lead{font-size:18px;line-height:1.85;color:var(--mute);max-width:780px;margin-bottom:24px;font-weight:500}
+p{line-height:1.75;font-size:15px;color:var(--mute);font-weight:500}
+.deck{font-size:18px;color:var(--mute);line-height:1.7;max-width:580px;margin-bottom:30px;font-weight:500}
+code{font-family:var(--mono);font-size:.88em;background:rgba(59,130,246,.1);padding:2px 7px;border-radius:6px;color:var(--accent);font-weight:600}
+
+.meta{display:flex;gap:36px;margin-top:28px;flex-wrap:wrap}
+.meta>div{display:flex;flex-direction:column;gap:4px}
+.meta b{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);font-weight:700}
+.meta span{font-size:15px;font-weight:600;color:var(--fg)}
+
+/* ── clay ───────────────────────────────────────────── */
+.clay{background:#fff;border-radius:22px;padding:26px;box-shadow:var(--clay-sh);transition:all .3s}
+.clay:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
+
+/* ── toc ────────────────────────────────────────────── */
+.toc{display:flex;flex-direction:column;gap:12px;margin-top:22px;max-width:760px}
+.toc-item{
+  display:grid;grid-template-columns:52px 1fr 28px;
+  align-items:center;gap:18px;padding:16px 22px;
+  border-radius:18px;background:#fff;cursor:pointer;
+  box-shadow:var(--clay-sh);transition:all .25s;
+}
+.toc-item:hover{transform:translateX(6px);box-shadow:var(--clay-sh-hi)}
+.ti-num{
+  width:42px;height:42px;border-radius:12px;
+  display:grid;place-items:center;font-weight:700;font-size:15px;color:#fff;
+  background:var(--grad);box-shadow:0 4px 10px rgba(59,130,246,.28);
+}
+.ti-t{font-size:16px;font-weight:600;color:var(--fg)}
+.ti-a{color:var(--accent);font-size:20px;font-weight:700}
+
+/* ── layout helpers ─────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:20px;align-items:start}
+.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:20px}
+
+/* ── code block ─────────────────────────────────────── */
+.code-block{
+  background:#1e2a3a;color:#e2e8f0;border-radius:18px;padding:22px 20px;
+  font-family:var(--mono);font-size:13px;line-height:1.9;
+  box-shadow:var(--clay-sh);
+}
+.code-block .kw{color:#f59e0b}   /* keyword */
+.code-block .fn{color:#3b82f6}   /* function */
+.code-block .str{color:#4ade80}  /* string */
+.code-block .num{color:#f97316}  /* number */
+.code-block .cmt{color:#4a5568;font-style:italic} /* comment */
+.code-block .var{color:#e2e8f0}  /* variable */
+.code-block .op{color:#8b5cf6}   /* operator */
+.code-block .bool{color:#f43f5e} /* boolean */
+.code-block .tag{color:#f59e0b}  /* html */
+
+/* ── 三角色卡片（P3） ───────────────────────────────── */
+.role-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+.role-card{
+  background:#fff;border-radius:22px;padding:28px 22px;text-align:center;
+  box-shadow:var(--clay-sh);transition:all .28s;
+}
+.role-card:hover{transform:translateY(-5px);box-shadow:var(--clay-sh-hi)}
+.role-card .emoji{font-size:50px;display:block;margin-bottom:14px;line-height:1}
+.role-card h3{font-size:17px;margin-bottom:8px;color:var(--fg)}
+.role-card .role-tag{
+  display:inline-block;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
+  padding:4px 12px;border-radius:20px;margin-bottom:12px;
+}
+.role-card p{font-size:13px;color:var(--mute);line-height:1.7}
+.tag-html{background:rgba(245,158,11,.15);color:#b45309}
+.tag-css{background:rgba(139,92,246,.15);color:#7c3aed}
+.tag-js{background:rgba(59,130,246,.15);color:#1d4ed8}
+
+/* ── 语法解剖（P4） ─────────────────────────────────── */
+.concept-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.concept-card{
+  background:#fff;border-radius:18px;padding:20px 18px;
+  box-shadow:var(--clay-sh);transition:all .25s;
+}
+.concept-card:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
+.concept-card .ico{font-size:30px;display:block;margin-bottom:10px;line-height:1}
+.concept-card .c-tag{
+  font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;
+  padding:3px 10px;border-radius:8px;display:inline-block;margin-bottom:10px;
+}
+.concept-card h4{font-size:15px;color:var(--fg);margin-bottom:6px}
+.concept-card p{font-size:12px;color:var(--mute);line-height:1.65}
+
+/* ── 事件流程图（P6） ───────────────────────────────── */
+.event-flow{
+  display:flex;align-items:center;gap:0;margin-top:24px;flex-wrap:wrap;justify-content:center;
+}
+.event-step{
+  background:#fff;border-radius:18px;padding:18px 22px;text-align:center;
+  box-shadow:var(--clay-sh);min-width:150px;
+}
+.event-step .e-ico{font-size:28px;display:block;margin-bottom:8px}
+.event-step h4{font-size:14px;color:var(--fg);margin-bottom:4px}
+.event-step p{font-size:12px;color:var(--mute);line-height:1.5}
+.event-arrow{
+  font-size:26px;color:var(--accent);font-weight:700;
+  margin:0 10px;flex-shrink:0;
+}
+
+/* ── 实战展示（P7） ─────────────────────────────────── */
+.demo-split{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:20px}
+.demo-live{
+  background:#fff;border-radius:18px;padding:26px;
+  box-shadow:var(--clay-sh);display:flex;flex-direction:column;gap:14px;
+}
+.demo-live-label{
+  font-size:10px;letter-spacing:.25em;text-transform:uppercase;
+  color:var(--accent2);font-weight:700;margin-bottom:4px;
+}
+/* demo button */
+.js-btn{
+  padding:12px 24px;border-radius:14px;border:none;cursor:pointer;
+  font-family:var(--ui-font);font-size:15px;font-weight:700;
+  background:var(--grad);color:#fff;
+  box-shadow:0 6px 16px rgba(59,130,246,.3);
+  transition:all .2s;display:inline-block;
+}
+.js-btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(59,130,246,.38)}
+.js-btn:active{transform:translateY(1px)}
+#demo-output{
+  font-size:15px;font-weight:600;color:var(--fg);
+  background:rgba(59,130,246,.07);border-radius:12px;
+  padding:14px 18px;line-height:1.6;min-height:52px;
+  border:2px dashed rgba(59,130,246,.2);
+  transition:all .3s;
+}
+#demo-counter-display{
+  font-size:52px;font-weight:700;text-align:center;
+  background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.counter-btns{display:flex;gap:10px;justify-content:center}
+.c-btn{
+  padding:10px 22px;border-radius:12px;border:none;cursor:pointer;
+  font-family:var(--ui-font);font-size:18px;font-weight:700;color:#fff;
+  box-shadow:0 4px 12px rgba(0,0,0,.12);transition:all .2s;
+}
+.c-btn:hover{transform:translateY(-2px)}
+.c-btn.plus{background:var(--accent3)}
+.c-btn.minus{background:var(--accent4)}
+
+/* ── 结尾 ────────────────────────────────────────────── */
+.end-line{width:60px;height:4px;background:var(--grad);border-radius:2px;margin:22px 0}
+.e-tag{font-size:17px;color:var(--mute);margin-bottom:28px;line-height:1.75;max-width:640px}
+.next-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:4px}
+.next-cards .clay{padding:20px}
+.next-cards .emoji-nc{font-size:30px;display:block;margin-bottom:10px}
+.next-cards h4{font-size:14px;color:var(--fg);margin-bottom:5px}
+.next-cards p{font-size:12px;color:var(--mute);line-height:1.65}
+
+/* ── 三合一回顾卡（结尾页用）──────────────────────── */
+.trilogy{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.trilogy-card{
+  border-radius:20px;padding:22px 18px;text-align:center;
+  box-shadow:var(--clay-sh);
+}
+.trilogy-card .big-emoji{font-size:38px;display:block;margin-bottom:10px}
+.trilogy-card h4{font-size:15px;font-weight:700;margin-bottom:6px}
+.trilogy-card p{font-size:12px;line-height:1.65;opacity:.85}
+.t1{background:linear-gradient(135deg,#fef3c7,#fde68a)}
+.t2{background:linear-gradient(135deg,#ede9fe,#ddd6fe)}
+.t3{background:linear-gradient(135deg,#dbeafe,#bfdbfe)}
+
+@media print{
+  @page{size:1280px 800px;margin:0}
+  html,body{height:auto;overflow:visible;background:#fff}
+  .topbar,.footbar,.progress,.nav-arrow{display:none !important}
+  .stage{position:static}
+  .slide{
+    position:relative;inset:auto;width:100%;height:800px;
+    page-break-after:always;break-after:page;
+    opacity:1!important;visibility:visible!important;transform:none!important;
+    transition:none!important;animation:none!important;overflow:hidden;
+  }
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .slide *{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">JavaScript 入门 · Lite</div>
+  <div id="topCh"></div>
+</div>
+
+<div class="stage" id="stage">
+
+  <!-- P1 封面 -->
+  <section class="slide active" data-name="封面">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">For Absolute Beginners · 零基础友好版 · 第三册</span></div>
+      <h1 class="reveal">给网页加上<br><b>动作和反应</b></h1>
+      <p class="deck reveal">骨架（HTML）有了，化妆（CSS）也会了。现在轮到 JavaScript——它让网页能听你的话，点了能动，输了有反应。</p>
+      <div class="meta reveal">
+        <div><b>难度</b><span>⭐⭐ 入门+</span></div>
+        <div><b>页数</b><span>8 页</span></div>
+        <div><b>结尾</b><span>能写一个真正"会动"的网页</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P2 目录 -->
+  <section class="slide" data-name="目录">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Index · 今天聊这 6 件事</span></div>
+      <h1 class="reveal">我们要<b>聊什么</b></h1>
+      <div class="toc reveal">
+        <div class="toc-item" onclick="goto(2)"><div class="ti-num">01</div><div class="ti-t">JavaScript 在三人组里是什么角色</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(3)"><div class="ti-num">02</div><div class="ti-t">JS 的四个基本积木：变量 / 函数 / 条件 / 循环</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(4)"><div class="ti-num">03</div><div class="ti-t">怎么操控 HTML 和 CSS（DOM）</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(5)"><div class="ti-num">04</div><div class="ti-t">事件：听用户的指令</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(6)"><div class="ti-num">05</div><div class="ti-t">动手：写两个真实的小功能</div><div class="ti-a">→</div></div>
+        <div class="toc-item" onclick="goto(7)"><div class="ti-num">06</div><div class="ti-t">三人组毕业典礼 + 下一步</div><div class="ti-a">→</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P3 三人组角色 -->
+  <section class="slide" data-name="JS 是什么">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 01</span></div>
+      <h2 class="reveal">三人组各司其职，<b>JS 是那双手</b></h2>
+      <p class="lead reveal">一个网页由三层构成，缺一不可。把它想成一个人：</p>
+
+      <div class="role-cards reveal">
+        <div class="role-card">
+          <span class="emoji">🦴</span>
+          <div class="role-tag tag-html">HTML</div>
+          <h3>骨架</h3>
+          <p>定义"页面上有什么"：标题、段落、按钮、图片。没有它，什么都没有。</p>
+        </div>
+        <div class="role-card">
+          <span class="emoji">👗</span>
+          <div class="role-tag tag-css">CSS</div>
+          <h3>衣服和化妆</h3>
+          <p>决定"长什么样"：颜色、字体、圆角、卡片阴影。好看不好看，全靠它。</p>
+        </div>
+        <div class="role-card" style="outline:3px solid var(--accent);outline-offset:3px">
+          <span class="emoji">🙌</span>
+          <div class="role-tag tag-js">JavaScript</div>
+          <h3>动作和大脑 ← 今天</h3>
+          <p>决定"能干什么"：点了按钮变色、输入关键词搜索、自动轮播图片。这就是 JS。</p>
+        </div>
+      </div>
+
+      <div class="clay reveal" style="margin-top:20px;padding:18px 22px">
+        <p style="font-size:14px">💡 <strong>小记忆法：</strong>HTML = 名词（这是什么），CSS = 形容词（长什么样），JavaScript = 动词（能干什么）。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- P4 四个基本积木 -->
+  <section class="slide" data-name="四个基本积木">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 02</span></div>
+      <h2 class="reveal">JS 的<b>四个基本积木</b></h2>
+      <p class="lead reveal" style="margin-bottom:16px">先认识这四个，剩下的全是它们的组合。</p>
+
+      <div class="two-col reveal">
+        <!-- 左列：变量 + 函数 -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="clay">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="font-size:26px">📦</span>
+              <div>
+                <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);font-weight:700">积木 1</div>
+                <h3 style="margin:0">变量 — 存东西的盒子</h3>
+              </div>
+            </div>
+            <div class="code-block" style="font-size:12.5px;padding:16px">
+<span class="cmt">// 声明一个变量，存你的名字</span>
+<span class="kw">let</span> <span class="var"> name</span> <span class="op">=</span> <span class="str">"小明"</span><span class="op">;</span>
+<span class="kw">let</span> <span class="var"> age</span> <span class="op">=</span> <span class="num">18</span><span class="op">;</span>
+<span class="kw">let</span> <span class="var"> isStudent</span> <span class="op">=</span> <span class="bool">true</span><span class="op">;</span>
+<span class="cmt">// 用的时候直接写变量名</span>
+<span class="fn">console</span><span class="op">.</span><span class="fn">log</span><span class="op">(</span><span class="var">name</span><span class="op">);</span> <span class="cmt">// → "小明"</span>
+            </div>
+            <p style="font-size:12px;margin-top:10px;color:var(--mute)">三种存法：<code>let</code>（可改）、<code>const</code>（不可改）、<code>var</code>（老写法，少用）</p>
+          </div>
+
+          <div class="clay">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="font-size:26px">⚙️</span>
+              <div>
+                <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);font-weight:700">积木 2</div>
+                <h3 style="margin:0">函数 — 打包好的一套动作</h3>
+              </div>
+            </div>
+            <div class="code-block" style="font-size:12.5px;padding:16px">
+<span class="cmt">// 定义一个打招呼的函数</span>
+<span class="kw">function</span> <span class="fn"> greet</span><span class="op">(</span><span class="var">name</span><span class="op">) {</span>
+  <span class="fn">alert</span><span class="op">(</span><span class="str">"你好，"</span> <span class="op">+</span> <span class="var">name</span><span class="op">);</span>
+<span class="op">}</span>
+<span class="cmt">// 调用它</span>
+<span class="fn">greet</span><span class="op">(</span><span class="str">"小明"</span><span class="op">);</span> <span class="cmt">// 弹出"你好，小明"</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 右列：条件 + 循环 -->
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="clay">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="font-size:26px">🔀</span>
+              <div>
+                <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);font-weight:700">积木 3</div>
+                <h3 style="margin:0">条件 — 根据情况选择</h3>
+              </div>
+            </div>
+            <div class="code-block" style="font-size:12.5px;padding:16px">
+<span class="kw">let</span> <span class="var"> score</span> <span class="op">=</span> <span class="num">85</span><span class="op">;</span>
+
+<span class="kw">if</span> <span class="op">(</span><span class="var">score</span> <span class="op">&gt;=</span> <span class="num">60</span><span class="op">) {</span>
+  <span class="fn">console</span><span class="op">.</span><span class="fn">log</span><span class="op">(</span><span class="str">"及格了 🎉"</span><span class="op">);</span>
+<span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
+  <span class="fn">console</span><span class="op">.</span><span class="fn">log</span><span class="op">(</span><span class="str">"再努力一下 💪"</span><span class="op">);</span>
+<span class="op">}</span>
+<span class="cmt">// → 及格了 🎉</span>
+            </div>
+          </div>
+
+          <div class="clay">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+              <span style="font-size:26px">🔄</span>
+              <div>
+                <div style="font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);font-weight:700">积木 4</div>
+                <h3 style="margin:0">循环 — 重复做同一件事</h3>
+              </div>
+            </div>
+            <div class="code-block" style="font-size:12.5px;padding:16px">
+<span class="cmt">// 打印 1 到 5，不用复制粘贴 5 遍</span>
+<span class="kw">for</span> <span class="op">(</span><span class="kw">let</span> <span class="var"> i</span> <span class="op">=</span> <span class="num">1</span><span class="op">;</span> <span class="var">i</span> <span class="op">&lt;=</span> <span class="num">5</span><span class="op">;</span> <span class="var">i</span><span class="op">++) {</span>
+  <span class="fn">console</span><span class="op">.</span><span class="fn">log</span><span class="op">(</span><span class="str">"第"</span> <span class="op">+</span> <span class="var">i</span> <span class="op">+</span> <span class="str">"次"</span><span class="op">);</span>
+<span class="op">}</span>
+<span class="cmt">// → 第1次 第2次 ... 第5次</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P5 DOM：操控 HTML -->
+  <section class="slide" data-name="操控 HTML — DOM">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 03 · DOM</span></div>
+      <h2 class="reveal">JS 用 <b>DOM</b> 来操控 HTML</h2>
+      <p class="lead reveal" style="margin-bottom:14px">DOM（文档对象模型）听起来很技术，但意思很简单：浏览器把整个 HTML 页面变成一棵"树"，JS 可以通过这棵树找到任何元素，然后改它。</p>
+
+      <div class="two-col reveal">
+        <div>
+          <div class="clay" style="margin-bottom:16px">
+            <h3 style="margin-bottom:12px">① 找到元素</h3>
+            <div class="code-block" style="font-size:12px;padding:16px">
+<span class="cmt">// 找到 id 叫 "title" 的那个元素</span>
+<span class="kw">const</span> <span class="var"> el</span> <span class="op">=</span> <span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"title"</span><span class="op">);</span>
+
+<span class="cmt">// 找到第一个 class 叫 "card" 的元素</span>
+<span class="kw">const</span> <span class="var"> card</span> <span class="op">=</span> <span class="fn">document</span><span class="op">.</span><span class="fn">querySelector</span><span class="op">(</span><span class="str">".card"</span><span class="op">);</span>
+
+<span class="cmt">// 找到所有 p 标签</span>
+<span class="kw">const</span> <span class="var"> ps</span> <span class="op">=</span> <span class="fn">document</span><span class="op">.</span><span class="fn">querySelectorAll</span><span class="op">(</span><span class="str">"p"</span><span class="op">);</span>
+            </div>
+          </div>
+
+          <div class="clay">
+            <h3 style="margin-bottom:12px">② 改掉它</h3>
+            <div class="code-block" style="font-size:12px;padding:16px">
+<span class="cmt">// 改文字</span>
+<span class="var">el</span><span class="op">.</span><span class="var">textContent</span> <span class="op">=</span> <span class="str">"新标题"</span><span class="op">;</span>
+
+<span class="cmt">// 改 CSS 样式</span>
+<span class="var">el</span><span class="op">.</span><span class="var">style</span><span class="op">.</span><span class="var">color</span> <span class="op">=</span> <span class="str">"red"</span><span class="op">;</span>
+
+<span class="cmt">// 加一个 class</span>
+<span class="var">el</span><span class="op">.</span><span class="var">classList</span><span class="op">.</span><span class="fn">add</span><span class="op">(</span><span class="str">"active"</span><span class="op">);</span>
+
+<span class="cmt">// 隐藏它</span>
+<span class="var">el</span><span class="op">.</span><span class="var">style</span><span class="op">.</span><span class="var">display</span> <span class="op">=</span> <span class="str">"none"</span><span class="op">;</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="clay" style="height:100%">
+            <h3 style="margin-bottom:14px">一张图看懂 DOM 树</h3>
+            <!-- 简单 DOM 树可视化 -->
+            <div style="display:flex;flex-direction:column;align-items:center;gap:0;font-family:var(--mono);font-size:13px">
+              <div style="background:linear-gradient(135deg,#dbeafe,#bfdbfe);border-radius:12px;padding:8px 18px;font-weight:700;color:#1d4ed8;box-shadow:var(--clay-sh)">document</div>
+              <div style="width:2px;height:16px;background:rgba(59,130,246,.3)"></div>
+              <div style="background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:12px;padding:8px 18px;font-weight:700;color:#92400e;box-shadow:var(--clay-sh)">&lt;html&gt;</div>
+              <div style="display:flex;gap:0;align-items:flex-start">
+                <div style="display:flex;flex-direction:column;align-items:center">
+                  <div style="width:2px;height:16px;background:rgba(59,130,246,.3)"></div>
+                  <div style="background:#fff;border-radius:12px;padding:8px 14px;font-weight:600;color:var(--fg);box-shadow:var(--clay-sh);font-size:12px">&lt;head&gt;</div>
+                  <div style="width:2px;height:14px;background:rgba(59,130,246,.3)"></div>
+                  <div style="background:rgba(59,130,246,.1);border-radius:10px;padding:6px 12px;font-size:11px;color:var(--mute)">&lt;title&gt;</div>
+                </div>
+                <div style="width:32px;height:2px;background:rgba(59,130,246,.2);margin-top:30px"></div>
+                <div style="display:flex;flex-direction:column;align-items:center">
+                  <div style="width:2px;height:16px;background:rgba(59,130,246,.3)"></div>
+                  <div style="background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-radius:12px;padding:8px 14px;font-weight:700;color:#065f46;box-shadow:var(--clay-sh);outline:2px solid #10b981;font-size:12px">&lt;body&gt; 👈</div>
+                  <div style="display:flex;gap:10px">
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                      <div style="width:2px;height:14px;background:rgba(59,130,246,.3)"></div>
+                      <div style="background:rgba(245,158,11,.15);border-radius:10px;padding:6px 12px;font-size:11px;color:#92400e">&lt;h1&gt;</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                      <div style="width:2px;height:14px;background:rgba(59,130,246,.3)"></div>
+                      <div style="background:rgba(139,92,246,.12);border-radius:10px;padding:6px 12px;font-size:11px;color:#7c3aed">&lt;p&gt;</div>
+                    </div>
+                    <div style="display:flex;flex-direction:column;align-items:center">
+                      <div style="width:2px;height:14px;background:rgba(59,130,246,.3)"></div>
+                      <div style="background:rgba(249,115,22,.12);border-radius:10px;padding:6px 12px;font-size:11px;color:#c2410c">&lt;div&gt;</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <p style="font-size:12px;color:var(--mute);text-align:center;margin-top:16px">JS 从 <code>document</code> 出发，沿树找到任意节点，然后操作它</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P6 事件 -->
+  <section class="slide" data-name="事件：听指令">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 04 · Events</span></div>
+      <h2 class="reveal">事件：JS <b>在监听你的每一个动作</b></h2>
+      <p class="lead reveal" style="margin-bottom:14px">用户点击、滑动、输入、移动鼠标——每个动作都是一个"事件"。JS 通过 <code>addEventListener</code> 来监听，然后做出反应。</p>
+
+      <div class="event-flow reveal">
+        <div class="event-step">
+          <span class="e-ico">👆</span>
+          <h4>用户动作</h4>
+          <p>点击按钮</p>
+        </div>
+        <div class="event-arrow">→</div>
+        <div class="event-step">
+          <span class="e-ico">📡</span>
+          <h4>JS 监听到了</h4>
+          <p>addEventListener</p>
+        </div>
+        <div class="event-arrow">→</div>
+        <div class="event-step">
+          <span class="e-ico">⚡</span>
+          <h4>触发函数</h4>
+          <p>执行你写的代码</p>
+        </div>
+        <div class="event-arrow">→</div>
+        <div class="event-step">
+          <span class="e-ico">🎯</span>
+          <h4>页面有反应</h4>
+          <p>变色 / 弹窗 / 跳转</p>
+        </div>
+      </div>
+
+      <div class="two-col reveal" style="margin-top:20px">
+        <div class="code-block" style="font-size:12.5px;padding:18px">
+<span class="cmt">// HTML 里有一个按钮</span>
+<span class="tag">&lt;button id="myBtn"&gt;</span>点我<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;p id="msg"&gt;&lt;/p&gt;</span>
+
+<span class="cmt">// JS 监听这个按钮的点击事件</span>
+<span class="kw">const</span> <span class="var"> btn</span> <span class="op">=</span> <span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"myBtn"</span><span class="op">);</span>
+<span class="var">btn</span><span class="op">.</span><span class="fn">addEventListener</span><span class="op">(</span><span class="str">"click"</span><span class="op">,</span> <span class="kw">function</span><span class="op">() {</span>
+  <span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"msg"</span><span class="op">).</span><span class="var">textContent</span>
+    <span class="op">=</span> <span class="str">"你点了我！🎉"</span><span class="op">;</span>
+<span class="op">});</span>
+        </div>
+
+        <div>
+          <h3 style="margin-bottom:14px">常见的事件类型</h3>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="clay" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+              <span style="font-size:22px">👆</span>
+              <div><code>click</code><span style="font-size:13px;color:var(--mute);margin-left:10px">鼠标点击</span></div>
+            </div>
+            <div class="clay" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+              <span style="font-size:22px">⌨️</span>
+              <div><code>keydown</code><span style="font-size:13px;color:var(--mute);margin-left:10px">键盘按下</span></div>
+            </div>
+            <div class="clay" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+              <span style="font-size:22px">🖱️</span>
+              <div><code>mouseover</code><span style="font-size:13px;color:var(--mute);margin-left:10px">鼠标悬停</span></div>
+            </div>
+            <div class="clay" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+              <span style="font-size:22px">📝</span>
+              <div><code>input</code><span style="font-size:13px;color:var(--mute);margin-left:10px">输入框有输入</span></div>
+            </div>
+            <div class="clay" style="padding:14px 18px;display:flex;align-items:center;gap:14px">
+              <span style="font-size:22px">🏁</span>
+              <div><code>DOMContentLoaded</code><span style="font-size:13px;color:var(--mute);margin-left:10px">页面加载完成</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P7 两个真实小功能 -->
+  <section class="slide" data-name="动手：两个小功能">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">Section 05 · 真的能用的小功能</span></div>
+      <h2 class="reveal">动手：下面两个<b>你可以直接用</b></h2>
+
+      <div class="demo-split reveal">
+        <!-- 左：点击显示文字 -->
+        <div>
+          <div class="demo-live">
+            <div class="demo-live-label">▼ 功能一：点击显示一句话</div>
+            <button class="js-btn" id="demo-btn">点我试试 👆</button>
+            <div id="demo-output">等待你的点击...</div>
+          </div>
+          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:16px;line-height:1.85">
+<span class="kw">const</span> <span class="var"> messages</span> <span class="op">= [</span>
+  <span class="str">"你好呀！👋"</span><span class="op">,</span> <span class="str">"再点一下呢？😄"</span><span class="op">,</span>
+  <span class="str">"就知道你停不下来 😂"</span>
+<span class="op">];</span>
+<span class="kw">let</span> <span class="var"> count</span> <span class="op">=</span> <span class="num">0</span><span class="op">;</span>
+<span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"demo-btn"</span><span class="op">)</span>
+  <span class="op">.</span><span class="fn">addEventListener</span><span class="op">(</span><span class="str">"click"</span><span class="op">,</span> <span class="kw">function</span><span class="op">() {</span>
+    <span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"demo-output"</span><span class="op">).</span><span class="var">textContent</span>
+      <span class="op">=</span> <span class="var">messages</span><span class="op">[</span><span class="var">count</span> <span class="op">%</span> <span class="var">messages</span><span class="op">.</span><span class="var">length</span><span class="op">];</span>
+    <span class="var">count</span><span class="op">++;</span>
+  <span class="op">});</span>
+          </div>
+        </div>
+
+        <!-- 右：计数器 -->
+        <div>
+          <div class="demo-live">
+            <div class="demo-live-label">▼ 功能二：加减计数器</div>
+            <div id="demo-counter-display">0</div>
+            <div class="counter-btns">
+              <button class="c-btn minus" id="minus-btn">－</button>
+              <button class="c-btn plus" id="plus-btn">＋</button>
+            </div>
+          </div>
+          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:16px;line-height:1.85">
+<span class="kw">let</span> <span class="var"> n</span> <span class="op">=</span> <span class="num">0</span><span class="op">;</span>
+<span class="kw">const</span> <span class="var"> display</span> <span class="op">=</span>
+  <span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"demo-counter-display"</span><span class="op">);</span>
+
+<span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"plus-btn"</span><span class="op">)</span>
+  <span class="op">.</span><span class="fn">addEventListener</span><span class="op">(</span><span class="str">"click"</span><span class="op">,</span> <span class="kw">function</span><span class="op">() {</span>
+    <span class="var">display</span><span class="op">.</span><span class="var">textContent</span> <span class="op">=</span> <span class="op">++</span><span class="var">n</span><span class="op">;</span>
+  <span class="op">});</span>
+<span class="fn">document</span><span class="op">.</span><span class="fn">getElementById</span><span class="op">(</span><span class="str">"minus-btn"</span><span class="op">)</span>
+  <span class="op">.</span><span class="fn">addEventListener</span><span class="op">(</span><span class="str">"click"</span><span class="op">,</span> <span class="kw">function</span><span class="op">() {</span>
+    <span class="var">display</span><span class="op">.</span><span class="var">textContent</span> <span class="op">=</span> <span class="op">--</span><span class="var">n</span><span class="op">;</span>
+  <span class="op">});</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- P8 结尾 -->
+  <section class="slide" data-name="三人组毕业典礼">
+    <div class="canvas">
+      <div class="reveal"><span class="eyebrow">The End · 三册学完了</span></div>
+      <h1 class="reveal">骨架 · 化妆 · 动作<br><b>集齐了</b></h1>
+      <div class="end-line reveal"></div>
+      <p class="e-tag reveal">这三件事放在一起，你已经能从零做出一个真实的、能交互的网页了。接下来去哪？随便你，你有选择权了。</p>
+
+      <div class="trilogy reveal">
+        <div class="trilogy-card t1">
+          <span class="big-emoji">🦴</span>
+          <h4 style="color:#92400e">HTML</h4>
+          <p style="color:#78350f">骨架 · 结构 · 标签<br>这是什么</p>
+        </div>
+        <div class="trilogy-card t2">
+          <span class="big-emoji">👗</span>
+          <h4 style="color:#6d28d9">CSS</h4>
+          <p style="color:#5b21b6">样式 · 颜色 · 布局<br>长什么样</p>
+        </div>
+        <div class="trilogy-card t3">
+          <span class="big-emoji">🙌</span>
+          <h4 style="color:#1d4ed8">JavaScript</h4>
+          <p style="color:#1e40af">事件 · 逻辑 · DOM<br>能干什么</p>
+        </div>
+      </div>
+
+      <div class="next-cards reveal" style="margin-top:18px">
+        <div class="clay">
+          <span class="emoji-nc">🏗️</span>
+          <h4>做个真实项目</h4>
+          <p>仿做一个你常用的页面（个人主页、待办清单、计算器）</p>
+        </div>
+        <div class="clay">
+          <span class="emoji-nc">📦</span>
+          <h4>学一个框架</h4>
+          <p>React / Vue——把 JS 组织得更好用，现代前端都在用</p>
+        </div>
+        <div class="clay">
+          <span class="emoji-nc">🛝</span>
+          <h4>去 CodePen 玩</h4>
+          <p>codepen.io——三列同时写 HTML / CSS / JS，实时看效果</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<button class="nav-arrow prev" onclick="goto(current-1)" aria-label="上一页">‹</button>
+<button class="nav-arrow next" onclick="goto(current+1)" aria-label="下一页">›</button>
+
+<div class="footbar">
+  <div>JavaScript 零基础入门 · Lite Edition · 第三册</div>
+  <div class="pg"><span id="curr">1</span> / <span id="total">8</span></div>
+</div>
+<div class="progress" id="progress"></div>
+
+<script>
+/* ── P7 Demo JS ──────────────────────────────────────── */
+(function(){
+  const messages = ["你好呀！👋","再点一下呢？😄","就知道你停不下来 😂","好了好了，你赢了 🏆","……行吧，随便你 😅"];
+  let count = 0;
+  const btn = document.getElementById('demo-btn');
+  const out = document.getElementById('demo-output');
+  if(btn && out){
+    btn.addEventListener('click', function(){
+      out.textContent = messages[count % messages.length];
+      out.style.background = ['rgba(59,130,246,.1)','rgba(245,158,11,.1)','rgba(16,185,129,.1)','rgba(139,92,246,.1)','rgba(249,115,22,.1)'][count % 5];
+      count++;
+    });
+  }
+  let n = 0;
+  const display = document.getElementById('demo-counter-display');
+  const plusBtn = document.getElementById('plus-btn');
+  const minusBtn = document.getElementById('minus-btn');
+  if(plusBtn && display){
+    plusBtn.addEventListener('click', function(){ display.textContent = ++n; });
+    minusBtn.addEventListener('click', function(){ display.textContent = --n; });
+  }
+})();
+
+/* ── Slide Navigation ────────────────────────────────── */
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const totalEl = document.getElementById('total');
+  const currEl = document.getElementById('curr');
+  const progress = document.getElementById('progress');
+  const topCh = document.getElementById('topCh');
+  if(totalEl) totalEl.textContent = total;
+  let current = 0, locked = false;
+
+  function setHeader(i){
+    if(!topCh) return;
+    topCh.textContent = slides[i].dataset.name || '';
+  }
+  function goto(i){
+    if(locked || i===current || i<0 || i>=total) return;
+    locked = true;
+    slides[current].classList.remove('active');
+    current = i;
+    slides[current].classList.add('active');
+    if(progress) progress.style.width = ((current+1)/total*100)+'%';
+    if(currEl) currEl.textContent = current+1;
+    setHeader(current);
+    setTimeout(()=>locked=false, 600);
+  }
+  Object.defineProperty(window,'current',{get:()=>current,set:(v)=>{current=v}});
+  window.goto = goto;
+
+  document.addEventListener('keydown', e => {
+    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();goto(current+1);}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();goto(current-1);}
+    else if(e.key==='Home') goto(0);
+    else if(e.key==='End') goto(total-1);
+    else if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+  let wheelLock = false;
+  document.addEventListener('wheel', e => {
+    if(wheelLock) return;
+    wheelLock = true;
+    if(e.deltaY>30) goto(current+1);
+    else if(e.deltaY<-30) goto(current-1);
+    setTimeout(()=>wheelLock=false, 800);
+  },{passive:true});
+  let touchY=0,touchX=0;
+  document.addEventListener('touchstart', e=>{touchY=e.touches[0].clientY;touchX=e.touches[0].clientX;});
+  document.addEventListener('touchend', e=>{
+    const dy=touchY-e.changedTouches[0].clientY;
+    const dx=touchX-e.changedTouches[0].clientX;
+    if(Math.abs(dy)>50&&Math.abs(dy)>Math.abs(dx)) goto(current+(dy>0?1:-1));
+    else if(Math.abs(dx)>50) goto(current+(dx>0?1:-1));
+  });
+  if(progress) progress.style.width=(1/total*100)+'%';
+  setHeader(0);
+})();
+</script>
+<script type="text/javascript" src="/accessproxy_statics/h5_fp.js" defer></script>
+<script type="text/javascript" src="/accessproxy_statics/wm.js" defer></script>
+</body>
+</html>

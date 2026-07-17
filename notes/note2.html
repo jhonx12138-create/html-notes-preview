@@ -1,124 +1,407 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>人类简史 — 认知革命与农业革命</title>
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", Georgia, serif;
-    font-size: 17px;
-    line-height: 1.85;
-    color: #2c3e50;
-    background: #fffef9;
-    padding: 24px 20px 40px;
-    max-width: 720px;
-    margin: 0 auto;
-  }
-  h1 { font-size: 1.6rem; margin-bottom: 6px; color: #1a1a2e; }
-  .meta { font-size: 0.85rem; color: #888; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 12px; }
-  h2 { font-size: 1.2rem; margin: 28px 0 10px; color: #2980b9; }
-  h3 { font-size: 1.05rem; margin: 20px 0 8px; color: #2c3e50; }
-  p { margin: 10px 0; text-align: justify; }
-  ul, ol { margin: 8px 0 8px 24px; }
-  li { margin: 4px 0; }
-  blockquote {
-    border-left: 3px solid #2980b9;
-    padding: 8px 16px;
-    margin: 16px 0;
-    background: #f0f7fb;
-    color: #2c3e50;
-    font-style: italic;
-  }
-  .highlight {
-    background: linear-gradient(180deg, transparent 60%, #aed6f1 60%);
-    padding: 0 2px;
-  }
-  .callout {
-    background: #fef9e7;
-    border: 1px solid #f9e79f;
-    border-radius: 8px;
-    padding: 14px 18px;
-    margin: 16px 0;
-  }
-  .callout strong { color: #c0392b; }
-  hr { border: none; border-top: 1px solid #e8e0d5; margin: 24px 0; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 16px 0;
-    font-size: 0.9rem;
-  }
-  th, td {
-    border: 1px solid #ddd;
-    padding: 8px 12px;
-    text-align: left;
-  }
-  th { background: #f8f9fa; font-weight: 600; }
-  em { color: #2980b9; font-style: normal; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《中国国家治理的制度逻辑》· 知识图谱（增强版）</title>
+    <style>
+        :root {
+            --bg: #faf9f7;
+            --card-bg: #ffffff;
+            --border: #d8d0c4;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #2c4a5e;
+            --accent-light: #eef3f6;
+            --accent-glow: rgba(44,74,94,0.18);
+            --shadow: 0 4px 16px rgba(0,0,0,0.04);
+            --radius: 12px;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --font-serif: 'Noto Serif SC', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            display: flex;
+            -webkit-font-smoothing:antialiased;
+        }
+        .sidebar {
+            position: fixed; top:0; left:0;
+            width: var(--sidebar-width); height: 100vh;
+            background: #f8f5f0; border-right:1px solid var(--border);
+            overflow-y:auto; padding:1.5rem 1rem; z-index:100;
+            font-family: var(--font-sans); font-size:0.86rem;
+            box-shadow:2px 0 10px rgba(0,0,0,0.02);
+        }
+        .sidebar h3 {
+            font-size:0.95rem; color:var(--accent); margin-bottom:1rem;
+            padding-bottom:0.5rem; border-bottom:2px solid var(--accent);
+            letter-spacing:0.04em; display:flex; align-items:center; gap:0.4rem;
+        }
+        .sidebar .toc-list { list-style:none; padding:0; }
+        .sidebar .toc-list li { margin-bottom:0.1rem; }
+        .sidebar .toc-list a {
+            display:block; padding:0.35rem 0.6rem; color:#4a3f33;
+            text-decoration:none; border-radius:6px; transition:all 0.2s; font-size:0.82rem;
+        }
+        .sidebar .toc-list a:hover { background:#e0d8cc; color:#1a1508; }
+        .sidebar .toc-list a.active { background:var(--accent); color:#fff; font-weight:600; }
+        .main {
+            margin-left: var(--sidebar-width); flex:1;
+            padding:2rem 2.5rem; max-width:1100px;
+        }
+        .header {
+            text-align:center; margin-bottom:2.5rem;
+            padding-bottom:2rem; border-bottom:2px solid var(--border);
+        }
+        .header h1 { font-size:2.2rem; font-weight:700; letter-spacing:0.04em; margin-bottom:0.3rem; color:#1e1508; }
+        .header .subtitle { font-size:1.05rem; color:var(--text-muted); font-style:italic; margin-bottom:1.2rem; }
+        .header .meta { font-size:0.88rem; color:var(--text-muted); display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem 1.5rem; margin-bottom:1.2rem; }
+        .framework-badges { display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; }
+        .badge { display:inline-block; background:var(--accent-light); border:1px solid #b0c4d0; border-radius:18px; padding:0.4rem 1.2rem; font-size:0.8rem; color:var(--accent); font-family:var(--font-sans); font-weight:500; }
+        .section {
+            background:var(--card-bg); border:1px solid var(--border);
+            border-radius:var(--radius); padding:1.6rem 1.8rem; margin-bottom:1.8rem;
+            box-shadow:var(--shadow); scroll-margin-top:1rem;
+        }
+        .section h2 { font-size:1.3rem; border-left:4px solid var(--accent); padding-left:0.8rem; margin-bottom:1rem; color:#1c3040; font-weight:700; display:flex; align-items:center; gap:0.5rem; }
+        .section h3 { font-size:1.05rem; margin:1.5rem 0 0.6rem; padding:0.3rem 0; border-bottom:1px dashed var(--border); color:#2c4a5e; font-weight:700; display:flex; align-items:center; gap:0.4rem; }
+        .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-top:0.6rem; }
+        .info-card {
+            background:#fdfaf6; border-radius:10px; padding:0.9rem 1.1rem;
+            border-left:5px solid #ccc; transition:all 0.25s; position:relative;
+        }
+        .info-card:hover { box-shadow:0 6px 16px rgba(0,0,0,0.06); transform:translateY(-2px); }
+        .info-card.core { border-color:#c46060; background:#fefafa; }
+        .info-card.mechanism { border-color:#5088b0; background:#fafcfe; }
+        .info-card.effect { border-color:#5a9050; background:#fafdfa; }
+        .info-card.insight { border-color:#9060b0; background:#fdfafe; }
+        .info-card .label { font-weight:700; font-size:0.82rem; margin-bottom:0.35rem; letter-spacing:0.04em; font-family:var(--font-sans); color:#2a3a45; display:flex; align-items:center; gap:0.4rem; }
+        .info-card .content { font-size:0.9rem; color:#4a3f33; }
+        .info-card .content ul { margin-top:0.2rem; padding-left:1.2rem; }
+        .info-card .content li { margin-bottom:0.2rem; }
+        .glossary-trigger {
+            display:inline-flex; align-items:center; justify-content:center;
+            width:20px; height:20px; background:var(--accent); color:#fff;
+            border-radius:50%; font-size:0.7rem; font-weight:700; cursor:pointer;
+            margin-left:0.35rem; transition:all 0.2s; font-family:var(--font-sans);
+            border:none; vertical-align:middle; box-shadow:0 2px 4px rgba(0,0,0,0.1);
+        }
+        .glossary-trigger:hover { background:#3a5a70; transform:scale(1.15); }
+        .modal-overlay {
+            position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:200;
+            display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s ease;
+        }
+        .modal-overlay.hidden { display:none; }
+        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+        .modal-card {
+            background:#fff; border-radius:16px; padding:1.8rem; max-width:560px; width:90%;
+            box-shadow:0 20px 40px rgba(0,0,0,0.2); border:1px solid var(--border);
+            position:relative; font-family:var(--font-sans); max-height:80vh; overflow-y:auto;
+        }
+        .modal-card h4 { font-size:1.15rem; color:var(--accent); margin-bottom:1rem; display:flex; align-items:center; gap:0.4rem; }
+        .modal-card p { font-size:0.92rem; color:#4a3f33; line-height:1.7; margin-bottom:0.7rem; }
+        .modal-card .close-btn { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.3rem; cursor:pointer; color:#999; }
+        .modal-card .close-btn:hover { color:#333; }
+        blockquote {
+            background:var(--accent-light); border-left:4px solid #4a7080;
+            margin:1rem 0; padding:0.9rem 1.3rem; font-style:italic;
+            border-radius:0 8px 8px 0; color:#1c3040; font-size:0.92rem;
+        }
+        .diagram-wrap { text-align:center; margin:1.2rem 0; background:#fafcfe; border-radius:10px; padding:1rem; border:1px solid #e0e8ee; }
+        .diagram-wrap svg { max-width:100%; }
+        table.extension { width:100%; border-collapse:collapse; font-size:0.9rem; margin-top:0.5rem; }
+        table.extension th { background:#eef3f6; padding:0.5rem 0.8rem; text-align:left; font-weight:700; color:#2c4a5e; border-bottom:2px solid var(--border); font-family:var(--font-sans); width:24%; }
+        table.extension td { padding:0.5rem 0.8rem; border-bottom:1px solid var(--border); color:#4a3f33; vertical-align:top; }
+        hr.divider { border:none; border-top:1px dashed var(--border); margin:2rem 0; }
+        .back-to-top {
+            position:fixed; bottom:2rem; right:2rem; background:var(--accent);
+            color:#fff; border:none; border-radius:50%; width:42px; height:42px;
+            font-size:1.1rem; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);
+            z-index:99; transition:all 0.3s; display:flex; align-items:center; justify-content:center;
+        }
+        .back-to-top:hover { background:#3a5a70; transform:translateY(-3px); }
+        @media (max-width:800px) {
+            .sidebar { display:none; }
+            .main { margin-left:0; padding:1rem; }
+            .info-grid { grid-template-columns:1fr; }
+            .header h1 { font-size:1.6rem; }
+        }
+    </style>
 </head>
 <body>
+<nav class="sidebar" id="sidebar">
+    <h3>📚 本书知识结构</h3>
+    <ul class="toc-list">
+        <li><a href="#header">📖 书籍信息</a></li>
+        <li><a href="#core">🎯 核心矛盾：权威体制 vs 有效治理</a></li>
+        <li><a href="#ch2">📐 制度基础：一统体制与行政发包</a></li>
+        <li><a href="#ch3">⚖️ 矛盾展开：政策执行偏差与机制衍生</a></li>
+        <li><a href="#ch4">🌪️ 纠偏机制：运动型治理</a></li>
+        <li><a href="#ch5">🤝 基层应对：共谋行为</a></li>
+        <li><a href="#ch6">🧩 基层策略：拼凑应对</a></li>
+        <li><a href="#ch7">🔗 多重逻辑与晋升锦标赛</a></li>
+        <li><a href="#ch8">💡 理论反思与制度韧性</a></li>
+        <li><a href="#laws">🧠 贯穿主线与核心规律</a></li>
+        <li><a href="#extension">🔍 延伸与比较</a></li>
+    </ul>
+</nav>
 
-<h1>🧬 《人类简史》— 认知革命与农业革命</h1>
-<div class="meta">尤瓦尔·赫拉利 · 著 | 阅读日期：2024年2月 | 标签：历史 · 人类学 · 科普</div>
+<div class="main">
+    <div class="header" id="header">
+        <h1>《中国国家治理的制度逻辑》</h1>
+        <div class="subtitle">组织学视角下的中国治理模式深度剖析</div>
+        <div class="meta">
+            <span><strong>作者</strong>：周雪光</span>
+            <span><strong>出版年份</strong>：2017年</span>
+            <span><strong>出版社</strong>：生活·读书·新知三联书店</span>
+        </div>
+        <div class="framework-badges">
+            <span class="badge">🏛️ 核心论点型</span>
+            <span class="badge">📊 组织社会学</span>
+            <span class="badge">🇨🇳 中国政治</span>
+            <span class="badge">🔍 制度分析</span>
+        </div>
+    </div>
 
-<h2>一、全书框架</h2>
-<p>赫拉利将人类历史划分为四大革命：<em>认知革命</em>（7万年前）→ <em>农业革命</em>（1.2万年前）→ <em>人类的融合统一</em> → <em>科学革命</em>（500年前）。本书的核心洞见是：<span class="highlight">人类之所以能统治地球，是因为我们能够大规模地灵活合作——而这建立在"虚构故事"之上。</span></p>
+    <!-- 核心矛盾 -->
+    <div class="section" id="core">
+        <h2>🎯 核心矛盾：权威体制与有效治理的张力</h2>
+        <p style="margin-bottom:1rem;">全书围绕一个根本矛盾展开：<strong>权威体制</strong>（中央统一决策、自上而下控制）与<strong>有效治理</strong>（因地制宜、灵活高效解决问题）之间存在结构性张力。这一矛盾是理解中国国家治理一切现象的逻辑起点。</p>
+        <div class="diagram-wrap">
+            <svg width="700" height="220" viewBox="0 0 700 220">
+                <rect x="30" y="30" width="220" height="60" rx="10" fill="#fefafa" stroke="#c46060" stroke-width="2"/>
+                <text x="140" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#a04040" font-family="'PingFang SC',sans-serif">权威体制</text>
+                <text x="140" y="75" text-anchor="middle" font-size="11" fill="#666">中央统一决策 · 自上而下控制</text>
+                <rect x="450" y="30" width="220" height="60" rx="10" fill="#fafdfa" stroke="#5a9050" stroke-width="2"/>
+                <text x="560" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a6030" font-family="'PingFang SC',sans-serif">有效治理</text>
+                <text x="560" y="75" text-anchor="middle" font-size="11" fill="#666">因地制宜 · 灵活高效解决问题</text>
+                <line x1="250" y1="50" x2="450" y2="50" stroke="#888" stroke-width="2" stroke-dasharray="6"/>
+                <text x="350" y="45" text-anchor="middle" font-size="12" fill="#c46060" font-weight="bold">结构性张力</text>
+                <text x="350" y="115" text-anchor="middle" font-size="12" fill="#2c4a5e" font-weight="bold">↓ 衍生出多种制度机制 ↓</text>
+                <rect x="40" y="130" width="135" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
+                <text x="107" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">行政发包制</text>
+                <rect x="195" y="130" width="120" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
+                <text x="255" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">运动型治理</text>
+                <rect x="335" y="130" width="120" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
+                <text x="395" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">基层共谋</text>
+                <rect x="475" y="130" width="120" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
+                <text x="535" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">拼凑应对</text>
+                <rect x="150" y="170" width="200" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
+                <text x="250" y="189" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">晋升锦标赛</text>
+                <rect x="380" y="170" width="180" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
+                <text x="470" y="189" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">多重制度逻辑</text>
+            </svg>
+            <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.3rem;">图：核心矛盾及其衍生的治理机制（强化主线）</p>
+        </div>
+    </div>
 
-<blockquote>
-  "智人之所以能够征服世界，是因为有独特的语言，这种语言能够传达关于不存在的事物的信息。"
-</blockquote>
+    <!-- 第二章：制度基础 -->
+    <div class="section" id="ch2">
+        <h2>📐 制度基础：一统体制与行政发包制</h2>
+        <div class="info-grid">
+            <div class="info-card core">
+                <div class="label">🏛️ 一统体制 <button class="glossary-trigger" onclick="openModal('unitary')">?</button></div>
+                <div class="content">中国自古以来就是一个<strong>一统体制</strong>的国家，核心特征是中央掌握最终决策权、人事任命权和资源分配权。这一体制通过层级结构向下传导权威，但也面临着治理规模庞大带来的信息与激励难题。</div>
+            </div>
+            <div class="info-card mechanism">
+                <div class="label">📋 行政发包制 <button class="glossary-trigger" onclick="openModal('administrative')">?</button></div>
+                <div class="content">中央将治理任务<strong>打包发包</strong>给下级政府，明确规定目标、时限和奖惩，但给予一定执行自主权。行政发包制有效调动了地方积极性，但也导致地方选择性执行和偏差行为——因为发包方难以完全监督代理方的执行过程。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">🔗 与核心矛盾的关系</div>
+                <div class="content">行政发包制是权威体制在治理实践中的具体体现：中央通过发包实现控制，但发包过程中的信息不对称和激励扭曲恰恰体现了权威体制与有效治理之间的张力。它是连接核心矛盾与后续衍生机制的关键制度安排。</div>
+            </div>
+        </div>
+    </div>
 
-<h2>二、认知革命（约7万年前）</h2>
+    <!-- 第三章：矛盾展开 -->
+    <div class="section" id="ch3">
+        <h2>⚖️ 矛盾展开：政策执行偏差与机制衍生</h2>
+        <div class="info-grid">
+            <div class="info-card mechanism">
+                <div class="label">📉 政策执行偏差 <button class="glossary-trigger" onclick="openModal('deviation')">?</button></div>
+                <div class="content">由于行政发包制中的信息不对称和激励不相容，地方政府在执行中央政策时出现系统性偏差：<strong>选择性执行</strong>（只做容易考核的）、<strong>象征性执行</strong>（以会议落实会议）、<strong>附加执行</strong>（层层加码）等现象层出不穷。</div>
+            </div>
+            <div class="info-card effect">
+                <div class="label">⚡ 矛盾的后果</div>
+                <div class="content">执行偏差积累到一定程度，会触发中央的纠偏机制——<strong>运动型治理</strong>。同时，基层政府在高压下发展出<strong>共谋行为</strong>和<strong>拼凑应对</strong>等策略以求自保。这些机制共同构成了中国治理的动态循环。</div>
+            </div>
+        </div>
+    </div>
 
-<h3>关键能力：八卦与虚构</h3>
-<p>智人的语言不仅能描述狮子的位置（很多动物也会），更能讨论<strong>谁值得信任、谁不靠谱</strong>（八卦的社会功能），以及更重要的是——<strong>讲述虚构的故事</strong>。</p>
+    <!-- 第四章：运动型治理 -->
+    <div class="section" id="ch4">
+        <h2>🌪️ 纠偏机制：运动型治理</h2>
+        <div class="info-grid">
+            <div class="info-card mechanism">
+                <div class="label">🌪️ 运动型治理 <button class="glossary-trigger" onclick="openModal('campaign')">?</button></div>
+                <div class="content">当常规官僚体系出现严重僵化或偏离时，中央通过<strong>政治动员</strong>打破常规程序，集中力量突破阻力。运动型治理是权威体制维护自身统一性的<strong>纠偏手段</strong>，但其非制度化特征也带来矫枉过正和周期性循环的问题。</div>
+            </div>
+            <div class="info-card effect">
+                <div class="label">🔄 周期性循环</div>
+                <div class="content">运动型治理往往形成“问题积累—运动爆发—问题缓解—问题再积累”的循环。每一次运动在短期内解决旧问题，但长期可能创造新问题，下一次运动则在更高起点上启动。这种循环恰是权威体制与有效治理矛盾无法根本解决的体现。</div>
+            </div>
+        </div>
+    </div>
 
-<ul>
-  <li><strong>八卦理论</strong>：邓巴数（约150人）是人类群体靠社交关系维持的最大规模。超过这个数量需要"虚构故事"来凝聚。</li>
-  <li><strong>虚构的力量</strong>：部落守护神、国家、法律、人权、货币、公司——这些东西只存在于我们共同想象之中，却能让数百万陌生人合作。</li>
-</ul>
+    <!-- 第五章：共谋行为 -->
+    <div class="section" id="ch5">
+        <h2>🤝 基层应对：共谋行为</h2>
+        <div class="info-grid">
+            <div class="info-card mechanism">
+                <div class="label">🤝 共谋行为 <button class="glossary-trigger" onclick="openModal('collusion')">?</button></div>
+                <div class="content">基层政府之间形成<strong>非正式合作关系</strong>，共同应对上级检查、应付政策要求。这不是个别腐败，而是<strong>组织层面的系统性行为</strong>——在高压问责和资源有限的双重约束下，共谋是基层降低风险的理性策略。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">🔍 组织学解释</div>
+                <div class="content">共谋行为的根源在于<strong>激励结构</strong>：上级考核指标多、时间紧、惩罚重，而下级资源不足。基层官员为完成考核、避免问责，倾向于相互配合来修饰数据、应付检查。这种行为一旦成为普遍模式，就形成了制度化的非正式规则。</div>
+            </div>
+        </div>
+    </div>
 
-<div class="callout">
-  <strong>💡 核心洞见：</strong>标致汽车公司并不"存在"——它只是一个法律拟制。如果你解散所有员工、卖掉所有资产，标致公司并不会在某个地方继续"存在"。它存在于我们共同的想象之中。
+    <!-- 第六章：拼凑应对 -->
+    <div class="section" id="ch6">
+        <h2>🧩 基层策略：拼凑应对</h2>
+        <div class="info-grid">
+            <div class="info-card mechanism">
+                <div class="label">🧩 拼凑应对 <button class="glossary-trigger" onclick="openModal('bricolage')">?</button></div>
+                <div class="content">基层政府在面对多重、冲突的上级指令时，采取灵活变通策略——<strong>选择性执行、象征性达标、数据修饰</strong>等——在有限资源和时间内完成任务。这一概念借用人类学“拼凑”一词，强调行动者利用手头有限资源进行创造性应对。</div>
+            </div>
+            <div class="info-card effect">
+                <div class="label">📊 双重后果</div>
+                <div class="content">拼凑应对短期内缓解了基层执行压力，体现了基层<strong>适应性</strong>；但长期来看，它导致<strong>政策目标偏离</strong>、<strong>治理效能衰减</strong>，并使中央难以获得真实信息，进一步加剧了权威体制与有效治理之间的矛盾。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第七章：多重逻辑与晋升锦标赛 -->
+    <div class="section" id="ch7">
+        <h2>🔗 多重逻辑与晋升锦标赛</h2>
+        <div class="info-grid">
+            <div class="info-card mechanism">
+                <div class="label">🏆 晋升锦标赛 <button class="glossary-trigger" onclick="openModal('tournament')">?</button></div>
+                <div class="content">地方政府官员之间的竞争可以理解为一场<strong>晋升锦标赛</strong>：上级设定考核指标（如GDP增长、招商引资），下级官员为了获得晋升机会而展开激烈竞争。这一机制有效激发了经济活力，但也导致唯指标论、数据造假等问题。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">🧭 多重制度逻辑 <button class="glossary-trigger" onclick="openModal('multilogic')">?</button></div>
+                <div class="content">国家治理不是单一逻辑驱动，而是<strong>科层制逻辑</strong>（层级控制）、<strong>政治逻辑</strong>（意识形态）、<strong>社会逻辑</strong>（公众期望）、<strong>市场逻辑</strong>（效率追求）等多重逻辑交织博弈的结果。晋升锦标赛正是政治逻辑与科层制逻辑结合的产物。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 第八章：理论反思 -->
+    <div class="section" id="ch8">
+        <h2>💡 理论反思与制度韧性</h2>
+        <div class="info-grid">
+            <div class="info-card insight">
+                <div class="label">🏗️ 制度韧性 <button class="glossary-trigger" onclick="openModal('resilience')">?</button></div>
+                <div class="content">尽管矛盾重重，中国治理体系表现出强大韧性。周雪光认为，<strong>运动型治理的纠偏能力</strong>和<strong>基层适应性行为</strong>共同构成“动态平衡”——矛盾不断产生也不断被消化，这正是制度韧性的来源。</div>
+            </div>
+            <div class="info-card insight">
+                <div class="label">🔮 出路何在？</div>
+                <div class="content">周雪光没有给出简单的解决方案，但暗示了方向：<strong>制度化的权力分配</strong>和<strong>法治化的治理转型</strong>。只要核心矛盾存在，各种衍生机制就会不断再生。真正的出路在于调整权威体制与有效治理之间的制度安排。</div>
+            </div>
+        </div>
+        <blockquote>
+            “中国国家治理的困境，不在于官员的个人素质或道德水平，而在于制度结构本身的内在矛盾。”
+            <span class="cite">——周雪光《中国国家治理的制度逻辑》</span>
+        </blockquote>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 核心规律 -->
+    <div class="section" id="laws">
+        <h2>🧠 贯穿主线与核心规律</h2>
+        <div class="info-grid">
+            <div class="info-card insight"><div class="label">主线：权威体制与有效治理的矛盾 → 行政发包 → 执行偏差 → 运动式纠偏 + 基层策略应对 → 动态平衡</div><div class="content">全书的逻辑链条清晰：核心矛盾催生行政发包制，发包过程中的信息不对称导致执行偏差，偏差积累触发运动型治理，基层在高压下发展出共谋与拼凑应对，这些机制循环往复形成中国治理的独特韧性。</div></div>
+            <div class="info-card insight"><div class="label">规律一：结构性矛盾无法根除，只能管理</div><div class="content">权威体制与有效治理的矛盾是制度性的，无法通过更换官员或技术手段彻底解决。任何改革都在原有框架内调整，改变的是矛盾的表现形式而非矛盾本身。</div></div>
+            <div class="info-card insight"><div class="label">规律二：基层行为是制度环境的理性反应</div><div class="content">共谋、拼凑应对等看似消极的行为，实际上是基层官员在激励结构和资源约束下的最优策略。要改变行为，必须先改变制度环境。</div></div>
+            <div class="info-card insight"><div class="label">规律三：多重逻辑交织决定治理走向</div><div class="content">单一逻辑无法解释中国治理的复杂性。科层制、政治、社会和市场逻辑同时作用，彼此冲突又互补。理解中国治理，必须接受这种复杂性而非追求单一解释。</div></div>
+        </div>
+    </div>
+
+    <!-- 延伸 -->
+    <div class="section" id="extension">
+        <h2>🔍 延伸与比较</h2>
+        <table class="extension">
+            <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+            <tbody>
+                <tr><td>与《历代经济变革得失》的对话</td><td>吴晓波从历史叙事角度总结“分权-集权循环律”，周雪光从组织社会学角度提供微观机制解释。两者互补：吴晓波讲“是什么”，周雪光讲“为什么”。</td></tr>
+                <tr><td>与“数目字管理”的关联</td><td>黄仁宇在《万历十五年》中提出中国古代缺乏“数目字管理”能力。周雪光的研究表明，信息失真和上下博弈恰恰是现代治理中“数目字管理”困境的表现。</td></tr>
+                <tr><td>行政发包制与晋升锦标赛的理论贡献</td><td>周雪光在书中融合了周黎安等人的“晋升锦标赛”理论和自身对行政发包制的分析，形成了理解中国地方政府行为的完整框架。这两个概念已成为中国政治经济学研究的核心分析工具。</td></tr>
+                <tr><td>推荐对照阅读</td><td><strong>吴晓波《历代经济变革得失》</strong>：历史维度观察中国治理周期性。<br><strong>黄仁宇《万历十五年》</strong>：微观叙事透视制度困境。<br><strong>福山《政治秩序与政治衰败》</strong>：比较视角下的国家治理理论。</td></tr>
+            </tbody>
+        </table>
+    </div>
+    <div style="text-align:center; margin-top:3rem; padding:1.2rem; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">《中国国家治理的制度逻辑》知识图谱 · 基于周雪光原著整理 · 仅供个人学习回顾</div>
 </div>
 
-<h2>三、农业革命（约1.2万年前）</h2>
+<!-- 弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+    <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+        <button class="close-btn" onclick="closeModal()">✕</button>
+        <div id="modalContent"></div>
+    </div>
+</div>
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<h3>史上最大的骗局？</h3>
-<p>赫拉利提出了一个挑衅性的观点：<em>不是人类驯化了小麦，而是小麦驯化了人类。</em></p>
-
-<table>
-  <tr><th>采集生活</th><th>农业生活</th></tr>
-  <tr><td>多样化饮食</td><td>单一谷物为主</td></tr>
-  <tr><td>每天工作3-6小时</td><td>日出而作日落而息</td></tr>
-  <tr><td>较少传染病</td><td>定居→密集居住→瘟疫</td></tr>
-  <tr><td>较少饥荒</td><td>依赖单一作物→脆弱</td></tr>
-  <tr><td>相对平等</td><td>剩余粮食→阶级分化</td></tr>
-</table>
-
-<h3>为什么回不去了？</h3>
-<ol>
-  <li><strong>奢侈生活陷阱</strong>：起初只是"多一种食物来源"的小实验，但当人口增长后再也回不去了。</li>
-  <li><strong>人口优势</strong>：农业养活了更多人口——尽管个体生活质量可能下降，但数量上彻底碾压了采集部落。</li>
-</ol>
-
-<h3>想象构建的秩序</h3>
-<p>大规模合作依赖于想象的秩序：《汉谟拉比法典》将人分为上等人/平民/奴隶；《独立宣言》宣称"人人生而平等"——两者都是想象，但都成功地组织了社会。</p>
-
-<p>维持想象秩序的三大支柱：<em>暴力</em>（军队/警察）、<em>金钱</em>（万物可通约）、<em>宗教/意识形态</em>（赋予秩序以神圣性）。</p>
-
-<h2>四、个人感悟</h2>
-<ol>
-  <li><strong>历史的选择并不必然带来幸福</strong>：演化成功 ≠ 个体幸福。农业革命让DNA拷贝更多了，但个体的痛苦可能增加了。</li>
-  <li><strong>重新审视我们视为理所当然的东西</strong>：国家、货币、法律、人权——它们是工具，不是自然法则。</li>
-  <li><strong>"讲故事"是最被低估的能力</strong>：能讲好一个让所有人相信的故事，是领导力的核心。</li>
-</ol>
-
-<hr>
-<p style="text-align:center; color:#999; font-size:0.85rem;">— 笔记完 —</p>
-
+<script>
+    const glossary = {
+        unitary: { title:'🏛️ 一统体制', content:'<p>中国历史延续至今的<strong>大一统</strong>政治传统，核心是中央掌握最终决策权和人事权。周雪光指出，一统体制面临两个根本挑战：一是治理规模——幅员辽阔、人口众多带来的管理困难；二是信息不对称——中央难以获取地方真实情况。为应对这些挑战，发展出了行政发包制等制度安排。</p><p>一统体制并非一成不变，它在历史上经历了郡县制、封建制、现代党政体制等多种形态，但“中央统揽”的基本逻辑始终延续。这是理解中国一切治理现象的出发点。</p>' },
+        administrative: { title:'📋 行政发包制', content:'<p><strong>行政发包制</strong>是周雪光用来描述中国中央与地方关系的核心概念。它不同于韦伯式科层制（完全按规则办事），也不同于纯粹的市场外包（完全自主）。其特点包括：</p><ul><li><strong>任务打包</strong>：中央将治理任务整体发包给地方，而非逐项指令。</li><li><strong>目标责任制</strong>：明确考核指标（如GDP、维稳），下级对结果负责。</li><li><strong>执行自主权</strong>：地方在如何完成任务上有一定灵活性。</li><li><strong>强激励</strong>：完成好的官员获得晋升，差的被问责。</li></ul><p>行政发包制有效调动了地方积极性，是改革开放后经济腾飞的重要制度基础。但其代价是信息失真和执行偏差——地方可能选择性地完成那些容易考核的指标，忽视难以量化的公共服务。</p>' },
+        deviation: { title:'📉 政策执行偏差', content:'<p>在行政发包制下，政策执行偏差是系统性现象，而非个别失误。主要表现形式包括：</p><ul><li><strong>选择性执行</strong>：只执行容易考核、与晋升挂钩的任务，忽视软指标（如教育质量、环境保护）。</li><li><strong>象征性执行</strong>：以文件落实文件，以会议落实会议，形式上完成但实际效果有限。</li><li><strong>附加执行</strong>：在中央政策基础上层层加码，导致政策走样。</li><li><strong>替换执行</strong>：表面执行上级政策，实际上用本地做法替代。</li></ul><p>执行偏差的积累是触发运动型治理的直接原因：当偏差达到一定程度，中央感到失控，就会启动运动来纠偏。</p>' },
+        campaign: { title:'🌪️ 运动型治理', content:'<p>运动型治理是中国治理体系中一种与常规行政并存的特殊机制。其核心特征包括：</p><ul><li><strong>政治动员</strong>：越过常规行政程序，通过高层政治权威直接推动。</li><li><strong>高压推动</strong>：集中大量资源，在短时间内突破阻力。</li><li><strong>非制度化</strong>：不受常规法律和程序的严格约束，具有临时性和灵活性。</li><li><strong>矫枉过正倾向</strong>：为了打破既得利益僵局，往往用力过猛，造成新问题。</li><li><strong>周期性循环</strong>：运动过后问题可能复发，导致新一轮运动。</li></ul><p>运动型治理并非简单的“人治”，而是权威体制在面对治理失效时的一种理性应对——当常规手段无法解决基层偏差时，启动运动是恢复中央权威的唯一有效手段。</p>' },
+        collusion: { title:'🤝 基层共谋行为', content:'<p>周雪光通过田野调查发现，基层政府之间常常形成<strong>非正式的合作网络</strong>，共同应对上级检查。这并非个别官员的腐败，而是组织层面的系统性行为。其形成条件包括：</p><ul><li><strong>高压问责</strong>：上级考核指标严格，一旦不达标面临严厉惩罚。</li><li><strong>资源有限</strong>：基层人力、财力不足，无法完全按规定执行所有政策。</li><li><strong>信息优势</strong>：基层掌握本地真实信息，上级难以核查。</li><li><strong>重复互动</strong>：基层官员之间长期共事，建立了信任和互惠关系。</li></ul><p>共谋行为的本质是基层在制度约束下的理性选择。要减少共谋，不能只靠加强监督，而需要调整激励结构和资源配置方式。</p>' },
+        bricolage: { title:'🧩 拼凑应对', content:'<p>“拼凑应对”（bricolage）一词源自法国人类学家列维-斯特劳斯，指利用手头有限资源进行创造性组合以解决眼前问题。周雪光用这一概念描述基层政府面对多重、冲突的上级指令时的行为模式：</p><ul><li><strong>优先级排序</strong>：在众多任务中，优先完成与考核权重最大、与晋升最相关的任务。</li><li><strong>数据修饰</strong>：通过技术性调整使统计数据达标，而非实质改善。</li><li><strong>资源重组</strong>：将一个项目的资源挪用于另一个更紧急的项目。</li><li><strong>时间缓冲</strong>：利用信息上报的时间差来争取调整空间。</li></ul><p>拼凑应对体现了基层的适应性和创造力，但它本质上是一种“治标不治本”的策略，长期可能加剧治理效能衰减。</p>' },
+        tournament: { title:'🏆 晋升锦标赛', content:'<p>“晋升锦标赛”理论由周黎安提出，周雪光在书中将其融入自己的分析框架。该理论认为，中国地方政府官员之间的竞争类似于一场体育锦标赛：</p><ul><li><strong>考核指标清晰</strong>：上级设定明确的量化指标（如GDP增长率、招商引资额），下级官员的晋升取决于这些指标的相对排名。</li><li><strong>零和竞争</strong>：晋升名额有限，一个官员的升迁意味着其他人的落选，因此竞争异常激烈。</li><li><strong>强激励效应</strong>：这种竞争极大激发了地方官员发展经济的积极性，是“中国奇迹”的重要制度解释。</li><li><strong>扭曲效应</strong>：过度关注量化指标导致官员忽视教育、医疗、环保等不易测量的公共服务，也催生了数据造假。</li></ul><p>晋升锦标赛与行政发包制相辅相成：发包制提供了任务框架，锦标赛提供了激励结构。两者共同塑造了中国地方政府的行为模式。</p>' },
+        multilogic: { title:'🧭 多重制度逻辑', content:'<p>周雪光强调，中国国家治理不能被单一逻辑解释，而是多重制度逻辑共同作用的结果。这些逻辑包括：</p><ul><li><strong>科层制逻辑</strong>：追求规则化、程序化和可预测性，但容易走向僵化和形式主义。</li><li><strong>政治逻辑</strong>：以意识形态和政治忠诚为核心，强调“政治正确”和服从。</li><li><strong>社会逻辑</strong>：回应公众期望和民意压力，近年来随着社交媒体发展日益重要。</li><li><strong>市场逻辑</strong>：追求效率和资源配置优化，与科层制逻辑常常产生冲突。</li></ul><p>这些逻辑彼此既互补又对抗：科层制逻辑要求稳定和程序，政治逻辑要求忠诚和动员，市场逻辑要求效率和创新。治理的难点在于如何在多重逻辑之间取得平衡，而这一平衡永远是动态和不稳定的。</p>' },
+        resilience: { title:'🏗️ 制度韧性的来源', content:'<p>尽管存在深刻矛盾，中国治理体系展现出惊人的韧性。周雪光认为，韧性的来源恰恰在于<strong>矛盾本身</strong>：</p><ul><li><strong>运动型治理的纠偏功能</strong>：当常规官僚体系走向僵化，运动型治理可以快速打破困局，恢复中央对地方的控制。</li><li><strong>基层适应性行为</strong>：共谋、拼凑应对等行为虽然消极，但也起到了“减压阀”的作用——它们在刚性制度中创造了一定的弹性空间，避免了系统因压力过大而崩溃。</li><li><strong>制度冗余</strong>：多重逻辑的存在意味着系统不会因为单一逻辑的失败而彻底瘫痪，总有一种逻辑可以接管。</li></ul><p>但周雪光同时警告：韧性不等于健康。一个不断依赖运动纠偏和基层应付的系统，长期来看可能消耗其合法性和治理能力。</p>' }
+    };
+    function openModal(key) {
+        const data = glossary[key];
+        if (!data) return;
+        document.getElementById('modalContent').innerHTML = `<h4>${data.title}</h4>${data.content}`;
+        document.getElementById('modalOverlay').classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal() {
+        document.getElementById('modalOverlay').classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+    document.addEventListener('DOMContentLoaded', () => {
+        const links = document.querySelectorAll('.sidebar a');
+        const sections = [];
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const target = document.getElementById(href.substring(1));
+                if (target) sections.push({ link, target });
+            }
+        });
+        links.forEach(link => link.addEventListener('click', function() {
+            links.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        }));
+        window.addEventListener('scroll', () => {
+            let current = null;
+            const scrollTop = window.scrollY + 120;
+            for (let i = sections.length - 1; i >= 0; i--) {
+                if (sections[i].target.offsetTop <= scrollTop) { current = sections[i].link; break; }
+            }
+            if (current) {
+                links.forEach(l => l.classList.remove('active'));
+                current.classList.add('active');
+            }
+        });
+    });
+</script>
 </body>
 </html>

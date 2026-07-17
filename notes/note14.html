@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《贝叶斯的博弈》· 完整知识图谱（结构优化版）</title>
+    <style>
+        :root {
+            --bg: #fdfdf9;
+            --card-bg: #ffffff;
+            --border: #e8e4d9;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #2c5f2d;
+            --accent-light: #f2f7f2;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --highlight: #f2f7f2;
+            --radius: 10px;
+            --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', 'STSong', Georgia, serif;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            padding: 2rem 1.5rem;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+            color: #1e1508;
+        }
+        .header .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.4rem;
+        }
+        .header .meta {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.6rem;
+        }
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #7a9f7a;
+            border-radius: 20px;
+            padding: 0.5rem 1.4rem;
+            font-size: 0.9rem;
+            color: #2c5f2d;
+            font-family: var(--font-sans);
+        }
+
+        /* Sections */
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2.2rem;
+            box-shadow: var(--shadow);
+        }
+        .section h2 {
+            font-size: 1.4rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.9rem;
+            margin-bottom: 1.3rem;
+            color: #1e3a1f;
+            font-weight: 700;
+        }
+        .section h3 {
+            font-size: 1.15rem;
+            margin: 2rem 0 0.8rem;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid var(--border);
+            color: #2c5f2d;
+            font-weight: 700;
+        }
+        .section h4 {
+            font-size: 1rem;
+            margin: 1.5rem 0 0.6rem;
+            color: #3a6b3a;
+            font-weight: 600;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        .info-card {
+            background: #fdfaf6;
+            border-radius: 8px;
+            padding: 0.9rem 1.2rem;
+            border-left: 4px solid #ccc;
+        }
+        .info-card.thesis     { border-color: #2c5f2d; background: #f2f7f2; } /* 核心论点 */
+        .info-card.argument   { border-color: #5f8fa8; background: #f3f8fb; } /* 论证过程 */
+        .info-card.case       { border-color: #b8956a; background: #fdf8f2; } /* 关键案例 */
+        .info-card.cost       { border-color: #c46666; background: #fdf5f5; } /* 局限与代价 */
+
+        .info-card .label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: var(--font-sans);
+            color: #3a4a35;
+        }
+        .info-card .content {
+            font-size: 0.94rem;
+            color: #4a3f33;
+        }
+        .info-card .content ul {
+            margin-top: 0.3rem;
+            padding-left: 1.3rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.25rem;
+        }
+
+        /* Law Cards */
+        .law-card {
+            background: var(--accent-light);
+            border: 1px solid #d4e0d4;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .law-card h4 {
+            color: #2c5f2d;
+            margin-bottom: 0.4rem;
+            font-size: 1.05rem;
+        }
+        .law-card p { font-size: 0.94rem; color: #4a3f33; }
+
+        /* Two column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        /* Blockquote */
+        blockquote {
+            background: var(--highlight);
+            border-left: 4px solid #7a9f7a;
+            margin: 1.2rem 0;
+            padding: 1rem 1.4rem;
+            font-style: italic;
+            border-radius: 0 6px 6px 0;
+            color: #2c4a2c;
+        }
+
+        /* Table */
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.94rem;
+        }
+        table.extension th {
+            background: #f2f7f2;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #2c5f2d;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
+        }
+        table.extension td {
+            padding: 0.6rem 1rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
+        }
+        table.extension tr:hover td {
+            background: #fdfaf6;
+        }
+        hr.divider {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 2.5rem 0;
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: var(--accent-light);
+            border: 1px solid #7a9f7a;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        .summary-box p {
+            margin-bottom: 0.5rem;
+            font-size: 0.94rem;
+        }
+        .summary-box ul {
+            padding-left: 1.4rem;
+            font-size: 0.94rem;
+        }
+        .summary-box li {
+            margin-bottom: 0.3rem;
+        }
+
+        /* 论证关系箭头 */
+        .logic-flow {
+            text-align: center;
+            font-size: 1.5rem;
+            color: var(--accent);
+            margin: 0.8rem 0;
+            font-weight: bold;
+        }
+
+        @media (max-width: 700px) {
+            .info-grid, .two-col { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- ==================== 头部：文献信息 ==================== -->
+    <div class="header">
+        <h1>《贝叶斯的博弈》</h1>
+        <div class="subtitle">数学、思维与人工智能 —— 一部关于不确定性、知识与推理的哲学之书</div>
+        <div class="meta">
+            <span><strong>作者</strong>：黄黎原（Lê Nguyên Hoang）</span>
+            <span><strong>译者</strong>：方弦</span>
+            <span><strong>出版年份</strong>：2021年2月</span>
+            <span><strong>出版社</strong>：人民邮电出版社</span>
+        </div>
+        <div class="framework-badges">
+            <span class="badge">📐 贝叶斯定理</span>
+            <span class="badge">🧠 思维与认知</span>
+            <span class="badge">🤖 人工智能</span>
+        </div>
+    </div>
+
+    <!-- ==================== 核心论点总览 ==================== -->
+    <div class="section">
+        <h2>全书核心论点</h2>
+        <p><strong>贝叶斯主义是应对不确定性的最高理性框架。</strong> 它不仅是数学工具，更是一套关于知识、学习和智能的普适哲学。本书论证了：所有理性的学习和推理，本质上都是贝叶斯过程。</p>
+        <div class="logic-flow">⬇️ 论证展开为三大递进板块 ⬇️</div>
+    </div>
+
+    <!-- ==================== 第一板块：数学与逻辑基础 ==================== -->
+    <div class="section">
+        <h2>第一板块：数学与逻辑基础 —— 贝叶斯主义的“道”与“术”</h2>
+        <p style="color:var(--text-muted); margin-bottom:1.5rem;">本板块建立贝叶斯主义的逻辑内核与数学根基，论证其作为推理框架的优越性和必然性。对应原著第1-7章。</p>
+
+        <!-- 模块A：哲学起点与公式内核 -->
+        <h3>模块A：哲学起点与公式内核</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">核心论点</div>
+                <div class="content">
+                    <strong>客观性是迷梦，贝叶斯公式是唯一一致的“智慧方程”。</strong>科学方法并非唯一，贝叶斯主义用概率量化信念，为所有经验科学提供了统一的知识哲学。<br>
+                    <strong>公式</strong>：P(假说|数据) = P(数据|假说) × P(假说) / P(数据)
+                </div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">
+                    破：指出波普尔证伪主义并非科学的唯一标准，科学实践中充满主观判断。<br>
+                    立：贝叶斯公式提供了一种根据观察结果持续修正假说信念的机制。这个过程与人类（从婴儿到科学家）认识世界的方式深度同构。
+                </div>
+            </div>
+        </div>
+        <div class="info-grid" style="margin-top:0.8rem;">
+            <div class="info-card case">
+                <div class="label">关键案例：萨莉·克拉克审判</div>
+                <div class="content">两位婴儿连续猝死。检察官误用概率（1/7300万），贝叶斯主义者则考虑了“母亲谋杀亲子”的极低先验概率，得出无罪结论。这个案例展示了忽视先验概率的致命后果。</div>
+            </div>
+            <div class="info-card case">
+                <div class="label">关键案例：蒙蒂·霍尔问题</div>
+                <div class="content">三扇门选汽车，主持人打开一扇有山羊的门后，改变选择可将中奖概率从1/3提升到2/3。这是后验概率随新信息更新的经典示范。</div>
+            </div>
+        </div>
+
+        <!-- 模块B：逻辑基础 -->
+        <h3>模块B：逻辑基础 —— 超越真与假</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">核心论点</div>
+                <div class="content"><strong>贝叶斯逻辑是更普适的推理框架。</strong>经典逻辑的真/假二分法无法处理不确定性，贝叶斯逻辑用概率取代布尔值，允许“部分相信”，让矛盾理论走向共存。</div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">柏拉图主义坚持排中律（命题非真即假），直觉主义则允许中间状态。贝叶斯逻辑将置信度赋予0到1之间的任何值，为处理不确定知识提供了坚实的逻辑基础。</div>
+            </div>
+        </div>
+
+        <!-- 模块C：归纳与偏见 -->
+        <h3>模块C：归纳问题与先验的必要性</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">核心论点</div>
+                <div class="content">
+                    <strong>“偏见”（先验概率）是理性推理的必要前提，而非缺陷。</strong>没有偏见，就无法从数据中学习。<br>
+                    频率主义以p值为核心，存在严重缺陷；贝叶斯公式是渐进学习的“智慧方程”。
+                </div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">
+                    从休谟的归纳问题出发，指出任何泛化都需要先验假设。以“琳达问题”展示人类直觉如何受代表性启发式影响。论证先验概率的必要性：为萨莉·克拉克辩护、对抗伪科学、拯救科学，都需要合理的偏见。贝叶斯主义者的目标是校准偏见，而非消除偏见。
+                </div>
+            </div>
+        </div>
+
+        <!-- 模块D：历史与终极理论 -->
+        <h3>模块D：历史演进与终极理论</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">核心论点</div>
+                <div class="content">
+                    贝叶斯主义经历了从诞生、寒冬到复兴的曲折历史。<br>
+                    <strong>所罗门诺夫归纳法是贝叶斯主义的终极理论形式</strong>，通过寻找能解释数据的最短程序来预测未来，定义了最优归纳推理。
+                </div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">
+                    历史线：托马斯·贝叶斯（可能并非贝叶斯主义者）→ 拉普拉斯（“贝叶斯主义之父”）→ “寒冬” → 图灵用贝叶斯破译恩尼格玛密码 → 现代复兴。<br>
+                    所罗门诺夫将奥卡姆剃刀算法化（柯尔莫哥洛夫复杂度），其归纳法具有完备性，但<strong>不可计算</strong>——理论上完美，实践中必须近似。
+                </div>
+            </div>
+        </div>
+
+        <div class="logic-flow">⬇️ 工具建立后，进入应用与拓展 ⬇️</div>
+    </div>
+
+    <!-- ==================== 第二板块：应用与拓展 ==================== -->
+    <div class="section">
+        <h2>第二板块：应用与拓展 —— 贝叶斯思维在科学各领域的威力</h2>
+        <p style="color:var(--text-muted); margin-bottom:1.5rem;">本板块展示贝叶斯思维如何渗透到多个科学与实践领域，成为理解和解决问题的核心框架。各模块为并行关系，共同论证贝叶斯主义的普适性。对应原著第8-18章。</p>
+
+        <!-- 模块A：信息与博弈 -->
+        <h3>模块A：信息与博弈</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">密码学与博弈论</div>
+                <div class="content">
+                    <strong>密码学</strong>：安全性基于信息的不确定性，贝叶斯分析是密码破解的核心方法（如图灵在二战中的工作）。差分隐私技术用贝叶斯框架保护个体信息。<br>
+                    <strong>博弈论</strong>：贝叶斯博弈将博弈论扩展到不完全信息情景，核心是引入玩家<strong>主观的先验信念</strong>。机制设计（如拍卖理论）据此设计规则以达到期望的社会结果。
+                </div>
+            </div>
+            <div class="info-card case">
+                <div class="label">关键案例</div>
+                <div class="content">
+                    <strong>图灵破译恩尼格玛</strong>：用贝叶斯方法计算密钥的后验概率，是贝叶斯主义在二战中最辉煌的实践。<br>
+                    <strong>迈尔森拍卖</strong>：通过贝叶斯机制设计，实现最优的资源分配。
+                </div>
+            </div>
+        </div>
+
+        <!-- 模块B：演化与学习 -->
+        <h3>模块B：演化、学习与奥卡姆剃刀</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">演化论与机器学习</div>
+                <div class="content">
+                    <strong>自然选择是贝叶斯过程</strong>：物种根据环境“证据”更新基因频率。<strong>幸存者偏差</strong>是忽视先验的典型错误（瓦尔德与战机装甲）。遗传算法和洛特卡-沃尔泰拉动力学展示了类似的动态。<br>
+                    <strong>奥卡姆剃刀来自贝叶斯</strong>：贝叶斯公式自动惩罚复杂模型，简单理论先验概率高，复杂理论需要更多证据。只有贝叶斯推断才是可容许的。
+                </div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证与案例</div>
+                <div class="content">
+                    通过交叉验证和正则化避免过拟合。指数增长超越人类直觉，对数尺度是处理大跨度数值的有效工具。“上星期四被创造的世界”思想实验：简单性是我们选择模型的核心标准。
+                </div>
+            </div>
+        </div>
+
+        <!-- 模块C：统计与现实 -->
+        <h3>模块C：统计陷阱与现实检验</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">因果关系与不确定性</div>
+                <div class="content">
+                    <strong>相关性不等于因果性</strong>：辛普森悖论和混杂因素是统计学中的经典陷阱。均值回归（极端表现趋于回归平均）是普遍存在的统计现象。<br>
+                    <strong>不确定性量化</strong>：小概率事件发生不代表模型失败，需区分预测错误和概率本身的随机性。“所有模型都是错的，但有些是有用的。”
+                </div>
+            </div>
+            <div class="info-card case">
+                <div class="label">关键案例</div>
+                <div class="content">
+                    <strong>FiveThirtyEight预测2016年美国大选</strong>：给出特朗普28.6%的获胜概率，其胜选不代表预测失败——28.6%意味着10次中约能获胜3次。<br>
+                    <strong>公立医院vs私立医院</strong>：总体存活率低的医院在各病情分组中反而更优，揭示辛普森悖论。
+                </div>
+            </div>
+        </div>
+
+        <!-- 模块D：实用贝叶斯与深度学习 -->
+        <h3>模块D：实用贝叶斯主义与深度学习的涌现</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">近似计算与深度学习</div>
+                <div class="content">
+                    <strong>完美是最优的大敌</strong>：纯粹贝叶斯推理不可计算，需要近似。卡尔曼滤波器处理含噪声时序数据，隐马尔可夫模型从可观测变量推断隐藏状态，MCMC方法进行高效采样。<br>
+                    <strong>深度学习的有效性是涌现的结果</strong>：大脑和深度网络都工作在<strong>临界态</strong>——有序与混沌的边缘。做梦是大脑在做“对比散度”，删除噪声、巩固学习。Transformer和自注意力机制实现了高效的分层抽象。
+                </div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">
+                    卷积神经网络模仿大脑视觉皮层。残差网络（ResNet）通过跳跃连接实现深层训练。<strong>涌现</strong>：当模型规模超过阈值时，突然学会未曾教授的技能。精致度就是所罗门诺夫的MAP估计。
+                </div>
+            </div>
+        </div>
+
+        <div class="logic-flow">⬇️ 应用展示完毕，进入对认知与现实的终极反思 ⬇️</div>
+    </div>
+
+    <!-- ==================== 第三板块：终极启示 ==================== -->
+    <div class="section">
+        <h2>第三板块：终极启示 —— 认知、现实与道德的贝叶斯重构</h2>
+        <p style="color:var(--text-muted); margin-bottom:1.5rem;">本板块将贝叶斯主义推向极致，用它重新解释大脑运作、现实本质、信念形成和道德决策，完成从数学工具到世界观的升华。对应原著第19-22章。</p>
+
+        <!-- 模块A：贝叶斯大脑 -->
+        <h3>模块A：贝叶斯大脑 —— “你以为你在看世界，其实你在猜世界”</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">核心论点</div>
+                <div class="content"><strong>人类大脑是一台贝叶斯推理机器。</strong>自然选择必然选择了贝叶斯推断——因为它是已知最优的学习和预测方法。所有感知本质上都是基于先验的无意识推断。</div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">视错觉（光源来自上方的先验偏见）、运动感知等大量证据表明，大脑无时无刻不在进行贝叶斯推断。婴儿都是天才学习者，天生具备强大的归纳能力。我们不是在“看”世界，而是在根据有限感觉输入“猜”世界。</div>
+            </div>
+        </div>
+
+        <!-- 模块B：现实与信念 -->
+        <h3>模块B：现实与信念 —— 一切都是有用的虚构</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">核心论点</div>
+                <div class="content">从贝叶斯视角看，一切模型（包括我们对现实的理解）都是“虚构”，其价值在于<strong>有用性</strong>而非绝对真理。货币、生命、“自我”都是有用的虚构。唯一真实存在的是算法和随机性。</div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">从柏拉图洞穴隐喻出发，引入反实在主义。大卫·休谟：“人不外乎一束以难以想象的迅捷速度前后相继的感知。”目的论和因果论只是看待同一现象的不同有用模型。信念的形成受叙事和情感的深刻影响，故事往往比数字更有说服力。</div>
+            </div>
+        </div>
+
+        <!-- 模块C：道德 -->
+        <h3>模块C：超越贝叶斯 —— 道德与决策</h3>
+        <div class="info-grid">
+            <div class="info-card thesis">
+                <div class="label">核心论点</div>
+                <div class="content"><strong>无贝叶斯不成道德。</strong>贝叶斯主义本身不包含道德哲学，但任何关心行为后果的道德体系（结果论），都必须依赖贝叶斯推理来预测后果。道德决策需要贝叶斯结果论者式的操作。</div>
+            </div>
+            <div class="info-card argument">
+                <div class="label">论证过程</div>
+                <div class="content">比较义务论（康德）和结果论（效用主义）的局限。贝叶斯结果论者的操作方式：利用先验偏见（在不了解他人时基于一般概率行事）、考虑不确定性（不只看预期，还要看灾难概率）、承认无知并向专家学习、避免直觉先行。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 核心规律与实操工具箱 ==================== -->
+    <div class="section">
+        <h2>全书核心规律与实操工具箱</h2>
+
+        <div class="two-col">
+            <div>
+                <h3>🧠 核心规律</h3>
+                <div class="law-card">
+                    <h4>规律一：先验决定后验</h4>
+                    <p>所有推理都始于偏见（先验概率）。没有先验，就无法从数据中学习。关键在于校准偏见，而非消除偏见。</p>
+                </div>
+                <div class="law-card">
+                    <h4>规律二：奥卡姆剃刀是贝叶斯的必然</h4>
+                    <p>贝叶斯公式自动惩罚复杂模型：简单理论先验概率高，复杂理论需要更多证据支撑。奥卡姆剃刀来自贝叶斯主义，而非独立的哲学原则。</p>
+                </div>
+                <div class="law-card">
+                    <h4>规律三：完美是最优的大敌</h4>
+                    <p>所罗门诺夫归纳法不可计算，纯粹贝叶斯需要近似。贪心算法、卡尔曼滤波器、MCMC——接受“足够好”胜过追求“最好”。</p>
+                </div>
+            </div>
+            <div>
+                <h3>🛠️ 实操工具箱</h3>
+                <div class="law-card">
+                    <ul style="padding-left:1.4rem; font-size:0.94rem;">
+                        <li><strong>拥抱不确定性</strong>：用概率而非确定性描述认知。</li>
+                        <li><strong>持续更新信念</strong>：根据新证据修正先验。</li>
+                        <li><strong>警惕认知偏差</strong>：启动效应、锚定效应是MCMC没跑够。</li>
+                        <li><strong>区分相关与因果</strong>：寻找混杂因素，随机化是关键。</li>
+                        <li><strong>从错误中学习</strong>：错误是更新模型的机会。</li>
+                        <li><strong>实用主义</strong>：接受近似解，先“足够好”再优化。</li>
+                        <li><strong>睡个好觉</strong>：做梦是大脑在做对比散度。</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 延伸与争议 ==================== -->
+    <div class="section">
+        <h2>延伸与批判</h2>
+        <table class="extension">
+            <thead>
+                <tr><th>思考维度</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>与频率主义的关系</td>
+                    <td>贝叶斯主义和频率主义是统计学两大流派，核心分歧在于“概率是什么”：频率主义认为概率是客观频率，贝叶斯主义认为概率是主观置信度。现代实践中两者趋于融合。</td>
+                </tr>
+                <tr>
+                    <td>“万物皆贝叶斯”的争议</td>
+                    <td>部分读者批评作者对贝叶斯主义的推崇“到了宗教信仰的高度”，存在过度简化和泛化的倾向。但这也正是本书的核心魅力所在。</td>
+                </tr>
+                <tr>
+                    <td>纯贝叶斯 vs 实用贝叶斯</td>
+                    <td>纯贝叶斯主义者要求考虑所有可能理论（不可计算），实用贝叶斯主义者接受近似计算。全书论证了从纯贝叶斯向实用贝叶斯妥协的必要性。</td>
+                </tr>
+                <tr>
+                    <td>推荐对照阅读</td>
+                    <td>纳特·西尔弗《信号与噪声》（贝叶斯预测实践）、丹尼尔·卡尼曼《思考，快与慢》（认知偏差与系统一/系统二）、莎伦·麦格雷恩《死不掉的理论》（贝叶斯主义历史）。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem; padding:1.5rem; color:var(--text-muted); font-size:0.85rem; border-top:1px solid var(--border);">
+        《贝叶斯的博弈》完整知识图谱 · 基于黄黎原原著整理 · 仅供个人学习回顾使用
+    </div>
+
+</div>
+</body>
+</html>

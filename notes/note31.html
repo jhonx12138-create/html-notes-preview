@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent 三阶段演进对比 · 时间线修正版</title>
+    <style>
+        :root {
+            --bg: #f7faf8;
+            --card-bg: #ffffff;
+            --text: #3a4a3f;
+            --text-secondary: #5f6d63;
+            --stage1: #97b5c3;
+            --stage1-light: #eaf1f5;
+            --stage1-bg: #f5f8fa;
+            --stage2: #d8a65c;
+            --stage2-light: #fef8ef;
+            --stage2-bg: #fefaf5;
+            --stage3: #66b89a;
+            --stage3-light: #eaf6f1;
+            --stage3-bg: #f5faf7;
+            --future: #8b7dba;
+            --future-light: #f1eff8;
+            --future-bg: #f9f7fc;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 3px 12px rgba(0, 0, 0, 0.07);
+            --shadow-lg: 0 6px 22px rgba(0, 0, 0, 0.08);
+            --radius: 13px;
+            --radius-sm: 9px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #f2f5f3;
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 8px;
+            min-height: 100vh;
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .container {
+            width: 100%;
+            max-width: 520px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: var(--shadow-lg);
+            padding: 20px 14px 18px;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg,
+                    var(--stage1) 0%, var(--stage1) 30%,
+                    var(--stage2) 33%, var(--stage2) 62%,
+                    var(--stage3) 65%, var(--stage3) 100%);
+            border-radius: 18px 18px 0 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2px;
+            padding-top: 8px;
+        }
+        .header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: #2c3e33;
+            margin-bottom: 3px;
+        }
+        .header .subtitle {
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.5;
+            padding: 0 4px;
+        }
+        .header .subtitle strong {
+            color: #3a6b55;
+            font-weight: 600;
+        }
+        .header .note {
+            font-size: 0.64rem;
+            color: #8a9a8f;
+            margin-top: 3px;
+            line-height: 1.4;
+        }
+
+        .timeline-css {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 2px 14px;
+            gap: 0;
+            user-select: none;
+        }
+        .tl-node-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            position: relative;
+        }
+        .tl-dot {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.68rem;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+            flex-shrink: 0;
+        }
+        .tl-dot.d1 {
+            background: var(--stage1);
+        }
+        .tl-dot.d2 {
+            background: var(--stage2);
+        }
+        .tl-dot.d3 {
+            background: var(--stage3);
+        }
+        .tl-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #4a5a4f;
+            margin-top: 5px;
+            text-align: center;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+        .tl-sublabel {
+            font-size: 0.6rem;
+            color: #8a9a8f;
+            font-weight: 500;
+            text-align: center;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+        .tl-arrow {
+            flex-shrink: 0;
+            width: 26px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b0beb4;
+            font-size: 1.1rem;
+            font-weight: 300;
+            padding-bottom: 18px;
+            opacity: 0.7;
+        }
+
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px 14px;
+            justify-content: center;
+            align-items: center;
+            margin: 0 0 10px;
+            font-size: 0.7rem;
+            color: #5a6b5f;
+            font-weight: 500;
+        }
+        .leg-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .leg-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .leg-dot.l-full {
+            background: #e8f5ef;
+            color: #3a7a5a;
+        }
+        .leg-dot.l-partial {
+            background: #fef7ec;
+            color: #8a6528;
+        }
+        .leg-dot.l-none {
+            background: #faf6f6;
+            color: #b0a0a0;
+        }
+
+        .stage-card-mobile {
+            border-radius: var(--radius);
+            padding: 14px 13px 12px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            border-left: 4px solid transparent;
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+        .stage-card-mobile:active {
+            box-shadow: var(--shadow-md);
+        }
+        .stage-card-mobile.s1 {
+            background: var(--stage1-bg);
+            border-left-color: var(--stage1);
+        }
+        .stage-card-mobile.s2 {
+            background: var(--stage2-bg);
+            border-left-color: var(--stage2);
+        }
+        .stage-card-mobile.s3 {
+            background: var(--stage3-bg);
+            border-left-color: var(--stage3);
+        }
+
+        .card-top-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 5px;
+        }
+        .card-stage-num {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: 0.72rem;
+            flex-shrink: 0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+        .s1 .card-stage-num {
+            background: var(--stage1);
+        }
+        .s2 .card-stage-num {
+            background: var(--stage2);
+        }
+        .s3 .card-stage-num {
+            background: var(--stage3);
+        }
+        .card-title-group h3 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #2c3e33;
+            margin: 0;
+            line-height: 1.3;
+        }
+        .card-title-group .card-time {
+            font-size: 0.66rem;
+            color: #7a8a7f;
+            font-weight: 500;
+        }
+
+        .card-rep-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 9px;
+        }
+        .card-rep-tags span {
+            background: #fff;
+            padding: 3px 9px;
+            border-radius: 12px;
+            font-size: 0.66rem;
+            font-weight: 600;
+            color: #4a5a4f;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+            white-space: nowrap;
+        }
+
+        .dim-list-mobile {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 8px;
+        }
+        .dim-list-mobile li {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed rgba(0, 0, 0, 0.05);
+            font-size: 0.73rem;
+            gap: 6px;
+            min-height: 32px;
+        }
+        .dim-list-mobile li:last-child {
+            border-bottom: none;
+        }
+        .dim-name {
+            font-weight: 600;
+            color: #3a4a3f;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .dim-value {
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-weight: 600;
+            padding: 4px 9px;
+            border-radius: 11px;
+            font-size: 0.7rem;
+            letter-spacing: 0.01em;
+            white-space: nowrap;
+        }
+        .status-full {
+            background: #e8f5ef;
+            color: #3a7a5a;
+        }
+        .status-partial {
+            background: #fef7ec;
+            color: #8a6528;
+        }
+        .status-none {
+            background: #faf6f6;
+            color: #b0a0a0;
+        }
+        .status-icon {
+            font-size: 0.66rem;
+            font-weight: 700;
+        }
+
+        .essence-mobile {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: #3a6b55;
+            background: #ffffffcc;
+            padding: 8px 11px;
+            border-radius: 9px;
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+            text-align: center;
+        }
+        .s1 .essence-mobile {
+            color: #4a5f68;
+            background: #eef3f6cc;
+        }
+        .s2 .essence-mobile {
+            color: #7a5622;
+            background: #fdf5eacc;
+        }
+        .s3 .essence-mobile {
+            color: #2d5a44;
+            background: #eaf6f1cc;
+        }
+
+        .diff-strip {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 10px;
+            justify-content: center;
+            align-items: center;
+            background: #f9fbf9;
+            border: 1px solid #e4ece6;
+            border-radius: var(--radius-sm);
+            padding: 10px 12px;
+            margin: 4px 0 10px;
+            font-size: 0.72rem;
+            color: #4a5a4f;
+            text-align: center;
+        }
+        .diff-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+        }
+        .diff-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+        .diff-dot.d1 {
+            background: var(--stage1);
+        }
+        .diff-dot.d2 {
+            background: var(--stage2);
+        }
+        .diff-dot.d3 {
+            background: var(--stage3);
+        }
+
+        .future-section {
+            margin-top: 2px;
+            background: var(--future-bg);
+            border: 1px solid #e1dcf0;
+            border-radius: var(--radius);
+            padding: 13px 13px 10px;
+            border-left: 4px solid var(--future);
+        }
+        .future-header {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 9px;
+            flex-wrap: wrap;
+        }
+        .future-header h2 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #3e3570;
+            margin: 0;
+        }
+        .future-badge {
+            font-size: 0.6rem;
+            background: #8b7dba;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 11px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            white-space: nowrap;
+        }
+        .future-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .future-card {
+            background: #fff;
+            border-radius: var(--radius-sm);
+            padding: 10px 10px 7px;
+            box-shadow: var(--shadow-sm);
+            border-left: 3px solid #8b7dba;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .future-card:active {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-1px);
+        }
+        .future-card .fc-icon {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
+            display: block;
+        }
+        .future-card h4 {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #3e3570;
+            margin: 0 0 2px;
+        }
+        .future-card p {
+            font-size: 0.64rem;
+            color: #5a5f6b;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 14px 8px 12px;
+                border-radius: 14px;
+            }
+            .header h1 {
+                font-size: 1.1rem;
+            }
+            .header .subtitle {
+                font-size: 0.74rem;
+            }
+            .tl-dot {
+                width: 32px;
+                height: 32px;
+                font-size: 0.6rem;
+            }
+            .tl-label {
+                font-size: 0.64rem;
+            }
+            .tl-sublabel {
+                font-size: 0.55rem;
+            }
+            .tl-arrow {
+                width: 18px;
+                font-size: 0.9rem;
+            }
+            .stage-card-mobile {
+                padding: 10px 8px 9px;
+            }
+            .dim-list-mobile li {
+                font-size: 0.68rem;
+                padding: 4px 0;
+            }
+            .status-badge {
+                font-size: 0.64rem;
+                padding: 3px 7px;
+            }
+            .future-cards {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .future-card {
+                padding: 8px 7px 6px;
+            }
+            .future-card h4 {
+                font-size: 0.64rem;
+            }
+            .future-card p {
+                font-size: 0.59rem;
+            }
+        }
+        @media (max-width: 320px) {
+            .future-cards {
+                grid-template-columns: 1fr;
+            }
+            .tl-arrow {
+                width: 12px;
+            }
+            .card-rep-tags span {
+                font-size: 0.6rem;
+                padding: 2px 6px;
+            }
+        }
+        @media (min-width: 520px) {
+            .container {
+                padding: 24px 20px 20px;
+            }
+            .stage-card-mobile {
+                padding: 16px 16px 14px;
+            }
+            .dim-list-mobile li {
+                font-size: 0.76rem;
+            }
+            .status-badge {
+                font-size: 0.73rem;
+                padding: 5px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <h1>🧬 AI Agent 三阶段演进对比</h1>
+            <p class="subtitle">
+                从<strong>纯语言模型</strong>到<strong>工具调用</strong>再到<strong>自主框架</strong>，AI Agent 经历了三次关键能力跃迁。
+            </p>
+            <p class="note">
+                ※ 实际时间轴：Function Calling (2023.6) → Tool Use / MCP (2024) → A2A / OpenClaw (2025) 逐步演进
+            </p>
+        </div>
+
+        <!-- CSS 时间线 -->
+        <div class="timeline-css">
+            <div class="tl-node-wrap">
+                <div class="tl-dot d1">一</div>
+                <div class="tl-label">LLM 原生</div>
+                <div class="tl-sublabel">2022–2023 初</div>
+            </div>
+            <div class="tl-arrow">→</div>
+            <div class="tl-node-wrap">
+                <div class="tl-dot d2">二</div>
+                <div class="tl-label">工具调用</div>
+                <div class="tl-sublabel">2023 中 – 2025</div>
+            </div>
+            <div class="tl-arrow">→</div>
+            <div class="tl-node-wrap">
+                <div class="tl-dot d3">三</div>
+                <div class="tl-label">Agent 框架</div>
+                <div class="tl-sublabel">2024 底 – 至今</div>
+            </div>
+        </div>
+
+        <!-- 状态图例 -->
+        <div class="legend-bar">
+            <span class="leg-item"><span class="leg-dot l-full">✓</span> 完善支持</span>
+            <span class="leg-item"><span class="leg-dot l-partial">△</span> 部分/弱</span>
+            <span class="leg-item"><span class="leg-dot l-none">✗</span> 不支持</span>
+        </div>
+
+        <!-- 阶段一 -->
+        <div class="stage-card-mobile s1">
+            <div class="card-top-row">
+                <div class="card-stage-num">一</div>
+                <div class="card-title-group">
+                    <h3>LLM 原生阶段</h3>
+                    <div class="card-time">2022 – 2023 年初</div>
+                </div>
+            </div>
+            <div class="card-rep-tags">
+                <span>ChatGPT</span><span>GPT-3.5</span>
+            </div>
+            <ul class="dim-list-mobile">
+                <li><span class="dim-name">🔧 工具调用</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 不支持，纯文本</span></span></li>
+                <li><span class="dim-name">📋 任务规划</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 仅靠 prompt</span></span></li>
+                <li><span class="dim-name">🧠 记忆管理</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 无，对话独立</span></span></li>
+                <li><span class="dim-name">⚠️ 错误处理</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 幻觉不可控</span></span></li>
+                <li><span class="dim-name">🛡️ 安全护栏</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 基本没有</span></span></li>
+                <li><span class="dim-name">🤝 多Agent协作</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 不支持</span></span></li>
+                <li><span class="dim-name">👤 人机协同</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 无</span></span></li>
+            </ul>
+            <div class="essence-mobile">💡 有脑无手：模型是大脑，但没有手脚。</div>
+        </div>
+
+        <!-- 阶段二 -->
+        <div class="stage-card-mobile s2">
+            <div class="card-top-row">
+                <div class="card-stage-num">二</div>
+                <div class="card-title-group">
+                    <h3>工具调用阶段</h3>
+                    <div class="card-time">2023 年中 – 2025</div>
+                </div>
+            </div>
+            <div class="card-rep-tags">
+                <span>OpenAI FC</span><span>Claude Tool Use</span><span>Gemini FC</span><span>MCP</span>
+            </div>
+            <ul class="dim-list-mobile">
+                <li><span class="dim-name">🔧 工具调用</span><span class="dim-value"><span class="status-badge status-partial"><span class="status-icon">△</span> 单步/简单循环</span></span></li>
+                <li><span class="dim-name">📋 任务规划</span><span class="dim-value"><span class="status-badge status-partial"><span class="status-icon">△</span> 弱，需人工拆分</span></span></li>
+                <li><span class="dim-name">🧠 记忆管理</span><span class="dim-value"><span class="status-badge status-partial"><span class="status-icon">△</span> 拼接上下文</span></span></li>
+                <li><span class="dim-name">⚠️ 错误处理</span><span class="dim-value"><span class="status-badge status-partial"><span class="status-icon">△</span> 手动重试</span></span></li>
+                <li><span class="dim-name">🛡️ 安全护栏</span><span class="dim-value"><span class="status-badge status-partial"><span class="status-icon">△</span> 自行过滤</span></span></li>
+                <li><span class="dim-name">🤝 多Agent协作</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 不支持</span></span></li>
+                <li><span class="dim-name">👤 人机协同</span><span class="dim-value"><span class="status-badge status-none"><span class="status-icon">✗</span> 无</span></span></li>
+            </ul>
+            <div class="essence-mobile">💡 有工具但靠人驱动：给模型工具，开发者写 while 循环。</div>
+        </div>
+
+        <!-- 阶段三 -->
+        <div class="stage-card-mobile s3">
+            <div class="card-top-row">
+                <div class="card-stage-num">三</div>
+                <div class="card-title-group">
+                    <h3>Agent 框架阶段</h3>
+                    <div class="card-time">2024 年底 – 至今</div>
+                </div>
+            </div>
+            <div class="card-rep-tags">
+                <span>LangGraph</span><span>CrewAI</span><span>AutoGen</span><span>OpenClaw</span><span>A2A</span>
+            </div>
+            <ul class="dim-list-mobile">
+                <li><span class="dim-name">🔧 工具调用</span><span class="dim-value"><span class="status-badge status-full"><span class="status-icon">✓</span> 多步编排 + MCP 标准化</span></span></li>
+                <li><span class="dim-name">📋 任务规划</span><span class="dim-value"><span class="status-badge status-full"><span class="status-icon">✓</span> 自动分解子任务</span></span></li>
+                <li><span class="dim-name">🧠 记忆管理</span><span class="dim-value"><span class="status-badge status-full"><span class="status-icon">✓</span> 短期+长期+向量</span></span></li>
+                <li><span class="dim-name">⚠️ 错误处理</span><span class="dim-value"><span class="status-badge status-full"><span class="status-icon">✓</span> 重试/降级/超时</span></span></li>
+                <li><span class="dim-name">🛡️ 安全护栏</span><span class="dim-value"><span class="status-badge status-full"><span class="status-icon">✓</span> 框架级校验</span></span></li>
+                <li><span class="dim-name">🤝 多Agent协作</span><span class="dim-value"><span class="status-badge status-full"><span class="status-icon">✓</span> CrewAI / AutoGen / A2A</span></span></li>
+                <li><span class="dim-name">👤 人机协同</span><span class="dim-value"><span class="status-badge status-full"><span class="status-icon">✓</span> 暂停确认机制</span></span></li>
+            </ul>
+            <div class="essence-mobile">💡 有缰绳自主奔跑：完整自我管理系统，自主规划·执行·纠错。</div>
+        </div>
+
+        <!-- 总结条 -->
+        <div class="diff-strip">
+            <span class="diff-item"><span class="diff-dot d1"></span> 阶段一：<strong>只有脑，没有手脚</strong></span>
+            <span style="color:#bcc8c0;">→</span>
+            <span class="diff-item"><span class="diff-dot d2"></span> 阶段二：<strong>有工具，但靠人驱动</strong></span>
+            <span style="color:#bcc8c0;">→</span>
+            <span class="diff-item"><span class="diff-dot d3"></span> 阶段三：<strong>有缰绳，自主奔跑</strong></span>
+        </div>
+
+        <!-- Harness 发展方向 -->
+        <div class="future-section">
+            <div class="future-header">
+                <h2>🚀 Agent 框架类（Harness）的发展方向</h2>
+                <span class="future-badge">正在发生</span>
+            </div>
+            <div class="future-cards">
+                <div class="future-card">
+                    <span class="fc-icon">🔌</span>
+                    <h4>MCP 协议标准化</h4>
+                    <p>像 USB-C 统一外设，Agent 可动态发现并调用兼容工具。</p>
+                </div>
+                <div class="future-card">
+                    <span class="fc-icon">🤝</span>
+                    <h4>多 Agent 协作</h4>
+                    <p>多个 Agent 分工完成复杂项目，形成团队化工作流。</p>
+                </div>
+                <div class="future-card">
+                    <span class="fc-icon">🧠</span>
+                    <h4>长期记忆 + RAG</h4>
+                    <p>跨会话记住偏好与经验，结合向量检索实现学习与成长。</p>
+                </div>
+                <div class="future-card">
+                    <span class="fc-icon">💻</span>
+                    <h4>代码生成 + 沙箱</h4>
+                    <p>现场写代码解决新问题，在安全沙箱中扩展能力边界。</p>
+                </div>
+                <div class="future-card">
+                    <span class="fc-icon">🛡️</span>
+                    <h4>安全护栏完善</h4>
+                    <p>多层输入输出过滤，防止毁灭性操作。</p>
+                </div>
+                <div class="future-card">
+                    <span class="fc-icon">👤</span>
+                    <h4>人机协同深化</h4>
+                    <p>高风险操作自动暂停等待批准，监督-执行协作模式。</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

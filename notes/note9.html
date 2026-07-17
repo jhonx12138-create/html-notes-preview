@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《心智简史》· 知识图谱</title>
+    <style>
+        :root {
+            --bg: #faf9f7;
+            --card-bg: #ffffff;
+            --border: #d8d0c4;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #5a3a6a;
+            --accent-light: #f6f2f8;
+            --accent-glow: rgba(90, 58, 106, 0.18);
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --font-serif: 'Noto Serif SC', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            display: flex;
+            -webkit-font-smoothing: antialiased;
+        }
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #f8f5f0;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 100;
+            font-family: var(--font-sans);
+            font-size: 0.86rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+        }
+        .sidebar h3 {
+            font-size: 0.95rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .sidebar .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar .toc-list li {
+            margin-bottom: 0.1rem;
+        }
+        .sidebar .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            color: #4a3f33;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+        .sidebar .toc-list a:hover {
+            background: #e0d8cc;
+            color: #1a1508;
+        }
+        .sidebar .toc-list a.active {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 2.5rem;
+            max-width: 1100px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.3rem;
+            color: #1e1508;
+        }
+        .header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.2rem;
+        }
+        .header .meta {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #c4b0d8;
+            border-radius: 18px;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-family: var(--font-sans);
+            font-weight: 500;
+        }
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.6rem 1.8rem;
+            margin-bottom: 1.8rem;
+            box-shadow: var(--shadow);
+            scroll-margin-top: 1rem;
+        }
+        .section h2 {
+            font-size: 1.3rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.8rem;
+            margin-bottom: 1rem;
+            color: #3a204a;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section h3 {
+            font-size: 1.05rem;
+            margin: 1.5rem 0 0.6rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed var(--border);
+            color: #5a3a6a;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.6rem;
+        }
+        .info-card {
+            background: #fdfaf6;
+            border-radius: 10px;
+            padding: 0.9rem 1.1rem;
+            border-left: 5px solid #ccc;
+            transition: all 0.25s;
+            position: relative;
+        }
+        .info-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+        .info-card.origin {
+            border-color: #c48040;
+            background: #fefaf6;
+        }
+        .info-card.evolution {
+            border-color: #5a9050;
+            background: #fafdfa;
+        }
+        .info-card.mechanism {
+            border-color: #5088b0;
+            background: #fafcfe;
+        }
+        .info-card.insight {
+            border-color: #9060b0;
+            background: #fdfafe;
+        }
+        .info-card.future {
+            border-color: #c46060;
+            background: #fefafa;
+        }
+        .info-card .label {
+            font-weight: 700;
+            font-size: 0.82rem;
+            margin-bottom: 0.35rem;
+            letter-spacing: 0.04em;
+            font-family: var(--font-sans);
+            color: #2a3a45;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .info-card .content {
+            font-size: 0.9rem;
+            color: #4a3f33;
+        }
+        .info-card .content ul {
+            margin-top: 0.2rem;
+            padding-left: 1.2rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.2rem;
+        }
+        .glossary-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 0.35rem;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
+            border: none;
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .glossary-trigger:hover {
+            background: #7a5a8a;
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px var(--accent-glow);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.hidden {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.8rem;
+            max-width: 560px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            position: relative;
+            font-family: var(--font-sans);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-card h4 {
+            font-size: 1.15rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .modal-card p {
+            font-size: 0.92rem;
+            color: #4a3f33;
+            line-height: 1.7;
+            margin-bottom: 0.7rem;
+        }
+        .modal-card .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-card .close-btn:hover {
+            color: #333;
+        }
+        blockquote {
+            background: var(--accent-light);
+            border-left: 4px solid #8a60b0;
+            margin: 1rem 0;
+            padding: 0.9rem 1.3rem;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+            color: #3a204a;
+            font-size: 0.92rem;
+        }
+        .timeline-track {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 0.3rem;
+            margin-bottom: 2rem;
+            padding: 1.2rem 0.8rem;
+            background: linear-gradient(180deg, #fdfcfa, #f8f5f0);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        .timeline-node {
+            text-align: center;
+            min-width: 75px;
+            flex: 1;
+            position: relative;
+        }
+        .timeline-node .era {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            font-family: var(--font-sans);
+        }
+        .timeline-node .dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 0.3rem;
+            box-shadow: 0 0 6px var(--accent-glow);
+        }
+        .timeline-node .name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #3a204a;
+            font-family: var(--font-sans);
+        }
+        .timeline-node .subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+        .diagram-wrap {
+            text-align: center;
+            margin: 1.2rem 0;
+            background: #fafcfe;
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid #e0e8ee;
+        }
+        .diagram-wrap svg {
+            max-width: 100%;
+        }
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        table.extension th {
+            background: #eef3f6;
+            padding: 0.5rem 0.8rem;
+            text-align: left;
+            font-weight: 700;
+            color: #5a3a6a;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
+        }
+        table.extension td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
+        }
+        hr.divider {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 2rem 0;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top:hover {
+            background: #7a5a8a;
+            transform: translateY(-3px);
+        }
+        @media (max-width: 800px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar" id="sidebar">
+        <h3>🧠 心智简史图谱</h3>
+        <ul class="toc-list">
+            <li><a href="#header">📖 书籍信息</a></li>
+            <li><a href="#timeline">⏳ 心智演化时间轴</a></li>
+            <li><a href="#part1">🌍 第一部分：心智的起源</a></li>
+            <li><a href="#part2">🐒 第二部分：从灵长类到人类</a></li>
+            <li><a href="#part3">💬 第三部分：语言与符号革命</a></li>
+            <li><a href="#part4">🏛️ 第四部分：文明与心智</a></li>
+            <li><a href="#part5">📖 第五部分：文字与理性</a></li>
+            <li><a href="#part6">⚙️ 第六部分：机器与心智</a></li>
+            <li><a href="#part7">🔮 第七部分：未来的心智</a></li>
+            <li><a href="#laws">🧠 核心规律</a></li>
+            <li><a href="#extension">🔍 延伸与比较</a></li>
+        </ul>
+    </nav>
+
+    <div class="main">
+        <div class="header" id="header">
+            <h1>《心智简史》</h1>
+            <div class="subtitle">一部关于心智如何从物质中涌现、演化并塑造人类文明的史诗</div>
+            <div class="meta">
+                <span><strong>作者</strong>：奥吉·奥加斯 / 赛·加达姆</span>
+                <span><strong>出版年份</strong>：2022年</span>
+                <span><strong>核心主题</strong>：心智的起源 · 意识的演化 · 认知科学</span>
+            </div>
+            <div class="framework-badges">
+                <span class="badge">📜 历史叙事型</span>
+                <span class="badge">🧠 认知科学</span>
+                <span class="badge">🧬 演化生物学</span>
+                <span class="badge">💻 人工智能</span>
+            </div>
+        </div>
+
+        <!-- 时间轴 -->
+        <div class="section" id="timeline">
+            <h2>⏳ 心智演化时间轴</h2>
+            <div class="timeline-track">
+                <div class="timeline-node"><div class="era">约40亿年前</div><div class="dot"></div><div class="name">生命起源</div><div class="subtitle">第一个细胞</div></div>
+                <div class="timeline-node"><div class="era">约6亿年前</div><div class="dot"></div><div class="name">神经元出现</div><div class="subtitle">感知与反应</div></div>
+                <div class="timeline-node"><div class="era">约2亿年前</div><div class="dot"></div><div class="name">哺乳动物</div><div class="subtitle">情绪与记忆</div></div>
+                <div class="timeline-node"><div class="era">约30万年前</div><div class="dot"></div><div class="name">智人</div><div class="subtitle">语言与符号</div></div>
+                <div class="timeline-node"><div class="era">约1万年前</div><div class="dot"></div><div class="name">农业革命</div><div class="subtitle">文字与文明</div></div>
+                <div class="timeline-node"><div class="era">约500年前</div><div class="dot"></div><div class="name">科学革命</div><div class="subtitle">理性与实验</div></div>
+                <div class="timeline-node"><div class="era">20世纪</div><div class="dot"></div><div class="name">计算机</div><div class="subtitle">信息与算法</div></div>
+                <div class="timeline-node"><div class="era">21世纪</div><div class="dot"></div><div class="name">人工智能</div><div class="subtitle">人机共生</div></div>
+            </div>
+        </div>
+
+        <!-- 第一部分：心智起源 -->
+        <div class="section" id="part1">
+            <h2>🌍 第一部分：心智的起源——从物质到生命</h2>
+            <div class="info-grid">
+                <div class="info-card origin">
+                    <div class="label">🧬 生命的起点 <button class="glossary-trigger" onclick="openModal('origin')">?</button></div>
+                    <div class="content">约40亿年前，地球上出现了第一个能够自我复制的细胞。这不仅是生命的起点，也是<strong>心智的种子</strong>——因为生命本身就意味着一种最原始的目的性：维持自身存在、趋利避害。</div>
+                </div>
+                <div class="info-card origin">
+                    <div class="label">🦠 从感觉到感知 <button class="glossary-trigger" onclick="openModal('sensation')">?</button></div>
+                    <div class="content">最早的单细胞生物已经能感知环境中的化学梯度，并朝有利方向移动。这种<strong>趋化性</strong>是心智最原始的形式——它不需要大脑，甚至不需要神经系统，只需要一种<strong>对世界的"在乎"</strong>。</div>
+                </div>
+                <div class="info-card mechanism">
+                    <div class="label">🧠 神经元的出现 <button class="glossary-trigger" onclick="openModal('neuron')">?</button></div>
+                    <div class="content">约6亿年前，多细胞动物演化出了<strong>神经元</strong>——专门传递信号的细胞。神经元的出现使得动物能够将感觉、记忆和行动联系起来，心智开始从简单的"刺激-反应"走向<strong>内部表征</strong>。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">心智不是突然出现的，而是从生命最原始的"目的性"中逐步演化而来。从趋化性到神经元，每一步都在增加信息的处理能力和行为的灵活性。生命的本质与心智的本质从一开始就密不可分。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二部分：灵长类到人类 -->
+        <div class="section" id="part2">
+            <h2>🐒 第二部分：从灵长类到人类——社会心智的诞生</h2>
+            <div class="info-grid">
+                <div class="info-card evolution">
+                    <div class="label">🐵 社会脑假说 <button class="glossary-trigger" onclick="openModal('socialbrain')">?</button></div>
+                    <div class="content">灵长类动物的大脑异常发达，不是因为需要解决物理问题（如觅食），而是因为<strong>社会生活的复杂性</strong>：识别盟友与敌人、理解等级关系、预测他者行为。心智在很大程度上是社会互动的产物。</div>
+                </div>
+                <div class="info-card mechanism">
+                    <div class="label">🪞 镜像神经元 <button class="glossary-trigger" onclick="openModal('mirror')">?</button></div>
+                    <div class="content">在猴子和人类大脑中发现的<strong>镜像神经元</strong>，在自身执行某个动作和观察他人执行同样动作时都会被激活。这被认为是<strong>共情、模仿学习</strong>和<strong>理解他人意图</strong>的神经基础，是心智演化的关键一步。</div>
+                </div>
+                <div class="info-card evolution">
+                    <div class="label">🧠 前额叶皮层的扩张</div>
+                    <div class="content">人类的前额叶皮层在灵长类基础上进一步扩大，这带来了<strong>计划、抑制冲动、抽象思维</strong>和<strong>自我意识</strong>的能力。前额叶皮层是人类心智区别于其他动物最显著的结构基础。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">社会生活的复杂化推动了大脑的演化。镜像神经元使得理解他者成为可能，前额叶皮层将这种能力提升到了抽象和反思的层面。心智不仅是私人的，更是社会的——我们天生就与他者的心智相连。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三部分：语言与符号 -->
+        <div class="section" id="part3">
+            <h2>💬 第三部分：语言与符号革命——心智的飞跃</h2>
+            <div class="info-grid">
+                <div class="info-card mechanism">
+                    <div class="label">🗣️ 语言的诞生 <button class="glossary-trigger" onclick="openModal('language')">?</button></div>
+                    <div class="content">约30万至5万年前，智人发展出了<strong>完整的语言能力</strong>。语言不仅仅是交流工具——它彻底改变了心智的工作方式。语言使得<strong>抽象概念</strong>和<strong>复杂命题</strong>可以被思考、存储和传播。</div>
+                </div>
+                <div class="info-card mechanism">
+                    <div class="label">🧠 内部对话与自我意识</div>
+                    <div class="content">语言使人类能够进行<strong>内部独白</strong>——与自己对话。这种内部对话是<strong>自我反思</strong>、<strong>道德判断</strong>和<strong>长期规划</strong>的基础。可以说，没有语言就没有我们通常所说的"自我"。</div>
+                </div>
+                <div class="info-card evolution">
+                    <div class="label">📖 共享叙事与集体心智 <button class="glossary-trigger" onclick="openModal('narrative')">?</button></div>
+                    <div class="content">语言让人类能够创造和分享<strong>叙事</strong>——关于部落起源、神灵、善恶的故事。这些共享叙事构成了<strong>集体心智</strong>的基础，使得大规模合作成为可能。心智从此不再局限于个体大脑之内。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">语言是心智演化的分水岭。它让思维从具体的"此时此地"解放出来，进入抽象的符号世界。内部对话催生了自我意识，共享叙事催生了文化和文明。心智从此成为群体的、历史的、累积的。</div>
+                </div>
+            </div>
+            <blockquote>"语言是人类心智最伟大的发明——它使得思想本身成为可以被思考的对象。"</blockquote>
+        </div>
+
+        <!-- 第四部分：文明与心智 -->
+        <div class="section" id="part4">
+            <h2>🏛️ 第四部分：文明与心智——外部化的认知</h2>
+            <div class="info-grid">
+                <div class="info-card evolution">
+                    <div class="label">🏙️ 农业革命与定居生活</div>
+                    <div class="content">约1万年前，人类开始定居和农耕。定居生活带来了<strong>社会分工</strong>和<strong>所有权观念</strong>，心智开始处理更复杂的社会关系和经济计算。日历、税收、法律——这些抽象制度都是心智适应新环境的产物。</div>
+                </div>
+                <div class="info-card mechanism">
+                    <div class="label">📝 文字的发明 <button class="glossary-trigger" onclick="openModal('writing')">?</button></div>
+                    <div class="content">约5500年前，苏美尔人发明了楔形文字。文字是<strong>心智的外部存储</strong>——思想可以被记录下来，跨越时间和空间传递给他人。这极大地扩展了人类心智的边界：我们可以"思考"前人的思想，在前人基础上继续前进。</div>
+                </div>
+                <div class="info-card evolution">
+                    <div class="label">📚 知识的外部化</div>
+                    <div class="content">从泥板到图书馆，从印刷术到互联网，人类不断将知识和思维过程<strong>外部化</strong>。这一趋势让个体心智得以借助集体积累的智慧，使得每一代人都站在前人的肩膀上。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">文明的发展本质上是心智外部化的过程。文字、数学、法律、科学——这些都是"外挂"在心智之上的工具。人类心智的独特之处不在于单个大脑的能力，而在于能够利用这些外部工具来扩展思维。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五部分：文字与理性 -->
+        <div class="section" id="part5">
+            <h2>📖 第五部分：文字与理性——从神话到逻辑</h2>
+            <div class="info-grid">
+                <div class="info-card mechanism">
+                    <div class="label">🧠 文字如何重塑心智 <button class="glossary-trigger" onclick="openModal('literacy')">?</button></div>
+                    <div class="content">认知科学家发现，识字者和文盲的大脑在处理信息时有显著差异。文字训练了<strong>线性思维</strong>、<strong>逻辑推理</strong>和<strong>去语境化理解</strong>的能力。阅读本身就是一种"心智体操"，它改变了大脑的结构和功能。</div>
+                </div>
+                <div class="info-card evolution">
+                    <div class="label">🏛️ 希腊哲学与理性</div>
+                    <div class="content">古希腊人将文字的力量推向了极致：苏格拉底的诘问、柏拉图的理念论、亚里士多德的逻辑学。他们发展出了<strong>系统性推理</strong>和<strong>抽象概念分析</strong>的方法，为后来的科学革命奠定了心智基础。</div>
+                </div>
+                <div class="info-card mechanism">
+                    <div class="label">🧪 科学革命与实验思维</div>
+                    <div class="content">约500年前，伽利略、培根等人开创了<strong>实验科学</strong>——用系统观察和数学描述来理解自然。这标志着人类心智从"相信权威"转向"相信证据"，是认知史上的一次深刻变革。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">文字不仅仅是记录工具——它从根本上改变了人类思考的方式。从神话思维到逻辑思维，从权威依赖到证据依赖，每一次心智模式的转变都与信息技术的变革密切相关。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第六部分：机器与心智 -->
+        <div class="section" id="part6">
+            <h2>⚙️ 第六部分：机器与心智——计算、AI与意识之谜</h2>
+            <div class="info-grid">
+                <div class="info-card mechanism">
+                    <div class="label">💻 计算机的诞生 <button class="glossary-trigger" onclick="openModal('computer')">?</button></div>
+                    <div class="content">20世纪中叶，图灵和冯·诺依曼等人奠定了现代计算机的基础。计算机第一次将"思维过程"从生物大脑中分离出来，用<strong>符号操作</strong>来模拟推理。这引发了一个深刻问题：心智是否可以完全由计算来复现？</div>
+                </div>
+                <div class="info-card mechanism">
+                    <div class="label">🤖 人工智能的演进 <button class="glossary-trigger" onclick="openModal('ai')">?</button></div>
+                    <div class="content">从早期的符号AI到深度学习，人工智能在特定领域（如图像识别、围棋、语言生成）已经超越人类。但<strong>通用人工智能</strong>（AGI）——具备人类水平的全面认知能力——仍然遥不可及。AI的发展迫使我们重新审视"什么是心智"。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🧠 意识之谜 <button class="glossary-trigger" onclick="openModal('consciousness')">?</button></div>
+                    <div class="content">尽管神经科学取得了巨大进展，<strong>意识的本质</strong>仍然是未解之谜。为什么大脑的物理活动会产生主观体验？这是哲学家大卫·查尔默斯所说的"意识的难题"——一个至今尚无共识的终极问题。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">计算机和AI的出现，让我们第一次有了"非生物心智"的参照物。通过与机器智能的比较，我们更清晰地看到了人类心智的独特之处——也可能更清楚地看到了它的局限性。心智可能不是一种"东西"，而是一种"过程"。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第七部分：未来心智 -->
+        <div class="section" id="part7">
+            <h2>🔮 第七部分：未来的心智——人机共生与超越</h2>
+            <div class="info-grid">
+                <div class="info-card future">
+                    <div class="label">🧬 脑机接口 <button class="glossary-trigger" onclick="openModal('bci')">?</button></div>
+                    <div class="content">Neuralink等公司正在开发<strong>脑机接口</strong>技术，试图将大脑与计算机直接连接。这可能让人类心智获得前所未有的计算能力，但也带来了关于<strong>身份、隐私和自主性</strong>的深刻伦理问题。</div>
+                </div>
+                <div class="info-card future">
+                    <div class="label">🌐 集体智能与互联网</div>
+                    <div class="content">互联网已经将数十亿人的心智连接在一起，形成了<strong>全球性集体智能</strong>。维基百科、开源软件、社交媒体——这些都是集体心智的表现形式。我们正在见证一种全新的认知生态系统的诞生。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔮 心智的终极归宿</div>
+                    <div class="content">心智可能不是宇宙中的偶然现象，而是<strong>信息处理的必然产物</strong>。从单细胞的趋化性到人类的自我意识，再到可能出现的超级智能，心智的演化可能指向一个更深层的宇宙规律：<strong>物质组织到一定程度，就会开始"思考"</strong>。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">心智简史的全书逻辑在此收束：从物质中涌现，通过生物演化不断完善，借助语言和文字实现飞跃，通过文明和科学不断扩展，最终在机器和集体智能中寻求新的形态。心智的演化没有终点——它一直在"成为"。</div>
+                </div>
+            </div>
+            <blockquote>"心智不是一种存在，而是一种生成。它不是我们已经拥有的东西，而是我们正在成为的东西。"</blockquote>
+        </div>
+
+        <hr class="divider">
+
+        <!-- 核心规律 -->
+        <div class="section" id="laws">
+            <h2>🧠 贯穿全书的核心规律</h2>
+            <div class="info-grid">
+                <div class="info-card insight">
+                    <div class="label">规律一：心智是渐进的，不是突然的</div>
+                    <div class="content">心智没有"出现"的明确时刻——它是从生命的原始目的性中逐步演化而来的连续体。从趋化性到自我意识，每一步都是在前一步基础上的微小改进。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">规律二：心智是社会的，不只是个人的</div>
+                    <div class="content">心智的演化在很大程度上由社会互动驱动。语言、共情、文化——这些都是"心智间"的产物，而非单个大脑的孤立成就。我们的心智天生就与他者相连。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">规律三：心智不断外部化</div>
+                    <div class="content">从语言到文字，从印刷术到互联网，人类不断将认知过程"外包"给外部工具。这使得个体心智的能力被极大放大，也使得"心智"的边界越来越模糊。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">规律四：心智是生成的，不是固定的</div>
+                    <div class="content">心智不是一个静态的"东西"，而是一个动态的"过程"。它在演化中不断变化，在个体发展中不断塑造，在技术变革中不断重新定义。心智的简史，就是一部永不停歇的"成为"史。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 延伸 -->
+        <div class="section" id="extension">
+            <h2>🔍 延伸与比较</h2>
+            <table class="extension">
+                <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>与《人类简史》的对话</td><td>赫拉利强调"认知革命"和"虚构故事"对人类合作的关键作用；《心智简史》则深入到这些能力背后的心智机制——语言、镜像神经元、共享叙事——提供了更底层的解释。</td></tr>
+                    <tr><td>与《思考，快与慢》的关联</td><td>卡尼曼提出"系统1"和"系统2"的双过程理论。《心智简史》从演化角度展示了这两个系统是如何形成的：系统1是古老的情绪和直觉系统，系统2是较晚出现的前额叶理性系统。</td></tr>
+                    <tr><td>与AI发展的联系</td><td>当前大语言模型（如GPT系列）引发了对"机器是否具有心智"的激烈讨论。《心智简史》提供了一个历史视角：心智从来不是非黑即白的，它是一个连续体，AI可能正在这个连续体上开辟新的位置。</td></tr>
+                    <tr><td>推荐对照阅读</td><td><strong>赫拉利《人类简史》</strong>：从宏观历史看心智的产物。<br><strong>丹尼尔·丹尼特《意识的解释》</strong>：从哲学和认知科学视角解读意识。<br><strong>安东尼奥·达马西奥《笛卡尔的错误》</strong>：情绪与理性不可分离的神经科学证据。</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align:center; margin-top:3rem; padding:1.2rem; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">
+            《心智简史》知识图谱 · 基于奥加斯与加达姆原著整理 · 仅供个人学习回顾使用
+        </div>
+    </div>
+
+    <!-- 弹窗容器 -->
+    <div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <script>
+        const glossary = {
+            origin: {
+                title: '🧬 生命的起点',
+                content: '<p>约40亿年前，地球上出现了第一个能够<strong>自我复制</strong>的原始细胞。这看似只是化学过程的延伸，但其中蕴含了一个关键转折：生命体开始表现出<strong>目的性</strong>——维持自身存在、趋利避害。这种最原始的"在乎"被一些学者视为心智的最初萌芽。</p><p>从化学到生命，关键的区别不在于物质成分，而在于<strong>信息</strong>——生命体开始编码、存储和使用关于环境的信息。从这个意义上说，心智的历史与生命的历史同样漫长。</p>'
+            },
+            sensation: {
+                title: '🦠 趋化性与原始感知',
+                content: '<p>单细胞生物（如大肠杆菌）虽然没有神经系统，却能感知环境中的化学物质浓度，并通过鞭毛运动朝有利方向移动。这种<strong>趋化性</strong>包含了一个完整的"感知-决策-行动"循环：接收信息、处理信息、做出反应。</p><p>趋化性表明，<strong>心智的核心功能——获取信息并据此指导行动——在最简单的生命形式中就已经存在</strong>。当然，这里没有"意识"，但已经有了意识和心智的"原材料"：对环境的状态感知和价值判断。</p>'
+            },
+            neuron: {
+                title: '🧠 神经元的出现',
+                content: '<p>约6亿年前，多细胞动物演化出了专门的<strong>神经元</strong>——能够快速传递电化学信号的细胞。神经元的出现是一个质的飞跃：它将"感知"和"行动"在时间上和空间上分离开来，使得信息可以在体内传播和整合。</p><p>最早的神经网络（如海葵和水母的神经网）没有中枢控制，信号向各个方向传播。后来演化出了<strong>神经节</strong>（集中的神经元群），最终在脊椎动物中形成了<strong>中枢神经系统</strong>——大脑和脊髓。这一过程是将分散的信息处理逐渐集中化和层级化的演化历程。</p>'
+            },
+            socialbrain: {
+                title: '🐵 社会脑假说',
+                content: '<p>英国人类学家罗宾·邓巴提出的<strong>社会脑假说</strong>认为，灵长类动物异常发达的大脑（相对于身体大小）主要是为了应对<strong>社会生活的复杂性</strong>，而非物理环境的挑战。</p><p>在一个由数十个个体组成的群体中，个体需要：识别每个成员及其关系、记住过去互动历史、预测他者可能的反应、灵活调整自己的策略。这种"社会计算"需要大量的认知资源，推动大脑不断增大。</p><p>邓巴发现，灵长类的新皮层大小与群体规模呈正相关——大脑越大的物种，其典型群体规模越大。人类的大脑可以支持约<strong>150人</strong>的社交圈（即"邓巴数"）。</p>'
+            },
+            mirror: {
+                title: '🪞 镜像神经元',
+                content: '<p>20世纪90年代，意大利神经科学家在猴脑中发现了一种特殊的神经元：当猴子<strong>自己执行某个动作</strong>（如抓取食物）时会被激活，当猴子<strong>观察其他猴子（或人类）执行同样动作</strong>时也会被激活。这就是<strong>镜像神经元</strong>。</p><p>镜像神经元被认为是<strong>共情</strong>的神经基础——它让我们能够"感同身受"。当我们看到他人微笑或痛苦时，镜像神经元会在我们自己的大脑中模拟相似的状态。这种机制也是<strong>模仿学习</strong>和<strong>理解他人意图</strong>的基础，对语言和社会认知的演化至关重要。</p>'
+            },
+            language: {
+                title: '🗣️ 语言的诞生',
+                content: '<p>语言的起源是科学界最大的未解之谜之一。已知的是：约30万至5万年前，智人发展出了<strong>完整的语言能力</strong>。这一能力依赖于多个大脑区域（如布罗卡区和韦尼克区）以及独特的声道结构。</p><p>语言的关键特征包括：<strong>递归</strong>（无限嵌套的句法结构）、<strong>符号性</strong>（词语与事物之间的任意关联）、<strong>可迁移性</strong>（可以讨论不在场的事物和虚构的概念）。这些特征使语言远远超越了动物的交流系统，成为心智飞跃的关键。</p>'
+            },
+            narrative: {
+                title: '📖 共享叙事与集体心智',
+                content: '<p>语言不仅用于描述现实，更用于<strong>创造共享的虚构</strong>。人类学家发现，所有已知文化都有神话、传说和故事传统。这些共享叙事让大规模群体有了共同的<strong>信念、价值观和目标</strong>。</p><p>从部落的创世神话到现代国家的宪法，从宗教经典到科学理论，共享叙事构成了人类合作的<strong>认知基础</strong>。心智从此不再是孤立的个体现象，而是嵌入在集体编织的意义网络之中。这一洞见也是《人类简史》作者赫拉利的核心论点。</p>'
+            },
+            writing: {
+                title: '📝 文字的发明与心智的外部化',
+                content: '<p>约公元前3500年，苏美尔人发明了楔形文字，这是人类历史上第一次将<strong>思想以可持久的外部形式</strong>保存下来。文字不仅改变了信息的存储方式，更深刻地改变了人类的思维方式。</p><p>认知科学家沃尔特·翁区分了"口语文化"和"书写文化"中的不同心智模式：口语文化依赖<strong>记忆、重复和韵律</strong>，思维更具情境性和参与性；书写文化则培养了<strong>抽象、分析和反思</strong>的能力。柏拉图在《斐德罗篇》中甚至批评文字会"削弱记忆"——他敏锐地察觉到了技术对心智的深刻影响。</p>'
+            },
+            literacy: {
+                title: '🧠 识字如何重塑大脑',
+                content: '<p>神经影像学研究表明，学会阅读会<strong>物理性地改变大脑结构</strong>。识字者的大脑中形成了专门的"视觉词形区"——一个在枕颞叶交界处的小区域，专门用于快速识别文字。</p><p>这一变化并非"免费"的——它占据了一部分原本用于面孔识别的区域。这意味着，<strong>每一种认知能力的获得都可能以其他能力的削弱为代价</strong>。识字虽然极大增强了逻辑和抽象思维能力，但也可能弱化了某些口语文化中的记忆和叙事能力。</p>'
+            },
+            computer: {
+                title: '💻 计算机：心智的机械化',
+                content: '<p>1936年，艾伦·图灵提出了<strong>图灵机</strong>的概念——一种理论上可以执行任何计算的抽象机器。这一思想后来催生了现代计算机，也催生了"心智是否就是一台计算机"的深刻哲学问题。</p><p>1956年的达特茅斯会议标志着<strong>人工智能</strong>作为一个独立领域的诞生。早期AI研究者乐观地认为机器很快就会拥有心智，但事实证明，许多对人类来说轻而易举的任务（如识别面孔、理解自然语言）对机器来说极其困难。这种"容易的难、困难的易"的现象，让我们意识到人类心智中有很多"隐性知识"——我们知道自己知道，但说不清是怎么知道的。</p>'
+            },
+            ai: {
+                title: '🤖 人工智能的演进',
+                content: '<p>AI的发展经历了几个阶段：<strong>符号AI</strong>（基于逻辑规则）、<strong>专家系统</strong>（基于知识库）、<strong>机器学习</strong>（基于数据驱动的模式识别）、<strong>深度学习</strong>（基于多层神经网络）。每一波浪潮都解决了一些问题，也暴露了新的局限。</p><p>当前的大语言模型（如GPT系列）展现了前所未有的语言能力，引发了"机器是否开始拥有心智"的讨论。但专家们对此意见分歧：一些人认为这只是<strong>高级的模式匹配</strong>，另一些人则认为<strong>复杂的语言处理本身就是心智的核心能力</strong>。这个问题的答案，取决于我们如何定义"心智"。</p>'
+            },
+            consciousness: {
+                title: '🧠 意识之谜',
+                content: '<p>澳大利亚哲学家大卫·查尔默斯将意识问题分为"简单问题"和"难题"。<strong>简单问题</strong>：大脑如何处理信息、如何控制行为、如何集中注意力——这些虽然困难，但原则上可以通过神经科学逐步解决。<strong>难题</strong>：为什么这些物理过程会产生<strong>主观体验</strong>？为什么我们不是"哲学僵尸"——没有任何内在感受却表现出完全相同的行为了？</p><p>关于意识的本质，目前有几种主要理论：<strong>整合信息理论</strong>（意识是信息整合的产物）、<strong>全局工作空间理论</strong>（意识是信息进入全局广播的结果）、<strong>高阶思维理论</strong>（意识是对自身心理状态的觉知）。但这些理论都尚未得到决定性验证。</p>'
+            },
+            bci: {
+                title: '🧬 脑机接口',
+                content: '<p><strong>脑机接口</strong>技术旨在建立大脑与外部设备之间的直接通信通道。马斯克的Neuralink公司正在开发植入式脑机接口，目标是让瘫痪患者能够通过意念控制计算机，并最终实现"人机融合"。</p><p>这项技术的潜力巨大：治疗神经系统疾病、增强人类认知能力、实现"心灵感应"式的交流。但风险同样显著：思想隐私的丧失、身份认同的混乱、社会不平等的加剧——如果只有少数人能够负担认知增强技术，人类可能会分裂为"增强者"和"自然者"两个物种。</p>'
+            }
+        };
+
+        function openModal(key) {
+            const data = glossary[key];
+            if (!data) return;
+            document.getElementById('modalContent').innerHTML = `<h4>${data.title}</h4>${data.content}`;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('.sidebar a');
+            const sections = [];
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const target = document.getElementById(href.substring(1));
+                    if (target) sections.push({ link, target });
+                }
+            });
+            links.forEach(link => link.addEventListener('click', function() {
+                links.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            }));
+            window.addEventListener('scroll', () => {
+                let current = null;
+                const scrollTop = window.scrollY + 120;
+                for (let i = sections.length - 1; i >= 0; i--) {
+                    if (sections[i].target.offsetTop <= scrollTop) { current = sections[i].link; break; }
+                }
+                if (current) {
+                    links.forEach(l => l.classList.remove('active'));
+                    current.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

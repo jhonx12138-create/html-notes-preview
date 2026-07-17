@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《通用人工智能》· 知识图谱</title>
+<style>
+/* ===== CSS 变量主题 ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 深紫色系（量子物理/前沿科学/哲学） */
+[data-theme="quantum"] {
+  --primary: #4a235a; --primary-light: #f4ecf7; --primary-dark: #2e1033;
+  --accent: #7d3c98; --accent-deep: #4a235a;
+  --bg: #faf8fc; --bg-card: #ffffff; --bg-soft: #f5eef8; --bg-softer: #ede0f5;
+  --bg-tag: #e8daef;
+  --text: #2c1540; --text-heading: #1a0a2a; --text-muted: #7f6b8d; --text-light: #9b8ea8;
+  --border: #d5c8de; --border-soft: #e8ddf2;
+  --highlight: #f4ecf7; --highlight-strong: #e8daef;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #7d3c98; --color-case: #8e44ad;
+  --color-history: #9b59b6; --color-insight: #6c3483; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #7d3c98;
+  --color-effect: #8e44ad; --color-core: #4a235a;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #faf8fc;
+  --reflect-bg: #f0e8f4; --quote-border: #7d3c98;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  margin-bottom: 14px; font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 12px;
+  border-radius: var(--radius); font-size: 13px;
+  color: var(--text); transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light); color: var(--primary-dark);
+  font-weight: 600; border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容区 ===== */
+.main { margin-left: 220px; max-width: 1100px; padding: 36px 40px 120px 40px; }
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg); padding: 32px 36px;
+  margin-bottom: 28px; box-shadow: var(--shadow);
+}
+.header h1 {
+  font-size: 28px; color: var(--text-heading);
+  margin-bottom: 4px; padding-left: 14px;
+  border-left: 5px solid var(--primary); line-height: 1.3;
+}
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 24px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px; background: var(--bg-soft);
+  border-radius: var(--radius); margin-bottom: 16px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.header .badge {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.header .core-narrative {
+  font-size: 14px; color: var(--primary-dark); line-height: 1.7;
+  padding: 12px 16px; background: var(--highlight);
+  border-radius: var(--radius); border-left: 4px solid var(--accent);
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 32px; }
+.section h2 {
+  font-size: 20px; color: var(--text-heading);
+  margin-bottom: 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 { font-size: 16px; color: var(--text-heading); margin: 20px 0 10px; }
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px; margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 20px;
+  transition: box-shadow .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700; font-size: 14px; margin-bottom: 8px;
+  color: var(--text-heading); padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px; color: var(--text); line-height: 1.75;
+}
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--example-bg); border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-muted); border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+/* 左侧彩色条 */
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 14px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.75;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 10px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px; margin-bottom: 12px;
+}
+.law-card h4 { font-size: 14px; font-weight: 700; color: var(--primary-dark); margin-bottom: 6px; }
+.law-card p { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+/* ===== 规律网格 ===== */
+.pattern-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px; margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px; color: var(--primary-dark);
+  margin-bottom: 6px; padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc { font-size: 13px; color: var(--text); line-height: 1.65; }
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px; font-style: italic;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 16px 20px; margin: 16px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.75; margin-bottom: 6px; }
+
+/* ===== 引用块（衬线字体倾斜） ===== */
+blockquote.quote-block {
+  background: var(--bg-soft); border-left: 5px solid var(--quote-border);
+  margin: 20px 0; padding: 18px 24px;
+  font-family: var(--font-serif); font-style: italic; font-size: 15px;
+  color: var(--text-heading); border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px; font-size: 12px;
+  font-style: normal; color: var(--text-muted); text-align: right;
+}
+
+/* ===== 两栏布局 ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
+
+/* ===== 论点链 ===== */
+.argument-chain { margin: 14px 0; }
+.argument-node {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 6px;
+}
+.argument-node .arg-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; background: var(--primary); color: #fff;
+  border-radius: 50%; font-size: 13px; font-weight: 700;
+  margin-right: 10px; flex-shrink: 0;
+}
+.argument-node .arg-head { display: flex; align-items: center; margin-bottom: 8px; }
+.argument-node .arg-title { font-weight: 700; font-size: 15px; color: var(--text-heading); }
+.argument-node .arg-body { font-size: 14px; color: var(--text); line-height: 1.75; margin-left: 38px; }
+.argument-arrow {
+  text-align: center; color: var(--accent); font-size: 20px;
+  margin: 2px 0; line-height: 1.2;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light); color: var(--primary-dark);
+  padding: 10px 14px; text-align: left; font-weight: 700;
+  border-bottom: 2px solid var(--border); width: 16%; white-space: nowrap;
+}
+table.extension td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.7;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 术语弹窗系统 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; background: var(--accent); color: #fff;
+  border: none; border-radius: 50%; font-size: 11px; font-weight: 700;
+  cursor: pointer; vertical-align: middle; margin-left: 3px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 28px 32px; max-width: 560px; width: 90%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2); position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; font-size: 20px;
+  cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; font-weight: 700; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; margin-bottom: 4px; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff; border: none;
+  border-radius: 50%; width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 32px 0; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+}
+</style>
+</head>
+<body data-theme="quantum">
+
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar">
+  <h3>📖 本书图谱</h3>
+  <ul class="toc-list">
+    <li><a href="#header" class="active">总览</a></li>
+    <li><a href="#core-question" class="">核心问题</a></li>
+    <li><a href="#arg1" class="">论点一：AGI是新物种</a></li>
+    <li class="toc-l2"><a href="#arg1-evo" class="">从窄AI到通用AI</a></li>
+    <li><a href="#arg2" class="">论点二：语言是关键</a></li>
+    <li class="toc-l2"><a href="#arg2-path" class="">三条路径的汇合</a></li>
+    <li><a href="#arg3" class="">论点三：第一性原理</a></li>
+    <li class="toc-l2"><a href="#arg3-scale" class="">大、大、大！</a></li>
+    <li><a href="#arg4" class="">论点四：教育GPT</a></li>
+    <li class="toc-l2"><a href="#arg4-align" class="">对齐与价值</a></li>
+    <li><a href="#arg5" class="">论点五：能力重构</a></li>
+    <li class="toc-l2"><a href="#arg5-five" class="">五大通识能力</a></li>
+    <li><a href="#insights" class="">贯穿论点</a></li>
+    <li><a href="#patterns" class="">反复规律</a></li>
+    <li><a href="#reflection" class="">延伸思辨</a></li>
+    <li><a href="#memory" class="">记忆钩子</a></li>
+    <li><a href="#extension" class="">延伸与比较</a></li>
+  </ul>
+</nav>
+
+<!-- 主内容 -->
+<div class="main">
+
+  <!-- 页头 -->
+  <div class="header" id="header">
+    <h1>《通用人工智能》</h1>
+    <div class="subtitle">认知、教育与生存方式的重构 · 刘嘉 著</div>
+    <div class="meta">
+      <span><strong>作者</strong> 刘嘉（清华大学心理与认知科学系主任）</span>
+      <span><strong>出版</strong> 2025年6月，中信出版社</span>
+      <span><strong>类型</strong> 模板A · 论点论证链</span>
+      <span><strong>主题</strong> 认知科学 · 人工智能 · 教育哲学</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">AGI</span>
+      <span class="badge">第一性原理</span>
+      <span class="badge">大语言模型</span>
+      <span class="badge">认知重构</span>
+      <span class="badge">教育变革</span>
+      <span class="badge">人机共生</span>
+      <span class="badge">五大通识能力</span>
+    </div>
+    <div class="core-narrative">
+      <strong>核心叙事：</strong>通用人工智能（AGI）不是传统AI的升级版，而是一个在认知能力上与人类并肩的"新物种"。它以语言理解为突破口，以规模法则为底层驱动，正在系统性地重构人类的认知方式、教育理念和生存意义。理解AGI的本质，不是在理解一项技术，而是在理解人类自身在智能宇宙中的新坐标。
+    </div>
+  </div>
+
+  <!-- 核心问题 -->
+  <div class="section" id="core-question">
+    <h2>核心问题</h2>
+    <blockquote class="quote-block">
+      <p>"当知识不再稀缺，学习的意义何在？当智能无处不在，智慧的栖身之所又在何处？当工具变成智能体，人的核心价值该如何彰显？"</p>
+      <span class="cite">——刘嘉，《通用人工智能》核心三问</span>
+    </blockquote>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">中心命题：AGI是一个"新物种"</div>
+        <div class="content">刘嘉的核心论断：传统AI（TSAI）与通用人工智能（AGI）的关系，犹如猩猩与人的关系——表面相近，本质不同。AGI不是工具的升级迭代，而是"智能体"这一新物种的诞生。这一论断将全书的技术讨论锚定在文明级别的意义维度上。</div>
+        <div class="example">💡 <strong>类比</strong>：把ChatGPT看作"更好的搜索引擎"就像把人类看作"更好的猩猩"——完全错失了本质差异。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">TSAI vs AGI<button class="glossary-trigger" onclick="openModal('tsai')">?</button></div>
+        <div class="content">刘嘉将传统AI划分为四个等级：一招鲜AI（专用）、符号主义AI、超级专家AI（如图像识别），统称为TSAI（Task-Specific AI）。AGI则突破了"任务专用"的边界，展现出跨领域的通用认知能力——这正是从猩猩到人的跃迁。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点一 -->
+  <div class="section" id="arg1">
+    <h2>论点一：AGI 是"新物种"，不是更快的人工智能</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">2022年11月30日 ChatGPT 问世，不是 AI 进化树上的一个新分支，而是跃迁到了另一棵树上。</p>
+
+    <div id="arg1-evo"></div>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">四个阶段的传统AI（TSAI）</div>
+        <div class="content">刘嘉系统梳理了AI演化的四个阶段：<strong>一招鲜AI</strong>（AlphaGo式的单任务专精）→ <strong>符号主义AI</strong>（基于规则推理）→ <strong>超级专家AI</strong>（深度学习在特定领域的超人表现）→ <strong>AGI火花</strong>（ChatGPT开启通用认知能力）。前三者本质都是"任务特定智能"，无法跨域迁移。</div>
+        <div class="example">💡 <strong>关键区分</strong>：AlphaGo能赢围棋但不会下象棋，ChatGPT能在数学、编程、写作、翻译等数十个任务上表现一致——这种"通用性"才是跃迁的本质。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">ChatGPT：AGI的"火花"而非终点</div>
+        <div class="content">刘嘉将2022年11月30日ChatGPT发布日定义为AI史上的分水岭。它首次展示了"涌现"（emergence）现象：当模型参数超过某个阈值，此前未训练的推理能力突然出现。这不是渐进增长，而是一次相变——从量变到质变。</div>
+        <div class="example">💡 <strong>涌现类比</strong>：就像水分子本身不具备"湿润"属性，但足够多的分子聚集就产生了"流动性"——智能的涌现遵循相同逻辑。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">猩猩与人的隐喻<button class="glossary-trigger" onclick="openModal('gorilla')">?</button></div>
+        <div class="content">刘嘉用"猩猩与人的基因相似度约98%"这一科学事实做类比：TSAI与AGI在技术栈上看似相似，但那2%的差异（通用性、理解力、创造性的涌现）决定了本质区别。只看"代码层面"会误判，真正的差异藏在认知结构的跃迁中。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">人类认知的"哥白尼时刻"</div>
+        <div class="content">AGI的诞生迫使人类面对一个此前从未认真对待的问题：如果智能不再是人类的专属特征，人类的独特价值何在？这不仅仅是技术焦虑，而是对"人之为人"定义的深层挑战。刘嘉认为回避这个问题比技术风险本身更危险。</div>
+        <div class="example">💡 文艺复兴以降，"理性"一直是人类区别于动物的核心标识。当AGI展示了更强的理性能力，这个标识失效了。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨："新物种"论断是否过度拟人化？</div>
+      <p>刘嘉用"新物种"一词有意识地游走于隐喻与实质之间。一方面，AGI确实不具有生物体的自我复制、新陈代谢等特征；另一方面，"物种"概念强调其独立于人类意图的自主性——AGI不是我们的工具延伸，而是一种须与之共存的异质智能。这一框架的深浅，取决于读者对"智能"这一概念的开放程度。</p>
+    </div>
+  </div>
+
+  <!-- 论点二 -->
+  <div class="section" id="arg2">
+    <h2>论点二：语言是实现通用智能的关键突破口</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">模拟行为、模拟神经、模拟认知——三条路都走了一段，但语言让认知模拟最终胜出。</p>
+
+    <div id="arg2-path"></div>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">路径一：模拟行为——强化学习</div>
+        <div class="content">以AlphaGo为代表的强化学习路径，通过试错和奖励信号学习策略。它在围棋、游戏等封闭规则环境中表现惊人，但本质上是"在固定空间里寻找最优解"，难以泛化到开放世界。行为的模拟无法触及"理解"的层面。</div>
+        <div class="example">💡 AlphaGo的棋谱是"最优策略"，不是"为什么这么下的解释"。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">路径二：模拟神经——计算神经科学</div>
+        <div class="content">从感知机到深度神经网络，这条路试图通过模拟神经元连接来实现智能。经历了两次"AI寒冬"（感知机局限、反向传播质疑），直到深度学习的"王者归来"。但这条路遇到的核心瓶颈是：模拟神经结构不等于模拟认知能力。</div>
+        <div class="example">💡 就像搭好了大脑的电路板，却不知道"思想"应该接在哪根线上——结构必要条件，但不是充分条件。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">路径三：模拟认知——自然语言处理</div>
+        <div class="content">第三条路直接模拟人类最高阶的认知能力——语言。刘嘉认为语言是人类智能的"操作系统"：它不仅承载信息，更承载思维的结构（逻辑推理、因果关系、反事实思考）。大语言模型的成功证明：当模型充分学习人类语言的分布模式，"理解"就从中涌现。</div>
+        <div class="example">💡 <strong>类比</strong>：语言之于智能，如同DNA之于生命——它不是智能的副产品，而是智能的编码载体。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">语言理解是"真理解"还是"统计伪装"？</div>
+        <div class="content">对于"大模型是否真正理解语言"的争论，刘嘉的立场是：如果我们用行为测试无法区分人类理解与AI理解之间的差异，那么"理解"的定义本身就应被重新审视。语言理解是梯度涌现的，不是二元开关。</div>
+        <div class="example">💡 图灵测试的当代版本：当模型能写出令人信服的哲学论文时，我们还坚持它"不理解"吗？</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点三 -->
+  <div class="section" id="arg3">
+    <h2>论点三：规模本身是第一性原理——"大、大、大！"</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">不要用工程直觉理解AGI——"大"不是效率问题，而是质变的前提条件。</p>
+
+    <div id="arg3-scale"></div>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">AGI的第一性原理<button class="glossary-trigger" onclick="openModal('firstPrinciple')">?</button></div>
+        <div class="content">刘嘉借用物理学"第一性原理"概念提出：AGI涌现的首要条件不是精巧的算法设计，而是三个维度的"大"——<strong>大数据、大算力、大模型</strong>。当一个语言模型跨越某个参数量的临界阈值，"智能"以非线性方式涌现，这是物理规律，不是工程选择。</div>
+        <div class="example">💡 <strong>类比</strong>：恒星达到一定质量才会点燃核聚变发光——不是"先让一小块物质优化优化"就能发光的。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">从感知机到ChatGPT：两起两落的神经网络史</div>
+        <div class="content">刘嘉回顾了神经网络的曲折历程：1960年代感知机被明斯基批判（第一次寒冬）→ 1980年代反向传播算法复兴，但受限于数据算力（第二次寒冬）→ 2010年代GPU+大数据推动深度学习崛起 → 2022年ChatGPT引爆AGI火花。每一次"寒冬"的根源不是算法错了，而是规模不够。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">"暴力美学"的争议</div>
+        <div class="content">学术界和工业界长期存在争论：依靠堆算力堆数据实现的智能，是真正的突破还是投机取巧的"暴力美学"？刘嘉的立场是：生物学中的进化同样是"暴力美学"的结果（数亿年的自然选择），涌现不需要优雅——需要规模。</div>
+        <div class="example">💡 自然界用了数十亿年和无数"试错"涌现出人类智能，凭什么要求AI在几十年内走"优雅"路线？</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">大模型新前沿：从暴力到精耕</div>
+        <div class="content">第六章讨论规模法则之后的新方向：思维链推理（Chain-of-Thought）、检索增强生成（RAG）、多模态融合、小型化高效模型（如蒸馏技术）。规模是入场券，但入场后仍需要精细优化——"强行起飞，粗糙开始，空中加油"。</div>
+        <div class="example">💡 <strong>类比</strong>：造火箭需要巨大的初始推力（规模），但入轨后的姿态调整需要精细控制（算法）。</div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      <p>"强行起飞，粗糙开始，空中加油。不要把时间花在起跑线上——终点比起点重要一万倍。"</p>
+      <span class="cite">——刘嘉，《通用人工智能》第六章</span>
+    </blockquote>
+  </div>
+
+  <!-- 论点四 -->
+  <div class="section" id="arg4">
+    <h2>论点四：教育GPT——授业、解惑、传道的三重进化</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">大模型的训练过程本身就是一种教育隐喻，揭示了三层递进的智能成长路径。</p>
+
+    <div id="arg4-align"></div>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">第一层：授业——提示词工程</div>
+        <div class="content">相当于AI的"知识获取"阶段——大模型通过预训练海量文本获得基础知识。提示词工程（Prompt Engineering）是人类与AI的"授课"界面：提问的质量决定回答的质量。这映射了传统教育中的知识传授过程。</div>
+        <div class="example">💡 好问题带来好答案——这在人机对话中和在课堂上完全一致。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">第二层：解惑——基于人类反馈的强化学习（RLHF）</div>
+        <div class="content">纯粹的预训练只能让模型学会"像人一样说话"，但不知道"说什么是对的"。RLHF<button class="glossary-trigger" onclick="openModal('rlhf')">?</button>让人类标注员对模型输出进行偏好排序，使模型学会对齐人类的价值观和判断。这类似于教育中的"解惑"——不是传授新知识，而是校准判断力。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">第三层：传道——对齐（Alignment）<button class="glossary-trigger" onclick="openModal('alignment')">?</button></div>
+        <div class="content">最高境界是"传道"：让AI内化人类价值观（安全、诚实、有益），而非仅仅模仿语言模式。刘嘉认为这揭示了教育的本质——教育的终极目标不是传授技能，而是塑造价值判断。AGI的对齐问题恰恰是人类教育问题的镜像。</div>
+        <div class="example">💡 教孩子"不能撒谎"不是在教语法，而是在教价值。教AI"不能撒谎"是同一个问题的技术版本。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">教育隐喻的双向启发</div>
+        <div class="content">用"授业-解惑-传道"的框架理解大模型训练，反过来也重新照亮了人类教育的本质：当我们把AI当作"学生"来教时，我们才真正意识到教育的三层递进中，哪一层正在被大规模忽视——大部分教育停留在"授业"阶段，极少到达"传道"。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点五 -->
+  <div class="section" id="arg5">
+    <h2>论点五：AGI时代的能力重构——五大通识能力</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">农耕文明靠力量，工业文明靠技能，智能时代靠什么？刘嘉的答案是五大通识能力。</p>
+
+    <div id="arg5-five"></div>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">才华的历史演变</div>
+        <div class="content">刘嘉提出"才华"的定义随文明形态迁移：<strong>农耕文明</strong>：力量即才华（体能是核心）；<strong>工业文明</strong>：技能即才华（专业化培训是关键）；<strong>智能时代</strong>：智慧即才华（提出正确问题的能力比解决问题的能力更重要）。AGI加速了这一范式转换。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">五大通识能力的当代版本</div>
+        <div class="content">刘嘉在第九章提出AGI时代人类不可替代的五项核心能力：<strong>研究</strong>（提出正确问题）→ <strong>统计</strong>（探寻事物间的关系）→ <strong>逻辑</strong>（从已知推演未知）→ <strong>心理</strong>（理解自己、洞悉他人）→ <strong>修辞</strong>（说服他人、引领革新）。这五项构成一个闭环：向内理解与向外影响的完整能力链。</div>
+        <div class="example">💡 <strong>关键区分</strong>：五项能力都不是"记住知识"——AGI已经承包了记忆和检索，人的价值转移到了"提问、关联、推演、共情、表达"。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">通识教育：重返古希腊</div>
+        <div class="content">刘嘉将现代教育的根源追溯至工业革命的"标准化生产"逻辑——教育被设计成流水线，培养能执行固定任务的工人。当AGI接管了标准化的认知劳动，教育必须回归古希腊的"自由教育"（Liberal Education）：培养完整的、自由的、有判断力的人，而非输出合格的劳动力。</div>
+        <div class="example">💡 <strong>对比</strong>：现代教育问"你会做什么"（技能），自由教育问"你是谁"（存在）。AGI逼迫我们面对后一个问题。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">终极目标：因真理，得自由，以服务</div>
+        <div class="content">第九章的标题取自燕京大学校训——刘嘉将其重新激活为AGI时代人类教育的终极理想：通过追求真理获得内在自由，并用这种自由服务于更广大的共同体。这不是宗教表达，而是对人类在智能宇宙中所处位置的深刻阐述。</div>
+        <div class="example">💡 当AGI能回答所有已知问题，人的价值在于提出新问题——而新问题的源头是"关心"。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨：通识教育的现实困境</div>
+      <p>刘嘉倡导的通识教育回归面对一个结构性矛盾：在高度专业化的就业市场和国家竞争逻辑下，谁能承担"重返古希腊"的时间成本？这不单是教育理念之争，更是社会资源分配问题。但AGI的加速发展正在改变计算前提——如果专业化工作被AI替代的速度远超预期，"通识"将从奢侈品变为必需品。</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 贯穿论点 -->
+  <div class="section" id="insights">
+    <h2>贯穿全书的核心论点</h2>
+
+    <div class="insight-card">
+      <div class="insight-title">论点A：从技术解释到文明叙事</div>
+      <div class="insight-body">刘嘉的核心贡献在于将AGI从一场"技术讨论"升级为"文明叙事"。传统AI书籍（如《深度学习》《人工智能简史》）聚焦算法实现和历史回顾，而这本书将AGI置于人类认知能力和生存方式重构的宏大框架中，追问的根本问题是"作为人意味着什么"。</div>
+      <div class="insight-evidence">证据链：序言"我与AI"的个人叙事 → 技术三路径的认知审视 → 教育的康德式反思 → 跋"信仰之跃"</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">论点B：规模不仅仅是工程，是自然规律</div>
+      <div class="insight-body">刘嘉反复强调"大、大、大"不是工程妥协，而是对自然规律的发现——正如物理学家发现达到临界质量才能启动链式反应。这一视角将AGI从"可控的技术开发"重新定义为"不可阻挡的自然涌现"，并由此推演出人类应对策略的紧迫性。</div>
+      <div class="insight-evidence">证据：感知机两次寒冬（规模不够）→ 深度学习崛起（数据算力爆发）→ ChatGPT涌现（跨过临界阈值）</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">论点C：对齐问题就是人类教育问题的镜像</div>
+      <div class="insight-body">全书最深刻的观点之一：教AI"对齐"人类价值观与教孩子"成为好人"是同一个问题的两面。RLHF技术本质上就是"教育技术"——我们如何塑造一个强大但有风险的智能体。当AGI的"教育问题"被认真对待时，人类自己的教育理念也开始松动。</div>
+      <div class="insight-evidence">证据：授业-解惑-传道三层训练框架 → 自由教育 vs 工业教育的历史分析 → "因真理得自由以服务"的价值锚定</div>
+    </div>
+  </div>
+
+  <!-- 反复规律 -->
+  <div class="section" id="patterns">
+    <h2>反复出现的历史规律</h2>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">规模阈值：量变触发质变</div>
+        <div class="pattern-desc">无论是文明史上的认知革命，还是神经网络从感知机到ChatGPT的飞跃，都有一个共同模式：当"量"（人口、信息、参数、数据）积累到临界值，"质"（语言、抽象思维、涌现能力）突然出现。</div>
+        <div class="pattern-examples">人类第一次认知革命（语言出现）← 群体规模突破；ChatGPT涌现 ← 参数规模突破</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">技术冲击 → 认知危机 → 范式重构</div>
+        <div class="pattern-desc">每一次重大技术突破都引发人类的认知危机（哥白尼→人不在宇宙中心；达尔文→人不是特殊造物；AGI→智能不是人的专属），但每次危机后人类认知都得到了拓展而非摧毁。</div>
+        <div class="pattern-examples">日心说→科学革命；进化论→生命科学；AGI→认知科学的自觉</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">教育滞后于技术，但价值观锚定方向</div>
+        <div class="pattern-desc">工业革命两百年后教育才初步适应；信息革命仍在挑战教育体系。刘嘉揭示的规律：教育总是最慢改变的领域，但它决定了技术冲击的最终社会后果。谁先重构教育，谁就在新文明形态中占据先机。</div>
+        <div class="pattern-examples">普鲁士教育体系（工业革命后百年才成型）；STEM教育改革（信息革命后40年仍在进行）</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">理性的外包与感性的升值</div>
+        <div class="pattern-desc">刘嘉发现的逆向规律：每次人类将认知能力委托给技术（记忆→文字；计算→计算机；推理→AGI），被外包的能力失去稀缺性，而未被外包的能力（如共情、审美、意义创造）反而升值。AGI外包了"理性"，这让"感性"重新成为稀缺品。</div>
+        <div class="pattern-examples">文字→口述传统贬值；计算器→心算贬值；AGI→将导致什么贬值？什么升值？</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection">
+    <h2>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">本书隐含的张力：理性主义与人文主义之间</div>
+      <p>刘嘉的叙事在两种立场之间穿行：一方面，他像物理学家一样用第一性原理拆解AGI的涌现逻辑（理性主义）；另一方面，他以"因真理得自由以服务"收尾（人文主义）。全书最迷人的地方正是这种张力——用最硬的技术论证推导出最软的人文关怀。但批评者可能问：如果AGI确实按第一性原理涌现，人类"自由"和"服务"的价值从何而来？它们是被论证出来的，还是被信仰附着的？</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">"信仰之跃"：跋的哲学重量</div>
+      <p>全书以"信仰之跃"为跋，引用了克尔凯郭尔的哲学概念。刘嘉似乎在说：面对AGI这个新物种，纯粹理性的分析到达边界后，需要一次"信仰之跃"——对人类独特价值的信念不能来自逻辑推导，而是来自生存的选择。这是一个诚实而非回避的姿态。</p>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="memory">
+    <h2>记忆钩子</h2>
+    <blockquote class="quote-block">
+      <p>一句话记住全书逻辑链：<br>
+      <strong>猩猩 vs 人&nbsp; ≈&nbsp; TSAI vs AGI&nbsp; →&nbsp; 语言是钥匙&nbsp; →&nbsp; 规模是引擎&nbsp; →&nbsp; 教育是镜像&nbsp; →&nbsp; 五大能力是答案&nbsp; →&nbsp; 信仰之跃是终点。</strong></p>
+      <span class="cite">——《通用人工智能》核心逻辑提炼</span>
+    </blockquote>
+    <div class="two-col">
+      <div class="law-card">
+        <h4>核心公式</h4>
+        <p>智能涌现 = 数据量 × 参数量 × 算力 → 超过阈值<br>
+        人的价值 = 提出正确问题的能力 × 理解他人的能力 × 创造意义的能力</p>
+      </div>
+      <div class="law-card">
+        <h4>类比记忆</h4>
+        <p>AGI像刚出生的"超人婴儿"：他比你聪明但不懂善恶，他学得飞快但不会提问，他对齐人类价值观的过程就是"教育的本质实验"——而你就是那个老师。</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 延伸与比较 -->
+  <div class="section" id="extension">
+    <h2>延伸与比较</h2>
+    <table class="extension">
+      <thead>
+        <tr><th>思考维度</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>中国学界在AGI时代最具代表性的"认知-教育-人文"跨界作品。作者以清华心理与认知科学系主任的学科背景，打通了人工智能技术史、认知科学和博雅教育传统，超越了纯技术解读或纯人文感怀的单一维度。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>乐观但审慎的AGI叙事：坚信AGI是文明的跃迁（而非灾难），但强调主动重构教育和认知体系是必要前提。对"放任技术发展"和"恐惧技术"两种立场均保持批判。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+            <strong>第三部分深度不足</strong>：教育反思与前两部分的技术论证之间篇幅失衡，五大通识能力的具体培养路径着墨不够。<br>
+            <strong>中国语境缺失</strong>：以全球视角展开论述，对中国教育体制的具体改革建议几乎空白。<br>
+            <strong>技术细节速度差</strong>：2025年出版，但AGI领域日新月异，部分技术案例（如特定模型的版本）已过时。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《为什么——关于因果关系的新科学》（朱迪亚·珀尔）</strong>：同样追问"智能如何理解世界"，珀尔从因果推理出发，刘嘉从语言涌现出发，两条路径在"第一性原理"处汇合。<br>
+            <strong>《生命3.0》（迈克斯·泰格马克）</strong>：同为AGI未来叙事，泰格马克侧重物理学视角和长期风险推演，刘嘉侧重认知科学和短期教育应对。<br>
+            <strong>《人间指南》（尤瓦尔·赫拉利）</strong>：赫拉利将AGI作为"权力的新形态"讨论，刘嘉将其作为"自我认知的契机"——前者向外（政治），后者向内（心灵）。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>与《为什么》在因果推理与涌现的交叉处对话；与《生命3.0》共享"智能作为自然涌现物"的观点；与《吴军数学通识讲义》共享"通识教育对抗技术焦虑"的立场。</td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            理解AGI涌现的底层逻辑（不只是"更快更准"，而是"新物种"）；<br>
+            评估个人和组织的学习策略调整方向（哪些能力需要升级，哪些可以外包给AI）；<br>
+            参与教育体系改革的公共讨论（从"培养标准件"转向"培养提问者"）；<br>
+            在AGI对齐问题的讨论中带入"人本主义"视角（对齐不是驯服，是教育）。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer-note">
+    《通用人工智能：认知、教育与生存方式的重构》· 刘嘉 著 · 知识图谱基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<!-- 术语弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- 返回顶部 -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  tsai: {
+    title: 'TSAI（Task-Specific AI）——任务特定人工智能',
+    content: '<p>刘嘉在书中创建的术语，对应英文 Task-Specific Artificial Intelligence，指代在特定任务上表现优异但无法泛化到新领域的人工智能系统。他将TSAI分为四个等级：</p><ul><li><strong>一招鲜AI</strong>：单一任务专精（如AlphaGo下围棋）</li><li><strong>符号主义AI</strong>：基于逻辑规则推理（如专家系统）</li><li><strong>超级专家AI</strong>：深度学习在特定领域超越人类（如图像识别、蛋白质折叠预测）</li></ul><p>TSAI与AGI的核心区别在于"通用性"——前者像专业棋手（只会下棋），后者像一个可以学习任何认知任务的人。</p>'
+  },
+  gorilla: {
+    title: '猩猩与人的类比——理解AGI跃迁的关键隐喻',
+    content: '<p>刘嘉全书最核心的类比：人类与黑猩猩的DNA相似度约98.8%，但在认知能力上有天壤之别（语言、抽象思维、文化积累）。</p><p>类比到AI领域：TSAI（传统AI）与AGI在技术基础（神经网络、梯度下降等）上有大量共享，但那2%的差异（涌现的通用理解能力、跨域迁移能力）决定了它们是不同的"物种"。</p><p><strong>警示意义</strong>：如果只看"DNA相似度"（技术栈相似性），会严重低估AGI的革命性。就像19世纪的人们如果只把达尔文进化论理解为"动物分类学的新方法"，就错过了它对人类自我认知的颠覆。</p>'
+  },
+  firstPrinciple: {
+    title: '第一性原理（First Principle）',
+    content: '<p>原为物理学和哲学概念，指从最基本、不可再简化的命题出发进行推理。亚里士多德将其定义为"事物最初被认知的基础"。马斯克将其推广到商业创新领域。</p><p>刘嘉将其引入AGI讨论中，主张AGI涌现的"第一性原理"不是精巧的算法，而是三个维度的规模：</p><ul><li><strong>大数据</strong>：足够丰富的训练语料</li><li><strong>大算力</strong>：足够强大的计算资源</li><li><strong>大模型</strong>：足够多的参数</li></ul><p>当三个"大"同时满足并跨越临界阈值，智能以非线性的方式涌现——这不是"堆资源"的工程妥协，而是对自然规律的发现。</p>'
+  },
+  rlhf: {
+    title: 'RLHF——基于人类反馈的强化学习',
+    content: '<p>Reinforcement Learning from Human Feedback，是ChatGPT等大模型实现"对齐"的核心技术。工作流程：</p><ol><li>训练一个奖励模型：让人类标注员对模型的多条输出进行偏好排序</li><li>用奖励模型替代人类标注员，通过强化学习（PPO算法）微调大模型</li></ol><p>刘嘉将这比作教育中的"解惑"阶段：不是教新知识，而是校准判断力——"什么是对的""什么是好的""什么是合适的"。</p><p><strong>深层含义</strong>：RLHF证明人类价值观可以通过技术手段"注入"AI——但这也反过来追问：我们自己的价值观清楚吗？如果我们自己都不知道什么是"好的"，如何教AI？</p>'
+  },
+  alignment: {
+    title: '对齐问题（Alignment Problem）',
+    content: '<p>AI安全领域的核心概念：确保人工智能系统的行为与人类价值观和意图保持一致。对齐问题不限于安全（不伤害人类），还包括准确性（说真话）、帮助性（给有用信息）和偏好对齐（按人类喜欢的方式表达）。</p><p>刘嘉将对齐问题重新理解为<strong>教育问题</strong>：教AI"对齐"与教孩子"成为好人"本质上相同——都需要从"传授知识"（预训练）到"纠偏校准"（RLHF）到"价值观内化"（更深层对齐）的递进过程。</p><p><strong>核心张力</strong>：如果人类的价值观本身就是多元且冲突的（不同文化、不同时代的"好"不同），AGI应该对齐"谁的"价值观？这个问题的答案决定了"传道"的方向。</p>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// 侧边栏滚动高亮
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+// 返回顶部显隐
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+
+
+</body></html>

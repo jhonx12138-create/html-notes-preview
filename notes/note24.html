@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>组织行为学知识体系全景</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+            background: #f4f7fc;
+            color: #1a2c3e;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e4b6e, #2c7da0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: -0.01em;
+        }
+        .hero .sub {
+            font-size: 1.1rem;
+            color: #2c5a74;
+            max-width: 800px;
+            margin: 0.75rem auto 0;
+            border-top: 2px solid #cbdde6;
+            display: inline-block;
+            padding-top: 0.6rem;
+        }
+        .badge-wrapper {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.2rem 0 0;
+        }
+        .badge {
+            background: #e9eff3;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #1f5e7e;
+        }
+        .intro-note {
+            background: #f8fafd;
+            border-left: 4px solid #2c7da0;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin: 1.5rem auto 0;
+            max-width: 900px;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #2c3e50;
+        }
+
+        .section {
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.03), 0 2px 4px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2.5rem;
+            padding: 1.8rem 2rem;
+            transition: all 0.2s;
+            border: 1px solid #e2edf2;
+        }
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid #b8d0de;
+            display: inline-block;
+            letter-spacing: -0.3px;
+            color: #1a4b6e;
+        }
+        .section-sub {
+            font-size: 0.9rem;
+            color: #5c7f8c;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+
+        .grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card {
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 1.4rem 1.5rem;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.02), 0 1px 3px rgba(0, 0, 0, 0.05);
+            border: 1px solid #eef3f8;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 25px -12px rgba(0, 0, 0, 0.1);
+        }
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.8rem;
+        }
+        .card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: inherit;
+        }
+        .card h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin: 0.9rem 0 0.4rem;
+            color: #2c3e50;
+        }
+        .card ul, .card p {
+            font-size: 0.9rem;
+            color: #2c4254;
+            padding-left: 0;
+            list-style-type: none;
+            margin: 0;
+        }
+        .card li {
+            margin-bottom: 0.4rem;
+            position: relative;
+            padding-left: 1.4rem;
+            line-height: 1.4;
+        }
+        .card li:before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: #6c8a9e;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        details.card {
+            cursor: pointer;
+        }
+        details.card > summary {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        details.card > summary::-webkit-details-marker {
+            display: none;
+        }
+        details.card > summary::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            margin-left: auto;
+            transition: transform 0.2s;
+            color: #6c8a9e;
+        }
+        details.card[open] > summary::after {
+            transform: rotate(180deg);
+        }
+        details.card > summary h3 {
+            margin: 0;
+        }
+        details.card .card-content {
+            padding-top: 0.8rem;
+        }
+
+        .inline-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem 0.8rem;
+            margin-top: 0.5rem;
+        }
+        .inline-tag {
+            background: #eef3fa;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #1e5a7a;
+        }
+
+        /* 时间线修正 */
+        .timeline {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin: 1.5rem 0 0.5rem;
+            align-items: stretch;
+        }
+        .timeline-item {
+            flex: 1;
+            min-width: 150px;
+            background: #f8fbfd;
+            border-radius: 24px;
+            padding: 1rem;
+            text-align: center;
+            border-left: 4px solid #2c7da0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .timeline-era {
+            font-weight: 800;
+            font-size: 0.9rem;
+            color: #2a6b8c;
+            line-height: 1.3;
+        }
+        .timeline-desc {
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-top: 0.3rem;
+            line-height: 1.4;
+        }
+        .timeline-person {
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+            color: #5c7f8c;
+        }
+        .multi-line-note {
+            background: #f0f6fa;
+            border-radius: 16px;
+            padding: 0.8rem 1.2rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: baseline;
+        }
+
+        .ind-color { color: #2c7da0; }
+        .team-color { color: #27ae60; }
+        .org-color { color: #d35400; }
+        .env-color { color: #7f8c8d; }
+        .bg-ind { background: #e5f2f5; border-left: 6px solid #2c7da0; }
+        .bg-team { background: #eafaf1; border-left: 6px solid #27ae60; }
+        .bg-org { background: #fdf2e9; border-left: 6px solid #d35400; }
+        .bg-env { background: #f2f4f4; border-left: 6px solid #7f8c8d; }
+
+        .model-container {
+            background: #fafcfd;
+            border-radius: 24px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            overflow-x: auto;
+        }
+        svg text {
+            font-family: 'Segoe UI', 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        .layers-viz {
+            background: #f0f6fa;
+            border-radius: 32px;
+            padding: 1.6rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .layer-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .layer {
+            background: white;
+            border-radius: 40px;
+            padding: 0.7rem 1.4rem;
+            width: 90%;
+            max-width: 500px;
+            font-weight: 600;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #d2e3ec;
+            text-align: center;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: none;
+            height: 1px;
+            background: #dfeaf0;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.8rem;
+            color: #6d8f9e;
+            margin-top: 2rem;
+            padding: 1rem;
+        }
+
+        @media (max-width: 760px) {
+            .container { padding: 1rem; }
+            .section { padding: 1.2rem; }
+            .card h3 { font-size: 1.3rem; }
+            .hero h1 { font-size: 1.9rem; }
+            .timeline {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .timeline-item {
+                border-left: none;
+                border-top: 4px solid #2c7da0;
+                text-align: left;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0,0,0,0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header class="hero" role="banner">
+        <h1><i class="fas fa-users"></i> 组织行为学知识体系全景</h1>
+        <div class="sub">多学科交叉 · 多层次分析 · 从经典理论到前沿探索</div>
+        <div class="badge-wrapper">
+            <span class="badge"><i class="fas fa-brain"></i> 心理学根基</span>
+            <span class="badge"><i class="fas fa-chart-line"></i> 社会学视角</span>
+            <span class="badge"><i class="fas fa-globe"></i> 人类学底蕴</span>
+            <span class="badge"><i class="fas fa-handshake"></i> 政治经济学交叉</span>
+        </div>
+        <div class="intro-note">
+            <i class="fas fa-layer-group"></i> <strong>组织行为学</strong>以<strong>个体、群体、组织、环境</strong>四个层次为基本分析单元，致力于描述、解释和干预组织中人的行为。本知识体系融合变量关系、理论边界与前沿发展，为深入学习提供结构化指引。
+        </div>
+    </header>
+
+    <!-- 一、学科定位 -->
+    <section class="section" aria-labelledby="sec1">
+        <div class="section-title" id="sec1"><i class="fas fa-map-marker-alt"></i> 一、学科定位与定义</div>
+        <p style="margin-bottom: 1rem; font-weight: 500;">组织行为学（OB）是研究<strong>个体、群体、组织</strong>在<strong>工作情境中</strong>的思维、情感和行为的学科，核心目标是<strong>描述·解释·预测·干预</strong>这些行为，以提升组织效能与员工福祉。</p>
+        <div class="grid-cards" style="grid-template-columns: repeat(auto-fit, minmax(180px,1fr)); gap:1rem;">
+            <div class="card" style="text-align:center;"><i class="fas fa-cogs card-icon"></i><h4>多学科根基</h4><p>心理学·社会学·人类学·政治学·经济学</p></div>
+            <div class="card" style="text-align:center;"><i class="fas fa-layer-group card-icon"></i><h4>多层次分析</h4><p>个体 → 群体/团队 → 组织 → 环境</p></div>
+            <div class="card" style="text-align:center;"><i class="fas fa-chart-simple card-icon"></i><h4>双元目标</h4><p>科学（描述+解释） · 应用（预测+干预）</p></div>
+        </div>
+    </section>
+
+    <!-- 二、历史演进 -->
+    <section class="section" aria-labelledby="sec2">
+        <div class="section-title" id="sec2"><i class="fas fa-timeline"></i> 二、历史演进与范式张力</div>
+        <div class="timeline" role="list">
+            <div class="timeline-item">
+                <div class="timeline-era">1880s-1920s</div>
+                <div class="timeline-desc">科学管理 · 经济人</div>
+                <div class="timeline-person">泰勒、吉尔布雷斯</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-era">1920s-1940s</div>
+                <div class="timeline-desc">人际关系运动 · 社会人</div>
+                <div class="timeline-person">霍桑实验(梅奥)</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-era">1950s-1970s</div>
+                <div class="timeline-desc">现代OB奠基 · 复杂人</div>
+                <div class="timeline-person">马斯洛、麦格雷戈、赫兹伯格</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-era">1980s-1990s</div>
+                <div class="timeline-desc">战略与认知转向</div>
+                <div class="timeline-person">沙因文化、日美比较</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-era">2000s-2010s</div>
+                <div class="timeline-desc">积极OB · 微观重构</div>
+                <div class="timeline-person">心理资本、工作投入</div>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-era">2020s-</div>
+                <div class="timeline-desc">数字化与算法转向</div>
+                <div class="timeline-person">AI与OB交叉、人机协作</div>
+            </div>
+        </div>
+        <div class="multi-line-note">
+            <span><i class="fas fa-code-branch"></i> <strong>并行传统：</strong>工业心理学（个体差异）与组织社会学（结构、制度）长期并存，相互批判。</span>
+            <span><i class="fas fa-globe-asia"></i> <strong>地域差异：</strong>北美主流叙事之外，欧洲批判管理学、日本Z理论、中国本土领导力（家长式领导）等也独具影响。</span>
+            <span><i class="fas fa-balance-scale"></i> <strong>核心张力：</strong>结构决定论 vs. 个体能动性；理性效率 vs. 人性关怀。</span>
+        </div>
+        <div class="section-sub" style="margin-top: 1rem;">演化脉络：效率至上 → 社会情感 → 权变适应 → 文化认知 → 积极心理 → 算法时代</div>
+    </section>
+
+    <!-- 三、核心变量体系 -->
+    <section class="section" aria-labelledby="sec3">
+        <div class="section-title" id="sec3"><i class="fas fa-diagram-project"></i> 三、核心变量体系</div>
+        <div class="grid-cards">
+            <details class="card bg-ind" open>
+                <summary>
+                    <i class="fas fa-user card-icon ind-color"></i>
+                    <h3 class="ind-color">个体层</h3>
+                </summary>
+                <div class="card-content">
+                    <h4>个体差异</h4>
+                    <ul><li>传记特征（年龄/性别/任期）</li><li>能力：一般心理能力(GMA)、情绪智力(EI)</li><li>人格：大五(OCEAN)、暗黑三人格</li><li>价值观与自我概念</li></ul>
+                    <h4>知觉与归因</h4>
+                    <ul><li>社会知觉偏差（晕轮、刻板等）</li><li>凯利三维归因理论</li></ul>
+                    <h4>决策与判断</h4>
+                    <ul><li>有限理性（西蒙）</li><li>双系统模型（卡尼曼）</li><li>前景理论（损失厌恶）</li></ul>
+                    <h4>动机与激励</h4>
+                    <ul><li>内容型：马斯洛、双因素、ERG</li><li>过程型：期望、公平、目标设置</li><li>自我决定理论(SDT) · 工作特征模型(JCM)</li></ul>
+                    <h4>工作设计与工作重塑</h4>
+                    <ul><li>工作特征模型（核心维度→关键心理状态→结果）</li><li>工作重塑（任务、关系、认知改变）</li></ul>
+                    <h4>情绪·态度·压力</h4>
+                    <ul><li>情感事件理论、情绪劳动</li><li>工作满意度、组织承诺、敬业度</li><li>压力源：挑战性 vs. 阻碍性；JD-R模型</li></ul>
+                    <h4>核心行为结果</h4>
+                    <ul><li><strong>组织公民行为(OCB)</strong></li><li><strong>反生产工作行为(CWB)</strong></li><li>离职、缺勤、工作绩效</li></ul>
+                    <h4>微观政治</h4>
+                    <ul><li>印象管理；向上影响策略</li></ul>
+                </div>
+            </details>
+
+            <details class="card bg-team">
+                <summary>
+                    <i class="fas fa-people-group card-icon team-color"></i>
+                    <h3 class="team-color">群体与团队层</h3>
+                </summary>
+                <div class="card-content">
+                    <h4>群体基础</h4>
+                    <ul><li>正式/非正式群体；塔克曼五阶段</li><li>角色、规范、地位、凝聚力</li><li>社会促进 vs. 社会惰化</li></ul>
+                    <h4>团队类型与设计</h4>
+                    <ul><li>问题解决型、自我管理型、跨职能型、虚拟团队</li></ul>
+                    <h4>团队过程与状态</h4>
+                    <ul><li>团队心智模型 · 心理安全感</li><li>团队冲突（任务/关系/过程）</li><li>谈判与冲突解决</li></ul>
+                    <h4>团队决策</h4>
+                    <ul><li>群体思维、群体极化、隐藏信息范式</li></ul>
+                    <h4>沟通</h4>
+                    <ul><li>沟通网络、跨层级沟通障碍</li></ul>
+                    <h4>领导力（跨层次现象）</h4>
+                    <ul><li>传统：特质、行为、权变</li><li>变革型、交易型、真实型、伦理型、服务型领导</li><li>领导-成员交换(LMX) 理论</li><li>共享型领导、数字化领导</li></ul>
+                </div>
+            </details>
+
+            <details class="card bg-org">
+                <summary>
+                    <i class="fas fa-building card-icon org-color"></i>
+                    <h3 class="org-color">组织层</h3>
+                </summary>
+                <div class="card-content">
+                    <h4>组织结构</h4>
+                    <ul><li>机械式 vs. 有机式；矩阵、网络、平台型</li></ul>
+                    <h4>组织文化</h4>
+                    <ul><li>沙因三层模型：基本假设→价值观→人工饰物</li><li>文化强度、适应性文化</li></ul>
+                    <h4>组织设计与变革</h4>
+                    <ul><li>权变理论；勒温三步；科特八步</li><li>组织学习：单环/双环学习</li></ul>
+                    <h4>权力与宏观政治</h4>
+                    <ul><li>权力五来源：强制、奖赏、合法、专家、参照</li><li>组织政治行为、联盟</li></ul>
+                    <h4>人力资源系统</h4>
+                    <ul><li>高绩效工作系统(HPWS)、战略HRM</li><li>组织社会化</li></ul>
+                </div>
+            </details>
+
+            <details class="card bg-env">
+                <summary>
+                    <i class="fas fa-globe-americas card-icon env-color"></i>
+                    <h3 class="env-color">环境层</h3>
+                </summary>
+                <div class="card-content">
+                    <h4>跨文化管理</h4>
+                    <ul><li>霍夫斯泰德文化维度</li><li>GLOBE项目；文化智力(CQ)</li></ul>
+                    <h4>制度环境</h4>
+                    <ul><li>规制、规范、认知支柱</li><li>制度同构（强制、模仿、规范）</li></ul>
+                    <h4>利益相关者与伦理</h4>
+                    <ul><li>CSR、ESG与组织行为</li><li>利益相关者压力</li></ul>
+                    <h4>组织生态</h4>
+                    <ul><li>种群密度依赖、生态位</li></ul>
+                </div>
+            </details>
+        </div>
+        <div class="section-sub" style="margin-top: 1rem;"><i class="fas fa-info-circle"></i> 贯穿层次的关键变量：权力 · 信任 · 意义 · 公平</div>
+    </section>
+
+    <!-- 四、跨层次因果模型（逻辑修正版） -->
+    <section class="section" aria-labelledby="sec4">
+        <div class="section-title" id="sec4"><i class="fas fa-project-diagram"></i> 四、跨层次因果模型</div>
+        <p>自上而下为<strong>约束/塑造</strong>关系，自下而上为<strong>涌现/反作用</strong>关系，环境主要作为<strong>调节变量</strong>影响内部层次间的关系强度。</p>
+        <div class="model-container">
+            <svg viewBox="0 0 800 360" width="100%" height="auto" role="img" aria-label="跨层次因果模型示意图">
+                <!-- 背景 -->
+                <rect x="10" y="10" width="780" height="340" fill="#f4f9fc" rx="20" />
+                <!-- 环境层 -->
+                <rect x="40" y="15" width="720" height="75" fill="#eef3f6" rx="12" stroke="#7f8c8d" stroke-width="2"/>
+                <text x="400" y="40" text-anchor="middle" fill="#7f8c8d" font-weight="bold">环境层（跨文化/制度/利益相关者）</text>
+                <text x="400" y="58" text-anchor="middle" fill="#556" font-size="12">调节变量：权力距离、行业规范、伦理标准</text>
+                <!-- 组织层 -->
+                <rect x="100" y="115" width="600" height="65" fill="#fdf2e9" rx="12" stroke="#d35400" stroke-width="2"/>
+                <text x="400" y="140" text-anchor="middle" fill="#d35400" font-weight="bold">组织层（结构·文化·HRM系统）</text>
+                <text x="400" y="158" text-anchor="middle" fill="#555" font-size="12">自变量：领导风格、组织公平、高绩效工作系统</text>
+                <!-- 团队层 -->
+                <rect x="180" y="205" width="440" height="65" fill="#eafaf1" rx="12" stroke="#27ae60" stroke-width="2"/>
+                <text x="400" y="230" text-anchor="middle" fill="#27ae60" font-weight="bold">团队层（规范·凝聚力·心理安全）</text>
+                <text x="400" y="248" text-anchor="middle" fill="#555" font-size="12">中介变量：团队冲突、沟通质量、共享心智</text>
+                <!-- 个体层 -->
+                <rect x="260" y="295" width="280" height="40" fill="#e5f2f5" rx="12" stroke="#2c7da0" stroke-width="2"/>
+                <text x="400" y="320" text-anchor="middle" fill="#2c7da0" font-weight="bold">个体结果：满意度·OCB·绩效·离职</text>
+
+                <!-- 箭头定义 -->
+                <defs>
+                    <marker id="downArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L8,4 L0,8 z" fill="#333"/>
+                    </marker>
+                    <marker id="upArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L6,3 L0,6 z" fill="#666"/>
+                    </marker>
+                </defs>
+
+                <!-- 自上而下实线（约束方向） -->
+                <!-- 环境→组织 -->
+                <line x1="400" y1="90" x2="400" y2="115" stroke="#333" stroke-width="1.5" marker-end="url(#downArrow)"/>
+                <!-- 组织→团队 -->
+                <line x1="400" y1="180" x2="400" y2="205" stroke="#333" stroke-width="1.5" marker-end="url(#downArrow)"/>
+                <!-- 团队→个体 -->
+                <line x1="400" y1="270" x2="400" y2="295" stroke="#333" stroke-width="1.5" marker-end="url(#downArrow)"/>
+
+                <!-- 自下而上虚线（涌现方向） -->
+                <!-- 个体→团队 -->
+                <line x1="350" y1="295" x2="350" y2="255" stroke="#666" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#upArrow)"/>
+                <text x="335" y="278" fill="#666" font-size="10">涌现</text>
+                <!-- 团队→组织 -->
+                <line x1="250" y1="240" x2="250" y2="190" stroke="#666" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#upArrow)"/>
+                <text x="235" y="218" fill="#666" font-size="10">涌现</text>
+
+                <!-- 环境调节箭头（指向组织→团队路径） -->
+                <path d="M 110 60 Q 130 130 160 180" fill="none" stroke="#b7950b" stroke-width="1.3" stroke-dasharray="3 3" marker-end="url(#downArrow)"/>
+                <text x="120" y="125" fill="#b7950b" font-size="10">跨层调节</text>
+            </svg>
+            <p style="font-size:0.85rem; margin-top:0.5rem;"><i class="fas fa-lightbulb"></i> <strong>典型命题：</strong>高绩效工作系统（组织）→ 心理授权（个体）→ 组织公民行为；权力距离（文化）调节组织公平对员工建言的影响。虚线涌现表示个体行为汇聚为团队属性，进一步涌现为组织特征。</p>
+        </div>
+    </section>
+
+    <!-- 五、理论流派 -->
+    <section class="section" aria-labelledby="sec5">
+        <div class="section-title" id="sec5"><i class="fas fa-landmark"></i> 五、核心理论流派</div>
+        <div class="grid-cards">
+            <div class="card"><h4><i class="fas fa-brain"></i> 认知流派</h4><p><strong>核心假设：</strong>行为取决于对信息的解释与加工。</p><p><strong>应用：</strong>决策、归因、期望理论。</p></div>
+            <div class="card"><h4><i class="fas fa-users-cog"></i> 社会学习流派</h4><p><strong>核心假设：</strong>观察、模仿、自我效能（Bandura）。</p><p><strong>应用：</strong>培训、领导力发展。</p></div>
+            <div class="card"><h4><i class="fas fa-exchange-alt"></i> 社会交换流派</h4><p><strong>核心假设：</strong>关系基于互惠与交换（LMX、组织支持）。</p><p><strong>应用：</strong>OCB、信任、心理契约。</p></div>
+            <div class="card"><h4><i class="fas fa-id-card"></i> 社会认同流派</h4><p><strong>核心假设：</strong>自我概念源于群体成员身份（Tajfel）。</p><p><strong>应用：</strong>组织认同、群际冲突。</p></div>
+            <div class="card"><h4><i class="fas fa-university"></i> 制度流派</h4><p><strong>核心假设：</strong>组织为合法性趋同于制度环境。</p><p><strong>应用：</strong>文化、结构同构、CSR。</p></div>
+            <div class="card"><h4><i class="fas fa-exclamation-triangle"></i> 批判流派</h4><p><strong>核心假设：</strong>组织是权力斗争和意识形态的场域。</p><p><strong>应用：</strong>权力、劳动过程、异化。</p></div>
+            <div class="card"><h4><i class="fas fa-project-diagram"></i> 复杂性理论</h4><p><strong>核心假设：</strong>非线性、自组织、涌现系统。</p><p><strong>应用：</strong>创新扩散、变革管理。</p></div>
+        </div>
+    </section>
+
+    <!-- 六、研究方法 -->
+    <section class="section" aria-labelledby="sec6">
+        <div class="section-title" id="sec6"><i class="fas fa-microscope"></i> 六、研究方法论</div>
+        <div class="grid-cards" style="grid-template-columns: repeat(auto-fit, minmax(240px,1fr));">
+            <div class="card"><i class="fas fa-chart-bar"></i> <strong>定量研究</strong><br>问卷、实验、纵向追踪、元分析。关注共同方法偏差、因果推断。</div>
+            <div class="card"><i class="fas fa-pen-fancy"></i> <strong>定性研究</strong><br>案例、民族志、扎根理论、叙事分析。</div>
+            <div class="card"><i class="fas fa-blender"></i> <strong>混合方法</strong><br>顺序性设计、并行三角验证。</div>
+            <div class="card"><i class="fas fa-chart-line"></i> <strong>新兴方法</strong><br>经验取样法(ESM)、社会网络分析、大数据文本挖掘。</div>
+        </div>
+        <div class="section-sub" style="margin-top: 1rem;">关键议题：多层线性模型(HLM)、调节/中介效应分析、内生性处理。</div>
+    </section>
+
+    <!-- 七、当代前沿 -->
+    <section class="section" aria-labelledby="sec7">
+        <div class="section-title" id="sec7"><i class="fas fa-chart-simple"></i> 七、当代前沿议题</div>
+        <div class="grid-cards" style="grid-template-columns: repeat(auto-fit, minmax(250px,1fr));">
+            <div class="card"><strong><i class="fas fa-heart"></i> 积极组织行为学</strong><br>心理资本、工作重塑。实证基础稳固。</div>
+            <div class="card"><strong><i class="fas fa-brain"></i> 神经组织行为学</strong><br>fMRI/EEG探究领导力神经基础。方法创新，理论贡献仍在积累。</div>
+            <div class="card"><strong><i class="fas fa-balance-scale"></i> 伦理与组织阴暗面</strong><br>辱虐管理、道德脱离。核心问题：如何平衡监控与尊严？</div>
+            <div class="card"><strong><i class="fas fa-network-wired"></i> 社会网络分析</strong><br>网络中心性、结构洞影响信息流与绩效。</div>
+            <div class="card"><strong><i class="fas fa-clock"></i> 动态OB</strong><br>情感与绩效的日内波动，纵向动态模型。</div>
+            <div class="card"><strong><i class="fas fa-laptop-house"></i> 虚拟与远程工作</strong><br>分布式团队、工作-边界管理。核心挑战：保持心理联结。</div>
+            <div class="card"><strong><i class="fas fa-rainbow"></i> 多元、公平与包容</strong><br>无意识偏见、包容性领导。已融入主流研究。</div>
+            <div class="card"><strong><i class="fas fa-robot"></i> 算法管理与人机协作</strong><br>AI作为决策者或监控者；人机信任尚在概念探索阶段。</div>
+            <div class="card"><strong><i class="fas fa-seedling"></i> 工作意义与使命感</strong><br>意义建构、工作重塑与积极OB交叉。</div>
+        </div>
+    </section>
+
+    <!-- 八、整合框架 -->
+    <section class="section" aria-labelledby="sec8">
+        <div class="section-title" id="sec8"><i class="fas fa-cubes"></i> 八、整合框架与嵌套系统</div>
+        <div class="layers-viz">
+            <div class="layer-stack">
+                <div class="layer" style="background:#f2f4f4; border-left: 6px solid #7f8c8d;">🌍 环境层 —— 文化/制度/利益相关者</div>
+                <div class="layer" style="background:#fdf2e9; border-left: 6px solid #d35400;">🏢 组织层 —— 结构·文化·设计·权力·HRM</div>
+                <div class="layer" style="background:#eafaf1; border-left: 6px solid #27ae60;">👥 群体/团队层 —— 角色/规范/决策/领导力/冲突</div>
+                <div class="layer" style="background:#e5f2f5; border-left: 6px solid #2c7da0;">🧑 个体层 —— 差异·知觉·动机·情绪·态度·行为</div>
+            </div>
+            <p style="margin-top: 1rem; font-size: 0.9rem;"><i class="fas fa-arrow-down"></i> <i class="fas fa-arrow-up"></i> <strong>跨层次交互：</strong>环境塑造组织 → 组织设计团队 → 团队影响个体 → 个体行为涌现集体现象。<br>
+            <strong>核心驱动机制：</strong>认知过程 · 社会互动 · 制度约束。贯穿变量：权力 / 信任 / 意义 / 公平。</p>
+        </div>
+        <div class="section-sub" style="margin-top:1rem;">组织行为学是一个不断演化的动态系统，强调从微观到宏观的跨层次整合与反馈循环。</div>
+    </section>
+
+    <footer>
+        <i class="fas fa-graduation-cap"></i> 组织行为学知识体系全景 · 多层次 · 变量因果 · 理论与前沿<br>
+        适用于学术研究与管理实践参考
+    </footer>
+</div>
+</body>
+</html>

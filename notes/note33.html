@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent 运行时序图 (含MCP · 布局优化)</title>
+    <style>
+        :root {
+            --bg: #f7faf8;
+            --card-bg: #ffffff;
+            --text: #3a4a3f;
+            --text-secondary: #5f6d63;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(160deg, #f2f8f4 0%, #f8faf9 30%, #f5f7f9 60%, #faf9f6 100%);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            padding: 28px 16px 50px;
+            min-height: 100vh;
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1160px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 36px 32px 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7eb8da 0%, #5dbaa0 20%, #a59cc8 40%, #7b9cc2 60%, #b5a4c7 80%, #e88d7d 100%);
+            border-radius: 20px 20px 0 0;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+            padding-top: 6px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e33;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header .subtitle strong {
+            color: #3a6b55;
+            font-weight: 600;
+        }
+
+        .svg-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin: 16px 0 20px;
+            border-radius: var(--radius);
+            background: #fcfdfc;
+            border: 1px solid #eef3ef;
+            padding: 8px 4px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .svg-wrapper svg {
+            display: block;
+            width: 100%;
+            min-width: 950px;
+            height: auto;
+        }
+
+        .legend-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 22px;
+            justify-content: center;
+            margin: 18px 0 22px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.82rem;
+            color: #4a5a4f;
+            font-weight: 500;
+        }
+
+        .legend-dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .dot-user {
+            background: #7eb8da;
+        }
+        .dot-agent {
+            background: #5dbaa0;
+        }
+        .dot-memory {
+            background: #a59cc8;
+        }
+        .dot-llm {
+            background: #7b9cc2;
+        }
+        .dot-mcp {
+            background: #b5a4c7;
+        }
+        .dot-tools {
+            background: #e88d7d;
+        }
+
+        .concept-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .concept-card {
+            background: #fafcfa;
+            border: 1px solid #e8efe9;
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .concept-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .concept-card .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .concept-card h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #2c3e33;
+            margin: 0 0 5px;
+        }
+
+        .concept-card p {
+            font-size: 0.8rem;
+            color: #5a6b5f;
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .concept-card .tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            background: #eaf5ef;
+            color: #3a6b55;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 12px 18px;
+                border-radius: 14px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .concept-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>🤖</span> AI Agent 运行时序图 <span style="font-size:1.6rem;">⚡</span>
+            </h1>
+            <p class="subtitle">
+                展示 <strong>AI Agent</strong> 从接收用户任务到返回结果的完整运行流程，
+                涵盖<strong>LLM规划</strong>、<strong>记忆检索</strong>、<strong>MCP协议工具调用</strong>及<strong>ReAct循环</strong>，层级职责与异常出口清晰。
+            </p>
+        </div>
+
+        <div class="legend-row">
+            <span class="legend-item"><span class="legend-dot dot-user"></span> 用户</span>
+            <span class="legend-item"><span class="legend-dot dot-agent"></span> Agent 核心</span>
+            <span class="legend-item"><span class="legend-dot dot-memory"></span> 记忆系统</span>
+            <span class="legend-item"><span class="legend-dot dot-llm"></span> LLM引擎</span>
+            <span class="legend-item"><span class="legend-dot dot-mcp"></span> MCP协议</span>
+            <span class="legend-item"><span class="legend-dot dot-tools"></span> 工具集</span>
+        </div>
+
+        <div class="svg-wrapper">
+            <svg viewBox="0 0 1100 990" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Agent运行时序图">
+                <defs>
+                    <!-- 向右箭头 (实线正向调用) -->
+                    <marker id="arrowRight" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                        <path d="M0,0 L10,4 L0,8 L1.5,4 Z" fill="#4a6658" />
+                    </marker>
+                    <!-- 向左箭头 (虚线反向返回) · 固定指向左，不自动旋转 -->
+                    <marker id="arrowLeft" markerWidth="10" markerHeight="8" refX="9" refY="4">
+                        <path d="M10,0 L0,4 L10,8 L8.5,4 Z" fill="#4a6658" />
+                    </marker>
+                    <!-- 循环返回专用向左箭头 · 固定指向左 -->
+                    <marker id="arrowLeftLoop" markerWidth="10" markerHeight="8" refX="9" refY="4">
+                        <path d="M10,0 L0,4 L10,8 L8.5,4 Z" fill="#6b8a78" />
+                    </marker>
+                    <!-- 自环无箭头圆点 -->
+                    <marker id="dotOnly" markerWidth="6" markerHeight="6" refX="3" refY="3">
+                        <circle cx="3" cy="3" r="2.5" fill="#4a6658" />
+                    </marker>
+                    <filter id="shadowHead" x="-15%" y="10%" width="130%" height="140%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000018" />
+                    </filter>
+                    <linearGradient id="gradStage1" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#e8f4ee" stop-opacity="0.7" />
+                        <stop offset="100%" stop-color="#e8f4ee" stop-opacity="0.25" />
+                    </linearGradient>
+                    <linearGradient id="gradStage2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#eaf2f8" stop-opacity="0.75" />
+                        <stop offset="100%" stop-color="#eaf2f8" stop-opacity="0.2" />
+                    </linearGradient>
+                    <linearGradient id="gradStage3" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#fdf5ea" stop-opacity="0.8" />
+                        <stop offset="100%" stop-color="#fdf5ea" stop-opacity="0.3" />
+                    </linearGradient>
+                </defs>
+
+                <!-- 三阶段背景 (阶段三高度扩展以容纳调整后的元素) -->
+                <rect x="30" y="122" width="1040" height="210" rx="10" fill="url(#gradStage1)" stroke="#d5e8db" stroke-width="1" stroke-dasharray="4,3" />
+                <rect x="30" y="340" width="1040" height="380" rx="10" fill="url(#gradStage2)" stroke="#d0dde8" stroke-width="1" stroke-dasharray="4,3" />
+                <rect x="30" y="728" width="1040" height="215" rx="10" fill="url(#gradStage3)" stroke="#efe5d5" stroke-width="1" stroke-dasharray="4,3" />
+
+                <rect x="36" y="130" width="6" height="194" rx="3" fill="#5dbaa0" opacity="0.7" />
+                <text x="52" y="232" font-size="12" font-weight="700" fill="#3a6b55">阶段一 · 理解与规划</text>
+
+                <rect x="36" y="348" width="6" height="364" rx="3" fill="#7b9cc2" opacity="0.7" />
+                <text x="52" y="535" font-size="12" font-weight="700" fill="#4a6880">阶段二 · 推理-行动循环 (ReAct)</text>
+
+                <rect x="36" y="736" width="6" height="198" rx="3" fill="#f0b860" opacity="0.7" />
+                <text x="52" y="838" font-size="12" font-weight="700" fill="#8a6528">阶段三 · 记忆与响应</text>
+
+                <!-- 参与者生命线 -->
+                <line x1="85" y1="95" x2="85" y2="940" stroke="#b8d4e6" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="245" y1="95" x2="245" y2="940" stroke="#a3d5c5" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="425" y1="95" x2="425" y2="940" stroke="#cbc4e2" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="605" y1="95" x2="605" y2="940" stroke="#bcc8d8" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="785" y1="95" x2="785" y2="940" stroke="#d4cbe0" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="965" y1="95" x2="965" y2="940" stroke="#f2c8bf" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+
+                <!-- 参与者头部 -->
+                <rect x="35" y="52" width="100" height="42" rx="21" fill="#7eb8da" filter="url(#shadowHead)" />
+                <text x="85" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">👤 用户</text>
+                <text x="85" y="84" text-anchor="middle" font-size="9.5" fill="#e3f0f7">User</text>
+
+                <rect x="185" y="52" width="120" height="42" rx="21" fill="#5dbaa0" filter="url(#shadowHead)" />
+                <text x="245" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🤖 Agent 核心</text>
+                <text x="245" y="84" text-anchor="middle" font-size="9.5" fill="#d5f2e8">Agent Core</text>
+
+                <rect x="365" y="52" width="120" height="42" rx="21" fill="#a59cc8" filter="url(#shadowHead)" />
+                <text x="425" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🧠 记忆系统</text>
+                <text x="425" y="84" text-anchor="middle" font-size="9.5" fill="#ece9f5">Memory</text>
+
+                <rect x="545" y="52" width="120" height="42" rx="21" fill="#7b9cc2" filter="url(#shadowHead)" />
+                <text x="605" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">💭 LLM引擎</text>
+                <text x="605" y="84" text-anchor="middle" font-size="9.5" fill="#dce6f0">LLM Engine</text>
+
+                <rect x="725" y="52" width="120" height="42" rx="21" fill="#b5a4c7" filter="url(#shadowHead)" />
+                <text x="785" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🔌 MCP协议</text>
+                <text x="785" y="84" text-anchor="middle" font-size="9.5" fill="#f3eff8">MCP</text>
+
+                <rect x="905" y="52" width="120" height="42" rx="21" fill="#e88d7d" filter="url(#shadowHead)" />
+                <text x="965" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🔧 工具集</text>
+                <text x="965" y="84" text-anchor="middle" font-size="9.5" fill="#fce8e4">Tools</text>
+
+                <!-- 步骤1：用户 → Agent -->
+                <line x1="92" y1="150" x2="237" y2="150" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="85" cy="150" r="9" fill="#7eb8da" stroke="#fff" stroke-width="2.2" />
+                <text x="85" y="154" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+                <text x="162" y="141" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">发送任务目标与约束</text>
+
+                <!-- 步骤2：Agent → Memory 查询 -->
+                <line x1="252" y1="195" x2="417" y2="195" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="195" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="199" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+                <text x="332" y="186" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">查询相关历史上下文</text>
+
+                <!-- 步骤3：Memory → Agent (反向虚线) -->
+                <line x1="418" y1="240" x2="253" y2="240" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="425" cy="240" r="9" fill="#a59cc8" stroke="#fff" stroke-width="2.2" />
+                <text x="425" y="244" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+                <text x="338" y="231" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回相关经验与上下文</text>
+
+                <!-- 步骤4：Agent → LLM 请求规划 -->
+                <line x1="252" y1="285" x2="597" y2="285" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="285" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="289" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+                <text x="422" y="276" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">发送任务与上下文，请求LLM规划分解</text>
+
+                <!-- 步骤5：LLM → Agent 返回计划 (反向虚线) -->
+                <line x1="598" y1="330" x2="253" y2="330" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="605" cy="330" r="9" fill="#7b9cc2" stroke="#fff" stroke-width="2.2" />
+                <text x="605" y="334" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+                <text x="428" y="321" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回分解后的任务计划</text>
+
+                <!-- 循环框 -->
+                <rect x="50" y="372" width="1020" height="340" rx="14" fill="none" stroke="#8cb8a6" stroke-width="2" stroke-dasharray="10,5" opacity="0.65" />
+                <rect x="58" y="362" width="190" height="22" rx="11" fill="#eaf5ef" stroke="#8cb8a6" stroke-width="1.2" />
+                <text x="153" y="377" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3a6b55">🔄 ReAct 推理-行动循环</text>
+
+                <!-- 步骤6：Agent → LLM 请求Action决策 -->
+                <line x1="252" y1="415" x2="597" y2="415" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="415" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="419" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+                <text x="422" y="405" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">[Plan+Context] 请求Action决策</text>
+
+                <!-- 步骤7：LLM → Agent 返回行动建议 (反向虚线) -->
+                <line x1="598" y1="460" x2="253" y2="460" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="605" cy="460" r="9" fill="#7b9cc2" stroke="#fff" stroke-width="2.2" />
+                <text x="605" y="464" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">7</text>
+                <text x="428" y="450" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回行动建议（含工具选择与参数）</text>
+
+                <!-- 步骤7.5：Agent 自环校验 -->
+                <path d="M252,485 Q272,485 272,500 Q272,515 252,515" fill="none" stroke="#4a6658" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#dotOnly)" />
+                <text x="285" y="503" font-size="9.5" fill="#4a6658" font-weight="500">安全/权限校验</text>
+
+                <!-- 步骤8：Agent → MCP 请求工具调用 -->
+                <line x1="252" y1="535" x2="777" y2="535" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="535" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="539" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">8</text>
+                <text x="510" y="525" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">通过MCP协议请求工具执行</text>
+
+                <!-- 步骤9：MCP → Tools 转发 -->
+                <line x1="792" y1="580" x2="957" y2="580" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="785" cy="580" r="9" fill="#b5a4c7" stroke="#fff" stroke-width="2.2" />
+                <text x="785" y="584" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">9</text>
+                <text x="875" y="571" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">调用具体工具接口</text>
+
+                <!-- 步骤10：Tools → MCP 返回 (反向虚线) -->
+                <line x1="958" y1="625" x2="793" y2="625" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="965" cy="625" r="9" fill="#e88d7d" stroke="#fff" stroke-width="2.2" />
+                <text x="965" y="629" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">10</text>
+                <text x="876" y="615" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回工具执行结果</text>
+
+                <!-- 步骤11：MCP → Agent 返回 (反向虚线) -->
+                <line x1="778" y1="670" x2="253" y2="670" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="785" cy="670" r="9" fill="#b5a4c7" stroke="#fff" stroke-width="2.2" />
+                <text x="785" y="674" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">11</text>
+                <text x="515" y="660" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回标准化工具结果</text>
+
+                <!-- 步骤12：Agent → Memory 写入工作记忆 -->
+                <line x1="252" y1="715" x2="417" y2="715" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="715" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="719" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">12</text>
+                <text x="332" y="705" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">写入本轮观察结果（短期记忆）</text>
+
+                <!-- 步骤13：Agent → LLM 请求反思评估 -->
+                <line x1="252" y1="760" x2="597" y2="760" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="760" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="764" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">13</text>
+                <text x="422" y="750" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">[Observation+History] 请求Reflection评估</text>
+
+                <!-- 步骤14：LLM → Agent 返回评估与完成标记 (反向虚线) -->
+                <line x1="598" y1="805" x2="253" y2="805" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="605" cy="805" r="9" fill="#7b9cc2" stroke="#fff" stroke-width="2.2" />
+                <text x="605" y="809" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">14</text>
+                <text x="428" y="795" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回评估结果与完成标记</text>
+
+                <!-- 判断菱形 (步骤15) -->
+                <polygon points="245,835 265,845 245,855 225,845" fill="#fef7ec" stroke="#f0b860" stroke-width="2" />
+                <text x="245" y="849" text-anchor="middle" font-size="9" font-weight="700" fill="#8a6528">15</text>
+
+                <!-- 循环返回箭头 -->
+                <path d="M265,845 Q300,845 300,750 Q300,415 258,415" fill="none" stroke="#6b8a78" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowLeftLoop)" opacity="0.7" />
+                <text x="308" y="635" font-size="10" fill="#6b8a78" font-weight="600" transform="rotate(-90, 308, 635)">未完成则返回步骤6</text>
+                <text x="280" y="865" font-size="10" fill="#8a6528" font-weight="600">[Agent解析完成标记] 任务完成?</text>
+                <text x="280" y="879" font-size="9" fill="#a08050">是 → 跳出循环，继续步骤16</text>
+                <text x="280" y="893" font-size="9" fill="#a08050">否/超时/异常 → 返回用户并说明原因</text>
+
+                <!-- 步骤16：Agent → Memory 存储最终经验 (位置下移) -->
+                <line x1="252" y1="920" x2="417" y2="920" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="920" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="924" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">16</text>
+                <text x="332" y="910" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">存储最终经验与知识</text>
+
+                <!-- 步骤17：Agent → User 返回结果 (反向虚线, 位置下移) -->
+                <line x1="238" y1="955" x2="93" y2="955" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="245" cy="955" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="959" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">17</text>
+                <text x="162" y="945" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回最终执行结果</text>
+
+                <circle cx="85" cy="955" r="14" fill="#e8f5ee" stroke="#5dbaa0" stroke-width="2.2" />
+                <text x="85" y="960" text-anchor="middle" font-size="14">✅</text>
+            </svg>
+        </div>
+
+        <div class="concept-cards">
+            <div class="concept-card">
+                <span class="card-icon">🔄</span>
+                <h4>ReAct 推理-行动循环</h4>
+                <p>Agent 在<strong>思考</strong>与<strong>行动</strong>间迭代：LLM决策动作，通过<strong>MCP协议</strong>调用工具，观察结果后再反思评估，直至任务完成或触发安全上限。</p>
+                <span class="tag">核心模式</span>
+            </div>
+            <div class="concept-card">
+                <span class="card-icon">🧠</span>
+                <h4>双层记忆系统</h4>
+                <p><strong>短期工作记忆：</strong>循环内每步观察即时写入，支持多轮上下文连续。<strong>长期记忆：</strong>跨会话经验积累，用于规划时的RAG检索增强。</p>
+                <span class="tag">上下文管理</span>
+            </div>
+            <div class="concept-card">
+                <span class="card-icon">🔌</span>
+                <h4>MCP 协议中间层</h4>
+                <p>Agent 通过<strong>Model Context Protocol</strong>标准化调用工具，解耦工具实现与Agent逻辑，支持动态发现工具、统一错误处理和权限控制。</p>
+                <span class="tag">工具标准化</span>
+            </div>
+            <div class="concept-card">
+                <span class="card-icon">📋</span>
+                <h4>LLM驱动的规划</h4>
+                <p>任务规划不再是独立组件，而是Agent核心调用<strong>LLM的规划模式(COT/TOT)</strong>完成，结合历史记忆生成可执行的任务分解计划。</p>
+                <span class="tag">任务分解</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

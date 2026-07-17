@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI时代管理幅度四象限 · 14种设计风格</title>
+    <style>
+        :root {
+            --bg: #f5f5f5; --card-bg: #fff; --text: #212121; --text-secondary: #616161;
+            --border: #e0e0e0; --shadow: 0 1px 3px rgba(0,0,0,0.12); --radius: 12px;
+            --q1-bg: #e0f2f1; --q2-bg: #fff8e1; --q3-bg: #ffebee; --q4-bg: #e3f2fd;
+            --q1-color: #00897b; --q2-color: #ef6c00; --q3-color: #d32f2f; --q4-color: #1565c0;
+            --axis-color: #424242; --grid-color: #bdbdbd;
+            --font: Roboto, "PingFang SC", sans-serif;
+            --chart-radius: 8px; --chart-stroke: #e0e0e0; --chart-stroke-width: 1.5;
+            --detail-top: 4px;
+            --backdrop: none; --glass-border: none; --glass-bg: #fff;
+        }
+        body {
+            margin: 0; background: var(--bg); color: var(--text); font-family: var(--font);
+            transition: background 0.3s, color 0.3s;
+        }
+        .style-bar {
+            position: sticky; top: 0; z-index: 100; background: rgba(30,30,30,0.9);
+            backdrop-filter: blur(10px); padding: 10px 16px; display: flex; flex-wrap: wrap;
+            gap: 8px; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .style-bar button {
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            color: #ccc; padding: 6px 14px; border-radius: 20px; cursor: pointer;
+            font-size: 13px; transition: all 0.2s; white-space: nowrap;
+        }
+        .style-bar button:hover, .style-bar button.active {
+            background: rgba(255,255,255,0.25); color: white; border-color: rgba(255,255,255,0.5);
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px 24px 80px; }
+        .header { text-align: center; margin-bottom: 32px; }
+        .header h1 { font-size: 2.5rem; font-weight: 500; letter-spacing: -0.5px; }
+        .header p { color: var(--text-secondary); margin-top: 8px; }
+        .chart-wrapper {
+            background: var(--glass-bg); border-radius: var(--radius); box-shadow: var(--shadow);
+            border: var(--border); padding: 32px 20px 16px; margin-bottom: 48px;
+            display: flex; flex-direction: column; align-items: center;
+            backdrop-filter: var(--backdrop); -webkit-backdrop-filter: var(--backdrop);
+        }
+        .chart-wrapper h2 { font-weight: 500; font-size: 1.5rem; margin-bottom: 24px; }
+        .svg-container { width: 100%; max-width: 700px; }
+        .criteria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 48px; }
+        .criteria-card {
+            background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
+            border: var(--border); padding: 24px; backdrop-filter: var(--backdrop);
+            -webkit-backdrop-filter: var(--backdrop);
+        }
+        .criteria-card h3 { font-size: 1.2rem; font-weight: 500; margin-bottom: 12px; }
+        .criteria-card table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        .criteria-card th { text-align: left; font-weight: 500; color: var(--text-secondary); padding: 8px 8px 6px 0; border-bottom: 1px solid var(--border); }
+        .criteria-card td { padding: 8px 8px 8px 0; border-bottom: 1px solid var(--grid-color); }
+        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 48px; }
+        .detail-card {
+            background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
+            border: var(--border); padding: 24px; border-top: var(--detail-top) solid transparent;
+            backdrop-filter: var(--backdrop); -webkit-backdrop-filter: var(--backdrop);
+        }
+        .detail-card.q1 { border-top-color: var(--q1-color); }
+        .detail-card.q2 { border-top-color: var(--q2-color); }
+        .detail-card.q3 { border-top-color: var(--q3-color); }
+        .detail-card.q4 { border-top-color: var(--q4-color); }
+        .detail-card h3 { font-size: 1.4rem; font-weight: 500; margin-bottom: 4px; }
+        .detail-card .subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px; }
+        .detail-card .badge {
+            display: inline-block; background: var(--bg); font-weight: 500; font-size: 0.82rem;
+            padding: 3px 12px; border-radius: 4px; margin-bottom: 14px;
+        }
+        .detail-card h4 { font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin: 16px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
+        .detail-card ul { list-style: none; padding-left: 0; }
+        .detail-card ul li { position: relative; padding-left: 20px; margin-bottom: 6px; font-size: 0.9rem; color: var(--text); }
+        .detail-card ul li::before { content: "›"; position: absolute; left: 0; font-weight: bold; font-size:1.1rem; }
+        .detail-card.q1 ul li::before { color: var(--q1-color); }
+        .detail-card.q2 ul li::before { color: var(--q2-color); }
+        .detail-card.q3 ul li::before { color: var(--q3-color); }
+        .detail-card.q4 ul li::before { color: var(--q4-color); }
+        .example-box { background: var(--bg); border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.87rem; color: var(--text-secondary); }
+        .dialectical h2 { text-align: center; font-size: 1.5rem; font-weight: 500; margin-bottom: 24px; }
+        .dialectical-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .dialectical-card {
+            background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
+            border: var(--border); padding: 20px; backdrop-filter: var(--backdrop);
+            -webkit-backdrop-filter: var(--backdrop);
+        }
+        .dialectical-card h4 { font-weight: 500; margin-bottom: 8px; }
+        .dialectical-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+        @media (max-width: 900px) { .detail-grid, .dialectical-grid { grid-template-columns: 1fr; } }
+
+        /* 各主题特有变量 */
+        body[data-theme="skeuo"] {
+            --bg: #e9e3d5; --card-bg: #fcfaf2; --text: #3d392e; --text-secondary: #6b6353;
+            --border: 1px solid #c4b99a; --shadow: 0 10px 30px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.06);
+            --radius: 18px; --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
+            --q1-bg: #fef7e0; --q2-bg: #e6f2f0; --q3-bg: #f9e7e5; --q4-bg: #e5edf8;
+            --axis-color: #5b4e3c; --grid-color: #b8a88c; --font: "Palatino Linotype", "Book Antiqua", Palatino, "PingFang SC", serif;
+            --chart-radius: 14px; --chart-stroke: #c4b99a; --chart-stroke-width: 1.5; --detail-top: 6px;
+        }
+        body[data-theme="flat"] {
+            --bg: #f0f2f5; --card-bg: #fff; --text: #1a1a2e; --text-secondary: #5a6475;
+            --border: 1px solid #d5dae3; --shadow: none; --radius: 8px;
+            --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
+            --q1-bg: #f0fdfa; --q2-bg: #fffbeb; --q3-bg: #fef2f2; --q4-bg: #eff6ff;
+            --axis-color: #2e3540; --grid-color: #d5dae3; --font: "Inter", "PingFang SC", sans-serif;
+            --chart-radius: 8px; --chart-stroke: #d5dae3; --detail-top: 4px;
+        }
+        body[data-theme="material"] {
+            --bg: #f5f5f5; --card-bg: #fff; --text: #212121; --text-secondary: #616161;
+            --border: 1px solid #e0e0e0; --shadow: 0 3px 6px rgba(0,0,0,0.15); --radius: 12px;
+            --q1-color: #00897b; --q2-color: #ef6c00; --q3-color: #d32f2f; --q4-color: #1565c0;
+            --q1-bg: #e0f2f1; --q2-bg: #fff8e1; --q3-bg: #ffebee; --q4-bg: #e3f2fd;
+            --axis-color: #424242; --grid-color: #bdbdbd; --font: Roboto, "PingFang SC", sans-serif;
+            --chart-radius: 8px; --chart-stroke: #e0e0e0;
+        }
+        body[data-theme="neumorphism"] {
+            --bg: #e0e5ec; --card-bg: #e0e5ec; --text: #2d3436; --text-secondary: #636e72;
+            --border: none; --shadow: 8px 8px 16px #b8bcc2, -8px -8px 16px #ffffff; --radius: 24px;
+            --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
+            --q1-bg: #d6e4e3; --q2-bg: #ece3d1; --q3-bg: #e8d6d5; --q4-bg: #d5e0f0;
+            --axis-color: #2d3436; --grid-color: #b0b8c0; --font: "Inter", "PingFang SC", sans-serif;
+            --chart-radius: 14px; --chart-stroke: #b0b8c0; --detail-top: 6px;
+        }
+        body[data-theme="glassmorphism"] {
+            --bg: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); --card-bg: rgba(255,255,255,0.25);
+            --text: #1e1e2f; --text-secondary: #3a3a5c; --border: 1px solid rgba(255,255,255,0.4);
+            --shadow: 0 8px 32px rgba(0,0,0,0.1); --radius: 20px;
+            --backdrop: blur(12px); --glass-bg: rgba(255,255,255,0.2);
+            --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
+            --q1-bg: rgba(13,148,136,0.15); --q2-bg: rgba(217,119,6,0.15); --q3-bg: rgba(220,38,38,0.15); --q4-bg: rgba(37,99,235,0.15);
+            --axis-color: #2d2d44; --grid-color: rgba(255,255,255,0.4); --font: "Inter", "PingFang SC", sans-serif;
+            --chart-radius: 12px; --chart-stroke: rgba(255,255,255,0.4); --detail-top: 4px;
+        }
+        body[data-theme="claymorphism"] {
+            --bg: #f3e8ff; --card-bg: #ffffff; --text: #4a2c6e; --text-secondary: #6b4d8a;
+            --border: none; --shadow: 0 12px 24px rgba(180,140,220,0.3), 0 4px 8px rgba(0,0,0,0.08); --radius: 32px;
+            --q1-color: #00b894; --q2-color: #fdcb6e; --q3-color: #ff7675; --q4-color: #6c5ce7;
+            --q1-bg: #e6f9f5; --q2-bg: #fff4e0; --q3-bg: #ffe8e6; --q4-bg: #ede8fd;
+            --axis-color: #4a2c6e; --grid-color: #c8b6d6; --font: "Comic Neue", "PingFang SC", cursive;
+            --chart-radius: 28px; --chart-stroke: #c8b6d6; --detail-top: 8px;
+        }
+        body[data-theme="liquid-glass"] {
+            --bg: #0f0c29; --card-bg: rgba(255,255,255,0.08);
+            --text: #e0e0f0; --text-secondary: #a0a0c0;
+            --border: 1px solid rgba(255,255,255,0.2); --shadow: 0 10px 40px rgba(0,0,0,0.4); --radius: 24px;
+            --backdrop: blur(20px); --glass-bg: rgba(255,255,255,0.05);
+            --q1-color: #00e5ff; --q2-color: #ffb300; --q3-color: #ff5252; --q4-color: #448aff;
+            --q1-bg: rgba(0,229,255,0.12); --q2-bg: rgba(255,179,0,0.12); --q3-bg: rgba(255,82,82,0.12); --q4-bg: rgba(68,138,255,0.12);
+            --axis-color: #c0c0e0; --grid-color: rgba(255,255,255,0.25); --font: "Inter", "PingFang SC", sans-serif;
+            --chart-radius: 16px; --chart-stroke: rgba(255,255,255,0.25);
+        }
+        body[data-theme="neo-brutalism"] {
+            --bg: #ffeb3b; --card-bg: #fff; --text: #000; --text-secondary: #333;
+            --border: 3px solid #000; --shadow: 6px 6px 0 #000; --radius: 0px;
+            --q1-color: #000; --q2-color: #000; --q3-color: #000; --q4-color: #000;
+            --q1-bg: #a5f3fc; --q2-bg: #fde68a; --q3-bg: #fca5a5; --q4-bg: #93c5fd;
+            --axis-color: #000; --grid-color: #000; --font: "Impact", "Arial Black", "PingFang SC", sans-serif;
+            --chart-radius: 0px; --chart-stroke: #000; --chart-stroke-width: 3; --detail-top: 6px;
+        }
+        body[data-theme="minimalism"] {
+            --bg: #fff; --card-bg: #fff; --text: #111; --text-secondary: #666;
+            --border: 1px solid #eaeaea; --shadow: none; --radius: 4px;
+            --q1-color: #111; --q2-color: #111; --q3-color: #111; --q4-color: #111;
+            --q1-bg: #f5f5f5; --q2-bg: #f5f5f5; --q3-bg: #f5f5f5; --q4-bg: #f5f5f5;
+            --axis-color: #111; --grid-color: #ddd; --font: "Helvetica Neue", "PingFang SC", sans-serif;
+            --chart-radius: 2px; --chart-stroke: #ddd; --detail-top: 2px;
+        }
+        body[data-theme="bauhaus"] {
+            --bg: #f4f0e6; --card-bg: #fff; --text: #1a1a1a; --text-secondary: #444;
+            --border: 2px solid #1a1a1a; --shadow: none; --radius: 0px;
+            --q1-color: #e63946; --q2-color: #f4a261; --q3-color: #264653; --q4-color: #2a9d8f;
+            --q1-bg: #fce4e4; --q2-bg: #fff3e0; --q3-bg: #e0f2f1; --q4-bg: #e3f2fd;
+            --axis-color: #1a1a1a; --grid-color: #1a1a1a; --font: "Futura", "Century Gothic", "PingFang SC", sans-serif;
+            --chart-radius: 0px; --chart-stroke: #1a1a1a; --chart-stroke-width: 2; --detail-top: 4px;
+        }
+        body[data-theme="retrofuturism"] {
+            --bg: #0a0a1a; --card-bg: rgba(20,20,40,0.8); --text: #e0f0ff; --text-secondary: #a0b0d0;
+            --border: 1px solid #ff00ff; --shadow: 0 0 20px rgba(255,0,255,0.3); --radius: 8px;
+            --backdrop: blur(8px); --glass-bg: rgba(10,10,30,0.7);
+            --q1-color: #00ffff; --q2-color: #ff00ff; --q3-color: #ff5555; --q4-color: #00ff88;
+            --q1-bg: rgba(0,255,255,0.1); --q2-bg: rgba(255,0,255,0.1); --q3-bg: rgba(255,85,85,0.1); --q4-bg: rgba(0,255,136,0.1);
+            --axis-color: #ff00ff; --grid-color: #444; --font: "Orbitron", "Courier New", "PingFang SC", monospace;
+            --chart-radius: 6px; --chart-stroke: #ff00ff;
+        }
+        body[data-theme="brutalism"] {
+            --bg: #e5e5e5; --card-bg: #d3d3d3; --text: #1a1a1a; --text-secondary: #333;
+            --border: 2px solid #1a1a1a; --shadow: none; --radius: 0px;
+            --q1-color: #1a1a1a; --q2-color: #1a1a1a; --q3-color: #1a1a1a; --q4-color: #1a1a1a;
+            --q1-bg: #c8c8c8; --q2-bg: #c8c8c8; --q3-bg: #c8c8c8; --q4-bg: #c8c8c8;
+            --axis-color: #1a1a1a; --grid-color: #999; --font: "Courier New", monospace;
+            --chart-radius: 0; --chart-stroke: #1a1a1a; --chart-stroke-width: 2; --detail-top: 4px;
+        }
+        body[data-theme="anti-design"] {
+            --bg: #ff6b6b; --card-bg: #4ecdc4; --text: #1a1a2e; --text-secondary: #2d2d44;
+            --border: 3px dashed #ffe66d; --shadow: 10px -10px 0 #f7fff7; --radius: 12px 4px 24px 8px;
+            --q1-color: #1a535c; --q2-color: #ff9f1c; --q3-color: #e71d36; --q4-color: #2ec4b6;
+            --q1-bg: #f7fff7; --q2-bg: #f7fff7; --q3-bg: #f7fff7; --q4-bg: #f7fff7;
+            --axis-color: #1a1a2e; --grid-color: #1a1a2e; --font: "Comic Sans MS", "Chalkboard SE", cursive;
+            --chart-radius: 8px; --chart-stroke: #1a1a2e; --detail-top: 6px;
+        }
+        body[data-theme="acid-graphics"] {
+            --bg: #120c1c; --card-bg: rgba(30,20,50,0.7); --text: #d4f0f0; --text-secondary: #a0c0c0;
+            --border: 1px solid #39ff14; --shadow: 0 0 30px rgba(57,255,20,0.3); --radius: 20px;
+            --backdrop: blur(15px); --glass-bg: rgba(20,10,30,0.5);
+            --q1-color: #ff007f; --q2-color: #ffcc00; --q3-color: #00ffcc; --q4-color: #bf00ff;
+            --q1-bg: rgba(255,0,127,0.15); --q2-bg: rgba(255,204,0,0.15); --q3-bg: rgba(0,255,204,0.15); --q4-bg: rgba(191,0,255,0.15);
+            --axis-color: #39ff14; --grid-color: #555; --font: "Monaco", "Courier New", monospace;
+            --chart-radius: 14px; --chart-stroke: #39ff14;
+        }
+    </style>
+</head>
+<body data-theme="material">
+
+<div class="style-bar">
+    <button onclick="setTheme('skeuo')">拟物化</button>
+    <button onclick="setTheme('flat')">扁平化</button>
+    <button onclick="setTheme('material')" class="active">Material</button>
+    <button onclick="setTheme('neumorphism')">新拟态</button>
+    <button onclick="setTheme('glassmorphism')">玻璃拟态</button>
+    <button onclick="setTheme('claymorphism')">粘土拟态</button>
+    <button onclick="setTheme('liquid-glass')">液态玻璃</button>
+    <button onclick="setTheme('neo-brutalism')">新粗野主义</button>
+    <button onclick="setTheme('minimalism')">极简主义</button>
+    <button onclick="setTheme('bauhaus')">包豪斯</button>
+    <button onclick="setTheme('retrofuturism')">复古未来</button>
+    <button onclick="setTheme('brutalism')">粗野主义</button>
+    <button onclick="setTheme('anti-design')">反设计</button>
+    <button onclick="setTheme('acid-graphics')">酸性设计</button>
+</div>
+
+<div class="container">
+    <div class="header">
+        <h1>AI 时代管理幅度四象限框架</h1>
+        <p>横轴：AI 可接管度（低 → 高）&nbsp;&nbsp;|&nbsp;&nbsp;纵轴：关系依赖度（低 → 高）</p>
+    </div>
+
+    <div class="chart-wrapper">
+        <h2>📐 管理幅度定位象限图</h2>
+        <div class="svg-container">
+            <svg viewBox="-30 -50 780 720" xmlns="http://www.w3.org/2000/svg">
+                <rect x="60" y="40" width="250" height="250" fill="var(--q2-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
+                <rect x="330" y="40" width="250" height="250" fill="var(--q1-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
+                <rect x="60" y="310" width="250" height="250" fill="var(--q3-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
+                <rect x="330" y="310" width="250" height="250" fill="var(--q4-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
+
+                <line x1="320" y1="45" x2="320" y2="585" stroke="var(--axis-color)" stroke-width="2.5"/>
+                <line x1="40" y1="300" x2="600" y2="300" stroke="var(--axis-color)" stroke-width="2.5"/>
+                <polygon points="320,38 314,52 326,52" fill="var(--axis-color)"/>
+                <polygon points="607,300 593,294 593,306" fill="var(--axis-color)"/>
+
+                <text x="610" y="306" font-size="14" font-weight="500" fill="var(--axis-color)">AI 可接管度</text>
+                <text x="326" y="26" font-size="14" font-weight="500" fill="var(--axis-color)">关系依赖度</text>
+                <text x="560" y="290" font-size="11" fill="var(--text-secondary)">高 →</text>
+                <text x="306" y="62" font-size="11" fill="var(--text-secondary)">↑ 高</text>
+                <text x="306" y="598" font-size="11" fill="var(--text-secondary)">↓ 低</text>
+                <text x="22" y="290" font-size="11" fill="var(--text-secondary)">← 低</text>
+                <circle cx="320" cy="300" r="4" fill="var(--axis-color)"/>
+
+                <text x="390" y="95" font-size="16" font-weight="500" fill="var(--q1-color)">Ⅰ 增强型精英体</text>
+                <text x="390" y="120" font-size="12" fill="var(--q1-color)">高关系 + 高AI</text>
+                <rect x="390" y="133" width="95" height="24" rx="4" fill="var(--q1-bg)" stroke="var(--q1-color)" stroke-width="1"/>
+                <text x="400" y="150" font-size="11" font-weight="500" fill="var(--q1-color)">幅度 10-30人</text>
+                <text x="390" y="180" font-size="10" fill="var(--q1-color)">例：对冲基金策略组</text>
+                <text x="390" y="198" font-size="10" fill="var(--q1-color)">　　AI咨询顾问团队</text>
+                <text x="390" y="216" font-size="10" fill="var(--q1-color)">　　精品游戏创意组</text>
+
+                <text x="110" y="95" font-size="16" font-weight="500" fill="var(--q2-color)">Ⅱ 传统精耕型</text>
+                <text x="110" y="120" font-size="12" fill="var(--q2-color)">高关系 + 低AI</text>
+                <rect x="110" y="133" width="90" height="24" rx="4" fill="var(--q2-bg)" stroke="var(--q2-color)" stroke-width="1"/>
+                <text x="120" y="150" font-size="11" font-weight="500" fill="var(--q2-color)">幅度 5-15人</text>
+                <text x="110" y="180" font-size="10" fill="var(--q2-color)">例：心理咨询督导组</text>
+                <text x="110" y="198" font-size="10" fill="var(--q2-color)">　　特种部队小队</text>
+                <text x="110" y="216" font-size="10" fill="var(--q2-color)">　　硬科技初创团队</text>
+
+                <text x="110" y="375" font-size="16" font-weight="500" fill="var(--q3-color)">Ⅲ 高摩擦作坊型</text>
+                <text x="110" y="400" font-size="12" fill="var(--q3-color)">低关系 + 低AI</text>
+                <rect x="110" y="413" width="90" height="24" rx="4" fill="var(--q3-bg)" stroke="var(--q3-color)" stroke-width="1"/>
+                <text x="120" y="430" font-size="11" font-weight="500" fill="var(--q3-color)">幅度 20-50人</text>
+                <text x="110" y="460" font-size="10" fill="var(--q3-color)">例：传统猎头公司</text>
+                <text x="110" y="478" font-size="10" fill="var(--q3-color)">　　社区医院行政办</text>
+                <text x="110" y="496" font-size="10" fill="var(--q3-color)">　　小型工程分包商</text>
+
+                <text x="390" y="375" font-size="16" font-weight="500" fill="var(--q4-color)">Ⅳ 算法规模型</text>
+                <text x="390" y="400" font-size="12" fill="var(--q4-color)">低关系 + 高AI</text>
+                <rect x="390" y="413" width="110" height="24" rx="4" fill="var(--q4-bg)" stroke="var(--q4-color)" stroke-width="1"/>
+                <text x="400" y="430" font-size="11" font-weight="500" fill="var(--q4-color)">幅度 数百-数千人</text>
+                <text x="390" y="460" font-size="10" fill="var(--q4-color)">例：电商仓储分拣中心</text>
+                <text x="390" y="478" font-size="10" fill="var(--q4-color)">　　数据标注众包平台</text>
+                <text x="390" y="496" font-size="10" fill="var(--q4-color)">　　自动化内容审核团队</text>
+
+                <line x1="320" y1="55" x2="320" y2="285" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
+                <line x1="75" y1="300" x2="305" y2="300" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
+                <line x1="335" y1="300" x2="580" y2="300" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
+                <line x1="320" y1="315" x2="320" y2="570" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
+            </svg>
+        </div>
+    </div>
+
+    <div class="criteria-grid">
+        <div class="criteria-card">
+            <h3>🤝 维度一：关系依赖度</h3>
+            <p>组织核心目标在多大程度上依赖成员间的高信任、心理安全与非正式默契。</p>
+            <table>
+                <tr><th>判断指标</th><th>高关系依赖 (4-5分)</th><th>低关系依赖 (1-2分)</th></tr>
+                <tr><td>任务互依性</td><td>频繁、难以预定的互相调整</td><td>任务可独立完成、标准化</td></tr>
+                <tr><td>创新不确定性</td><td>依赖创造性碰撞，需要心理安全</td><td>产出明确，流程固定</td></tr>
+                <tr><td>情感劳动含量</td><td>工作本身涉及处理人的情绪</td><td>极少情绪互动需求</td></tr>
+                <tr><td>价值观一致性</td><td>需要对"为何而做"有共享信念</td><td>契约即可，不需深层价值认同</td></tr>
+                <tr><td>关键人才流失影响</td><td>隐性关系网断裂，严重损害产出</td><td>人员替换成本低</td></tr>
+            </table>
+        </div>
+        <div class="criteria-card">
+            <h3>🤖 维度二：AI 可接管度</h3>
+            <p>日常运营中有多大比例的决策与操作可被AI端到端可靠完成。</p>
+            <table>
+                <tr><th>判断指标</th><th>高可接管度 (4-5分)</th><th>低可接管度 (1-2分)</th></tr>
+                <tr><td>任务结构化</td><td>步骤清晰，例外有明确边界</td><td>高度非结构化，例外频繁</td></tr>
+                <tr><td>数据完整性</td><td>数据充分、干净、可获取</td><td>数据匮乏、质量差</td></tr>
+                <tr><td>错误可逆性</td><td>错误成本低、可逆</td><td>错误代价极高、不可逆</td></tr>
+                <tr><td>环境稳定性</td><td>业务环境变化缓慢</td><td>频繁出现全新模式</td></tr>
+                <tr><td>当前AI表现</td><td>实际可用性高，异常率＜1%</td><td>AI难以胜任核心环节</td></tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="detail-grid">
+        <div class="detail-card q1">
+            <h3>Ⅰ 增强型精英体</h3>
+            <div class="subtitle">高关系依赖 · 高AI可接管</div>
+            <span class="badge">管理幅度 10–30人</span>
+            <p>AI端到端接管80%以上的常规决策与执行，管理者将所有精力投入"赋意义"和深度人文连接。</p>
+            <h4>📌 如何判断自己在此象限</h4>
+            <ul><li>团队高度互依，需要频繁的非正式沟通与信任</li><li>AI已深度嵌入核心流程</li><li>管理者聚焦于愿景与意义</li></ul>
+            <h4>🧠 管理者应对思路</h4>
+            <ul><li>从"做决定"升级为"问正确的问题"</li><li>成为团队的意义建构者</li><li>投资哲学与人文素养</li></ul>
+            <h4>💼 员工应对思路</h4>
+            <ul><li>不可替代性来自"在场"</li><li>基于人文视角质疑AI方案</li><li>主动寻求职业意义对话</li></ul>
+            <div class="example-box"><strong>典型案例：</strong>量化对冲基金策略团队、AI辅助顶级咨询顾问组、精品游戏创意核心组。</div>
+        </div>
+        <div class="detail-card q2">
+            <h3>Ⅱ 传统精耕型</h3>
+            <div class="subtitle">高关系依赖 · 低AI可接管</div>
+            <span class="badge">管理幅度 5–15人</span>
+            <p>核心工作高度不确定，AI仅提供浅层辅助。管理者是全能型的"教练+家长"。</p>
+            <h4>📌 如何判断自己在此象限</h4>
+            <ul><li>成员间需深厚信任</li><li>AI仅完成信息检索等辅助工作</li><li>管理者大量时间用于一对一辅导</li></ul>
+            <h4>🧠 管理者应对思路</h4>
+            <ul><li>把AI当作"高级实习生"</li><li>绝不用AI"监控"人</li><li>坦诚表达依赖是最好的粘合剂</li></ul>
+            <h4>💼 员工应对思路</h4>
+            <ul><li>成为管理者的"外挂大脑"</li><li>理解混乱的价值</li></ul>
+            <div class="example-box"><strong>典型案例：</strong>心理咨询师督导小组、特种部队小队、初创期硬科技科学家团队。</div>
+        </div>
+        <div class="detail-card q3">
+            <h3>Ⅲ 高摩擦作坊型</h3>
+            <div class="subtitle">低关系依赖 · 低AI可接管</div>
+            <span class="badge">管理幅度 20–50人</span>
+            <p>任务可标准化但依赖人工协调。最需要转型的象限。</p>
+            <h4>📌 如何判断自己在此象限</h4>
+            <ul><li>工作流程本可标准化</li><li>员工间无需深层情感连接</li><li>管理者陷于低价值劳动</li></ul>
+            <h4>🧠 管理者应对思路</h4>
+            <ul><li>改造重复性协调环节</li><li>成为"流程诊断者"</li><li>启动初步数字化</li></ul>
+            <h4>💼 员工应对思路</h4>
+            <ul><li>成为"数字化接口"</li><li>从电子化清单开始</li></ul>
+            <div class="example-box"><strong>典型案例：</strong>传统猎头公司、社区医院行政办公室、小型工程项目分包商。</div>
+        </div>
+        <div class="detail-card q4">
+            <h3>Ⅳ 算法规模型</h3>
+            <div class="subtitle">低关系依赖 · 高AI可接管</div>
+            <span class="badge">管理幅度 数百–数千人</span>
+            <p>AI端到端管理执行。管理者是"系统管理员"。</p>
+            <h4>📌 如何判断自己在此象限</h4>
+            <ul><li>任务高度标准化</li><li>AI自动完成绩效评估</li><li>管理者极少一对一沟通</li></ul>
+            <h4>🧠 管理者应对思路</h4>
+            <ul><li>核心KPI是无人工干预率</li><li>警惕算法偏见</li><li>价值在于设计系统规则</li></ul>
+            <h4>💼 员工应对思路</h4>
+            <ul><li>成为高评分节点</li><li>寻找转岗象限Ⅱ/Ⅰ</li><li>管理自己的数字孪生</li></ul>
+            <div class="example-box"><strong>典型案例：</strong>大型电商仓储分拣中心、大模型数据标注众包平台、自动化内容审核团队。</div>
+        </div>
+    </div>
+
+    <div class="dialectical">
+        <h2>🧠 辩证思考：框架的动态性与现实启示</h2>
+        <div class="dialectical-grid">
+            <div class="dialectical-card"><h4>🔄 同一组织，多象限并存</h4><p>前沿研究院是象限Ⅰ，销售铁军是象限Ⅳ，HR是象限Ⅱ。一刀切的管理必然失败。</p></div>
+            <div class="dialectical-card"><h4>⏳ 同一团队，随生命周期迁移</h4><p>立项期是象限Ⅱ，增长期变象限Ⅳ，危机时退回象限Ⅱ。管理者需有意识升降维。</p></div>
+            <div class="dialectical-card"><h4>🚀 AI进化推动象限位移</h4><p>随着AI共情能力突破，象限Ⅱ可转为象限Ⅰ。技术决定象限边界的动态性。</p></div>
+            <div class="dialectical-card"><h4>🌐 "双幅度"分形结构</h4><p>管理者做30人社区的"意义市长"，只直连5-8位"长老"，由其辐射社区。</p></div>
+            <div class="dialectical-card"><h4>🧭 转型的两个基本方向</h4><p>向右投资AI提升可接管度；向下重新设计工作降低关系依赖。</p></div>
+            <div class="dialectical-card"><h4>⚠️ 警惕"伪象限Ⅰ"</h4><p>引入AI不等于象限Ⅰ。需同时满足高关系与高AI，否则只是更精致的螺丝钉。</p></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function setTheme(name) {
+        document.body.setAttribute('data-theme', name);
+        document.querySelectorAll('.style-bar button').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.style-bar button[onclick="setTheme('${name}')"]`).classList.add('active');
+    }
+</script>
+</body>
+</html>

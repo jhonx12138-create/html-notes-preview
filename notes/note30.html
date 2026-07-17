@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>人大版《金融学》核心知识体系 · 演示</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif+SC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+/* ============== Theme · 商务深蓝 (corporate-navy) ============== */
+:root{
+  --bg:#0a1f3d;
+  --bg2:#0f2a52;
+  --bg3:#143266;
+  --fg:#e8edf5;
+  --mute:#a8b3c7;
+  --dim:#6e7a92;
+  --accent:#c9a961;
+  --accent2:#8b6f3a;
+  --accent-grad:linear-gradient(90deg,#c9a961 0%,#e6cf95 50%,#c9a961 100%);
+  --line:rgba(201,169,97,.28);
+  --paper:#0f2a52;
+  --up:#5fb786;
+  --down:#e15c63;
+  --ui:'Inter','Helvetica Neue','PingFang SC','Microsoft YaHei',sans-serif;
+  --serif:'Noto Serif SC','Source Han Serif SC',Georgia,'Times New Roman',serif;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--ui);overflow:hidden;font-feature-settings:'tnum'}
+body{
+  background:
+    radial-gradient(circle at 18% 12%, rgba(201,169,97,.06), transparent 55%),
+    radial-gradient(circle at 86% 90%, rgba(15,42,82,.85), transparent 60%),
+    var(--bg);
+}
+
+/* ===== Stage / Slide ===== */
+.stage{position:fixed;inset:0}
+.slide{
+  position:absolute;inset:0;
+  display:block;
+  padding:80px 7vw;
+  opacity:0;visibility:hidden;
+  transform:translateY(20px);
+  transition:opacity .55s cubic-bezier(.7,0,.2,1),transform .55s cubic-bezier(.7,0,.2,1),visibility .55s;
+  overflow-y:auto;overflow-x:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:none}
+.canvas{
+  width:100%;max-width:1200px;margin:0 auto;
+  min-height:calc(100vh - 160px);
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;z-index:2;
+}
+
+/* reveal */
+.slide.active .reveal{animation:reveal-rise .7s cubic-bezier(.7,0,.2,1) both}
+.slide.active .reveal:nth-child(1){animation-delay:.05s}
+.slide.active .reveal:nth-child(2){animation-delay:.15s}
+.slide.active .reveal:nth-child(3){animation-delay:.25s}
+.slide.active .reveal:nth-child(4){animation-delay:.35s}
+.slide.active .reveal:nth-child(5){animation-delay:.45s}
+.slide.active .reveal:nth-child(6){animation-delay:.55s}
+.slide.active .reveal:nth-child(7){animation-delay:.65s}
+@keyframes reveal-rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+/* ===== Topbar / Footbar / Progress / Nav ===== */
+.topbar{
+  position:fixed;top:0;left:0;right:0;height:46px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
+  color:var(--mute);z-index:10;
+  background:linear-gradient(to bottom, rgba(10,31,61,.92), rgba(10,31,61,0));
+}
+.topbar::before{
+  content:"";position:absolute;top:0;left:0;right:0;height:3px;
+  background:var(--accent-grad);
+}
+.topbar .brand{color:var(--accent);font-weight:700}
+.topbar #topCh{color:var(--fg);letter-spacing:.18em}
+
+.footbar{
+  position:fixed;bottom:0;left:0;right:0;height:38px;
+  display:flex;align-items:center;justify-content:space-between;padding:0 28px;
+  font-size:11px;letter-spacing:.18em;font-weight:600;color:var(--mute);
+  z-index:10;
+  background:linear-gradient(to top, rgba(10,31,61,.92), rgba(10,31,61,0));
+}
+.footbar .pg{font-variant-numeric:tabular-nums;font-weight:700;color:var(--accent)}
+.progress{
+  position:fixed;bottom:0;left:0;height:2px;width:0;z-index:11;
+  background:var(--accent-grad);
+  transition:width .55s cubic-bezier(.7,0,.2,1);
+  box-shadow:0 0 8px rgba(201,169,97,.5);
+}
+.nav-arrow{
+  position:fixed;top:50%;transform:translateY(-50%);
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(15,42,82,.6);border:1px solid var(--line);
+  color:var(--accent);
+  display:grid;place-items:center;font-size:22px;cursor:pointer;
+  z-index:10;transition:all .25s;backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+.nav-arrow:hover{background:rgba(201,169,97,.18);transform:translateY(-50%) scale(1.07)}
+.nav-arrow.prev{left:20px}.nav-arrow.next{right:20px}
+
+/* ===== Typography ===== */
+.eyebrow{
+  display:inline-block;font-size:11px;letter-spacing:.32em;text-transform:uppercase;
+  margin-bottom:18px;font-weight:700;color:var(--accent);
+  padding:6px 12px 6px 0;border-bottom:1px solid var(--line);
+}
+h1{
+  font-family:var(--serif);
+  font-size:clamp(40px,5.4vw,72px);font-weight:700;line-height:1.1;letter-spacing:-.01em;
+  margin-bottom:22px;
+  color:var(--fg);
+}
+h1 b{color:var(--accent);font-weight:700}
+h2{
+  font-family:var(--serif);
+  font-size:clamp(28px,3.8vw,48px);font-weight:600;line-height:1.15;letter-spacing:-.005em;
+  margin-bottom:14px;color:var(--fg);
+}
+h2 .h2-num{
+  display:inline-block;font-family:var(--ui);
+  color:var(--accent);font-size:.55em;letter-spacing:.2em;
+  margin-right:14px;vertical-align:.18em;font-weight:600;
+}
+h3{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--fg);margin-bottom:10px;line-height:1.3}
+h4{font-size:17px;font-weight:600;color:var(--fg);margin-bottom:8px;line-height:1.35}
+.lead{
+  max-width:760px;line-height:1.85;font-size:16px;margin-bottom:22px;color:var(--mute);
+}
+p{line-height:1.75;color:var(--mute);font-size:15px}
+.footnote{font-size:12px;color:var(--dim);margin-top:24px;letter-spacing:.05em}
+
+/* ===== 封面 cover ===== */
+.slide.cover .canvas{justify-content:center}
+.slide.cover h1{font-size:clamp(46px,6.4vw,86px);line-height:1.05}
+.slide.cover .deck{
+  font-family:var(--serif);font-style:italic;
+  color:var(--accent);font-size:22px;margin:18px 0 60px;letter-spacing:.04em;
+}
+.slide.cover .meta{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:30px;
+  border-top:1px solid var(--line);padding-top:26px;max-width:780px;
+}
+.slide.cover .meta b{
+  display:block;font-size:10px;letter-spacing:.3em;color:var(--accent);
+  text-transform:uppercase;margin-bottom:8px;font-weight:700;
+}
+.slide.cover .meta span{font-size:15px;color:var(--fg);font-weight:500;line-height:1.5}
+
+/* ===== 目录 toc ===== */
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:14px 28px;margin-top:26px}
+.toc-item{
+  display:grid;grid-template-columns:48px 1fr auto auto;gap:18px;align-items:center;
+  padding:18px 16px;border:1px solid var(--line);border-radius:2px;
+  background:rgba(15,42,82,.4);cursor:pointer;transition:all .25s;
+}
+.toc-item:hover{background:rgba(201,169,97,.08);border-color:var(--accent);transform:translateX(4px)}
+.toc .ti-num{
+  font-family:var(--serif);font-size:30px;font-weight:700;color:var(--accent);
+  font-variant-numeric:tabular-nums;line-height:1;
+}
+.toc .ti-t{font-size:16px;font-weight:600;color:var(--fg);line-height:1.4}
+.toc .ti-t small{display:block;font-weight:400;color:var(--mute);font-size:12px;margin-top:3px;letter-spacing:.05em}
+.toc .ti-p{font-size:11px;letter-spacing:.18em;color:var(--mute);font-weight:600}
+.toc .ti-a{color:var(--accent);font-size:18px;opacity:.5;transition:opacity .2s}
+.toc-item:hover .ti-a{opacity:1}
+
+/* ===== 章节封面 chapter ===== */
+.slide.ch-cover .canvas{justify-content:center}
+.slide.ch-cover .ch-lbl{
+  font-size:11px;letter-spacing:.4em;color:var(--accent);text-transform:uppercase;
+  font-weight:700;margin-bottom:36px;
+}
+.slide.ch-cover .ch-num{
+  font-family:var(--serif);font-size:200px;font-weight:700;line-height:.85;
+  color:transparent;-webkit-text-stroke:1.5px var(--accent);
+  letter-spacing:-.04em;margin-bottom:8px;font-variant-numeric:tabular-nums;
+}
+.slide.ch-cover h1{font-size:clamp(48px,6.5vw,84px);margin-top:16px}
+.slide.ch-cover h1 b{display:block;color:var(--accent);font-style:italic}
+.slide.ch-cover .ch-desc{
+  max-width:680px;margin-top:30px;color:var(--mute);font-size:17px;line-height:1.85;
+  border-left:2px solid var(--accent);padding-left:18px;
+}
+
+/* ===== Single body + KPI 侧栏 ===== */
+.aside-kpi{
+  border:1px solid var(--line);background:rgba(15,42,82,.5);
+  padding:28px 26px;border-radius:2px;position:relative;
+}
+.aside-kpi::before{
+  content:"";position:absolute;top:0;left:0;width:36px;height:2px;background:var(--accent);
+}
+.aside-kpi .kpi-label{
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:14px;
+}
+.aside-kpi .kpi-num{
+  font-family:var(--serif);font-size:54px;font-weight:700;color:var(--fg);line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.aside-kpi .kpi-num .u{font-size:.4em;color:var(--accent);margin-left:6px;font-weight:500}
+.aside-kpi .kpi-trend{font-size:13px;color:var(--mute);margin-top:14px;line-height:1.6}
+
+/* 通用 列表 */
+.bullets{margin-top:14px}
+.bullets li{
+  list-style:none;position:relative;padding-left:18px;line-height:1.85;color:var(--mute);font-size:15px;margin-bottom:7px;
+}
+.bullets li::before{
+  content:"";position:absolute;left:0;top:.85em;width:8px;height:1px;background:var(--accent);
+}
+.bullets li b{color:var(--fg);font-weight:600}
+
+/* ===== Cards 三模块 / 四模块 ===== */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:14px}
+.cards-4{grid-template-columns:repeat(4,1fr);gap:18px}
+.card{
+  border:1px solid var(--line);background:rgba(15,42,82,.5);
+  padding:26px 22px;border-radius:2px;position:relative;
+  transition:all .25s;
+}
+.card::before{
+  content:"";position:absolute;top:0;left:0;width:32px;height:2px;background:var(--accent);
+}
+.card:hover{transform:translateY(-3px);border-color:var(--accent);background:rgba(15,42,82,.75)}
+.card .ico{
+  font-family:var(--serif);font-size:13px;letter-spacing:.22em;
+  color:var(--accent);font-weight:700;margin-bottom:14px;text-transform:uppercase;
+}
+.card h3{font-size:19px;margin-bottom:12px}
+.card .num{
+  font-family:var(--serif);font-size:38px;font-weight:700;color:var(--accent);line-height:1;
+  margin-bottom:12px;font-variant-numeric:tabular-nums;
+}
+.card p{font-size:14px;line-height:1.75}
+
+/* ===== 四 KPI ===== */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:18px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat{
+  padding:32px 22px;border-right:1px solid var(--line);position:relative;
+}
+.stat:last-child{border-right:none}
+.stat .lbl{
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:16px;
+}
+.stat .num{
+  font-family:var(--serif);font-size:46px;font-weight:700;color:var(--fg);line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.stat .num .u{font-size:.4em;color:var(--accent);margin-left:6px;font-weight:500}
+.stat .trend{font-size:13px;color:var(--mute);margin-top:14px;line-height:1.6}
+
+/* ===== 引言 quote ===== */
+.slide.quote .canvas{justify-content:center;align-items:center;text-align:center}
+.slide.quote .qm{
+  font-family:var(--serif);font-size:140px;color:var(--accent);
+  line-height:1;font-weight:700;margin-bottom:0;
+}
+.slide.quote .qt{
+  font-family:var(--serif);font-size:clamp(26px,3.2vw,40px);font-weight:500;color:var(--fg);
+  line-height:1.5;max-width:920px;margin:0 auto;font-style:italic;
+}
+.slide.quote .qa-line{width:60px;height:1px;background:var(--accent);margin:36px auto 18px}
+.slide.quote .qn{font-size:15px;font-weight:700;color:var(--fg);letter-spacing:.05em}
+.slide.quote .qj{font-size:13px;color:var(--mute);margin-top:6px;letter-spacing:.1em}
+
+/* ===== 数据表 ===== */
+.data-table{
+  width:100%;border-collapse:collapse;margin-top:14px;font-size:14px;
+  font-variant-numeric:tabular-nums;
+}
+.data-table th{
+  text-align:left;padding:14px 12px;border-bottom:2px solid var(--accent);
+  color:var(--accent);font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;
+}
+.data-table th.r{text-align:right}
+.data-table td{
+  padding:13px 12px;border-bottom:1px solid var(--line);color:var(--fg);
+}
+.data-table td.r{text-align:right}
+.data-table td.dim{color:var(--mute)}
+.data-table td.up{color:var(--up);font-weight:600}
+.data-table td.down{color:var(--down);font-weight:600}
+.data-table tr.total td{
+  border-top:1px solid var(--accent);border-bottom:none;
+  font-weight:700;color:var(--accent);padding-top:16px;
+}
+.data-table tr:hover td{background:rgba(201,169,97,.04)}
+
+/* ===== 时间线 ===== */
+.timeline{margin-top:14px;position:relative;padding-left:30px}
+.timeline::before{
+  content:"";position:absolute;top:6px;bottom:6px;left:7px;width:1px;background:var(--line);
+}
+.tl-item{position:relative;margin-bottom:24px;padding-bottom:8px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{
+  position:absolute;left:-30px;top:6px;width:14px;height:14px;border-radius:50%;
+  background:var(--bg);border:2px solid var(--accent);
+  box-shadow:0 0 0 3px rgba(201,169,97,.12);
+}
+.tl-date{
+  display:inline-block;font-size:11px;letter-spacing:.18em;color:var(--accent);font-weight:700;
+  text-transform:uppercase;margin-bottom:6px;
+}
+.tl-content h4{font-size:16px;margin-bottom:5px}
+.tl-content p{font-size:14px;line-height:1.7}
+
+/* ===== SWOT 四象限 ===== */
+.quadrants{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.quadrant{
+  border:1px solid var(--line);background:rgba(15,42,82,.5);
+  padding:22px 22px 20px;border-radius:2px;position:relative;
+}
+.quadrant::before{
+  content:"";position:absolute;top:0;left:0;width:32px;height:2px;background:var(--accent);
+}
+.quadrant .q-tag{
+  display:inline-block;font-family:var(--serif);font-size:11px;letter-spacing:.28em;
+  color:var(--accent);font-weight:700;margin-bottom:10px;text-transform:uppercase;
+}
+.quadrant h4{font-size:17px;margin-bottom:8px}
+.quadrant p{font-size:13.5px;line-height:1.7;margin-bottom:8px}
+.quadrant ul{list-style:none}
+.quadrant ul li{
+  position:relative;padding-left:14px;font-size:13px;color:var(--mute);line-height:1.7;margin-bottom:4px;
+}
+.quadrant ul li::before{
+  content:"";position:absolute;left:0;top:.85em;width:6px;height:1px;background:var(--accent);
+}
+
+/* ===== 流程 process ===== */
+.process{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:18px}
+.step{
+  position:relative;padding:22px 18px;border:1px solid var(--line);
+  background:rgba(15,42,82,.4);border-radius:2px;margin-right:-1px;
+}
+.step::before{content:"";position:absolute;top:0;left:0;width:30px;height:2px;background:var(--dim)}
+.step.done::before,.step.active::before{background:var(--accent)}
+.step.active{background:rgba(201,169,97,.06);border-color:var(--accent)}
+.step .step-num{
+  font-family:var(--serif);font-size:34px;font-weight:700;color:var(--accent);
+  line-height:1;margin-bottom:10px;font-variant-numeric:tabular-nums;
+}
+.step.upcoming .step-num{color:var(--dim)}
+.step .step-content h4{font-size:15px;margin-bottom:6px}
+.step .step-content p{font-size:13px;line-height:1.7}
+
+/* ===== 结尾页 ===== */
+.slide.end .canvas{justify-content:center;align-items:center;text-align:center}
+.slide.end h1{font-size:clamp(48px,6.5vw,84px);text-align:center}
+.slide.end h1 b{display:block;color:var(--accent);font-style:italic}
+.slide.end .e-line{width:80px;height:1px;background:var(--accent);margin:32px auto}
+.slide.end .e-tag{
+  font-size:16px;color:var(--mute);max-width:680px;margin:0 auto 50px;line-height:1.85;
+}
+.slide.end .e-c{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:50px;
+  border-top:1px solid var(--line);padding-top:28px;max-width:780px;
+}
+.slide.end .e-c .lbl{font-size:10px;letter-spacing:.3em;color:var(--accent);text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.slide.end .e-c .val{font-size:14px;color:var(--fg);font-weight:500;line-height:1.5}
+
+/* 双栏正文 */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:18px}
+.two-col h4{font-size:17px;margin-bottom:10px;color:var(--accent)}
+.two-col h4 small{font-family:var(--ui);color:var(--mute);font-weight:500;font-size:12px;letter-spacing:.1em;margin-left:6px}
+
+/* 三 col 含 ico */
+.tri-col{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;margin-top:14px}
+.tri-col .blk{border-left:2px solid var(--accent);padding-left:16px}
+.tri-col .blk h4{font-size:16px;margin-bottom:6px}
+.tri-col .blk small{font-size:11px;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;font-weight:700;display:block;margin-bottom:6px}
+.tri-col .blk p{font-size:13.5px;line-height:1.7}
+
+/* 罗马数字小角标 */
+.ch-roman{
+  font-family:var(--serif);font-style:italic;color:var(--accent);font-weight:600;
+  font-size:14px;letter-spacing:.15em;margin-bottom:8px;display:block;
+}
+
+/* 公式块 */
+.formula{
+  font-family:var(--serif);font-size:22px;color:var(--fg);
+  background:rgba(15,42,82,.55);border:1px solid var(--line);
+  padding:14px 18px;border-radius:2px;margin:10px 0;
+  font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  border-left:3px solid var(--accent);line-height:1.6;
+  text-align:center;
+}
+.formula small{display:block;font-family:var(--ui);font-style:normal;color:var(--mute);font-size:12px;margin-top:6px;letter-spacing:.04em;line-height:1.5}
+.formula .gold{color:var(--accent);font-weight:600}
+.formula i{font-style:italic;color:var(--accent)}
+
+/* 公式矩阵：左侧公式 + 右侧释义 */
+.fmat{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px}
+.fmat .item{
+  border:1px solid var(--line);background:rgba(15,42,82,.4);
+  padding:14px 16px;border-radius:2px;border-left:2px solid var(--accent);
+}
+.fmat .item .nm{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:6px}
+.fmat .item .fx{font-family:var(--serif);font-size:18px;color:var(--fg);margin-bottom:6px;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.fmat .item .ds{font-size:12.5px;color:var(--mute);line-height:1.65}
+
+/* 紧凑公式列表 */
+.fcol{display:flex;flex-direction:column;gap:9px;margin-top:8px}
+.fcol .frow{
+  display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:baseline;
+  padding:8px 14px;border-bottom:1px dashed var(--line);
+}
+.fcol .frow:last-child{border-bottom:none}
+.fcol .frow .fk{font-family:var(--serif);font-size:16px;color:var(--accent);font-weight:600;letter-spacing:.02em;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fcol .frow .fv{font-size:13.5px;color:var(--mute);line-height:1.65}
+
+/* ===== Print ===== */
+@media print{
+  @page{ size: 1280px 800px; margin:0; }
+  html,body{ height:auto; overflow:visible; background:#0a1f3d; }
+  .topbar,.footbar,.progress,.nav-arrow{ display:none !important; }
+  .stage{ position:static; }
+  .slide{
+    position:relative;inset:auto;width:100%;height:800px;
+    page-break-after:always;page-break-inside:avoid;
+    break-after:page;break-inside:avoid;
+    opacity:1 !important;visibility:visible !important;
+    transform:none !important;transition:none !important;animation:none !important;
+    overflow:hidden;
+  }
+  .slide:last-child{page-break-after:auto;break-after:auto}
+  .slide *{animation:none !important;transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">⊹ 人大版《金融学》 · 知识体系</div>
+  <div id="topCh"></div>
+</div>
+
+<div class="stage" id="stage">
+
+<!-- ============== P1 封面 ============== -->
+<section class="slide cover active" data-name="封面">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Renmin Univ. of China · Finance Textbook</span></div>
+    <h1 class="reveal">人大版《金融学》<br><b>核心知识体系梳理</b></h1>
+    <p class="deck reveal">黄达 · 张杰 主编 · 中国金融学派代表性教材（第六版）</p>
+    <div class="meta reveal">
+      <div><b>编著</b><span>黄达 / 张杰</span></div>
+      <div><b>出版</b><span>中国人民大学出版社</span></div>
+      <div><b>篇幅</b><span>四篇 · 二十二讲</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P2 目录 ============== -->
+<section class="slide" data-name="目录">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Index · 目录</span></div>
+    <h1 class="reveal">从货币到金融<br><b>四大知识板块</b></h1>
+    <div class="toc reveal">
+      <div class="toc-item" onclick="goto(2)">
+        <div class="ti-num">01</div>
+        <div class="ti-t">教材简介与体系全景<small>作者 · 沿革 · 章节地图</small></div>
+        <div class="ti-p">P. 03</div>
+        <div class="ti-a">→</div>
+      </div>
+      <div class="toc-item" onclick="goto(3)">
+        <div class="ti-num">02</div>
+        <div class="ti-t">货币与信用基础<small>货币 / 信用 / 利率</small></div>
+        <div class="ti-p">P. 05</div>
+        <div class="ti-a">→</div>
+      </div>
+      <div class="toc-item" onclick="goto(7)">
+        <div class="ti-num">03</div>
+        <div class="ti-t">金融市场与金融机构<small>货币市场 / 资本市场 / 中央银行 · 资产定价</small></div>
+        <div class="ti-p">P. 09</div>
+        <div class="ti-a">→</div>
+      </div>
+      <div class="toc-item" onclick="goto(12)">
+        <div class="ti-num">04</div>
+        <div class="ti-t">货币理论与货币政策<small>需求 / 供给 / 公式集 / 政策传导</small></div>
+        <div class="ti-p">P. 14</div>
+        <div class="ti-a">→</div>
+      </div>
+      <div class="toc-item" onclick="goto(17)">
+        <div class="ti-num">05</div>
+        <div class="ti-t">通胀 · 监管 · 开放经济<small>通胀 / 监管演进 / 国际收支 · 平价</small></div>
+        <div class="ti-p">P. 18</div>
+        <div class="ti-a">→</div>
+      </div>
+      <div class="toc-item" onclick="goto(23)">
+        <div class="ti-num">06</div>
+        <div class="ti-t">学习路径 · 计算题 · 公式手册<small>三层阅读法 / 计量速查表</small></div>
+        <div class="ti-p">P. 24</div>
+        <div class="ti-a">→</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P3 教材简介 ============== -->
+<section class="slide" data-name="教材简介">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">About · 教材简介</span></div>
+    <h2 class="reveal"><span class="h2-num">01</span>中国金融学派的标杆教科书</h2>
+    <p class="lead reveal">由"中国金融学之父"<b style="color:var(--fg)">黄达</b>先生主编的《金融学》，是中国人民大学出版社"21 世纪金融学系列教材"的旗舰之作；自 2003 年初版以来历经多版修订，现行通用第六版由黄达、张杰共同主编，在保留宏观金融理论根基的同时，吸纳了利率市场化、汇率市场化、金融科技与开放金融体系的最新进展。</p>
+    <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:36px;margin-top:14px">
+      <div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px">编写定位</h4>
+        <ul class="bullets">
+          <li><b>大金融视野：</b>把货币银行学与国际金融、金融市场、公司金融统合在统一框架下</li>
+          <li><b>理论与中国实践并重：</b>每章配套中国金融改革史与制度演进案例</li>
+          <li><b>面向高年级本科与硕士：</b>是央行、银保监、研究院、高校研究生入学考试的核心参考</li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:12px">章节结构</h4>
+        <ul class="bullets">
+          <li><b>第一篇 范畴：</b>货币、信用、利息率、外汇与汇率</li>
+          <li><b>第二篇 机构与市场：</b>金融市场、金融机构、中央银行</li>
+          <li><b>第三篇 货币均衡：</b>货币需求、供给、政策与通胀通缩</li>
+          <li><b>第四篇 金融发展：</b>金融监管、开放经济、金融与经济增长</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P4 章节封面 I · 货币与信用 ============== -->
+<section class="slide ch-cover" data-name="第一章：货币与信用">
+  <div class="canvas">
+    <div class="reveal"><div class="ch-lbl">Chapter I · 第一篇 范畴</div></div>
+    <div class="reveal"><div class="ch-num">01</div></div>
+    <h1 class="reveal">货币 · 信用<b>· 利率</b></h1>
+    <p class="ch-desc reveal">金融学最底层的三个范畴：什么是货币、信用如何运行、利率如何形成与决定。这三块是后续宏观分析、市场分析、政策分析的共同基石。</p>
+  </div>
+</section>
+
+<!-- ============== P5 三模块 · 货币 / 信用 ============== -->
+<section class="slide" data-name="货币与信用三柱">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Three Pillars · 三大基础范畴</span></div>
+    <h2 class="reveal"><span class="h2-num">02</span>货币的本质与信用的形态</h2>
+    <p class="lead reveal">教材在开篇就明确：货币与信用并不是孤立的"工具"，而是经济运行的两条主血管。把握这两条主线，才能理解后续的市场、机构与政策。</p>
+    <div class="cards reveal">
+      <div class="card">
+        <div class="ico">01 · 货币职能</div>
+        <h3>货币的五大职能</h3>
+        <p><b style="color:var(--fg)">价值尺度 · 流通手段 · 贮藏手段 · 支付手段 · 世界货币</b>。教材延续马克思货币职能体系，并融合现代货币理论，强调"流通手段+支付手段"是现代信用货币的核心。</p>
+      </div>
+      <div class="card">
+        <div class="ico">02 · 货币制度</div>
+        <h3>货币制度的演变</h3>
+        <p>从<b style="color:var(--fg)">实物货币 → 金属货币（金本位 / 复本位）→ 不兑现的信用货币 → 电子货币 / 数字货币</b>。重点理解 1971 年布雷顿森林体系瓦解后，全球进入纯信用货币时代的逻辑。</p>
+      </div>
+      <div class="card">
+        <div class="ico">03 · 信用形式</div>
+        <h3>五大信用形式</h3>
+        <p><b style="color:var(--fg)">商业信用 · 银行信用 · 国家信用 · 消费信用 · 国际信用</b>。其中银行信用是现代经济的主导形式；国家信用通过国债将财政与货币联结，是宏观调控的关键支点。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P6 单栏 + KPI · 利息与利率 ============== -->
+<section class="slide" data-name="利息与利率">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Interest & Rates · 利息与利率</span></div>
+    <h2 class="reveal"><span class="h2-num">03</span>利息率：资金的价格信号</h2>
+    <div class="reveal" style="display:grid;grid-template-columns:2fr 1fr;gap:36px;margin-top:14px">
+      <div>
+        <p class="lead">利率是资金借贷市场的均衡价格，也是连接金融与实体经济最关键的传导变量。教材从三个层次展开：<b style="color:var(--fg)">利率的种类、利率的决定理论、利率的期限与风险结构</b>。</p>
+        <ul class="bullets">
+          <li><b>种类：</b>名义/实际、固定/浮动、市场/官定、基准/差别利率（LPR 是中国当前的核心基准）</li>
+          <li><b>决定理论：</b>古典储蓄投资论、可贷资金论、流动性偏好论（凯恩斯）、IS-LM 综合论</li>
+          <li><b>期限结构：</b>预期理论、市场分割理论、流动性溢价理论 —— 解释收益率曲线为何上斜、倒挂</li>
+          <li><b>风险结构：</b>违约风险、流动性、税收差异共同决定不同信用主体之间的利差</li>
+          <li><b>利率市场化：</b>中国 1996 年启动至 2015 年存款利率上限放开，2019 年 LPR 改革标志正式形成</li>
+        </ul>
+      </div>
+      <div class="aside-kpi">
+        <div class="kpi-label">核心公式 · Fisher</div>
+        <div class="kpi-num">i ≈ r + π<sup style="font-size:.4em;color:var(--accent)">e</sup></div>
+        <div class="kpi-trend">名义利率 ≈ 实际利率 + 预期通货膨胀率。预期通胀上行时，名义利率必须同步上行才能保持实际利率稳定。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P7 引言 · 货币的本质 ============== -->
+<section class="slide quote" data-name="引言：货币的本质">
+  <div class="canvas">
+    <div class="reveal"><div class="qm">"</div></div>
+    <p class="qt reveal">货币不是中性的面纱，而是穿越实体经济的<br>一条看不见、却始终存在的血脉。</p>
+    <div class="reveal">
+      <div class="qa-line"></div>
+      <div class="qn">黄  达</div>
+      <div class="qj">《金融学》引言 · 关于宏观金融分析的方法论</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P8 章节封面 II · 市场与机构 ============== -->
+<section class="slide ch-cover" data-name="第二章：市场与机构">
+  <div class="canvas">
+    <div class="reveal"><div class="ch-lbl">Chapter II · 第二篇 机构与市场</div></div>
+    <div class="reveal"><div class="ch-num">02</div></div>
+    <h1 class="reveal">金融市场<b>· 金融机构</b></h1>
+    <p class="ch-desc reveal">资金从盈余者流向赤字者的两条主路径：直接金融市场与间接金融机构。教材在此框架下系统梳理货币市场、资本市场、外汇市场，以及银行体系的层级结构。</p>
+  </div>
+</section>
+
+<!-- ============== P9 三模块 · 三大金融市场 ============== -->
+<section class="slide" data-name="三大金融市场">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Markets · 三大金融市场</span></div>
+    <h2 class="reveal"><span class="h2-num">04</span>货币 · 资本 · 外汇与衍生品市场</h2>
+    <p class="lead reveal">按交易工具的期限和性质，金融市场划分为短期资金的<b style="color:var(--fg)">货币市场</b>、长期融资的<b style="color:var(--fg)">资本市场</b>，以及跨境资金交易的<b style="color:var(--fg)">外汇与衍生品市场</b>。三者互为补充，共同形成完整的金融体系。</p>
+    <div class="cards reveal">
+      <div class="card">
+        <div class="ico">01 · Money Market</div>
+        <h3>货币市场</h3>
+        <p>期限<b style="color:var(--fg)">1 年以内</b>。子市场包括同业拆借、回购、票据贴现、大额存单、短期国债。核心功能：流动性管理与基准利率形成（DR007、SHIBOR）。</p>
+      </div>
+      <div class="card">
+        <div class="ico">02 · Capital Market</div>
+        <h3>资本市场</h3>
+        <p>期限<b style="color:var(--fg)">1 年以上</b>。包括股票市场（主板/创业板/科创板/北交所）、债券市场（利率债/信用债）、长期信贷。核心功能：长期资本形成与价格发现。</p>
+      </div>
+      <div class="card">
+        <div class="ico">03 · FX & Derivatives</div>
+        <h3>外汇与衍生品</h3>
+        <p>包括即期、远期、掉期、期权、期货、利率互换、CDS。核心功能：跨境资金调剂、汇率发现、风险对冲。中国 2015 年 8.11 汇改后人民币兑美元逐步进入双向波动机制。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P10 数据表 · 金融机构体系 ============== -->
+<section class="slide" data-name="金融机构体系">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Institutions · 金融机构体系</span></div>
+    <h2 class="reveal"><span class="h2-num">05</span>中国金融机构图谱（2023 监管改革后）</h2>
+    <table class="data-table reveal">
+      <thead>
+        <tr>
+          <th>机构类型</th>
+          <th>核心代表</th>
+          <th>主要职能</th>
+          <th>当前监管主体</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><b>中央银行</b></td><td class="dim">中国人民银行</td><td>制定执行货币政策 · 维护金融稳定 · 发行货币</td><td>国务院</td></tr>
+        <tr><td>商业银行</td><td class="dim">工 / 农 / 中 / 建 / 交 / 邮储 + 股份行 + 城商行 + 农商行</td><td>吸收存款 · 发放贷款 · 中间业务 · 同业业务</td><td>金融监管总局</td></tr>
+        <tr><td>政策性银行</td><td class="dim">国开行 · 进出口行 · 农发行</td><td>承担国家战略性融资 · 不以盈利为首要目标</td><td>金融监管总局</td></tr>
+        <tr><td>证券公司</td><td class="dim">中信 · 中金 · 国君 · 华泰 等</td><td>承销保荐 · 经纪 · 自营 · 资管 · 投行</td><td>证监会</td></tr>
+        <tr><td>保险公司</td><td class="dim">寿险 / 财险 / 再保险</td><td>风险补偿 · 长期资金供给</td><td>金融监管总局</td></tr>
+        <tr><td>资管 / 公募 / 私募</td><td class="dim">基金公司 · 信托 · 理财子 · 私募</td><td>受托管理资产 · 资产配置</td><td>证监会 / 金融监管总局</td></tr>
+        <tr class="total"><td colspan="3">2023 年监管改革：组建国家金融监督管理总局，统一负责银行、保险、金融控股公司监管</td><td>"一行一总局一会"</td></tr>
+      </tbody>
+    </table>
+    <p class="footnote reveal">资料来源：教材第六版第二篇 · 结合 2023 年党和国家机构改革方案整理</p>
+  </div>
+</section>
+
+<!-- ============== P11 单栏 · 中央银行 ============== -->
+<section class="slide" data-name="中央银行">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Central Bank · 中央银行</span></div>
+    <h2 class="reveal"><span class="h2-num">06</span>中央银行：发钞银行 · 银行的银行 · 政府的银行</h2>
+    <div class="reveal" style="display:grid;grid-template-columns:2fr 1fr;gap:36px;margin-top:14px">
+      <div>
+        <p class="lead">中央银行处于现代金融体系的顶层。教材从<b style="color:var(--fg)">起源、性质、职能、独立性</b>四个维度展开，强调央行不是普通银行，其负债（基础货币）是整个信用货币体系的基石。</p>
+        <ul class="bullets">
+          <li><b>三大基本职能：</b>发钞银行（垄断货币发行）/ 银行的银行（最后贷款人 + 清算中心 + 集中存款准备金）/ 政府的银行（代理国库 + 经理国债）</li>
+          <li><b>资产负债表：</b>资产侧 = 国外资产 / 对政府债权 / 对存款机构债权 / 对其他金融机构债权；负债侧 = 储备货币（流通中现金 + 金融机构存款）+ 政府存款 + 央行票据</li>
+          <li><b>独立性：</b>目标独立 / 工具独立 / 人事独立 —— 越独立，越能抵御短期政治压力下的通胀偏向</li>
+          <li><b>中国实践：</b>1984 年人行专门行使央行职能；2003 年银监会从人行分立；2023 年金融监管总局成立后，人行更聚焦货币政策与宏观审慎"双支柱"</li>
+        </ul>
+      </div>
+      <div class="aside-kpi">
+        <div class="kpi-label">基础货币 · MB</div>
+        <div class="kpi-num">B = C + R</div>
+        <div class="kpi-trend">基础货币 = 流通中现金（C） + 银行准备金（R）。央行通过控制 B 的总量，间接影响整个货币供给体系。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P13 资产定价基础 ============== -->
+<section class="slide" data-name="资产定价基础">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Asset Pricing · 资产定价基础</span></div>
+    <h2 class="reveal"><span class="h2-num">07</span>四个最基本的定价工具</h2>
+    <p class="lead reveal">教材在金融市场篇中嵌入了"<b style="color:var(--fg)">现值 → 股票 → 债券 → 风险定价</b>"四级递进的资产定价工具箱。这是把金融市场理论与实务连接起来的最小公式集。</p>
+    <div class="fmat reveal">
+      <div class="item">
+        <div class="nm">01 · 现值 PV</div>
+        <div class="fx">PV = ∑ CF<sub>t</sub> / (1+r)<sup>t</sup></div>
+        <div class="ds">所有定价的最底层逻辑：未来现金流按贴现率 r 折回今日。r 反映时间价值与风险溢价。</div>
+      </div>
+      <div class="item">
+        <div class="nm">02 · 股票 DDM / Gordon</div>
+        <div class="fx">P<sub>0</sub> = D<sub>1</sub> / (k − g)</div>
+        <div class="ds">股利折现模型常见简化形式（增长率 g 恒定且 g &lt; k）。k 是必要回报率，g 是股利永续增长率。</div>
+      </div>
+      <div class="item">
+        <div class="nm">03 · 债券 · 久期 D</div>
+        <div class="fx">D = ∑ t · w<sub>t</sub>　　ΔP/P ≈ −D · Δy</div>
+        <div class="ds">麦考利久期是各期现金流时间的加权平均。修正久期度量利率敏感性：利率上行 1bp，债券价格约下跌 D bp。</div>
+      </div>
+      <div class="item">
+        <div class="nm">04 · 风险定价 CAPM</div>
+        <div class="fx">E(R<sub>i</sub>) = R<sub>f</sub> + β<sub>i</sub> · [E(R<sub>m</sub>) − R<sub>f</sub>]</div>
+        <div class="ds">资本资产定价模型：单个资产的预期收益由无风险利率 R<sub>f</sub> 与系统性风险 β 的市场溢价共同决定。β 是相对市场组合的风险敞口。</div>
+      </div>
+    </div>
+    <p class="footnote reveal">教材在第二篇 · 金融市场章中给出推导，建议结合米什金《货币金融学》对应章节交叉印证。</p>
+  </div>
+</section>
+
+<!-- ============== P14 章节封面 III · 货币理论 ============== -->
+<section class="slide ch-cover" data-name="第三章：货币理论与政策">
+  <div class="canvas">
+    <div class="reveal"><div class="ch-lbl">Chapter III · 第三篇 货币均衡</div></div>
+    <div class="reveal"><div class="ch-num">03</div></div>
+    <h1 class="reveal">货币需求 · 供给<b>· 政策传导</b></h1>
+    <p class="ch-desc reveal">从"为什么持有货币"到"货币如何被创造"，再到"货币政策如何影响产出与物价"。这一篇把宏观货币的供求与政策连接成完整闭环，是教材的理论核心区。</p>
+  </div>
+</section>
+
+<!-- ============== P13 三模块 · 货币需求理论 ============== -->
+<section class="slide" data-name="货币需求理论">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Money Demand · 货币需求理论</span></div>
+    <h2 class="reveal"><span class="h2-num">08</span>三大学派的货币需求函数</h2>
+    <p class="lead reveal">货币需求理论回答的是"经济主体为什么、按多少比例、把财富以货币形式持有"。教材按时间脉络梳理古典 → 凯恩斯 → 弗里德曼三大流派。</p>
+    <div class="cards reveal">
+      <div class="card">
+        <div class="ico">01 · Classical</div>
+        <h3>古典学派 · 现金交易方程</h3>
+        <div class="num">MV = PY</div>
+        <p>费雪方程式。<b style="color:var(--fg)">V（流通速度）和 Y（产出）短期稳定</b>，因此货币 M 的变化直接影响物价 P —— 货币数量论的经典结论。剑桥方程 M = kPY 与之等价。</p>
+      </div>
+      <div class="card">
+        <div class="ico">02 · Keynes</div>
+        <h3>凯恩斯 · 流动性偏好</h3>
+        <div class="num">L = L₁(Y) + L₂(i)</div>
+        <p>持有货币的三大动机：<b style="color:var(--fg)">交易、预防、投机</b>。前两者随收入正相关，投机性需求与利率反向。利率足够低时进入"流动性陷阱"，货币政策失效。</p>
+      </div>
+      <div class="card">
+        <div class="ico">03 · Friedman</div>
+        <h3>弗里德曼 · 现代货币数量论</h3>
+        <div class="num">M<sup style="font-size:.5em">d</sup>/P = f(Yp, ...)</div>
+        <p>把货币视为一种资产，需求取决于<b style="color:var(--fg)">恒久收入 Yp、各类资产收益率、偏好</b>。结论：货币需求函数稳定，央行盯住 M 的增速即可稳定经济 —— 货币主义的政策主张。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P14 四 KPI · 货币供给层次 ============== -->
+<section class="slide" data-name="货币供给层次">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Money Supply · 货币供给</span></div>
+    <h2 class="reveal"><span class="h2-num">09</span>货币层次与货币乘数</h2>
+    <p class="lead reveal">现代信用货币是分层次的。央行直接控制基础货币（MB），通过商业银行的存款派生过程，逐级形成 M0 → M1 → M2 的总量结构。</p>
+    <div class="stats reveal">
+      <div class="stat">
+        <div class="lbl">M0</div>
+        <div class="num">现金<span class="u">流通中</span></div>
+        <div class="trend">流通中的现金。流动性最强、与民生最直接相关。</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">M1</div>
+        <div class="num">M0 + 活期</div>
+        <div class="trend">狭义货币 = M0 + 单位活期存款。代表交易性货币，反映企业经营活跃度。</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">M2</div>
+        <div class="num">M1 + 准货币</div>
+        <div class="trend">广义货币 = M1 + 居民储蓄 + 单位定期存款 + 其他存款。央行调控的主要中介目标之一。</div>
+      </div>
+      <div class="stat">
+        <div class="lbl">m</div>
+        <div class="num">M / B<span class="u">乘数</span></div>
+        <div class="trend">货币乘数 m = (1+c)/(rd+re+c)，其中 c 为现金比率，rd 法定准备金率，re 超额准备金率。</div>
+      </div>
+    </div>
+    <p class="footnote reveal">注：中国央行 M3 口径已较少使用；社会融资规模（社融）作为辅助指标反映实体经济从全社会获得的资金总量。</p>
+  </div>
+</section>
+
+<!-- ============== P18 货币计量公式集 ============== -->
+<section class="slide" data-name="货币计量公式集">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Quant · 货币计量公式集</span></div>
+    <h2 class="reveal"><span class="h2-num">10</span>三组核心公式：从基础货币到 IS-LM</h2>
+    <div class="reveal" style="display:grid;grid-template-columns:1.05fr 1fr;gap:30px;margin-top:14px">
+      <div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px">① 货币乘数完整推导</h4>
+        <div class="formula" style="text-align:left">
+          M = C + D ;　B = C + R<br>
+          ⇒ m = M/B = (C+D) / (C+R)<br>
+          上下同除 D，令 c = C/D，r = R/D：<br>
+          <span class="gold">m = (1 + c) / (r<sub>d</sub> + r<sub>e</sub> + c)</span>
+          <small>c：现金/存款比率　r<sub>d</sub>：法定准备金率　r<sub>e</sub>：超额准备金率</small>
+        </div>
+        <p style="font-size:13px;color:var(--mute);line-height:1.7;margin-top:6px">乘数 m 受三个比率共同影响：央行调 r<sub>d</sub> 是直接控制；r<sub>e</sub> 受银行风险偏好与流动性压力影响；c 受居民支付习惯（现金 vs 电子货币）影响。</p>
+
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin:18px 0 10px">② Fisher 方程与实际利率</h4>
+        <div class="formula" style="text-align:left">
+          (1+i) = (1+r)(1+π<sup>e</sup>)<br>
+          展开后近似：　<span class="gold">i ≈ r + π<sup>e</sup></span>
+          <small>i：名义利率　r：实际利率　π<sup>e</sup>：预期通胀率</small>
+        </div>
+        <p style="font-size:13px;color:var(--mute);line-height:1.7;margin-top:6px">考点延伸：当 π<sup>e</sup> 上行而 i 不变 → 实际利率 r 下行 → 货币政策被动宽松。这是"通胀税"的核心机制。</p>
+      </div>
+      <div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:10px">③ IS-LM 联立方程</h4>
+        <div class="formula" style="text-align:left">
+          <b style="color:var(--accent)">IS</b>　Y = C(Y−T) + I(r) + G + NX<br>
+          ⇒ 商品市场均衡，r↑ ⟹ Y↓<br><br>
+          <b style="color:var(--accent)">LM</b>　M/P = L(Y, r)<br>
+          ⇒ 货币市场均衡，Y↑ ⟹ r↑
+          <small>两条曲线交点同时确定均衡产出 Y* 与利率 r*</small>
+        </div>
+        <div class="fcol" style="margin-top:10px">
+          <div class="frow"><div class="fk">扩张性财政　G↑</div><div class="fv">IS 右移 → Y↑ r↑（"挤出效应"使乘数变小）</div></div>
+          <div class="frow"><div class="fk">扩张性货币　M↑</div><div class="fv">LM 右移 → Y↑ r↓（流动性陷阱时 LM 水平段失效）</div></div>
+          <div class="frow"><div class="fk">总需求　AD</div><div class="fv">IS-LM 进一步导出 AD 曲线，与 AS 联立得 P*、Y*</div></div>
+        </div>
+
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin:18px 0 10px">④ 货币流通速度 V</h4>
+        <div class="formula" style="text-align:left">
+          MV = PY ⇒ V = PY / M<br>
+          <span class="gold">ΔM/M + ΔV/V = ΔP/P + ΔY/Y</span>
+          <small>费雪方程的增长率形式 —— 中国 2010s 后 V 持续下行，使 M2 高增长未必转化为高通胀</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P19 流程 · 货币政策传导 ============== -->
+<section class="slide" data-name="货币政策传导">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Transmission · 货币政策传导</span></div>
+    <h2 class="reveal"><span class="h2-num">11</span>从工具到最终目标的传导链</h2>
+    <p class="lead reveal">教材把货币政策框架抽象为"<b style="color:var(--fg)">三大目标 · 四类工具 · 多重渠道</b>"。中国当前已进入价格型与数量型工具并行、以利率走廊为辅助的混合调控阶段。</p>
+    <div class="process reveal">
+      <div class="step done">
+        <div class="step-num">01</div>
+        <div class="step-content"><h4>政策工具</h4><p>公开市场操作（OMO）/ 法定存款准备金率 / 再贴现与再贷款 / MLF / SLF / PSL / LPR 引导</p></div>
+      </div>
+      <div class="step done">
+        <div class="step-num">02</div>
+        <div class="step-content"><h4>操作目标</h4><p>基础货币（MB）/ 银行间利率（DR007 是当前主要观察指标）</p></div>
+      </div>
+      <div class="step active">
+        <div class="step-num">03</div>
+        <div class="step-content"><h4>中介目标</h4><p>货币供应量（M2）/ 利率（LPR）/ 信贷规模 / 社会融资规模 —— 兼顾价格与数量</p></div>
+      </div>
+      <div class="step upcoming">
+        <div class="step-num">04</div>
+        <div class="step-content"><h4>最终目标</h4><p>币值稳定（控通胀）/ 充分就业 / 经济增长 / 国际收支平衡 ——"四元目标"通常存在冲突</p></div>
+      </div>
+    </div>
+    <p class="footnote reveal">主要传导渠道：利率渠道、信贷渠道、资产价格渠道、汇率渠道、预期渠道。</p>
+  </div>
+</section>
+
+<!-- ============== P16 章节封面 IV · 通胀监管开放 ============== -->
+<section class="slide ch-cover" data-name="第四章：通胀监管开放">
+  <div class="canvas">
+    <div class="reveal"><div class="ch-lbl">Chapter IV · 第四篇 金融发展</div></div>
+    <div class="reveal"><div class="ch-num">04</div></div>
+    <h1 class="reveal">通胀 · 监管<b>· 开放经济</b></h1>
+    <p class="ch-desc reveal">从国内的物价稳定与监管框架，扩展到开放经济中的国际收支、汇率与资本流动。教材最后一篇把视角从"一国货币"提升到"全球金融"。</p>
+  </div>
+</section>
+
+<!-- ============== P17 SWOT 类四象限 · 通胀 vs 通缩 ============== -->
+<section class="slide" data-name="通胀 vs 通缩">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Inflation & Deflation · 物价失衡</span></div>
+    <h2 class="reveal"><span class="h2-num">12</span>通货膨胀与通货紧缩对照</h2>
+    <div class="quadrants reveal">
+      <div class="quadrant">
+        <div class="q-tag">I · 通胀成因</div>
+        <h4>需求拉上 / 成本推动 / 结构性 / 输入型</h4>
+        <p>过度需求驱动总需求曲线右移；工资—成本螺旋；部门发展不平衡；进口商品价格上升通过汇率渠道传入。</p>
+        <ul><li>财政赤字货币化是历史上恶性通胀的主因</li></ul>
+      </div>
+      <div class="quadrant">
+        <div class="q-tag">II · 通胀影响</div>
+        <h4>财富再分配 · 经济效率损失 · 预期紊乱</h4>
+        <p>从债权人转向债务人、从固定收入者转向资产持有者；菜单成本与皮鞋成本；预期一旦形成便自我强化。</p>
+        <ul><li>恶性通胀（年率 &gt; 50%）会摧毁货币职能</li></ul>
+      </div>
+      <div class="quadrant">
+        <div class="q-tag">III · 通缩成因</div>
+        <h4>有效需求不足 · 资产负债表衰退 · 输入型</h4>
+        <p>持续物价下行 + 货币供应紧缩 + 经济衰退三者叠加。一旦陷入"债务—通缩"螺旋，治理难度远高于通胀。</p>
+        <ul><li>日本"失去的三十年"是通缩的典型案例</li></ul>
+      </div>
+      <div class="quadrant">
+        <div class="q-tag">IV · 治理工具</div>
+        <h4>紧缩 vs 宽松 · 货币 vs 财政 · 预期管理</h4>
+        <p>反通胀：紧货币 + 紧财政 + 收入政策 + 预期引导；反通缩：宽松货币 + 积极财政 + 结构改革 + 必要时进入零利率/负利率。</p>
+        <ul><li>非常规货币政策（QE / YCC / 前瞻指引）已成为应对通缩的标准工具箱</li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P18 时间线 · 中国金融监管演进 ============== -->
+<section class="slide" data-name="金融监管演进">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Regulation · 监管演进</span></div>
+    <h2 class="reveal"><span class="h2-num">13</span>中国金融监管框架四十年</h2>
+    <div class="timeline reveal">
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">1984</div>
+        <div class="tl-content"><h4>央行职能分立</h4><p>中国人民银行剥离工商信贷业务，专门行使中央银行职能；工商银行成立。中国金融体系开始由"大一统"向二元结构转型。</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">1995</div>
+        <div class="tl-content"><h4>《商业银行法》《中国人民银行法》</h4><p>首次以基本法律形式确立商业银行的市场化运营原则与人行央行地位，金融立法体系从此建立。</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">1998 · 2003</div>
+        <div class="tl-content"><h4>"一行三会"分业监管成形</h4><p>1998 年保监会成立；2003 年银监会从人行剥离 —— 形成 "人行 + 银监会 + 证监会 + 保监会" 的分业监管格局。</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2017 – 2018</div>
+        <div class="tl-content"><h4>金融稳定发展委员会 + 银保合并</h4><p>设立国务院金融稳定发展委员会统筹协调；银监会、保监会合并为"银保监会"，监管走向功能监管与综合监管。</p></div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-dot"></div>
+        <div class="tl-date">2023</div>
+        <div class="tl-content"><h4>国家金融监督管理总局成立</h4><p>党和国家机构改革：在银保监会基础上组建金融监管总局，把人行的金融控股公司监管职能、证监会的投资者保护职能纳入；形成"一行（人行）+ 一总局 + 一会（证监会）"的新格局。</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P19 三模块 · 国际收支 / 汇率 / 资本流动 ============== -->
+<section class="slide" data-name="开放经济三议题">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Open Economy · 开放经济</span></div>
+    <h2 class="reveal"><span class="h2-num">14</span>国际收支 · 汇率制度 · 资本流动</h2>
+    <p class="lead reveal">开放经济条件下，国内货币政策必须在"<b style="color:var(--fg)">汇率稳定 / 货币政策独立 / 资本自由流动</b>"的不可能三角中作权衡。教材在此章把开放金融的三大议题串成一条逻辑链。</p>
+    <div class="tri-col reveal">
+      <div class="blk">
+        <small>01 · BOP</small>
+        <h4>国际收支平衡表</h4>
+        <p>由<b style="color:var(--fg)">经常账户、资本与金融账户、储备资产</b>三大类构成。经常账户反映实体竞争力；资本账户反映金融一体化深度。失衡可通过本币贬值、外汇干预、资本管制来再平衡。</p>
+      </div>
+      <div class="blk">
+        <small>02 · FX Regime</small>
+        <h4>汇率制度光谱</h4>
+        <p>从<b style="color:var(--fg)">硬钉住（货币局/共同货币）→ 软钉住（爬行钉住、目标区）→ 浮动（管理浮动、自由浮动）</b>。中国 2005 年汇改后实行"以市场供求为基础、参考一篮子货币、有管理的浮动汇率制"。</p>
+      </div>
+      <div class="blk">
+        <small>03 · Capital Flow</small>
+        <h4>资本流动与三元悖论</h4>
+        <p>蒙代尔三元悖论：<b style="color:var(--fg)">汇率稳定 / 资本自由流动 / 货币政策独立</b>三者不可兼得，只能选两项。中国当前选择"货币政策独立 + 部分资本管制 + 有管理的浮动"组合。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P23 利率与汇率平价 ============== -->
+<section class="slide" data-name="利率汇率平价">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Parity · 国际金融三大平价</span></div>
+    <h2 class="reveal"><span class="h2-num">15</span>利率平价 · 汇率平价 · 不可能三角的数学化</h2>
+    <p class="lead reveal">开放经济中"三大平价"是教材最高密度的公式区。它们把利率、通胀、汇率、跨境套利串成统一方程，也是央行理解外汇市场的核心工具。</p>
+    <div class="fmat reveal">
+      <div class="item">
+        <div class="nm">01 · 抛补利率平价 CIP</div>
+        <div class="fx">F / S = (1 + i<sub>本</sub>) / (1 + i<sub>外</sub>)</div>
+        <div class="ds">远期汇率 F 与即期汇率 S 的比值由两国利差决定。CIP 通过远期合约锁汇套利，若不成立即存在无风险套利空间，在自由资本流动下几乎严格成立。</div>
+      </div>
+      <div class="item">
+        <div class="nm">02 · 非抛补利率平价 UIP</div>
+        <div class="fx">E(S<sub>t+1</sub>) / S<sub>t</sub> = (1 + i<sub>本</sub>) / (1 + i<sub>外</sub>)</div>
+        <div class="ds">不锁汇情形下，预期汇率变动 ≈ 利差。高息货币会被预期未来贬值以抵消利差。"高息货币持续走强"现象就是 UIP 在现实中的偏离（carry trade）。</div>
+      </div>
+      <div class="item">
+        <div class="nm">03 · 购买力平价 PPP</div>
+        <div class="fx">绝对：S = P<sub>本</sub> / P<sub>外</sub>　相对：ΔS/S ≈ π<sub>本</sub> − π<sub>外</sub></div>
+        <div class="ds">一价定律的国际化。绝对 PPP 在短期几乎不成立；相对 PPP 在长期、可贸易品上有较强解释力。中国 1994 年汇率并轨后人民币实际有效汇率走势可由相对 PPP 大体解释。</div>
+      </div>
+      <div class="item">
+        <div class="nm">04 · 不可能三角 · 数学化</div>
+        <div class="fx">∂Y/∂G | 固定汇率 + 资本流动 = 0</div>
+        <div class="ds">Mundell-Fleming 模型证明：在固定汇率 + 完全资本流动下，<b style="color:var(--fg)">财政政策完全有效、货币政策完全无效</b>；浮动汇率下结论反转。三元悖论的数学根源就在这里。</div>
+      </div>
+    </div>
+    <p class="footnote reveal">PPP 通常给出长期均衡；UIP 给出短期预期路径；CIP 给出无风险套利下界。三者构成开放经济金融分析的"三角坐标系"。</p>
+  </div>
+</section>
+
+<!-- ============== P24 引言 · 金融与发展 ============== -->
+<section class="slide quote" data-name="引言：金融与发展">
+  <div class="canvas">
+    <div class="reveal"><div class="qm">"</div></div>
+    <p class="qt reveal">金融发展不是经济增长的副产品，<br>而是经济现代化进程中不可替代的发动机之一。</p>
+    <div class="reveal">
+      <div class="qa-line"></div>
+      <div class="qn">第六版 · 终章</div>
+      <div class="qj">关于金融发展、金融深化与中国实践</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P21 双栏 · 学习路径 ============== -->
+<section class="slide" data-name="学习路径">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Study Path · 学习路径</span></div>
+    <h2 class="reveal"><span class="h2-num">16</span>怎么用好这本书：三层阅读法</h2>
+    <p class="lead reveal">这本书的体例是"以宏观为主线、以微观为支撑"。建议按"宏观看体系 → 微观看工具 → 政策看传导"三层递进阅读，配合中国金融改革史和当期数据持续校准。</p>
+    <div class="two-col reveal">
+      <div>
+        <h4>① 第一遍 · 建立框架 <small>3–4 周</small></h4>
+        <ul class="bullets">
+          <li>通读四篇导论 + 章末小结，绘制本章思维导图</li>
+          <li>把每章的"核心定义 / 关键公式 / 重要图表"抄成 A4 一页摘要</li>
+          <li>配套习题做 50%，重点放在概念辨析题</li>
+        </ul>
+        <h4 style="margin-top:18px">② 第二遍 · 深耕理论 <small>4–6 周</small></h4>
+        <ul class="bullets">
+          <li>对照米什金、曼昆、克鲁格曼的相关章节交叉印证</li>
+          <li>重点啃货币需求供给、IS-LM、AD-AS、货币政策传导</li>
+          <li>从教材公式手动推导 IS-LM 方程，跑一遍 Excel 模拟</li>
+        </ul>
+      </div>
+      <div>
+        <h4>③ 第三遍 · 对接现实 <small>持续</small></h4>
+        <ul class="bullets">
+          <li>每月跟踪人行《货币政策执行报告》《金融统计数据》</li>
+          <li>关注<b style="color:var(--fg)">DR007 / LPR / M2 / 社融 / 外汇储备</b>五项指标的变动</li>
+          <li>读人行工作论文、IMF Article IV、BIS 季报作为延伸</li>
+          <li>把每一次政策操作（降准、降息、MLF 续作、汇率波动）回填到教材框架里</li>
+        </ul>
+        <h4 style="margin-top:18px">考试复习重点</h4>
+        <ul class="bullets">
+          <li>名词解释：货币、信用、利率、汇率、基础货币、货币乘数、流动性陷阱、不可能三角</li>
+          <li>计算：货币乘数、Fisher 方程、IS-LM、抛补 / 非抛补利率平价</li>
+          <li>论述：货币政策传导机制、人民币汇率制度演变、金融监管改革逻辑</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============== P26 公式手册速查 ============== -->
+<section class="slide" data-name="公式手册速查">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">Formula Sheet · 公式速查手册</span></div>
+    <h2 class="reveal"><span class="h2-num">17</span>考前一页通：核心计算公式总览</h2>
+    <p class="lead reveal">把全书最高频考点的公式集中到一页，按"<b style="color:var(--fg)">货币 / 利率与汇率 / 资产定价 / 宏观均衡</b>"四组分类。复习时建议先盖住右栏自答释义，再翻看核对。</p>
+    <div class="reveal" style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:8px">
+      <div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:8px">货币与信用</h4>
+        <div class="fcol">
+          <div class="frow"><div class="fk">m = (1+c)/(r<sub>d</sub>+r<sub>e</sub>+c)</div><div class="fv">货币乘数（c 现金比，r<sub>d</sub> 法定，r<sub>e</sub> 超额）</div></div>
+          <div class="frow"><div class="fk">M = m · B</div><div class="fv">广义货币 = 乘数 × 基础货币</div></div>
+          <div class="frow"><div class="fk">MV = PY</div><div class="fv">费雪交易方程，求 V 或 ΔP</div></div>
+          <div class="frow"><div class="fk">i ≈ r + π<sup>e</sup></div><div class="fv">Fisher：名义 = 实际 + 预期通胀</div></div>
+        </div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin:18px 0 8px">资产定价</h4>
+        <div class="fcol">
+          <div class="frow"><div class="fk">PV = ∑CF<sub>t</sub>/(1+r)<sup>t</sup></div><div class="fv">现值通用公式</div></div>
+          <div class="frow"><div class="fk">P<sub>0</sub> = D<sub>1</sub>/(k−g)</div><div class="fv">Gordon 股利贴现模型</div></div>
+          <div class="frow"><div class="fk">D = ∑t·w<sub>t</sub></div><div class="fv">麦考利久期</div></div>
+          <div class="frow"><div class="fk">ΔP/P ≈ −D · Δy</div><div class="fv">修正久期 → 利率敏感性</div></div>
+          <div class="frow"><div class="fk">E(R<sub>i</sub>)=R<sub>f</sub>+β<sub>i</sub>(R<sub>m</sub>−R<sub>f</sub>)</div><div class="fv">CAPM 风险定价</div></div>
+        </div>
+      </div>
+      <div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:8px">利率与汇率</h4>
+        <div class="fcol">
+          <div class="frow"><div class="fk">F/S = (1+i<sub>本</sub>)/(1+i<sub>外</sub>)</div><div class="fv">CIP 抛补利率平价</div></div>
+          <div class="frow"><div class="fk">E(S′)/S = (1+i<sub>本</sub>)/(1+i<sub>外</sub>)</div><div class="fv">UIP 非抛补利率平价</div></div>
+          <div class="frow"><div class="fk">ΔS/S ≈ π<sub>本</sub> − π<sub>外</sub></div><div class="fv">相对 PPP（长期）</div></div>
+          <div class="frow"><div class="fk">i<sub>l</sub> = (1/n)∑E(i<sup>s</sup><sub>t</sub>) + RP</div><div class="fv">期限结构：长期利率 ≈ 预期短期 + 风险溢价</div></div>
+        </div>
+        <h4 style="color:var(--accent);font-family:var(--ui);font-size:12px;letter-spacing:.22em;text-transform:uppercase;margin:18px 0 8px">宏观均衡</h4>
+        <div class="fcol">
+          <div class="frow"><div class="fk">Y = C + I + G + NX</div><div class="fv">国民收入恒等式</div></div>
+          <div class="frow"><div class="fk">IS：Y = C(Y−T)+I(r)+G+NX</div><div class="fv">商品市场均衡</div></div>
+          <div class="frow"><div class="fk">LM：M/P = L(Y, r)</div><div class="fv">货币市场均衡</div></div>
+          <div class="frow"><div class="fk">M<sup>d</sup>/P = f(Y, i)</div><div class="fv">货币需求函数（凯恩斯）</div></div>
+          <div class="frow"><div class="fk">k = 1/(1−MPC)</div><div class="fv">凯恩斯支出乘数</div></div>
+        </div>
+      </div>
+    </div>
+    <p class="footnote reveal">高频计算题：① 给出 c / r<sub>d</sub> / r<sub>e</sub> / B 求 M2；② 给出 i 和 π<sup>e</sup> 求实际利率；③ 给定即期 + 利差求远期汇率；④ 给定 D<sub>1</sub>/k/g 求合理股价；⑤ Δy 求债券价格波动。</p>
+  </div>
+</section>
+
+<!-- ============== P27 结尾 ============== -->
+<section class="slide end" data-name="结语">
+  <div class="canvas">
+    <div class="reveal"><span class="eyebrow">⊹ Coda · 结语</span></div>
+    <h1 class="reveal">理解金融<br><b>就是理解现代经济</b></h1>
+    <div class="reveal"><div class="e-line"></div></div>
+    <p class="e-tag reveal">从黄达先生主编的这本《金融学》开始，我们不仅在学一门课，而是在拿到一把同时打开宏观经济、政策制度与金融市场的总钥匙。 —— 体系学得越通透，世界看得越清晰。</p>
+    <div class="e-c reveal">
+      <div><div class="lbl">教材</div><div class="val">《金融学》第六版<br>黄达 · 张杰 主编</div></div>
+      <div><div class="lbl">出版</div><div class="val">中国人民大学出版社<br>21 世纪金融学系列</div></div>
+      <div><div class="lbl">配套</div><div class="val">习题集 · 教师手册<br>电子课件 · 在线题库</div></div>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<button class="nav-arrow prev" onclick="goto(current-1)">‹</button>
+<button class="nav-arrow next" onclick="goto(current+1)">›</button>
+
+<div class="footbar">
+  <div>RUC · School of Finance · Knowledge Map</div>
+  <div class="pg"><span id="curr">1</span> / <span id="total">26</span></div>
+</div>
+<div class="progress" id="progress"></div>
+
+<script>
+(function(){
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const totalEl = document.getElementById('total');
+  const currEl = document.getElementById('curr');
+  const progress = document.getElementById('progress');
+  const topCh = document.getElementById('topCh');
+  if(totalEl) totalEl.textContent = total;
+  let current = 0, locked = false;
+  window.current = current;
+
+  function setHeader(i){
+    if(!topCh) return;
+    const name = slides[i].dataset.name || '';
+    topCh.textContent = name;
+  }
+  function goto(i){
+    if(locked || i===current || i<0 || i>=total) return;
+    locked = true;
+    slides[current].classList.remove('active');
+    current = i; window.current = current;
+    slides[current].classList.add('active');
+    if(progress) progress.style.width = ((current+1)/total*100)+'%';
+    if(currEl) currEl.textContent = current+1;
+    setHeader(current);
+    setTimeout(()=>locked=false, 600);
+  }
+  window.goto = goto;
+  document.addEventListener('keydown', e => {
+    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') goto(current+1);
+    else if(e.key==='ArrowLeft'||e.key==='PageUp') goto(current-1);
+    else if(e.key==='Home') goto(0);
+    else if(e.key==='End') goto(total-1);
+    else if(e.key==='f'||e.key==='F'){
+      if(!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+  let wheelLock = false;
+  document.addEventListener('wheel', e => {
+    if(wheelLock) return; wheelLock = true;
+    if(e.deltaY>30) goto(current+1);
+    else if(e.deltaY<-30) goto(current-1);
+    setTimeout(()=>wheelLock=false, 800);
+  }, {passive:true});
+  let touchY=0, touchX=0;
+  document.addEventListener('touchstart', e=>{touchY=e.touches[0].clientY;touchX=e.touches[0].clientX});
+  document.addEventListener('touchend', e=>{
+    const dy=touchY-e.changedTouches[0].clientY, dx=touchX-e.changedTouches[0].clientX;
+    if(Math.abs(dy)>50&&Math.abs(dy)>Math.abs(dx)) goto(current+(dy>0?1:-1));
+    else if(Math.abs(dx)>50) goto(current+(dx>0?1:-1));
+  });
+  if(progress) progress.style.width = (1/total*100)+'%';
+  setHeader(0);
+})();
+</script>
+<script type="text/javascript" src="/accessproxy_statics/h5_fp.js" defer></script>
+<script type="text/javascript" src="/accessproxy_statics/wm.js" defer></script>
+</body>
+</html>
