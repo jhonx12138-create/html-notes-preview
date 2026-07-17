@@ -169,7 +169,7 @@ html, body {
 
 /* Swipe wrapper */
 .note-item-wrapper {
-  position: relative; overflow: hidden; margin-bottom: 2px; border-radius: var(--radius-md);
+  position: relative; overflow: hidden; margin-bottom: 2px; border-radius: var(--radius-md); touch-action: pan-y;
 }
 .note-item-swipe-actions {
   position: absolute; right: 0; top: 0; bottom: 0;
@@ -1008,8 +1008,7 @@ html, body {
       else item.style.transform = '';
     }
     swipeCurrentX = e.touches[0].clientX;
-    e.preventDefault();
-  }, { passive: false });
+  }, { passive: true });
 
   noteList.addEventListener('touchend', function() {
     if (!swipeIsDragging || !swipeActiveWrapper) return;
