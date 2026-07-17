@@ -579,8 +579,8 @@ html, body {
       <div class="tab-panel active" id="tabHome">
         <!-- Sub-tab: 笔记 / 书架 -->
         <div class="home-subtab-bar" id="homeSubtabBar">
-          <button class="home-subtab-btn active" data-subtab="notes">📝 笔记</button>
-          <button class="home-subtab-btn" data-subtab="shelf">📚 书架</button>
+          <button class="home-subtab-btn" data-subtab="notes">📝 笔记</button>
+          <button class="home-subtab-btn active" data-subtab="shelf">📚 书架</button>
         </div>
         <!-- Notes List View -->
         <div id="notesViewArea">
@@ -855,7 +855,7 @@ html, body {
     theme: 'light',
     isMobile: false,
     activeTab: 'home',
-    isShelfView: false,
+    isShelfView: true,
     pinnedIds: [],
     searchHistory: [],
     selectedCategory: '全部',
@@ -904,7 +904,7 @@ html, body {
   function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
 
   /* ---- Persistence: Shelf View ---- */
-  function loadShelfView() { try { const s=localStorage.getItem('notes-home-view'); if(s==='shelf') STATE.isShelfView=true; } catch(_){STATE.isShelfView=false;} }
+  function loadShelfView() { try { const s=localStorage.getItem('notes-home-view'); STATE.isShelfView=(s!=='notes'); } catch(_){STATE.isShelfView=true;} }
   function saveShelfView() { try { localStorage.setItem('notes-home-view',STATE.isShelfView?'shelf':'notes'); } catch(_){} }
 
   /* ---- Persistence: Nickname ---- */
@@ -1433,12 +1433,14 @@ html, body {
     const notesBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="notes"]');
     const shelfBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="shelf"]');
     if (STATE.isShelfView) {
+      homeSubtabBar.style.display = 'flex';
       notesViewArea.style.display = 'none';
       shelfContainer.classList.remove('hidden');
       if (notesBtn) notesBtn.classList.remove('active');
       if (shelfBtn) shelfBtn.classList.add('active');
       renderShelf();
     } else {
+      homeSubtabBar.style.display = 'none';
       notesViewArea.style.display = '';
       shelfContainer.classList.add('hidden');
       if (notesBtn) notesBtn.classList.add('active');
