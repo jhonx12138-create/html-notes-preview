@@ -984,9 +984,12 @@ html, body {
 
     if (!swipeDirectionLocked) {
       if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SWIPE_VERT_THRESHOLD) {
+        // 垂直滚动：清除滑动状态，避免残留影响下一次触摸
+        swipeActiveWrapper = null;
         swipeIsDragging = false; return;
       }
-      if (Math.abs(dx) > 5) swipeDirectionLocked = true;
+      // 阈值提高到 15px，避免手指自然抖动（~6px 水平偏移）误锁方向
+      if (Math.abs(dx) > 15) swipeDirectionLocked = true;
     }
 
     if (!swipeDirectionLocked) return;
