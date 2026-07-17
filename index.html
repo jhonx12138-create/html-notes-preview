@@ -1200,8 +1200,8 @@ html, body {
     const note = STATE.notes.find(n => n.id === noteId);
     if (!note) return;
     actionSheetTitle.textContent = note.title || '笔记操作';
-    // Delete only for user notes
-    asDeleteBtn.style.display = note.source === 'user' ? '' : 'none';
+    // Delete available for all notes
+    asDeleteBtn.style.display = '';
     // Pin button label
     asPinBtn.innerHTML = isPinned(noteId)
       ? '<span class="as-icon">📌</span>取消置顶'
