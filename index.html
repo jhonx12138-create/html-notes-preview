@@ -96,6 +96,20 @@ html, body {
 .tab-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
 .tab-btn.active { background: var(--accent); color: #fff; }
 
+/* ===== Sub-Tab Bar (Home) ===== */
+.sub-tab-bar {
+  display: flex; padding: 0 16px; gap: 0; flex-shrink: 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.sub-tab-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 16px; border: none; background: transparent; color: var(--text-secondary);
+  font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all var(--transition);
+  position: relative; border-bottom: 2px solid transparent; margin-bottom: -1px;
+}
+.sub-tab-btn:hover { color: var(--text-primary); }
+.sub-tab-btn.active { color: var(--accent); font-weight: 600; border-bottom-color: var(--accent); }
+
 /* ===== Sidebar Content Area ===== */
 .sidebar-content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -369,6 +383,69 @@ html, body {
 @keyframes spin { to { transform: rotate(360deg); } }
 .error-banner { margin: 12px; padding: 12px 16px; border-radius: var(--radius-md); background: var(--accent-light); color: var(--accent); font-size: 0.85rem; text-align: center; }
 
+/* ===== Shelf View ===== */
+.shelf-container { flex: 1; overflow-y: auto; padding: 16px 8px; -webkit-overflow-scrolling: touch; }
+.shelf-container::-webkit-scrollbar { width: 4px; }
+.shelf-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+
+.shelf-section { margin-bottom: 20px; }
+.shelf-cat-label {
+  display: inline-flex; align-items: center; padding: 4px 14px; border-radius: 20px;
+  font-size: 0.78rem; font-weight: 600; color: #fff; margin-bottom: 10px; margin-left: 8px;
+}
+.shelf-row {
+  display: flex; gap: 12px; overflow-x: auto; padding: 8px 8px 12px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-behavior: smooth;
+}
+.shelf-row::-webkit-scrollbar { display: none; }
+
+.book-card {
+  flex-shrink: 0; width: 110px; height: 160px; border-radius: 6px;
+  cursor: pointer; transition: all 0.25s ease; position: relative;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+.book-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px;
+  z-index: 2; border-radius: 6px 0 0 6px;
+}
+.book-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 8px;
+  z-index: 1; border-radius: 0 0 6px 6px;
+}
+.book-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+.book-card.active { box-shadow: 0 3px 10px rgba(0,0,0,0.15); outline: 3px solid var(--accent); outline-offset: -3px; }
+
+.book-title {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  color: rgba(255,255,255,0.93); font-size: 0.9rem; font-weight: 700;
+  max-height: 120px; overflow: hidden; text-overflow: ellipsis;
+  white-space: nowrap; padding: 8px 4px; z-index: 3; position: relative;
+  letter-spacing: 0.05em; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* Category color classes */
+.book-philosophy { background: #5d4e8c; }
+.book-philosophy::before { background: #3d3360; }
+.book-philosophy::after { background: #3d3360; }
+
+.book-history { background: #8b4513; }
+.book-history::before { background: #5a2d0d; }
+.book-history::after { background: #5a2d0d; }
+
+.book-literature { background: #c44569; }
+.book-literature::before { background: #8a2c4a; }
+.book-literature::after { background: #8a2c4a; }
+
+.book-tech { background: #2c7a7b; }
+.book-tech::before { background: #1c5253; }
+.book-tech::after { background: #1c5253; }
+
+.book-other { background: #6b7280; }
+.book-other::before { background: #4a5058; }
+.book-other::after { background: #4a5058; }
+
 /* ===== Responsive: Mobile ===== */
 @media (max-width: 767px) {
   .app { flex-direction: column; position: relative; height: 100%; }
@@ -408,10 +485,19 @@ html, body {
 
       <!-- Home Tab -->
       <div class="tab-panel active" id="tabHome">
+        <div class="sub-tab-bar" id="subTabBar">
+          <button class="sub-tab-btn active" data-view="list">📝 笔记</button>
+          <button class="sub-tab-btn" data-view="shelf">📚 书架</button>
+        </div>
+        <div id="notesViewArea">
         <div class="category-chips" id="categoryChips"></div>
         <div class="toolbar"><span class="count" id="noteCount">共 0 篇</span></div>
         <div class="note-list" id="noteList">
           <div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>
+        </div>
+        </div><!-- /notesViewArea -->
+        <div class="shelf-container hidden" id="shelfContainer">
+          <div class="empty-state"><div class="empty-icon">📚</div><p>书架上还没有书</p></div>
         </div>
         <div class="search-page hidden" id="searchPage">
           <div class="search-header">
@@ -477,11 +563,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v3.0</span>
+                <span class="setting-value">v4.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 笔记预览 v3.0</div>
+              <div class="about-version">📚 笔记预览 v4.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -537,7 +623,7 @@ html, body {
 
 <script>
 /* ===================================================================
- * 笔记预览 APP v3.0
+ * 笔记预览 APP v4.0
  * =================================================================== */
 (function() {
   'use strict';
@@ -563,6 +649,11 @@ html, body {
   const noteList    = $('#noteList');
   const noteCount   = $('#noteCount');
   const searchBtn   = $('#searchBtn');
+
+  // Home — sub-tab & shelf
+  const subTabBar     = $('#subTabBar');
+  const notesViewArea = $('#notesViewArea');
+  const shelfContainer = $('#shelfContainer');
 
   // Search page
   const searchPage     = $('#searchPage');
@@ -615,6 +706,7 @@ html, body {
     theme: 'light',
     isMobile: false,
     activeTab: 'home',
+    homeView: 'list',
     searchHistory: [],
     selectedCategory: '全部',
     blobUrl: null,
@@ -649,6 +741,10 @@ html, body {
     if(m) m.setAttribute('content',STATE.theme==='dark'?'#1a1a2e':'#f5f0e8');
   }
   function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
+
+  /* ---- Persistence: Home View ---- */
+  function loadHomeView() { try { const s=localStorage.getItem('notes-home-view'); if(s==='shelf'||s==='list') STATE.homeView=s; } catch(_){STATE.homeView='list';} }
+  function saveHomeView() { try { localStorage.setItem('notes-home-view',STATE.homeView); } catch(_){} }
 
   /* ---- Persistence: Nickname ---- */
   function loadNickname() { try { const s=localStorage.getItem('notes-nickname'); if(s) profileNickname.value=s; } catch(_){} }
@@ -710,7 +806,7 @@ html, body {
   async function loadAllNotes() {
     noteList.innerHTML='<div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>';
     await DB.open(); await loadBuiltInNotes(); mergeNotes();
-    renderCategoryChips(); renderNoteList(); populateUploadCategories();
+    renderCategoryChips(); renderNoteList(); if(STATE.homeView==='shelf') renderShelf(); populateUploadCategories();
   }
 
   /* ---- Category Chips ---- */
@@ -726,6 +822,63 @@ html, body {
       const active=STATE.selectedCategory===cat;
       return `<button class="category-chip${active?' active':''}" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}<span class="chip-count">${cnt}</span></button>`;
     }).join('');
+  }
+
+  /* ---- Shelf View ---- */
+  const CAT_COLOR_MAP = { '哲学': 'philosophy', '历史': 'history', '文学': 'literature', '科技': 'tech', '其他': 'other' };
+  const CAT_ORDER = ['哲学', '历史', '文学', '科技', '其他'];
+  function getBookColorClass(cat) { return 'book-' + (CAT_COLOR_MAP[cat] || 'other'); }
+
+  function renderShelf() {
+    const grouped = {};
+    for (const n of STATE.notes) {
+      const cat = n.category || '其他';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(n);
+    }
+    let html = '';
+    for (const cat of CAT_ORDER) {
+      const notes = grouped[cat];
+      if (!notes || !notes.length) continue;
+      const cc = getBookColorClass(cat);
+      html += `<div class="shelf-section">
+        <div class="shelf-cat-label ${cc}">${escapeHtml(cat)}</div>
+        <div class="shelf-row">${notes.map(n => {
+          const active = n.id === STATE.selectedId;
+          return `<div class="book-card ${cc}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}&#10;${n.date ? formatDate(n.date) : ''}${(n.tags||[]).length ? '&#10;' + n.tags.join(', ') : ''}">
+            <span class="book-title">${escapeHtml(n.title)}</span>
+          </div>`;
+        }).join('')}</div>
+      </div>`;
+    }
+    // Also render categories not in CAT_ORDER (dynamic ones)
+    for (const cat of Object.keys(grouped)) {
+      if (CAT_ORDER.includes(cat)) continue;
+      const notes = grouped[cat];
+      if (!notes || !notes.length) continue;
+      const cc = getBookColorClass(cat);
+      html += `<div class="shelf-section">
+        <div class="shelf-cat-label ${cc}">${escapeHtml(cat)}</div>
+        <div class="shelf-row">${notes.map(n => {
+          const active = n.id === STATE.selectedId;
+          return `<div class="book-card ${cc}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}&#10;${n.date ? formatDate(n.date) : ''}${(n.tags||[]).length ? '&#10;' + n.tags.join(', ') : ''}">
+            <span class="book-title">${escapeHtml(n.title)}</span>
+          </div>`;
+        }).join('')}</div>
+      </div>`;
+    }
+    if (!html) {
+      html = '<div class="empty-state"><div class="empty-icon">📚</div><p>书架上还没有书</p></div>';
+    }
+    shelfContainer.innerHTML = html;
+  }
+
+  function applyHomeView() {
+    const isShelf = STATE.homeView === 'shelf';
+    notesViewArea.style.display = isShelf ? 'none' : '';
+    shelfContainer.classList.toggle('hidden', !isShelf);
+    $$('.sub-tab-btn').forEach(b => b.classList.toggle('active', b.getAttribute('data-view') === STATE.homeView));
+    if (isShelf) renderShelf();
   }
 
   /* ---- Note List ---- */
@@ -779,7 +932,7 @@ html, body {
     $$('.history-delete',searchHistoryEl).forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeSearchHistory(b.getAttribute('data-del'));renderSearchHistory();}));
   }
   function openSearchPage() { tabHome.classList.remove('active'); searchPage.classList.remove('hidden'); searchPageInput.value=''; renderSearchResults(''); renderSearchHistory(); setTimeout(()=>searchPageInput.focus(),50); }
-  function closeSearchPage() { tabHome.classList.add('active'); searchPage.classList.add('hidden'); STATE._sq=''; if(STATE.activeTab==='home') { renderNoteList(); renderCategoryChips(); } }
+  function closeSearchPage() { tabHome.classList.add('active'); searchPage.classList.add('hidden'); STATE._sq=''; if(STATE.activeTab==='home') { if(STATE.homeView==='shelf') renderShelf(); else { renderNoteList(); renderCategoryChips(); } } }
 
   /* ---- Tab Switching ---- */
   function switchTab(name) {
@@ -822,7 +975,7 @@ html, body {
       const id=genId(), now=new Date().toISOString().slice(0,10);
       await DB.put({id,title:final,file:file.name,date:now,tags,category:cat,content});
       STATE.userNotesIndex.unshift({id,title:final,file:file.name,date:now,tags,category:cat});
-      saveUserNotesIndex(); mergeNotes(); renderNoteList(); renderCategoryChips(); resetUploadForm();
+      saveUserNotesIndex(); mergeNotes(); renderNoteList(); renderCategoryChips(); if(STATE.homeView==='shelf') renderShelf(); resetUploadForm();
       switchTab('home'); showToast('✅ 笔记上传成功！');
     } catch(err) { console.error(err); showToast('上传失败：'+err.message); }
   }
@@ -835,7 +988,7 @@ html, body {
         await DB.delete(noteId); STATE.userNotesIndex=STATE.userNotesIndex.filter(n=>n.id!==noteId); saveUserNotesIndex();
         if(STATE.selectedId===noteId) { mergeNotes(); STATE.notes.length?showPreview(STATE.notes[0]):showWelcome(); }
         else { mergeNotes(); renderNoteList(); }
-        renderCategoryChips();
+        renderCategoryChips(); if(STATE.homeView==='shelf') renderShelf();
       } catch(err) { console.error(err); showToast('删除失败：'+err.message); }
     });
   }
@@ -847,7 +1000,7 @@ html, body {
       await DB.clear(); STATE.userNotesIndex=[]; saveUserNotesIndex();
       if(STATE.selectedId) { const s=STATE.notes.find(n=>n.id===STATE.selectedId); if(s&&s.source==='user') { mergeNotes(); STATE.notes.length?showPreview(STATE.notes[0]):showWelcome(); } else { mergeNotes(); renderNoteList(); } }
       else { mergeNotes(); renderNoteList(); }
-      renderCategoryChips(); refreshProfileStorageSize();
+      renderCategoryChips(); if(STATE.homeView==='shelf') renderShelf(); refreshProfileStorageSize();
     } catch(err) { console.error(err); showToast('清除失败：'+err.message); }
   }
 
@@ -879,6 +1032,7 @@ html, body {
       buildIframeHTML(note, previewBody, 'blobUrl');
     }
     renderNoteList();
+    if(STATE.homeView==='shelf') renderShelf();
   }
 
   function showWelcome() {
@@ -887,6 +1041,7 @@ html, body {
     previewBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>';
     overlayBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>';
     renderNoteList();
+    if(STATE.homeView==='shelf') renderShelf();
   }
 
   function closePreviewOverlay() {
@@ -916,6 +1071,13 @@ html, body {
     renderCategoryChips(); renderNoteList();
   });
 
+  // Sub-tab bar (home view switch)
+  subTabBar.addEventListener('click',e=>{
+    const b=e.target.closest('.sub-tab-btn'); if(!b) return;
+    const v=b.getAttribute('data-view'); if(!v||v===STATE.homeView) return;
+    STATE.homeView=v; saveHomeView(); applyHomeView();
+  });
+
   // Note list
   noteList.addEventListener('click',e=>{
     const del=e.target.closest('[data-action="delete"]'); if(del){e.stopPropagation();removeUserNote(del.getAttribute('data-id'));return;}
@@ -923,6 +1085,13 @@ html, body {
     const note=STATE.notes.find(n=>n.id===item.getAttribute('data-id')); if(note) showPreview(note);
   });
   noteList.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const item=e.target.closest('.note-item'); if(item){e.preventDefault();const note=STATE.notes.find(n=>n.id===item.getAttribute('data-id'));if(note)showPreview(note);}}});
+
+  // Shelf click
+  shelfContainer.addEventListener('click',e=>{
+    const card=e.target.closest('.book-card'); if(!card) return;
+    const note=STATE.notes.find(n=>n.id===card.getAttribute('data-id')); if(note) showPreview(note);
+  });
+  shelfContainer.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const card=e.target.closest('.book-card');if(card){e.preventDefault();const note=STATE.notes.find(n=>n.id===card.getAttribute('data-id'));if(note)showPreview(note);}}});
 
   // Search
   searchBtn.addEventListener('click',()=>openSearchPage());
@@ -970,11 +1139,12 @@ html, body {
 
   /* ---- Init ---- */
   async function init() {
-    loadTheme(); loadNickname(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
+    loadTheme(); loadNickname(); loadHomeView(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
     else{mainContent.style.display='none';history.pushState({view:'home'},'');}
-    showWelcome(); await loadAllNotes();
+    applyHomeView(); showWelcome(); await loadAllNotes();
+    if(STATE.homeView==='shelf') renderShelf();
   }
   init();
 })();
