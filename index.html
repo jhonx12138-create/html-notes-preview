@@ -94,23 +94,6 @@ html, body {
 }
 .sidebar-header h1 { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; flex: 1; min-width: 0; }
 
-/* ===== Home Sub-Tab Bar (笔记/书架) ===== */
-.home-subtab-bar {
-  display: flex; padding: 0 16px; gap: 4px; flex-shrink: 0;
-  border-bottom: 2px solid var(--border-color);
-}
-.home-subtab-btn {
-  padding: 10px 18px; border: none; background: none;
-  font-size: 0.85rem; font-weight: 500; color: var(--text-secondary);
-  cursor: pointer; position: relative; transition: color var(--transition);
-  border-bottom: 2px solid transparent; margin-bottom: -2px;
-}
-.home-subtab-btn:hover { color: var(--text-primary); }
-.home-subtab-btn.active {
-  color: var(--accent);
-  border-bottom-color: var(--accent);
-}
-
 /* ===== Desktop Tab Bar ===== */
 .tab-bar {
   display: flex; padding: 8px 16px 12px; gap: 4px; flex-shrink: 0;
@@ -341,6 +324,72 @@ html, body {
 .profile-about { margin-top: 12px; padding: 14px 0; text-align: center; }
 .profile-about .about-version { font-size: 0.82rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 6px; }
 .profile-about .about-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
+
+/* ===== Tag Manager (Profile) ===== */
+.tag-manager-item {
+  flex-direction: column !important; align-items: stretch !important;
+}
+.tag-manager-list {
+  margin-top: 10px; display: flex; flex-direction: column; gap: 6px;
+}
+.tag-manager-row {
+  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+  border-radius: var(--radius-sm); background: var(--bg-primary);
+  transition: background var(--transition);
+}
+.tag-manager-row:hover { background: var(--bg-hover); }
+.tag-manager-row .tag-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.tag-manager-row .tag-name {
+  flex: 1; font-size: 0.85rem; color: var(--text-primary); font-weight: 500;
+  min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.tag-manager-row .tag-count {
+  font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
+}
+.tag-manager-row .tag-actions {
+  display: flex; gap: 4px; flex-shrink: 0;
+}
+.tag-manager-row .tag-action-btn {
+  width: 28px; height: 28px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-secondary); font-size: 0.85rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.tag-manager-row .tag-action-btn:hover { background: var(--bg-active); }
+.tag-manager-row .tag-action-btn.tag-delete:hover { background: var(--accent-light); color: var(--accent); }
+.btn-add-tag {
+  margin-top: 10px; align-self: flex-start;
+}
+
+/* Tag input modal */
+.tag-input-overlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+  z-index: 1200;
+}
+.tag-input-overlay.hidden { display: none; }
+.tag-input-card {
+  background: var(--bg-card); border-radius: var(--radius-lg); padding: 20px 24px;
+  max-width: 340px; width: 90%; box-shadow: var(--shadow-lg);
+}
+.tag-input-card h4 { font-size: 1rem; color: var(--text-primary); margin-bottom: 14px; font-weight: 600; }
+.tag-input-card input[type="text"] {
+  width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
+  font-size: 0.9rem; outline: none; margin-bottom: 16px; transition: all var(--transition);
+}
+.tag-input-card input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.tag-input-card .tag-input-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* Tag delete replace modal */
+.tag-replace-select {
+  width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
+  font-size: 0.9rem; outline: none; margin-bottom: 16px; transition: all var(--transition);
+  appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a9aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer;
+}
+.tag-replace-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
 
 /* ===== Bottom Nav (Mobile) ===== */
 .bottom-nav {
@@ -579,21 +628,16 @@ html, body {
 
       <!-- Home Tab -->
       <div class="tab-panel active" id="tabHome">
-        <!-- Sub-tab: 笔记 / 书架 -->
-        <div class="home-subtab-bar" id="homeSubtabBar">
-          <button class="home-subtab-btn" data-subtab="notes">📝 笔记</button>
-          <button class="home-subtab-btn active" data-subtab="shelf">📚 书架</button>
-        </div>
-        <!-- Notes List View -->
-        <div id="notesViewArea">
+        <!-- Notes List View (hidden, kept for search) -->
+        <div id="notesViewArea" style="display:none">
           <div class="category-chips" id="categoryChips"></div>
           <div class="toolbar"><span class="count" id="noteCount">共 0 篇</span></div>
           <div class="note-list" id="noteList">
             <div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>
           </div>
         </div>
-        <!-- Shelf View (toggled) -->
-        <div class="shelf-container hidden" id="shelfContainer">
+        <!-- Shelf View (always visible) -->
+        <div class="shelf-container" id="shelfContainer">
           <div class="empty-state"><div class="empty-icon">📚</div><p>书架上还没有书</p></div>
         </div>
         <!-- Search Page -->
@@ -659,13 +703,19 @@ html, body {
                 <span class="setting-label"><span class="setting-icon">🗑️</span>清除用户笔记</span>
                 <button class="btn-setting" id="clearUserNotesBtn">清除全部</button>
               </li>
+              <!-- Tag Management -->
+              <li class="profile-setting-item tag-manager-item">
+                <span class="setting-label"><span class="setting-icon">🏷️</span>标签管理</span>
+                <div class="tag-manager-list" id="tagManagerList"></div>
+                <button class="btn-setting btn-add-tag" id="addTagBtn">+ 新增标签</button>
+              </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v5.0</span>
+                <span class="setting-value">v6.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 笔记预览 v5.0</div>
+              <div class="about-version">📚 笔记预览 v6.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -755,9 +805,36 @@ html, body {
   </div>
 </div>
 
+<!-- Tag Input Modal (add/edit tag) -->
+<div class="tag-input-overlay hidden" id="tagInputOverlay">
+  <div class="tag-input-card">
+    <h4 id="tagInputTitle">新增标签</h4>
+    <input type="text" id="tagInputField" placeholder="输入标签名" maxlength="30" autocomplete="off">
+    <div class="tag-input-actions">
+      <button class="btn btn-cancel" id="tagInputCancel">取消</button>
+      <button class="btn btn-primary" id="tagInputConfirm">确定</button>
+    </div>
+  </div>
+</div>
+
+<!-- Tag Delete/Replace Modal -->
+<div class="modal-overlay hidden" id="tagReplaceModal">
+  <div class="modal-card">
+    <div class="modal-icon" id="tagReplaceIcon">⚠️</div>
+    <h3 id="tagReplaceTitle">确认操作</h3>
+    <p id="tagReplaceMessage">确定要删除此标签吗？</p>
+    <select class="tag-replace-select hidden" id="tagReplaceSelect"></select>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" id="tagReplaceCancel">取消</button>
+      <button class="btn btn-danger" id="tagReplaceRemove">直接移除</button>
+      <button class="btn btn-primary hidden" id="tagReplaceConfirm">替换</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ===================================================================
- * 笔记预览 APP v5.0
+ * 笔记预览 APP v6.0
  * =================================================================== */
 (function() {
   'use strict';
@@ -848,6 +925,22 @@ html, body {
   const storageSize        = $('#storageSize');
   const clearUserNotesBtn  = $('#clearUserNotesBtn');
 
+  // Tag management
+  const tagManagerList   = $('#tagManagerList');
+  const addTagBtn        = $('#addTagBtn');
+  const tagInputOverlay  = $('#tagInputOverlay');
+  const tagInputTitle    = $('#tagInputTitle');
+  const tagInputField    = $('#tagInputField');
+  const tagInputCancel   = $('#tagInputCancel');
+  const tagInputConfirm  = $('#tagInputConfirm');
+  const tagReplaceModal  = $('#tagReplaceModal');
+  const tagReplaceTitle  = $('#tagReplaceTitle');
+  const tagReplaceMessage = $('#tagReplaceMessage');
+  const tagReplaceSelect = $('#tagReplaceSelect');
+  const tagReplaceCancel = $('#tagReplaceCancel');
+  const tagReplaceRemove = $('#tagReplaceRemove');
+  const tagReplaceConfirm = $('#tagReplaceConfirm');
+
   /* ---- State ---- */
   const STATE = {
     builtInNotes: [],
@@ -857,12 +950,12 @@ html, body {
     theme: 'light',
     isMobile: false,
     activeTab: 'home',
-    isShelfView: true,
     pinnedIds: [],
     searchHistory: [],
     selectedCategory: '全部',
     blobUrl: null,
     overlayBlobUrl: null,
+    customTags: [],
   };
 
   /* ---- Helpers ---- */
@@ -905,10 +998,6 @@ html, body {
   }
   function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
 
-  /* ---- Persistence: Shelf View ---- */
-  function loadShelfView() { try { const s=localStorage.getItem('notes-home-view'); STATE.isShelfView=(s!=='notes'); } catch(_){STATE.isShelfView=true;} }
-  function saveShelfView() { try { localStorage.setItem('notes-home-view',STATE.isShelfView?'shelf':'notes'); } catch(_){} }
-
   /* ---- Persistence: Nickname ---- */
   function loadNickname() { try { const s=localStorage.getItem('notes-nickname'); if(s) profileNickname.value=s; } catch(_){} }
   function saveNickname(n) { try { localStorage.setItem('notes-nickname',n.trim()); } catch(_){} }
@@ -919,6 +1008,10 @@ html, body {
   function addSearchHistory(t) { const x=t.trim(); if(!x) return; STATE.searchHistory=STATE.searchHistory.filter(h=>h!==x); STATE.searchHistory.unshift(x); if(STATE.searchHistory.length>20) STATE.searchHistory=STATE.searchHistory.slice(0,20); saveSearchHistory(); }
   function removeSearchHistory(t) { STATE.searchHistory=STATE.searchHistory.filter(h=>h!==t); saveSearchHistory(); }
   function clearSearchHistory() { STATE.searchHistory=[]; saveSearchHistory(); }
+
+  /* ---- Persistence: Custom Tags ---- */
+  function loadCustomTags() { try { const r=localStorage.getItem('notes-custom-tags'); if(r) STATE.customTags=JSON.parse(r); else STATE.customTags=[]; } catch(_){STATE.customTags=[];} }
+  function saveCustomTags() { try { localStorage.setItem('notes-custom-tags',JSON.stringify(STATE.customTags)); } catch(_){} }
 
   /* ---- Persistence: User Notes ---- */
   function loadUserNotesIndex() { try { const r=localStorage.getItem('user-notes-index'); if(r) STATE.userNotesIndex=JSON.parse(r); else STATE.userNotesIndex=[]; } catch(_){STATE.userNotesIndex=[];} }
@@ -1352,8 +1445,7 @@ html, body {
   async function loadAllNotes() {
     noteList.innerHTML='<div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>';
     await DB.open(); await loadBuiltInNotes(); mergeNotes();
-    if (!STATE.isShelfView) { renderCategoryChips(); renderNoteList(); }
-    else renderShelf();
+    renderShelf();
     populateUploadCategories();
   }
 
@@ -1427,36 +1519,7 @@ html, body {
     </div>`;
   }
 
-  function toggleShelfView() {
-    STATE.isShelfView = !STATE.isShelfView;
-    saveShelfView();
-    closeAllSwipes();
-    applyShelfView();
-  }
-
-  function applyShelfView() {
-    const notesBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="notes"]');
-    const shelfBtn = $('#homeSubtabBar .home-subtab-btn[data-subtab="shelf"]');
-    if (STATE.isShelfView) {
-      notesViewArea.style.display = 'none';
-      shelfContainer.classList.remove('hidden');
-      if (notesBtn) notesBtn.classList.remove('active');
-      if (shelfBtn) shelfBtn.classList.add('active');
-      renderShelf();
-    } else {
-      notesViewArea.style.display = '';
-      shelfContainer.classList.add('hidden');
-      if (notesBtn) notesBtn.classList.add('active');
-      if (shelfBtn) shelfBtn.classList.remove('active');
-      renderCategoryChips();
-      renderNoteList();
-    }
-  }
-
-  function refreshCurrentView() {
-    if (STATE.isShelfView) renderShelf();
-    else { renderCategoryChips(); renderNoteList(); }
-  }
+  function refreshCurrentView() { renderShelf(); }
 
   /* ===================================================================
    *  NOTE LIST
@@ -1557,7 +1620,7 @@ html, body {
     $$('.nav-item',bottomNav).forEach(b=>b.classList.toggle('active',b.getAttribute('data-tab')===name));
     if(!searchPage.classList.contains('hidden')) closeSearchPage();
     closeAllSwipes();
-    if(name==='profile') refreshProfileStorageSize();
+    if(name==='profile') { refreshProfileStorageSize(); renderTagManager(); }
     if(name==='upload') populateUploadCategories();
   }
 
@@ -1604,6 +1667,261 @@ html, body {
     } catch(err) { console.error(err); showToast('清除失败：'+err.message); }
   }
 
+  /* ---- Tag Management ---- */
+  let tagEditMode = 'add'; // 'add' | 'edit'
+  let tagEditOldName = '';
+  let tagDeleteTarget = '';
+
+  function collectAllTags() {
+    const map = new Map();
+    for (const n of STATE.notes) {
+      for (const t of (n.tags || [])) {
+        const k = t.trim();
+        if (!k) continue;
+        map.set(k, (map.get(k) || 0) + 1);
+      }
+    }
+    return map;
+  }
+
+  function renderTagManager() {
+    const tagMap = collectAllTags();
+    // Merge custom tags that may have 0 notes
+    for (const ct of STATE.customTags) {
+      if (!tagMap.has(ct)) tagMap.set(ct, 0);
+    }
+    if (tagMap.size === 0) {
+      tagManagerList.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:8px 0">暂无标签</div>';
+      return;
+    }
+    const entries = Array.from(tagMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+    tagManagerList.innerHTML = entries.map(([name, count]) => {
+      const color = tagColor(name);
+      return `<div class="tag-manager-row" data-tag="${escapeHtml(name)}">
+        <span class="tag-dot" style="background:${color}"></span>
+        <span class="tag-name">${escapeHtml(name)}</span>
+        <span class="tag-count">(${count}篇笔记)</span>
+        <span class="tag-actions">
+          <button class="tag-action-btn" data-action="edit" data-tag="${escapeHtml(name)}" title="编辑" aria-label="编辑标签">✏️</button>
+          <button class="tag-action-btn tag-delete" data-action="delete" data-tag="${escapeHtml(name)}" title="删除" aria-label="删除标签">🗑️</button>
+        </span>
+      </div>`;
+    }).join('');
+  }
+
+  // --- Tag input overlay (add/edit) ---
+  function openTagInput(mode, oldName) {
+    tagEditMode = mode;
+    tagEditOldName = oldName || '';
+    tagInputTitle.textContent = mode === 'add' ? '新增标签' : '编辑标签';
+    tagInputField.value = mode === 'edit' ? tagEditOldName : '';
+    tagInputOverlay.classList.remove('hidden');
+    setTimeout(() => tagInputField.focus(), 50);
+  }
+
+  function closeTagInput() {
+    tagInputOverlay.classList.add('hidden');
+    tagInputField.value = '';
+    tagEditMode = 'add';
+    tagEditOldName = '';
+  }
+
+  function confirmTagInput() {
+    const newName = tagInputField.value.trim();
+    if (!newName) { showToast('标签名不能为空'); return; }
+    if (tagEditMode === 'add') {
+      // Add new custom tag
+      if (STATE.customTags.includes(newName)) { showToast('标签已存在'); return; }
+      STATE.customTags.push(newName);
+      saveCustomTags();
+      showToast('✅ 标签已添加');
+    } else {
+      // Edit: rename tag in all notes
+      if (newName === tagEditOldName) { closeTagInput(); return; }
+      // Check if new name already exists as another tag
+      const tagMap = collectAllTags();
+      if (tagMap.has(newName) && newName !== tagEditOldName) { showToast('目标标签名已存在'); return; }
+      // Update in all STATE.notes
+      for (const n of STATE.notes) {
+        if (!n.tags) continue;
+        const idx = n.tags.indexOf(tagEditOldName);
+        if (idx >= 0) n.tags[idx] = newName;
+      }
+      // Update in builtInNotes
+      for (const n of STATE.builtInNotes) {
+        if (!n.tags) continue;
+        const idx = n.tags.indexOf(tagEditOldName);
+        if (idx >= 0) n.tags[idx] = newName;
+      }
+      // Update in userNotesIndex and IndexedDB
+      for (const idxNote of STATE.userNotesIndex) {
+        if (!idxNote.tags) continue;
+        const idx = idxNote.tags.indexOf(tagEditOldName);
+        if (idx >= 0) idxNote.tags[idx] = newName;
+      }
+      saveUserNotesIndex();
+      // Update custom tags
+      const ci = STATE.customTags.indexOf(tagEditOldName);
+      if (ci >= 0) { STATE.customTags[ci] = newName; saveCustomTags(); }
+      // Update IndexedDB user notes
+      DB.getAll().then(userNotes => {
+        const updates = [];
+        for (const un of userNotes) {
+          if (!un.tags) continue;
+          const idx = un.tags.indexOf(tagEditOldName);
+          if (idx >= 0) {
+            un.tags[idx] = newName;
+            updates.push(DB.put(un));
+          }
+        }
+        return Promise.all(updates);
+      }).catch(err => console.error('Tag edit DB update error:', err));
+      showToast('✅ 标签已更新');
+    }
+    closeTagInput();
+    renderTagManager();
+    mergeNotes();
+    refreshCurrentView();
+  }
+
+  tagInputCancel.addEventListener('click', closeTagInput);
+  tagInputOverlay.addEventListener('click', function(e) { if (e.target === tagInputOverlay) closeTagInput(); });
+  tagInputConfirm.addEventListener('click', confirmTagInput);
+  tagInputField.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmTagInput(); });
+
+  // --- Add tag button ---
+  addTagBtn.addEventListener('click', () => openTagInput('add'));
+
+  // --- Tag list click delegation ---
+  tagManagerList.addEventListener('click', function(e) {
+    const btn = e.target.closest('.tag-action-btn');
+    if (!btn) return;
+    const action = btn.getAttribute('data-action');
+    const tagName = btn.getAttribute('data-tag');
+    if (action === 'edit') {
+      openTagInput('edit', tagName);
+    } else if (action === 'delete') {
+      openTagDeleteConfirm(tagName);
+    }
+  });
+
+  // --- Tag delete ---
+  function openTagDeleteConfirm(tagName) {
+    tagDeleteTarget = tagName;
+    const tagMap = collectAllTags();
+    const count = tagMap.get(tagName) || 0;
+
+    if (count > 0) {
+      // Has associated notes: offer replace or remove
+      tagReplaceIcon.textContent = '⚠️';
+      tagReplaceTitle.textContent = '删除标签「' + tagName + '」';
+      tagReplaceMessage.textContent = '该标签关联了 ' + count + ' 篇笔记。请选择处理方式：';
+      tagReplaceSelect.classList.remove('hidden');
+      tagReplaceRemove.textContent = '直接移除标签';
+      tagReplaceConfirm.classList.remove('hidden');
+
+      // Populate replace select with other tags
+      const otherTags = Array.from(tagMap.keys()).filter(t => t !== tagName);
+      tagReplaceSelect.innerHTML = '<option value="__remove__">-- 选择替换标签（可选）--</option>' +
+        otherTags.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+      tagReplaceSelect.value = '__remove__';
+    } else {
+      // No associated notes: simple delete
+      tagReplaceIcon.textContent = '⚠️';
+      tagReplaceTitle.textContent = '删除标签';
+      tagReplaceMessage.textContent = '确定要删除标签「' + tagName + '」吗？该标签没有关联笔记。';
+      tagReplaceSelect.classList.add('hidden');
+      tagReplaceRemove.textContent = '确定删除';
+      tagReplaceConfirm.classList.add('hidden');
+    }
+    tagReplaceModal.classList.remove('hidden');
+  }
+
+  function closeTagReplaceModal() {
+    tagReplaceModal.classList.add('hidden');
+    tagDeleteTarget = '';
+  }
+
+  async function executeTagDelete(replaceWith) {
+    const oldName = tagDeleteTarget;
+    if (!oldName) return;
+
+    if (replaceWith && replaceWith !== '__remove__') {
+      // Replace tag in all notes
+      for (const n of STATE.notes) {
+        if (!n.tags) continue;
+        const idx = n.tags.indexOf(oldName);
+        if (idx >= 0) n.tags[idx] = replaceWith;
+      }
+      for (const n of STATE.builtInNotes) {
+        if (!n.tags) continue;
+        const idx = n.tags.indexOf(oldName);
+        if (idx >= 0) n.tags[idx] = replaceWith;
+      }
+      for (const idxNote of STATE.userNotesIndex) {
+        if (!idxNote.tags) continue;
+        const idx = idxNote.tags.indexOf(oldName);
+        if (idx >= 0) idxNote.tags[idx] = replaceWith;
+      }
+      saveUserNotesIndex();
+      // Update IndexedDB
+      const userNotes = await DB.getAll();
+      for (const un of userNotes) {
+        if (!un.tags) continue;
+        const idx = un.tags.indexOf(oldName);
+        if (idx >= 0) {
+          un.tags[idx] = replaceWith;
+          await DB.put(un);
+        }
+      }
+    } else {
+      // Remove tag from all notes
+      for (const n of STATE.notes) {
+        if (!n.tags) continue;
+        n.tags = n.tags.filter(t => t !== oldName);
+      }
+      for (const n of STATE.builtInNotes) {
+        if (!n.tags) continue;
+        n.tags = n.tags.filter(t => t !== oldName);
+      }
+      for (const idxNote of STATE.userNotesIndex) {
+        if (!idxNote.tags) continue;
+        idxNote.tags = idxNote.tags.filter(t => t !== oldName);
+      }
+      saveUserNotesIndex();
+      // Update IndexedDB
+      const userNotes = await DB.getAll();
+      for (const un of userNotes) {
+        if (!un.tags) continue;
+        un.tags = un.tags.filter(t => t !== oldName);
+        await DB.put(un);
+      }
+    }
+
+    // Remove from custom tags
+    const ci = STATE.customTags.indexOf(oldName);
+    if (ci >= 0) { STATE.customTags.splice(ci, 1); saveCustomTags(); }
+
+    mergeNotes();
+    renderTagManager();
+    refreshCurrentView();
+    showToast('🗑️ 标签已删除');
+  }
+
+  tagReplaceCancel.addEventListener('click', closeTagReplaceModal);
+  tagReplaceModal.addEventListener('click', function(e) { if (e.target === tagReplaceModal) closeTagReplaceModal(); });
+
+  tagReplaceRemove.addEventListener('click', function() {
+    closeTagReplaceModal();
+    executeTagDelete('__remove__');
+  });
+
+  tagReplaceConfirm.addEventListener('click', function() {
+    const replaceWith = tagReplaceSelect.value;
+    closeTagReplaceModal();
+    executeTagDelete(replaceWith);
+  });
+
   /* ---- Preview (shared logic) ---- */
   function buildIframeHTML(note, targetBody, blobKey) {
     if(STATE[blobKey]) { URL.revokeObjectURL(STATE[blobKey]); STATE[blobKey]=null; }
@@ -1631,8 +1949,7 @@ html, body {
       previewTitle.textContent=note.title; previewDate.textContent=note.date?formatDate(note.date):'';
       buildIframeHTML(note, previewBody, 'blobUrl');
     }
-    if (!STATE.isShelfView) { closeAllSwipes(); renderNoteList(); }
-    else renderShelf();
+    renderShelf();
   }
 
   function showWelcome() {
@@ -1640,8 +1957,7 @@ html, body {
     previewTitle.textContent='选择一篇笔记'; previewDate.textContent='';
     previewBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>';
     overlayBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>';
-    if (!STATE.isShelfView) renderNoteList();
-    else renderShelf();
+    renderShelf();
   }
 
   function closePreviewOverlay() {
@@ -1671,18 +1987,6 @@ html, body {
     const chip=e.target.closest('.category-chip'); if(!chip) return;
     STATE.selectedCategory=chip.getAttribute('data-cat');
     renderCategoryChips(); renderNoteList();
-  });
-
-  // Home sub-tab bar
-  const homeSubtabBar = $('#homeSubtabBar');
-  homeSubtabBar.addEventListener('click', e => {
-    const btn = e.target.closest('.home-subtab-btn');
-    if (!btn) return;
-    const view = btn.getAttribute('data-subtab');
-    STATE.isShelfView = (view === 'shelf');
-    saveShelfView();
-    closeAllSwipes();
-    applyShelfView();
   });
 
   // Search
@@ -1736,12 +2040,12 @@ html, body {
    *  INIT
    * =================================================================== */
   async function init() {
-    loadTheme(); loadNickname(); loadShelfView(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
+    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); loadCustomTags(); checkMobile();
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
     else{mainContent.style.display='none';history.pushState({view:'home'},'');}
-    applyShelfView(); showWelcome(); await loadAllNotes();
-    if(STATE.isShelfView) renderShelf();
+    renderShelf(); showWelcome(); await loadAllNotes();
+    renderShelf();
   }
   init();
 })();
