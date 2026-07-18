@@ -39,6 +39,11 @@
   --book-lit-bg: #fde8ee;  --book-lit-accent: #c44569;
   --book-tech-bg: #e6f5f5; --book-tech-accent: #2c7a7b;
   --book-other-bg: #f3f4f6; --book-other-accent: #6b7280;
+  --book-econ-bg: #fef6e6; --book-econ-accent: #e67e22;
+  --book-mgmt-bg: #e6f0fa; --book-mgmt-accent: #2980b9;
+  --book-psych-bg: #f5ecfa; --book-psych-accent: #8e44ad;
+  --book-edu-bg: #e6faee; --book-edu-accent: #27ae60;
+  --book-art-bg: #fde6e6; --book-art-accent: #e74c3c;
 }
 
 [data-theme="dark"] {
@@ -67,6 +72,11 @@
   --book-lit-bg: #3d2028;  --book-lit-accent: #d46780;
   --book-tech-bg: #1a3d3d; --book-tech-accent: #4a9e9e;
   --book-other-bg: #2d3036; --book-other-accent: #8b9098;
+  --book-econ-bg: #3d2817; --book-econ-accent: #d9822b;
+  --book-mgmt-bg: #172a3d; --book-mgmt-accent: #4a90d9;
+  --book-psych-bg: #2d2040; --book-psych-accent: #9b6cc4;
+  --book-edu-bg: #173d23; --book-edu-accent: #4a9e5f;
+  --book-art-bg: #3d2020; --book-art-accent: #d95b5b;
 }
 
 /* ===== Reset & Base ===== */
@@ -325,71 +335,73 @@ html, body {
 .profile-about .about-version { font-size: 0.82rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 6px; }
 .profile-about .about-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
 
-/* ===== Tag Manager (Profile) ===== */
-.tag-manager-item {
+/* ===== Category Manager (Profile) ===== */
+.category-manager-item {
   flex-direction: column !important; align-items: stretch !important;
 }
-.tag-manager-list {
+.category-manager-list {
   margin-top: 10px; display: flex; flex-direction: column; gap: 6px;
 }
-.tag-manager-row {
+.category-manager-row {
   display: flex; align-items: center; gap: 8px; padding: 8px 10px;
   border-radius: var(--radius-sm); background: var(--bg-primary);
   transition: background var(--transition);
 }
-.tag-manager-row:hover { background: var(--bg-hover); }
-.tag-manager-row .tag-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-.tag-manager-row .tag-name {
+.category-manager-row:hover { background: var(--bg-hover); }
+.category-manager-row .cat-dot {
+  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
+}
+.category-manager-row .cat-name {
   flex: 1; font-size: 0.85rem; color: var(--text-primary); font-weight: 500;
   min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.tag-manager-row .tag-count {
+.category-manager-row .cat-count {
   font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
 }
-.tag-manager-row .tag-actions {
+.category-manager-row .cat-actions {
   display: flex; gap: 4px; flex-shrink: 0;
 }
-.tag-manager-row .tag-action-btn {
+.category-manager-row .cat-action-btn {
   width: 28px; height: 28px; border: none; border-radius: var(--radius-sm);
   background: transparent; color: var(--text-secondary); font-size: 0.85rem;
   cursor: pointer; display: flex; align-items: center; justify-content: center;
   transition: all var(--transition);
 }
-.tag-manager-row .tag-action-btn:hover { background: var(--bg-active); }
-.tag-manager-row .tag-action-btn.tag-delete:hover { background: var(--accent-light); color: var(--accent); }
-.btn-add-tag {
+.category-manager-row .cat-action-btn:hover { background: var(--bg-active); }
+.category-manager-row .cat-action-btn.cat-delete:hover { background: var(--accent-light); color: var(--accent); }
+.btn-add-category {
   margin-top: 10px; align-self: flex-start;
 }
 
-/* Tag input modal */
-.tag-input-overlay {
+/* Category input modal */
+.category-input-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
   z-index: 1200;
 }
-.tag-input-overlay.hidden { display: none; }
-.tag-input-card {
+.category-input-overlay.hidden { display: none; }
+.category-input-card {
   background: var(--bg-card); border-radius: var(--radius-lg); padding: 20px 24px;
   max-width: 340px; width: 90%; box-shadow: var(--shadow-lg);
 }
-.tag-input-card h4 { font-size: 1rem; color: var(--text-primary); margin-bottom: 14px; font-weight: 600; }
-.tag-input-card input[type="text"] {
+.category-input-card h4 { font-size: 1rem; color: var(--text-primary); margin-bottom: 14px; font-weight: 600; }
+.category-input-card input[type="text"] {
   width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
   border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
   font-size: 0.9rem; outline: none; margin-bottom: 16px; transition: all var(--transition);
 }
-.tag-input-card input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-.tag-input-card .tag-input-actions { display: flex; gap: 10px; justify-content: flex-end; }
+.category-input-card input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.category-input-card .category-input-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
-/* Tag delete replace modal */
-.tag-replace-select {
+/* Category delete replace modal */
+.category-replace-select {
   width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
   border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
   font-size: 0.9rem; outline: none; margin-bottom: 16px; transition: all var(--transition);
   appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a9aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
   background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer;
 }
-.tag-replace-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.category-replace-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
 
 /* ===== Bottom Nav (Mobile) ===== */
 .bottom-nav {
@@ -536,6 +548,11 @@ html, body {
 .shelf-cat-label.literature { background: var(--book-lit-accent); }
 .shelf-cat-label.tech { background: var(--book-tech-accent); }
 .shelf-cat-label.other { background: var(--book-other-accent); }
+.shelf-cat-label.economy { background: var(--book-econ-accent); }
+.shelf-cat-label.management { background: var(--book-mgmt-accent); }
+.shelf-cat-label.psychology { background: var(--book-psych-accent); }
+.shelf-cat-label.education { background: var(--book-edu-accent); }
+.shelf-cat-label.art { background: var(--book-art-accent); }
 
 .shelf-row {
   display: flex; gap: 12px; overflow-x: auto; padding: 8px 8px 12px;
@@ -587,6 +604,21 @@ html, body {
 .book-other { background: var(--book-other-bg); }
 .book-other .book-card-top-bar { background: var(--book-other-accent); }
 .book-other .book-card-bottom-bar { background: var(--book-other-accent); }
+
+.book-economy .book-card-top-bar { background: var(--book-econ-accent); }
+.book-economy .book-card-bottom-bar { background: var(--book-econ-accent); }
+
+.book-management .book-card-top-bar { background: var(--book-mgmt-accent); }
+.book-management .book-card-bottom-bar { background: var(--book-mgmt-accent); }
+
+.book-psychology .book-card-top-bar { background: var(--book-psych-accent); }
+.book-psychology .book-card-bottom-bar { background: var(--book-psych-accent); }
+
+.book-education .book-card-top-bar { background: var(--book-edu-accent); }
+.book-education .book-card-bottom-bar { background: var(--book-edu-accent); }
+
+.book-art .book-card-top-bar { background: var(--book-art-accent); }
+.book-art .book-card-bottom-bar { background: var(--book-art-accent); }
 
 /* ===== Responsive: Mobile ===== */
 @media (max-width: 767px) {
@@ -703,11 +735,11 @@ html, body {
                 <span class="setting-label"><span class="setting-icon">🗑️</span>清除用户笔记</span>
                 <button class="btn-setting" id="clearUserNotesBtn">清除全部</button>
               </li>
-              <!-- Tag Management -->
-              <li class="profile-setting-item tag-manager-item">
-                <span class="setting-label"><span class="setting-icon">🏷️</span>标签管理</span>
-                <div class="tag-manager-list" id="tagManagerList"></div>
-                <button class="btn-setting btn-add-tag" id="addTagBtn">+ 新增标签</button>
+              <!-- Category Management -->
+              <li class="profile-setting-item category-manager-item">
+                <span class="setting-label"><span class="setting-icon">📂</span>分类管理</span>
+                <div class="category-manager-list" id="categoryManagerList"></div>
+                <button class="btn-setting btn-add-category" id="addCategoryBtn">+ 新增分类</button>
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
@@ -805,29 +837,29 @@ html, body {
   </div>
 </div>
 
-<!-- Tag Input Modal (add/edit tag) -->
-<div class="tag-input-overlay hidden" id="tagInputOverlay">
-  <div class="tag-input-card">
-    <h4 id="tagInputTitle">新增标签</h4>
-    <input type="text" id="tagInputField" placeholder="输入标签名" maxlength="30" autocomplete="off">
-    <div class="tag-input-actions">
-      <button class="btn btn-cancel" id="tagInputCancel">取消</button>
-      <button class="btn btn-primary" id="tagInputConfirm">确定</button>
+<!-- Category Input Modal (add/edit category) -->
+<div class="category-input-overlay hidden" id="categoryInputOverlay">
+  <div class="category-input-card">
+    <h4 id="categoryInputTitle">新增分类</h4>
+    <input type="text" id="categoryInputField" placeholder="输入分类名" maxlength="30" autocomplete="off">
+    <div class="category-input-actions">
+      <button class="btn btn-cancel" id="categoryInputCancel">取消</button>
+      <button class="btn btn-primary" id="categoryInputConfirm">确定</button>
     </div>
   </div>
 </div>
 
-<!-- Tag Delete/Replace Modal -->
-<div class="modal-overlay hidden" id="tagReplaceModal">
+<!-- Category Delete/Replace Modal -->
+<div class="modal-overlay hidden" id="categoryReplaceModal">
   <div class="modal-card">
-    <div class="modal-icon" id="tagReplaceIcon">⚠️</div>
-    <h3 id="tagReplaceTitle">确认操作</h3>
-    <p id="tagReplaceMessage">确定要删除此标签吗？</p>
-    <select class="tag-replace-select hidden" id="tagReplaceSelect"></select>
+    <div class="modal-icon" id="categoryReplaceIcon">⚠️</div>
+    <h3 id="categoryReplaceTitle">确认操作</h3>
+    <p id="categoryReplaceMessage">确定要删除此分类吗？</p>
+    <select class="category-replace-select hidden" id="categoryReplaceSelect"></select>
     <div class="modal-actions">
-      <button class="btn btn-cancel" id="tagReplaceCancel">取消</button>
-      <button class="btn btn-danger" id="tagReplaceRemove">直接移除</button>
-      <button class="btn btn-primary hidden" id="tagReplaceConfirm">替换</button>
+      <button class="btn btn-cancel" id="categoryReplaceCancel">取消</button>
+      <button class="btn btn-danger" id="categoryReplaceRemove">移除分类</button>
+      <button class="btn btn-primary hidden" id="categoryReplaceConfirm">替换</button>
     </div>
   </div>
 </div>
@@ -925,21 +957,21 @@ html, body {
   const storageSize        = $('#storageSize');
   const clearUserNotesBtn  = $('#clearUserNotesBtn');
 
-  // Tag management
-  const tagManagerList   = $('#tagManagerList');
-  const addTagBtn        = $('#addTagBtn');
-  const tagInputOverlay  = $('#tagInputOverlay');
-  const tagInputTitle    = $('#tagInputTitle');
-  const tagInputField    = $('#tagInputField');
-  const tagInputCancel   = $('#tagInputCancel');
-  const tagInputConfirm  = $('#tagInputConfirm');
-  const tagReplaceModal  = $('#tagReplaceModal');
-  const tagReplaceTitle  = $('#tagReplaceTitle');
-  const tagReplaceMessage = $('#tagReplaceMessage');
-  const tagReplaceSelect = $('#tagReplaceSelect');
-  const tagReplaceCancel = $('#tagReplaceCancel');
-  const tagReplaceRemove = $('#tagReplaceRemove');
-  const tagReplaceConfirm = $('#tagReplaceConfirm');
+  // Category management
+  const categoryManagerList = $('#categoryManagerList');
+  const addCategoryBtn     = $('#addCategoryBtn');
+  const categoryInputOverlay  = $('#categoryInputOverlay');
+  const categoryInputTitle    = $('#categoryInputTitle');
+  const categoryInputField    = $('#categoryInputField');
+  const categoryInputCancel   = $('#categoryInputCancel');
+  const categoryInputConfirm  = $('#categoryInputConfirm');
+  const categoryReplaceModal  = $('#categoryReplaceModal');
+  const categoryReplaceTitle  = $('#categoryReplaceTitle');
+  const categoryReplaceMessage = $('#categoryReplaceMessage');
+  const categoryReplaceSelect = $('#categoryReplaceSelect');
+  const categoryReplaceCancel = $('#categoryReplaceCancel');
+  const categoryReplaceRemove = $('#categoryReplaceRemove');
+  const categoryReplaceConfirm = $('#categoryReplaceConfirm');
 
   /* ---- State ---- */
   const STATE = {
@@ -955,7 +987,6 @@ html, body {
     selectedCategory: '全部',
     blobUrl: null,
     overlayBlobUrl: null,
-    customTags: [],
   };
 
   /* ---- Helpers ---- */
@@ -983,7 +1014,7 @@ html, body {
   }
 
   /* ---- Persistence: Categories ---- */
-  const PRESET_CATEGORIES = ['全部','哲学','历史','文学','科技','其他'];
+  const PRESET_CATEGORIES = ['全部','哲学','历史','文学','科技','经济','管理','心理学','教育','艺术','其他'];
   function loadCategories() { try { const r=localStorage.getItem('notes-categories'); if(r){ const p=JSON.parse(r); if(Array.isArray(p)&&p.length) return p; } } catch(_){} return [...PRESET_CATEGORIES]; }
   function saveCategories(c) { try { localStorage.setItem('notes-categories',JSON.stringify(c)); } catch(_){} }
 
@@ -1008,10 +1039,6 @@ html, body {
   function addSearchHistory(t) { const x=t.trim(); if(!x) return; STATE.searchHistory=STATE.searchHistory.filter(h=>h!==x); STATE.searchHistory.unshift(x); if(STATE.searchHistory.length>20) STATE.searchHistory=STATE.searchHistory.slice(0,20); saveSearchHistory(); }
   function removeSearchHistory(t) { STATE.searchHistory=STATE.searchHistory.filter(h=>h!==t); saveSearchHistory(); }
   function clearSearchHistory() { STATE.searchHistory=[]; saveSearchHistory(); }
-
-  /* ---- Persistence: Custom Tags ---- */
-  function loadCustomTags() { try { const r=localStorage.getItem('notes-custom-tags'); if(r) STATE.customTags=JSON.parse(r); else STATE.customTags=[]; } catch(_){STATE.customTags=[];} }
-  function saveCustomTags() { try { localStorage.setItem('notes-custom-tags',JSON.stringify(STATE.customTags)); } catch(_){} }
 
   /* ---- Persistence: User Notes ---- */
   function loadUserNotesIndex() { try { const r=localStorage.getItem('user-notes-index'); if(r) STATE.userNotesIndex=JSON.parse(r); else STATE.userNotesIndex=[]; } catch(_){STATE.userNotesIndex=[];} }
@@ -1466,8 +1493,8 @@ html, body {
   /* ===================================================================
    *  SHELF VIEW
    * =================================================================== */
-  const CAT_COLOR_MAP = { '哲学': 'philosophy', '历史': 'history', '文学': 'literature', '科技': 'tech', '其他': 'other' };
-  const CAT_ORDER = ['哲学', '历史', '文学', '科技', '其他'];
+  const CAT_COLOR_MAP = { '哲学': 'philosophy', '历史': 'history', '文学': 'literature', '科技': 'tech', '经济': 'economy', '管理': 'management', '心理学': 'psychology', '教育': 'education', '艺术': 'art', '其他': 'other' };
+  const CAT_ORDER = ['哲学', '历史', '文学', '科技', '经济', '管理', '心理学', '教育', '艺术', '其他'];
   function getBookColorClass(cat) { return 'book-' + (CAT_COLOR_MAP[cat] || 'other'); }
 
   function renderShelf() {
@@ -1620,7 +1647,7 @@ html, body {
     $$('.nav-item',bottomNav).forEach(b=>b.classList.toggle('active',b.getAttribute('data-tab')===name));
     if(!searchPage.classList.contains('hidden')) closeSearchPage();
     closeAllSwipes();
-    if(name==='profile') { refreshProfileStorageSize(); renderTagManager(); }
+    if(name==='profile') { refreshProfileStorageSize(); renderCategoryManager(); }
     if(name==='upload') populateUploadCategories();
   }
 
@@ -1667,259 +1694,248 @@ html, body {
     } catch(err) { console.error(err); showToast('清除失败：'+err.message); }
   }
 
-  /* ---- Tag Management ---- */
-  let tagEditMode = 'add'; // 'add' | 'edit'
-  let tagEditOldName = '';
-  let tagDeleteTarget = '';
+  /* ---- Category Management ---- */
+  let catEditMode = 'add'; // 'add' | 'edit'
+  let catEditOldName = '';
+  let catDeleteTarget = '';
 
-  function collectAllTags() {
+  const CAT_COLORS_JS = {
+    '哲学': '#5d4e8c', '历史': '#8b4513', '文学': '#c44569', '科技': '#2c7a7b',
+    '经济': '#e67e22', '管理': '#2980b9', '心理学': '#8e44ad', '教育': '#27ae60',
+    '艺术': '#e74c3c', '其他': '#6b7280'
+  };
+  function catColorJS(name) { return CAT_COLORS_JS[name] || '#6b7280'; }
+
+  function countNotesByCategory() {
     const map = new Map();
     for (const n of STATE.notes) {
-      for (const t of (n.tags || [])) {
-        const k = t.trim();
-        if (!k) continue;
-        map.set(k, (map.get(k) || 0) + 1);
-      }
+      const cat = n.category || '其他';
+      map.set(cat, (map.get(cat) || 0) + 1);
     }
     return map;
   }
 
-  function renderTagManager() {
-    const tagMap = collectAllTags();
-    // Merge custom tags that may have 0 notes
-    for (const ct of STATE.customTags) {
-      if (!tagMap.has(ct)) tagMap.set(ct, 0);
-    }
-    if (tagMap.size === 0) {
-      tagManagerList.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:8px 0">暂无标签</div>';
+  function renderCategoryManager() {
+    const cats = loadCategories().filter(c => c !== '全部');
+    const catCounts = countNotesByCategory();
+
+    if (cats.length === 0) {
+      categoryManagerList.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:8px 0">暂无分类</div>';
       return;
     }
-    const entries = Array.from(tagMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-    tagManagerList.innerHTML = entries.map(([name, count]) => {
-      const color = tagColor(name);
-      return `<div class="tag-manager-row" data-tag="${escapeHtml(name)}">
-        <span class="tag-dot" style="background:${color}"></span>
-        <span class="tag-name">${escapeHtml(name)}</span>
-        <span class="tag-count">(${count}篇笔记)</span>
-        <span class="tag-actions">
-          <button class="tag-action-btn" data-action="edit" data-tag="${escapeHtml(name)}" title="编辑" aria-label="编辑标签">✏️</button>
-          <button class="tag-action-btn tag-delete" data-action="delete" data-tag="${escapeHtml(name)}" title="删除" aria-label="删除标签">🗑️</button>
+
+    categoryManagerList.innerHTML = cats.map(name => {
+      const count = catCounts.get(name) || 0;
+      const color = catColorJS(name);
+      return `<div class="category-manager-row" data-cat="${escapeHtml(name)}">
+        <span class="cat-dot" style="background:${color}"></span>
+        <span class="cat-name">${escapeHtml(name)}</span>
+        <span class="cat-count">(${count}篇笔记)</span>
+        <span class="cat-actions">
+          <button class="cat-action-btn" data-action="edit" data-cat="${escapeHtml(name)}" title="编辑" aria-label="编辑分类">✏️</button>
+          <button class="cat-action-btn cat-delete" data-action="delete" data-cat="${escapeHtml(name)}" title="删除" aria-label="删除分类">🗑️</button>
         </span>
       </div>`;
     }).join('');
   }
 
-  // --- Tag input overlay (add/edit) ---
-  function openTagInput(mode, oldName) {
-    tagEditMode = mode;
-    tagEditOldName = oldName || '';
-    tagInputTitle.textContent = mode === 'add' ? '新增标签' : '编辑标签';
-    tagInputField.value = mode === 'edit' ? tagEditOldName : '';
-    tagInputOverlay.classList.remove('hidden');
-    setTimeout(() => tagInputField.focus(), 50);
+  // --- Category input overlay (add/edit) ---
+  function openCategoryInput(mode, oldName) {
+    catEditMode = mode;
+    catEditOldName = oldName || '';
+    categoryInputTitle.textContent = mode === 'add' ? '新增分类' : '编辑分类';
+    categoryInputField.value = mode === 'edit' ? catEditOldName : '';
+    categoryInputOverlay.classList.remove('hidden');
+    setTimeout(() => categoryInputField.focus(), 50);
   }
 
-  function closeTagInput() {
-    tagInputOverlay.classList.add('hidden');
-    tagInputField.value = '';
-    tagEditMode = 'add';
-    tagEditOldName = '';
+  function closeCategoryInput() {
+    categoryInputOverlay.classList.add('hidden');
+    categoryInputField.value = '';
+    catEditMode = 'add';
+    catEditOldName = '';
   }
 
-  function confirmTagInput() {
-    const newName = tagInputField.value.trim();
-    if (!newName) { showToast('标签名不能为空'); return; }
-    if (tagEditMode === 'add') {
-      // Add new custom tag
-      if (STATE.customTags.includes(newName)) { showToast('标签已存在'); return; }
-      STATE.customTags.push(newName);
-      saveCustomTags();
-      showToast('✅ 标签已添加');
+  function confirmCategoryInput() {
+    const newName = categoryInputField.value.trim();
+    if (!newName) { showToast('分类名不能为空'); return; }
+
+    const cats = loadCategories();
+    if (catEditMode === 'add') {
+      if (cats.includes(newName)) { showToast('分类已存在'); return; }
+      cats.splice(cats.length - 1, 0, newName); // insert before '其他'
+      saveCategories(cats);
+      showToast('✅ 分类已添加');
     } else {
-      // Edit: rename tag in all notes
-      if (newName === tagEditOldName) { closeTagInput(); return; }
-      // Check if new name already exists as another tag
-      const tagMap = collectAllTags();
-      if (tagMap.has(newName) && newName !== tagEditOldName) { showToast('目标标签名已存在'); return; }
-      // Update in all STATE.notes
+      if (newName === catEditOldName) { closeCategoryInput(); return; }
+      if (cats.includes(newName)) { showToast('目标分类名已存在'); return; }
+      // Rename category in all notes
       for (const n of STATE.notes) {
-        if (!n.tags) continue;
-        const idx = n.tags.indexOf(tagEditOldName);
-        if (idx >= 0) n.tags[idx] = newName;
+        if (n.category === catEditOldName) n.category = newName;
       }
-      // Update in builtInNotes
       for (const n of STATE.builtInNotes) {
-        if (!n.tags) continue;
-        const idx = n.tags.indexOf(tagEditOldName);
-        if (idx >= 0) n.tags[idx] = newName;
+        if (n.category === catEditOldName) n.category = newName;
       }
-      // Update in userNotesIndex and IndexedDB
       for (const idxNote of STATE.userNotesIndex) {
-        if (!idxNote.tags) continue;
-        const idx = idxNote.tags.indexOf(tagEditOldName);
-        if (idx >= 0) idxNote.tags[idx] = newName;
+        if (idxNote.category === catEditOldName) idxNote.category = newName;
       }
       saveUserNotesIndex();
-      // Update custom tags
-      const ci = STATE.customTags.indexOf(tagEditOldName);
-      if (ci >= 0) { STATE.customTags[ci] = newName; saveCustomTags(); }
-      // Update IndexedDB user notes
+      // Update categories list
+      const idx = cats.indexOf(catEditOldName);
+      if (idx >= 0) cats[idx] = newName;
+      saveCategories(cats);
+      // Update IndexedDB
       DB.getAll().then(userNotes => {
         const updates = [];
         for (const un of userNotes) {
-          if (!un.tags) continue;
-          const idx = un.tags.indexOf(tagEditOldName);
-          if (idx >= 0) {
-            un.tags[idx] = newName;
+          if (un.category === catEditOldName) {
+            un.category = newName;
             updates.push(DB.put(un));
           }
         }
         return Promise.all(updates);
-      }).catch(err => console.error('Tag edit DB update error:', err));
-      showToast('✅ 标签已更新');
+      }).catch(err => console.error('Category edit DB update error:', err));
+      // Update selected category if it was the old one
+      if (STATE.selectedCategory === catEditOldName) STATE.selectedCategory = newName;
+      showToast('✅ 分类已更新');
     }
-    closeTagInput();
-    renderTagManager();
+    closeCategoryInput();
+    renderCategoryManager();
+    renderCategoryChips();
     mergeNotes();
     refreshCurrentView();
   }
 
-  tagInputCancel.addEventListener('click', closeTagInput);
-  tagInputOverlay.addEventListener('click', function(e) { if (e.target === tagInputOverlay) closeTagInput(); });
-  tagInputConfirm.addEventListener('click', confirmTagInput);
-  tagInputField.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmTagInput(); });
+  categoryInputCancel.addEventListener('click', closeCategoryInput);
+  categoryInputOverlay.addEventListener('click', function(e) { if (e.target === categoryInputOverlay) closeCategoryInput(); });
+  categoryInputConfirm.addEventListener('click', confirmCategoryInput);
+  categoryInputField.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmCategoryInput(); });
 
-  // --- Add tag button ---
-  addTagBtn.addEventListener('click', () => openTagInput('add'));
+  // --- Add category button ---
+  addCategoryBtn.addEventListener('click', () => openCategoryInput('add'));
 
-  // --- Tag list click delegation ---
-  tagManagerList.addEventListener('click', function(e) {
-    const btn = e.target.closest('.tag-action-btn');
+  // --- Category list click delegation ---
+  categoryManagerList.addEventListener('click', function(e) {
+    const btn = e.target.closest('.cat-action-btn');
     if (!btn) return;
     const action = btn.getAttribute('data-action');
-    const tagName = btn.getAttribute('data-tag');
+    const catName = btn.getAttribute('data-cat');
+    if (catName === '其他') { showToast('「其他」为保留分类，不可编辑或删除'); return; }
     if (action === 'edit') {
-      openTagInput('edit', tagName);
+      openCategoryInput('edit', catName);
     } else if (action === 'delete') {
-      openTagDeleteConfirm(tagName);
+      openCategoryDeleteConfirm(catName);
     }
   });
 
-  // --- Tag delete ---
-  function openTagDeleteConfirm(tagName) {
-    tagDeleteTarget = tagName;
-    const tagMap = collectAllTags();
-    const count = tagMap.get(tagName) || 0;
+  // --- Category delete ---
+  function openCategoryDeleteConfirm(catName) {
+    catDeleteTarget = catName;
+    const catCounts = countNotesByCategory();
+    const count = catCounts.get(catName) || 0;
 
     if (count > 0) {
-      // Has associated notes: offer replace or remove
-      tagReplaceIcon.textContent = '⚠️';
-      tagReplaceTitle.textContent = '删除标签「' + tagName + '」';
-      tagReplaceMessage.textContent = '该标签关联了 ' + count + ' 篇笔记。请选择处理方式：';
-      tagReplaceSelect.classList.remove('hidden');
-      tagReplaceRemove.textContent = '直接移除标签';
-      tagReplaceConfirm.classList.remove('hidden');
+      categoryReplaceIcon.textContent = '⚠️';
+      categoryReplaceTitle.textContent = '删除分类「' + catName + '」';
+      categoryReplaceMessage.textContent = '该分类关联了 ' + count + ' 篇笔记。请选择处理方式：';
+      categoryReplaceSelect.classList.remove('hidden');
+      categoryReplaceRemove.textContent = '移除分类';
+      categoryReplaceRemove.classList.remove('hidden');
+      categoryReplaceConfirm.classList.remove('hidden');
 
-      // Populate replace select with other tags
-      const otherTags = Array.from(tagMap.keys()).filter(t => t !== tagName);
-      tagReplaceSelect.innerHTML = '<option value="__remove__">-- 选择替换标签（可选）--</option>' +
-        otherTags.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
-      tagReplaceSelect.value = '__remove__';
+      const otherCats = loadCategories().filter(c => c !== '全部' && c !== catName);
+      categoryReplaceSelect.innerHTML = '<option value="">-- 选择替换分类 --</option>' +
+        otherCats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+      categoryReplaceSelect.value = '';
     } else {
-      // No associated notes: simple delete
-      tagReplaceIcon.textContent = '⚠️';
-      tagReplaceTitle.textContent = '删除标签';
-      tagReplaceMessage.textContent = '确定要删除标签「' + tagName + '」吗？该标签没有关联笔记。';
-      tagReplaceSelect.classList.add('hidden');
-      tagReplaceRemove.textContent = '确定删除';
-      tagReplaceConfirm.classList.add('hidden');
+      categoryReplaceIcon.textContent = '⚠️';
+      categoryReplaceTitle.textContent = '删除分类';
+      categoryReplaceMessage.textContent = '确定要删除分类「' + catName + '」吗？该分类没有关联笔记。';
+      categoryReplaceSelect.classList.add('hidden');
+      categoryReplaceRemove.textContent = '确定删除';
+      categoryReplaceConfirm.classList.add('hidden');
     }
-    tagReplaceModal.classList.remove('hidden');
+    categoryReplaceModal.classList.remove('hidden');
   }
 
-  function closeTagReplaceModal() {
-    tagReplaceModal.classList.add('hidden');
-    tagDeleteTarget = '';
+  function closeCategoryReplaceModal() {
+    categoryReplaceModal.classList.add('hidden');
+    catDeleteTarget = '';
   }
 
-  async function executeTagDelete(replaceWith) {
-    const oldName = tagDeleteTarget;
+  async function executeCategoryDelete(replaceWith) {
+    const oldName = catDeleteTarget;
     if (!oldName) return;
 
-    if (replaceWith && replaceWith !== '__remove__') {
-      // Replace tag in all notes
+    const effectiveReplace = (replaceWith && replaceWith !== '') ? replaceWith : null;
+
+    if (effectiveReplace) {
       for (const n of STATE.notes) {
-        if (!n.tags) continue;
-        const idx = n.tags.indexOf(oldName);
-        if (idx >= 0) n.tags[idx] = replaceWith;
+        if (n.category === oldName) n.category = effectiveReplace;
       }
       for (const n of STATE.builtInNotes) {
-        if (!n.tags) continue;
-        const idx = n.tags.indexOf(oldName);
-        if (idx >= 0) n.tags[idx] = replaceWith;
+        if (n.category === oldName) n.category = effectiveReplace;
       }
       for (const idxNote of STATE.userNotesIndex) {
-        if (!idxNote.tags) continue;
-        const idx = idxNote.tags.indexOf(oldName);
-        if (idx >= 0) idxNote.tags[idx] = replaceWith;
+        if (idxNote.category === oldName) idxNote.category = effectiveReplace;
       }
       saveUserNotesIndex();
-      // Update IndexedDB
       const userNotes = await DB.getAll();
       for (const un of userNotes) {
-        if (!un.tags) continue;
-        const idx = un.tags.indexOf(oldName);
-        if (idx >= 0) {
-          un.tags[idx] = replaceWith;
+        if (un.category === oldName) {
+          un.category = effectiveReplace;
           await DB.put(un);
         }
       }
     } else {
-      // Remove tag from all notes
+      // No replacement selected / direct remove: set to '其他'
       for (const n of STATE.notes) {
-        if (!n.tags) continue;
-        n.tags = n.tags.filter(t => t !== oldName);
+        if (n.category === oldName) n.category = '其他';
       }
       for (const n of STATE.builtInNotes) {
-        if (!n.tags) continue;
-        n.tags = n.tags.filter(t => t !== oldName);
+        if (n.category === oldName) n.category = '其他';
       }
       for (const idxNote of STATE.userNotesIndex) {
-        if (!idxNote.tags) continue;
-        idxNote.tags = idxNote.tags.filter(t => t !== oldName);
+        if (idxNote.category === oldName) idxNote.category = '其他';
       }
       saveUserNotesIndex();
-      // Update IndexedDB
       const userNotes = await DB.getAll();
       for (const un of userNotes) {
-        if (!un.tags) continue;
-        un.tags = un.tags.filter(t => t !== oldName);
-        await DB.put(un);
+        if (un.category === oldName) {
+          un.category = '其他';
+          await DB.put(un);
+        }
       }
     }
 
-    // Remove from custom tags
-    const ci = STATE.customTags.indexOf(oldName);
-    if (ci >= 0) { STATE.customTags.splice(ci, 1); saveCustomTags(); }
+    // Remove from categories list
+    const cats = loadCategories();
+    const idx = cats.indexOf(oldName);
+    if (idx >= 0) { cats.splice(idx, 1); saveCategories(cats); }
+
+    // Reset selected category if deleted
+    if (STATE.selectedCategory === oldName) STATE.selectedCategory = '全部';
 
     mergeNotes();
-    renderTagManager();
+    renderCategoryManager();
+    renderCategoryChips();
     refreshCurrentView();
-    showToast('🗑️ 标签已删除');
+    showToast('🗑️ 分类已删除');
   }
 
-  tagReplaceCancel.addEventListener('click', closeTagReplaceModal);
-  tagReplaceModal.addEventListener('click', function(e) { if (e.target === tagReplaceModal) closeTagReplaceModal(); });
+  categoryReplaceCancel.addEventListener('click', closeCategoryReplaceModal);
+  categoryReplaceModal.addEventListener('click', function(e) { if (e.target === categoryReplaceModal) closeCategoryReplaceModal(); });
 
-  tagReplaceRemove.addEventListener('click', function() {
-    closeTagReplaceModal();
-    executeTagDelete('__remove__');
+  categoryReplaceRemove.addEventListener('click', function() {
+    closeCategoryReplaceModal();
+    executeCategoryDelete('');
   });
 
-  tagReplaceConfirm.addEventListener('click', function() {
-    const replaceWith = tagReplaceSelect.value;
-    closeTagReplaceModal();
-    executeTagDelete(replaceWith);
+  categoryReplaceConfirm.addEventListener('click', function() {
+    const replaceWith = categoryReplaceSelect.value;
+    if (!replaceWith) { showToast('请选择一个替换分类'); return; }
+    closeCategoryReplaceModal();
+    executeCategoryDelete(replaceWith);
   });
 
   /* ---- Preview (shared logic) ---- */
@@ -2040,7 +2056,7 @@ html, body {
    *  INIT
    * =================================================================== */
   async function init() {
-    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); loadCustomTags(); checkMobile();
+    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
     else{mainContent.style.display='none';history.pushState({view:'home'},'');}
