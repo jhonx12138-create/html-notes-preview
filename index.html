@@ -42,8 +42,8 @@
   --book-econ-bg: #fef6e6; --book-econ-accent: #e67e22;
   --book-mgmt-bg: #e6f0fa; --book-mgmt-accent: #2980b9;
   --book-psych-bg: #f5ecfa; --book-psych-accent: #8e44ad;
-  --book-edu-bg: #e6faee; --book-edu-accent: #27ae60;
-  --book-art-bg: #fde6e6; --book-art-accent: #e74c3c;
+  --book-business-bg: #faf0e6; --book-business-accent: #d35400;
+  --book-politics-bg: #e6eef6; --book-politics-accent: #1a5276;
 }
 
 [data-theme="dark"] {
@@ -75,8 +75,8 @@
   --book-econ-bg: #3d2817; --book-econ-accent: #d9822b;
   --book-mgmt-bg: #172a3d; --book-mgmt-accent: #4a90d9;
   --book-psych-bg: #2d2040; --book-psych-accent: #9b6cc4;
-  --book-edu-bg: #173d23; --book-edu-accent: #4a9e5f;
-  --book-art-bg: #3d2020; --book-art-accent: #d95b5b;
+  --book-business-bg: #3d2517; --book-business-accent: #d35400;
+  --book-politics-bg: #172a3d; --book-politics-accent: #1a5276;
 }
 
 /* ===== Reset & Base ===== */
@@ -551,8 +551,8 @@ html, body {
 .shelf-cat-label.economy { background: var(--book-econ-accent); }
 .shelf-cat-label.management { background: var(--book-mgmt-accent); }
 .shelf-cat-label.psychology { background: var(--book-psych-accent); }
-.shelf-cat-label.education { background: var(--book-edu-accent); }
-.shelf-cat-label.art { background: var(--book-art-accent); }
+.shelf-cat-label.business { background: var(--book-business-accent); }
+.shelf-cat-label.politics { background: var(--book-politics-accent); }
 
 .shelf-row {
   display: flex; gap: 12px; overflow-x: auto; padding: 8px 8px 12px;
@@ -614,11 +614,11 @@ html, body {
 .book-psychology .book-card-top-bar { background: var(--book-psych-accent); }
 .book-psychology .book-card-bottom-bar { background: var(--book-psych-accent); }
 
-.book-education .book-card-top-bar { background: var(--book-edu-accent); }
-.book-education .book-card-bottom-bar { background: var(--book-edu-accent); }
+.book-business .book-card-top-bar { background: var(--book-business-accent); }
+.book-business .book-card-bottom-bar { background: var(--book-business-accent); }
 
-.book-art .book-card-top-bar { background: var(--book-art-accent); }
-.book-art .book-card-bottom-bar { background: var(--book-art-accent); }
+.book-politics .book-card-top-bar { background: var(--book-politics-accent); }
+.book-politics .book-card-bottom-bar { background: var(--book-politics-accent); }
 
 /* ===== Responsive: Mobile ===== */
 @media (max-width: 767px) {
@@ -1014,7 +1014,7 @@ html, body {
   }
 
   /* ---- Persistence: Categories ---- */
-  const PRESET_CATEGORIES = ['全部','哲学','历史','文学','科技','经济','管理','心理学','教育','艺术','其他'];
+  const PRESET_CATEGORIES = ['全部','哲学','历史','文学','科技','经济','管理','心理学','商业','政治','其他'];
   function loadCategories() { try { const r=localStorage.getItem('notes-categories'); if(r){ const p=JSON.parse(r); if(Array.isArray(p)&&p.length) return p; } } catch(_){} return [...PRESET_CATEGORIES]; }
   function saveCategories(c) { try { localStorage.setItem('notes-categories',JSON.stringify(c)); } catch(_){} }
 
@@ -1493,8 +1493,8 @@ html, body {
   /* ===================================================================
    *  SHELF VIEW
    * =================================================================== */
-  const CAT_COLOR_MAP = { '哲学': 'philosophy', '历史': 'history', '文学': 'literature', '科技': 'tech', '经济': 'economy', '管理': 'management', '心理学': 'psychology', '教育': 'education', '艺术': 'art', '其他': 'other' };
-  const CAT_ORDER = ['哲学', '历史', '文学', '科技', '经济', '管理', '心理学', '教育', '艺术', '其他'];
+  const CAT_COLOR_MAP = { '哲学': 'philosophy', '历史': 'history', '文学': 'literature', '科技': 'tech', '经济': 'economy', '管理': 'management', '心理学': 'psychology', '商业': 'business', '政治': 'politics', '其他': 'other' };
+  const CAT_ORDER = ['哲学', '历史', '文学', '科技', '经济', '管理', '心理学', '商业', '政治', '其他'];
   function getBookColorClass(cat) { return 'book-' + (CAT_COLOR_MAP[cat] || 'other'); }
 
   function renderShelf() {
@@ -1701,8 +1701,8 @@ html, body {
 
   const CAT_COLORS_JS = {
     '哲学': '#5d4e8c', '历史': '#8b4513', '文学': '#c44569', '科技': '#2c7a7b',
-    '经济': '#e67e22', '管理': '#2980b9', '心理学': '#8e44ad', '教育': '#27ae60',
-    '艺术': '#e74c3c', '其他': '#6b7280'
+    '经济': '#e67e22', '管理': '#2980b9', '心理学': '#8e44ad', '商业': '#d35400',
+    '政治': '#1a5276', '其他': '#6b7280'
   };
   function catColorJS(name) { return CAT_COLORS_JS[name] || '#6b7280'; }
 
@@ -1863,8 +1863,8 @@ html, body {
     catDeleteTarget = '';
   }
 
-  async function executeCategoryDelete(replaceWith) {
-    const oldName = catDeleteTarget;
+  async function executeCategoryDelete(replaceWith, oldNameOverride) {
+    const oldName = oldNameOverride || catDeleteTarget;
     if (!oldName) return;
 
     const effectiveReplace = (replaceWith && replaceWith !== '') ? replaceWith : null;
@@ -1927,15 +1927,17 @@ html, body {
   categoryReplaceModal.addEventListener('click', function(e) { if (e.target === categoryReplaceModal) closeCategoryReplaceModal(); });
 
   categoryReplaceRemove.addEventListener('click', function() {
+    const oldName = catDeleteTarget;
     closeCategoryReplaceModal();
-    executeCategoryDelete('');
+    executeCategoryDelete('', oldName);
   });
 
   categoryReplaceConfirm.addEventListener('click', function() {
     const replaceWith = categoryReplaceSelect.value;
     if (!replaceWith) { showToast('请选择一个替换分类'); return; }
+    const oldName = catDeleteTarget;
     closeCategoryReplaceModal();
-    executeCategoryDelete(replaceWith);
+    executeCategoryDelete(replaceWith, oldName);
   });
 
   /* ---- Preview (shared logic) ---- */
