@@ -22,5 +22,6 @@
   "homepage": "https://github.com/jhonx12138-create/html-notes-preview#readme",
   "dependencies": {
     "playwright": "^1.61.1"
-  }
+  },
+  "devDependencies": {}
 }

@@ -466,16 +466,85 @@ html, body {
 .preview-overlay .overlay-body { flex: 1; position: relative; background: #fff; }
 .preview-overlay .overlay-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
-.preview-overlay.landscape .overlay-header { display: none; }
-.preview-overlay.landscape .overlay-body { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 501; }
-.preview-overlay.landscape .landscape-float-back {
-  display: flex; align-items: center; gap: 4px;
-  position: fixed; top: max(12px, env(safe-area-inset-top, 12px)); left: 12px;
-  z-index: 510; padding: 6px 14px; border: none; border-radius: 24px;
-  background: rgba(0,0,0,0.5); color: #fff; font-size: 0.85rem; font-weight: 500;
-  cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+.preview-overlay.landscape .overlay-header {
+  display: flex; position: fixed; top: max(12px, env(safe-area-inset-top, 12px));
+  left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.55); border-radius: 28px; padding: 4px 20px;
+  border: none; z-index: 510; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  gap: 8px; opacity: 0; transition: opacity 0.3s ease;
 }
+.preview-overlay.landscape .overlay-header.show { opacity: 1; }
+.preview-overlay.landscape .overlay-header .overlay-back-btn { color: #fff; padding: 6px 8px; }
+.preview-overlay.landscape .overlay-header .overlay-title { color: #fff; font-size: 0.85rem; }
+.preview-overlay.landscape .overlay-toolbar { background: rgba(255,255,255,0.15); }
+.preview-overlay.landscape .overlay-tool-btn { color: #fff; }
+.preview-overlay.landscape .overlay-body { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 501; }
 .landscape-float-back { display: none; }
+
+/* ========== Preview Overlay Toolbar ========== */
+.overlay-toolbar {
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(128,128,128,0.1); border-radius: 24px; padding: 3px;
+  flex-shrink: 0;
+}
+.overlay-tool-btn {
+  width: 38px; height: 38px; border: none; border-radius: 50%;
+  background: transparent; color: var(--text-secondary); font-size: 1.25rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); line-height: 1;
+}
+.overlay-tool-btn:hover { background: var(--accent-soft); color: var(--accent); }
+.overlay-tool-btn.active { background: var(--accent); color: #fff; }
+.overlay-tool-btn.preview-dark-active { background: var(--text-primary); color: #fff; }
+
+/* Brightness mask */
+.overlay-brightness-mask {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: #000; pointer-events: none; z-index: 2;
+  opacity: 0; transition: opacity 0.15s ease;
+}
+
+/* Brightness slider popup */
+.brightness-slider-popup {
+  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--bg-card); border-radius: 24px; padding: 10px 22px;
+  box-shadow: var(--shadow-lg); z-index: 100;
+  transition: all 0.25s ease;
+}
+.brightness-slider-popup.hidden {
+  opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(8px);
+}
+.brightness-slider-popup input[type="range"] {
+  width: 200px; height: 6px; -webkit-appearance: none; appearance: none;
+  background: var(--border); border-radius: 3px; outline: none; display: block;
+}
+.brightness-slider-popup input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; box-shadow: var(--shadow-sm);
+  border: 2px solid #fff;
+}
+.brightness-slider-popup input[type="range"]::-moz-range-thumb {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; border: 2px solid #fff;
+}
+
+/* Preview dark theme */
+.preview-overlay.preview-dark .overlay-body { background: #1a1a2e; }
+.preview-overlay.preview-dark .overlay-body iframe {
+  filter: invert(0.9) hue-rotate(180deg);
+}
+.preview-overlay.preview-dark .overlay-body img,
+.preview-overlay.preview-dark .overlay-body video,
+.preview-overlay.preview-dark .overlay-body canvas {
+  filter: invert(0.9) hue-rotate(180deg) !important;
+}
+
+/* Mobile responsive for category detail */
+@media (max-width: 767px) {
+  .category-detail-grid { padding: 12px 16px; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .category-detail-header { padding: 12px 16px; }
+}
 
 /* ========== Modal ========== */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
@@ -558,6 +627,31 @@ html, body {
 .shelf-container::-webkit-scrollbar { width: 4px; }
 .shelf-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+/* ========== Category Detail View ========== */
+.category-detail-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.category-detail-view.hidden { display: none; }
+.category-detail-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.category-detail-header .back-cat-btn {
+  width: 40px; height: 40px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-secondary); font-size: 1.3rem;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition); flex-shrink: 0;
+}
+.category-detail-header .back-cat-btn:hover { background: var(--accent-soft); color: var(--accent); }
+.category-detail-header .category-detail-title { font-size: 18px; font-weight: 600; color: var(--text-primary); flex: 1; }
+.category-detail-header .category-detail-count { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
+.category-detail-grid {
+  flex: 1; overflow-y: auto; padding: 16px 24px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
+  align-content: start; -webkit-overflow-scrolling: touch;
+}
+.category-detail-grid::-webkit-scrollbar { width: 4px; }
+.category-detail-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.category-detail-grid .book-card { width: auto; }
+
 .shelf-section { padding: 0 24px 28px; }
 .shelf-section-header {
   display: flex; align-items: center; justify-content: space-between;
@@ -570,6 +664,13 @@ html, body {
 }
 .shelf-label .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
 .shelf-count { font-size: 13px; color: var(--text-muted); font-weight: 400; }
+.shelf-section-header {
+  cursor: pointer; user-select: none; -webkit-user-select: none;
+  border-radius: var(--radius-sm); padding: 4px 8px; margin: -4px -8px;
+  transition: background var(--transition);
+}
+.shelf-section-header:hover { background: var(--accent-soft); }
+.shelf-section-header:active { opacity: 0.7; }
 
 .book-row {
   display: flex; gap: 14px; overflow-x: auto;
@@ -695,15 +796,25 @@ html, body {
         <div class="shelf-container" id="shelfContainer">
           <div class="empty-state"><div class="empty-icon">📚</div><p>书架上还没有书</p></div>
         </div>
-        <!-- Search Page -->
-        <div class="search-page hidden" id="searchPage">
-          <div class="search-header">
-            <button class="back-search-btn" id="backSearchBtn" aria-label="返回笔记列表">←</button>
-            <input type="text" id="searchPageInput" placeholder="搜索笔记标题…" autocomplete="off">
+        <!-- Category Detail View -->
+        <div class="category-detail-view hidden" id="categoryDetailView">
+          <div class="category-detail-header">
+            <button class="back-cat-btn" id="backCatBtn" aria-label="返回书架">←</button>
+            <span class="category-detail-title" id="categoryDetailTitle"></span>
+            <span class="category-detail-count" id="categoryDetailCount"></span>
           </div>
-          <div class="search-results" id="searchResults"><div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索笔记</p></div></div>
-          <div class="search-history" id="searchHistory"></div>
+          <div class="category-detail-grid" id="categoryDetailGrid"></div>
         </div>
+      </div>
+
+      <!-- Search Page (sibling of tabHome, NOT inside it — avoids display:none from tab-panel) -->
+      <div class="search-page hidden" id="searchPage">
+        <div class="search-header">
+          <button class="back-search-btn" id="backSearchBtn" aria-label="返回笔记列表">←</button>
+          <input type="text" id="searchPageInput" placeholder="搜索笔记标题…" autocomplete="off">
+        </div>
+        <div class="search-results" id="searchResults"><div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索笔记</p></div></div>
+        <div class="search-history" id="searchHistory"></div>
       </div>
 
       <!-- Upload Tab -->
@@ -766,11 +877,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v6.0</span>
+                <span class="setting-value">v7.1</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v6.0</div>
+              <div class="about-version">📚 书阁 v7.1</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -801,13 +912,23 @@ html, body {
 
 <!-- Mobile Full-Screen Preview Overlay -->
 <div class="preview-overlay hidden" id="previewOverlay">
-  <button class="landscape-float-back" id="landscapeFloatBack" aria-label="返回列表">← 返回</button>
   <div class="overlay-header" id="overlayHeader">
     <button class="overlay-back-btn" id="overlayBackBtn" aria-label="返回列表">←</button>
     <span class="overlay-title" id="overlayTitle">选择一篇笔记</span>
+    <div class="overlay-toolbar" id="overlayToolbar">
+      <button class="overlay-tool-btn" id="overlayBrightnessBtn" title="亮度" aria-label="亮度调节">🔆</button>
+      <button class="overlay-tool-btn" id="overlayThemeBtn" title="主题" aria-label="切换预览主题">🌓</button>
+      <button class="overlay-tool-btn" id="overlayLandscapeBtn" title="横屏" aria-label="切换横屏">🔄</button>
+    </div>
   </div>
   <div class="overlay-body" id="overlayBody">
-    <div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>
+    <div class="overlay-brightness-mask" id="overlayBrightnessMask"></div>
+    <div class="brightness-slider-popup hidden" id="brightnessSliderPopup">
+      <input type="range" id="brightnessSlider" min="0" max="80" value="0" step="1">
+    </div>
+    <div id="overlayBodyContent">
+      <div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>
+    </div>
   </div>
 </div>
 
@@ -889,7 +1010,7 @@ html, body {
 
 <script>
 /* ===================================================================
- * 笔记预览 APP v6.0 — 书阁设计
+ * 笔记预览 APP v7.1 — 书阁设计
  * =================================================================== */
 (function() {
   'use strict';
@@ -945,9 +1066,25 @@ html, body {
   const previewOverlay    = $('#previewOverlay');
   const overlayHeader     = $('#overlayHeader');
   const overlayBackBtn    = $('#overlayBackBtn');
-  const landscapeFloatBack = $('#landscapeFloatBack');
   const overlayTitle      = $('#overlayTitle');
   const overlayBody       = $('#overlayBody');
+  const overlayBodyContent = $('#overlayBodyContent');
+
+  // Preview overlay toolbar
+  const overlayToolbar    = $('#overlayToolbar');
+  const overlayBrightnessBtn = $('#overlayBrightnessBtn');
+  const overlayThemeBtn   = $('#overlayThemeBtn');
+  const overlayLandscapeBtn = $('#overlayLandscapeBtn');
+  const overlayBrightnessMask = $('#overlayBrightnessMask');
+  const brightnessSliderPopup = $('#brightnessSliderPopup');
+  const brightnessSlider  = $('#brightnessSlider');
+
+  // Category detail view
+  const categoryDetailView = $('#categoryDetailView');
+  const categoryDetailGrid = $('#categoryDetailGrid');
+  const categoryDetailTitle = $('#categoryDetailTitle');
+  const categoryDetailCount = $('#categoryDetailCount');
+  const backCatBtn = $('#backCatBtn');
 
   // Confirm modal
   const confirmModal        = $('#confirmModal');
@@ -1010,6 +1147,11 @@ html, body {
     selectedCategory: '全部',
     blobUrl: null,
     overlayBlobUrl: null,
+    previewBrightness: 0,
+    previewDark: false,
+    isLandscape: false,
+    brightnessTimer: null,
+    landscapeHideTimer: null,
   };
 
   /* ---- Helpers ---- */
@@ -1443,7 +1585,41 @@ html, body {
     </div>`;
   }
 
-  function refreshCurrentView() { renderShelf(); }
+  function refreshCurrentView() {
+    if (!categoryDetailView.classList.contains('hidden')) {
+      const catName = categoryDetailTitle.textContent;
+      renderCategoryDetail(catName);
+    } else {
+      renderShelf();
+    }
+  }
+
+  /* ===================================================================
+   *  CATEGORY DETAIL VIEW
+   * =================================================================== */
+  function openCategoryDetail(catName) {
+    shelfContainer.style.display = 'none';
+    categoryDetailView.classList.remove('hidden');
+    categoryDetailTitle.textContent = catName;
+    renderCategoryDetail(catName);
+  }
+
+  function closeCategoryDetail() {
+    categoryDetailView.classList.add('hidden');
+    shelfContainer.style.display = '';
+    renderShelf();
+  }
+
+  function renderCategoryDetail(catName) {
+    const notes = STATE.notes.filter(n => (n.category || '其他') === catName);
+    categoryDetailCount.textContent = notes.length + ' 本书';
+    if (!notes.length) {
+      categoryDetailGrid.innerHTML = '<div class="empty-state"><div class="empty-icon">📚</div><p>该分类暂无书籍</p></div>';
+      return;
+    }
+    const cc = getBookColorClass(catName);
+    categoryDetailGrid.innerHTML = notes.map(n => renderBookCard(n, cc)).join('');
+  }
 
   /* ===================================================================
    *  NOTE LIST
@@ -1515,8 +1691,22 @@ html, body {
     $$('.search-history-item',searchHistoryEl).forEach(el=>el.addEventListener('click',e=>{if(e.target.closest('.history-delete'))return;searchPageInput.value=el.getAttribute('data-term');renderSearchResults(el.getAttribute('data-term'));}));
     $$('.history-delete',searchHistoryEl).forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeSearchHistory(b.getAttribute('data-del'));renderSearchHistory();}));
   }
-  function openSearchPage() { tabHome.classList.remove('active'); searchPage.classList.remove('hidden'); searchPageInput.value=''; renderSearchResults(''); renderSearchHistory(); setTimeout(()=>searchPageInput.focus(),50); }
-  function closeSearchPage() { tabHome.classList.add('active'); searchPage.classList.add('hidden'); STATE._sq=''; if(STATE.activeTab==='home') refreshCurrentView(); }
+  function openSearchPage() {
+    if (STATE.activeTab !== 'home') switchTab('home');
+    shelfContainer.style.display = 'none';
+    if (!categoryDetailView.classList.contains('hidden')) categoryDetailView.classList.add('hidden');
+    searchPage.classList.remove('hidden');
+    searchPageInput.value = '';
+    renderSearchResults('');
+    renderSearchHistory();
+    setTimeout(() => searchPageInput.focus(), 50);
+  }
+  function closeSearchPage() {
+    searchPage.classList.add('hidden');
+    shelfContainer.style.display = '';
+    STATE._sq = '';
+    refreshCurrentView();
+  }
 
   /* ---- Tab Switching ---- */
   function switchTab(name) {
@@ -1529,6 +1719,7 @@ html, body {
     $$('.nav-item',bottomNav).forEach(b=>b.classList.toggle('active',b.getAttribute('data-tab')===name));
     if(!searchPage.classList.contains('hidden')) closeSearchPage();
     closeAllSwipes();
+    if(name==='home' && !categoryDetailView.classList.contains('hidden')) { closeCategoryDetail(); }
     if(name==='profile') { refreshProfileStorageSize(); renderCategoryManager(); }
     if(name==='upload') populateUploadCategories();
   }
@@ -1734,7 +1925,7 @@ html, body {
     if(!note) return; STATE.selectedId=note.id;
     if(STATE.isMobile) {
       overlayTitle.textContent=note.title;
-      buildIframeHTML(note, overlayBody, 'overlayBlobUrl');
+      buildIframeHTML(note, overlayBodyContent, 'overlayBlobUrl');
       previewOverlay.classList.remove('hidden'); sidebar.classList.add('hidden');
       checkLandscape(); history.pushState({view:'preview',noteId:note.id},'');
     } else {
@@ -1748,18 +1939,126 @@ html, body {
     STATE.selectedId=null;
     previewTitle.textContent='选择一篇笔记'; previewDate.textContent='';
     previewBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>';
-    overlayBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>';
+    overlayBodyContent.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>';
     renderShelf();
   }
-
-  function closePreviewOverlay() { previewOverlay.classList.add('hidden'); sidebar.classList.remove('hidden'); }
 
   /* ---- Landscape Detection ---- */
   function checkLandscape() {
     if(!STATE.isMobile||previewOverlay.classList.contains('hidden')) return;
     const ls=window.matchMedia('(orientation: landscape)').matches;
-    previewOverlay.classList.toggle('landscape',ls);
-    if(ls) landscapeFloatBack.style.display='flex'; else landscapeFloatBack.style.display='none';
+    if (ls !== STATE.isLandscape) {
+      STATE.isLandscape = ls;
+      applyLandscapeState();
+    }
+  }
+
+  function applyLandscapeState() {
+    if (STATE.isLandscape) {
+      previewOverlay.classList.add('landscape');
+      sidebar.classList.add('hidden');
+      bottomNav.style.display = 'none';
+      overlayLandscapeBtn.classList.add('active');
+      overlayLandscapeBtn.textContent = '↩️';
+      showLandscapeToolbar();
+    } else {
+      previewOverlay.classList.remove('landscape');
+      bottomNav.style.display = '';
+      overlayLandscapeBtn.classList.remove('active');
+      overlayLandscapeBtn.textContent = '🔄';
+      overlayHeader.classList.remove('show');
+      if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); STATE.landscapeHideTimer = null; }
+    }
+  }
+
+  function toggleLandscape() {
+    STATE.isLandscape = !STATE.isLandscape;
+    applyLandscapeState();
+    if (!STATE.isLandscape) {
+      if (!previewOverlay.classList.contains('hidden')) { sidebar.classList.add('hidden'); }
+    }
+  }
+
+  function showLandscapeToolbar() {
+    overlayHeader.classList.add('show');
+    if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); }
+    STATE.landscapeHideTimer = setTimeout(() => {
+      overlayHeader.classList.remove('show');
+    }, 3000);
+  }
+
+  /* ---- Brightness Control ---- */
+  function loadBrightness() {
+    try {
+      const v = localStorage.getItem('notes-brightness');
+      if (v !== null) {
+        STATE.previewBrightness = parseInt(v, 10);
+        if (isNaN(STATE.previewBrightness)) STATE.previewBrightness = 0;
+        STATE.previewBrightness = Math.max(0, Math.min(80, STATE.previewBrightness));
+      }
+    } catch(_) { STATE.previewBrightness = 0; }
+    brightnessSlider.value = STATE.previewBrightness;
+    applyBrightness();
+  }
+
+  function saveBrightness() {
+    try { localStorage.setItem('notes-brightness', String(STATE.previewBrightness)); } catch(_) {}
+  }
+
+  function applyBrightness() {
+    const opacity = STATE.previewBrightness / 100;
+    overlayBrightnessMask.style.opacity = String(opacity);
+  }
+
+  function toggleBrightnessSlider() {
+    const hidden = brightnessSliderPopup.classList.toggle('hidden');
+    if (!hidden) {
+      brightnessSlider.value = STATE.previewBrightness;
+      brightnessSlider.focus();
+      if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); }
+      STATE.brightnessTimer = setTimeout(() => {
+        brightnessSliderPopup.classList.add('hidden');
+      }, 4000);
+    }
+  }
+
+  function hideBrightnessSlider() {
+    brightnessSliderPopup.classList.add('hidden');
+    if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); STATE.brightnessTimer = null; }
+  }
+
+  /* ---- Preview Theme Toggle ---- */
+  function togglePreviewTheme() {
+    STATE.previewDark = !STATE.previewDark;
+    if (STATE.previewDark) {
+      previewOverlay.classList.add('preview-dark');
+      overlayThemeBtn.textContent = '🌙';
+      overlayThemeBtn.classList.add('preview-dark-active');
+    } else {
+      previewOverlay.classList.remove('preview-dark');
+      overlayThemeBtn.textContent = '🌓';
+      overlayThemeBtn.classList.remove('preview-dark-active');
+    }
+  }
+
+  /* ---- Close Preview (reset state) ---- */
+  function closePreviewOverlay() {
+    previewOverlay.classList.add('hidden');
+    sidebar.classList.remove('hidden');
+    hideBrightnessSlider();
+    if (STATE.isLandscape) {
+      STATE.isLandscape = false;
+      applyLandscapeState();
+    }
+    if (STATE.previewDark) {
+      STATE.previewDark = false;
+      previewOverlay.classList.remove('preview-dark');
+      overlayThemeBtn.textContent = '🌓';
+      overlayThemeBtn.classList.remove('preview-dark-active');
+    }
+    bottomNav.style.display = '';
+    if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); STATE.landscapeHideTimer = null; }
+    if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); STATE.brightnessTimer = null; }
   }
 
   /* ===================================================================
@@ -1795,7 +2094,90 @@ html, body {
   clearUserNotesBtn.addEventListener('click',()=>showConfirm('确认清除全部用户笔记','此操作将永久删除所有用户上传的笔记内容，内置笔记不受影响。确定继续吗？',()=>clearAllUserNotes()));
 
   overlayBackBtn.addEventListener('click',()=>closePreviewOverlay());
-  landscapeFloatBack.addEventListener('click',()=>closePreviewOverlay());
+
+  // Preview toolbar buttons
+  overlayBrightnessBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleBrightnessSlider(); });
+  overlayThemeBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePreviewTheme(); });
+  overlayLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
+
+  // Brightness slider
+  brightnessSlider.addEventListener('input', () => {
+    STATE.previewBrightness = parseInt(brightnessSlider.value, 10);
+    applyBrightness();
+    saveBrightness();
+    if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); }
+    STATE.brightnessTimer = setTimeout(() => {
+      brightnessSliderPopup.classList.add('hidden');
+    }, 3000);
+  });
+
+  // Landscape toolbar — tap to show
+  overlayHeader.addEventListener('click', () => {
+    if (STATE.isLandscape) showLandscapeToolbar();
+  });
+
+  // Category detail back button
+  backCatBtn.addEventListener('click', () => closeCategoryDetail());
+
+  // Shelf section header clicks
+  shelfContainer.addEventListener('click', (e) => {
+    const header = e.target.closest('.shelf-section-header');
+    if (!header) return;
+    const section = header.closest('.shelf-section');
+    if (!section) return;
+    const label = section.querySelector('.shelf-label');
+    if (!label) return;
+    // Extract category name from label (skip the dot span)
+    const catName = label.textContent.trim();
+    if (catName) openCategoryDetail(catName);
+  });
+
+  // Category detail grid — click to preview
+  categoryDetailGrid.addEventListener('click', (e) => {
+    const card = e.target.closest('.book-card');
+    if (!card) return;
+    const noteId = card.getAttribute('data-id');
+    const note = STATE.notes.find(n => n.id === noteId);
+    if (note) showPreview(note);
+  });
+
+  // Category detail grid — long-press for action sheet
+  let catDetailLongTimer = null;
+  let catDetailLongCard = null;
+  let catDetailStartX = 0;
+  let catDetailStartY = 0;
+
+  categoryDetailGrid.addEventListener('touchstart', function(e) {
+    const card = e.target.closest('.book-card');
+    if (!card) return;
+    catDetailLongCard = card;
+    catDetailStartX = e.touches[0].clientX;
+    catDetailStartY = e.touches[0].clientY;
+    catDetailLongTimer = setTimeout(() => {
+      if (catDetailLongCard) {
+        if (navigator.vibrate) { navigator.vibrate(20); }
+        const noteId = catDetailLongCard.getAttribute('data-id');
+        if (noteId) openActionSheet(noteId);
+        catDetailLongCard = null; catDetailLongTimer = null;
+      }
+    }, LONG_PRESS_DURATION);
+  }, { passive: true });
+
+  categoryDetailGrid.addEventListener('touchmove', function(e) {
+    if (!catDetailLongTimer || !catDetailLongCard) return;
+    const dx = Math.abs(e.touches[0].clientX - catDetailStartX);
+    const dy = Math.abs(e.touches[0].clientY - catDetailStartY);
+    if (dx > LONG_PRESS_MOVE_THRESHOLD || dy > LONG_PRESS_MOVE_THRESHOLD) {
+      clearTimeout(catDetailLongTimer); catDetailLongTimer = null; catDetailLongCard = null;
+    }
+  }, { passive: true });
+
+  categoryDetailGrid.addEventListener('touchend', function() {
+    if (catDetailLongTimer) { clearTimeout(catDetailLongTimer); catDetailLongTimer = null; catDetailLongCard = null; }
+  });
+  categoryDetailGrid.addEventListener('touchcancel', function() {
+    if (catDetailLongTimer) { clearTimeout(catDetailLongTimer); catDetailLongTimer = null; catDetailLongCard = null; }
+  });
 
   window.matchMedia('(orientation: landscape)').addEventListener('change',()=>checkLandscape());
 
@@ -1816,7 +2198,7 @@ html, body {
    *  INIT
    * =================================================================== */
   async function init() {
-    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
+    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile(); loadBrightness();
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
     else{mainContent.style.display='none';history.pushState({view:'home'},'');}
