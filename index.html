@@ -3,162 +3,164 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#f5f0e8">
+<meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 笔记预览</title>
+<title>📚 书阁</title>
 <style>
-/* ===== CSS Variables ===== */
+/* ========== Design System ========== */
 :root {
-  --bg-primary: #f5f0e8;
-  --bg-secondary: #ffffff;
-  --bg-sidebar: #ede8dd;
-  --bg-hover: #e3dcd0;
-  --bg-active: #d5cfc2;
-  --bg-card: #ffffff;
-  --text-primary: #2c3e50;
-  --text-secondary: #5a6c7d;
-  --text-muted: #8a9aaa;
-  --border-color: #d5cfc2;
-  --accent: #c0392b;
-  --accent-hover: #a93226;
-  --accent-light: #fce4e4;
-  --chip-bg: #e8e2d6;
-  --chip-active-bg: #c0392b;
-  --chip-active-text: #ffffff;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,0.10);
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --transition: 0.2s ease;
-  /* Book card light colors */
-  --book-phil-bg: #f0ecfa; --book-phil-accent: #5d4e8c;
-  --book-hist-bg: #faf0e6; --book-hist-accent: #8b4513;
-  --book-lit-bg: #fde8ee;  --book-lit-accent: #c44569;
-  --book-tech-bg: #e6f5f5; --book-tech-accent: #2c7a7b;
-  --book-other-bg: #f3f4f6; --book-other-accent: #6b7280;
-  --book-econ-bg: #fef6e6; --book-econ-accent: #e67e22;
-  --book-mgmt-bg: #e6f0fa; --book-mgmt-accent: #2980b9;
-  --book-psych-bg: #f5ecfa; --book-psych-accent: #8e44ad;
-  --book-business-bg: #faf0e6; --book-business-accent: #d35400;
-  --book-politics-bg: #e6eef6; --book-politics-accent: #1a5276;
+  --bg-page: #FFFBF5;
+  --bg-card: #FFFFFF;
+  --bg-nav: rgba(255,251,245,0.92);
+  --text-primary: #1A1A2E;
+  --text-secondary: #5C6370;
+  --text-muted: #9CA3AF;
+  --border: #F0EBE0;
+  --accent: #C97064;
+  --accent-soft: #FDF0ED;
+  --accent-deep: #A8584E;
+
+  /* Category color palette */
+  --cat-philosophy: #7C6BA0;
+  --cat-history: #C0976C;
+  --cat-literature: #D4858A;
+  --cat-tech: #5B9EA3;
+  --cat-economics: #D4953B;
+  --cat-management: #5E81AC;
+  --cat-psychology: #9B7BB8;
+  --cat-business: #D47355;
+  --cat-politics: #6B8FA3;
+  --cat-other: #8C8C94;
+
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 20px;
+  --shadow-sm: 0 1px 4px rgba(26,26,46,0.04);
+  --shadow-md: 0 4px 16px rgba(26,26,46,0.06);
+  --shadow-lg: 0 8px 32px rgba(26,26,46,0.08);
+  --shadow-book: 0 6px 20px rgba(26,26,46,0.07), 2px 0 0 rgba(0,0,0,0.05) inset;
+  --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
 [data-theme="dark"] {
-  --bg-primary: #1a1a2e;
-  --bg-secondary: #16213e;
-  --bg-sidebar: #1f2b3d;
-  --bg-hover: #263550;
-  --bg-active: #2d3f5e;
-  --bg-card: #16213e;
+  --bg-page: #1a1a2e;
+  --bg-card: #1e2a3a;
+  --bg-nav: rgba(26,26,46,0.92);
   --text-primary: #e8e6e3;
   --text-secondary: #b0b8c1;
   --text-muted: #6b7b8d;
-  --border-color: #2d3f5e;
-  --accent: #ff6b6b;
-  --accent-hover: #ee5a5a;
-  --accent-light: #3d2025;
-  --chip-bg: #263550;
-  --chip-active-bg: #ff6b6b;
-  --chip-active-text: #fff;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.20);
-  --shadow-md: 0 2px 8px rgba(0,0,0,0.25);
-  --shadow-lg: 0 4px 16px rgba(0,0,0,0.35);
-  /* Book card dark colors */
-  --book-phil-bg: #2d2450; --book-phil-accent: #8b7cc4;
-  --book-hist-bg: #3d2817; --book-hist-accent: #b8734a;
-  --book-lit-bg: #3d2028;  --book-lit-accent: #d46780;
-  --book-tech-bg: #1a3d3d; --book-tech-accent: #4a9e9e;
-  --book-other-bg: #2d3036; --book-other-accent: #8b9098;
-  --book-econ-bg: #3d2817; --book-econ-accent: #d9822b;
-  --book-mgmt-bg: #172a3d; --book-mgmt-accent: #4a90d9;
-  --book-psych-bg: #2d2040; --book-psych-accent: #9b6cc4;
-  --book-business-bg: #3d2517; --book-business-accent: #d35400;
-  --book-politics-bg: #172a3d; --book-politics-accent: #1a5276;
+  --border: #2d3f5e;
+  --accent: #e88070;
+  --accent-soft: #3d2025;
+  --accent-deep: #c97064;
+
+  --cat-philosophy: #9b8cc4;
+  --cat-history: #d4a87c;
+  --cat-literature: #e49a9e;
+  --cat-tech: #6db3b8;
+  --cat-economics: #e4a85b;
+  --cat-management: #7b9dc4;
+  --cat-psychology: #b49bcc;
+  --cat-business: #e49078;
+  --cat-politics: #85a8bd;
+  --cat-other: #a0a0a8;
+
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.2);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.25);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
+  --shadow-book: 0 6px 20px rgba(0,0,0,0.25), 2px 0 0 rgba(255,255,255,0.03) inset;
 }
 
-/* ===== Reset & Base ===== */
+/* ========== Reset & Base ========== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
   height: 100%; overflow: hidden;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  font-size: 16px; line-height: 1.6; color: var(--text-primary); background: var(--bg-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Noto Sans SC", sans-serif;
+  font-size: 16px; line-height: 1.6; color: var(--text-primary); background: var(--bg-page);
   -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; overscroll-behavior: none;
 }
 
-/* ===== App Shell ===== */
+/* ========== App Shell ========== */
 .app { display: flex; height: 100%; max-width: 1400px; margin: 0 auto; }
 
-/* ===== Sidebar ===== */
+/* ========== Sidebar ========== */
 .sidebar {
   display: flex; flex-direction: column;
   width: 340px; min-width: 340px; height: 100%;
-  background: var(--bg-sidebar); border-right: 1px solid var(--border-color);
+  background: var(--bg-page); border-right: 1px solid var(--border);
   transition: transform var(--transition); z-index: 10; overflow: hidden;
 }
-.sidebar-header {
-  padding: 14px 20px 8px; flex-shrink: 0;
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-}
-.sidebar-header h1 { font-size: 1.3rem; font-weight: 700; color: var(--text-primary); letter-spacing: -0.02em; flex: 1; min-width: 0; }
 
-/* ===== Desktop Tab Bar ===== */
+/* ========== Header ========== */
+.sidebar-header {
+  padding: 20px 24px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+  background: linear-gradient(180deg, var(--bg-page) 60%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 20;
+}
+.sidebar-header h1 {
+  font-size: 28px; font-weight: 700; letter-spacing: -0.5px;
+  color: var(--text-primary); display: flex; align-items: center; gap: 8px;
+}
+
+/* ========== Desktop Tab Bar ========== */
 .tab-bar {
-  display: flex; padding: 8px 16px 12px; gap: 4px; flex-shrink: 0;
-  border-bottom: 1px solid var(--border-color);
+  display: flex; padding: 8px 24px 12px; gap: 4px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
 }
 .tab-btn {
   flex: 1; display: flex; align-items: center; justify-content: center; gap: 4px;
-  padding: 8px 6px; border: none; border-radius: var(--radius-md);
-  background: transparent; color: var(--text-secondary);
+  padding: 8px 6px; border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-card); color: var(--text-secondary);
   font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all var(--transition); white-space: nowrap;
 }
-.tab-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
-.tab-btn.active { background: var(--accent); color: #fff; }
+.tab-btn:hover { background: var(--accent-soft); color: var(--accent); }
+.tab-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: #fff; }
 
-/* ===== Sidebar Content Area ===== */
+/* ========== Sidebar Content Area ========== */
 .sidebar-content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
 /* Tab panels */
 .tab-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
 .tab-panel.active { display: flex; }
 
-/* ===== Category Chips ===== */
+/* ========== Category Chips ========== */
 .category-chips {
-  display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; flex-shrink: 0;
+  display: flex; gap: 8px; padding: 8px 24px 16px; overflow-x: auto; flex-shrink: 0;
   -webkit-overflow-scrolling: touch; scrollbar-width: none;
 }
 .category-chips::-webkit-scrollbar { display: none; }
 .category-chip {
   display: inline-flex; align-items: center; gap: 4px;
-  padding: 5px 14px; border: none; border-radius: 20px;
-  background: var(--chip-bg); color: var(--text-secondary);
-  font-size: 0.78rem; font-weight: 500; cursor: pointer;
-  white-space: nowrap; flex-shrink: 0; transition: all var(--transition);
+  flex-shrink: 0; padding: 8px 18px; border: 1.5px solid var(--border);
+  border-radius: 20px; background: var(--bg-card); color: var(--text-secondary);
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  white-space: nowrap; letter-spacing: 0.3px; transition: all var(--transition);
 }
-.category-chip:hover { background: var(--bg-hover); color: var(--text-primary); }
-.category-chip.active { background: var(--chip-active-bg); color: var(--chip-active-text); }
-.category-chip .chip-count { font-size: 0.7rem; opacity: 0.7; }
+.category-chip:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-soft); }
+.category-chip.active { background: var(--text-primary); border-color: var(--text-primary); color: #FFFFFF; font-weight: 600; }
+.category-chip .chip-count { font-size: 11px; opacity: 0.6; margin-left: 2px; }
 
 /* Toolbar */
-.toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 20px; flex-shrink: 0; border-bottom: 1px solid var(--border-color); }
-.toolbar .count { font-size: 0.78rem; color: var(--text-muted); flex: 1; }
+.toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 24px; flex-shrink: 0; border-bottom: 1px solid var(--border); }
+.toolbar .count { font-size: 13px; color: var(--text-muted); flex: 1; }
 
 .icon-btn {
-  width: 32px; height: 32px; border: none; border-radius: var(--radius-sm);
-  background: transparent; color: var(--text-secondary); font-size: 1rem;
+  width: 40px; height: 40px; border: none; border-radius: var(--radius-sm);
+  background: transparent; color: var(--text-secondary); font-size: 20px;
   cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition);
 }
-.icon-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.icon-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .icon-btn.active { background: var(--accent); color: #fff; }
-.icon-btn.active:hover { background: var(--accent-hover); color: #fff; }
+.icon-btn.active:hover { background: var(--accent-deep); color: #fff; }
 
-/* ===== Note List ===== */
+/* ========== Note List ========== */
 .note-list { flex: 1; overflow-y: auto; padding: 8px 12px; -webkit-overflow-scrolling: touch; }
 .note-list::-webkit-scrollbar { width: 4px; }
-.note-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+.note-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 #notesViewArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
@@ -186,10 +188,10 @@ html, body {
   display: flex; align-items: flex-start; gap: 10px;
   padding: 12px 14px; border-radius: var(--radius-md); cursor: pointer;
   transition: transform 0.25s ease, background var(--transition); margin-bottom: 0; position: relative;
-  background: var(--bg-card); z-index: 1;
+  background: var(--bg-card); z-index: 1; box-shadow: var(--shadow-sm);
 }
-.note-item:hover { background: var(--bg-hover); }
-.note-item.active { background: var(--bg-active); }
+.note-item:hover { background: var(--accent-soft); }
+.note-item.active { background: var(--accent-soft); border: 1px solid var(--accent); }
 .note-item-wrapper.swiped .note-item { border-radius: var(--radius-md) 0 0 var(--radius-md); }
 
 .note-item .note-info { flex: 1; min-width: 0; }
@@ -198,111 +200,108 @@ html, body {
 .note-item .note-date { flex-shrink: 0; }
 .note-item .note-tags { display: flex; gap: 6px; flex-wrap: nowrap; overflow: hidden; }
 
-/* Category mini-chip in note item */
 .note-cat-chip {
   display: inline-flex; padding: 1px 8px; border-radius: 10px;
   font-size: 0.68rem; font-weight: 500; white-space: nowrap;
-  background: var(--accent-light); color: var(--accent); flex-shrink: 0;
+  background: var(--accent-soft); color: var(--accent); flex-shrink: 0;
 }
 
-/* Pinned section divider */
 .pinned-divider {
   display: flex; align-items: center; gap: 8px;
   padding: 8px 16px 4px; font-size: 0.7rem; color: var(--text-muted); font-weight: 600;
   text-transform: uppercase; letter-spacing: 0.05em;
 }
-.pinned-divider::after { content: ''; flex: 1; height: 1px; background: var(--border-color); }
+.pinned-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
 .tag-pill {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 1px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 500;
-  white-space: nowrap; background: var(--bg-hover); color: var(--text-secondary);
+  white-space: nowrap; background: var(--accent-soft); color: var(--accent);
 }
 .tag-pill .tag-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
-/* Empty State */
 .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; color: var(--text-muted); }
 .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.6; }
 .empty-state p { font-size: 0.9rem; }
 
-/* ===== Search Page ===== */
+/* ========== Search Page ========== */
 .search-page { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
 .search-page.hidden { display: none; }
-.search-page .search-header { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-bottom: 1px solid var(--border-color); flex-shrink: 0; }
+.search-page .search-header { display: flex; align-items: center; gap: 8px; padding: 12px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .search-page .search-header input {
-  flex: 1; height: 38px; padding: 0 14px; border: 1px solid var(--border-color);
-  border-radius: var(--radius-md); background: var(--bg-card); color: var(--text-primary);
-  font-size: 0.9rem; outline: none; transition: all var(--transition);
+  flex: 1; height: 40px; padding: 0 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg-page); color: var(--text-primary);
+  font-size: 15px; font-family: inherit; outline: none; transition: all var(--transition);
 }
-.search-page .search-header input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.search-page .search-header input:focus { border-color: var(--accent); }
 .back-search-btn {
-  width: 34px; height: 34px; border: none; border-radius: var(--radius-sm);
+  width: 40px; height: 40px; border: none; border-radius: var(--radius-sm);
   background: transparent; color: var(--text-secondary); font-size: 1.1rem;
   cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all var(--transition);
 }
-.back-search-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.back-search-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .search-results { flex: 1; overflow-y: auto; padding: 8px 12px; -webkit-overflow-scrolling: touch; }
 .search-results::-webkit-scrollbar { width: 4px; }
-.search-results::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
-.search-history { padding: 12px 16px; border-top: 1px solid var(--border-color); flex-shrink: 0; max-height: 45%; overflow-y: auto; }
+.search-results::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.search-history { padding: 12px 24px; border-top: 1px solid var(--border); flex-shrink: 0; max-height: 45%; overflow-y: auto; }
 .search-history .history-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
 .search-history .history-title span { font-size: 0.75rem; color: var(--text-muted); font-weight: 500; }
 .clear-history-btn { font-size: 0.72rem; color: var(--accent); background: none; border: none; cursor: pointer; padding: 2px 6px; border-radius: var(--radius-sm); transition: all var(--transition); }
-.clear-history-btn:hover { background: var(--accent-light); }
+.clear-history-btn:hover { background: var(--accent-soft); }
 .search-history-item { display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-radius: var(--radius-sm); cursor: pointer; transition: background var(--transition); }
-.search-history-item:hover { background: var(--bg-hover); }
+.search-history-item:hover { background: var(--accent-soft); }
 .search-history-item .history-text { font-size: 0.85rem; color: var(--text-secondary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .search-history-item .history-delete { flex-shrink: 0; width: 24px; height: 24px; border: none; border-radius: 50%; background: transparent; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; justify-content: center; margin-left: 8px; }
-.search-history-item .history-delete:hover { background: var(--accent-light); color: var(--accent); }
+.search-history-item .history-delete:hover { background: var(--accent-soft); color: var(--accent); }
 
-/* ===== Upload Form ===== */
-.upload-wrapper { flex: 1; overflow-y: auto; padding: 20px; display: flex; justify-content: center; -webkit-overflow-scrolling: touch; }
+/* ========== Upload Form ========== */
+.upload-wrapper { flex: 1; overflow-y: auto; padding: 24px; display: flex; justify-content: center; -webkit-overflow-scrolling: touch; }
 .upload-card {
-  background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px;
-  box-shadow: var(--shadow-sm); max-width: 400px; width: 100%; align-self: flex-start;
+  background: var(--bg-card); border-radius: var(--radius-lg); padding: 28px 24px;
+  box-shadow: var(--shadow-md); max-width: 400px; width: 100%; align-self: flex-start;
 }
-.upload-card h2 { font-size: 1.05rem; font-weight: 600; color: var(--text-primary); margin-bottom: 20px; text-align: center; }
-.form-group { margin-bottom: 16px; }
-.form-group label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+.upload-card h2 { font-size: 18px; font-weight: 600; color: var(--text-primary); margin-bottom: 24px; text-align: center; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
 .form-group label .required { color: var(--accent); }
 .form-group input[type="text"], .form-group select {
-  width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
-  font-size: 0.9rem; outline: none; transition: all var(--transition);
+  width: 100%; height: 44px; padding: 0 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg-page); color: var(--text-primary);
+  font-size: 15px; font-family: inherit; outline: none; transition: border var(--transition);
 }
-.form-group input[type="text"]:focus, .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
-.form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a9aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+.form-group input[type="text"]:focus, .form-group select:focus { border-color: var(--accent); }
+.form-group select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.5' fill='none'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; padding-right: 36px; cursor: pointer; }
 .file-row { display: flex; align-items: center; gap: 10px; }
 .file-row .file-name-display {
-  flex: 1; font-size: 0.85rem; color: var(--text-muted); padding: 8px 12px;
-  border: 1px dashed var(--border-color); border-radius: var(--radius-sm); background: var(--bg-primary);
+  flex: 1; font-size: 14px; color: var(--text-muted); padding: 10px 14px;
+  border: 2px dashed var(--border); border-radius: var(--radius-sm); background: var(--bg-page);
   min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .btn-browse {
-  display: inline-flex; align-items: center; gap: 4px; padding: 8px 16px;
-  border: 1px solid var(--border-color); border-radius: var(--radius-sm);
-  background: var(--bg-primary); color: var(--text-secondary); font-size: 0.85rem;
+  display: inline-flex; align-items: center; gap: 4px; padding: 10px 18px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-card); color: var(--text-secondary); font-size: 14px;
   cursor: pointer; transition: all var(--transition); white-space: nowrap; flex-shrink: 0;
 }
-.btn-browse:hover { background: var(--bg-hover); color: var(--text-primary); }
+.btn-browse:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
 .btn-upload-submit {
-  width: 100%; padding: 10px 20px; border: none; border-radius: var(--radius-sm);
-  background: var(--accent); color: #fff; font-size: 0.9rem; font-weight: 600;
+  width: 100%; padding: 14px; border: none; border-radius: var(--radius-sm);
+  background: var(--text-primary); color: #fff; font-size: 16px; font-weight: 600;
   cursor: pointer; transition: all var(--transition); margin-top: 8px;
 }
-.btn-upload-submit:hover { background: var(--accent-hover); }
-.btn-upload-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-upload-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-upload-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 .upload-hint { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 12px; }
 
-/* ===== Main Content (Desktop Preview) ===== */
-.main-content { flex: 1; display: flex; flex-direction: column; height: 100%; background: var(--bg-primary); min-width: 0; }
+/* ========== Main Content (Desktop Preview) ========== */
+.main-content { flex: 1; display: flex; flex-direction: column; height: 100%; background: var(--bg-page); min-width: 0; }
 .preview-header {
-  display: flex; align-items: center; gap: 12px; padding: 12px 20px;
-  background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+  display: flex; align-items: center; gap: 12px; padding: 12px 24px;
+  background: var(--bg-card); border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .preview-header .note-title-display { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .preview-header .note-date-display { font-size: 0.78rem; color: var(--text-muted); flex-shrink: 0; }
-.preview-body { flex: 1; position: relative; background: var(--bg-secondary); }
+.preview-body { flex: 1; position: relative; background: var(--bg-card); }
 .preview-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
 .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); text-align: center; padding: 40px; }
@@ -310,68 +309,96 @@ html, body {
 .welcome h3 { font-size: 1.1rem; color: var(--text-secondary); margin-bottom: 8px; font-weight: 500; }
 .welcome p { font-size: 0.85rem; max-width: 300px; }
 
-/* ===== Profile Tab ===== */
-.profile-body { flex: 1; overflow-y: auto; padding: 20px; -webkit-overflow-scrolling: touch; }
+/* ========== Profile Tab ========== */
+.profile-body { flex: 1; overflow-y: auto; padding: 24px; -webkit-overflow-scrolling: touch; }
 .profile-body-inner { max-width: 400px; margin: 0 auto; }
-.profile-avatar-section { display: flex; flex-direction: column; align-items: center; padding: 16px 0 24px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px; }
-.profile-avatar { width: 64px; height: 64px; border-radius: 50%; background: var(--bg-hover); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px; flex-shrink: 0; }
-.profile-nickname { font-size: 1.15rem; font-weight: 600; color: var(--text-primary); border: none; background: none; text-align: center; outline: none; padding: 4px 8px; border-radius: var(--radius-sm); transition: all var(--transition); max-width: 180px; }
-.profile-nickname:focus { background: var(--bg-hover); }
-.profile-nickname-edit { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+.profile-avatar-section { display: flex; flex-direction: column; align-items: center; padding: 8px 0 24px; }
+.profile-avatar {
+  width: 64px; height: 64px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--cat-philosophy), var(--cat-literature));
+  display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px;
+  color: #fff; flex-shrink: 0;
+}
+.profile-nickname { font-size: 20px; font-weight: 600; color: var(--text-primary); border: none; background: none; text-align: center; outline: none; padding: 4px 8px; border-radius: var(--radius-sm); transition: all var(--transition); max-width: 180px; }
+.profile-nickname:focus { background: var(--accent-soft); }
+.profile-nickname-edit { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+
+/* iOS-style setting groups */
 .profile-settings { list-style: none; }
-.profile-setting-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border-color); }
-.profile-setting-item .setting-label { font-size: 0.92rem; color: var(--text-primary); display: flex; align-items: center; gap: 10px; }
-.profile-setting-item .setting-label .setting-icon { font-size: 1.15rem; }
-.profile-setting-item .setting-value { font-size: 0.8rem; color: var(--text-muted); }
+.profile-setting-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  font-size: 15px; cursor: pointer; transition: background var(--transition);
+  background: var(--bg-card);
+}
+.profile-setting-item:first-of-type { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.profile-setting-item:last-of-type { border-radius: 0 0 var(--radius-lg) var(--radius-lg); border-bottom: none; }
+.profile-setting-item:only-of-type { border-radius: var(--radius-lg); }
+.profile-setting-item:hover { background: var(--accent-soft); }
+.profile-setting-item .setting-label { font-size: 15px; color: var(--text-primary); display: flex; align-items: center; gap: 12px; }
+.profile-setting-item .setting-label .setting-icon { font-size: 20px; }
+.profile-setting-item .setting-value { font-size: 13px; color: var(--text-muted); }
+
+/* Make non-setting-items (like the category section title) also styled */
+.profile-setting-item.category-manager-item {
+  flex-direction: column !important; align-items: stretch !important;
+  border-radius: 0; border-bottom: 1px solid var(--border);
+}
+.profile-setting-item.category-manager-item:first-of-type { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+
+/* Add margin between setting groups */
+.profile-setting-item + .profile-setting-item:not(:nth-last-of-type(2)) { /* handled by border-bottom */ }
+
+/* Visually group settings — use bg-card background and gaps */
+.profile-setting-item:nth-of-type(1),
+.profile-setting-item:nth-of-type(4) { border-top: none; }
+
+/* Actually, let's use a cleaner approach: group settings */
+.profile-settings .settings-group {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm); overflow: hidden; margin-bottom: 16px;
+}
+/* JS doesn't produce groups, so style the flat list items */
+.profile-settings > .profile-setting-item:first-child { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.profile-setting-item ~ .profile-setting-item { /* continuity */ }
+
+/* Make every 3rd item in list start a new visual group with margin-top */
+/* Simpler: all items get bg-card background */
+.profile-setting-item { background: var(--bg-card); margin-bottom: 0; }
+/* Add visual separation between the groups: after item 3 (storage), before item 6 (about) */
+.profile-setting-item:nth-child(1) { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.profile-setting-item:nth-child(3) { border-bottom: none; }
+.profile-setting-item:nth-child(4) { border-radius: 0; margin-top: 16px; border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+.profile-setting-item:nth-child(6) { border-radius: 0 0 var(--radius-lg) var(--radius-lg); border-bottom: none; }
+
 .toggle-switch { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
 .toggle-switch input { opacity: 0; width: 0; height: 0; }
-.toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--bg-hover); border-radius: 28px; transition: all var(--transition); }
-.toggle-switch .slider::before { content: ''; position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: all var(--transition); }
+.toggle-switch .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: var(--border); border-radius: 28px; transition: all var(--transition); }
+.toggle-switch .slider::before { content: ''; position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background: #fff; border-radius: 50%; transition: all var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.15); }
 .toggle-switch input:checked + .slider { background: var(--accent); }
-.toggle-switch input:checked + .slider::before { transform: translateX(20px); } /* stylelint-disable-line */
-.btn-setting { padding: 6px 14px; border: 1px solid var(--accent); border-radius: var(--radius-sm); background: transparent; color: var(--accent); font-size: 0.78rem; cursor: pointer; transition: all var(--transition); }
-.btn-setting:hover { background: var(--accent-light); }
-.profile-about { margin-top: 12px; padding: 14px 0; text-align: center; }
-.profile-about .about-version { font-size: 0.82rem; color: var(--text-secondary); font-weight: 500; margin-bottom: 6px; }
+.toggle-switch input:checked + .slider::before { transform: translateX(20px); }
+.btn-setting { padding: 6px 14px; border: 1.5px solid var(--accent); border-radius: var(--radius-sm); background: transparent; color: var(--accent); font-size: 0.78rem; cursor: pointer; transition: all var(--transition); }
+.btn-setting:hover { background: var(--accent-soft); }
+.profile-about { margin-top: 24px; padding: 14px 0; text-align: center; }
+.profile-about .about-version { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
 .profile-about .about-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
 
-/* ===== Category Manager (Profile) ===== */
-.category-manager-item {
-  flex-direction: column !important; align-items: stretch !important;
-}
-.category-manager-list {
-  margin-top: 10px; display: flex; flex-direction: column; gap: 6px;
-}
+/* ========== Category Manager ========== */
+.category-manager-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; width: 100%; }
 .category-manager-row {
-  display: flex; align-items: center; gap: 8px; padding: 8px 10px;
-  border-radius: var(--radius-sm); background: var(--bg-primary);
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px;
+  border-radius: var(--radius-sm); background: var(--bg-page);
   transition: background var(--transition);
 }
-.category-manager-row:hover { background: var(--bg-hover); }
-.category-manager-row .cat-dot {
-  width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0;
-}
-.category-manager-row .cat-name {
-  flex: 1; font-size: 0.85rem; color: var(--text-primary); font-weight: 500;
-  min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.category-manager-row .cat-count {
-  font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; flex-shrink: 0;
-}
-.category-manager-row .cat-actions {
-  display: flex; gap: 4px; flex-shrink: 0;
-}
-.category-manager-row .cat-action-btn {
-  width: 28px; height: 28px; border: none; border-radius: var(--radius-sm);
-  background: transparent; color: var(--text-secondary); font-size: 0.85rem;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition);
-}
-.category-manager-row .cat-action-btn:hover { background: var(--bg-active); }
-.category-manager-row .cat-action-btn.cat-delete:hover { background: var(--accent-light); color: var(--accent); }
-.btn-add-category {
-  margin-top: 10px; align-self: flex-start;
-}
+.category-manager-row:hover { background: var(--accent-soft); }
+.category-manager-row .cat-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.category-manager-row .cat-name { flex: 1; font-size: 0.85rem; color: var(--text-primary); font-weight: 500; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.category-manager-row .cat-count { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; }
+.category-manager-row .cat-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.category-manager-row .cat-action-btn { width: 28px; height: 28px; border: none; border-radius: var(--radius-sm); background: transparent; color: var(--text-secondary); font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all var(--transition); }
+.category-manager-row .cat-action-btn:hover { background: var(--bg-card); }
+.category-manager-row .cat-action-btn.cat-delete:hover { background: var(--accent-soft); color: var(--accent); }
+.btn-add-category { margin-top: 10px; align-self: flex-start; }
 
 /* Category input modal */
 .category-input-overlay {
@@ -386,41 +413,41 @@ html, body {
 }
 .category-input-card h4 { font-size: 1rem; color: var(--text-primary); margin-bottom: 14px; font-weight: 600; }
 .category-input-card input[type="text"] {
-  width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
-  font-size: 0.9rem; outline: none; margin-bottom: 16px; transition: all var(--transition);
+  width: 100%; height: 44px; padding: 0 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg-page); color: var(--text-primary);
+  font-size: 15px; font-family: inherit; outline: none; margin-bottom: 16px; transition: all var(--transition);
 }
-.category-input-card input[type="text"]:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.category-input-card input[type="text"]:focus { border-color: var(--accent); }
 .category-input-card .category-input-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
-/* Category delete replace modal */
 .category-replace-select {
-  width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
-  font-size: 0.9rem; outline: none; margin-bottom: 16px; transition: all var(--transition);
-  appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a9aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer;
+  width: 100%; height: 44px; padding: 0 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg-page); color: var(--text-primary);
+  font-size: 15px; font-family: inherit; outline: none; margin-bottom: 16px; transition: all var(--transition);
+  appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center; padding-right: 36px; cursor: pointer;
 }
-.category-replace-select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.category-replace-select:focus { border-color: var(--accent); }
 
-/* ===== Bottom Nav (Mobile) ===== */
+/* ========== Bottom Nav ========== */
 .bottom-nav {
   display: none; align-items: center; justify-content: space-around;
-  padding: 6px 12px; padding-bottom: max(6px, env(safe-area-inset-bottom));
-  background: var(--bg-secondary); border-top: 1px solid var(--border-color); flex-shrink: 0;
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+  background: var(--bg-nav); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border); flex-shrink: 0;
 }
 .bottom-nav .nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 1px;
-  padding: 4px 14px; border: none; background: none; color: var(--text-muted);
-  font-size: 0.65rem; cursor: pointer; border-radius: var(--radius-sm); transition: all var(--transition);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 20px; border: none; background: none; color: var(--text-muted);
+  font-size: 11px; cursor: pointer; border-radius: var(--radius-sm); transition: all var(--transition);
 }
-.bottom-nav .nav-item .nav-icon { font-size: 1.25rem; }
-.bottom-nav .nav-item.active { color: var(--accent); }
+.bottom-nav .nav-item .nav-icon { font-size: 22px; }
+.bottom-nav .nav-item.active { color: var(--accent); font-weight: 600; }
 
-/* ===== Preview Overlay (Mobile Full-Screen) ===== */
+/* ========== Preview Overlay (Mobile) ========== */
 .preview-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: var(--bg-secondary); z-index: 500; display: flex; flex-direction: column;
+  background: var(--bg-card); z-index: 500; display: flex; flex-direction: column;
   transform: translateX(0); transition: transform 0.25s ease;
 }
 .preview-overlay.hidden { transform: translateX(100%); pointer-events: none; }
@@ -429,29 +456,28 @@ html, body {
   border: none; border-radius: 20px; background: transparent; color: var(--text-secondary);
   font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition);
 }
-.preview-overlay .overlay-back-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.preview-overlay .overlay-back-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .preview-overlay .overlay-header {
   display: flex; align-items: center; gap: 10px;
   padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top, 12px));
-  background: var(--bg-secondary); border-bottom: 1px solid var(--border-color); flex-shrink: 0;
+  background: var(--bg-card); border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .preview-overlay .overlay-header .overlay-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .preview-overlay .overlay-body { flex: 1; position: relative; background: #fff; }
 .preview-overlay .overlay-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
 
-/* Landscape mode */
 .preview-overlay.landscape .overlay-header { display: none; }
 .preview-overlay.landscape .overlay-body { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 501; }
 .preview-overlay.landscape .landscape-float-back {
   display: flex; align-items: center; gap: 4px;
   position: fixed; top: max(12px, env(safe-area-inset-top, 12px)); left: 12px;
-  z-index: 510; padding: 6px 14px; border: none; border-radius: 20px;
-  background: rgba(0,0,0,0.45); color: #fff; font-size: 0.85rem; font-weight: 500;
+  z-index: 510; padding: 6px 14px; border: none; border-radius: 24px;
+  background: rgba(0,0,0,0.5); color: #fff; font-size: 0.85rem; font-weight: 500;
   cursor: pointer; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
 }
 .landscape-float-back { display: none; }
 
-/* ===== Modal ===== */
+/* ========== Modal ========== */
 .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
 .modal-overlay.hidden { display: none; }
 .modal-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; max-width: 380px; width: 90%; box-shadow: var(--shadow-lg); text-align: center; }
@@ -460,32 +486,32 @@ html, body {
 .modal-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
 .modal-card .modal-actions { display: flex; gap: 10px; justify-content: center; }
 .modal-card .btn { padding: 8px 24px; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition); }
-.modal-card .btn-cancel { background: var(--bg-hover); color: var(--text-secondary); }
-.modal-card .btn-cancel:hover { background: var(--bg-active); }
+.modal-card .btn-cancel { background: var(--bg-page); color: var(--text-secondary); }
+.modal-card .btn-cancel:hover { background: var(--border); }
 .modal-card .btn-danger { background: var(--accent); color: #fff; }
-.modal-card .btn-danger:hover { background: var(--accent-hover); }
-.modal-card .btn-primary { background: var(--accent); color: #fff; }
-.modal-card .btn-primary:hover { background: var(--accent-hover); }
+.modal-card .btn-danger:hover { background: var(--accent-deep); }
+.modal-card .btn-primary { background: var(--text-primary); color: #fff; }
+.modal-card .btn-primary:hover { opacity: 0.85; }
 
-/* ===== Edit Modal ===== */
+/* Edit modal */
 .edit-modal-body { text-align: left; }
 .edit-modal-body .form-group { margin-bottom: 14px; }
-.edit-modal-body .form-group label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--text-secondary); margin-bottom: 6px; }
+.edit-modal-body .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; }
 .edit-modal-body .form-group input[type="text"],
 .edit-modal-body .form-group select {
-  width: 100%; height: 40px; padding: 0 12px; border: 1px solid var(--border-color);
-  border-radius: var(--radius-sm); background: var(--bg-primary); color: var(--text-primary);
-  font-size: 0.9rem; outline: none; transition: all var(--transition);
+  width: 100%; height: 44px; padding: 0 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); background: var(--bg-page); color: var(--text-primary);
+  font-size: 15px; font-family: inherit; outline: none; transition: all var(--transition);
 }
 .edit-modal-body .form-group input[type="text"]:focus,
-.edit-modal-body .form-group select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+.edit-modal-body .form-group select:focus { border-color: var(--accent); }
 .edit-modal-body .form-group select {
-  appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238a9aaa' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer;
+  appearance: none; background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239CA3AF' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 16px center; padding-right: 36px; cursor: pointer;
 }
 .edit-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
 
-/* ===== Action Sheet ===== */
+/* ========== Action Sheet ========== */
 .action-sheet-backdrop {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: rgba(0,0,0,0.4); z-index: 1100; display: flex; align-items: flex-end; justify-content: center;
@@ -494,143 +520,140 @@ html, body {
 .action-sheet-backdrop.hidden { display: none; }
 .action-sheet {
   background: var(--bg-card); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  width: 100%; max-width: 420px; padding: 8px 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  width: 100%; max-width: 430px; padding: 8px 16px calc(16px + env(safe-area-inset-bottom, 0px));
   animation: sheetUp 0.25s ease;
 }
 @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 .action-sheet-title {
-  text-align: center; font-size: 0.8rem; color: var(--text-muted);
-  padding: 10px 0 6px; border-bottom: 1px solid var(--border-color); margin-bottom: 4px;
+  text-align: center; font-size: 13px; color: var(--text-muted);
+  padding: 10px 0 6px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
 }
 .action-sheet-btn {
   display: flex; align-items: center; gap: 12px; width: 100%;
   padding: 14px 16px; border: none; background: none;
-  color: var(--text-primary); font-size: 0.95rem; font-weight: 500;
+  color: var(--text-primary); font-size: 15px; font-weight: 500;
   cursor: pointer; border-radius: var(--radius-sm); transition: all var(--transition);
   text-align: left;
 }
-.action-sheet-btn:hover, .action-sheet-btn:active { background: var(--bg-hover); }
+.action-sheet-btn:hover, .action-sheet-btn:active { background: var(--accent-soft); }
 .action-sheet-btn .as-icon { font-size: 1.2rem; width: 24px; text-align: center; flex-shrink: 0; }
 .action-sheet-btn.as-cancel {
-  justify-content: center; font-weight: 600; border-top: 1px solid var(--border-color);
+  justify-content: center; font-weight: 600; border-top: 1px solid var(--border);
   margin-top: 8px; padding-top: 16px; color: var(--text-secondary);
 }
 
-/* ===== Toast ===== */
+/* ========== Toast ========== */
 .toast {
-  position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
-  background: var(--text-primary); color: var(--bg-primary);
-  padding: 10px 24px; border-radius: 20px; font-size: 0.85rem; font-weight: 500;
-  z-index: 2000; box-shadow: var(--shadow-md);
-  animation: toastIn 0.3s ease, toastOut 0.3s ease 1.7s forwards; pointer-events: none;
+  position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
+  background: var(--text-primary); color: #FFFFFF;
+  padding: 12px 24px; border-radius: 24px; font-size: 14px; font-weight: 500;
+  z-index: 2000; box-shadow: var(--shadow-lg);
+  opacity: 0; pointer-events: none;
+  transition: opacity var(--transition);
 }
-@keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
-@keyframes toastOut { from { opacity: 1; transform: translateX(-50%) translateY(0); } to { opacity: 0; transform: translateX(-50%) translateY(-10px); } }
+.toast.show { opacity: 1; }
 
-/* Loading */
-.loading-spinner { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; }
-.loading-spinner .spinner { width: 24px; height: 24px; border: 2.5px solid var(--border-color); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 10px; }
-@keyframes spin { to { transform: rotate(360deg); } }
-.error-banner { margin: 12px; padding: 12px 16px; border-radius: var(--radius-md); background: var(--accent-light); color: var(--accent); font-size: 0.85rem; text-align: center; }
-
-/* ===== Shelf View ===== */
-.shelf-container { flex: 1; overflow-y: auto; padding: 16px 8px; -webkit-overflow-scrolling: touch; }
+/* ========== Shelf View ========== */
+.shelf-container { flex: 1; overflow-y: auto; padding: 0; -webkit-overflow-scrolling: touch; }
 .shelf-container::-webkit-scrollbar { width: 4px; }
-.shelf-container::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+.shelf-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-.shelf-section { margin-bottom: 20px; }
-.shelf-cat-label {
-  display: inline-flex; align-items: center; padding: 4px 14px; border-radius: 20px;
-  font-size: 0.78rem; font-weight: 600; color: #fff; margin-bottom: 10px; margin-left: 8px;
+.shelf-section { padding: 0 24px 28px; }
+.shelf-section-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
 }
-.shelf-cat-label.philosophy { background: var(--book-phil-accent); }
-.shelf-cat-label.history { background: var(--book-hist-accent); }
-.shelf-cat-label.literature { background: var(--book-lit-accent); }
-.shelf-cat-label.tech { background: var(--book-tech-accent); }
-.shelf-cat-label.other { background: var(--book-other-accent); }
-.shelf-cat-label.economy { background: var(--book-econ-accent); }
-.shelf-cat-label.management { background: var(--book-mgmt-accent); }
-.shelf-cat-label.psychology { background: var(--book-psych-accent); }
-.shelf-cat-label.business { background: var(--book-business-accent); }
-.shelf-cat-label.politics { background: var(--book-politics-accent); }
-
-.shelf-row {
-  display: flex; gap: 12px; overflow-x: auto; padding: 8px 8px 12px;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none; scroll-behavior: smooth;
+.shelf-label {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 18px; font-weight: 600; color: var(--text-primary);
+  letter-spacing: -0.3px;
 }
-.shelf-row::-webkit-scrollbar { display: none; }
+.shelf-label .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.shelf-count { font-size: 13px; color: var(--text-muted); font-weight: 400; }
 
-/* ===== New Book Card (Horizontal Layout) ===== */
+.book-row {
+  display: flex; gap: 14px; overflow-x: auto;
+  padding: 4px 0 8px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.book-row::-webkit-scrollbar { display: none; }
+
+/* ========== Book Card (New Vertical Cover Design) ========== */
 .book-card {
-  flex-shrink: 0; width: 150px; min-height: 130px; border-radius: 10px;
-  cursor: pointer; transition: all 0.25s ease; position: relative;
-  display: flex; flex-direction: column; overflow: hidden;
-  box-shadow: var(--shadow-md); user-select: none; -webkit-user-select: none;
+  flex-shrink: 0; width: 120px;
+  scroll-snap-align: start;
+  border-radius: var(--radius-md); overflow: hidden;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-book);
+  cursor: pointer; transition: all var(--transition);
+  border: 1px solid transparent;
+  user-select: none; -webkit-user-select: none;
 }
-.book-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
-.book-card.active { outline: 3px solid var(--accent); outline-offset: -3px; }
+.book-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(26,26,46,0.12), 2px 0 0 rgba(0,0,0,0.06) inset; }
+.book-card:active { transform: translateY(-2px); }
+.book-card.active { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-book); }
 
-.book-card-top-bar { height: 8px; flex-shrink: 0; border-radius: 10px 10px 0 0; }
-.book-card-bottom-bar { height: 6px; flex-shrink: 0; border-radius: 0 0 10px 10px; margin-top: auto; }
-
-.book-card-body { flex: 1; padding: 10px 12px 8px; display: flex; flex-direction: column; }
-.book-card-title {
-  font-size: 0.85rem; font-weight: 700; color: var(--text-primary);
-  line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
-  overflow: hidden; word-break: break-word; margin-bottom: 6px;
+.book-cover {
+  padding: 18px 14px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 100px; position: relative; color: #FFFFFF;
 }
-.book-card-meta { display: flex; flex-direction: column; gap: 4px; margin-top: auto; }
-.book-card-date { font-size: 0.7rem; color: var(--text-muted); }
-.book-card-tags { display: flex; gap: 4px; flex-wrap: wrap; overflow: hidden; max-height: 20px; }
-.book-card-tags .tag-pill { font-size: 0.65rem; padding: 1px 6px; }
+.book-cover::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 5px; background: rgba(0,0,0,0.15); border-radius: 0 2px 2px 0;
+}
+.book-title {
+  font-size: 14px; font-weight: 600; text-align: center; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+  overflow: hidden; text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
 
-/* Book card color classes — light bg + dark text */
-.book-philosophy { background: var(--book-phil-bg); }
-.book-philosophy .book-card-top-bar { background: var(--book-phil-accent); }
-.book-philosophy .book-card-bottom-bar { background: var(--book-phil-accent); }
+.book-info { padding: 10px 14px; background: var(--bg-card); }
+.book-date { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
+.book-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.book-tag {
+  font-size: 10px; padding: 2px 8px; border-radius: 10px;
+  background: var(--accent-soft); color: var(--accent); font-weight: 500;
+}
 
-.book-history { background: var(--book-hist-bg); }
-.book-history .book-card-top-bar { background: var(--book-hist-accent); }
-.book-history .book-card-bottom-bar { background: var(--book-hist-accent); }
+/* Category cover colors */
+.philosophy .book-cover, .book-philosophy .book-cover { background: var(--cat-philosophy); }
+.history .book-cover, .book-history .book-cover     { background: var(--cat-history); }
+.literature .book-cover, .book-literature .book-cover  { background: var(--cat-literature); }
+.tech .book-cover, .book-tech .book-cover        { background: var(--cat-tech); }
+.economics .book-cover, .book-economy .book-cover   { background: var(--cat-economics); }
+.management .book-cover, .book-management .book-cover  { background: var(--cat-management); }
+.psychology .book-cover, .book-psychology .book-cover  { background: var(--cat-psychology); }
+.business .book-cover, .book-business .book-cover    { background: var(--cat-business); }
+.politics .book-cover, .book-politics .book-cover    { background: var(--cat-politics); }
+.other .book-cover, .book-other .book-cover       { background: var(--cat-other); }
 
-.book-literature { background: var(--book-lit-bg); }
-.book-literature .book-card-top-bar { background: var(--book-lit-accent); }
-.book-literature .book-card-bottom-bar { background: var(--book-lit-accent); }
+/* ========== Loading & Error ========== */
+.loading-spinner { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; }
+.loading-spinner .spinner { width: 24px; height: 24px; border: 2.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 10px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-banner { margin: 12px 24px; padding: 12px 16px; border-radius: var(--radius-md); background: var(--accent-soft); color: var(--accent); font-size: 0.85rem; text-align: center; }
 
-.book-tech { background: var(--book-tech-bg); }
-.book-tech .book-card-top-bar { background: var(--book-tech-accent); }
-.book-tech .book-card-bottom-bar { background: var(--book-tech-accent); }
+/* ========== Bottom padding for safe area ========== */
+@media (max-width: 767px) {
+  .sidebar { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+}
 
-.book-other { background: var(--book-other-bg); }
-.book-other .book-card-top-bar { background: var(--book-other-accent); }
-.book-other .book-card-bottom-bar { background: var(--book-other-accent); }
-
-.book-economy .book-card-top-bar { background: var(--book-econ-accent); }
-.book-economy .book-card-bottom-bar { background: var(--book-econ-accent); }
-
-.book-management .book-card-top-bar { background: var(--book-mgmt-accent); }
-.book-management .book-card-bottom-bar { background: var(--book-mgmt-accent); }
-
-.book-psychology .book-card-top-bar { background: var(--book-psych-accent); }
-.book-psychology .book-card-bottom-bar { background: var(--book-psych-accent); }
-
-.book-business .book-card-top-bar { background: var(--book-business-accent); }
-.book-business .book-card-bottom-bar { background: var(--book-business-accent); }
-
-.book-politics .book-card-top-bar { background: var(--book-politics-accent); }
-.book-politics .book-card-bottom-bar { background: var(--book-politics-accent); }
-
-/* ===== Responsive: Mobile ===== */
+/* ========== Responsive: Mobile ========== */
 @media (max-width: 767px) {
   .app { flex-direction: column; position: relative; height: 100%; }
-  .sidebar { width: 100%; min-width: 0; height: 100%; position: absolute; top: 0; left: 0; border-right: none; padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
+  .sidebar { width: 100%; min-width: 0; height: 100%; position: absolute; top: 0; left: 0; border-right: none; }
   .tab-bar { display: none; }
   .main-content { display: none; }
   .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; }
-  .book-card { width: 140px; min-height: 120px; }
+  .shelf-section { padding: 0 16px 20px; }
+  .category-chips { padding: 8px 16px 12px; }
+  .sidebar-header { padding: 16px 20px 10px; }
+  .sidebar-header h1 { font-size: 24px; }
 }
-@media (min-width: 768px) and (max-width: 1023px) { .sidebar { width: 300px; min-width: 300px; } .note-item { padding: 10px 12px; } .book-card { width: 140px; } }
-@media (min-width: 1024px) { .sidebar { width: 360px; min-width: 360px; } .book-card { width: 155px; } }
+@media (min-width: 768px) and (max-width: 1023px) { .sidebar { width: 300px; min-width: 300px; } .note-item { padding: 10px 12px; } .book-card { width: 120px; } }
+@media (min-width: 1024px) { .sidebar { width: 360px; min-width: 360px; } .book-card { width: 130px; } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 </style>
 </head>
@@ -644,7 +667,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 读书笔记</h1>
+      <h1>📚 书阁</h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -687,9 +710,9 @@ html, body {
       <div class="tab-panel" id="tabUpload">
         <div class="upload-wrapper">
           <div class="upload-card">
-            <h2>📤 上传笔记</h2>
+            <h2>📤 上传读书笔记</h2>
             <div class="form-group">
-              <label for="uploadTitle">文件名</label>
+              <label for="uploadTitle">笔记标题</label>
               <input type="text" id="uploadTitle" placeholder="自动从文件名提取" maxlength="100">
             </div>
             <div class="form-group">
@@ -747,7 +770,7 @@ html, body {
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 笔记预览 v6.0</div>
+              <div class="about-version">📚 书阁 v6.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -770,7 +793,7 @@ html, body {
 
   <!-- Mobile Bottom Nav -->
   <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span>首页</span></button>
+    <button class="nav-item active" data-tab="home"><span class="nav-icon">📚</span><span>首页</span></button>
     <button class="nav-item" data-tab="upload"><span class="nav-icon">📤</span><span>上传</span></button>
     <button class="nav-item" data-tab="profile"><span class="nav-icon">👤</span><span>我的</span></button>
   </nav>
@@ -866,7 +889,7 @@ html, body {
 
 <script>
 /* ===================================================================
- * 笔记预览 APP v6.0
+ * 笔记预览 APP v6.0 — 书阁设计
  * =================================================================== */
 (function() {
   'use strict';
@@ -999,7 +1022,9 @@ html, body {
   function showToast(msg) {
     const e=document.querySelector('.toast'); if(e)e.remove();
     const t=document.createElement('div'); t.className='toast'; t.textContent=msg;
-    document.body.appendChild(t); setTimeout(()=>t.remove(),2200);
+    document.body.appendChild(t);
+    requestAnimationFrame(() => { t.classList.add('show'); });
+    setTimeout(()=>t.remove(),2200);
   }
 
   /* ---- Persistence: Pinned Notes ---- */
@@ -1025,7 +1050,7 @@ html, body {
     document.documentElement.setAttribute('data-theme',STATE.theme);
     profileThemeToggle.checked = (STATE.theme==='dark');
     const m=document.querySelector('meta[name="theme-color"]');
-    if(m) m.setAttribute('content',STATE.theme==='dark'?'#1a1a2e':'#f5f0e8');
+    if(m) m.setAttribute('content',STATE.theme==='dark'?'#1a1a2e':'#FFFBF5');
   }
   function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
 
@@ -1080,16 +1105,10 @@ html, body {
   }
 
   noteList.addEventListener('touchstart', function(e) {
-    // If touching a swipe action button, don't start swipe — let the click handle it
     if (e.target.closest('.swipe-btn')) return;
-
     const wrapper = e.target.closest('.note-item-wrapper');
     if (!wrapper) { closeAllSwipes(); return; }
-
-    if (swipeActiveWrapper && swipeActiveWrapper !== wrapper) {
-      closeAllSwipes();
-    }
-
+    if (swipeActiveWrapper && swipeActiveWrapper !== wrapper) { closeAllSwipes(); }
     swipeActiveWrapper = wrapper;
     swipeStartX = e.touches[0].clientX;
     swipeStartY = e.touches[0].clientY;
@@ -1100,77 +1119,43 @@ html, body {
 
   noteList.addEventListener('touchmove', function(e) {
     if (!swipeIsDragging || !swipeActiveWrapper) return;
-
     const dx = e.touches[0].clientX - swipeStartX;
     const dy = e.touches[0].clientY - swipeStartY;
-
     if (!swipeDirectionLocked) {
-      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SWIPE_VERT_THRESHOLD) {
-        // 垂直滚动：清除滑动状态，避免残留影响下一次触摸
-        swipeActiveWrapper = null;
-        swipeIsDragging = false; return;
-      }
-      // 阈值提高到 15px，避免手指自然抖动（~6px 水平偏移）误锁方向
+      if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > SWIPE_VERT_THRESHOLD) { swipeActiveWrapper = null; swipeIsDragging = false; return; }
       if (Math.abs(dx) > 15) swipeDirectionLocked = true;
     }
-
     if (!swipeDirectionLocked) return;
-
     const item = swipeActiveWrapper.querySelector('.note-item');
     if (!item) return;
     item.style.transition = 'none';
-
     const wasOpen = swipeActiveWrapper.classList.contains('swiped');
-    if (wasOpen) {
-      const targetX = Math.min(Math.max(dx - SWIPE_MAX, -SWIPE_MAX), 0);
-      item.style.transform = `translateX(${targetX}px)`;
-    } else {
-      const targetX = Math.max(dx, -SWIPE_MAX);
-      if (targetX <= 0) item.style.transform = `translateX(${targetX}px)`;
-      else item.style.transform = '';
-    }
+    if (wasOpen) { const targetX = Math.min(Math.max(dx - SWIPE_MAX, -SWIPE_MAX), 0); item.style.transform = `translateX(${targetX}px)`; }
+    else { const targetX = Math.max(dx, -SWIPE_MAX); if (targetX <= 0) item.style.transform = `translateX(${targetX}px)`; else item.style.transform = ''; }
     swipeCurrentX = e.touches[0].clientX;
   }, { passive: true });
 
   noteList.addEventListener('touchend', function() {
     if (!swipeIsDragging || !swipeActiveWrapper) return;
     swipeIsDragging = false;
-
     const item = swipeActiveWrapper.querySelector('.note-item');
     if (!item) return;
     item.style.transition = '';
-
     const wasOpen = swipeActiveWrapper.classList.contains('swiped');
     const totalDx = swipeCurrentX - swipeStartX;
-
     if (wasOpen) {
-      if (totalDx > SWIPE_THRESHOLD / 2) {
-        item.style.transform = '';
-        swipeActiveWrapper.classList.remove('swiped');
-        swipeActiveWrapper = null;
-      } else {
-        item.style.transform = `translateX(-${SWIPE_MAX}px)`;
-        swipeActiveWrapper.classList.add('swiped');
-      }
+      if (totalDx > SWIPE_THRESHOLD / 2) { item.style.transform = ''; swipeActiveWrapper.classList.remove('swiped'); swipeActiveWrapper = null; }
+      else { item.style.transform = `translateX(-${SWIPE_MAX}px)`; swipeActiveWrapper.classList.add('swiped'); }
     } else {
-      if (totalDx < -SWIPE_THRESHOLD) {
-        item.style.transform = `translateX(-${SWIPE_MAX}px)`;
-        swipeActiveWrapper.classList.add('swiped');
-      } else {
-        item.style.transform = '';
-        swipeActiveWrapper.classList.remove('swiped');
-        swipeActiveWrapper = null;
-      }
+      if (totalDx < -SWIPE_THRESHOLD) { item.style.transform = `translateX(-${SWIPE_MAX}px)`; swipeActiveWrapper.classList.add('swiped'); }
+      else { item.style.transform = ''; swipeActiveWrapper.classList.remove('swiped'); swipeActiveWrapper = null; }
     }
   });
 
-  // Click on note list: close swipe or select note
   noteList.addEventListener('click', function(e) {
-    // Swipe action buttons — check for swipe-btn (may be nested via span)
     const sbtn = e.target.closest('.swipe-btn');
     if (sbtn) {
-      e.preventDefault();
-      e.stopPropagation();
+      e.preventDefault(); e.stopPropagation();
       const wrapper = sbtn.closest('.note-item-wrapper');
       const noteId = wrapper ? wrapper.getAttribute('data-id') : null;
       if (!noteId) return;
@@ -1180,19 +1165,9 @@ html, body {
       else if (action === 'pin') { togglePin(noteId); closeAllSwipes(); refreshCurrentView(); }
       return;
     }
-
-    // Click on note item area
     const wrapper = e.target.closest('.note-item-wrapper');
     if (!wrapper) { closeAllSwipes(); return; }
-
-    // If swiped open, close it (don't open preview on first tap after swipe)
-    if (wrapper.classList.contains('swiped')) {
-      e.stopPropagation();
-      closeAllSwipes();
-      return;
-    }
-
-    // Otherwise open preview
+    if (wrapper.classList.contains('swiped')) { e.stopPropagation(); closeAllSwipes(); return; }
     const noteId = wrapper.getAttribute('data-id');
     const note = STATE.notes.find(n => n.id === noteId);
     if (note) showPreview(note);
@@ -1218,21 +1193,10 @@ html, body {
     closeAllSwipes();
     showConfirm('确认删除「' + note.title + '」', '删除后笔记内容将永久丢失，此操作不可撤销。', async () => {
       try {
-        if (note.source !== 'user') {
-          // built-in note: remove from builtInNotes array
-          STATE.builtInNotes = STATE.builtInNotes.filter(n => n.id !== noteId);
-        } else {
-          await DB.delete(noteId);
-          STATE.userNotesIndex = STATE.userNotesIndex.filter(n => n.id !== noteId);
-          saveUserNotesIndex();
-        }
-        if (STATE.selectedId === noteId) {
-          mergeNotes();
-          STATE.notes.length ? showPreview(STATE.notes[0]) : showWelcome();
-        } else {
-          mergeNotes();
-          refreshCurrentView();
-        }
+        if (note.source !== 'user') { STATE.builtInNotes = STATE.builtInNotes.filter(n => n.id !== noteId); }
+        else { await DB.delete(noteId); STATE.userNotesIndex = STATE.userNotesIndex.filter(n => n.id !== noteId); saveUserNotesIndex(); }
+        if (STATE.selectedId === noteId) { mergeNotes(); STATE.notes.length ? showPreview(STATE.notes[0]) : showWelcome(); }
+        else { mergeNotes(); refreshCurrentView(); }
       } catch(err) { console.error(err); showToast('删除失败：'+err.message); }
     });
   }
@@ -1246,21 +1210,14 @@ html, body {
     editTargetId = noteId;
     editTitle.value = note.title || '';
     editTagsInput.value = (note.tags || []).join(', ');
-
     const cats = loadCategories().filter(c => c !== '全部');
-    editCategory.innerHTML = cats.map(c =>
-      `<option value="${escapeHtml(c)}"${c === (note.category || '其他') ? ' selected' : ''}>${escapeHtml(c)}</option>`
-    ).join('');
+    editCategory.innerHTML = cats.map(c => `<option value="${escapeHtml(c)}"${c === (note.category || '其他') ? ' selected' : ''}>${escapeHtml(c)}</option>`).join('');
     if (!cats.length) editCategory.innerHTML = '<option value="">请选择分类</option>';
-
     editModal.classList.remove('hidden');
     editTitle.focus();
   }
 
-  function closeEditModal() {
-    editModal.classList.add('hidden');
-    editTargetId = null;
-  }
+  function closeEditModal() { editModal.classList.add('hidden'); editTargetId = null; }
 
   editModalCancel.addEventListener('click', closeEditModal);
   editModal.addEventListener('click', function(e) { if (e.target === editModal) closeEditModal(); });
@@ -1269,46 +1226,22 @@ html, body {
     if (!editTargetId) return;
     const note = STATE.notes.find(n => n.id === editTargetId);
     if (!note) return;
-
     const newTitle = editTitle.value.trim() || note.title;
     const newCategory = editCategory.value || note.category || '其他';
     const newTags = editTagsInput.value.trim().split(',').map(t => t.trim()).filter(Boolean);
-
-    note.title = newTitle;
-    note.category = newCategory;
-    note.tags = newTags;
-
+    note.title = newTitle; note.category = newCategory; note.tags = newTags;
     if (note.source === 'user') {
       try {
         const idx = STATE.userNotesIndex.findIndex(n => n.id === editTargetId);
-        if (idx >= 0) {
-          STATE.userNotesIndex[idx].title = newTitle;
-          STATE.userNotesIndex[idx].category = newCategory;
-          STATE.userNotesIndex[idx].tags = newTags;
-          saveUserNotesIndex();
-        }
+        if (idx >= 0) { STATE.userNotesIndex[idx].title = newTitle; STATE.userNotesIndex[idx].category = newCategory; STATE.userNotesIndex[idx].tags = newTags; saveUserNotesIndex(); }
         const rec = await DB.get(editTargetId);
-        if (rec) {
-          rec.title = newTitle;
-          rec.category = newCategory;
-          rec.tags = newTags;
-          await DB.put(rec);
-        }
+        if (rec) { rec.title = newTitle; rec.category = newCategory; rec.tags = newTags; await DB.put(rec); }
       } catch(err) { console.error(err); showToast('保存失败：'+err.message); }
     } else {
-      // Update built-in note in the source array so mergeNotes preserves it
       const bi = STATE.builtInNotes.findIndex(n => n.id === editTargetId);
-      if (bi >= 0) {
-        STATE.builtInNotes[bi].title = newTitle;
-        STATE.builtInNotes[bi].category = newCategory;
-        STATE.builtInNotes[bi].tags = newTags;
-      }
+      if (bi >= 0) { STATE.builtInNotes[bi].title = newTitle; STATE.builtInNotes[bi].category = newCategory; STATE.builtInNotes[bi].tags = newTags; }
     }
-
-    closeEditModal();
-    closeAllSwipes();
-    mergeNotes();
-    refreshCurrentView();
+    closeEditModal(); closeAllSwipes(); mergeNotes(); refreshCurrentView();
     showToast('✅ 笔记已更新');
   });
 
@@ -1320,44 +1253,25 @@ html, body {
     const note = STATE.notes.find(n => n.id === noteId);
     if (!note) return;
     actionSheetTitle.textContent = note.title || '笔记操作';
-    // Delete available for all notes
     asDeleteBtn.style.display = '';
-    // Pin button label
-    asPinBtn.innerHTML = isPinned(noteId)
-      ? '<span class="as-icon">📌</span>取消置顶'
-      : '<span class="as-icon">📌</span>置顶';
+    asPinBtn.innerHTML = isPinned(noteId) ? '<span class="as-icon">📌</span>取消置顶' : '<span class="as-icon">📌</span>置顶';
     actionSheetBackdrop.classList.remove('hidden');
   }
+  function closeActionSheet() { actionSheetBackdrop.classList.add('hidden'); actionSheetTargetId = null; }
 
-  function closeActionSheet() {
-    actionSheetBackdrop.classList.add('hidden');
-    actionSheetTargetId = null;
-  }
-
-  actionSheetBackdrop.addEventListener('click', function(e) {
-    if (e.target === actionSheetBackdrop) closeActionSheet();
-  });
+  actionSheetBackdrop.addEventListener('click', function(e) { if (e.target === actionSheetBackdrop) closeActionSheet(); });
 
   actionSheet.addEventListener('click', function(e) {
     const btn = e.target.closest('[data-as-action]');
     if (!btn) return;
     const action = btn.getAttribute('data-as-action');
     const noteId = actionSheetTargetId;
-
     if (action === 'cancel') { closeActionSheet(); return; }
     if (!noteId) { closeActionSheet(); return; }
-
     closeActionSheet();
-
-    if (action === 'edit') {
-      openEditModal(noteId);
-    } else if (action === 'delete') {
-      deleteNoteById(noteId);
-    } else if (action === 'pin') {
-      togglePin(noteId);
-      refreshCurrentView();
-      showToast(isPinned(noteId) ? '📌 已置顶' : '已取消置顶');
-    }
+    if (action === 'edit') { openEditModal(noteId); }
+    else if (action === 'delete') { deleteNoteById(noteId); }
+    else if (action === 'pin') { togglePin(noteId); refreshCurrentView(); showToast(isPinned(noteId) ? '📌 已置顶' : '已取消置顶'); }
   });
 
   /* ===================================================================
@@ -1381,8 +1295,7 @@ html, body {
         if (navigator.vibrate) { navigator.vibrate(20); }
         const noteId = longPressCard.getAttribute('data-id');
         if (noteId) openActionSheet(noteId);
-        longPressCard = null;
-        longPressTimer = null;
+        longPressCard = null; longPressTimer = null;
       }
     }, LONG_PRESS_DURATION);
   }, { passive: true });
@@ -1391,30 +1304,12 @@ html, body {
     if (!longPressTimer || !longPressCard) return;
     const dx = Math.abs(e.touches[0].clientX - longPressStartX);
     const dy = Math.abs(e.touches[0].clientY - longPressStartY);
-    if (dx > LONG_PRESS_MOVE_THRESHOLD || dy > LONG_PRESS_MOVE_THRESHOLD) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-      longPressCard = null;
-    }
+    if (dx > LONG_PRESS_MOVE_THRESHOLD || dy > LONG_PRESS_MOVE_THRESHOLD) { clearTimeout(longPressTimer); longPressTimer = null; longPressCard = null; }
   }, { passive: true });
 
-  shelfContainer.addEventListener('touchend', function() {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-      longPressCard = null;
-    }
-  });
+  shelfContainer.addEventListener('touchend', function() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; longPressCard = null; } });
+  shelfContainer.addEventListener('touchcancel', function() { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; longPressCard = null; } });
 
-  shelfContainer.addEventListener('touchcancel', function() {
-    if (longPressTimer) {
-      clearTimeout(longPressTimer);
-      longPressTimer = null;
-      longPressCard = null;
-    }
-  });
-
-  // Shelf click to preview
   shelfContainer.addEventListener('click', function(e) {
     const card = e.target.closest('.book-card');
     if (!card) return;
@@ -1426,11 +1321,7 @@ html, body {
   shelfContainer.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
       const card = e.target.closest('.book-card');
-      if (card) {
-        e.preventDefault();
-        const note = STATE.notes.find(n => n.id === card.getAttribute('data-id'));
-        if (note) showPreview(note);
-      }
+      if (card) { e.preventDefault(); const note = STATE.notes.find(n => n.id === card.getAttribute('data-id')); if (note) showPreview(note); }
     }
   });
 
@@ -1477,10 +1368,7 @@ html, body {
   }
 
   /* ---- Category Chips ---- */
-  function getCatCount(cat) {
-    if(cat==='全部') return STATE.notes.length;
-    return STATE.notes.filter(n=>(n.category||'其他')===cat).length;
-  }
+  function getCatCount(cat) { if(cat==='全部') return STATE.notes.length; return STATE.notes.filter(n=>(n.category||'其他')===cat).length; }
   function renderCategoryChips() {
     const cats=loadCategories();
     categoryChips.innerHTML = cats.map(cat=>{
@@ -1491,11 +1379,13 @@ html, body {
   }
 
   /* ===================================================================
-   *  SHELF VIEW
+   *  SHELF VIEW (New Book Card Design)
    * =================================================================== */
-  const CAT_COLOR_MAP = { '哲学': 'philosophy', '历史': 'history', '文学': 'literature', '科技': 'tech', '经济': 'economy', '管理': 'management', '心理学': 'psychology', '商业': 'business', '政治': 'politics', '其他': 'other' };
+  const CAT_COLOR_MAP = { '哲学': 'philosophy', '历史': 'history', '文学': 'literature', '科技': 'tech', '经济': 'economics', '管理': 'management', '心理学': 'psychology', '商业': 'business', '政治': 'politics', '其他': 'other' };
   const CAT_ORDER = ['哲学', '历史', '文学', '科技', '经济', '管理', '心理学', '商业', '政治', '其他'];
-  function getBookColorClass(cat) { return 'book-' + (CAT_COLOR_MAP[cat] || 'other'); }
+  const CAT_COLORS = { '哲学': '#7C6BA0', '历史': '#C0976C', '文学': '#D4858A', '科技': '#5B9EA3', '经济': '#D4953B', '管理': '#5E81AC', '心理学': '#9B7BB8', '商业': '#D47355', '政治': '#6B8FA3', '其他': '#8C8C94' };
+
+  function getBookColorClass(cat) { return CAT_COLOR_MAP[cat] || 'other'; }
 
   function renderShelf() {
     const grouped = {};
@@ -1509,9 +1399,13 @@ html, body {
       const notes = grouped[cat];
       if (!notes || !notes.length) continue;
       const cc = getBookColorClass(cat);
+      const color = CAT_COLORS[cat] || '#8C8C94';
       html += `<div class="shelf-section">
-        <div class="shelf-cat-label ${CAT_COLOR_MAP[cat] || 'other'}">${escapeHtml(cat)}</div>
-        <div class="shelf-row">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
+        <div class="shelf-section-header">
+          <span class="shelf-label"><span class="dot" style="background:${color}"></span>${escapeHtml(cat)}</span>
+          <span class="shelf-count">${notes.length} 本书</span>
+        </div>
+        <div class="book-row">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
       </div>`;
     }
     for (const cat of Object.keys(grouped)) {
@@ -1519,9 +1413,13 @@ html, body {
       const notes = grouped[cat];
       if (!notes || !notes.length) continue;
       const cc = getBookColorClass(cat);
+      const color = CAT_COLORS[cat] || '#8C8C94';
       html += `<div class="shelf-section">
-        <div class="shelf-cat-label ${CAT_COLOR_MAP[cat] || 'other'}">${escapeHtml(cat)}</div>
-        <div class="shelf-row">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
+        <div class="shelf-section-header">
+          <span class="shelf-label"><span class="dot" style="background:${color}"></span>${escapeHtml(cat)}</span>
+          <span class="shelf-count">${notes.length} 本书</span>
+        </div>
+        <div class="book-row">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
       </div>`;
     }
     if (!html) {
@@ -1533,16 +1431,15 @@ html, body {
   function renderBookCard(n, colorClass) {
     const active = n.id === STATE.selectedId;
     const pinned = isPinned(n.id);
+    const tags = (n.tags || []).slice(0, 3);
     return `<div class="book-card ${colorClass}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}">
-      <div class="book-card-top-bar"></div>
-      <div class="book-card-body">
-        <div class="book-card-title">${escapeHtml(n.title)}${pinned ? ' 📌' : ''}</div>
-        <div class="book-card-meta">
-          ${n.date ? `<span class="book-card-date">📅 ${formatDate(n.date)}</span>` : ''}
-          ${(n.tags||[]).length ? `<div class="book-card-tags">${n.tags.slice(0,3).map(t => `<span class="tag-pill"><span class="tag-dot" style="background:${tagColor(t)}"></span>${escapeHtml(t)}</span>`).join('')}</div>` : ''}
-        </div>
+      <div class="book-cover">
+        <span class="book-title">${escapeHtml(n.title)}${pinned ? ' 📌' : ''}</span>
       </div>
-      <div class="book-card-bottom-bar"></div>
+      <div class="book-info">
+        ${n.date ? `<div class="book-date">📅 ${formatDate(n.date)}</div>` : ''}
+        ${tags.length ? `<div class="book-tags">${tags.map(t => `<span class="book-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+      </div>
     </div>`;
   }
 
@@ -1553,9 +1450,7 @@ html, body {
    * =================================================================== */
   function getFilteredNotes() {
     let f=STATE.notes;
-    if(STATE.selectedCategory!=='全部') {
-      f=f.filter(n=>(n.category||'其他')===STATE.selectedCategory);
-    }
+    if(STATE.selectedCategory!=='全部') { f=f.filter(n=>(n.category||'其他')===STATE.selectedCategory); }
     const q=(STATE._sq||'').trim().toLowerCase();
     if(q) f=f.filter(n=>n.title.toLowerCase().includes(q)||(n.tags||[]).some(t=>t.toLowerCase().includes(q)));
     return f;
@@ -1568,25 +1463,12 @@ html, body {
       noteList.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>${STATE.selectedCategory!=='全部'||(STATE._sq||'')?'没有匹配的笔记':'暂无笔记'}</p></div>`;
       updateCount(0); return;
     }
-
-    // Separate pinned and unpinned
-    const pinnedNotes = [];
-    const unpinnedNotes = [];
-    for (const n of f) {
-      if (isPinned(n.id)) pinnedNotes.push(n);
-      else unpinnedNotes.push(n);
-    }
-
+    const pinnedNotes = []; const unpinnedNotes = [];
+    for (const n of f) { if (isPinned(n.id)) pinnedNotes.push(n); else unpinnedNotes.push(n); }
     let html = '';
-    if (pinnedNotes.length) {
-      html += `<div class="pinned-divider">📌 置顶</div>`;
-      html += pinnedNotes.map(n => renderNoteItem(n)).join('');
-    }
-    if (pinnedNotes.length && unpinnedNotes.length) {
-      html += `<div class="pinned-divider">📝 笔记</div>`;
-    }
+    if (pinnedNotes.length) { html += `<div class="pinned-divider">📌 置顶</div>`; html += pinnedNotes.map(n => renderNoteItem(n)).join(''); }
+    if (pinnedNotes.length && unpinnedNotes.length) { html += `<div class="pinned-divider">📝 笔记</div>`; }
     html += unpinnedNotes.map(n => renderNoteItem(n)).join('');
-
     noteList.innerHTML = html;
     updateCount(f.length);
   }
@@ -1695,38 +1577,24 @@ html, body {
   }
 
   /* ---- Category Management ---- */
-  let catEditMode = 'add'; // 'add' | 'edit'
+  let catEditMode = 'add';
   let catEditOldName = '';
   let catDeleteTarget = '';
 
-  const CAT_COLORS_JS = {
-    '哲学': '#5d4e8c', '历史': '#8b4513', '文学': '#c44569', '科技': '#2c7a7b',
-    '经济': '#e67e22', '管理': '#2980b9', '心理学': '#8e44ad', '商业': '#d35400',
-    '政治': '#1a5276', '其他': '#6b7280'
-  };
-  function catColorJS(name) { return CAT_COLORS_JS[name] || '#6b7280'; }
+  const CAT_COLORS_JS = { '哲学': '#7C6BA0', '历史': '#C0976C', '文学': '#D4858A', '科技': '#5B9EA3', '经济': '#D4953B', '管理': '#5E81AC', '心理学': '#9B7BB8', '商业': '#D47355', '政治': '#6B8FA3', '其他': '#8C8C94' };
+  function catColorJS(name) { return CAT_COLORS_JS[name] || '#8C8C94'; }
 
   function countNotesByCategory() {
     const map = new Map();
-    for (const n of STATE.notes) {
-      const cat = n.category || '其他';
-      map.set(cat, (map.get(cat) || 0) + 1);
-    }
+    for (const n of STATE.notes) { const cat = n.category || '其他'; map.set(cat, (map.get(cat) || 0) + 1); }
     return map;
   }
-
   function renderCategoryManager() {
     const cats = loadCategories().filter(c => c !== '全部');
     const catCounts = countNotesByCategory();
-
-    if (cats.length === 0) {
-      categoryManagerList.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:8px 0">暂无分类</div>';
-      return;
-    }
-
+    if (cats.length === 0) { categoryManagerList.innerHTML = '<div style="font-size:0.78rem;color:var(--text-muted);text-align:center;padding:8px 0">暂无分类</div>'; return; }
     categoryManagerList.innerHTML = cats.map(name => {
-      const count = catCounts.get(name) || 0;
-      const color = catColorJS(name);
+      const count = catCounts.get(name) || 0; const color = catColorJS(name);
       return `<div class="category-manager-row" data-cat="${escapeHtml(name)}">
         <span class="cat-dot" style="background:${color}"></span>
         <span class="cat-name">${escapeHtml(name)}</span>
@@ -1739,205 +1607,112 @@ html, body {
     }).join('');
   }
 
-  // --- Category input overlay (add/edit) ---
   function openCategoryInput(mode, oldName) {
-    catEditMode = mode;
-    catEditOldName = oldName || '';
+    catEditMode = mode; catEditOldName = oldName || '';
     categoryInputTitle.textContent = mode === 'add' ? '新增分类' : '编辑分类';
     categoryInputField.value = mode === 'edit' ? catEditOldName : '';
     categoryInputOverlay.classList.remove('hidden');
     setTimeout(() => categoryInputField.focus(), 50);
   }
-
-  function closeCategoryInput() {
-    categoryInputOverlay.classList.add('hidden');
-    categoryInputField.value = '';
-    catEditMode = 'add';
-    catEditOldName = '';
-  }
+  function closeCategoryInput() { categoryInputOverlay.classList.add('hidden'); categoryInputField.value = ''; catEditMode = 'add'; catEditOldName = ''; }
 
   function confirmCategoryInput() {
     const newName = categoryInputField.value.trim();
     if (!newName) { showToast('分类名不能为空'); return; }
-
     const cats = loadCategories();
     if (catEditMode === 'add') {
       if (cats.includes(newName)) { showToast('分类已存在'); return; }
-      cats.splice(cats.length - 1, 0, newName); // insert before '其他'
-      saveCategories(cats);
-      showToast('✅ 分类已添加');
+      cats.splice(cats.length - 1, 0, newName);
+      saveCategories(cats); showToast('✅ 分类已添加');
     } else {
       if (newName === catEditOldName) { closeCategoryInput(); return; }
       if (cats.includes(newName)) { showToast('目标分类名已存在'); return; }
-      // Rename category in all notes
-      for (const n of STATE.notes) {
-        if (n.category === catEditOldName) n.category = newName;
-      }
-      for (const n of STATE.builtInNotes) {
-        if (n.category === catEditOldName) n.category = newName;
-      }
-      for (const idxNote of STATE.userNotesIndex) {
-        if (idxNote.category === catEditOldName) idxNote.category = newName;
-      }
+      for (const n of STATE.notes) { if (n.category === catEditOldName) n.category = newName; }
+      for (const n of STATE.builtInNotes) { if (n.category === catEditOldName) n.category = newName; }
+      for (const idxNote of STATE.userNotesIndex) { if (idxNote.category === catEditOldName) idxNote.category = newName; }
       saveUserNotesIndex();
-      // Update categories list
-      const idx = cats.indexOf(catEditOldName);
-      if (idx >= 0) cats[idx] = newName;
+      const idx = cats.indexOf(catEditOldName); if (idx >= 0) cats[idx] = newName;
       saveCategories(cats);
-      // Update IndexedDB
       DB.getAll().then(userNotes => {
         const updates = [];
-        for (const un of userNotes) {
-          if (un.category === catEditOldName) {
-            un.category = newName;
-            updates.push(DB.put(un));
-          }
-        }
+        for (const un of userNotes) { if (un.category === catEditOldName) { un.category = newName; updates.push(DB.put(un)); } }
         return Promise.all(updates);
       }).catch(err => console.error('Category edit DB update error:', err));
-      // Update selected category if it was the old one
       if (STATE.selectedCategory === catEditOldName) STATE.selectedCategory = newName;
       showToast('✅ 分类已更新');
     }
-    closeCategoryInput();
-    renderCategoryManager();
-    renderCategoryChips();
-    mergeNotes();
-    refreshCurrentView();
+    closeCategoryInput(); renderCategoryManager(); renderCategoryChips(); mergeNotes(); refreshCurrentView();
   }
 
   categoryInputCancel.addEventListener('click', closeCategoryInput);
   categoryInputOverlay.addEventListener('click', function(e) { if (e.target === categoryInputOverlay) closeCategoryInput(); });
   categoryInputConfirm.addEventListener('click', confirmCategoryInput);
   categoryInputField.addEventListener('keydown', function(e) { if (e.key === 'Enter') confirmCategoryInput(); });
-
-  // --- Add category button ---
   addCategoryBtn.addEventListener('click', () => openCategoryInput('add'));
 
-  // --- Category list click delegation ---
   categoryManagerList.addEventListener('click', function(e) {
     const btn = e.target.closest('.cat-action-btn');
     if (!btn) return;
     const action = btn.getAttribute('data-action');
     const catName = btn.getAttribute('data-cat');
     if (catName === '其他') { showToast('「其他」为保留分类，不可编辑或删除'); return; }
-    if (action === 'edit') {
-      openCategoryInput('edit', catName);
-    } else if (action === 'delete') {
-      openCategoryDeleteConfirm(catName);
-    }
+    if (action === 'edit') { openCategoryInput('edit', catName); }
+    else if (action === 'delete') { openCategoryDeleteConfirm(catName); }
   });
 
-  // --- Category delete ---
   function openCategoryDeleteConfirm(catName) {
     catDeleteTarget = catName;
     const catCounts = countNotesByCategory();
     const count = catCounts.get(catName) || 0;
-
     if (count > 0) {
-      categoryReplaceIcon.textContent = '⚠️';
-      categoryReplaceTitle.textContent = '删除分类「' + catName + '」';
+      categoryReplaceIcon.textContent = '⚠️'; categoryReplaceTitle.textContent = '删除分类「' + catName + '」';
       categoryReplaceMessage.textContent = '该分类关联了 ' + count + ' 篇笔记。请选择处理方式：';
-      categoryReplaceSelect.classList.remove('hidden');
-      categoryReplaceRemove.textContent = '移除分类';
-      categoryReplaceRemove.classList.remove('hidden');
-      categoryReplaceConfirm.classList.remove('hidden');
-
+      categoryReplaceSelect.classList.remove('hidden'); categoryReplaceRemove.textContent = '移除分类';
+      categoryReplaceRemove.classList.remove('hidden'); categoryReplaceConfirm.classList.remove('hidden');
       const otherCats = loadCategories().filter(c => c !== '全部' && c !== catName);
-      categoryReplaceSelect.innerHTML = '<option value="">-- 选择替换分类 --</option>' +
-        otherCats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
+      categoryReplaceSelect.innerHTML = '<option value="">-- 选择替换分类 --</option>' + otherCats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('');
       categoryReplaceSelect.value = '';
     } else {
-      categoryReplaceIcon.textContent = '⚠️';
-      categoryReplaceTitle.textContent = '删除分类';
+      categoryReplaceIcon.textContent = '⚠️'; categoryReplaceTitle.textContent = '删除分类';
       categoryReplaceMessage.textContent = '确定要删除分类「' + catName + '」吗？该分类没有关联笔记。';
-      categoryReplaceSelect.classList.add('hidden');
-      categoryReplaceRemove.textContent = '确定删除';
+      categoryReplaceSelect.classList.add('hidden'); categoryReplaceRemove.textContent = '确定删除';
       categoryReplaceConfirm.classList.add('hidden');
     }
     categoryReplaceModal.classList.remove('hidden');
   }
-
-  function closeCategoryReplaceModal() {
-    categoryReplaceModal.classList.add('hidden');
-    catDeleteTarget = '';
-  }
+  function closeCategoryReplaceModal() { categoryReplaceModal.classList.add('hidden'); catDeleteTarget = ''; }
 
   async function executeCategoryDelete(replaceWith, oldNameOverride) {
-    const oldName = oldNameOverride || catDeleteTarget;
-    if (!oldName) return;
-
+    const oldName = oldNameOverride || catDeleteTarget; if (!oldName) return;
     const effectiveReplace = (replaceWith && replaceWith !== '') ? replaceWith : null;
-
     if (effectiveReplace) {
-      for (const n of STATE.notes) {
-        if (n.category === oldName) n.category = effectiveReplace;
-      }
-      for (const n of STATE.builtInNotes) {
-        if (n.category === oldName) n.category = effectiveReplace;
-      }
-      for (const idxNote of STATE.userNotesIndex) {
-        if (idxNote.category === oldName) idxNote.category = effectiveReplace;
-      }
+      for (const n of STATE.notes) { if (n.category === oldName) n.category = effectiveReplace; }
+      for (const n of STATE.builtInNotes) { if (n.category === oldName) n.category = effectiveReplace; }
+      for (const idxNote of STATE.userNotesIndex) { if (idxNote.category === oldName) idxNote.category = effectiveReplace; }
       saveUserNotesIndex();
       const userNotes = await DB.getAll();
-      for (const un of userNotes) {
-        if (un.category === oldName) {
-          un.category = effectiveReplace;
-          await DB.put(un);
-        }
-      }
+      for (const un of userNotes) { if (un.category === oldName) { un.category = effectiveReplace; await DB.put(un); } }
     } else {
-      // No replacement selected / direct remove: set to '其他'
-      for (const n of STATE.notes) {
-        if (n.category === oldName) n.category = '其他';
-      }
-      for (const n of STATE.builtInNotes) {
-        if (n.category === oldName) n.category = '其他';
-      }
-      for (const idxNote of STATE.userNotesIndex) {
-        if (idxNote.category === oldName) idxNote.category = '其他';
-      }
+      for (const n of STATE.notes) { if (n.category === oldName) n.category = '其他'; }
+      for (const n of STATE.builtInNotes) { if (n.category === oldName) n.category = '其他'; }
+      for (const idxNote of STATE.userNotesIndex) { if (idxNote.category === oldName) idxNote.category = '其他'; }
       saveUserNotesIndex();
       const userNotes = await DB.getAll();
-      for (const un of userNotes) {
-        if (un.category === oldName) {
-          un.category = '其他';
-          await DB.put(un);
-        }
-      }
+      for (const un of userNotes) { if (un.category === oldName) { un.category = '其他'; await DB.put(un); } }
     }
-
-    // Remove from categories list
-    const cats = loadCategories();
-    const idx = cats.indexOf(oldName);
-    if (idx >= 0) { cats.splice(idx, 1); saveCategories(cats); }
-
-    // Reset selected category if deleted
+    const cats = loadCategories(); const idx = cats.indexOf(oldName); if (idx >= 0) { cats.splice(idx, 1); saveCategories(cats); }
     if (STATE.selectedCategory === oldName) STATE.selectedCategory = '全部';
-
-    mergeNotes();
-    renderCategoryManager();
-    renderCategoryChips();
-    refreshCurrentView();
+    mergeNotes(); renderCategoryManager(); renderCategoryChips(); refreshCurrentView();
     showToast('🗑️ 分类已删除');
   }
 
   categoryReplaceCancel.addEventListener('click', closeCategoryReplaceModal);
   categoryReplaceModal.addEventListener('click', function(e) { if (e.target === categoryReplaceModal) closeCategoryReplaceModal(); });
-
-  categoryReplaceRemove.addEventListener('click', function() {
-    const oldName = catDeleteTarget;
-    closeCategoryReplaceModal();
-    executeCategoryDelete('', oldName);
-  });
-
+  categoryReplaceRemove.addEventListener('click', function() { const oldName = catDeleteTarget; closeCategoryReplaceModal(); executeCategoryDelete('', oldName); });
   categoryReplaceConfirm.addEventListener('click', function() {
     const replaceWith = categoryReplaceSelect.value;
     if (!replaceWith) { showToast('请选择一个替换分类'); return; }
-    const oldName = catDeleteTarget;
-    closeCategoryReplaceModal();
-    executeCategoryDelete(replaceWith, oldName);
+    const oldName = catDeleteTarget; closeCategoryReplaceModal(); executeCategoryDelete(replaceWith, oldName);
   });
 
   /* ---- Preview (shared logic) ---- */
@@ -1961,8 +1736,7 @@ html, body {
       overlayTitle.textContent=note.title;
       buildIframeHTML(note, overlayBody, 'overlayBlobUrl');
       previewOverlay.classList.remove('hidden'); sidebar.classList.add('hidden');
-      checkLandscape();
-      history.pushState({view:'preview',noteId:note.id},'');
+      checkLandscape(); history.pushState({view:'preview',noteId:note.id},'');
     } else {
       previewTitle.textContent=note.title; previewDate.textContent=note.date?formatDate(note.date):'';
       buildIframeHTML(note, previewBody, 'blobUrl');
@@ -1978,9 +1752,7 @@ html, body {
     renderShelf();
   }
 
-  function closePreviewOverlay() {
-    previewOverlay.classList.add('hidden'); sidebar.classList.remove('hidden');
-  }
+  function closePreviewOverlay() { previewOverlay.classList.add('hidden'); sidebar.classList.remove('hidden'); }
 
   /* ---- Landscape Detection ---- */
   function checkLandscape() {
@@ -1993,21 +1765,15 @@ html, body {
   /* ===================================================================
    *  EVENT HANDLERS
    * =================================================================== */
-
-  // Tab bar (desktop)
   tabBar.addEventListener('click',e=>{const b=e.target.closest('.tab-btn'); if(b) switchTab(b.getAttribute('data-tab'));});
-
-  // Bottom nav (mobile)
   bottomNav.addEventListener('click',e=>{const b=e.target.closest('.nav-item'); if(b){closePreviewOverlay();switchTab(b.getAttribute('data-tab'));}});
 
-  // Category chips
   categoryChips.addEventListener('click',e=>{
     const chip=e.target.closest('.category-chip'); if(!chip) return;
     STATE.selectedCategory=chip.getAttribute('data-cat');
     renderCategoryChips(); renderNoteList();
   });
 
-  // Search
   searchBtn.addEventListener('click',()=>openSearchPage());
   backSearchBtn.addEventListener('click',()=>closeSearchPage());
   let sd=null; searchPageInput.addEventListener('input',function(){clearTimeout(sd);sd=setTimeout(()=>renderSearchResults(this.value),150);});
@@ -2018,26 +1784,21 @@ html, body {
   });
   searchResults.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){const item=e.target.closest('.note-item');if(item){e.preventDefault();const note=STATE.notes.find(n=>n.id===item.getAttribute('data-id'));if(note){const t=searchPageInput.value.trim();if(t)addSearchHistory(t);closeSearchPage();showPreview(note);}}}});
 
-  // Upload
   uploadBrowseBtn.addEventListener('click',()=>uploadFileInput.click());
   uploadFileInput.addEventListener('change',function(){const f=this.files[0];if(f){uploadFileDisplay.textContent=f.name;if(!uploadTitle.value.trim())uploadTitle.value=f.name.replace(/\.html$/i,'').trim();}else{uploadFileDisplay.textContent='未选择文件';}updateUploadBtn();});
   uploadCategory.addEventListener('change',()=>updateUploadBtn());
   uploadSubmitBtn.addEventListener('click',()=>{const f=uploadFileInput.files[0];if(f)handleUpload(f);});
 
-  // Profile
   profileNickname.addEventListener('blur',function(){saveNickname(this.value);});
   profileNickname.addEventListener('keydown',function(e){if(e.key==='Enter')this.blur();});
   profileThemeToggle.addEventListener('change',()=>toggleTheme());
   clearUserNotesBtn.addEventListener('click',()=>showConfirm('确认清除全部用户笔记','此操作将永久删除所有用户上传的笔记内容，内置笔记不受影响。确定继续吗？',()=>clearAllUserNotes()));
 
-  // Preview overlay back buttons
   overlayBackBtn.addEventListener('click',()=>closePreviewOverlay());
   landscapeFloatBack.addEventListener('click',()=>closePreviewOverlay());
 
-  // Orientation change
   window.matchMedia('(orientation: landscape)').addEventListener('change',()=>checkLandscape());
 
-  // Resize
   let rt=null;
   window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
     const was=STATE.isMobile; checkMobile();
@@ -2048,10 +1809,7 @@ html, body {
     checkLandscape();
   },200);});
 
-  // Android back button
   window.addEventListener('popstate',e=>{if(STATE.isMobile&&!previewOverlay.classList.contains('hidden')){closePreviewOverlay();history.pushState({view:'home'},'');}});
-
-  // Close edit modal on Escape
   document.addEventListener('keydown',function(e){if(e.key==='Escape'){if(!editModal.classList.contains('hidden')) closeEditModal();if(!actionSheetBackdrop.classList.contains('hidden')) closeActionSheet();}});
 
   /* ===================================================================
