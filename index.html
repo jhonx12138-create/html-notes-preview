@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v7.5</title>
+<title>📚 书阁 v7.6</title>
 <style>
 /* ========== Design System ========== */
 :root {
@@ -813,7 +813,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v7.5</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v7.6</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -926,7 +926,7 @@ html, body {
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v7.5</div>
+              <div class="about-version">📚 书阁 v7.6</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1380,7 +1380,12 @@ html, body {
     closeAllSwipes();
     showConfirm('确认删除「' + note.title + '」', '删除后笔记内容将永久丢失，此操作不可撤销。', async () => {
       try {
-        if (note.source !== 'user') { STATE.builtInNotes = STATE.builtInNotes.filter(n => n.id !== noteId); }
+        if (note.source !== 'user') {
+          STATE.builtInNotes = STATE.builtInNotes.filter(n => n.id !== noteId);
+          const edits = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
+          edits._del.push(noteId);
+          localStorage.setItem('notes-edits', JSON.stringify(edits));
+        }
         else { await DB.delete(noteId); STATE.userNotesIndex = STATE.userNotesIndex.filter(n => n.id !== noteId); saveUserNotesIndex(); }
         if (STATE.selectedId === noteId) { mergeNotes(); STATE.notes.length ? showPreview(STATE.notes[0]) : showWelcome(); }
         else { mergeNotes(); refreshCurrentView(); }
@@ -1427,6 +1432,9 @@ html, body {
     } else {
       const bi = STATE.builtInNotes.findIndex(n => n.id === editTargetId);
       if (bi >= 0) { STATE.builtInNotes[bi].title = newTitle; STATE.builtInNotes[bi].category = newCategory; STATE.builtInNotes[bi].tags = newTags; }
+      const edits = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
+      edits._mod[editTargetId] = { title: newTitle, category: newCategory, tags: newTags };
+      localStorage.setItem('notes-edits', JSON.stringify(edits));
     }
     closeEditModal(); closeAllSwipes(); mergeNotes(); refreshCurrentView();
     showToast('✅ 笔记已更新');
@@ -1534,7 +1542,13 @@ html, body {
       if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data=await resp.json();
       if(!Array.isArray(data)) throw new Error('数据格式错误');
-      STATE.builtInNotes=data.map((n,i)=>({...n,id:n.id||String(i+1),title:n.title||'未命名笔记',file:n.file||'',date:n.date||'',tags:Array.isArray(n.tags)?n.tags:[],category:n.category||'其他',source:'builtin'}));
+      const edits = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
+      const delSet = new Set(edits._del || []);
+      const modMap = edits._mod || {};
+      STATE.builtInNotes = data
+        .map((n,i) => ({...n,id:n.id||String(i+1),title:n.title||'未命名笔记',file:n.file||'',date:n.date||'',tags:Array.isArray(n.tags)?n.tags:[],category:n.category||'其他',source:'builtin'}))
+        .filter(n => !delSet.has(n.id))
+        .map(n => modMap[n.id] ? { ...n, title: modMap[n.id].title, category: modMap[n.id].category, tags: modMap[n.id].tags } : n);
     } catch(err) {
       console.error(err); STATE.builtInNotes=[];
       noteList.innerHTML=`<div class="error-banner">⚠️ 加载笔记失败：${err.message}</div>`;
