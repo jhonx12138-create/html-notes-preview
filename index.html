@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.2</title>
+<title>📚 书阁 v8.3</title>
 <style>
 /* ========== Design System ========== */
 :root {
@@ -774,7 +774,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.2</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.3</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -887,7 +887,7 @@ html, body {
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.2</div>
+              <div class="about-version">📚 书阁 v8.3</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1175,8 +1175,10 @@ html, body {
 
   /* ---- Persistence: Categories ---- */
   const PRESET_CATEGORIES = ['全部','AI与科技','数学','政治与经济','社会与文化','组织与管理','通识与科普','金融与财务','其他'];
-  function loadCategories() { try { const r=localStorage.getItem('notes-categories'); if(r){ const p=JSON.parse(r); if(Array.isArray(p)&&p.length) return p; } } catch(_){} return [...PRESET_CATEGORIES]; }
-  function saveCategories(c) { try { localStorage.setItem('notes-categories',JSON.stringify(c)); } catch(_){} }
+  function loadCategories() { try { const r=localStorage.getItem('notes-categories-v2'); if(r){ const p=JSON.parse(r); if(Array.isArray(p)&&p.length) return p; } } catch(_){} return [...PRESET_CATEGORIES]; }
+  function saveCategories(c) { try { localStorage.setItem('notes-categories-v2',JSON.stringify(c)); } catch(_){} }
+  // v8.2 升级：清除旧版本分类缓存（避免旧7类显示）
+  try { localStorage.removeItem('notes-categories'); } catch(_){}
 
   /* ---- Persistence: Theme ---- */
   function loadTheme() { try { const s=localStorage.getItem('notes-theme'); if(s==='dark'||s==='light') STATE.theme=s; } catch(_){STATE.theme='light';} applyTheme(); }
