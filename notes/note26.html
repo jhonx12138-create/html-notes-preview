@@ -3,642 +3,686 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>组织行为学全景：深度拆解 · 模块化精讲</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>《皇权与绅权》· 知识图谱</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
         :root {
-            --c-intro: #2c7da0;
-            --c-intro-dark: #1a4b6e;
-            --c-individual: #2a9d8f;
-            --c-individual-dark: #1d6e64;
-            --c-group: #6a4c93;
-            --c-group-dark: #4a3469;
-            --c-leader: #e76f51;
-            --c-leader-dark: #b04e35;
-            --c-org: #8e44ad;
-            --c-org-dark: #62307a;
-            --c-env: #d68c45;
-            --c-env-dark: #a06228;
-            --c-method: #4a6fa5;
-            --c-method-dark: #2f4a73;
-            --c-future: #c9184a;
-            --c-future-dark: #8a0d33;
+            --bg: #faf9f7;
+            --card-bg: #ffffff;
+            --border: #d8d0c4;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #4a3060;
+            --accent-light: #f6f2f8;
+            --accent-glow: rgba(74, 48, 96, 0.15);
+            --imperial: #8b3030;
+            --imperial-light: #fef6f6;
+            --gentry: #2a5070;
+            --gentry-light: #f6fafd;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --font-serif: 'Noto Serif SC', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
         }
-
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body {
-            font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: #eef2f5;
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-            color: #2c4254;
-        }
-
-        .progress-bar {
-            position: fixed;
-            top: 0; left: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--c-intro), var(--c-future));
-            z-index: 1001;
-            transition: width 0.25s ease;
-            width: 0%;
-            box-shadow: 0 0 8px rgba(0,0,0,0.15);
-        }
-
-        .slides-container {
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
             display: flex;
-            flex-direction: column;
-            width: 100%;
+            -webkit-font-smoothing: antialiased;
         }
-
-        .slide {
-            min-height: 100vh;
-            width: 100%;
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #f8f5f0;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 100;
+            font-family: var(--font-sans);
+            font-size: 0.86rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
+        }
+        .sidebar h3 {
+            font-size: 0.95rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+            letter-spacing: 0.04em;
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 4rem 2rem;
-            background: #f8fafc;
-            border-bottom: 1px solid rgba(0,0,0,0.04);
-            position: relative;
+            gap: 0.4rem;
         }
-        .slide:nth-child(odd) { background: #ffffff; }
-        .slide:nth-child(even) { background: #f4f8fb; }
-
-        .slide[data-module="intro"]      { --accent: var(--c-intro);      --accent-dark: var(--c-intro-dark); }
-        .slide[data-module="individual"] { --accent: var(--c-individual); --accent-dark: var(--c-individual-dark); }
-        .slide[data-module="group"]      { --accent: var(--c-group);      --accent-dark: var(--c-group-dark); }
-        .slide[data-module="leader"]     { --accent: var(--c-leader);     --accent-dark: var(--c-leader-dark); }
-        .slide[data-module="org"]        { --accent: var(--c-org);        --accent-dark: var(--c-org-dark); }
-        .slide[data-module="env"]        { --accent: var(--c-env);        --accent-dark: var(--c-env-dark); }
-        .slide[data-module="method"]     { --accent: var(--c-method);     --accent-dark: var(--c-method-dark); }
-        .slide[data-module="future"]     { --accent: var(--c-future);     --accent-dark: var(--c-future-dark); }
-
-        .slide-card {
-            max-width: 1300px;
-            width: 100%;
-            background: rgba(255,255,255,0.98);
-            border-radius: 1.8rem;
-            box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.18), 0 0 0 1px rgba(0,0,0,0.03);
-            padding: 2.4rem 2.8rem;
-            border-top: 5px solid var(--accent, #2c7da0);
+        .sidebar .toc-list {
+            list-style: none;
+            padding: 0;
         }
-
-        .module-tag {
-            display: inline-block;
-            background: var(--accent, #2c7da0);
-            color: white;
-            padding: 0.25rem 0.9rem;
-            border-radius: 1rem;
-            font-size: 0.75rem;
+        .sidebar .toc-list li {
+            margin-bottom: 0.1rem;
+        }
+        .sidebar .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            color: #4a3f33;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+        .sidebar .toc-list a:hover {
+            background: #e0d8cc;
+            color: #1a1508;
+        }
+        .sidebar .toc-list a.active {
+            background: var(--accent);
+            color: #fff;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.8rem;
-            text-transform: uppercase;
         }
-
-        .slide-title {
-            font-size: 2.4rem;
-            font-weight: 800;
-            color: var(--accent-dark, #1a4b6e);
-            margin-bottom: 0.6rem;
-            letter-spacing: -0.5px;
-            border-left: 6px solid var(--accent, #2c7da0);
-            padding-left: 1.2rem;
-            line-height: 1.2;
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 2.5rem;
+            max-width: 1100px;
         }
-
-        .slide-sub {
-            color: #5c7f8e;
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.3rem;
+            color: #1e1508;
+        }
+        .header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.2rem;
+        }
+        .header .meta {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #c4b0d8;
+            border-radius: 18px;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-family: var(--font-sans);
+            font-weight: 500;
+        }
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.6rem 1.8rem;
             margin-bottom: 1.8rem;
-            font-size: 1rem;
-            font-weight: 400;
-            border-bottom: 1px dashed #cbdde6;
-            padding-bottom: 0.8rem;
-            margin-left: 1.4rem;
+            box-shadow: var(--shadow);
+            scroll-margin-top: 1rem;
         }
-
-        .two-columns {
+        .section h2 {
+            font-size: 1.3rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.8rem;
+            margin-bottom: 1rem;
+            color: #3a204a;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section h3 {
+            font-size: 1.05rem;
+            margin: 1.5rem 0 0.6rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed var(--border);
+            color: #4a3060;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin: 1.2rem 0;
-        }
-        .three-columns {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.4rem;
-            margin: 1.2rem 0;
-        }
-        .four-columns {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
-            margin: 1.2rem 0;
-        }
-
-        .info-box {
-            background: #fefefe;
-            border-radius: 1.2rem;
-            padding: 1.3rem 1.5rem;
-            border-left: 4px solid var(--accent, #2c7da0);
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        .info-box:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.08);
-        }
-        .info-box h3 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent-dark, #1f5e7e);
-            margin-bottom: 0.7rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .info-box h3 i {
-            color: var(--accent, #2c7da0);
-            background: color-mix(in srgb, var(--accent, #2c7da0) 12%, transparent);
-            width: 32px; height: 32px;
-            border-radius: 8px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.95rem;
-        }
-        .info-box ul, .info-box p {
-            font-size: 0.95rem;
-            line-height: 1.55;
-            color: #2c4254;
-        }
-        .info-box ul { margin-left: 1.2rem; }
-        .info-box p + p { margin-top: 0.5rem; }
-        li { margin-bottom: 0.4rem; }
-
-        .badge-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin: 1rem 0 0;
-        }
-        .badge-item {
-            background: color-mix(in srgb, var(--accent, #2c7da0) 12%, white);
-            color: var(--accent-dark, #1f5e7e);
-            padding: 0.3rem 0.95rem;
-            border-radius: 2rem;
-            font-size: 0.8rem;
-            font-weight: 600;
-            border: 1px solid color-mix(in srgb, var(--accent, #2c7da0) 25%, transparent);
-        }
-
-        .timeline-horizontal {
-            display: flex;
-            flex-wrap: wrap;
             gap: 0.8rem;
-            margin: 1.5rem 0;
+            margin-top: 0.6rem;
         }
-        .timeline-node {
-            flex: 1;
-            background: linear-gradient(135deg, color-mix(in srgb, var(--accent, #2c7da0) 8%, white), white);
-            border-radius: 1rem;
-            padding: 1rem 0.8rem;
-            text-align: center;
-            min-width: 130px;
-            font-weight: 500;
-            font-size: 0.88rem;
-            border: 1px solid color-mix(in srgb, var(--accent, #2c7da0) 18%, transparent);
-            line-height: 1.4;
-        }
-        .timeline-node strong {
-            color: var(--accent-dark, #1a4b6e);
-            display: block;
-            margin-bottom: 0.3rem;
-            font-size: 1rem;
-        }
-
-        .quote {
-            background: color-mix(in srgb, var(--accent, #2c7da0) 8%, white);
-            border-radius: 1rem;
-            padding: 1rem 1.5rem;
-            margin: 1.2rem 0;
-            font-weight: 500;
-            border-left: 5px solid var(--accent, #2c7da0);
-            color: var(--accent-dark, #1a4b6e);
-            font-size: 0.95rem;
-            line-height: 1.6;
-        }
-
-        /* 封面样式 */
-        .cover-card {
-            text-align: center;
-            padding: 4rem 3rem;
-            background: linear-gradient(135deg, #1a4b6e 0%, #2c7da0 50%, #c9184a 100%);
-            color: white;
-            border-top: none;
-            box-shadow: 0 30px 60px -20px rgba(0,0,0,0.3);
+        .info-card {
+            background: #fdfaf6;
+            border-radius: 10px;
+            padding: 0.9rem 1.1rem;
+            border-left: 5px solid #ccc;
+            transition: all 0.25s;
             position: relative;
         }
-        .cover-card h1 {
-            font-size: 3.4rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            letter-spacing: -1px;
-            line-height: 1.15;
+        .info-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
         }
-        .cover-card .cover-sub {
-            font-size: 1.3rem;
-            opacity: 0.92;
-            margin-bottom: 2.5rem;
-            font-weight: 300;
+        .info-card.imperial {
+            border-color: var(--imperial);
+            background: var(--imperial-light);
         }
-        .cover-meta {
-            display: flex;
-            justify-content: center;
-            gap: 2.5rem;
-            flex-wrap: wrap;
-            margin-top: 2rem;
-            font-size: 0.95rem;
-            opacity: 0.85;
+        .info-card.gentry {
+            border-color: var(--gentry);
+            background: var(--gentry-light);
         }
-        .cover-meta div i { margin-right: 6px; }
-        .cover-signature {
-            position: absolute;
-            bottom: 1rem;
-            right: 1rem;
-            font-size: 0.65rem;
-            opacity: 0.6;
-            font-weight: 400;
-            text-align: right;
-            line-height: 1.3;
-            pointer-events: none;
+        .info-card.interaction {
+            border-color: #6a5080;
+            background: #fdfafe;
         }
-        @media (max-width: 700px) {
-            .cover-signature {
-                bottom: 0.6rem;
-                right: 0.8rem;
-                font-size: 0.55rem;
-            }
+        .info-card.insight {
+            border-color: #5a9050;
+            background: #fafdfa;
         }
-
-        .toc-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        .toc-item {
-            background: #fff;
-            border-radius: 1rem;
-            padding: 1.1rem 1.2rem;
-            border-left: 4px solid var(--toc-c, #2c7da0);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .toc-item:hover {
-            transform: translateX(4px);
-            box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-        }
-        .toc-item .toc-num {
-            font-size: 0.75rem;
+        .info-card .label {
             font-weight: 700;
-            color: var(--toc-c, #2c7da0);
-            letter-spacing: 1px;
-        }
-        .toc-item h4 {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #1a4b6e;
-            margin: 0.3rem 0;
-        }
-        .toc-item p {
             font-size: 0.82rem;
-            color: #6b8290;
-            line-height: 1.4;
-        }
-
-        .ending-card {
-            text-align: center;
-            background: linear-gradient(135deg, #c9184a 0%, #8a0d33 100%);
-            color: white;
-            border-top: none;
-        }
-        .ending-card h2 {
-            font-size: 2.8rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-        .ending-card p { font-size: 1.1rem; opacity: 0.9; }
-        .book-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin: 2rem 0 1rem;
-            text-align: left;
-        }
-        .book-item {
-            background: rgba(255,255,255,0.12);
-            backdrop-filter: blur(8px);
-            padding: 1rem 1.2rem;
-            border-radius: 0.8rem;
-            border: 1px solid rgba(255,255,255,0.18);
-            font-size: 0.9rem;
-        }
-        .book-item strong { display: block; margin-bottom: 0.3rem; font-size: 1rem; }
-
-        hr { margin: 1rem 0; border: none; height: 1px; background: #e0edf3; }
-
-        .nav-fixed {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 0.55rem 1.1rem;
+            margin-bottom: 0.35rem;
+            letter-spacing: 0.04em;
+            font-family: var(--font-sans);
+            color: #3a2a45;
             display: flex;
-            gap: 0.8rem;
             align-items: center;
-            z-index: 1000;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            border: 1px solid rgba(0,0,0,0.06);
+            gap: 0.4rem;
         }
-        .nav-btn {
-            background: #2c7da0;
-            border: none;
-            color: white;
-            width: 38px; height: 38px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: 0.2s;
+        .info-card .content {
+            font-size: 0.9rem;
+            color: #4a3f33;
+        }
+        .info-card .content ul {
+            margin-top: 0.2rem;
+            padding-left: 1.2rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.2rem;
+        }
+        .glossary-trigger {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-        }
-        .nav-btn:hover { background: #165a78; transform: scale(1.08); }
-        .page-indicator {
-            font-size: 0.88rem;
-            color: #1e4b6e;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.7rem;
             font-weight: 700;
-            min-width: 55px;
-            text-align: center;
+            cursor: pointer;
+            margin-left: 0.35rem;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
+            border: none;
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
-        @media (max-width: 900px) {
-            .slide { padding: 2rem 1rem; }
-            .slide-card { padding: 1.5rem 1.3rem; border-radius: 1.2rem; }
-            .two-columns, .three-columns, .four-columns {
-                grid-template-columns: 1fr;
-                gap: 0.9rem;
+        .glossary-trigger:hover {
+            background: #6a5090;
+            transform: scale(1.15);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.hidden {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
             }
-            .slide-title { font-size: 1.7rem; }
-            .cover-card h1 { font-size: 2.2rem; }
-            .cover-card .cover-sub { font-size: 1rem; }
-            .ending-card h2 { font-size: 2rem; }
-            .nav-fixed { bottom: 12px; right: 12px; padding: 0.4rem 0.8rem; }
-            .nav-btn { width: 34px; height: 34px; }
+            to {
+                opacity: 1;
+            }
         }
-        @media (min-width: 901px) and (max-width: 1100px) {
-            .three-columns { grid-template-columns: repeat(2, 1fr); }
-            .four-columns { grid-template-columns: repeat(2, 1fr); }
+        .modal-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.8rem;
+            max-width: 560px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            position: relative;
+            font-family: var(--font-sans);
+            max-height: 80vh;
+            overflow-y: auto;
         }
-        @media print {
-            .slide { page-break-after: always; min-height: auto; padding: 1rem; }
-            .nav-fixed, .progress-bar { display: none; }
-            .slide-card { box-shadow: none; border: 1px solid #ccc; }
+        .modal-card h4 {
+            font-size: 1.15rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .modal-card p {
+            font-size: 0.92rem;
+            color: #4a3f33;
+            line-height: 1.7;
+            margin-bottom: 0.7rem;
+        }
+        .modal-card .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-card .close-btn:hover {
+            color: #333;
+        }
+        blockquote {
+            background: var(--accent-light);
+            border-left: 4px solid #8a60b0;
+            margin: 1rem 0;
+            padding: 0.9rem 1.3rem;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+            color: #3a204a;
+            font-size: 0.92rem;
+        }
+        .diagram-wrap {
+            text-align: center;
+            margin: 1.2rem 0;
+            background: #fafcfe;
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid #e0e8ee;
+        }
+        .diagram-wrap svg {
+            max-width: 100%;
+        }
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        table.extension th {
+            background: #f5ede3;
+            padding: 0.5rem 0.8rem;
+            text-align: left;
+            font-weight: 700;
+            color: #4a3060;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
+        }
+        table.extension td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
+        }
+        hr.divider {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 2rem 0;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top:hover {
+            background: #6a5090;
+            transform: translateY(-3px);
+        }
+        @media (max-width: 800px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
 <body>
-<div class="progress-bar" id="progressBar"></div>
-<div class="slides-container" id="slidesContainer">
+    <nav class="sidebar" id="sidebar">
+        <h3>📚 皇权与绅权</h3>
+        <ul class="toc-list">
+            <li><a href="#header">📖 书籍信息</a></li>
+            <li><a href="#core">🎯 核心辩题</a></li>
+            <li><a href="#ch1">👑 皇权的来源与限制</a></li>
+            <li><a href="#ch2">🏛️ 绅权的来源与特征</a></li>
+            <li><a href="#ch3">🤝 双轨政治</a></li>
+            <li><a href="#ch4">⚖️ 绅权的功能</a></li>
+            <li><a href="#ch5">🔄 历史的演变</a></li>
+            <li><a href="#laws">🧠 核心理论贡献</a></li>
+            <li><a href="#extension">🔍 延伸与比较</a></li>
+        </ul>
+    </nav>
 
-    <!-- 封面 -->
-    <div class="slide" data-module="intro">
-        <div class="slide-card cover-card">
-            <h1>组织行为学全景</h1>
-            <div class="cover-sub">深度拆解 · 模块化精讲 · 从经典理论到算法时代</div>
-            <div style="font-size: 4rem; opacity: 0.85; margin: 1.5rem 0;"><i class="fas fa-sitemap"></i></div>
-            <div class="cover-meta">
-                <div><i class="fas fa-layer-group"></i> 10 大模块</div>
-                <div><i class="fas fa-file-alt"></i> 23 屏精讲</div>
-                <div><i class="fas fa-microchip"></i> 含 AI 时代前沿</div>
+    <div class="main">
+        <div class="header" id="header">
+            <h1>《皇权与绅权》</h1>
+            <div class="subtitle">中国传统政治中两股力量的博弈与平衡</div>
+            <div class="meta">
+                <span><strong>作者</strong>：费孝通、吴晗等</span>
+                <span><strong>首版</strong>：1948年</span>
+                <span><strong>出版社</strong>：生活·读书·新知三联书店</span>
+                <span><strong>学科领域</strong>：政治社会学 / 历史学 / 中国研究</span>
             </div>
-            <div class="cover-signature" id="coverDateSig">
-                <span id="todayDate"></span><br>作者：XZY
-            </div>
-        </div>
-    </div>
-
-    <!-- 目录 -->
-    <div class="slide" data-module="intro">
-        <div class="slide-card">
-            <span class="module-tag">CONTENTS</span>
-            <div class="slide-title">📑 目录 · 学习路线图</div>
-            <div class="slide-sub">从学科基础 → 个体 → 群体 → 领导力 → 组织 → 环境 → 整合前沿</div>
-            <div class="toc-grid">
-                <div class="toc-item" style="--toc-c: var(--c-intro);" data-target="2"><div class="toc-num">PART 01</div><h4>学科定位</h4><p>OB是什么？多学科交叉与多层次分析</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-intro);" data-target="3"><div class="toc-num">PART 02</div><h4>历史演进</h4><p>从科学管理到算法时代的范式变迁</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-individual);" data-target="5"><div class="toc-num">PART 03</div><h4>个体层 (5屏)</h4><p>人格、知觉、决策、动机、情绪压力</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-group);" data-target="10"><div class="toc-num">PART 04</div><h4>群体与团队 (3屏)</h4><p>群体动力、团队过程、决策陷阱</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-leader);" data-target="13"><div class="toc-num">PART 05</div><h4>领导力理论 (2屏)</h4><p>经典脉络与当代前沿</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-org);" data-target="15"><div class="toc-num">PART 06</div><h4>组织层 (3屏)</h4><p>结构、文化、权力与HRM</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-env);" data-target="18"><div class="toc-num">PART 07</div><h4>环境层</h4><p>跨文化、制度同构、ESG</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-method);" data-target="19"><div class="toc-num">PART 08</div><h4>理论流派</h4><p>核心透镜与新兴框架</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-method);" data-target="20"><div class="toc-num">PART 09</div><h4>研究方法论</h4><p>定量、定性、混合与新兴技术</p></div>
-                <div class="toc-item" style="--toc-c: var(--c-future);" data-target="21"><div class="toc-num">PART 10</div><h4>整合与前沿</h4><p>AI时代的OB重塑</p></div>
+            <div class="framework-badges">
+                <span class="badge">⚔️ 多视角辩论型</span>
+                <span class="badge">👑 政治社会学</span>
+                <span class="badge">🏛️ 中国政治传统</span>
+                <span class="badge">📜 社会史</span>
             </div>
         </div>
-    </div>
 
-    <!-- 1. 学科定位 -->
-    <div class="slide" data-module="intro">
-        <div class="slide-card">
-            <span class="module-tag">PART 01 · 学科基础</span>
-            <div class="slide-title">📖 一、学科定位 · 组织行为学是什么？</div>
-            <div class="slide-sub">定义 | 核心特征 | 多学科交叉属性</div>
-            <div class="two-columns">
-                <div class="info-box"><h3><i class="fas fa-bullseye"></i> 标准定义</h3><p><strong>组织行为学（OB）</strong> 是系统研究组织中人的心理与行为规律，探讨个体、群体、结构对行为的影响，并运用知识改善组织效能的学科。核心目标：<strong>描述 · 解释 · 预测 · 控制/干预</strong>。</p></div>
-                <div class="info-box"><h3><i class="fas fa-shapes"></i> 三大根本特征</h3><ul><li><strong>多学科根基</strong>：心理学、社会学、人类学、政治学、经济学</li><li><strong>多层次分析</strong>：个体→群体/团队→组织→环境</li><li><strong>双元目标</strong>：科学性+应用性</li></ul></div>
-            </div>
-            <div class="quote"><i class="fas fa-quote-left"></i> 组织行为学的终极使命：让人性化的管理成为竞争优势，让组织成为个体意义与效率的共生体。</div>
-            <div class="badge-list"><span class="badge-item"><i class="fas fa-brain"></i> 心理学</span><span class="badge-item"><i class="fas fa-users"></i> 社会学</span><span class="badge-item"><i class="fas fa-globe"></i> 人类学</span><span class="badge-item"><i class="fas fa-landmark"></i> 政治学</span><span class="badge-item"><i class="fas fa-chart-line"></i> 经济学</span></div>
-        </div>
-    </div>
-
-    <!-- 2. 历史演进上 -->
-    <div class="slide" data-module="intro">
-        <div class="slide-card">
-            <span class="module-tag">PART 02 · 历史脉络</span>
-            <div class="slide-title">⏳ 二、历史演进 (上) · 从科学管理到人际关系革命</div>
-            <div class="slide-sub">1880s-1950s：效率至上 → 社会人觉醒</div>
-            <div class="timeline-horizontal"><div class="timeline-node"><strong>1880s</strong>古典管理萌芽</div><div class="timeline-node"><strong>1900s</strong>科学管理</div><div class="timeline-node"><strong>1920s-30s</strong>霍桑实验</div><div class="timeline-node"><strong>1940s-50s</strong>人际关系学派</div></div>
-            <div class="two-columns"><div class="info-box"><h3><i class="fas fa-industry"></i> 科学管理</h3><p>泰勒动作研究、计件工资，“经济人”假设；提升效率但忽视情感。</p></div><div class="info-box"><h3><i class="fas fa-handshake"></i> 人际关系运动</h3><p>霍桑实验揭示非正式组织与群体规范，提出“社会人”假设，开启员工导向管理。</p></div></div>
-            <div class="quote">📌 范式初变：从“机器模型”转向“有机体模型”，重视沟通与参与。</div>
-        </div>
-    </div>
-
-    <!-- 3. 历史演进下 -->
-    <div class="slide" data-module="intro">
-        <div class="slide-card">
-            <span class="module-tag">PART 02 · 历史脉络</span>
-            <div class="slide-title">⚡ 二、历史演进 (下) · 现代OB奠基 → 算法时代</div>
-            <div class="slide-sub">1950s-2020s：复杂人、权变、积极OB与数字化转型</div>
-            <div class="timeline-horizontal"><div class="timeline-node"><strong>1950-70</strong>现代OB奠基</div><div class="timeline-node"><strong>1980-90</strong>战略与认知转向</div><div class="timeline-node"><strong>2000-10</strong>积极OB</div><div class="timeline-node"><strong>2020-今</strong>数字化转向</div></div>
-            <div class="two-columns"><div class="info-box"><h3>人性假设演变</h3><p>经济人 → 社会人 → 自我实现人 → 复杂人 → 数字人</p></div><div class="info-box"><h3>近年里程碑</h3><p>情境强度、情感事件理论、心理资本PsyCap、大数据与神经科学OB。</p></div></div>
-        </div>
-    </div>
-
-    <!-- 个体层 1/5 人格 -->
-    <div class="slide" data-module="individual"><div class="slide-card"><span class="module-tag">PART 03 · 个体层 (1/5)</span><div class="slide-title">🧬 三、个体差异：人格、能力与价值观</div><div class="slide-sub">大五人格 · 核心自我评价 · 能力分类</div><div class="two-columns"><div class="info-box"><h3>大五人格 (OCEAN)</h3><ul><li>尽责性：最强绩效预测因子</li><li>情绪稳定性：抗压</li><li>外向性：领导涌现</li><li>开放性：创造力</li><li>宜人性：团队合作</li></ul></div><div class="info-box"><h3>能力与自我评价</h3><ul><li>一般心理能力(GMA)</li><li>情绪智力(EI)</li><li>核心自我评价(CSE)</li></ul></div></div><div class="info-box"><h3>价值观与文化嵌入</h3><p>工作价值观影响职业选择；霍夫斯泰德维度塑造权力距离偏好。</p></div></div></div>
-
-    <!-- 个体层 2/5 知觉归因 -->
-    <div class="slide" data-module="individual"><div class="slide-card"><span class="module-tag">PART 03 · 个体层 (2/5)</span><div class="slide-title">👁️ 三、社会知觉与归因理论</div><div class="slide-sub">选择性知觉 · 晕轮效应 · Kelley归因三维理论</div><div class="two-columns"><div class="info-box"><h3>社会知觉偏差</h3><ul><li>选择性知觉、晕轮效应、对比效应、刻板印象、首因/近因效应</li></ul></div><div class="info-box"><h3>Kelley归因三维理论</h3><ul><li>一致性、一贯性、区别性 → 内归因/外归因</li><li>基本归因错误：低估情境，高估个人</li><li>自利偏差：成功内归因，失败外归因</li></ul></div></div><div class="quote">⚠️ 管理者容易因归因偏差错误评价下属绩效。</div></div></div>
-
-    <!-- 个体层 3/5 决策 -->
-    <div class="slide" data-module="individual"><div class="slide-card"><span class="module-tag">PART 03 · 个体层 (3/5)</span><div class="slide-title">🎲 三、决策与判断模型</div><div class="slide-sub">有限理性 · 双系统理论 · 前景理论</div><div class="three-columns"><div class="info-box"><h3>有限理性</h3><p>西蒙：满意原则，行政人假设。</p></div><div class="info-box"><h3>双系统理论</h3><p>卡尼曼：系统1直觉、系统2分析；启发式偏差。</p></div><div class="info-box"><h3>前景理论</h3><p>损失厌恶、参照依赖、框架效应。</p></div></div><div class="quote">🔍 组织决策病灶：承诺升级、确认偏误。解毒：事前剖析、红队对抗。</div></div></div>
-
-    <!-- 个体层 4/5 动机 -->
-    <div class="slide" data-module="individual"><div class="slide-card"><span class="module-tag">PART 03 · 个体层 (4/5)</span><div class="slide-title">⚙️ 三、动机与激励深度解析</div><div class="slide-sub">内容理论 · 过程理论 · 自我决定理论</div><div class="two-columns"><div class="info-box"><h3>内容理论</h3><ul><li>马斯洛需求层次</li><li>赫兹伯格双因素</li><li>麦克利兰三种需要</li><li>ERG理论</li></ul></div><div class="info-box"><h3>过程理论</h3><ul><li>期望理论 (Vroom)</li><li>公平理论 (Adams)</li><li>目标设置理论 (Locke)</li></ul></div></div><div class="info-box"><h3>自我决定理论 (SDT)</h3><p>自主、胜任、归属三大心理需求。AI管理挑战：算法控制削弱自主性，需透明可解释。</p></div></div></div>
-
-    <!-- 个体层 5/5 情绪压力 -->
-    <div class="slide" data-module="individual"><div class="slide-card"><span class="module-tag">PART 03 · 个体层 (5/5)</span><div class="slide-title">😤 三、情绪劳动 · 工作态度 · 压力与倦怠</div><div class="slide-sub">情感事件理论 · 组织承诺 · JD-R模型</div><div class="two-columns"><div class="info-box"><h3>情绪劳动</h3><ul><li>表层/深层扮演</li><li>情感事件理论(AET)</li></ul></div><div class="info-box"><h3>态度与承诺</h3><ul><li>工作满意度五大因素</li><li>组织承诺三成分 (情感/持续/规范)</li><li>员工敬业度</li></ul></div></div><div class="info-box"><h3>压力与职业倦怠</h3><ul><li>挑战性/阻碍性压力源</li><li>JD-R模型</li><li>倦怠三成分 (Maslach)</li><li>AI监控的双刃剑效应</li></ul></div></div></div>
-
-    <!-- 群体层 1/3 基础 -->
-    <div class="slide" data-module="group"><div class="slide-card"><span class="module-tag">PART 04 · 群体与团队 (1/3)</span><div class="slide-title">👥 四、群体基础与凝聚力</div><div class="slide-sub">正式/非正式群体 · 塔克曼模型 · 群体属性</div><div class="two-columns"><div class="info-box"><h3>群体类型与阶段</h3><ul><li>正式/非正式群体</li><li>塔克曼五阶段：形成→风暴→规范→执行→解散</li><li>群体属性：角色、规范、地位、规模</li></ul></div><div class="info-box"><h3>凝聚力</h3><ul><li>社会/任务凝聚力</li><li>与绩效中度相关，过度凝聚引发群体思维</li></ul></div></div></div></div>
-
-    <!-- 群体层 2/3 过程 -->
-    <div class="slide" data-module="group"><div class="slide-card"><span class="module-tag">PART 04 · 群体与团队 (2/3)</span><div class="slide-title">⚙️ 四、团队过程与心理机制</div><div class="slide-sub">心理安全感 · 共享心智模型 · 冲突类型</div><div class="info-box"><h3>心理安全感 (Edmondson)</h3><p>团队人际冒险安全气候，Google亚里士多德计划验证为高效团队第一预测因子。</p></div><div class="two-columns"><div class="info-box"><h3>共享心智模型</h3><p>共同知识表征，减少过程损耗。</p></div><div class="info-box"><h3>团队冲突 (Jehn)</h3><ul><li>任务冲突：适度有益</li><li>关系冲突：始终有害</li><li>过程冲突：需干预</li></ul></div></div></div></div>
-
-    <!-- 群体层 3/3 决策陷阱 -->
-    <div class="slide" data-module="group"><div class="slide-card"><span class="module-tag">PART 04 · 群体与团队 (3/3)</span><div class="slide-title">⚠️ 四、团队决策陷阱与纠偏</div><div class="slide-sub">群体思维 · 群体极化 · 隐藏信息 · 社会惰化</div><div class="two-columns"><div class="info-box"><h3>群体思维 (Janis)</h3><p>高凝聚力压制异议，导致失败决策。八大症状。</p></div><div class="info-box"><h3>群体极化</h3><p>讨论后观点更极端。</p></div></div><div class="two-columns"><div class="info-box"><h3>隐藏信息范式</h3><p>团队忽略独有信息，共享已知信息。</p></div><div class="info-box"><h3>社会惰化 & 阿比林悖论</h3><p>个人投入减少；集体同意无人想要的决定。</p></div></div><div class="quote">✅ 缓解工具箱：魔鬼代言人、匿名意见、德尔菲法、事前剖析。</div></div></div>
-
-    <!-- 领导力 1/2 经典 -->
-    <div class="slide" data-module="leader"><div class="slide-card"><span class="module-tag">PART 05 · 领导力 (1/2)</span><div class="slide-title">👑 五、领导力理论 · 经典脉络</div><div class="slide-sub">特质理论 → 行为理论 → 权变模型</div><div class="three-columns"><div class="info-box"><h3>特质理论</h3><p>大五外向性、尽责性相关，但情境重要。</p></div><div class="info-box"><h3>行为理论</h3><p>俄亥俄：定规与关怀；密歇根：员工导向；管理方格9,9最优。</p></div><div class="info-box"><h3>权变理论</h3><p>费德勒LPC、路径-目标理论、情境领导。</p></div></div></div></div>
-
-    <!-- 领导力 2/2 当代 -->
-    <div class="slide" data-module="leader"><div class="slide-card"><span class="module-tag">PART 05 · 领导力 (2/2)</span><div class="slide-title">✨ 五、当代领导力前沿 · 超越交易型</div><div class="slide-sub">变革型 · 真实型 · 共享型 · AI时代领导</div><div class="two-columns"><div class="info-box"><h3>变革型领导 (Bass)</h3><ul><li>4I：理想化影响、智力激发、个性化关怀、鼓舞激励</li><li>提升创造力、组织承诺、OCB</li></ul></div><div class="info-box"><h3>真实型与伦理型领导</h3><ul><li>真实型：自我意识、透明、内化道德</li><li>伦理型：榜样与奖惩强化规范</li></ul></div></div><div class="info-box"><h3>数字化与算法领导</h3><p>算法素养、共享型领导、e-leadership，人机共治。</p></div></div></div>
-
-    <!-- 组织层 1/3 结构 -->
-    <div class="slide" data-module="org"><div class="slide-card"><span class="module-tag">PART 06 · 组织层 (1/3)</span><div class="slide-title">🏛️ 六、组织结构与设计</div><div class="slide-sub">机械式/有机式 · 当代结构形态 · 权变设计</div><div class="two-columns"><div class="info-box"><h3>经典结构连续带</h3><ul><li>机械式：高度分工、层级、集权</li><li>有机式：扁平、跨职能、低正式化</li><li>当代形态：矩阵、网络、平台、无边界</li></ul></div><div class="info-box"><h3>权变设计变量</h3><ul><li>战略追随结构 (钱德勒)</li><li>环境不确定性→有机</li><li>技术 (伍德沃德)</li><li>规模 → 正式化程度</li></ul></div></div></div></div>
-
-    <!-- 组织层 2/3 文化 -->
-    <div class="slide" data-module="org"><div class="slide-card"><span class="module-tag">PART 06 · 组织层 (2/3)</span><div class="slide-title">🎨 六、组织文化深度</div><div class="slide-sub">沙因三层模型 · 文化强度 · 变革阻力</div><div class="info-box"><h3>沙因文化三层模型</h3><ul><li>① 人工饰物</li><li>② 倡导的价值观</li><li>③ 基本隐性假设 (文化核心)</li></ul></div><div class="two-columns"><div class="info-box"><h3>文化类型与影响</h3><p>强文化降低不确定但可能僵化；适应性文化促创新。竞争价值框架(CVF)。</p></div><div class="info-box"><h3>文化变革</h3><p>科特八步法：紧迫感、联盟、愿景沟通、短期胜利等。</p></div></div></div></div>
-
-    <!-- 组织层 3/3 权力政治与HR -->
-    <div class="slide" data-module="org"><div class="slide-card"><span class="module-tag">PART 06 · 组织层 (3/3)</span><div class="slide-title">⚖️ 六、权力政治与人力资源系统</div><div class="slide-sub">权力来源 · 组织政治行为 · 高绩效工作系统</div><div class="two-columns"><div class="info-box"><h3>French & Raven 权力五来源</h3><ul><li>强制、奖赏、合法、专家、参照权</li><li>专家权与参照权与承诺正相关</li></ul></div><div class="info-box"><h3>组织政治与印象管理</h3><ul><li>政治知觉降低满意度</li><li>政治技能 (Ferris)</li><li>印象管理策略</li></ul></div></div><div class="info-box"><h3>高绩效工作系统 (HPWS)</h3><p>AMO框架：能力+动机+机会。人力资源分析(People Analytics)与伦理挑战。</p></div></div></div>
-
-    <!-- 环境层 -->
-    <div class="slide" data-module="env"><div class="slide-card"><span class="module-tag">PART 07 · 环境层</span><div class="slide-title">🌐 七、环境层 · 跨文化与制度压力</div><div class="slide-sub">霍夫斯泰德维度 · GLOBE · 制度同构 · ESG</div><div class="three-columns"><div class="info-box"><h3>文化维度</h3><ul><li>霍夫斯泰德6维</li><li>GLOBE项目</li></ul></div><div class="info-box"><h3>制度理论</h3><ul><li>三大支柱 (Scott)</li><li>制度同构 (DiMaggio & Powell)</li></ul></div><div class="info-box"><h3>CSR与ESG</h3><p>企业社会责任影响组织认同与人才吸引。</p></div></div></div></div>
-
-    <!-- 理论流派 -->
-    <div class="slide" data-module="method"><div class="slide-card"><span class="module-tag">PART 08 · 理论透镜</span><div class="slide-title">📚 八、核心理论流派总览</div><div class="slide-sub">解读组织行为的主要透镜</div><div class="badge-list" style="justify-content:center;"><span class="badge-item">认知流派</span><span class="badge-item">社会学习</span><span class="badge-item">社会交换</span><span class="badge-item">社会认同</span><span class="badge-item">制度理论</span><span class="badge-item">批判理论</span><span class="badge-item">复杂性理论</span></div><div class="two-columns"><div class="info-box"><h3>主要视角</h3><ul><li>社会交换：LMX、POS</li><li>社会认同：组织认同</li><li>认知流派：信息加工</li><li>社会学习：自我效能</li></ul></div><div class="info-box"><h3>新兴整合框架</h3><ul><li>资源保存理论(COR)</li><li>自我决定理论(SDT)</li><li>JD-R模型</li><li>积极组织行为学(POB)</li></ul></div></div></div></div>
-
-    <!-- 研究方法 -->
-    <div class="slide" data-module="method"><div class="slide-card"><span class="module-tag">PART 09 · 方法论</span><div class="slide-title">🔬 九、研究方法论与设计严谨性</div><div class="slide-sub">定量 · 定性 · 混合方法 · 新兴技术</div><div class="two-columns"><div class="info-box"><h3>定量方法</h3><ul><li>问卷、实验、纵向、元分析</li><li>结构方程、HLM</li></ul></div><div class="info-box"><h3>定性方法</h3><ul><li>案例研究、扎根理论、民族志</li></ul></div></div><div class="info-box"><h3>前沿方法体系</h3><ul><li>经验取样法(ESM)</li><li>社会网络分析(SNA)</li><li>大数据文本分析</li><li>可穿戴设备、组织神经科学</li></ul></div></div></div>
-
-    <!-- 整合前沿 -->
-    <div class="slide" data-module="future"><div class="slide-card"><span class="module-tag">PART 10 · 整合与前沿</span><div class="slide-title">🔮 十、整合逻辑 · 从经典走向算法时代</div><div class="slide-sub">多层次交互 · 关键贯穿变量 · AI对OB的重塑</div><div class="quote"><strong>全局嵌套模型：</strong>宏观环境 → 组织设计/文化 → 团队过程/领导力 → 个体动机/行为。<br><strong>贯穿变量：</strong>权力、信任、公平、意义感。</div><div class="two-columns"><div class="info-box"><h3>人工智能与OB新命题</h3><ul><li>算法管理冲击SDT自主需求</li><li>人机团队信任与责任</li><li>一人公司(OPC)与微组织</li><li>生成式AI重塑知识工作</li></ul></div><div class="info-box"><h3>未来研究方向</h3><ul><li>AI伦理与透明领导力</li><li>混合办公心理契约</li><li>数据隐私与福祉</li><li>DEI与算法偏见</li></ul></div></div><div class="badge-list"><span class="badge-item">算法组织行为学</span><span class="badge-item">神经OB</span><span class="badge-item">积极OB 2.0</span><span class="badge-item">可持续组织</span></div></div></div>
-
-    <!-- 结尾页 - 修改后的书单 -->
-    <div class="slide" data-module="future">
-        <div class="slide-card ending-card">
-            <h2>🎓 总结与延伸阅读</h2>
-            <p>组织行为学的本质：在复杂人性与制度约束的张力中，寻找个体、群体与组织的共生之道。</p>
-            <div class="book-list">
-                <div class="book-item"><strong>📘 罗宾斯 《组织行为学》</strong>OB经典教科书，体系完整</div>
-                <div class="book-item"><strong>📕 巴纳德 《经理人员的职能》</strong>现代管理理论奠基，组织协作与权威</div>
-                <div class="book-item"><strong>📗 卡尼曼 《思考，快与慢》</strong>决策双系统与认知偏差必读</div>
-                <div class="book-item"><strong>📙 沙因 《组织文化与领导力》</strong>文化三层模型开创之作</div>
-                <div class="book-item"><strong>📓 戴维·迈尔斯 《社会心理学》</strong>群体动力、社会认知、归因等经典理论</div>
-                <div class="book-item"><strong>📔 德鲁克 《管理的实践》</strong>目标管理与组织效能，管理学的奠基经典</div>
-            </div>
-            <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.2);">
-                <div style="font-size: 1.4rem; margin-bottom: 0.5rem;">💬 Thank You</div>
-                <p style="font-size: 0.9rem; opacity: 0.8;">理解组织 · 重塑工作 · 成就个体</p>
+        <!-- 核心辩题 -->
+        <div class="section" id="core">
+            <h2>🎯 核心辩题：皇权与绅权如何共存与博弈？</h2>
+            <p style="margin-bottom:1rem;color:#4a3f33;">
+                本书围绕一个核心问题展开：在中国传统社会中，<strong>以皇帝为代表的中央权力（皇权）与以士绅为代表的地方势力（绅权）之间，究竟是怎样一种关系？</strong>是皇权压倒绅权，还是绅权制约皇权？是合作共治，还是此消彼长？费孝通从社会学视角出发，吴晗从历史学视角出发，共同探讨了这一中国政治传统中的根本问题。
+            </p>
+            <div class="diagram-wrap">
+                <svg width="700" height="280" viewBox="0 0 700 280">
+                    <rect x="250" y="8" width="200" height="36" rx="8" fill="#fef6f6" stroke="#8b3030" stroke-width="2"/>
+                    <text x="350" y="31" text-anchor="middle" font-size="13" font-weight="bold" fill="#8b3030" font-family="'PingFang SC',sans-serif">皇权 vs 绅权</text>
+                    <line x1="350" y1="44" x2="200" y2="65" stroke="#888" stroke-width="1"/>
+                    <line x1="350" y1="44" x2="500" y2="65" stroke="#888" stroke-width="1"/>
+                    <rect x="50" y="65" width="300" height="55" rx="6" fill="#fef6f6" stroke="#8b3030" stroke-width="1.8"/>
+                    <text x="200" y="87" text-anchor="middle" font-size="12" font-weight="bold" fill="#8b3030" font-family="'PingFang SC',sans-serif">👑 皇权：自上而下的权力</text>
+                    <text x="200" y="107" text-anchor="middle" font-size="10" fill="#666" font-family="'PingFang SC',sans-serif">来源：武力征服 · 天命授予</text>
+                    <text x="200" y="120" text-anchor="middle" font-size="10" fill="#666" font-family="'PingFang SC',sans-serif">特征：集中 · 专制 · 世袭</text>
+                    <rect x="350" y="65" width="300" height="55" rx="6" fill="#f6fafd" stroke="#2a5070" stroke-width="1.8"/>
+                    <text x="500" y="87" text-anchor="middle" font-size="12" font-weight="bold" fill="#2a5070" font-family="'PingFang SC',sans-serif">🏛️ 绅权：自下而上的权力</text>
+                    <text x="500" y="107" text-anchor="middle" font-size="10" fill="#666" font-family="'PingFang SC',sans-serif">来源：知识 · 土地 · 地方声望</text>
+                    <text x="500" y="120" text-anchor="middle" font-size="10" fill="#666" font-family="'PingFang SC',sans-serif">特征：分散 · 道德权威 · 教化</text>
+                    <line x1="200" y1="120" x2="200" y2="138" stroke="#888" stroke-width="1"/>
+                    <line x1="500" y1="120" x2="500" y2="138" stroke="#888" stroke-width="1"/>
+                    <rect x="140" y="138" width="120" height="30" rx="4" fill="#fdfafe" stroke="#6a5080" stroke-width="1.2"/>
+                    <text x="200" y="158" text-anchor="middle" font-size="10" fill="#4a3060" font-family="'PingFang SC',sans-serif">武力征服</text>
+                    <rect x="440" y="138" width="120" height="30" rx="4" fill="#fdfafe" stroke="#6a5080" stroke-width="1.2"/>
+                    <text x="500" y="158" text-anchor="middle" font-size="10" fill="#4a3060" font-family="'PingFang SC',sans-serif">知识教化</text>
+                    <line x1="200" y1="168" x2="350" y2="195" stroke="#888" stroke-width="1"/>
+                    <line x1="500" y1="168" x2="350" y2="195" stroke="#888" stroke-width="1"/>
+                    <rect x="200" y="195" width="300" height="36" rx="8" fill="#fafdfa" stroke="#5a9050" stroke-width="2"/>
+                    <text x="350" y="218" text-anchor="middle" font-size="12" font-weight="bold" fill="#3a6030" font-family="'PingFang SC',sans-serif">🤝 双轨政治：合作 · 制衡 · 冲突</text>
+                </svg>
+                <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.3rem;">图：皇权与绅权的来源、特征与互动关系</p>
             </div>
         </div>
+
+        <!-- 第一章：皇权 -->
+        <div class="section" id="ch1">
+            <h2>👑 皇权的来源与限制</h2>
+            <div class="info-grid">
+                <div class="info-card imperial">
+                    <div class="label">🗡️ 皇权的来源 <button class="glossary-trigger" onclick="openModal('origin_imperial')">?</button></div>
+                    <div class="content">吴晗从历史角度指出，皇权的根本来源是<strong>武力征服</strong>——"马上得天下"。开国皇帝通过军事力量推翻前朝，建立新政权。之后通过<strong>"天命"</strong>观念来合法化统治，将武力征服包装为"天意所归"。但本质上，皇权是建立在暴力基础上的。</div>
+                </div>
+                <div class="info-card imperial">
+                    <div class="label">⛓️ 皇权的限制 <button class="glossary-trigger" onclick="openModal('limit_imperial')">?</button></div>
+                    <div class="content">皇权并非绝对的、无限的。费孝通指出，传统中国的皇权受到多重限制：<strong>天命的约束</strong>（失德者失天下）、<strong>官僚体系的制衡</strong>（宰相制度的"封驳权"）、<strong>绅权的牵制</strong>（地方士绅的抵抗）、<strong>传统和礼法的约束</strong>（祖宗之法不可废）。"皇权不下县"正是这些限制的结果。</div>
+                </div>
+                <div class="info-card imperial">
+                    <div class="label">📜 "无为政治"的理想 <button class="glossary-trigger" onclick="openModal('wuwei')">?</button></div>
+                    <div class="content">费孝通提出，中国传统政治的理想是<strong>"无为而治"</strong>——皇帝不应该过多干预民间生活。这种思想源于道家，但在实际政治中形成了对皇权扩张的内在约束。一个好的皇帝是"垂拱而治"的，一个过度干预的皇帝则被视为"扰民"。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">皇权虽然高高在上，但它无法延伸到每一个村庄。那么，在皇权不及的广大基层社会中，谁在维持秩序？这就引出了<strong>绅权</strong>的角色。</div>
+                </div>
+            </div>
+            <blockquote>"皇权不下县"——这句广为流传的概括，揭示了传统中国政治中中央权力与基层社会之间的结构性距离。</blockquote>
+        </div>
+
+        <!-- 第二章：绅权 -->
+        <div class="section" id="ch2">
+            <h2>🏛️ 绅权的来源与特征</h2>
+            <div class="info-grid">
+                <div class="info-card gentry">
+                    <div class="label">🎓 绅权的来源 <button class="glossary-trigger" onclick="openModal('origin_gentry')">?</button></div>
+                    <div class="content">费孝通分析，绅权的来源不是暴力，而是<strong>知识和土地</strong>。士绅通常是科举出身（拥有功名）或退休官员，他们凭借文化资本和社会声望在地方上获得权威。此外，士绅通常也是大地主，经济实力进一步巩固了他们的社会地位。</div>
+                </div>
+                <div class="info-card gentry">
+                    <div class="label">🏘️ 绅权的特征</div>
+                    <div class="content">
+                        <ul>
+                            <li><strong>地方性</strong>：绅权是地方性的，影响力局限于特定的村庄或县域。</li>
+                            <li><strong>非正式性</strong>：绅权没有正式的行政职位，依靠的是道德威望和社区认可。</li>
+                            <li><strong>中介性</strong>：士绅是连接皇权与民众的桥梁——对上代表民意，对下传达政令。</li>
+                            <li><strong>教化性</strong>：绅权的运作方式是教育、调解和示范，而非强制。</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-card gentry">
+                    <div class="label">🆚 绅权与皇权的根本区别 <button class="glossary-trigger" onclick="openModal('diff_powers')">?</button></div>
+                    <div class="content">皇权是<strong>自上而下</strong>的，来源于征服和继承；绅权是<strong>自下而上</strong>的，来源于社区内部的认可。皇权依靠<strong>暴力</strong>和<strong>法律</strong>；绅权依靠<strong>道德</strong>和<strong>习俗</strong>。皇权追求<strong>控制</strong>；绅权追求<strong>和谐</strong>。这两种权力在性质上是根本不同的，但又在传统社会中长期共存。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">皇权与绅权如何在实际政治中互动？费孝通提出了一个著名的概念——<strong>"双轨政治"</strong>。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三章：双轨政治 -->
+        <div class="section" id="ch3">
+            <h2>🤝 双轨政治：自上而下与自下而上的并行</h2>
+            <div class="info-grid">
+                <div class="info-card interaction">
+                    <div class="label">🛤️ "双轨政治"的概念 <button class="glossary-trigger" onclick="openModal('dualgui')">?</button></div>
+                    <div class="content">费孝通提出，中国传统政治是<strong>"双轨"</strong>的：一轨是<strong>自上而下的皇权行政体系</strong>——从中央到省、府、县，通过官僚系统传达政令；另一轨是<strong>自下而上的绅权自治体系</strong>——从村庄到宗族，通过士绅网络表达民意和维护秩序。两条轨道并行不悖，共同维持着社会的运转。</div>
+                </div>
+                <div class="info-card interaction">
+                    <div class="label">🏛️ 县以上与县以下</div>
+                    <div class="content">"双轨政治"有一个明确的结构分界：<strong>县以上</strong>是皇权主导的官僚行政体系——知县是中央任命的官员，负责税收、司法和治安；<strong>县以下</strong>则是绅权主导的自治空间——士绅负责修桥铺路、兴办教育、调解纠纷。县是皇权与绅权的<strong>交汇点</strong>，知县需要依赖士绅来落实政令。</div>
+                </div>
+                <div class="info-card interaction">
+                    <div class="label">⚖️ 双轨的平衡与失衡</div>
+                    <div class="content">费孝通指出，双轨政治的健康运行需要<strong>两轨之间的平衡</strong>。当皇权过度扩张、压制绅权时（如秦朝），社会就会动荡；当绅权过于强大、架空皇权时（如东汉末年），中央就会失控。中国传统政治的治乱循环，很大程度上就是<strong>双轨失衡</strong>的结果。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">在双轨政治中，士绅在基层社会到底发挥了哪些具体功能？</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四章：绅权的功能 -->
+        <div class="section" id="ch4">
+            <h2>⚖️ 绅权的功能：基层社会的组织者</h2>
+            <div class="info-grid">
+                <div class="info-card gentry">
+                    <div class="label">🏗️ 公共建设的组织者</div>
+                    <div class="content">在传统中国，<strong>修桥铺路、兴修水利、赈灾救济</strong>等公共事务主要不是由政府来完成的，而是由士绅组织和资助的。士绅通过带头捐款和动员社区力量来完成这些工程。这种模式使得政府在不需要庞大财政和行政体系的情况下，也能维持基本的社会运转。</div>
+                </div>
+                <div class="info-card gentry">
+                    <div class="label">📖 教育与文化的传承者</div>
+                    <div class="content">士绅是<strong>儒家文化</strong>的主要承载者和传播者。他们开办私塾、编修族谱、撰写地方志，将正统的价值观传递到基层社会。科举制度的意义不仅在于选拔官员，更在于<strong>在全国范围内培养了一个接受儒家教育的士绅阶层</strong>，这个阶层成为了文化统一的载体。</div>
+                </div>
+                <div class="info-card gentry">
+                    <div class="label">⚖️ 纠纷调解者</div>
+                    <div class="content">在"无讼"的乡土社会中，士绅扮演着<strong>调解者</strong>的角色。村民之间发生纠纷，首先不是去县衙告状，而是请当地有威望的士绅来调解。士绅的调解依靠的是<strong>道德权威</strong>而非法律强制，目的是"息事宁人"、恢复社区和谐。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">绅权的这些功能不是一成不变的。在漫长的历史中，皇权与绅权的关系经历了怎样的演变？</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五章：历史的演变 -->
+        <div class="section" id="ch5">
+            <h2>🔄 历史的演变：从秦汉到明清</h2>
+            <div class="info-grid">
+                <div class="info-card interaction">
+                    <div class="label">📜 吴晗的历史分析 <button class="glossary-trigger" onclick="openModal('wu_han')">?</button></div>
+                    <div class="content">吴晗从历史学角度梳理了皇权与绅权关系的演变脉络：<strong>秦汉</strong>时期皇权强势，压制旧贵族；<strong>魏晋南北朝</strong>时期门阀士族崛起，绅权达到顶峰；<strong>隋唐</strong>通过科举制将绅权纳入皇权轨道；<strong>宋明</strong>时期形成较为稳定的双轨平衡；<strong>清代</strong>皇权极度强化，绅权逐渐式微。</div>
+                </div>
+                <div class="info-card interaction">
+                    <div class="label">🔄 绅权的衰落 <button class="glossary-trigger" onclick="openModal('decline')">?</button></div>
+                    <div class="content">费孝通特别关注了绅权在近代的命运。他认为，<strong>科举制度的废除（1905年）</strong>是绅权衰落的转折点——士绅丧失了制度化的产生机制。同时，现代国家的行政体系向下延伸（"政权下乡"），压缩了绅权的自治空间。绅权的衰落导致了<strong>基层社会的组织真空</strong>，这是中国现代化过程中的一个核心难题。</div>
+                </div>
+                <div class="info-card interaction">
+                    <div class="label">🔍 "政权下乡"的困境</div>
+                    <div class="content">当传统的绅权被削弱后，现代国家试图将行政力量延伸到基层，但遇到了巨大困难：一方面，国家缺乏足够的资源来替代士绅的各种功能；另一方面，外来的行政力量难以获得当地人的信任。这导致了基层治理的<strong>"内卷化"</strong>——国家不断投入资源，但治理效果并不理想。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🔗 逻辑承接</div>
+                    <div class="content">《皇权与绅权》不仅是历史分析，更对理解当代中国的基层治理具有深刻的启示意义。</div>
+                </div>
+            </div>
+            <blockquote>"绅权的衰落留下的不是权力真空，而是治理真空。谁来填补这个真空，是中国现代化必须回答的问题。" —— 费孝通思想精髓</blockquote>
+        </div>
+
+        <hr class="divider">
+
+        <!-- 核心规律 -->
+        <div class="section" id="laws">
+            <h2>🧠 核心理论贡献</h2>
+            <div class="info-grid">
+                <div class="info-card insight"><div class="label">贡献一："双轨政治"——理解中国传统政治的钥匙</div><div class="content">"双轨政治"是费孝通提出的理解中国传统政治的核心概念。它不是简单的"皇权与绅权并存"，而是揭示了<strong>两条权力轨道如何并行、交汇和互动</strong>。这一概念为后来的中国政治研究提供了重要的分析框架。</div></div>
+                <div class="info-card insight"><div class="label">贡献二：绅权研究的开创性</div><div class="content">在费孝通之前，学界对中国传统社会的分析多集中于皇权和官僚体系。《皇权与绅权》首次系统性地将<strong>士绅阶层作为独立的政治力量</strong>进行分析，揭示了其在国家与社会之间的关键中介角色。</div></div>
+                <div class="info-card insight"><div class="label">贡献三：对话而非独白</div><div class="content">本书是费孝通与吴晗等学者<strong>对话的产物</strong>，代表了社会学家与历史学家在同一问题上的不同视角。这种跨学科的对话方式在当时极为少见，使得本书的分析既有社会学的结构感，又有历史学的时间深度。</div></div>
+                <div class="info-card insight"><div class="label">贡献四：对当代治理的启示</div><div class="content">"双轨政治"的瓦解和绅权的衰落，提出了一个至今未完全解决的问题：在传统权威消失后，<strong>基层社会如何实现有效治理？</strong>中国的社区建设、村民自治、社会组织发展，都可以看作是寻找"新绅权"或"新双轨"的努力。</div></div>
+            </div>
+        </div>
+
+        <!-- 延伸 -->
+        <div class="section" id="extension">
+            <h2>🔍 延伸与比较</h2>
+            <table class="extension">
+                <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>与《乡土中国》的关系</td><td>《皇权与绅权》可以看作是《乡土中国》在政治领域的延伸。《乡土中国》描述了社会结构（差序格局、礼治秩序），《皇权与绅权》则分析了这种社会结构的政治后果——绅权如何在乡土社会中运作，以及它与皇权的关系。两部作品互为表里。</td></tr>
+                    <tr><td>与《中国历代政治得失》的对话</td><td>钱穆在《中国历代政治得失》中从制度史角度分析了中国政治传统，强调其合理性和内在逻辑。费孝通则从社会学角度分析，更关注权力的实际运作和社会基础。两部作品的视角不同但相互补充。</td></tr>
+                    <tr><td>"双轨政治"的当代回响</td><td>尽管绅权作为一种制度已经消亡，但"双轨"逻辑在当代中国仍有体现——例如村民自治、社区组织、行业协会等都可以看作是新的"自下而上"的力量。如何在现代条件下重建有效的"双轨"，是中国治理现代化的核心议题之一。</td></tr>
+                    <tr><td>推荐对照阅读</td><td><strong>费孝通《乡土中国》</strong>：理解绅权运作的社会基础。<br><strong>瞿同祖《清代地方政府》</strong>：从制度角度分析地方治理中的官绅关系。<br><strong>张仲礼《中国绅士》</strong>：对士绅阶层的系统研究。<br><strong>杜赞奇《文化、权力与国家》</strong>：分析近代以来国家权力向基层渗透的过程。</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align:center; margin-top:3rem; padding:1.2rem; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">《皇权与绅权》知识图谱 · 基于费孝通、吴晗等原著整理 · 仅供个人学习回顾</div>
     </div>
-</div>
 
-<footer class="nav-fixed">
-    <button class="nav-btn" id="prevBtn" aria-label="上一页"><i class="fas fa-chevron-left"></i></button>
-    <span class="page-indicator" id="pageIndicator">1 / 23</span>
-    <button class="nav-btn" id="nextBtn" aria-label="下一页"><i class="fas fa-chevron-right"></i></button>
-</footer>
+    <!-- 弹窗容器 -->
+    <div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<script>
-    const slides = document.querySelectorAll('.slide');
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    const indicator = document.getElementById('pageIndicator');
-    const progressBar = document.getElementById('progressBar');
-    const total = slides.length;
-    let currentIdx = 0;
+    <script>
+        const glossary = {
+            origin_imperial: { title: '🗡️ 皇权的来源', content: '<p>吴晗在书中从历史角度系统分析了皇权的起源：</p><ul><li><strong>武力征服</strong>：皇权最根本的来源是军事力量。"马上得天下"——通过战争推翻前朝，以武力建立新政权。刘邦、李世民、朱元璋等开国皇帝都是通过军事手段夺取政权的。</li><li><strong>天命观念</strong>：武力征服之后，需要通过意识形态来合法化统治。"天命"理论将武力征服包装为天意所归——前朝失德，天降大任于新主。这种合法性论述在中国政治传统中极为重要。</li><li><strong>血缘继承</strong>：皇权确立后，通过血缘世袭来维持。"家天下"——国家被视为皇室的私产。但世袭制度也带来了继承危机的周期性爆发。</li></ul>' },
+            limit_imperial: { title: '⛓️ 皇权的限制', content: '<p>费孝通指出，中国传统中的皇权并非绝对的、无所不能的。它受到多重限制：</p><ul><li><strong>"无为政治"的传统</strong>：从道家到儒家，中国政治思想中有一条强调"不扰民"的传统。一个过度干预的皇帝会受到道德谴责，被视为"暴君"。</li><li><strong>官僚体系的制衡</strong>：宰相制度中的"封驳权"允许宰相驳回皇帝的诏令。谏官制度则赋予官员批评皇帝的权力。这些制度设计为皇权设置了程序性障碍。</li><li><strong>绅权的抵抗</strong>：当皇权试图向基层延伸时，会遇到士绅的抵抗。士绅可以动员地方舆论、消极执行政令，甚至通过关系网络向上传达不满。</li><li><strong>"皇权不下县"</strong>：这是中国传统政治的一个重要特征——正式的行政体系只延伸到县一级，县以下是士绅主导的自治空间。皇帝的命令到了县以下就大打折扣。</li></ul>' },
+            wuwei: { title: '📜 "无为政治"的理想', content: '<p>"无为而治"是中国传统政治思想中的一个重要理念，它源自道家，但被儒家吸收和改造。</p><p><strong>道家的无为</strong>：老子主张"治大国若烹小鲜"——治理大国就像煎小鱼，翻动太多就会碎。最好的统治者是让人民感觉不到他的存在。</p><p><strong>儒家的无为</strong>：孔子说"无为而治者，其舜也与！夫何为哉？恭己正南面而已矣。"意思是理想的君主只需要端正自己，面向南方坐着，天下自然就治理好了。</p><p><strong>在实际政治中的影响</strong>："无为"理念构成了对皇帝干预民间生活的一种内在道德约束。皇帝应该"与民休息"，而非"扰民"。大兴土木、频繁征战、过度征税的皇帝在历史上都留下了恶名。</p>' },
+            origin_gentry: { title: '🎓 绅权的来源', content: '<p>费孝通分析了绅权的三个主要来源：</p><ul><li><strong>知识（科举功名）</strong>：绅权最核心的来源是文化资本。通过科举考试获得功名的士人，在社会上享有特殊的地位和尊重。"万般皆下品，唯有读书高"的观念赋予了士绅阶层以道德和文化上的优越性。</li><li><strong>土地（经济基础）</strong>：士绅通常也是大地主。土地不仅提供了经济保障，还使得士绅能够资助公共事业、救济贫困、开办学校——这些善举进一步巩固了他们的声望。</li><li><strong>地方声望（社区认可）</strong>：绅权不是由中央任命的，而是由地方社区自发认可的。一个士绅的地位取决于他在当地做了多少好事——修桥铺路、调解纠纷、资助学子。声望的积累是一个长期的过程。</li></ul>' },
+            diff_powers: { title: '🆚 绅权与皇权的根本区别', content: '<p>费孝通从多个维度对比了两种权力：</p><ul><li><strong>来源不同</strong>：皇权来自武力征服和世袭继承；绅权来自知识、土地和地方声望。</li><li><strong>方向不同</strong>：皇权是自上而下的，从中央向地方延伸；绅权是自下而上的，从社区内部生长。</li><li><strong>运作方式不同</strong>：皇权依靠暴力和法律来强制执行；绅权依靠道德威望和社区舆论来软性约束。</li><li><strong>覆盖范围不同</strong>：皇权覆盖整个帝国，但深度有限；绅权范围虽小，但在地方上根深蒂固。</li><li><strong>与民众的关系不同</strong>：皇权与民众是统治与被统治的关系；绅权与民众是"自己人"的关系——士绅就生活在村民之中。</li></ul>' },
+            dualgui: { title: '🛤️ "双轨政治"详解', content: '<p>"双轨政治"是费孝通在本书中提出的最核心概念：</p><p><strong>自上而下的一轨</strong>：皇帝→中央官僚→地方官员（知县）→???。这一轨到县为止，知县以下没有正式的行政体系。皇帝的政令到了县这一级，再往下就需要依赖士绅来落实。</p><p><strong>自下而上的一轨</strong>：村民→宗族→士绅→知县。这一轨代表了民间的声音和利益。士绅将民众的诉求传达给官府，同时也将官府的政令解释和传达给民众。</p><p><strong>两轨的交汇点——县</strong>：知县是两轨交汇的关键节点。他既是中央任命的官员，需要完成上级交办的任务；又必须与当地士绅保持良好关系，否则政令无法推行。一个好的知县懂得如何平衡这两方面的压力。</p>' },
+            wu_han: { title: '📜 吴晗的历史分析', content: '<p>作为历史学家，吴晗在书中提供了皇权与绅权关系演变的长时段分析：</p><ul><li><strong>秦汉</strong>：皇权强势。秦始皇"焚书坑儒"是对士人阶层的打压。汉初实行"黄老之治"，皇权收缩；汉武帝"独尊儒术"后，开始吸纳士人进入官僚体系。</li><li><strong>魏晋南北朝</strong>：绅权崛起。门阀士族（如琅琊王氏、陈郡谢氏）掌握巨大权力，甚至能与皇权分庭抗礼。"王与马，共天下"是这一时期的写照。</li><li><strong>隋唐</strong>：皇权反击。科举制度的创立旨在打破门阀垄断，将士人纳入皇权轨道。但唐代的门阀势力依然强大。</li><li><strong>宋明</strong>：双轨平衡。科举制度成熟，士绅阶层成为皇权与基层社会之间的稳定中介。这是一个相对平衡的时期。</li><li><strong>清代</strong>：皇权独大。满清统治者通过"文字狱"等手段压制士人，绅权逐渐式微。</li></ul>' },
+            decline: { title: '🔄 绅权的衰落', content: '<p>费孝通特别关注了绅权在近代中国的命运：</p><p><strong>科举制度的废除（1905年）</strong>：这是绅权衰落的转折点。科举不仅是选拔官员的制度，更是<strong>士绅阶层的产生机制</strong>。科举废除后，新的士绅无法再生，旧的士绅也逐渐凋零。</p><p><strong>"政权下乡"的冲击</strong>：现代国家试图将行政力量延伸到基层，建立了乡镇一级的正式行政体系。这直接压缩了士绅的自治空间。传统的"双轨"变成了单轨——只剩下自上而下的行政命令。</p><p><strong>绅权的遗留问题</strong>：绅权消亡后留下的"治理真空"至今仍在产生影响。谁来组织基层的公共事务？谁来调解村民之间的纠纷？现代国家试图用行政力量来填补这个真空，但效果往往不尽人意——因为外来干部很难获得当地人的信任。</p>' }
+        };
 
-    function updateUI() {
-        indicator.textContent = `${currentIdx + 1} / ${total}`;
-        progressBar.style.width = `${((currentIdx + 1) / total) * 100}%`;
-    }
-
-    function scrollToSlide(index) {
-        index = Math.max(0, Math.min(index, total - 1));
-        slides[index].scrollIntoView({ behavior: 'smooth', block: 'start' });
-        currentIdx = index;
-        updateUI();
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-        let bestEntry = null;
-        let maxRatio = 0;
-        entries.forEach(entry => {
-            if (entry.intersectionRatio > maxRatio) {
-                maxRatio = entry.intersectionRatio;
-                bestEntry = entry;
-            }
-        });
-        if (bestEntry && bestEntry.intersectionRatio >= 0.5) {
-            const idx = Array.from(slides).indexOf(bestEntry.target);
-            if (idx !== -1 && idx !== currentIdx) {
-                currentIdx = idx;
-                updateUI();
-            }
+        function openModal(key) {
+            const data = glossary[key];
+            if (!data) return;
+            document.getElementById('modalContent').innerHTML = `<h4>${data.title}</h4>${data.content}`;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
-    }, { threshold: [0.5, 0.6, 0.7, 0.8, 0.9, 1.0] });
-    slides.forEach(slide => observer.observe(slide));
-
-    prevBtn.addEventListener('click', () => scrollToSlide(currentIdx - 1));
-    nextBtn.addEventListener('click', () => scrollToSlide(currentIdx + 1));
-
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); scrollToSlide(currentIdx - 1); }
-        if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); scrollToSlide(currentIdx + 1); }
-        if (e.key === 'Home') { e.preventDefault(); scrollToSlide(0); }
-        if (e.key === 'End') { e.preventDefault(); scrollToSlide(total - 1); }
-    });
-
-    document.querySelectorAll('.toc-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const target = parseInt(item.dataset.target, 10);
-            if (!isNaN(target)) scrollToSlide(target);
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('.sidebar a');
+            const sections = [];
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const target = document.getElementById(href.substring(1));
+                    if (target) sections.push({ link, target });
+                }
+            });
+            links.forEach(link => link.addEventListener('click', function() {
+                links.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            }));
+            window.addEventListener('scroll', () => {
+                let current = null;
+                const scrollTop = window.scrollY + 120;
+                for (let i = sections.length - 1; i >= 0; i--) {
+                    if (sections[i].target.offsetTop <= scrollTop) { current = sections[i].link; break; }
+                }
+                if (current) {
+                    links.forEach(l => l.classList.remove('active'));
+                    current.classList.add('active');
+                }
+            });
         });
-    });
-
-    const todayElem = document.getElementById('todayDate');
-    if (todayElem) {
-        const today = new Date();
-        const yyyy = today.getFullYear();
-        const mm = String(today.getMonth() + 1).padStart(2, '0');
-        const dd = String(today.getDate()).padStart(2, '0');
-        todayElem.textContent = `时间：${yyyy}.${mm}.${dd}`;
-    }
-
-    updateUI();
-</script>
+    </script>
 </body>
 </html>

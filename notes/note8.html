@@ -1,908 +1,788 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>《吴军数学通识讲义》· 完整知识图谱</title>
-    <style>
-        :root {
-            --bg: #fdfdf9;
-            --sidebar-bg: #f5f0e8;
-            --card-bg: #ffffff;
-            --border: #e0d8cc;
-            --text: #2c2416;
-            --text-muted: #6b6258;
-            --accent: #1a5276;
-            --accent-light: #eaf2f8;
-            --shadow: 0 2px 12px rgba(0,0,0,0.06);
-            --highlight: #eaf2f8;
-            --radius: 10px;
-            --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', 'STSong', Georgia, serif;
-            --sidebar-width: 260px;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: var(--font-serif);
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.9;
-            -webkit-font-smoothing: antialiased;
-            display: flex;
-        }
+<html lang="zh-CN"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《通用人工智能》· 知识图谱</title>
+<style>
+/* ===== CSS 变量主题 ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
 
-        /* ========== 侧边栏 ========== */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: var(--sidebar-width);
-            height: 100vh;
-            background: var(--sidebar-bg);
-            border-right: 1px solid var(--border);
-            overflow-y: auto;
-            padding: 1.5rem 1rem;
-            z-index: 100;
-            font-family: var(--font-sans);
-            font-size: 0.9rem;
-        }
-        .sidebar h3 {
-            font-size: 1rem;
-            color: #1a5276;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid #1a5276;
-            letter-spacing: 0.04em;
-        }
-        .sidebar .toc-list {
-            list-style: none;
-            padding: 0;
-        }
-        .sidebar .toc-list li {
-            margin-bottom: 0.15rem;
-        }
-        .sidebar .toc-list a {
-            display: block;
-            padding: 0.35rem 0.6rem;
-            color: #4a3f33;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: all 0.2s;
-        }
-        .sidebar .toc-list a:hover {
-            background: #d4c8b0;
-            color: #1a1508;
-        }
-        .sidebar .toc-list a.active {
-            background: #1a5276;
-            color: #fff;
-            font-weight: 600;
-        }
-        .sidebar .toc-list .toc-l2 {
-            padding-left: 0.8rem;
-            font-size: 0.83rem;
-        }
-        .sidebar .toc-list .toc-l3 {
-            padding-left: 1.6rem;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-        }
+/* 深紫色系（量子物理/前沿科学/哲学） */
+[data-theme="quantum"] {
+  --primary: #4a235a; --primary-light: #f4ecf7; --primary-dark: #2e1033;
+  --accent: #7d3c98; --accent-deep: #4a235a;
+  --bg: #faf8fc; --bg-card: #ffffff; --bg-soft: #f5eef8; --bg-softer: #ede0f5;
+  --bg-tag: #e8daef;
+  --text: #2c1540; --text-heading: #1a0a2a; --text-muted: #7f6b8d; --text-light: #9b8ea8;
+  --border: #d5c8de; --border-soft: #e8ddf2;
+  --highlight: #f4ecf7; --highlight-strong: #e8daef;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #7d3c98; --color-case: #8e44ad;
+  --color-history: #9b59b6; --color-insight: #6c3483; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #7d3c98;
+  --color-effect: #8e44ad; --color-core: #4a235a;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #faf8fc;
+  --reflect-bg: #f0e8f4; --quote-border: #7d3c98;
+}
 
-        /* ========== 主内容区 ========== */
-        .main {
-            margin-left: var(--sidebar-width);
-            flex: 1;
-            padding: 2rem 2rem 2rem 2.5rem;
-            max-width: 1100px;
-        }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
 
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-            padding-bottom: 2.5rem;
-            border-bottom: 2px solid var(--border);
-        }
-        .header h1 {
-            font-size: 2.4rem;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            margin-bottom: 0.4rem;
-            color: #1e1508;
-        }
-        .header .subtitle {
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            font-style: italic;
-            margin-bottom: 1.4rem;
-        }
-        .header .meta {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.5rem 1.5rem;
-            margin-bottom: 1.6rem;
-        }
-        .framework-badges {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 0.6rem;
-        }
-        .badge {
-            display: inline-block;
-            background: var(--accent-light);
-            border: 1px solid #85a5c0;
-            border-radius: 20px;
-            padding: 0.5rem 1.4rem;
-            font-size: 0.9rem;
-            color: var(--accent);
-            font-family: var(--font-sans);
-        }
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  margin-bottom: 14px; font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 12px;
+  border-radius: var(--radius); font-size: 13px;
+  color: var(--text); transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light); color: var(--primary-dark);
+  font-weight: 600; border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
 
-        /* Section */
-        .section {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 2rem;
-            margin-bottom: 2.2rem;
-            box-shadow: var(--shadow);
-            scroll-margin-top: 1rem;
-        }
-        .section h2 {
-            font-size: 1.5rem;
-            border-left: 4px solid var(--accent);
-            padding-left: 0.9rem;
-            margin-bottom: 1.3rem;
-            color: #0d2b40;
-            font-weight: 700;
-        }
-        .section h3 {
-            font-size: 1.2rem;
-            margin: 2rem 0 0.8rem;
-            padding: 0.35rem 0;
-            border-bottom: 1px solid var(--border);
-            color: #1a5276;
-            font-weight: 700;
-        }
-        .section h4 {
-            font-size: 1.05rem;
-            margin: 1.5rem 0 0.6rem;
-            color: #2a6280;
-            font-weight: 600;
-        }
+/* ===== 主内容区 ===== */
+.main { margin-left: 220px; max-width: 1100px; padding: 36px 40px 120px 40px; }
 
-        /* Info Grid */
-        .info-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.8rem;
-            margin-top: 0.8rem;
-        }
-        .info-card {
-            background: #fdfaf6;
-            border-radius: 8px;
-            padding: 1rem 1.3rem;
-            border-left: 4px solid #ccc;
-        }
-        .info-card.concept  { border-color: #1a5276; background: #eaf2f8; }
-        .info-card.case     { border-color: #b8956a; background: #fdf8f2; }
-        .info-card.tool     { border-color: #7a9f7a; background: #f5faf5; }
-        .info-card.history  { border-color: #8b7aaa; background: #f8f5fb; }
-        .info-card .label {
-            font-weight: 700;
-            font-size: 0.85rem;
-            margin-bottom: 0.5rem;
-            letter-spacing: 0.04em;
-            text-transform: uppercase;
-            font-family: var(--font-sans);
-            color: #1a3a50;
-        }
-        .info-card .content {
-            font-size: 0.94rem;
-            color: #4a3f33;
-        }
-        .info-card .content ul {
-            margin-top: 0.3rem;
-            padding-left: 1.3rem;
-        }
-        .info-card .content li {
-            margin-bottom: 0.3rem;
-        }
-        .info-card .example {
-            margin-top: 0.5rem;
-            padding: 0.5rem 0.8rem;
-            background: #fffef9;
-            border-radius: 4px;
-            font-size: 0.9rem;
-            color: #5c4a2a;
-            border-left: 3px solid #d4b896;
-        }
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg); padding: 32px 36px;
+  margin-bottom: 28px; box-shadow: var(--shadow);
+}
+.header h1 {
+  font-size: 28px; color: var(--text-heading);
+  margin-bottom: 4px; padding-left: 14px;
+  border-left: 5px solid var(--primary); line-height: 1.3;
+}
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 24px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px; background: var(--bg-soft);
+  border-radius: var(--radius); margin-bottom: 16px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.header .badge {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.header .core-narrative {
+  font-size: 14px; color: var(--primary-dark); line-height: 1.7;
+  padding: 12px 16px; background: var(--highlight);
+  border-radius: var(--radius); border-left: 4px solid var(--accent);
+}
 
-        /* Insight Cards */
-        .insight-card {
-            background: var(--highlight);
-            border: 1px solid #b0c8d8;
-            border-radius: 8px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1rem;
-        }
-        .insight-card h4 {
-            color: #1a5276;
-            margin-bottom: 0.4rem;
-            font-size: 1.05rem;
-        }
-        .insight-card p { font-size: 0.94rem; color: #4a3f33; }
+/* ===== 区块 ===== */
+.section { margin-bottom: 32px; }
+.section h2 {
+  font-size: 20px; color: var(--text-heading);
+  margin-bottom: 16px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 { font-size: 16px; color: var(--text-heading); margin: 20px 0 10px; }
 
-        /* Two column */
-        .two-col {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1.5rem;
-            margin-top: 1rem;
-        }
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px; margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 20px;
+  transition: box-shadow .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700; font-size: 14px; margin-bottom: 8px;
+  color: var(--text-heading); padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px; color: var(--text); line-height: 1.75;
+}
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--example-bg); border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-muted); border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
 
-        /* Blockquote */
-        blockquote {
-            background: var(--highlight);
-            border-left: 4px solid #5f9ea0;
-            margin: 1.2rem 0;
-            padding: 1rem 1.4rem;
-            font-style: italic;
-            border-radius: 0 6px 6px 0;
-            color: #1a3a50;
-        }
-        blockquote .cite {
-            display: block;
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            font-style: normal;
-            color: var(--text-muted);
-        }
+/* 左侧彩色条 */
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
 
-        /* Table */
-        table.extension {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.94rem;
-        }
-        table.extension th {
-            background: #eaf2f8;
-            padding: 0.6rem 1rem;
-            text-align: left;
-            font-weight: 700;
-            color: #1a5276;
-            border-bottom: 2px solid var(--border);
-            font-family: var(--font-sans);
-            width: 24%;
-        }
-        table.extension td {
-            padding: 0.6rem 1rem;
-            border-bottom: 1px solid var(--border);
-            color: #4a3f33;
-            vertical-align: top;
-        }
-        table.extension tr:hover td {
-            background: #fdfaf6;
-        }
-        hr.divider {
-            border: none;
-            border-top: 1px dashed var(--border);
-            margin: 2.5rem 0;
-        }
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 14px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.75;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 10px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
 
-        /* Back to top */
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: #1a5276;
-            color: #fff;
-            border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            font-size: 1.2rem;
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            z-index: 99;
-        }
-        .back-to-top:hover {
-            background: #0d2b40;
-        }
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px; margin-bottom: 12px;
+}
+.law-card h4 { font-size: 14px; font-weight: 700; color: var(--primary-dark); margin-bottom: 6px; }
+.law-card p { font-size: 13px; color: var(--text); line-height: 1.7; }
 
-        @media (max-width: 900px) {
-            .sidebar {
-                display: none;
-            }
-            .main {
-                margin-left: 0;
-                padding: 1rem;
-            }
-            .info-grid, .two-col { grid-template-columns: 1fr; }
-            .header h1 { font-size: 1.8rem; }
-        }
-    </style>
+/* ===== 规律网格 ===== */
+.pattern-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px; margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px; color: var(--primary-dark);
+  margin-bottom: 6px; padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc { font-size: 13px; color: var(--text); line-height: 1.65; }
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px; font-style: italic;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 16px 20px; margin: 16px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.75; margin-bottom: 6px; }
+
+/* ===== 引用块（衬线字体倾斜） ===== */
+blockquote.quote-block {
+  background: var(--bg-soft); border-left: 5px solid var(--quote-border);
+  margin: 20px 0; padding: 18px 24px;
+  font-family: var(--font-serif); font-style: italic; font-size: 15px;
+  color: var(--text-heading); border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px; font-size: 12px;
+  font-style: normal; color: var(--text-muted); text-align: right;
+}
+
+/* ===== 两栏布局 ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
+
+/* ===== 论点链 ===== */
+.argument-chain { margin: 14px 0; }
+.argument-node {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 6px;
+}
+.argument-node .arg-num {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; background: var(--primary); color: #fff;
+  border-radius: 50%; font-size: 13px; font-weight: 700;
+  margin-right: 10px; flex-shrink: 0;
+}
+.argument-node .arg-head { display: flex; align-items: center; margin-bottom: 8px; }
+.argument-node .arg-title { font-weight: 700; font-size: 15px; color: var(--text-heading); }
+.argument-node .arg-body { font-size: 14px; color: var(--text); line-height: 1.75; margin-left: 38px; }
+.argument-arrow {
+  text-align: center; color: var(--accent); font-size: 20px;
+  margin: 2px 0; line-height: 1.2;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light); color: var(--primary-dark);
+  padding: 10px 14px; text-align: left; font-weight: 700;
+  border-bottom: 2px solid var(--border); width: 16%; white-space: nowrap;
+}
+table.extension td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.7;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 术语弹窗系统 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; background: var(--accent); color: #fff;
+  border: none; border-radius: 50%; font-size: 11px; font-weight: 700;
+  cursor: pointer; vertical-align: middle; margin-left: 3px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 28px 32px; max-width: 560px; width: 90%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2); position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; font-size: 20px;
+  cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; font-weight: 700; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; margin-bottom: 4px; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff; border: none;
+  border-radius: 50%; width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 32px 0; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+}
+</style>
 </head>
-<body>
+<body data-theme="quantum">
 
-<!-- ==================== 侧边栏目录 ==================== -->
+<!-- 侧边栏 -->
 <nav class="sidebar" id="sidebar">
-    <h3>📚 全书章节目录</h3>
-    <ul class="toc-list">
-        <li><a href="#header">📖 书籍信息</a></li>
-        <li><a href="#knowledge-tree">🌳 全书知识结构树</a></li>
-        <li><a href="#part1">📐 基础篇（第1-3章）</a></li>
-        <li><a href="#ch1" class="toc-l2">第1章 数学是什么</a></li>
-        <li><a href="#ch2" class="toc-l2">第2章 勾股定理与逻辑</a></li>
-        <li><a href="#ch3" class="toc-l2">第3章 数列与级数</a></li>
-        <li><a href="#part2">🔢 数字篇（第4-5章）</a></li>
-        <li><a href="#ch4" class="toc-l2">第4章 方程与函数</a></li>
-        <li><a href="#ch5" class="toc-l2">第5章 无穷与极限</a></li>
-        <li><a href="#part3">📏 几何篇（第6-7章）</a></li>
-        <li><a href="#ch6" class="toc-l2">第6章 公理化体系</a></li>
-        <li><a href="#ch7" class="toc-l2">第7章 解析几何</a></li>
-        <li><a href="#part4">📊 代数篇（第8-9章）</a></li>
-        <li><a href="#ch8" class="toc-l2">第8章 函数与向量</a></li>
-        <li><a href="#ch9" class="toc-l2">第9章 矩阵与线性代数</a></li>
-        <li><a href="#part5">∫ 微积分篇（第10-11章）</a></li>
-        <li><a href="#ch10" class="toc-l2">第10章 导数与微分</a></li>
-        <li><a href="#ch11" class="toc-l2">第11章 积分</a></li>
-        <li><a href="#part6">🎲 概率统计篇（第12-15章）</a></li>
-        <li><a href="#ch12" class="toc-l2">第12章 概率论起源</a></li>
-        <li><a href="#ch13" class="toc-l2">第13章 泊松与高斯分布</a></li>
-        <li><a href="#ch14" class="toc-l2">第14章 贝叶斯公式</a></li>
-        <li><a href="#ch15" class="toc-l2">第15章 统计学</a></li>
-        <li><a href="#part7">🌐 终篇（第16章）</a></li>
-        <li><a href="#ch16" class="toc-l2">第16章 数学的位置</a></li>
-        <li><a href="#cognition">🧠 认知升级主线</a></li>
-        <li><a href="#extension">🔍 延伸与比较</a></li>
-    </ul>
+  <h3>📖 本书图谱</h3>
+  <ul class="toc-list">
+    <li><a href="#header" class="active">总览</a></li>
+    <li><a href="#core-question" class="">核心问题</a></li>
+    <li><a href="#arg1" class="">论点一：AGI是新物种</a></li>
+    <li class="toc-l2"><a href="#arg1-evo" class="">从窄AI到通用AI</a></li>
+    <li><a href="#arg2" class="">论点二：语言是关键</a></li>
+    <li class="toc-l2"><a href="#arg2-path" class="">三条路径的汇合</a></li>
+    <li><a href="#arg3" class="">论点三：第一性原理</a></li>
+    <li class="toc-l2"><a href="#arg3-scale" class="">大、大、大！</a></li>
+    <li><a href="#arg4" class="">论点四：教育GPT</a></li>
+    <li class="toc-l2"><a href="#arg4-align" class="">对齐与价值</a></li>
+    <li><a href="#arg5" class="">论点五：能力重构</a></li>
+    <li class="toc-l2"><a href="#arg5-five" class="">五大通识能力</a></li>
+    <li><a href="#insights" class="">贯穿论点</a></li>
+    <li><a href="#patterns" class="">反复规律</a></li>
+    <li><a href="#reflection" class="">延伸思辨</a></li>
+    <li><a href="#memory" class="">记忆钩子</a></li>
+    <li><a href="#extension" class="">延伸与比较</a></li>
+  </ul>
 </nav>
 
-<!-- ==================== 主内容区 ==================== -->
+<!-- 主内容 -->
 <div class="main">
 
-    <!-- ==================== 头部 ==================== -->
-    <div class="header" id="header">
-        <h1>《吴军数学通识讲义》</h1>
-        <div class="subtitle">原来数学可以这样用 —— 一本写给所有人的数学通识讲义</div>
-        <div class="meta">
-            <span><strong>作者</strong>：吴军</span>
-            <span><strong>出版年份</strong>：2021年4月</span>
-            <span><strong>出版社</strong>：新星出版社（得到图书出品）</span>
-            <span><strong>豆瓣评分</strong>：8.5</span>
-        </div>
-        <div class="framework-badges">
-            <span class="badge">📐 数学思维</span>
-            <span class="badge">🎓 通识教育</span>
-            <span class="badge">🧠 认知升级</span>
-        </div>
-        <p style="margin-top:1rem; color:#1a5276; font-size:0.92rem;">
-            <strong>贯穿主线</strong>：从直观到抽象，从静态到动态，从宏观到微观，从确定到随机
-        </p>
+  <!-- 页头 -->
+  <div class="header" id="header">
+    <h1>《通用人工智能》</h1>
+    <div class="subtitle">认知、教育与生存方式的重构 · 刘嘉 著</div>
+    <div class="meta">
+      <span><strong>作者</strong> 刘嘉（清华大学心理与认知科学系主任）</span>
+      <span><strong>出版</strong> 2025年6月，中信出版社</span>
+      <span><strong>类型</strong> 模板A · 论点论证链</span>
+      <span><strong>主题</strong> 认知科学 · 人工智能 · 教育哲学</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">AGI</span>
+      <span class="badge">第一性原理</span>
+      <span class="badge">大语言模型</span>
+      <span class="badge">认知重构</span>
+      <span class="badge">教育变革</span>
+      <span class="badge">人机共生</span>
+      <span class="badge">五大通识能力</span>
+    </div>
+    <div class="core-narrative">
+      <strong>核心叙事：</strong>通用人工智能（AGI）不是传统AI的升级版，而是一个在认知能力上与人类并肩的"新物种"。它以语言理解为突破口，以规模法则为底层驱动，正在系统性地重构人类的认知方式、教育理念和生存意义。理解AGI的本质，不是在理解一项技术，而是在理解人类自身在智能宇宙中的新坐标。
+    </div>
+  </div>
+
+  <!-- 核心问题 -->
+  <div class="section" id="core-question">
+    <h2>核心问题</h2>
+    <blockquote class="quote-block">
+      <p>"当知识不再稀缺，学习的意义何在？当智能无处不在，智慧的栖身之所又在何处？当工具变成智能体，人的核心价值该如何彰显？"</p>
+      <span class="cite">——刘嘉，《通用人工智能》核心三问</span>
+    </blockquote>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">中心命题：AGI是一个"新物种"</div>
+        <div class="content">刘嘉的核心论断：传统AI（TSAI）与通用人工智能（AGI）的关系，犹如猩猩与人的关系——表面相近，本质不同。AGI不是工具的升级迭代，而是"智能体"这一新物种的诞生。这一论断将全书的技术讨论锚定在文明级别的意义维度上。</div>
+        <div class="example">💡 <strong>类比</strong>：把ChatGPT看作"更好的搜索引擎"就像把人类看作"更好的猩猩"——完全错失了本质差异。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">TSAI vs AGI<button class="glossary-trigger" onclick="openModal('tsai')">?</button></div>
+        <div class="content">刘嘉将传统AI划分为四个等级：一招鲜AI（专用）、符号主义AI、超级专家AI（如图像识别），统称为TSAI（Task-Specific AI）。AGI则突破了"任务专用"的边界，展现出跨领域的通用认知能力——这正是从猩猩到人的跃迁。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点一 -->
+  <div class="section" id="arg1">
+    <h2>论点一：AGI 是"新物种"，不是更快的人工智能</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">2022年11月30日 ChatGPT 问世，不是 AI 进化树上的一个新分支，而是跃迁到了另一棵树上。</p>
+
+    <div id="arg1-evo"></div>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">四个阶段的传统AI（TSAI）</div>
+        <div class="content">刘嘉系统梳理了AI演化的四个阶段：<strong>一招鲜AI</strong>（AlphaGo式的单任务专精）→ <strong>符号主义AI</strong>（基于规则推理）→ <strong>超级专家AI</strong>（深度学习在特定领域的超人表现）→ <strong>AGI火花</strong>（ChatGPT开启通用认知能力）。前三者本质都是"任务特定智能"，无法跨域迁移。</div>
+        <div class="example">💡 <strong>关键区分</strong>：AlphaGo能赢围棋但不会下象棋，ChatGPT能在数学、编程、写作、翻译等数十个任务上表现一致——这种"通用性"才是跃迁的本质。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">ChatGPT：AGI的"火花"而非终点</div>
+        <div class="content">刘嘉将2022年11月30日ChatGPT发布日定义为AI史上的分水岭。它首次展示了"涌现"（emergence）现象：当模型参数超过某个阈值，此前未训练的推理能力突然出现。这不是渐进增长，而是一次相变——从量变到质变。</div>
+        <div class="example">💡 <strong>涌现类比</strong>：就像水分子本身不具备"湿润"属性，但足够多的分子聚集就产生了"流动性"——智能的涌现遵循相同逻辑。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">猩猩与人的隐喻<button class="glossary-trigger" onclick="openModal('gorilla')">?</button></div>
+        <div class="content">刘嘉用"猩猩与人的基因相似度约98%"这一科学事实做类比：TSAI与AGI在技术栈上看似相似，但那2%的差异（通用性、理解力、创造性的涌现）决定了本质区别。只看"代码层面"会误判，真正的差异藏在认知结构的跃迁中。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">人类认知的"哥白尼时刻"</div>
+        <div class="content">AGI的诞生迫使人类面对一个此前从未认真对待的问题：如果智能不再是人类的专属特征，人类的独特价值何在？这不仅仅是技术焦虑，而是对"人之为人"定义的深层挑战。刘嘉认为回避这个问题比技术风险本身更危险。</div>
+        <div class="example">💡 文艺复兴以降，"理性"一直是人类区别于动物的核心标识。当AGI展示了更强的理性能力，这个标识失效了。</div>
+      </div>
     </div>
 
-    <!-- ==================== 全书知识结构树 ==================== -->
-    <div class="section" id="knowledge-tree">
-        <h2>全书知识结构树</h2>
-        <div style="background:var(--accent-light); border-radius:8px; padding:1.5rem 2rem; font-family:var(--font-sans); line-height:2.2;">
-            <div style="font-weight:700; color:#0d2b40; font-size:1.05rem;">《吴军数学通识讲义》七篇 × 16章</div>
-            <div style="border-top:1px dashed #b0c8d8; margin:0.6rem 0;"></div>
-            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 基础篇（第1-3章）—— 数学是什么</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 毕达哥拉斯定理 · 逻辑证明 vs 经验证实</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 无理数与黄金分割 · 数学的预见性与美学</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 数列与级数 · 趋势比当下重要</div>
-            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 数字篇（第4-5章）—— 从静态数值到动态趋势</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 方程 · 逆向思维的工具</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 虚数与无穷 · 虚构概念的现实力量</div>
-            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 几何篇（第6-7章）—— 公理化体系</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 欧几里得几何 · 5条公理构建世界</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 非欧几何与解析几何 · 创新的路径</div>
-            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 代数篇（第8-9章）—— 从个体到整体</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 函数 · 从静态到动态的认知升级</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 向量与矩阵 · 多元思维的工具</div>
-            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 微积分篇（第10-11章）—— 理解变化</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 导数 · 微观变化看宏观趋势</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 积分 · 从微观累积到宏观总量</div>
-            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 概率统计篇（第12-15章）—— 把握不确定性</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 古典概率与伯努利试验</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 泊松分布与高斯分布</div>
-            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 贝叶斯公式与统计学</div>
-            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">└─ 终篇（第16章）—— 数学的位置</div>
-        </div>
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨："新物种"论断是否过度拟人化？</div>
+      <p>刘嘉用"新物种"一词有意识地游走于隐喻与实质之间。一方面，AGI确实不具有生物体的自我复制、新陈代谢等特征；另一方面，"物种"概念强调其独立于人类意图的自主性——AGI不是我们的工具延伸，而是一种须与之共存的异质智能。这一框架的深浅，取决于读者对"智能"这一概念的开放程度。</p>
+    </div>
+  </div>
+
+  <!-- 论点二 -->
+  <div class="section" id="arg2">
+    <h2>论点二：语言是实现通用智能的关键突破口</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">模拟行为、模拟神经、模拟认知——三条路都走了一段，但语言让认知模拟最终胜出。</p>
+
+    <div id="arg2-path"></div>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">路径一：模拟行为——强化学习</div>
+        <div class="content">以AlphaGo为代表的强化学习路径，通过试错和奖励信号学习策略。它在围棋、游戏等封闭规则环境中表现惊人，但本质上是"在固定空间里寻找最优解"，难以泛化到开放世界。行为的模拟无法触及"理解"的层面。</div>
+        <div class="example">💡 AlphaGo的棋谱是"最优策略"，不是"为什么这么下的解释"。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">路径二：模拟神经——计算神经科学</div>
+        <div class="content">从感知机到深度神经网络，这条路试图通过模拟神经元连接来实现智能。经历了两次"AI寒冬"（感知机局限、反向传播质疑），直到深度学习的"王者归来"。但这条路遇到的核心瓶颈是：模拟神经结构不等于模拟认知能力。</div>
+        <div class="example">💡 就像搭好了大脑的电路板，却不知道"思想"应该接在哪根线上——结构必要条件，但不是充分条件。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">路径三：模拟认知——自然语言处理</div>
+        <div class="content">第三条路直接模拟人类最高阶的认知能力——语言。刘嘉认为语言是人类智能的"操作系统"：它不仅承载信息，更承载思维的结构（逻辑推理、因果关系、反事实思考）。大语言模型的成功证明：当模型充分学习人类语言的分布模式，"理解"就从中涌现。</div>
+        <div class="example">💡 <strong>类比</strong>：语言之于智能，如同DNA之于生命——它不是智能的副产品，而是智能的编码载体。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">语言理解是"真理解"还是"统计伪装"？</div>
+        <div class="content">对于"大模型是否真正理解语言"的争论，刘嘉的立场是：如果我们用行为测试无法区分人类理解与AI理解之间的差异，那么"理解"的定义本身就应被重新审视。语言理解是梯度涌现的，不是二元开关。</div>
+        <div class="example">💡 图灵测试的当代版本：当模型能写出令人信服的哲学论文时，我们还坚持它"不理解"吗？</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点三 -->
+  <div class="section" id="arg3">
+    <h2>论点三：规模本身是第一性原理——"大、大、大！"</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">不要用工程直觉理解AGI——"大"不是效率问题，而是质变的前提条件。</p>
+
+    <div id="arg3-scale"></div>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">AGI的第一性原理<button class="glossary-trigger" onclick="openModal('firstPrinciple')">?</button></div>
+        <div class="content">刘嘉借用物理学"第一性原理"概念提出：AGI涌现的首要条件不是精巧的算法设计，而是三个维度的"大"——<strong>大数据、大算力、大模型</strong>。当一个语言模型跨越某个参数量的临界阈值，"智能"以非线性方式涌现，这是物理规律，不是工程选择。</div>
+        <div class="example">💡 <strong>类比</strong>：恒星达到一定质量才会点燃核聚变发光——不是"先让一小块物质优化优化"就能发光的。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">从感知机到ChatGPT：两起两落的神经网络史</div>
+        <div class="content">刘嘉回顾了神经网络的曲折历程：1960年代感知机被明斯基批判（第一次寒冬）→ 1980年代反向传播算法复兴，但受限于数据算力（第二次寒冬）→ 2010年代GPU+大数据推动深度学习崛起 → 2022年ChatGPT引爆AGI火花。每一次"寒冬"的根源不是算法错了，而是规模不够。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">"暴力美学"的争议</div>
+        <div class="content">学术界和工业界长期存在争论：依靠堆算力堆数据实现的智能，是真正的突破还是投机取巧的"暴力美学"？刘嘉的立场是：生物学中的进化同样是"暴力美学"的结果（数亿年的自然选择），涌现不需要优雅——需要规模。</div>
+        <div class="example">💡 自然界用了数十亿年和无数"试错"涌现出人类智能，凭什么要求AI在几十年内走"优雅"路线？</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">大模型新前沿：从暴力到精耕</div>
+        <div class="content">第六章讨论规模法则之后的新方向：思维链推理（Chain-of-Thought）、检索增强生成（RAG）、多模态融合、小型化高效模型（如蒸馏技术）。规模是入场券，但入场后仍需要精细优化——"强行起飞，粗糙开始，空中加油"。</div>
+        <div class="example">💡 <strong>类比</strong>：造火箭需要巨大的初始推力（规模），但入轨后的姿态调整需要精细控制（算法）。</div>
+      </div>
     </div>
 
-    <!-- ==================== 基础篇 ==================== -->
-    <div class="section" id="part1">
-        <h2>基础篇 · 数学是什么（第1-3章）</h2>
+    <blockquote class="quote-block">
+      <p>"强行起飞，粗糙开始，空中加油。不要把时间花在起跑线上——终点比起点重要一万倍。"</p>
+      <span class="cite">——刘嘉，《通用人工智能》第六章</span>
+    </blockquote>
+  </div>
 
-        <!-- 第1章 -->
-        <h3 id="ch1">第1章 · 数学与自然科学的本质区别</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">核心区别一：测量 vs 逻辑推理</div>
-                <div class="content">
-                    自然科学依靠实验和测量来证实结论——比如伽利略在比萨斜塔上扔铁球，用实验验证自由落体规律。但数学不同，数学的结论只能从定义和公理出发，使用逻辑严格证明，不能靠实验。<br>
-                    <strong>为什么重要</strong>：这意味着数学的结论具有绝对性——一旦被证明，就永远为真，不会像科学结论那样被新的实验推翻。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：在数学上证明了“不存在最大的素数”，这个结论就永远不会被推翻。而物理学中，“地球是宇宙中心”曾经也是被“证实”的——但它后来被推翻了。</div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">核心区别二：用事实证明 vs 用逻辑证明</div>
-                <div class="content">
-                    科学可以用大量事实来支撑一个理论——看到1000只白天鹅，就倾向于相信“所有天鹅都是白的”。但数学不行：一个反例就足以推翻整个定理。如果一个命题声称对所有自然数成立，那么只要找到一个反例，整个命题就是假的。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：费马大定理——费马在1637年写下“我找到了一个美妙的证明”，但后来的数学家花了358年才真正证明它。在这358年中，尽管验证了无数个具体的n值都成立，数学家们仍然不认为它已经得证——直到1994年安德鲁·怀尔斯给出了完整的逻辑证明。</div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">数学定理的确立过程</div>
-                <div class="content">
-                    特例 → 发现规律 → 提出猜想 → 严格证明 → 成为定理 → 产生推论 → 新的定理与新的应用。<br>
-                    <strong>关键</strong>：猜想和定理的区别在于有没有经过严格证明。哥德巴赫猜想（任何一个大于2的偶数都可以写成两个素数之和）至今没有被证明，所以它仍然是“猜想”，不是“定理”。
-                </div>
-            </div>
-            <div class="info-card history">
-                <div class="label">数学预见性：无理数的发现</div>
-                <div class="content">
-                    毕达哥拉斯学派信奉“万物皆数”（有理数）。但希帕索斯用毕达哥拉斯定理（勾股定理）本身，严格证明了√2不是有理数。这个发现是颠覆性的，因为它是<strong>从体系内部用逻辑推出</strong>的，不依赖任何外部经验。<br>
-                    这体现了数学的强大力量：它能看到人类直觉和经验无法触及的盲区。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：现代数学中，四维空间、高维球体、虚数——这些都无法“看见”或“触摸”，但数学可以用逻辑严格研究它们的性质。爱因斯坦后来发现，四维时空的数学模型恰好描述了我们所在的宇宙。</div>
-            </div>
-        </div>
+  <!-- 论点四 -->
+  <div class="section" id="arg4">
+    <h2>论点四：教育GPT——授业、解惑、传道的三重进化</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">大模型的训练过程本身就是一种教育隐喻，揭示了三层递进的智能成长路径。</p>
 
-        <!-- 第2章 -->
-        <h3 id="ch2">第2章 · 勾股定理与逻辑的力量</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">毕达哥拉斯定理（勾股定理）</div>
-                <div class="content">
-                    <strong>内容</strong>：直角三角形两条直角边的平方和等于斜边的平方（a² + b² = c²）。<br>
-                    中国古代的勾股定理（勾三股四弦五）是经验总结。毕达哥拉斯则给出了<strong>逻辑证明</strong>——这是质的飞跃。<br>
-                    该定理有超过400种证明方法，包括欧几里得的面积法、印度数学家婆什迦罗的图解法、美国第20任总统加菲尔德的梯形证明。
-                </div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">黄金分割：数学与美学的桥梁</div>
-                <div class="content">
-                    <strong>黄金分割比例</strong> φ = (1+√5)/2 ≈ 1.618。<br>
-                    美感来自几何图形的<strong>相似性</strong>——将一个矩形切掉一个正方形后，剩下的小矩形与原矩形相似，这个比例就是黄金分割。<br>
-                    <strong>等角螺旋线</strong>：蜗牛壳、台风、银河系的旋臂都呈现这种形状——每转过一个固定角度，到中心的距离就乘以一个固定比例（φ）。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：华罗庚推广的<strong>优选法</strong>——在生产实验中寻找最佳配比时，每次在黄金分割点做实验，可以最快逼近最优解。比如调试咖啡豆的烘焙温度，用优选法可以用最少的实验次数找到最佳温度。</div>
-            </div>
-        </div>
+    <div id="arg4-align"></div>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">第一层：授业——提示词工程</div>
+        <div class="content">相当于AI的"知识获取"阶段——大模型通过预训练海量文本获得基础知识。提示词工程（Prompt Engineering）是人类与AI的"授课"界面：提问的质量决定回答的质量。这映射了传统教育中的知识传授过程。</div>
+        <div class="example">💡 好问题带来好答案——这在人机对话中和在课堂上完全一致。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">第二层：解惑——基于人类反馈的强化学习（RLHF）</div>
+        <div class="content">纯粹的预训练只能让模型学会"像人一样说话"，但不知道"说什么是对的"。RLHF<button class="glossary-trigger" onclick="openModal('rlhf')">?</button>让人类标注员对模型输出进行偏好排序，使模型学会对齐人类的价值观和判断。这类似于教育中的"解惑"——不是传授新知识，而是校准判断力。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">第三层：传道——对齐（Alignment）<button class="glossary-trigger" onclick="openModal('alignment')">?</button></div>
+        <div class="content">最高境界是"传道"：让AI内化人类价值观（安全、诚实、有益），而非仅仅模仿语言模式。刘嘉认为这揭示了教育的本质——教育的终极目标不是传授技能，而是塑造价值判断。AGI的对齐问题恰恰是人类教育问题的镜像。</div>
+        <div class="example">💡 教孩子"不能撒谎"不是在教语法，而是在教价值。教AI"不能撒谎"是同一个问题的技术版本。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">教育隐喻的双向启发</div>
+        <div class="content">用"授业-解惑-传道"的框架理解大模型训练，反过来也重新照亮了人类教育的本质：当我们把AI当作"学生"来教时，我们才真正意识到教育的三层递进中，哪一层正在被大规模忽视——大部分教育停留在"授业"阶段，极少到达"传道"。</div>
+      </div>
+    </div>
+  </div>
 
-        <!-- 第3章 -->
-        <h3 id="ch3">第3章 · 数列与级数：趋势比当下重要</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">数列与级数的核心思维</div>
-                <div class="content">
-                    <strong>数列</strong>帮助我们“从孤立事件中发现规律”。<br>
-                    <strong>斐波那契数列</strong>：1, 1, 2, 3, 5, 8, 13, 21…——每一项是前两项之和。相邻两项的比值越来越接近黄金分割（1.618）。这个数列广泛出现在自然界中：花瓣数量（百合3瓣、梅花5瓣、雏菊34或55瓣）、菠萝表皮的螺旋线数。
-                </div>
-                <div class="example">💡 <strong>例子：传销骗局与等比级数</strong>——如果一个传销组织要求每人发展5个下线，只需12层就能覆盖2.4亿人（比全中国人口还多）。这说明任何承诺指数增长的商业模式都必然不可持续——识别庞氏骗局不需要懂金融，只需要懂等比数列。</div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">数学边界：希尔伯特第十问题</div>
-                <div class="content">
-                    1900年，希尔伯特提出23个数学问题。第十问题：是否存在一个通用算法，可以判断任意一个多项式方程是否有整数解？1970年，马蒂亚塞维奇证明：<strong>不存在</strong>这样的算法——有些数学问题是不可判定的。<br>
-                    <strong>启示</strong>：数学不是万能的，承认局限性恰恰是理性的标志。哥德尔不完备定理同样指出：任何足够强大的数学体系中，都存在既不能证明也不能证伪的命题。
-                </div>
-            </div>
-        </div>
+  <!-- 论点五 -->
+  <div class="section" id="arg5">
+    <h2>论点五：AGI时代的能力重构——五大通识能力</h2>
+    <p style="font-size:14px; color:var(--text-muted); margin-bottom:14px;">农耕文明靠力量，工业文明靠技能，智能时代靠什么？刘嘉的答案是五大通识能力。</p>
+
+    <div id="arg5-five"></div>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">才华的历史演变</div>
+        <div class="content">刘嘉提出"才华"的定义随文明形态迁移：<strong>农耕文明</strong>：力量即才华（体能是核心）；<strong>工业文明</strong>：技能即才华（专业化培训是关键）；<strong>智能时代</strong>：智慧即才华（提出正确问题的能力比解决问题的能力更重要）。AGI加速了这一范式转换。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">五大通识能力的当代版本</div>
+        <div class="content">刘嘉在第九章提出AGI时代人类不可替代的五项核心能力：<strong>研究</strong>（提出正确问题）→ <strong>统计</strong>（探寻事物间的关系）→ <strong>逻辑</strong>（从已知推演未知）→ <strong>心理</strong>（理解自己、洞悉他人）→ <strong>修辞</strong>（说服他人、引领革新）。这五项构成一个闭环：向内理解与向外影响的完整能力链。</div>
+        <div class="example">💡 <strong>关键区分</strong>：五项能力都不是"记住知识"——AGI已经承包了记忆和检索，人的价值转移到了"提问、关联、推演、共情、表达"。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">通识教育：重返古希腊</div>
+        <div class="content">刘嘉将现代教育的根源追溯至工业革命的"标准化生产"逻辑——教育被设计成流水线，培养能执行固定任务的工人。当AGI接管了标准化的认知劳动，教育必须回归古希腊的"自由教育"（Liberal Education）：培养完整的、自由的、有判断力的人，而非输出合格的劳动力。</div>
+        <div class="example">💡 <strong>对比</strong>：现代教育问"你会做什么"（技能），自由教育问"你是谁"（存在）。AGI逼迫我们面对后一个问题。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">终极目标：因真理，得自由，以服务</div>
+        <div class="content">第九章的标题取自燕京大学校训——刘嘉将其重新激活为AGI时代人类教育的终极理想：通过追求真理获得内在自由，并用这种自由服务于更广大的共同体。这不是宗教表达，而是对人类在智能宇宙中所处位置的深刻阐述。</div>
+        <div class="example">💡 当AGI能回答所有已知问题，人的价值在于提出新问题——而新问题的源头是"关心"。</div>
+      </div>
     </div>
 
-    <!-- ==================== 数字篇 ==================== -->
-    <div class="section" id="part2">
-        <h2>数字篇 · 从静态数值到动态趋势（第4-5章）</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨：通识教育的现实困境</div>
+      <p>刘嘉倡导的通识教育回归面对一个结构性矛盾：在高度专业化的就业市场和国家竞争逻辑下，谁能承担"重返古希腊"的时间成本？这不单是教育理念之争，更是社会资源分配问题。但AGI的加速发展正在改变计算前提——如果专业化工作被AI替代的速度远超预期，"通识"将从奢侈品变为必需品。</p>
+    </div>
+  </div>
 
-        <h3 id="ch4">第4章 · 方程与虚数</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">方程：逆向思维的工具</div>
-                <div class="content">
-                    <strong>方程的本质</strong>是逆向思维——对要求解的问题先存疑，把已知条件和未知量之间的关系用等式表达清楚，然后反向推理，一步步得到答案。<br>
-                    <strong>鸡兔同笼问题</strong>：用方程解，设鸡x只、兔y只，列出“x+y=35, 2x+4y=94”，一步到位。用算术凑数法只能解决特定问题，方程则是通用的。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：笛卡尔方法论——把任何复杂问题分解为若干简单问题，用方程表示未知量之间的关系，然后逐步求解。这种思维方式不仅用于数学，也适用于商业分析、工程规划等任何需要“从已知推导未知”的场景。</div>
-            </div>
-            <div class="info-card history">
-                <div class="label">虚数的诞生与意义</div>
-                <div class="content">
-                    <strong>i² = -1</strong>——在解一元三次方程的过程中，数学家发现公式中出现了负数开根号，这在当时被认为是无意义的。<br>
-                    但数学家没有放弃，而是创造性地定义了虚数i = √(-1)。从实数到虚数再到复数，人类对数的理解“从形象具体真实的对象，上升到了纯粹理性的抽象认识”。<br>
-                    今天，虚数是电子工程、量子力学和信号处理的基础——这些“虚构”的数字支撑着整个现代科技。
-                </div>
-            </div>
-        </div>
+  <hr class="divider">
 
-        <h3 id="ch5">第5章 · 无穷大、无穷小与极限</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">无穷大的本质</div>
-                <div class="content">
-                    <strong>无穷大不是一个具体的数</strong>，它反映的是“一种无限增加的趋势”。在无穷大的世界里，部分可以完全和整体等价——比如正整数（1,2,3…）和正偶数（2,4,6…）虽然看起来后者是前者的一半，但它们的“个数”实际上一样多（因为它们之间可以建立一一对应关系）。<br>
-                    <strong>希尔伯特旅馆</strong>：一个有无穷多个房间的旅馆即使住满了，也能通过让每位客人移到下一个房间，给新来的客人腾出空间。
-                </div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">极限与第二次数学危机</div>
-                <div class="content">
-                    <strong>芝诺悖论</strong>：阿喀琉斯永远追不上乌龟——每次到达乌龟之前的位置，乌龟又前进了一点。这个悖论的破解需要极限理论：无穷多段距离之和可以是一个有限值。<br>
-                    <strong>0.999… = 1</strong>：不是约等于，而是严格等于。1/3 = 0.333…，两边乘3得到0.999… = 1。这是极限概念的直观体现。<br>
-                    牛顿和莱布尼茨发明微积分后，贝克莱主教批评无穷小量“既是零又不是零”。后来数学家通过ε-δ的严格定义彻底解决了这个问题。
-                </div>
-            </div>
-        </div>
+  <!-- 贯穿论点 -->
+  <div class="section" id="insights">
+    <h2>贯穿全书的核心论点</h2>
+
+    <div class="insight-card">
+      <div class="insight-title">论点A：从技术解释到文明叙事</div>
+      <div class="insight-body">刘嘉的核心贡献在于将AGI从一场"技术讨论"升级为"文明叙事"。传统AI书籍（如《深度学习》《人工智能简史》）聚焦算法实现和历史回顾，而这本书将AGI置于人类认知能力和生存方式重构的宏大框架中，追问的根本问题是"作为人意味着什么"。</div>
+      <div class="insight-evidence">证据链：序言"我与AI"的个人叙事 → 技术三路径的认知审视 → 教育的康德式反思 → 跋"信仰之跃"</div>
     </div>
 
-    <!-- ==================== 几何篇 ==================== -->
-    <div class="section" id="part3">
-        <h2>几何篇 · 公理化体系的建立与发展（第6-7章）</h2>
-
-        <h3 id="ch6">第6章 · 欧几里得几何与非欧几何</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">公理化体系：5条公理构建世界</div>
-                <div class="content">
-                    欧几里得《几何原本》只用<strong>5条公理</strong>（如“两点之间可以画一条直线”“所有直角都相等”等）加上5条公设，推导出了整个几何学大厦——400多条定理，无一例外地从这几条公理逻辑推导出来。<br>
-                    <strong>核心启示</strong>：“有什么样的公理，就有什么样的结果，这就如同有什么样的DNA就会得到什么样的物种一样。”
-                </div>
-                <div class="example">💡 <strong>例子：法律体系与公理化</strong>——宪法就是法律体系的“公理”，所有下位法都必须从宪法原则出发。宪法的细微差异会导致整个法律体系的不同（比如美国的言论自由法系 vs 德国的诽谤罪优先体系）。</div>
-            </div>
-            <div class="info-card history">
-                <div class="label">非欧几何：换一条公理会怎样</div>
-                <div class="content">
-                    欧几里得的第五公理（平行公理）看起来不那么“自明”：过直线外一点有且只有一条平行线。<br>
-                    罗巴切夫斯基修改了这条公理——允许过一点做多条平行线——结果推导出了一套完全不同但逻辑自洽的几何体系（双曲几何）。后来黎曼又发展了椭圆几何（没有平行线）。<br>
-                    非欧几何在发明之时被认为“毫无实际用处”，但后来成为爱因斯坦广义相对论的数学基础——时空在大质量天体附近是弯曲的，用黎曼几何来描述。
-                </div>
-            </div>
-        </div>
-
-        <h3 id="ch7">第7章 · 解析几何</h3>
-        <div class="info-grid">
-            <div class="info-card tool">
-                <div class="label">解析几何：代数与几何的融合</div>
-                <div class="content">
-                    笛卡尔发明坐标系，将几何问题转化为代数方程——这是人类认知史上一次重大的跨领域融合。一条曲线不再是“画出来的那个形状”，而是一个方程 f(x, y) = 0。<br>
-                    <strong>方法论意义</strong>：“工具能弥补理解力和记忆力的不足。”——当你遇到一个很难直观想象的几何问题，把它转化为方程，用代数工具来解决。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：判断卫星轨道是否与某个天体相交——用几何方法需要画图、测量、估算。用解析几何，只需要把轨道方程和天体方程联立，看方程组有没有解。</div>
-            </div>
-            <div class="info-card case">
-                <div class="label">公理化思维的实际意义</div>
-                <div class="content">
-                    公理化的精髓不是“记住那几条公理”，而是：<strong>1. 明确你的基本假设</strong>（你默认了什么前提）；<strong>2. 从这些假设出发进行逻辑推理</strong>；<strong>3. 如果结论有问题，检查假设是否正确。</strong><br>
-                    这种思维方式适用于政策制定、商业决策、软件架构设计等所有需要逻辑一致性的领域。
-                </div>
-            </div>
-        </div>
+    <div class="insight-card">
+      <div class="insight-title">论点B：规模不仅仅是工程，是自然规律</div>
+      <div class="insight-body">刘嘉反复强调"大、大、大"不是工程妥协，而是对自然规律的发现——正如物理学家发现达到临界质量才能启动链式反应。这一视角将AGI从"可控的技术开发"重新定义为"不可阻挡的自然涌现"，并由此推演出人类应对策略的紧迫性。</div>
+      <div class="insight-evidence">证据：感知机两次寒冬（规模不够）→ 深度学习崛起（数据算力爆发）→ ChatGPT涌现（跨过临界阈值）</div>
     </div>
 
-    <!-- ==================== 代数篇 ==================== -->
-    <div class="section" id="part4">
-        <h2>代数篇 · 从数量到趋势，从个体到整体（第8-9章）</h2>
-
-        <h3 id="ch8">第8章 · 函数与向量</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">函数：从静态到动态的认知升级</div>
-                <div class="content">
-                    “理解函数，我们就从小学思维上升到中学思维了。”小学关注的是具体的数（1+2=3），函数关注的是<strong>变量之间的关系</strong>和<strong>变化趋势</strong>。<br>
-                    函数的本质：给一个输入x，对应一个确定的输出f(x)。这与因果关系区分开来：<strong>决定性关系</strong>（函数：给定x必有确定的y）vs <strong>相关性关系</strong>（x和y统计上相关，但不是确定的）。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：学习时间与考试成绩是相关性关系（不是函数关系）——你不能说“学习10小时就一定考95分”。但自由落体距离是时间的函数：h = 1/2gt²，给定t就有确定的h。理解这两种关系的区别，是科学思维的基础。</div>
-            </div>
-            <div class="info-card tool">
-                <div class="label">向量：多元思维的工具</div>
-                <div class="content">
-                    <strong>向量</strong>是既有大小又有方向的量——不是单一的数值，而是一组数值的组合。两个人拉一辆车，力的大小和方向不同，合力由向量加法确定。<br>
-                    <strong>高维向量</strong>：一个人的信用评分可以是多维的（收入、资产、历史还款记录、消费习惯），这是一个高维空间中的向量。余弦定理可以计算两个向量的夹角，用来判断相似度。
-                </div>
-            </div>
-        </div>
-
-        <h3 id="ch9">第9章 · 矩阵与线性代数</h3>
-        <div class="info-grid">
-            <div class="info-card tool">
-                <div class="label">矩阵：从个体思维到整体思维</div>
-                <div class="content">
-                    “矩阵是一个让我们对事物的理解从个体到整体的工具。”一个矩阵可以同时描述多个对象在多个维度上的属性。<br>
-                    <strong>核心应用：线性方程组</strong>——几十个变量、几十个方程的方程组，用矩阵来描述和求解非常简洁。今天几乎所有工程计算都在与矩阵打交道。
-                </div>
-                <div class="example">💡 <strong>例子：余弦定理与文本分类</strong>——将每篇文档表示为词频向量（每个词出现的次数构成的向量），计算两篇文档向量的余弦值：余弦值越接近1，两篇文档内容越相似。搜索引擎、推荐系统、垃圾邮件分类都基于这个原理。</div>
-            </div>
-            <div class="info-card case">
-                <div class="label">简历筛选的数学原理</div>
-                <div class="content">
-                    将每个候选人表示为一个向量（学历、工作经验、技能匹配度等维度），将职位要求也表示为向量，计算两个向量的余弦相似度。得分最高者即为最佳匹配。<br>
-                    这不是“拍脑袋”，而是有严格数学基础的决策方法。
-                </div>
-            </div>
-        </div>
+    <div class="insight-card">
+      <div class="insight-title">论点C：对齐问题就是人类教育问题的镜像</div>
+      <div class="insight-body">全书最深刻的观点之一：教AI"对齐"人类价值观与教孩子"成为好人"是同一个问题的两面。RLHF技术本质上就是"教育技术"——我们如何塑造一个强大但有风险的智能体。当AGI的"教育问题"被认真对待时，人类自己的教育理念也开始松动。</div>
+      <div class="insight-evidence">证据：授业-解惑-传道三层训练框架 → 自由教育 vs 工业教育的历史分析 → "因真理得自由以服务"的价值锚定</div>
     </div>
+  </div>
 
-    <!-- ==================== 微积分篇 ==================== -->
-    <div class="section" id="part5">
-        <h2>微积分篇 · 理解变化与积累（第10-11章）</h2>
-
-        <h3 id="ch10">第10章 · 导数与微分</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">导数：从宏观深入到微观</div>
-                <div class="content">
-                    <strong>导数的本质</strong>：揭示事物变化的<strong>瞬时速率</strong>。不是你走了多远（距离），而是你正在以多快的速度走（瞬时速度）。不是你赚了多少钱（总量），而是你赚钱的速度正在加快还是放慢（增长率的变化）。<br>
-                    <strong>极值问题</strong>：利润最大化的产量是多少？导数等于零的点就是可能的极值点——边际收益等于边际成本。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：企业决策——如果每多生产一件产品的额外成本（边际成本）高于额外收入（边际收益），就不应该继续增产。最优产量恰好是边际成本等于边际收益的那个点。这种分析方法来自微积分。</div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">微积分的认知价值</div>
-                <div class="content">
-                    吴军指出，微积分能够“帮助一个年轻人把自己对世界、对变化、对规律的理解，从静态的、孤立的和具体的层面，上升到动态的、连续的和规律性的层面”。<br>
-                    你不一定需要会算复杂的微积分题，但理解“变化率”“累积效应”和“最优化”这三个概念，已经能让你用完全不同的视角看世界。
-                </div>
-            </div>
-        </div>
-
-        <h3 id="ch11">第11章 · 积分：从微观到宏观</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">积分的本质</div>
-                <div class="content">
-                    积分是微分的逆运算——从无数个微小的瞬时变化，累积出宏观的总量。<br>
-                    <strong>一个生动的类比</strong>：“能力是努力的积分，成绩是能力的积分，好形象是成绩的积分。”每一个微小的努力积累起来，最终决定一个人的能力水平。
-                </div>
-                <div class="example">💡 <strong>例子：求不规则图形的面积</strong>——切成无数个细长的矩形，每个矩形的面积趋近于0，但无穷多个加起来就是精确的总面积。这就是定积分的直观理解：把一个复杂的宏观问题分解为无数个简单的微观问题，再汇总。</div>
-            </div>
-            <div class="info-card history">
-                <div class="label">牛顿与莱布尼茨之争</div>
-                <div class="content">
-                    两人几乎同时独立发明微积分，牛顿可能是先发明者，但莱布尼茨的符号系统（dy/dx、∫）更优越，一直沿用至今。这场争论导致英国数学界与欧洲大陆隔绝了将近100年——教训是，一个好的符号系统和表达方式，有时候比发明本身还重要。
-                </div>
-            </div>
-        </div>
+  <!-- 反复规律 -->
+  <div class="section" id="patterns">
+    <h2>反复出现的历史规律</h2>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">规模阈值：量变触发质变</div>
+        <div class="pattern-desc">无论是文明史上的认知革命，还是神经网络从感知机到ChatGPT的飞跃，都有一个共同模式：当"量"（人口、信息、参数、数据）积累到临界值，"质"（语言、抽象思维、涌现能力）突然出现。</div>
+        <div class="pattern-examples">人类第一次认知革命（语言出现）← 群体规模突破；ChatGPT涌现 ← 参数规模突破</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">技术冲击 → 认知危机 → 范式重构</div>
+        <div class="pattern-desc">每一次重大技术突破都引发人类的认知危机（哥白尼→人不在宇宙中心；达尔文→人不是特殊造物；AGI→智能不是人的专属），但每次危机后人类认知都得到了拓展而非摧毁。</div>
+        <div class="pattern-examples">日心说→科学革命；进化论→生命科学；AGI→认知科学的自觉</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">教育滞后于技术，但价值观锚定方向</div>
+        <div class="pattern-desc">工业革命两百年后教育才初步适应；信息革命仍在挑战教育体系。刘嘉揭示的规律：教育总是最慢改变的领域，但它决定了技术冲击的最终社会后果。谁先重构教育，谁就在新文明形态中占据先机。</div>
+        <div class="pattern-examples">普鲁士教育体系（工业革命后百年才成型）；STEM教育改革（信息革命后40年仍在进行）</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">理性的外包与感性的升值</div>
+        <div class="pattern-desc">刘嘉发现的逆向规律：每次人类将认知能力委托给技术（记忆→文字；计算→计算机；推理→AGI），被外包的能力失去稀缺性，而未被外包的能力（如共情、审美、意义创造）反而升值。AGI外包了"理性"，这让"感性"重新成为稀缺品。</div>
+        <div class="pattern-examples">文字→口述传统贬值；计算器→心算贬值；AGI→将导致什么贬值？什么升值？</div>
+      </div>
     </div>
+  </div>
 
-    <!-- ==================== 概率统计篇 ==================== -->
-    <div class="section" id="part6">
-        <h2>概率和数理统计篇 · 把握不确定性（第12-15章）</h2>
-
-        <h3 id="ch12">第12章 · 概率论起源：来自赌徒的学问</h3>
-        <div class="info-grid">
-            <div class="info-card history">
-                <div class="label">古典概率</div>
-                <div class="content">
-                    概率论起源于17世纪的赌博问题：两个赌徒在赌博中途被迫停止，如何公平分配赌注？帕斯卡和费马的通信奠定了概率论的基础。<br>
-                    拉普拉斯系统化了<strong>古典概率</strong>：基于所有可能结果的等可能性进行计算。比如掷一枚公平的骰子，每个面朝上的概率都是1/6。
-                </div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">伯努利试验与大数定律</div>
-                <div class="content">
-                    <strong>伯努利试验</strong>：在相同条件下重复进行只有两种可能结果（成功/失败）的实验。<br>
-                    <strong>大数定律</strong>：实验次数足够多时，事件发生的频率会趋近于其真实概率。抛硬币10次可能是7次正面，抛10000次则正面比例非常接近50%。<br>
-                    <strong>启示</strong>：随机事件在单次实验中不可预测，但在大量实验中呈现出确定的规律。
-                </div>
-            </div>
-        </div>
-
-        <h3 id="ch13">第13章 · 泊松分布与高斯分布</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">泊松分布：稀有事件的规律</div>
-                <div class="content">
-                    <strong>描述什么</strong>：在固定时间或空间内，稀有事件发生次数的概率分布。比如一天内交通事故的数量、一本书中的错别字数、一个呼叫中心每小时接到的电话数。<br>
-                    <strong>实际应用</strong>：保险公司为什么必须有足够大的客户群？因为如果只有100个客户，一次大的理赔就可能让公司破产。当客户数量达到百万级，每年的总赔付额就非常稳定可预测了。
-                </div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">高斯分布（正态分布）：大概率事件的规律</div>
-                <div class="content">
-                    自然界和社会中大量现象都近似服从正态分布——身高、体重、考试成绩、测量误差。分布的形状是钟形曲线：大多数数据集中在均值附近，离均值越远出现的概率越低。<br>
-                    <strong>均值与方差</strong>：均值描述“理想状态”（中心在哪里），方差描述“现实与理想的差距”（数据有多分散）。标准差σ刻画了波动的幅度。
-                </div>
-                <div class="example">💡 <strong>例子</strong>：质量控制——工厂生产螺丝，目标直径10mm。如果实际直径服从均值为10mm、标准差为0.01mm的正态分布，那么99.7%的螺丝直径在9.97mm到10.03mm之间（±3σ）。质检人员据此设置合格范围。</div>
-            </div>
-        </div>
-
-        <h3 id="ch14">第14章 · 贝叶斯公式：机器翻译的原理</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">贝叶斯公式</div>
-                <div class="content">
-                    <strong>P(A|B) = P(B|A) × P(A) / P(B)</strong><br>
-                    <strong>白话解读</strong>：在观察到新证据B之后，我们对假说A的信念应该如何更新。新信念 = 旧信念 × 证据的力度。<br>
-                    <strong>先验概率</strong>P(A)：在看到任何证据之前，我们对A的初始信念。<strong>后验概率</strong>P(A|B)：看到证据B之后更新过的信念。
-                </div>
-                <div class="example">💡 <strong>例子：机器翻译</strong>——给定英文句子E，计算中文句子C的翻译概率P(C|E)。这个概率难以直接计算，但贝叶斯公式将其转化为P(E|C)×P(C)/P(E)。P(C)是中文句子本身的自然程度（语言模型），P(E|C)是翻译回英文的准确性（翻译模型）。现代机器翻译系统（如谷歌翻译）的核心思想就源于此。</div>
-            </div>
-            <div class="info-card case">
-                <div class="label">贝叶斯思维的实际价值</div>
-                <div class="content">
-                    贝叶斯主义的核心是<strong>不断根据新信息更新信念</strong>。你不需要算出精确的后验概率，只需要养成“看到新证据后调整自己的判断”的习惯。这与固执己见相反——贝叶斯主义者永远是开放的、可修正的。
-                </div>
-            </div>
-        </div>
-
-        <h3 id="ch15">第15章 · 统计学：方法论与世界观</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">概率是世界观，统计是方法论</div>
-                <div class="content">
-                    <strong>概率论</strong>：已知概率分布，推断事件发生的可能性（从因到果）。<br>
-                    <strong>统计学</strong>：已知观测到的数据，推断背后的概率分布（从果到因）。<br>
-                    比如：已知硬币公平（概率50%），推算连抛10次正面朝上的概率——这是概率论。抛了1000次得到530次正面，推断这枚硬币是否公平——这是统计学。
-                </div>
-            </div>
-            <div class="info-card tool">
-                <div class="label">古德-图灵折扣估计：防范黑天鹅</div>
-                <div class="content">
-                    如果你从未见过某种事件发生，应该给它的概率分配多少？0吗？那如果它真的发生了，你的模型就彻底崩溃。<br>
-                    <strong>古德-图灵方法</strong>：将一部分概率“预算”留给从未发生过的事件，这样当罕见事件发生时，模型不会完全失效。这在金融风险管理（应对市场崩盘）和自然语言处理（遇到从未见过的词）中都有重要应用。
-                </div>
-            </div>
-        </div>
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection">
+    <h2>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">本书隐含的张力：理性主义与人文主义之间</div>
+      <p>刘嘉的叙事在两种立场之间穿行：一方面，他像物理学家一样用第一性原理拆解AGI的涌现逻辑（理性主义）；另一方面，他以"因真理得自由以服务"收尾（人文主义）。全书最迷人的地方正是这种张力——用最硬的技术论证推导出最软的人文关怀。但批评者可能问：如果AGI确实按第一性原理涌现，人类"自由"和"服务"的价值从何而来？它们是被论证出来的，还是被信仰附着的？</p>
     </div>
-
-    <!-- ==================== 终篇 ==================== -->
-    <div class="section" id="part7">
-        <h2>终篇 · 数学在人类知识体系中的位置（第16章）</h2>
-        <h3 id="ch16">第16章 · 数学与哲学、科学、逻辑的关系</h3>
-        <div class="info-grid">
-            <div class="info-card concept">
-                <div class="label">数学与哲学：一头一尾</div>
-                <div class="content">
-                    哲学追问最根本的问题（存在是什么？知识是什么？），数学提供最根本的工具（如何严格地推理？）。<br>
-                    吴军指出：“无用之用是为大用，一个人只有在深刻理解了人类知识的普遍性原理之后，才能站在一个制高点往下俯视。”
-                </div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">数学与自然科学</div>
-                <div class="content">
-                    数学是自然科学的语言——牛顿用微积分描述力学，爱因斯坦用黎曼几何描述引力，海森堡用矩阵描述量子力学。每一次物理学革命背后，都或前或后地伴随着数学工具的革新。
-                </div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">数学是更底层的工具</div>
-                <div class="content">
-                    数学不能直接解决实际问题，但能提供思路。“数学思维不是指算小账算得清楚，而是说善于基于数学知识，使用逻辑发现问题，或者预见到不得不做的事情。”<br>
-                    学好数学的目的不是会解题，而是“让我们变成更好的人”。
-                </div>
-            </div>
-            <div class="info-card concept">
-                <div class="label">通识教育的本质</div>
-                <div class="content">
-                    “通识教育的本质，即能够将这些知识用于许多地方，而不仅仅是直接用来做具体的事情。”——你不需要记住所有公式，但你应该知道数学有哪些分支、每个分支解决什么问题、以及这套思维方式如何迁移到生活中。
-                </div>
-            </div>
-        </div>
+    <div class="reflection-block">
+      <div class="reflection-title">"信仰之跃"：跋的哲学重量</div>
+      <p>全书以"信仰之跃"为跋，引用了克尔凯郭尔的哲学概念。刘嘉似乎在说：面对AGI这个新物种，纯粹理性的分析到达边界后，需要一次"信仰之跃"——对人类独特价值的信念不能来自逻辑推导，而是来自生存的选择。这是一个诚实而非回避的姿态。</p>
     </div>
+  </div>
 
-    <!-- ==================== 认知升级主线 ==================== -->
-    <div class="section" id="cognition">
-        <h2>贯穿全书的认知升级主线</h2>
-        <div class="two-col">
-            <div>
-                <div class="insight-card">
-                    <h4>升级一：从直观到抽象</h4>
-                    <p>无理数→虚数→无穷大→高维空间。数学不断超越感官经验，训练纯理性的抽象思维能力。“虚构”的概念（虚数、四维空间）反而成为理解真实世界最强大的工具。</p>
-                </div>
-                <div class="insight-card">
-                    <h4>升级二：从静态到动态</h4>
-                    <p>数字→方程→函数→微积分。从关注“是什么”到关注“怎么变”，从单个数值到变化趋势。“趋势比当下重要”——斐波那契数列、导数、增长率都是动态思维的体现。</p>
-                </div>
-                <div class="insight-card">
-                    <h4>升级三：从宏观到微观</h4>
-                    <p>导数让我们看到宏观现象背后的微观机制（瞬时速度），积分让我们从微观变化累积出宏观趋势（总路程）。两者互为逆运算，形成一个完整的认知循环。</p>
-                </div>
-            </div>
-            <div>
-                <div class="insight-card">
-                    <h4>升级四：从确定到随机</h4>
-                    <p>从决定论（经典数学：给定初始条件就确定结果）到概率论（承认不确定性，用概率分布描述世界）。这并非放弃理性，而是更高级的理性——承认“不知道”恰恰是智慧的起点。</p>
-                </div>
-                <div class="insight-card">
-                    <h4>数学思维的核心定义</h4>
-                    <p style="font-style:italic;">“数学思维不是指算小账算得清楚，而是说善于基于数学知识，使用逻辑发现问题，或者预见到不得不做的事情。”</p>
-                </div>
-                <div class="insight-card">
-                    <h4>核心金句</h4>
-                    <p style="font-style:italic;">“数学的本质，是一种高级的常识。”</p>
-                    <p style="font-style:italic;">“无用之用是为大用。”</p>
-                    <p style="font-style:italic;">“通识教育的本质，是能够将这些知识用于许多地方，而不仅仅是直接用来做具体的事情。”</p>
-                </div>
-            </div>
-        </div>
+  <!-- 记忆钩子 -->
+  <div class="section" id="memory">
+    <h2>记忆钩子</h2>
+    <blockquote class="quote-block">
+      <p>一句话记住全书逻辑链：<br>
+      <strong>猩猩 vs 人&nbsp; ≈&nbsp; TSAI vs AGI&nbsp; →&nbsp; 语言是钥匙&nbsp; →&nbsp; 规模是引擎&nbsp; →&nbsp; 教育是镜像&nbsp; →&nbsp; 五大能力是答案&nbsp; →&nbsp; 信仰之跃是终点。</strong></p>
+      <span class="cite">——《通用人工智能》核心逻辑提炼</span>
+    </blockquote>
+    <div class="two-col">
+      <div class="law-card">
+        <h4>核心公式</h4>
+        <p>智能涌现 = 数据量 × 参数量 × 算力 → 超过阈值<br>
+        人的价值 = 提出正确问题的能力 × 理解他人的能力 × 创造意义的能力</p>
+      </div>
+      <div class="law-card">
+        <h4>类比记忆</h4>
+        <p>AGI像刚出生的"超人婴儿"：他比你聪明但不懂善恶，他学得飞快但不会提问，他对齐人类价值观的过程就是"教育的本质实验"——而你就是那个老师。</p>
+      </div>
     </div>
+  </div>
 
-    <!-- ==================== 延伸与比较 ==================== -->
-    <div class="section" id="extension">
-        <h2>延伸与比较</h2>
-        <table class="extension">
-            <thead>
-                <tr><th>思考维度</th><th>内容</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>本书的核心定位</td>
-                    <td>不是数学教科书，而是数学思维启蒙书。不讲难题、不考计算，而是让你理解数学的底层逻辑和思维方式。吴军强调：“学好数学的目的不是会解题，而是让我们变成更好的人。”</td>
-                </tr>
-                <tr>
-                    <td>通识教育理念</td>
-                    <td>通识教育的本质是“将这些知识用于许多地方，而不仅仅是直接用来做具体的事情”。数学的通识意义在于：训练抽象思维、逻辑推理、建模能力和对不确定性的理解——这些能力迁移到任何领域都有价值。</td>
-                </tr>
-                <tr>
-                    <td>本书可能的局限</td>
-                    <td>有书评指出：前半部分（基础篇到代数篇）与生活联系紧密，后半部分（微积分到概率统计）与教科书的差异变小，公式密度增大，可能对非专业读者造成阅读负担。部分数学史细节存在争议（如毕达哥拉斯是否真的“证明”了勾股定理）。</td>
-                </tr>
-                <tr>
-                    <td>推荐对照阅读</td>
-                    <td><strong>吴军《数学之美》</strong>：更侧重数学在计算机科学（搜索、自然语言处理）中的应用，可作为本书的应用深化版。<br><strong>米卡埃尔·洛奈《万物皆数》</strong>：从数学史和美学的角度展示数学的感性之美，与本书的“实用理性”视角形成互补。<br><strong>刘嘉《概率论通识讲义》</strong>：同为得到讲义系列，对概率论专题有更深入的展开。</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+  <hr class="divider">
 
-    <div style="text-align:center; margin-top:3rem; padding:1.5rem; color:var(--text-muted); font-size:0.85rem; border-top:1px solid var(--border);">
-        《吴军数学通识讲义》完整知识图谱 · 基于吴军原著整理 · 仅供个人学习回顾使用
-    </div>
+  <!-- 延伸与比较 -->
+  <div class="section" id="extension">
+    <h2>延伸与比较</h2>
+    <table class="extension">
+      <thead>
+        <tr><th>思考维度</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>中国学界在AGI时代最具代表性的"认知-教育-人文"跨界作品。作者以清华心理与认知科学系主任的学科背景，打通了人工智能技术史、认知科学和博雅教育传统，超越了纯技术解读或纯人文感怀的单一维度。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>乐观但审慎的AGI叙事：坚信AGI是文明的跃迁（而非灾难），但强调主动重构教育和认知体系是必要前提。对"放任技术发展"和"恐惧技术"两种立场均保持批判。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+            <strong>第三部分深度不足</strong>：教育反思与前两部分的技术论证之间篇幅失衡，五大通识能力的具体培养路径着墨不够。<br>
+            <strong>中国语境缺失</strong>：以全球视角展开论述，对中国教育体制的具体改革建议几乎空白。<br>
+            <strong>技术细节速度差</strong>：2025年出版，但AGI领域日新月异，部分技术案例（如特定模型的版本）已过时。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《为什么——关于因果关系的新科学》（朱迪亚·珀尔）</strong>：同样追问"智能如何理解世界"，珀尔从因果推理出发，刘嘉从语言涌现出发，两条路径在"第一性原理"处汇合。<br>
+            <strong>《生命3.0》（迈克斯·泰格马克）</strong>：同为AGI未来叙事，泰格马克侧重物理学视角和长期风险推演，刘嘉侧重认知科学和短期教育应对。<br>
+            <strong>《人间指南》（尤瓦尔·赫拉利）</strong>：赫拉利将AGI作为"权力的新形态"讨论，刘嘉将其作为"自我认知的契机"——前者向外（政治），后者向内（心灵）。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>与《为什么》在因果推理与涌现的交叉处对话；与《生命3.0》共享"智能作为自然涌现物"的观点；与《吴军数学通识讲义》共享"通识教育对抗技术焦虑"的立场。</td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            理解AGI涌现的底层逻辑（不只是"更快更准"，而是"新物种"）；<br>
+            评估个人和组织的学习策略调整方向（哪些能力需要升级，哪些可以外包给AI）；<br>
+            参与教育体系改革的公共讨论（从"培养标准件"转向"培养提问者"）；<br>
+            在AGI对齐问题的讨论中带入"人本主义"视角（对齐不是驯服，是教育）。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 
+  <!-- 页脚 -->
+  <div class="footer-note">
+    《通用人工智能：认知、教育与生存方式的重构》· 刘嘉 著 · 知识图谱基于原著整理 · 仅供个人学习回顾
+  </div>
 </div>
 
-<!-- 返回顶部按钮 -->
-<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<!-- 术语弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
 
-<!-- 侧边栏高亮当前位置的脚本 -->
+<!-- 返回顶部 -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const sidebarLinks = document.querySelectorAll('.sidebar a');
-        const sections = [];
+const glossary = {
+  tsai: {
+    title: 'TSAI（Task-Specific AI）——任务特定人工智能',
+    content: '<p>刘嘉在书中创建的术语，对应英文 Task-Specific Artificial Intelligence，指代在特定任务上表现优异但无法泛化到新领域的人工智能系统。他将TSAI分为四个等级：</p><ul><li><strong>一招鲜AI</strong>：单一任务专精（如AlphaGo下围棋）</li><li><strong>符号主义AI</strong>：基于逻辑规则推理（如专家系统）</li><li><strong>超级专家AI</strong>：深度学习在特定领域超越人类（如图像识别、蛋白质折叠预测）</li></ul><p>TSAI与AGI的核心区别在于"通用性"——前者像专业棋手（只会下棋），后者像一个可以学习任何认知任务的人。</p>'
+  },
+  gorilla: {
+    title: '猩猩与人的类比——理解AGI跃迁的关键隐喻',
+    content: '<p>刘嘉全书最核心的类比：人类与黑猩猩的DNA相似度约98.8%，但在认知能力上有天壤之别（语言、抽象思维、文化积累）。</p><p>类比到AI领域：TSAI（传统AI）与AGI在技术基础（神经网络、梯度下降等）上有大量共享，但那2%的差异（涌现的通用理解能力、跨域迁移能力）决定了它们是不同的"物种"。</p><p><strong>警示意义</strong>：如果只看"DNA相似度"（技术栈相似性），会严重低估AGI的革命性。就像19世纪的人们如果只把达尔文进化论理解为"动物分类学的新方法"，就错过了它对人类自我认知的颠覆。</p>'
+  },
+  firstPrinciple: {
+    title: '第一性原理（First Principle）',
+    content: '<p>原为物理学和哲学概念，指从最基本、不可再简化的命题出发进行推理。亚里士多德将其定义为"事物最初被认知的基础"。马斯克将其推广到商业创新领域。</p><p>刘嘉将其引入AGI讨论中，主张AGI涌现的"第一性原理"不是精巧的算法，而是三个维度的规模：</p><ul><li><strong>大数据</strong>：足够丰富的训练语料</li><li><strong>大算力</strong>：足够强大的计算资源</li><li><strong>大模型</strong>：足够多的参数</li></ul><p>当三个"大"同时满足并跨越临界阈值，智能以非线性的方式涌现——这不是"堆资源"的工程妥协，而是对自然规律的发现。</p>'
+  },
+  rlhf: {
+    title: 'RLHF——基于人类反馈的强化学习',
+    content: '<p>Reinforcement Learning from Human Feedback，是ChatGPT等大模型实现"对齐"的核心技术。工作流程：</p><ol><li>训练一个奖励模型：让人类标注员对模型的多条输出进行偏好排序</li><li>用奖励模型替代人类标注员，通过强化学习（PPO算法）微调大模型</li></ol><p>刘嘉将这比作教育中的"解惑"阶段：不是教新知识，而是校准判断力——"什么是对的""什么是好的""什么是合适的"。</p><p><strong>深层含义</strong>：RLHF证明人类价值观可以通过技术手段"注入"AI——但这也反过来追问：我们自己的价值观清楚吗？如果我们自己都不知道什么是"好的"，如何教AI？</p>'
+  },
+  alignment: {
+    title: '对齐问题（Alignment Problem）',
+    content: '<p>AI安全领域的核心概念：确保人工智能系统的行为与人类价值观和意图保持一致。对齐问题不限于安全（不伤害人类），还包括准确性（说真话）、帮助性（给有用信息）和偏好对齐（按人类喜欢的方式表达）。</p><p>刘嘉将对齐问题重新理解为<strong>教育问题</strong>：教AI"对齐"与教孩子"成为好人"本质上相同——都需要从"传授知识"（预训练）到"纠偏校准"（RLHF）到"价值观内化"（更深层对齐）的递进过程。</p><p><strong>核心张力</strong>：如果人类的价值观本身就是多元且冲突的（不同文化、不同时代的"好"不同），AGI应该对齐"谁的"价值观？这个问题的答案决定了"传道"的方向。</p>'
+  }
+};
 
-        // 收集所有锚点目标
-        sidebarLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('#')) {
-                const target = document.getElementById(href.substring(1));
-                if (target) {
-                    sections.push({ link: link, target: target });
-                }
-            }
-        });
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
 
-        // 点击高亮
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                this.classList.add('active');
-            });
-        });
+// 侧边栏滚动高亮
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
 
-        // 滚动高亮
-        window.addEventListener('scroll', function() {
-            let current = null;
-            const scrollTop = window.scrollY + 100;
-
-            sections.forEach(section => {
-                if (section.target.offsetTop <= scrollTop) {
-                    current = section.link;
-                }
-            });
-
-            if (current) {
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                current.classList.add('active');
-            }
-        });
-    });
+// 返回顶部显隐
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
 </script>
 
-</body>
-</html>
+
+</body></html>

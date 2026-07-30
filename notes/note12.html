@@ -3,413 +3,799 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>《科学革命的结构》知识体系 · 含例解</title>
+    <title>《中国历代政治得失》· 知识图谱</title>
     <style>
         :root {
-            --bg: #f5f3f0;
+            --bg: #faf9f7;
             --card-bg: #ffffff;
-            --text: #2e2c2a;
-            --subtext: #4a4846;
-            --accent: #6a4c3a;
-            --border: #d9d0c7;
-            --highlight: #f2e8dc;
-            --example-bg: #f7f3e8;
-            --example-border: #d4b896;
-            --tag-bg: #e7ddd2;
-            --shadow: 0 4px 12px rgba(0,0,0,0.04);
+            --border: #d8d0c4;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #3a4a30;
+            --accent-light: #f2f5f0;
+            --accent-glow: rgba(58, 74, 48, 0.15);
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --font-serif: 'Noto Serif SC', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
-            background-color: var(--bg);
-            font-family: "Segoe UI", "Noto Serif SC", "华文楷体", "楷体", KaiTi, Georgia, serif;
+            font-family: var(--font-serif);
+            background: var(--bg);
             color: var(--text);
-            line-height: 1.7;
+            line-height: 1.9;
             display: flex;
-            justify-content: center;
-            padding: 3rem 1.5rem;
+            -webkit-font-smoothing: antialiased;
         }
-
-        .container {
-            max-width: 900px;
-            width: 100%;
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #f8f5f0;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 100;
+            font-family: var(--font-sans);
+            font-size: 0.86rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
         }
-
-        header {
+        .sidebar h3 {
+            font-size: 0.95rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .sidebar .toc-list {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar .toc-list li {
+            margin-bottom: 0.1rem;
+        }
+        .sidebar .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            color: #4a3f33;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+        .sidebar .toc-list a:hover {
+            background: #e0d8cc;
+            color: #1a1508;
+        }
+        .sidebar .toc-list a.active {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
+        }
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 2.5rem;
+            max-width: 1100px;
+        }
+        .header {
             text-align: center;
             margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
         }
-
-        header h1 {
-            font-size: 2.5rem;
-            font-weight: 500;
-            color: var(--accent);
-            letter-spacing: 2px;
-            border-bottom: 1px solid var(--border);
-            display: inline-block;
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.5rem;
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.3rem;
+            color: #1e1508;
         }
-
-        header .subtitle {
-            font-size: 1.1rem;
-            color: var(--subtext);
-            margin-top: 0.6rem;
+        .header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
             font-style: italic;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            padding: 2rem 2.2rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-            transition: all 0.2s;
-        }
-
-        .card:hover {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
-        }
-
-        .card h2 {
-            font-size: 1.7rem;
-            font-weight: 500;
-            color: var(--accent);
             margin-bottom: 1.2rem;
-            padding-bottom: 0.4rem;
-            border-bottom: 1px dashed var(--border);
+        }
+        .header .meta {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #b0c4a0;
+            border-radius: 18px;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-family: var(--font-sans);
+            font-weight: 500;
+        }
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.6rem 1.8rem;
+            margin-bottom: 1.8rem;
+            box-shadow: var(--shadow);
+            scroll-margin-top: 1rem;
+        }
+        .section h2 {
+            font-size: 1.3rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.8rem;
+            margin-bottom: 1rem;
+            color: #2a3a20;
+            font-weight: 700;
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-
-        .card h2 .num {
-            font-size: 1.2rem;
-            background: var(--tag-bg);
-            padding: 0.2rem 0.8rem;
-            border-radius: 2rem;
-            font-weight: 400;
-            color: #5a4a3a;
-        }
-
-        .card h3 {
-            font-size: 1.25rem;
-            font-weight: 500;
-            color: #4f4034;
-            margin: 1.4rem 0 0.6rem;
-            border-left: 4px solid var(--accent);
-            padding-left: 0.8rem;
-        }
-
-        .card p {
-            margin-bottom: 0.8rem;
-            color: var(--subtext);
-        }
-
-        .card ul {
-            margin: 0.6rem 0 1rem 1.4rem;
-            color: var(--subtext);
-        }
-
-        .card ul li {
-            margin-bottom: 0.4rem;
-        }
-
-        .highlight-box {
-            background: var(--highlight);
-            border-left: 4px solid var(--accent);
-            padding: 1rem 1.3rem;
-            border-radius: 0 0.8rem 0.8rem 0;
-            margin: 1.2rem 0;
-            font-size: 0.98rem;
-        }
-
-        .example-box {
-            background: var(--example-bg);
-            border-left: 4px solid var(--example-border);
-            padding: 1rem 1.3rem;
-            border-radius: 0 0.8rem 0.8rem 0;
-            margin: 1rem 0 1.4rem;
-            font-size: 0.96rem;
-        }
-
-        .example-box .example-title {
-            font-weight: 600;
-            color: #8b6f4c;
-            margin-bottom: 0.3rem;
+        .section h3 {
+            font-size: 1.05rem;
+            margin: 1.5rem 0 0.6rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed var(--border);
+            color: #3a4a30;
+            font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 0.3rem;
+            gap: 0.4rem;
         }
-
-        .flow-chart {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 1.8rem 0 1rem;
-            gap: 0.3rem;
-        }
-
-        .flow-step {
-            background: #faf9f7;
-            border: 1px solid var(--border);
-            border-radius: 2rem;
-            padding: 0.7rem 2rem;
-            font-weight: 500;
-            color: #4d3e32;
-            text-align: center;
-            min-width: 220px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
-        }
-
-        .flow-arrow {
-            color: var(--accent);
-            font-size: 1.5rem;
-            line-height: 1;
-            margin: 0.1rem 0;
-        }
-
-        .flow-note {
-            font-size: 0.85rem;
-            color: #7a6e64;
-            margin-bottom: 0.4rem;
-        }
-
-        .two-columns {
+        .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1.8rem;
+            gap: 0.8rem;
+            margin-top: 0.6rem;
+        }
+        .info-card {
+            background: #fdfaf6;
+            border-radius: 10px;
+            padding: 0.9rem 1.1rem;
+            border-left: 5px solid #ccc;
+            transition: all 0.25s;
+            position: relative;
+        }
+        .info-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
+        }
+        .info-card.gov {
+            border-color: #5a7a40;
+            background: #f8faf6;
+        }
+        .info-card.exam {
+            border-color: #5088b0;
+            background: #fafcfe;
+        }
+        .info-card.econ {
+            border-color: #c48830;
+            background: #fefcf6;
+        }
+        .info-card.military {
+            border-color: #904050;
+            background: #fef8f8;
+        }
+        .info-card.insight {
+            border-color: #6a5080;
+            background: #fdfafe;
+        }
+        .info-card .label {
+            font-weight: 700;
+            font-size: 0.82rem;
+            margin-bottom: 0.35rem;
+            letter-spacing: 0.04em;
+            font-family: var(--font-sans);
+            color: #2a3a20;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .info-card .content {
+            font-size: 0.9rem;
+            color: #4a3f33;
+        }
+        .info-card .content ul {
+            margin-top: 0.2rem;
+            padding-left: 1.2rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.2rem;
+        }
+        .glossary-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 0.35rem;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
+            border: none;
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .glossary-trigger:hover {
+            background: #4a5a40;
+            transform: scale(1.15);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.hidden {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.8rem;
+            max-width: 560px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            position: relative;
+            font-family: var(--font-sans);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-card h4 {
+            font-size: 1.15rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .modal-card p {
+            font-size: 0.92rem;
+            color: #4a3f33;
+            line-height: 1.7;
+            margin-bottom: 0.7rem;
+        }
+        .modal-card .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-card .close-btn:hover {
+            color: #333;
+        }
+        blockquote {
+            background: var(--accent-light);
+            border-left: 4px solid #5a7a40;
+            margin: 1rem 0;
+            padding: 0.9rem 1.3rem;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+            color: #2a3a20;
+            font-size: 0.92rem;
+        }
+        .timeline-track {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 0.3rem;
+            margin-bottom: 1.8rem;
+            padding: 1.2rem 0.8rem;
+            background: linear-gradient(180deg, #fdfcfa, #f8f5f0);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        .timeline-node {
+            text-align: center;
+            min-width: 70px;
+            flex: 1;
+            position: relative;
+        }
+        .timeline-node .era {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            font-family: var(--font-sans);
+        }
+        .timeline-node .dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 0.3rem;
+            box-shadow: 0 0 6px var(--accent-glow);
+        }
+        .timeline-node .name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #2a3a20;
+            font-family: var(--font-sans);
+        }
+        .timeline-node .subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+        table.compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.82rem;
+            margin-top: 0.8rem;
+        }
+        table.compare-table th {
+            background: #f5ede3;
+            padding: 0.45rem 0.6rem;
+            text-align: left;
+            font-weight: 700;
+            color: #3a4a30;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            font-size: 0.78rem;
+        }
+        table.compare-table td {
+            padding: 0.45rem 0.6rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
+        }
+        table.compare-table tr:hover td {
+            background: #fdfaf6;
+        }
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
             margin-top: 0.5rem;
         }
-
-        .pros, .cons {
-            background: #fcfaf8;
-            border-radius: 0.9rem;
-            padding: 1.3rem 1.4rem;
-            border: 1px solid var(--border);
+        table.extension th {
+            background: #f2f5f0;
+            padding: 0.5rem 0.8rem;
+            text-align: left;
+            font-weight: 700;
+            color: #3a4a30;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
         }
-
-        .pros h3 {
-            color: #3b5e3b;
-            border-left-color: #5e7a5e;
-            margin-top: 0;
+        table.extension td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
         }
-
-        .cons h3 {
-            color: #8b4a4a;
-            border-left-color: #b46f6f;
-            margin-top: 0;
+        hr.divider {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 2rem 0;
         }
-
-        .pros ul, .cons ul {
-            margin-left: 1.2rem;
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-
-        .tag {
-            display: inline-block;
-            background: var(--tag-bg);
-            border-radius: 1rem;
-            padding: 0.15rem 0.7rem;
-            font-size: 0.8rem;
-            font-weight: 500;
-            margin-right: 0.3rem;
-            color: #4d3e32;
+        .back-to-top:hover {
+            background: #4a5a40;
+            transform: translateY(-3px);
         }
-
-        footer {
-            text-align: center;
-            font-size: 0.9rem;
-            color: #9b8e82;
-            margin-top: 1.8rem;
-        }
-
-        @media (max-width: 600px) {
-            .card {
-                padding: 1.5rem;
+        @media (max-width: 800px) {
+            .sidebar {
+                display: none;
             }
-            .two-columns {
+            .main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .info-grid {
                 grid-template-columns: 1fr;
             }
-            header h1 {
-                font-size: 2rem;
+            .header h1 {
+                font-size: 1.6rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>《科学革命的结构》</h1>
-            <div class="subtitle">托马斯·库恩 · 知识体系、价值与不足 · 附经典案例</div>
-        </header>
+    <nav class="sidebar" id="sidebar">
+        <h3>📚 中国历代政治得失</h3>
+        <ul class="toc-list">
+            <li><a href="#header">📖 书籍信息</a></li>
+            <li><a href="#timeline">⏳ 五讲时间轴</a></li>
+            <li><a href="#core">🎯 核心方法论</a></li>
+            <li><a href="#ch1">🏛️ 第一讲 · 汉代</a></li>
+            <li><a href="#ch2">🏛️ 第二讲 · 唐代</a></li>
+            <li><a href="#ch3">🏛️ 第三讲 · 宋代</a></li>
+            <li><a href="#ch4">🏛️ 第四讲 · 明代</a></li>
+            <li><a href="#ch5">🏛️ 第五讲 · 清代</a></li>
+            <li><a href="#compare">📊 五朝制度对比总表</a></li>
+            <li><a href="#laws">🧠 核心观点与主线</a></li>
+            <li><a href="#extension">🔍 延伸与比较</a></li>
+        </ul>
+    </nav>
 
-        <!-- 概述卡片 -->
-        <div class="card">
-            <h2><span class="num">概述</span> 历史主义与范式革命</h2>
-            <p>库恩彻底改变了科学哲学的面貌。他反对科学是线性累积的知识集合，主张<strong>科学是科学共同体在特定历史情境下的集体实践</strong>。全书围绕<strong>“范式”</strong>这一核心概念，构建了一套非连续、结构化的科学发展动态模型。</p>
-        </div>
-
-        <!-- 一、历史主义基石 -->
-        <div class="card">
-            <h2><span class="num">一</span> 历史主义的认识论基石</h2>
-            <p>库恩的方法论起点是<strong>历史主义</strong>：必须回到科学史本身，钻进当时科学家的头脑，理解看似过时的理论为何曾经合理。科学哲学不应只做静态逻辑辩护，而应关注科学活动的实际过程。</p>
-            <div class="highlight-box">
-                <strong>核心洞见：</strong>“科学是科学共同体在特定历史情境下的集体活动，而非孤立命题的集合。”
+    <div class="main">
+        <div class="header" id="header">
+            <h1>《中国历代政治得失》</h1>
+            <div class="subtitle">从制度史视角理解中国政治传统的温情与理性</div>
+            <div class="meta">
+                <span><strong>作者</strong>：钱穆</span>
+                <span><strong>首版</strong>：1952年</span>
+                <span><strong>出版社</strong>：生活·读书·新知三联书店</span>
+                <span><strong>学科领域</strong>：历史学 / 政治制度史 / 中国研究</span>
             </div>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子</div>
-                <p>18世纪的化学家普遍相信<strong>燃素说</strong>，认为可燃物含有“燃素”，燃烧时释放。今天我们视其为谬误，但在当时，它能解释金属煅烧增重（燃素有负重量或特殊属性）、燃烧需要空气等现象。库恩指出，只有回到当时的知识网络，才能理解燃素说曾经也是“好科学”，而非原始迷信。</p>
-            </div>
-        </div>
-
-        <!-- 二、核心概念：范式 -->
-        <div class="card">
-            <h2><span class="num">二</span> 核心概念：范式</h2>
-            <p>“范式”是全书最复杂的概念，库恩在后记中将其细分为两层含义，构成科学活动的全部认知框架。</p>
-            
-            <h3>2.1 学科基质</h3>
-            <ul>
-                <li><strong>符号通式：</strong>如 <em>F=ma</em> 等定律的形式化表达。</li>
-                <li><strong>模型：</strong>提供本体论承诺，如“气体分子像微小球台”的启发式模型。</li>
-                <li><strong>价值：</strong>共享的评判标准，如精确性、一致性、简洁性。</li>
-                <li><strong>范例：</strong>最关键的要素——具体的解题样板（教科书习题）。</li>
-            </ul>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子：牛顿力学的范式</div>
-                <p>牛顿的《自然哲学的数学原理》为后世提供了一个完整范式：<strong>符号通式</strong>是三大运动定律和万有引力定律（F=Gm₁m₂/r²）；<strong>模型</strong>是用质点与力来描述世界的机械论图景；<strong>价值</strong>追求数学精确性和预言能力；<strong>范例</strong>则是无数学子反复演练的斜面滑块、抛体运动和行星轨道计算。学到这套范例的人，就“像牛顿一样思考”。</p>
-            </div>
-
-            <h3>2.2 范例与隐性知识</h3>
-            <p>学生通过反复操练范例学会“类化”能力——看出问题相似性，用同一套方法解决。这是<strong>隐性知识</strong>的核心，也是科学共同体直觉与“行话”的来源。</p>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子</div>
-                <p>物理系学生面对一个复杂的力学问题，立刻识别出它“本质上是一个谐振子问题”，然后套用简谐振动的标准解法。这种瞬间的相似性判断无法完全用规则写明，它来自解过数十道类似习题后获得的默会直觉。库恩将此比作象棋大师一眼看出棋局的关键特征。</p>
+            <div class="framework-badges">
+                <span class="badge">📜 历史叙事型</span>
+                <span class="badge">🏛️ 制度史</span>
+                <span class="badge">🇨🇳 中国政治传统</span>
+                <span class="badge">📊 比较视角</span>
             </div>
         </div>
 
-        <!-- 三、科学发展的动态循环模型 -->
-        <div class="card">
-            <h2><span class="num">三</span> 科学发展的动态循环模型</h2>
-            <p>库恩将科学进程描述为一个由常规与革命交替推动的非连续循环。</p>
-            
-            <h3>3.1 前范式时期</h3>
-            <p>学派林立，缺乏共识，所有事实都看似同等相关。研究者进行无休止的哲学争论，直到某一划时代著作（如牛顿《原理》）胜出，吸引多数下一代从业者。</p>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子：光学的前范式时期</div>
-                <p>17世纪的光学研究者分成微粒说（牛顿）和波动说（惠更斯）两大阵营，双方对“光是什么”有根本分歧，连什么现象算重要都达不成一致。直到19世纪杨氏双缝实验和菲涅耳的波动理论取得空前成功，光学才进入波动说的常规科学阶段。</p>
-            </div>
-            
-            <h3>3.2 常规科学：解谜活动</h3>
-            <p>在成熟范式主导下，科学不再是求新，而是<strong>解谜</strong>。核心工作：提高重大事实的精度、让理论与事实更吻合、消除范式内部模糊。反常被暂时忽视，科学家动力来自展示解题技艺。</p>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子：哈雷彗星回归预测</div>
-                <p>1705年，哈雷运用牛顿力学计算了24颗彗星的轨道，并预言其中一颗将于1758年回归。这颗彗星果真如期而至。这就是典型的常规科学解谜——谜底已被牛顿范式预设，哈雷只是凭借高超技艺完成了精确计算，彰显了范式的强大威力。</p>
-            </div>
-            
-            <h3>3.3 反常与危机</h3>
-            <p>当反常顽固抵抗、触及范式核心时，危机爆发。范式规则松弛，非常规科学涌现，各种思辨方案登场，哲学批判重兴。危机是新理论诞生的必要前奏。</p>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子：紫外灾难与量子论的诞生</div>
-                <p>19世纪末的物理学建立在牛顿力学和麦克斯韦电磁理论上。但当用经典能量均分定理计算黑体辐射时，竟得出在紫外波段能量无穷大的荒谬结果（“紫外灾难”）。这已不是小修小补能解决的，它直接动摇了经典理论的基础。在这场危机中，普朗克被迫提出能量量子化假说，开启了量子革命。</p>
-            </div>
-            
-            <h3>3.4 科学革命：格式塔转换与不可通约性</h3>
-            <p>革命即<strong>范式更替</strong>。它不是知识的累积，而是世界观的根本重建——科学家在革命后“看到”了不同的世界。新旧范式之间具有<strong>不可通约性</strong>：标准不同、概念网络断裂、甚至连知觉都发生了格式塔转换。范式转换因此更像是政治革命式的<strong>说服与改宗</strong>。</p>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子一：哥白尼革命与“行星”的概念断裂</div>
-                <p>在托勒密地心体系中，“行星”指在天空中相对于恒星背景移动的天体，包括太阳和月亮。地球是静止的中心，不被称为行星。哥白尼日心体系里，地球变成了一颗绕太阳运行的普通行星，而太阳不再被叫做行星。同一个词“行星”，其含义在新旧范式中完全不同，无法用一套中立的语言来直接翻译。这就是不可通约性——你无法在旧框架中完全理解新理论的概念。</p>
-            </div>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子二：爱因斯坦与牛顿中的“质量”</div>
-                <p>在牛顿力学中，质量是恒定不变的。在狭义相对论中，“质量”随速度变化，且与能量等价（E=mc²）。虽然数学上可以在低速下近似退化为牛顿形式，但概念的物理含义已经彻底改变。库恩强调，这不是简单的扩充，而是整个意义网络的替换。</p>
-            </div>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子三：摆的格式塔转换</div>
-                <p>亚里士多德学派看到垂挂的重物，把它理解为“受约束的落体”——重物在努力趋向地心但被绳子阻碍。伽利略学派则看到了“摆”——一种周期性运动，其规律与振幅无关。同样的物理装置，在两个不同的范式凝视下，科学家“看见”的根本就不是同一个东西。库恩将这种现象称为格式塔转换，如同心理学中既可看作兔子也可看作鸭子的图形。</p>
+        <!-- 时间轴 -->
+        <div class="section" id="timeline">
+            <h2>⏳ 五讲时间轴</h2>
+            <div class="timeline-track">
+                <div class="timeline-node"><div class="era">前206-220</div><div class="dot"></div><div class="name">汉代</div><div class="subtitle">制度奠基</div></div>
+                <div class="timeline-node"><div class="era">618-907</div><div class="dot"></div><div class="name">唐代</div><div class="subtitle">制度完备</div></div>
+                <div class="timeline-node"><div class="era">960-1279</div><div class="dot"></div><div class="name">宋代</div><div class="subtitle">文治转向</div></div>
+                <div class="timeline-node"><div class="era">1368-1644</div><div class="dot"></div><div class="name">明代</div><div class="subtitle">专制强化</div></div>
+                <div class="timeline-node"><div class="era">1644-1911</div><div class="dot"></div><div class="name">清代</div><div class="subtitle">部族政权</div></div>
             </div>
         </div>
 
-        <!-- 四、通过革命的进步 -->
-        <div class="card">
-            <h2><span class="num">四</span> 通过革命的进步：进化而非趋真</h2>
-            <p>库恩拒绝真理符合论，认为不存在中立的“自然真理”作为跨范式标准。科学的进步类似于<strong>达尔文进化</strong>——是解谜工具不断适应环境的<strong>工具性提升</strong>，而非朝某个终极真理的逼近。进步最终由科学共同体基于价值（精确性、广域性等）做出的<strong>专家判断</strong>来裁定。</p>
-            <div class="highlight-box">
-                “趋向真理”是一种幻觉；科学进步是我们在解谜能力上变得更强，而不意味着离某种“实在”更近。
-            </div>
-            <div class="example-box">
-                <div class="example-title">📖 经典例子</div>
-                <p>从牛顿到爱因斯坦，我们并没有“更接近”某个终极的宇宙真相，而是拥有了一个能处理更高速度和更强引力场的解谜工具箱。正如生物从水中进化到陆地，只是对当时环境的适应，而不是向着一个完美生物的方向前进。库恩说科学进步也是如此：后来范式能更好地解决导致前范式陷入危机的那些反常，仅此而已。</p>
-            </div>
-        </div>
-
-        <!-- 五、知识体系全览 -->
-        <div class="card">
-            <h2><span class="num">五</span> 知识体系全览</h2>
-            <div class="flow-chart">
-                <div class="flow-step">前科学（无共识范式）</div>
-                <div class="flow-arrow">↓ <span class="flow-note">通过划时代成就</span></div>
-                <div class="flow-step">常规科学 1<br><small>（范式1：解谜传统）</small></div>
-                <div class="flow-arrow">↓ <span class="flow-note">遭遇并识别反常</span></div>
-                <div class="flow-step">反常与危机<br><small>（范式动摇，非常规研究出现）</small></div>
-                <div class="flow-arrow">↓ <span class="flow-note">革命：说服与改宗</span></div>
-                <div class="flow-step">范式转换<br><small>（不可通约的世界观变更）</small></div>
-                <div class="flow-arrow">↓</div>
-                <div class="flow-step">常规科学 2<br><small>（新范式：全新解谜传统）</small></div>
-            </div>
-            <p style="text-align: center; margin-top: 1rem; color: #6b5e53;">教科书通过重写历史掩盖了这一循环，把科学打扮成线性累积的假象。</p>
-            <div class="example-box" style="margin-top:1.5rem;">
-                <div class="example-title">📖 例子：教科书如何改写历史</div>
-                <p>现代化学教科书往往直接把拉瓦锡描绘成推翻燃素说的英雄，却隐去燃素说在其时代的高度合理性，以及拉瓦锡的氧化学说最初也面临诸多困难。这样，科学史就被压缩成“真理一步步战胜谬误”的简单叙事，而非库恩所揭示的那场充满概念断裂的革命。</p>
-            </div>
-        </div>
-
-        <!-- 六、价值与不足 -->
-        <div class="card">
-            <h2><span class="num">六</span> 本书的价值与不足</h2>
-            <div class="two-columns">
-                <div class="pros">
-                    <h3>✨ 核心价值</h3>
-                    <ul>
-                        <li><span class="tag">颠覆线性史观</span> 揭示了科学发展中的断裂与革命，打破了累积进步的神话。</li>
-                        <li><span class="tag">范式概念</span> 为分析科学共同体的信念、工具与实践提供了强有力框架。</li>
-                        <li><span class="tag">历史主义转向</span> 推动科学哲学与科学史深度结合，关注实际科研过程。</li>
-                        <li><span class="tag">不可通约性</span> 深刻揭示了理论变革的概念断裂与视角转换。</li>
-                        <li><span class="tag">跨学科影响</span> “范式转换”成为社会科学、人文学科的通用认知工具。</li>
-                        <li><span class="tag">隐性知识</span> 强调范例学习与默会认知，超越规则描述的局限。</li>
-                    </ul>
-                    <div class="example-box" style="margin-top:1rem;">
-                        <div class="example-title">💡 价值示例</div>
-                        <p>“范式转换”一词已被广泛用于描述商业管理中的变革，比如智能手机取代功能手机，并非传统手机的渐进升级，而是整个行业规则和竞争标准的重新定义。</p>
-                    </div>
+        <!-- 核心方法论 -->
+        <div class="section" id="core">
+            <h2>🎯 核心方法论：制度史的温情理解</h2>
+            <div class="info-grid">
+                <div class="info-card insight">
+                    <div class="label">📖 钱穆的制度观 <button class="glossary-trigger" onclick="openModal('method')">?</button></div>
+                    <div class="content">钱穆强调，讨论历史制度应<strong>将其放回历史语境中去理解</strong>，不能以今天的标准苛责古人。每一种制度都是在特定时代条件下产生的，都有其"不得不如此"的理由。本书的核心方法论是：<strong>不空谈理论，而从实际制度运作中看其得失</strong>。</div>
                 </div>
-                <div class="cons">
-                    <h3>⚠️ 主要不足与批评</h3>
-                    <ul>
-                        <li><span class="tag">范式模糊</span> 概念多义，被批评有超过20种不同用法，缺乏精确性。</li>
-                        <li><span class="tag">相对主义嫌疑</span> 不可通约性若推向极端，可能否定科学客观性与进步标准。</li>
-                        <li><span class="tag">革命过强断裂</span> 过分强调革命性断裂，可能低估常规科学中渐进变化的累积作用。</li>
-                        <li><span class="tag">进化类比局限</span> 将科学进步等同于无方向的进化，回避了“进步究竟朝向什么”的深层问题。</li>
-                        <li><span class="tag">社会维度单薄</span> 早期版本相对忽视社会制度、经济、技术等外部因素对科学变革的塑造。</li>
-                        <li><span class="tag">真理观争议</span> 彻底放弃“趋真”理想，使许多哲学家感到不安，认为削弱了科学的认知权威。</li>
-                    </ul>
-                    <div class="example-box" style="margin-top:1rem;">
-                        <div class="example-title">⚠️ 批评示例</div>
-                        <p>如果托勒密体系和哥白尼体系真的完全不可通约，那二者如何能够被比较并最终选择一个？批评者指出，必须存在某些跨范式的理性标准（如观测精度、预言能力），否则科学变革就成了非理性的信仰改变。</p>
-                    </div>
+                <div class="info-card insight">
+                    <div class="label">📐 四大制度维度 <button class="glossary-trigger" onclick="openModal('four')">?</button></div>
+                    <div class="content">钱穆从四个维度系统比较了五个朝代的政治制度：<strong>①政府组织</strong>（中央与地方权力结构）、<strong>②考试选举</strong>（人才选拔机制）、<strong>③赋税经济</strong>（田赋与财政）、<strong>④兵役国防</strong>（军事与边防）。这四个维度构成了一套完整的制度分析框架。</div>
+                </div>
+                <div class="info-card insight">
+                    <div class="label">🧠 "制度之得失"</div>
+                    <div class="content">钱穆的核心问题是：每一种制度在当时条件下解决了什么问题？又产生了什么新问题？好的制度会随时代变迁而失效；制度如果一成不变，就会走向僵化。中国政治传统中的许多弊端，往往是因为<strong>后人沿袭了已经失效的制度</strong>。</div>
                 </div>
             </div>
-            <p style="margin-top:1.4rem; font-size:0.95rem; color:#5c5248;">库恩后期对部分批评做出回应，将注意力转向“不可通约性”的语言学解释，并承认了专业共同体之外的社会因素。这些争议本身也推动了对科学本质更深入的探索。</p>
+            <blockquote>"任何一项政治制度，要站在当时的历史条件下来评判，而不能用今天的标准去苛求。" —— 钱穆</blockquote>
         </div>
 
-        <footer>
-            《科学革命的结构》 · 知识体系整理 · 含例解 · 2026
-        </footer>
+        <!-- 第一讲：汉代 -->
+        <div class="section" id="ch1">
+            <h2>🏛️ 第一讲 · 汉代：制度的奠基时代</h2>
+            <div class="info-grid">
+                <div class="info-card gov">
+                    <div class="label">🏛️ 政府组织 <button class="glossary-trigger" onclick="openModal('han_gov')">?</button></div>
+                    <div class="content">汉代是中国政治制度的奠基期。中央实行<strong>"三公九卿"</strong>制——丞相掌行政、太尉掌军事、御史大夫掌监察，三者并立、互相制衡。地方实行<strong>"郡县制"</strong>，但汉初同时存在封建王国（郡国并行制）。皇权与相权之间有明确的界限，宰相拥有相当大的权力。</div>
+                </div>
+                <div class="info-card exam">
+                    <div class="label">📝 选举制度 <button class="glossary-trigger" onclick="openModal('han_exam')">?</button></div>
+                    <div class="content">汉代实行<strong>"乡举里选"</strong>——由地方官推荐人才，经过考核后录用。主要形式有<strong>"贤良方正"</strong>（特科，针对特定问题选拔人才）和<strong>"孝廉"</strong>（常科，每年按人口比例推荐）。汉武帝时太学兴起，逐渐形成了士人政府的基础。</div>
+                </div>
+                <div class="info-card econ">
+                    <div class="label">💰 赋税经济 <button class="glossary-trigger" onclick="openModal('han_econ')">?</button></div>
+                    <div class="content">汉代实行<strong>"轻徭薄赋"</strong>，田租三十税一（约为收成的三十分之一），远低于秦代。但存在<strong>人头税</strong>（算赋、口赋）和<strong>徭役</strong>负担。汉初实行"与民休息"政策，经济得到恢复。但土地兼并逐渐严重，成为后期社会矛盾的主要根源。</div>
+                </div>
+                <div class="info-card military">
+                    <div class="label">⚔️ 兵役国防 <button class="glossary-trigger" onclick="openModal('han_military')">?</button></div>
+                    <div class="content">汉代实行<strong>"全民皆兵"</strong>的兵役制度——男子二十三岁开始服役，一生服役两年。边郡戍卒、中央卫军、地方材官构成三层国防体系。但到了东汉，兵制转为募兵，军队素质下降，地方豪强势力上升。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二讲：唐代 -->
+        <div class="section" id="ch2">
+            <h2>🏛️ 第二讲 · 唐代：制度的完备时代</h2>
+            <div class="info-grid">
+                <div class="info-card gov">
+                    <div class="label">🏛️ 政府组织 <button class="glossary-trigger" onclick="openModal('tang_gov')">?</button></div>
+                    <div class="content">唐代完善了<strong>"三省六部"</strong>制——中书省决策、门下省审核、尚书省执行，三省互相制约。尚书省下设吏、户、礼、兵、刑、工六部，成为此后历代政府的标准架构。相权被分散到多个宰相身上，皇权进一步加强。地方设<strong>州县制</strong>。</div>
+                </div>
+                <div class="info-card exam">
+                    <div class="label">📝 科举制度 <button class="glossary-trigger" onclick="openModal('tang_exam')">?</button></div>
+                    <div class="content">唐代正式确立了<strong>科举制度</strong>——通过公开考试选拔官员，打破了魏晋以来的门阀垄断。主要科目有<strong>进士科</strong>（考诗赋策论）和<strong>明经科</strong>（考儒家经典）。但唐代科举的录取人数极少，门阀势力仍然强大，"行卷"（考前向权贵投递作品）现象普遍。</div>
+                </div>
+                <div class="info-card econ">
+                    <div class="label">💰 赋税经济 <button class="glossary-trigger" onclick="openModal('tang_econ')">?</button></div>
+                    <div class="content">唐初实行<strong>"租庸调"</strong>法——租是田赋，庸是力役（可以交钱代役），调是户税（缴纳绢布）。这一制度建立在均田制基础上，户籍制度严密。安史之乱后均田制瓦解，杨炎推行<strong>"两税法"</strong>——按财产和土地征税，是中国赋税制度的一次重大变革。</div>
+                </div>
+                <div class="info-card military">
+                    <div class="label">⚔️ 兵役国防 <button class="glossary-trigger" onclick="openModal('tang_military')">?</button></div>
+                    <div class="content">唐初实行<strong>"府兵制"</strong>——兵农合一，府兵自备武器，平时耕作、战时出征。府兵制基础是均田制，当均田制瓦解时府兵制也随之崩溃。后期改为<strong>"募兵制"</strong>，形成藩镇割据的局面——节度使掌握军权和财权，最终酿成安史之乱和唐末军阀混战。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三讲：宋代 -->
+        <div class="section" id="ch3">
+            <h2>🏛️ 第三讲 · 宋代：文治的转向</h2>
+            <div class="info-grid">
+                <div class="info-card gov">
+                    <div class="label">🏛️ 政府组织 <button class="glossary-trigger" onclick="openModal('song_gov')">?</button></div>
+                    <div class="content">宋代进一步<strong>削弱相权、强化皇权</strong>。三省长官不再常设，实际权力转移到<strong>"中书门下"</strong>和<strong>枢密院</strong>（分掌民政和军政）。增设<strong>谏院</strong>和<strong>三司</strong>（财政独立），形成权力更加分散的格局。地方设路、州、县三级，但<strong>路没有统一的行政长官</strong>，四司并立，防止地方割据。</div>
+                </div>
+                <div class="info-card exam">
+                    <div class="label">📝 科举制度的成熟 <button class="glossary-trigger" onclick="openModal('song_exam')">?</button></div>
+                    <div class="content">宋代是科举制度的黄金时代。建立了<strong>"糊名""誊录"</strong>制度（匿名评卷），极大提高了考试的公平性。录取人数远超唐代，且<strong>进士出身者直接授官</strong>，士人阶层崛起。但科举的兴盛也导致了<strong>"冗官"</strong>问题——官员数量膨胀，财政负担加重。</div>
+                </div>
+                <div class="info-card econ">
+                    <div class="label">💰 赋税经济 <button class="glossary-trigger" onclick="openModal('song_econ')">?</button></div>
+                    <div class="content">宋代在两税法基础上进一步发展，但<strong>田赋制度逐渐混乱</strong>。王安石变法中推行<strong>"方田均税法"</strong>（清丈土地、公平税负）和<strong>"免役法"</strong>（交钱免役）。但变法最终失败。宋代的商业税和专卖收入大幅增加，经济中心从农业转向商业。</div>
+                </div>
+                <div class="info-card military">
+                    <div class="label">⚔️ 兵役国防 <button class="glossary-trigger" onclick="openModal('song_military')">?</button></div>
+                    <div class="content">宋代以<strong>"募兵制"</strong>为主，军队规模庞大但战斗力不强。实行<strong>"强干弱枝"</strong>政策——中央禁军强大，地方武力薄弱。边防上采取"消极防御"策略，岁币（给辽、西夏的"和平费"）成为沉重负担。宋代<strong>"积弱"</strong>问题的根源在于军事制度的根本缺陷。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四讲：明代 -->
+        <div class="section" id="ch4">
+            <h2>🏛️ 第四讲 · 明代：专制的强化</h2>
+            <div class="info-grid">
+                <div class="info-card gov">
+                    <div class="label">🏛️ 政府组织 <button class="glossary-trigger" onclick="openModal('ming_gov')">?</button></div>
+                    <div class="content">明代是中国专制政治的高峰。朱元璋<strong>废除丞相制度</strong>，一切大权集于皇帝一人。但皇帝个人精力有限，后来发展出<strong>"内阁"</strong>作为皇帝的秘书机构。内阁大学士虽有"票拟"（草拟批示）之权，但决策权仍归皇帝。宦官势力膨胀，<strong>"司礼监"</strong>成为实际上的权力中心。</div>
+                </div>
+                <div class="info-card exam">
+                    <div class="label">📝 科举制度的僵化 <button class="glossary-trigger" onclick="openModal('ming_exam')">?</button></div>
+                    <div class="content">明代科举发展出<strong>"八股文"</strong>制度——固定的文章格式和内容范围，方便评分但也束缚了思想。科举成为入仕的唯一正途，学校变成了科举的附庸。但科举的公平性继续提高，社会流动保持在较高水平。</div>
+                </div>
+                <div class="info-card econ">
+                    <div class="label">💰 赋税经济 <button class="glossary-trigger" onclick="openModal('ming_econ')">?</button></div>
+                    <div class="content">明代赋税制度复杂。张居正推行<strong>"一条鞭法"</strong>——将各种赋役合并，折合成银两征收，简化了税制。这是中国赋税史上又一次重大变革，确立了<strong>白银本位</strong>。但明代后期财政危机严重，加派"三饷"（辽饷、剿饷、练饷），导致民不聊生。</div>
+                </div>
+                <div class="info-card military">
+                    <div class="label">⚔️ 兵役国防 <button class="glossary-trigger" onclick="openModal('ming_military')">?</button></div>
+                    <div class="content">明初实行<strong>"卫所制"</strong>——军队屯田自养，兵民合一。但卫所制在明中期后逐渐瓦解，军队转为募兵。明代最大的国防问题是<strong>"北虏南倭"</strong>——北方蒙古威胁、东南沿海倭寇侵扰。修筑长城和"海禁"政策是明代的应对措施。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五讲：清代 -->
+        <div class="section" id="ch5">
+            <h2>🏛️ 第五讲 · 清代：部族政权的统治</h2>
+            <div class="info-grid">
+                <div class="info-card gov">
+                    <div class="label">🏛️ 政府组织 <button class="glossary-trigger" onclick="openModal('qing_gov')">?</button></div>
+                    <div class="content">钱穆将清代定性为<strong>"部族政权"</strong>——满洲人以少数族裔统治多数汉人，在制度上有意识地<strong>维护满人特权</strong>。中央设<strong>"军机处"</strong>，实际上取代了内阁，权力更加集中于皇帝。地方设总督和巡抚，行政层级更加严密。清代皇权专制达到了中国历史的顶峰。</div>
+                </div>
+                <div class="info-card exam">
+                    <div class="label">📝 科举与笼络 <button class="glossary-trigger" onclick="openModal('qing_exam')">?</button></div>
+                    <div class="content">清代延续明代科举制度，但<strong>科举名额有限</strong>，且对汉人有诸多限制。清政府通过科举笼络汉族知识分子，但最高权力始终掌握在满族贵族手中。科举制度在清代已经失去活力，沦为纯粹的"利禄之途"——人们读书只为做官，不再追求学问。</div>
+                </div>
+                <div class="info-card econ">
+                    <div class="label">💰 赋税经济 <button class="glossary-trigger" onclick="openModal('qing_econ')">?</button></div>
+                    <div class="content">清初实行<strong>"摊丁入亩"</strong>——将人头税并入田赋，减轻了无地农民的负担，是中国赋税制度的一大进步。但清代中期以后，人口爆炸式增长（从明末的不到一亿增长到四亿），人均土地减少，赋税压力增大。鸦片战争后财政更加困难。</div>
+                </div>
+                <div class="info-card military">
+                    <div class="label">⚔️ 兵役国防 <button class="glossary-trigger" onclick="openModal('qing_military')">?</button></div>
+                    <div class="content">清军主力是<strong>"八旗兵"</strong>和<strong>"绿营兵"</strong>。八旗是满洲核心武力，但入关后迅速腐化。绿营是汉人军队，地位低下。太平天国时期，八旗和绿营均不堪一击，<strong>曾国藩的湘军</strong>和李鸿章的淮军等地方武装崛起。这是清廷权威衰落的标志。清末编练"新军"，但新军后来成为推翻清廷的主要力量。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 五朝制度对比总表 -->
+        <div class="section" id="compare">
+            <h2>📊 五朝制度对比总表</h2>
+            <table class="compare-table">
+                <thead>
+                    <tr><th style="width:12%;">维度</th><th style="width:18%;">汉代</th><th style="width:18%;">唐代</th><th style="width:18%;">宋代</th><th style="width:18%;">明代</th><th style="width:16%;">清代</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>政府组织</strong></td>
+                        <td>三公九卿<br>郡国并行制<br>皇权相权分立</td>
+                        <td>三省六部<br>州县制<br>相权分散</td>
+                        <td>中书门下+枢密院<br>路州县三级<br>相权进一步削弱</td>
+                        <td>废除丞相<br>内阁+司礼监<br>皇帝独揽大权</td>
+                        <td>军机处<br>总督巡抚<br>皇权专制顶峰</td>
+                    </tr>
+                    <tr>
+                        <td><strong>选举考试</strong></td>
+                        <td>乡举里选<br>孝廉、贤良方正<br>太学培养</td>
+                        <td>科举确立<br>进士科、明经科<br>门阀仍有势力</td>
+                        <td>糊名誊录制<br>科举成熟<br>进士直接授官</td>
+                        <td>八股文制度<br>科举僵化<br>学校成附庸</td>
+                        <td>科举延续<br>名额有限<br>满洲特权</td>
+                    </tr>
+                    <tr>
+                        <td><strong>赋税经济</strong></td>
+                        <td>轻徭薄赋<br>田租三十税一<br>人头税、徭役</td>
+                        <td>租庸调→两税法<br>均田制<br>户籍严密</td>
+                        <td>两税法<br>商业税增加<br>王安石变法</td>
+                        <td>一条鞭法<br>白银本位<br>"三饷"加派</td>
+                        <td>摊丁入亩<br>人口爆炸<br>财政危机</td>
+                    </tr>
+                    <tr>
+                        <td><strong>兵役国防</strong></td>
+                        <td>全民征兵<br>三层国防体系<br>后转募兵</td>
+                        <td>府兵制→募兵<br>藩镇割据<br>安史之乱</td>
+                        <td>募兵制<br>强干弱枝<br>岁币负担</td>
+                        <td>卫所制→募兵<br>北虏南倭<br>长城海禁</td>
+                        <td>八旗+绿营→湘军<br>军队腐化<br>地方武装崛起</td>
+                    </tr>
+                    <tr>
+                        <td><strong>钱穆评价</strong></td>
+                        <td>制度奠基<br>相权重而合理</td>
+                        <td>制度完备<br>盛极而衰</td>
+                        <td>文治转向<br>积弱积贫</td>
+                        <td>专制强化<br>制度崩坏</td>
+                        <td>部族政权<br>无制度可言</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <hr class="divider">
+
+        <!-- 核心规律 -->
+        <div class="section" id="laws">
+            <h2>🧠 核心观点与贯穿主线</h2>
+            <div class="info-grid">
+                <div class="info-card insight"><div class="label">主线一：皇权渐强、相权渐弱</div><div class="content">从汉代的三公并立到明代的废除丞相，中国政治制度的演变呈现出一个清晰的趋势：皇权不断强化，相权不断削弱。钱穆认为这是中国政治制度演变中最显著的一条线索，也是理解"专制"问题的关键。</div></div>
+                <div class="info-card insight"><div class="label">主线二：中央政府与地方政府的关系</div><div class="content">从汉代的郡县到清代的督抚，地方政府在大多数时期处于弱势。宋代以后，"强干弱枝"成为基本国策，地方缺乏自主权。钱穆认为这种过度集权是导致地方治理能力低下的重要原因。</div></div>
+                <div class="info-card insight"><div class="label">主线三：从"制度"到"法术"</div><div class="content">钱穆区分了"制度"和"法术"——制度是服务于公共利益的规则体系，法术是服务于私人利益的权谋手段。他认为清代已无真正的"制度"可言，只有维护满洲特权的"法术"。这一论断在学界引发了长期讨论。</div></div>
+                <div class="info-card insight"><div class="label">核心态度：温情与敬意</div><div class="content">钱穆强调"对本国历史应抱一种温情与敬意"。他不以今天的民主标准苛责古人，而是在具体历史条件下分析制度的合理性。这种态度使他的分析既有批判性，又避免了对历史的粗暴否定。</div></div>
+            </div>
+        </div>
+
+        <!-- 延伸 -->
+        <div class="section" id="extension">
+            <h2>🔍 延伸与比较</h2>
+            <table class="extension">
+                <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>与《中国政治制度史》的关系</td><td>本书原本是钱穆为香港大学学生讲授的课程讲稿，后整理成书。它与钱穆的《国史大纲》相互补充——前者是纵向的通史叙述，后者是横向的制度比较。</td></tr>
+                    <tr><td>"清代是部族政权"的争议</td><td>钱穆将清代定性为"部族政权"而非中国传统王朝，这一观点引发了不少争议。批评者认为钱穆过于强调汉满对立，忽视了清代制度的复杂性。肯定者则认为这一视角揭示了清代统治的核心特征。</td></tr>
+                    <tr><td>与费孝通《皇权与绅权》的对话</td><td>两本书都探讨了中国传统政治的权力结构。钱穆从制度史角度分析皇权与相权的关系，费孝通则从社会学角度分析皇权与绅权的互动。两者视角不同但相互印证——钱穆讲"上面"的制度，费孝通讲"下面"的社会。</td></tr>
+                    <tr><td>推荐对照阅读</td><td><strong>钱穆《国史大纲》</strong>：纵向的中国通史叙述。<br><strong>费孝通《皇权与绅权》</strong>：从社会学视角看中国传统政治的双轨结构。<br><strong>瞿同祖《清代地方政府》</strong>：对清代地方治理的深入制度分析。<br><strong>白钢《中国政治制度史》</strong>：更全面的制度史参考。</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <div style="text-align:center; margin-top:3rem; padding:1.2rem; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">《中国历代政治得失》知识图谱 · 基于钱穆原著整理 · 仅供个人学习回顾</div>
     </div>
+
+    <!-- 弹窗容器 -->
+    <div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+    <script>
+        const glossary = {
+            method: { title: '📖 钱穆的制度观', content: '<p>钱穆在本书中提出了一个核心方法论：<strong>讨论历史制度，必须将其放回当时的历史条件中</strong>，而不能以今天的标准苛责古人。</p><p>他的几个关键原则：</p><ul><li><strong>"制度是死的，人事是活的"</strong>：制度写在纸面上是一回事，实际运作是另一回事。同样的制度，不同的人执行会有完全不同的效果。</li><li><strong>"一代有一代的制度"</strong>：每一种制度都是为了解决当时的特定问题而产生的。当时代条件变化后，原本好的制度也会失效。</li><li><strong>"制度之失，不在其本身，而在其不能适时而变"</strong>：钱穆认为，中国政治传统中的许多弊端，根源在于后人因循守旧，不能根据时代变化调整制度。</li><li><strong>"不空谈理论，从实际制度运作中看得失"</strong>：他反对用抽象的理论概念（如"专制"）来简单评判中国历史，主张具体分析制度的设计和实际效果。</li></ul>' },
+            four: { title: '📐 四大制度维度', content: '<p>钱穆从四个维度来系统比较各朝代的政治制度：</p><ul><li><strong>①政府的组织</strong>：即中央和地方的权力结构。包括皇权与相权的关系、中央政府各部门的设置、地方行政层级的设计。</li><li><strong>②考试和选举</strong>：即人才的选拔机制。从汉代的察举到唐代的科举，钱穆特别关注这一维度的演变，因为它决定了<strong>谁可以进入政府</strong>。</li><li><strong>③赋税制度</strong>：即政府的财政基础。田赋、人头税、徭役、专卖——不同的赋税制度反映了不同的治理理念和社会结构。</li><li><strong>④国防与兵役</strong>：即军事力量的组建和维持。从全民征兵到募兵制，兵制的变化深刻影响了国家的命运。</li></ul><p>这四个维度相互关联、不可分割。理解任何一个朝代的制度，都必须从这四个方面综合考量。</p>' },
+            han_gov: { title: '🏛️ 汉代政府组织', content: '<p>汉代的政治制度是在秦制基础上发展起来的，但做了重要的修正。</p><p><strong>中央：三公九卿</strong></p><ul><li><strong>丞相</strong>：总理行政，权力极大，"掌丞天子，助理万机"。</li><li><strong>太尉</strong>：掌军事，但不常设。</li><li><strong>御史大夫</strong>：掌监察，副丞相，可弹劾百官包括丞相。</li></ul><p>三公并立、互相制衡的格局，使得汉代相权较重。皇帝不能随意绕过宰相直接下达命令——"不经凤阁鸾台，何名为敕"。</p><p><strong>地方：郡县与封国并行</strong></p><p>汉初实行"郡国并行制"——既有中央直辖的郡县，也有分封的诸侯王国。这种制度在七国之乱后被逐步削弱，到汉武帝时已基本实现实际上的郡县制。</p>' },
+            han_exam: { title: '📝 汉代选举制度', content: '<p>汉代的选举制度是中国文官制度的开端。</p><p><strong>察举制</strong>：由地方官向中央推荐人才，主要科目有：</p><ul><li><strong>孝廉</strong>：孝顺廉洁之人，是常科，每年按人口比例推荐。这是汉代最重要的入仕途径。</li><li><strong>贤良方正</strong>：能直言极谏之人，是特科，通常在皇帝下诏求言时举行。</li><li><strong>茂才</strong>（秀才）：特殊才能之人，也是特科。</li></ul><p><strong>太学</strong>：汉武帝设立太学，培养儒家人才。太学生经过考核可以入仕。</p><p>汉代选举制度的意义在于：它打破了世袭贵族垄断权力的局面，为有才学的普通人开辟了上升通道。但弊端也明显——推荐权在地方官手中，容易产生<strong>人情请托</strong>和<strong>门阀垄断</strong>。</p>' },
+            han_econ: { title: '💰 汉代赋税', content: '<p>汉代赋税制度以"轻徭薄赋"著称。</p><p><strong>田租</strong>：汉初实行"十五税一"（收成的十五分之一），文帝后改为"三十税一"，是中国历史上最低的田赋之一。</p><p><strong>人口税</strong>：</p><ul><li><strong>算赋</strong>：成年男女每年缴纳。</li><li><strong>口赋</strong>：未成年人缴纳。</li></ul><p>人头税的存在使得贫富差距被放大——富人田多但田赋低，穷人田少但人头税不减。</p><p><strong>徭役</strong>：成年男子每年需要服一定天数的无偿劳役。</p><p><strong>盐铁专卖</strong>：汉武帝时实行盐铁专卖，国家垄断经营以增加财政收入。这一政策引发了著名的"盐铁会议"辩论。</p>' },
+            han_military: { title: '⚔️ 汉代兵制', content: '<p>汉代实行"全民征兵制"：男子二十三岁开始服兵役，一生共服役两年——一年在本郡当"材官"（步兵），一年在边疆当"戍卒"或京师当"卫士"。</p><p><strong>三层国防体系</strong>：</p><ul><li><strong>中央军</strong>：驻守京师，护卫皇帝。</li><li><strong>地方军</strong>：各郡的材官和骑士。</li><li><strong>边防军</strong>：边疆的戍卒和屯田兵。</li></ul><p>到了东汉，征兵制转为募兵制，地方豪强趁机招募私人武装，为后来的军阀割据埋下了伏笔。</p>' },
+            tang_gov: { title: '🏛️ 唐代三省六部', content: '<p>唐代的三省六部制是中国政治制度史上的一个高峰。</p><p><strong>三省</strong>：</p><ul><li><strong>中书省</strong>：负责起草诏令（决策权）。</li><li><strong>门下省</strong>：负责审核诏令（封驳权）。</li><li><strong>尚书省</strong>：负责执行诏令（行政权）。</li></ul><p>三省之间权力分立、互相制约——中书起草的诏令，门下如果认为不妥可以驳回。这种制度设计体现了权力制衡的智慧。</p><p><strong>六部</strong>（属尚书省）：吏部（人事）、户部（财政）、礼部（教育外交）、兵部（军事）、刑部（司法）、工部（建设）。</p><p>六部制为后世沿用了千年，直到清末才被废除。</p>' },
+            tang_exam: { title: '📝 唐代科举', content: '<p>唐代正式确立了科举制度——通过考试选拔官员。</p><p><strong>主要科目</strong>：</p><ul><li><strong>进士科</strong>：考诗赋和策论，最受重视，但录取极少（每年仅二三十人）。</li><li><strong>明经科</strong>：考儒家经典，录取较多。</li></ul><p><strong>特点</strong>：</p><ul><li>唐代科举的门阀色彩仍然浓厚——"行卷"（考前向权贵投递作品）是公开的秘密。</li><li>录取人数少，无法动摇门阀士族的政治优势。</li><li>但科举制度的意义在于：它为后来宋代的制度完善奠定了基础，开辟了社会流动的通道。</li></ul>' },
+            tang_econ: { title: '💰 唐代赋税', content: '<p>唐代赋税经历了从"租庸调"到"两税法"的重大变革。</p><p><strong>租庸调</strong>（唐前期）：建立在均田制基础上。</p><ul><li><strong>租</strong>：田赋，每丁每年纳粟二石。</li><li><strong>庸</strong>：力役，每丁每年服役二十天，可以交钱代役。</li><li><strong>调</strong>：户税，每丁每年纳绢二丈。</li></ul><p><strong>两税法</strong>（唐后期，杨炎推行）：安史之乱后均田制瓦解，改为按财产和土地征税，每年分夏秋两次征收。这是中国赋税史上的一次重大变革——从"税人"转向"税地"。</p>' },
+            tang_military: { title: '⚔️ 唐代府兵制', content: '<p><strong>府兵制</strong>是唐代前期兵制的核心：兵农合一，府兵平时耕作、战时出征，自备武器和马匹。府兵制的经济基础是均田制——只有当农民有足够土地时，才能负担起自备武器的费用。</p><p>均田制瓦解后，府兵制随之崩溃。唐玄宗时期改为<strong>募兵制</strong>，在边境设节度使统领大军。节度使同时掌握军权和财权，逐渐形成<strong>藩镇割据</strong>的局面。安史之乱（755-763年）是藩镇问题的总爆发，此后唐朝虽名义上存在了一百多年，但中央权威已名存实亡。</p>' },
+            song_gov: { title: '🏛️ 宋代政府组织', content: '<p>宋代政府组织的特点是<strong>分散权力、强化皇权</strong>。</p><p><strong>中央</strong>：</p><ul><li><strong>中书门下</strong>：处理日常政务，长官为"同中书门下平章事"（宰相）。但宋代宰相权力远不如前朝。</li><li><strong>枢密院</strong>：掌军事，与中书并立，互相牵制。</li><li><strong>三司</strong>：掌财政，与中书、枢密并立，形成"二府三司"的格局。</li><li><strong>谏院</strong>：独立的监察机构，可以批评皇帝和宰相。</li></ul><p>宋代将政府权力切割成多块，使其互相牵制，防止任何一方坐大。这种"分权制衡"的设计虽然防止了权臣和军阀的出现，但也导致了行政效率低下。</p><p><strong>地方</strong>：路、州、县三级。但路没有统一的行政长官，设经略安抚使（军事）、转运使（财政）、提点刑狱（司法）、提举常平（仓储）四司并立，各向中央负责。</p>' },
+            song_exam: { title: '📝 宋代科举', content: '<p>宋代是科举制度的黄金时代，多项创新至今仍在沿用。</p><p><strong>重大改革</strong>：</p><ul><li><strong>糊名</strong>：将考生姓名密封，防止阅卷官认出考生身份。</li><li><strong>誊录</strong>：将考生试卷由专人重新抄录后再阅卷，防止通过笔迹识别考生。</li><li><strong>锁院</strong>：考试期间考官封闭管理，防止泄题。</li></ul><p>这些措施极大提高了科举的公平性。宋代每年录取进士数百人，远超唐代。进士出身者直接授官，士人阶层真正崛起。</p><p><strong>问题</strong>：科举的兴盛也导致"冗官"——官员数量膨胀，财政负担加重。一个人中了进士就要给他官做，但国家没有那么多职位，只能增设闲职。</p>' },
+            song_econ: { title: '💰 宋代赋税与经济', content: '<p>宋代经济是中国古代的一个高峰，商业繁荣远超前代。</p><p><strong>赋税</strong>：宋代在两税法基础上延续，但田赋制度逐渐混乱。王安石变法中的"方田均税法"试图清丈土地、公平税负，但变法失败。</p><p><strong>商业与专卖</strong>：宋代的商业税和专卖收入（盐、茶、酒、矾等）大幅增加，成为国家财政的重要支柱。交子（纸币）也在宋代出现，是世界上最早的纸币。</p><p><strong>"冗费"问题</strong>：宋代财政的痼疾是"三冗"——冗官（官员太多）、冗兵（军队庞大）、冗费（开支浩大）。国家收入虽多，但支出更多，长期处于财政紧张状态。</p>' },
+            song_military: { title: '⚔️ 宋代兵制', content: '<p>宋代兵制以"募兵制"为主，军队规模庞大但战斗力低下。</p><p><strong>"强干弱枝"</strong>：中央禁军数量庞大、装备精良；地方武力（厢军）薄弱，只能维持治安。这种设计有效防止了地方割据，但也使得边防无力——一旦中央军被击败，整个国防体系就崩溃。</p><p><strong>"积弱"的根源</strong>：</p><ul><li>募兵制导致军队职业化，士兵以当兵为谋生手段，缺乏战斗力。</li><li>"将不知兵，兵不知将"——频繁调动将领以防止军阀形成，但导致指挥混乱。</li><li>岁币政策——向辽、西夏支付"和平费"，虽然短期的成本低于战争，但长期养虎为患。</li></ul>' },
+            ming_gov: { title: '🏛️ 明代政府组织', content: '<p>明代是中国专制政治的高峰。</p><p><strong>废除丞相</strong>：朱元璋以"胡惟庸案"为借口，彻底废除丞相制度，六部直接向皇帝负责。这一改革将一切大权集中于皇帝一人之手。</p><p><strong>内阁</strong>：皇帝个人无法处理所有政务，于是挑选大学士入阁作为秘书和顾问。内阁大学士有"票拟"权（草拟对奏章的批复意见），但最终决定权在皇帝。内阁不是正式的政府机构，大学士也不是前朝的宰相。</p><p><strong>司礼监</strong>：明代宦官的权力机构。司礼监太监可以代替皇帝"批红"（在票拟上用红笔批示），实际上掌握了部分决策权。宦官与内阁之间的权力斗争是明代政治的一大特征。</p>' },
+            ming_exam: { title: '📝 八股文制度', content: '<p>明代科举最具标志性的制度就是"八股文"。</p><p><strong>格式</strong>：八股文有固定的格式——破题、承题、起讲、入手、起股、中股、后股、束股，每部分都有严格的字数要求。</p><p><strong>内容</strong>：题目必须出自四书五经，解释必须依据朱熹的注释。考生的个人见解不允许超出程朱理学的范围。</p><p><strong>钱穆的评价</strong>：八股文的优点在于便于统一评分，保证了形式上的公平；缺点是严重束缚了思想，使科举沦为纯粹的形式主义训练。到了清代，八股文的弊端更加严重。</p>' },
+            ming_econ: { title: '💰 一条鞭法', content: '<p>"一条鞭法"是明代张居正推行的赋税改革，是中国赋税史上继两税法之后的又一次重大变革。</p><p><strong>内容</strong>：将各种赋税和徭役合并，统一折合成银两征收。简化了税制，也促进了货币经济的发展。</p><p><strong>意义</strong>：确立了<strong>白银本位</strong>的货币体系。农民不再需要缴纳实物，只需缴纳银两，这促进了农产品的商品化。</p><p><strong>明代后期的财政危机</strong>：对后金（清）的战争导致了"三饷"加派——辽饷（对辽东用兵）、剿饷（镇压农民起义）、练饷（训练新兵）。沉重的赋税负担使得大批农民破产，最终引发了明末农民大起义。</p>' },
+            ming_military: { title: '⚔️ 明代卫所制', content: '<p>明初实行"卫所制"：军队驻扎在卫（五千六百人）和所（一千一百二十人）中，屯田自养，兵民合一。</p><p><strong>优点</strong>：国家不需要支付大量军费，军队通过屯田实现自给自足。</p><p><strong>瓦解</strong>：卫所制需要严密的户籍管理和土地分配。随着土地被军官侵占、士兵逃亡，卫所制在明中期后逐渐瓦解。军队不得不转为募兵。</p><p><strong>国防问题</strong>："北虏南倭"——北方蒙古（后金）的威胁和东南沿海倭寇的侵扰，使得明代的国防压力极大。修筑长城和"海禁"政策是主要的应对措施。</p>' },
+            qing_gov: { title: '🏛️ 清代部族政权', content: '<p>钱穆对清代的定性是一个争议性话题：他将清代称为<strong>"部族政权"</strong>而非中国传统王朝。</p><p><strong>论证</strong>：</p><ul><li>满洲人以少数族裔统治多数汉人，有意识地维护满人特权。</li><li>中央重要职位由满人垄断或满汉各半，且满人掌握实权。</li><li>清朝皇帝反复强调"满汉一家"，但实际推行的政策处处体现满人优越性。</li></ul><p><strong>军机处</strong>：雍正设立的军机处，最初是为处理紧急军务，后来演变为实际上的最高权力机构。军机大臣由皇帝直接任命，没有品级，完全依附于皇权。清代皇权专制达到了中国历史的顶峰。</p><p><strong>争议</strong>：钱穆的这一观点在学界既有支持者也有批评者。批评者认为他过于强调汉满对立，忽视了清代制度的延续性和复杂性。</p>' },
+            qing_exam: { title: '📝 清代科举', content: '<p>清代延续明代科举制度，但科举已经失去活力。</p><p><strong>延续</strong>：八股文制度、三级考试（乡试、会试、殿试）都被继承下来。</p><p><strong>变化</strong>：</p><ul><li>科举名额有限，大量读书人终身无法中举，形成了庞大的"科举失意者"群体。</li><li>科举纯粹成为"利禄之途"——人们读书只为做官，不再追求真正的学问。</li><li>满人可以通过"笔帖式"等特殊渠道入仕，不必经过科举。</li></ul><p>1905年，科举制度被废除，存在了约1300年的中国文官选拔制度宣告终结。</p>' },
+            qing_econ: { title: '💰 摊丁入亩', content: '<p>清初的"摊丁入亩"是中国赋税制度的一大进步。</p><p><strong>内容</strong>：将人头税（丁银）并入田赋，按土地面积征收。这意味着无地或少地的贫苦农民不再需要缴纳人头税。</p><p><strong>效果</strong>：减轻了贫民的负担，但也鼓励了人口增长——因为生孩子不再增加税务负担。清代人口从明末的不到一亿增长到四亿，形成"人口爆炸"。</p><p><strong>矛盾</strong>：人口增长远超耕地增长，人均土地大幅减少。虽然税率不高，但人均产出下降，农民生活反而更加困苦。</p>' },
+            qing_military: { title: '⚔️ 清代兵制', content: '<p>清代军队由几个不同部分组成：</p><p><strong>八旗兵</strong>：满洲核心武力，入关后由国家供养。但八旗子弟在和平环境中迅速腐化，到康熙后期已丧失战斗力。</p><p><strong>绿营兵</strong>：由汉人组成的军队，地位低下、装备落后。</p><p><strong>湘军与淮军</strong>：太平天国时期，八旗和绿营均不堪一击。曾国藩在湖南组建湘军，以同乡、师生关系为纽带，成为镇压太平天国的主力。李鸿章的淮军随后崛起。这些地方武装的兴起标志着清廷中央权威的衰落。</p><p><strong>新军</strong>：清末编练新式军队，但新军后来成为辛亥革命的主力，推翻了清廷。</p>' }
+        };
+
+        function openModal(key) {
+            const data = glossary[key];
+            if (!data) return;
+            document.getElementById('modalContent').innerHTML = `<h4>${data.title}</h4>${data.content}`;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('.sidebar a');
+            const sections = [];
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const target = document.getElementById(href.substring(1));
+                    if (target) sections.push({ link, target });
+                }
+            });
+            links.forEach(link => link.addEventListener('click', function() {
+                links.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            }));
+            window.addEventListener('scroll', () => {
+                let current = null;
+                const scrollTop = window.scrollY + 120;
+                for (let i = sections.length - 1; i >= 0; i--) {
+                    if (sections[i].target.offsetTop <= scrollTop) { current = sections[i].link; break; }
+                }
+                if (current) {
+                    links.forEach(l => l.classList.remove('active'));
+                    current.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

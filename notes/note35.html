@@ -1,747 +1,937 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CSS 入门 · 给完全没接触过编程的你</title>
-<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root{
-  --fg:      #3d2a5c;
-  --mute:    #6a5a8d;
-  --accent:  #7c4dff;
-  --accent2: #ff70a6;
-  --accent3: #7ad1ff;
-  --accent4: #ffb951;
-  --accent5: #4ade80;
-  --grad:    linear-gradient(135deg,#ff70a6,#7c4dff);
-  --grad2:   linear-gradient(135deg,#7ad1ff,#7c4dff);
-  --grad3:   linear-gradient(135deg,#ffb951,#ff70a6);
-  --card:    #ffffff;
-  --clay-sh: 0 12px 28px rgba(124,77,255,.16), 0 2px 6px rgba(124,77,255,.10), inset 0 2px 4px rgba(255,255,255,.9);
-  --clay-sh-hi: 0 18px 40px rgba(124,77,255,.24), 0 4px 10px rgba(124,77,255,.14), inset 0 2px 4px rgba(255,255,255,.9);
-  --ui-font: 'Quicksand','PingFang SC',-apple-system,BlinkMacSystemFont,sans-serif;
-  --mono:    'JetBrains Mono','Cascadia Code','Fira Code',monospace;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>《金融学》（人大版）· 完整知识图谱</title>
+    <style>
+        :root {
+            --bg: #fafaf5;
+            --sidebar-bg: #ecf0e8;
+            --card-bg: #ffffff;
+            --border: #d4dac8;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #0f766e;
+            --accent-light: #d1fae5;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --highlight: #d1fae5;
+            --radius: 10px;
+            --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-serif);
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            -webkit-font-smoothing: antialiased;
+            display: flex;
+        }
 
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{
-  width:100%;height:100%;color:var(--fg);
-  font-family:var(--ui-font);font-weight:500;
-  background:linear-gradient(135deg,#d4f7e5 0%,#c7d8ff 45%,#ffd6e8 100%);
-  overflow:hidden;
-}
+        /* ========== 侧边栏 ========== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 100;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+        }
+        .sidebar h3 {
+            font-size: 1rem;
+            color: #0f766e;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0f766e;
+            letter-spacing: 0.04em;
+        }
+        .sidebar .toc-list { list-style: none; padding: 0; }
+        .sidebar .toc-list li { margin-bottom: 0.15rem; }
+        .sidebar .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            color: #4a3f33;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .sidebar .toc-list a:hover { background: #c8d0b8; color: #1a1508; }
+        .sidebar .toc-list a.active { background: #0f766e; color: #fff; font-weight: 600; }
+        .sidebar .toc-list .toc-l2 { padding-left: 0.8rem; font-size: 0.83rem; }
+        .sidebar .toc-list .toc-l3 { padding-left: 1.6rem; font-size: 0.78rem; color: var(--text-muted); }
 
-body::before,body::after{
-  content:'';position:fixed;border-radius:50%;
-  pointer-events:none;z-index:0;filter:blur(45px);opacity:.5;
-}
-body::before{
-  width:400px;height:400px;top:-100px;left:-60px;
-  background:radial-gradient(circle,#4ade80 0%,transparent 70%);
-  animation:blob 18s ease-in-out infinite alternate;
-}
-body::after{
-  width:360px;height:360px;bottom:-60px;right:-60px;
-  background:radial-gradient(circle,#ff70a6 0%,transparent 70%);
-  animation:blob 22s ease-in-out infinite alternate-reverse;
-}
-@keyframes blob{
-  0%{transform:translate(0,0) scale(1)}
-  100%{transform:translate(50px,36px) scale(1.1)}
-}
+        /* ========== 主内容区 ========== */
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 2rem 2rem 2.5rem;
+            max-width: 1100px;
+        }
 
-.stage{position:fixed;inset:0;overflow:hidden}
-.slide{
-  position:absolute;inset:0;
-  display:block;padding:70px 7vw 60px;
-  opacity:0;visibility:hidden;transform:translateY(20px);
-  transition:opacity .55s cubic-bezier(.7,0,.2,1),transform .55s cubic-bezier(.7,0,.2,1),visibility .55s;
-  overflow-y:auto;overflow-x:hidden;
-}
-.slide.active{opacity:1;visibility:visible;transform:none}
-.canvas{
-  width:100%;max-width:1100px;margin:0 auto;
-  min-height:calc(100vh - 160px);
-  display:flex;flex-direction:column;justify-content:center;
-  position:relative;z-index:2;
-}
-.slide.active .reveal{animation:rise .7s cubic-bezier(.7,0,.2,1) both}
-.slide.active .reveal:nth-child(1){animation-delay:.04s}
-.slide.active .reveal:nth-child(2){animation-delay:.16s}
-.slide.active .reveal:nth-child(3){animation-delay:.28s}
-.slide.active .reveal:nth-child(4){animation-delay:.40s}
-.slide.active .reveal:nth-child(5){animation-delay:.52s}
-.slide.active .reveal:nth-child(6){animation-delay:.64s}
-@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 2px solid var(--border);
+        }
+        .header h1 { font-size: 2.4rem; font-weight: 700; letter-spacing: 0.04em; margin-bottom: 0.4rem; color: #0d2b40; }
+        .header .subtitle { font-size: 1.1rem; color: var(--text-muted); font-style: italic; margin-bottom: 1.4rem; }
+        .header .meta {
+            font-size: 0.95rem; color: var(--text-muted);
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.5rem; margin-bottom: 1.6rem;
+        }
+        .framework-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.6rem; }
+        .badge {
+            display: inline-block; background: var(--accent-light); border: 1px solid #6b9a8a;
+            border-radius: 20px; padding: 0.5rem 1.4rem; font-size: 0.9rem; color: var(--accent); font-family: var(--font-sans);
+        }
 
-/* ── chrome ─────────────────────────────────────────── */
-.topbar{
-  position:fixed;top:0;left:0;right:0;height:46px;z-index:10;
-  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
-  font-size:11px;letter-spacing:.22em;text-transform:uppercase;font-weight:700;
-  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  color:var(--mute);border-bottom:1px solid rgba(124,77,255,.08);
-}
-.topbar .brand{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.footbar{
-  position:fixed;bottom:0;left:0;right:0;height:38px;z-index:10;
-  display:flex;align-items:center;justify-content:space-between;padding:0 24px;
-  font-size:11px;letter-spacing:.15em;font-weight:600;
-  background:rgba(255,255,255,.55);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
-  color:var(--mute);border-top:1px solid rgba(124,77,255,.08);
-}
-.footbar .pg{font-variant-numeric:tabular-nums;font-weight:700;color:var(--fg)}
-.progress{position:fixed;bottom:0;left:0;height:3px;width:0;z-index:11;background:var(--grad);transition:width .55s cubic-bezier(.7,0,.2,1)}
-.nav-arrow{
-  position:fixed;top:50%;transform:translateY(-50%);
-  width:48px;height:48px;border-radius:50%;
-  display:grid;place-items:center;font-size:22px;cursor:pointer;
-  z-index:10;color:var(--accent);background:#fff;border:none;outline:none;
-  box-shadow:var(--clay-sh);transition:all .25s;
-}
-.nav-arrow:hover{transform:translateY(-50%) scale(1.08);box-shadow:var(--clay-sh-hi)}
-.nav-arrow.prev{left:14px}.nav-arrow.next{right:14px}
+        .section {
+            background: var(--card-bg); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 2rem; margin-bottom: 2.2rem;
+            box-shadow: var(--shadow); scroll-margin-top: 1rem;
+        }
+        .section h2 {
+            font-size: 1.5rem; border-left: 4px solid var(--accent); padding-left: 0.9rem;
+            margin-bottom: 1.3rem; color: #0d3b30; font-weight: 700;
+        }
+        .section h3 {
+            font-size: 1.2rem; margin: 2rem 0 0.8rem; padding: 0.35rem 0;
+            border-bottom: 1px solid var(--border); color: #0f766e; font-weight: 700;
+        }
+        .section h4 {
+            font-size: 1.05rem; margin: 1.5rem 0 0.6rem; color: #2a8070; font-weight: 600;
+        }
 
-/* ── typography ─────────────────────────────────────── */
-.eyebrow{
-  display:inline-block;font-size:11px;letter-spacing:.3em;text-transform:uppercase;
-  margin-bottom:18px;font-weight:700;color:var(--accent2);
-}
-h1{font-size:clamp(40px,5.5vw,68px);font-weight:700;line-height:1.1;margin-bottom:18px;letter-spacing:-.01em}
-h1 b{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
-h2{font-size:clamp(28px,4vw,46px);font-weight:700;line-height:1.15;margin-bottom:16px}
-h2 b{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;font-weight:700}
-h3{font-size:19px;font-weight:700;margin-bottom:9px}
-h4{font-size:16px;font-weight:700;margin-bottom:5px}
-.lead{font-size:18px;line-height:1.85;color:var(--mute);max-width:780px;margin-bottom:26px;font-weight:500}
-p{line-height:1.75;font-size:15px;color:var(--mute);font-weight:500}
-.deck{font-size:18px;color:var(--mute);line-height:1.7;max-width:560px;margin-bottom:32px;font-weight:500}
-code{font-family:var(--mono);font-size:.9em;background:rgba(124,77,255,.1);padding:2px 7px;border-radius:6px;color:var(--accent);font-weight:600}
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 0.8rem; }
+        .info-card {
+            background: #fdfaf6; border-radius: 8px; padding: 1rem 1.3rem; border-left: 4px solid #ccc;
+        }
+        .info-card.concept  { border-color: #0f766e; background: #d1fae5; }
+        .info-card.case     { border-color: #b8956a; background: #fdf8f2; }
+        .info-card.tool     { border-color: #7a9f7a; background: #f5faf5; }
+        .info-card.history  { border-color: #8b7aaa; background: #f8f5fb; }
+        .info-card .label {
+            font-weight: 700; font-size: 0.85rem; margin-bottom: 0.5rem;
+            letter-spacing: 0.04em; text-transform: uppercase;
+            font-family: var(--font-sans); color: #0d3b30;
+        }
+        .info-card .content { font-size: 0.94rem; color: #4a3f33; }
+        .info-card .content ul { margin-top: 0.3rem; padding-left: 1.3rem; }
+        .info-card .content li { margin-bottom: 0.3rem; }
+        .info-card .example {
+            margin-top: 0.5rem; padding: 0.5rem 0.8rem; background: #fffef9;
+            border-radius: 4px; font-size: 0.9rem; color: #5c4a2a; border-left: 3px solid #c4b090;
+        }
 
-/* ── meta row ───────────────────────────────────────── */
-.meta{display:flex;gap:36px;margin-top:28px;flex-wrap:wrap}
-.meta>div{display:flex;flex-direction:column;gap:4px}
-.meta b{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent2);font-weight:700}
-.meta span{font-size:15px;font-weight:600;color:var(--fg)}
+        .insight-card {
+            background: var(--highlight); border: 1px solid #a0c8a0;
+            border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1rem;
+        }
+        .insight-card h4 { color: #0f766e; margin-bottom: 0.4rem; font-size: 1.05rem; }
+        .insight-card p { font-size: 0.94rem; color: #4a3f33; }
 
-/* ── clay card ──────────────────────────────────────── */
-.clay{background:#fff;border-radius:22px;padding:26px;box-shadow:var(--clay-sh);transition:all .3s}
-.clay:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
 
-/* ── toc ────────────────────────────────────────────── */
-.toc{display:flex;flex-direction:column;gap:12px;margin-top:24px;max-width:760px}
-.toc-item{
-  display:grid;grid-template-columns:52px 1fr 28px;
-  align-items:center;gap:18px;padding:16px 22px;
-  border-radius:18px;background:#fff;cursor:pointer;
-  box-shadow:var(--clay-sh);transition:all .25s;
-}
-.toc-item:hover{transform:translateX(6px);box-shadow:var(--clay-sh-hi)}
-.ti-num{
-  width:42px;height:42px;border-radius:12px;
-  display:grid;place-items:center;font-weight:700;font-size:15px;color:#fff;
-  background:var(--grad);box-shadow:0 4px 10px rgba(124,77,255,.28);
-}
-.ti-t{font-size:16px;font-weight:600;color:var(--fg)}
-.ti-a{color:var(--accent);font-size:20px;font-weight:700}
+        blockquote {
+            background: var(--highlight); border-left: 4px solid #5f9ea0;
+            margin: 1.2rem 0; padding: 1rem 1.4rem; font-style: italic;
+            border-radius: 0 6px 6px 0; color: #0d3b30;
+        }
+        blockquote .cite {
+            display: block; margin-top: 0.5rem; font-size: 0.85rem; font-style: normal; color: var(--text-muted);
+        }
 
-/* ── 两栏 ───────────────────────────────────────────── */
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px;align-items:start}
-.three-col{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
+        table.extension { width: 100%; border-collapse: collapse; font-size: 0.94rem; }
+        table.extension th {
+            background: #d1fae5; padding: 0.6rem 1rem; text-align: left;
+            font-weight: 700; color: #0f766e; border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans); width: 24%;
+        }
+        table.extension td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); color: #4a3f33; vertical-align: top; }
+        table.extension tr:hover td { background: #fafaf5; }
+        hr.divider { border: none; border-top: 1px dashed var(--border); margin: 2.5rem 0; }
 
-/* ── 代码块 ─────────────────────────────────────────── */
-.code-block{
-  background:#2d1b4e;color:#fff;border-radius:18px;padding:22px 20px;
-  font-family:var(--mono);font-size:13px;line-height:1.9;
-  box-shadow:var(--clay-sh);
-}
-.code-block .sel{color:#ffb951}   /* selector */
-.code-block .prop{color:#7ad1ff}  /* property */
-.code-block .val{color:#a3e635}   /* value */
-.code-block .pun{color:#9b8fb8}   /* punctuation */
-.code-block .cmt{color:#6b5fa8;font-style:italic} /* comment */
-.code-block .tag{color:#ff8fab}   /* html tag */
-.code-block .attr{color:#7ad1ff}  /* html attr */
-.code-block .str{color:#a3e635}   /* string */
+        .back-to-top {
+            position: fixed; bottom: 2rem; right: 2rem; background: #0f766e; color: #fff;
+            border: none; border-radius: 50%; width: 45px; height: 45px; font-size: 1.2rem;
+            cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 99;
+        }
+        .back-to-top:hover { background: #0d5b50; }
 
-/* ── 预览框 ─────────────────────────────────────────── */
-.preview-box{
-  background:#fff;border-radius:18px;padding:28px 24px;
-  box-shadow:var(--clay-sh);
-}
-.preview-label{
-  font-size:10px;letter-spacing:.25em;text-transform:uppercase;
-  color:var(--accent2);font-weight:700;margin-bottom:14px;
-}
-
-/* ── 属性演示卡 ─────────────────────────────────────── */
-.prop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px}
-.prop-card{
-  background:#fff;border-radius:18px;padding:20px;
-  box-shadow:var(--clay-sh);text-align:center;
-  transition:all .25s;
-}
-.prop-card:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
-.prop-card .emoji{font-size:34px;display:block;margin-bottom:10px;line-height:1}
-.prop-card .prop-name{
-  font-family:var(--mono);font-size:13px;font-weight:700;
-  color:var(--accent);margin-bottom:8px;display:block;
-  background:rgba(124,77,255,.09);padding:4px 8px;border-radius:8px;
-}
-.prop-card h4{font-size:14px;color:var(--fg);margin-bottom:6px}
-.prop-card p{font-size:12px;color:var(--mute);line-height:1.65}
-
-/* ── 盒模型可视化 ────────────────────────────────────── */
-.box-model{
-  display:flex;align-items:center;justify-content:center;
-  margin-top:24px;
-}
-.bm-margin{
-  background:rgba(255,185,81,.25);border:2px dashed var(--accent4);
-  border-radius:24px;padding:20px;display:flex;align-items:center;justify-content:center;
-  position:relative;
-}
-.bm-border{
-  background:rgba(255,112,166,.2);border:3px solid var(--accent2);
-  border-radius:16px;padding:16px;display:flex;align-items:center;justify-content:center;
-}
-.bm-padding{
-  background:rgba(74,222,128,.2);border:2px solid var(--accent5);
-  border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center;
-}
-.bm-content{
-  background:#fff;border-radius:6px;padding:14px 22px;
-  font-weight:700;font-size:15px;color:var(--fg);
-  box-shadow:var(--clay-sh);text-align:center;
-}
-.bm-label{
-  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-  position:absolute;top:-14px;left:50%;transform:translateX(-50%);
-  background:#fff;padding:2px 10px;border-radius:20px;white-space:nowrap;
-  box-shadow:0 2px 8px rgba(124,77,255,.12);
-}
-.bm-margin .bm-label{color:var(--accent4)}
-.bm-border .bm-label{color:var(--accent2)}
-.bm-padding .bm-label{color:var(--accent5)}
-.bm-content .bm-label{color:var(--accent);position:absolute;top:-12px;font-size:10px}
-.bm-border{position:relative}
-.bm-padding{position:relative}
-.bm-margin{position:relative}
-
-.bm-legend{
-  display:flex;flex-direction:column;gap:10px;margin-left:36px;
-}
-.bm-legend-item{display:flex;align-items:center;gap:10px}
-.bm-legend-dot{width:14px;height:14px;border-radius:4px;flex-shrink:0}
-
-/* ── 选择器演示 ─────────────────────────────────────── */
-.selector-rows{display:flex;flex-direction:column;gap:12px;margin-top:18px}
-.selector-row{
-  display:grid;grid-template-columns:180px 1fr 1fr;gap:16px;
-  align-items:center;padding:14px 18px;
-  background:#fff;border-radius:16px;box-shadow:var(--clay-sh);
-}
-.selector-tag{
-  font-family:var(--mono);font-size:13px;font-weight:700;
-  color:#fff;background:var(--grad);
-  padding:5px 12px;border-radius:10px;display:inline-block;text-align:center;
-}
-.selector-explain{font-size:14px;color:var(--mute);line-height:1.5}
-.selector-example{font-size:13px;font-family:var(--mono);color:var(--accent);background:rgba(124,77,255,.08);padding:4px 10px;border-radius:8px}
-
-/* ── 如何连接 ────────────────────────────────────────── */
-.connect-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:22px}
-.connect-card{
-  background:#fff;border-radius:20px;padding:24px 20px;
-  box-shadow:var(--clay-sh);text-align:center;transition:all .25s;
-}
-.connect-card:hover{transform:translateY(-4px);box-shadow:var(--clay-sh-hi)}
-.connect-card .emoji{font-size:40px;display:block;margin-bottom:12px;line-height:1}
-.connect-card h3{font-size:16px;color:var(--fg);margin-bottom:10px}
-.connect-card p{font-size:13px;color:var(--mute);line-height:1.7}
-.connect-card .rec{
-  margin-top:12px;font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;
-  padding:3px 10px;border-radius:20px;display:inline-block;
-}
-.rec-best{background:rgba(74,222,128,.2);color:#16a34a}
-.rec-ok{background:rgba(124,77,255,.12);color:var(--accent)}
-.rec-bad{background:rgba(255,112,166,.15);color:#e11d48}
-
-/* ── before/after 卡对比 ────────────────────────────── */
-.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:22px}
-.ba-card{
-  background:#fff;border-radius:20px;padding:24px;
-  box-shadow:var(--clay-sh);
-}
-.ba-label{
-  font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;
-  margin-bottom:14px;
-}
-.ba-label.before-l{color:#94a3b8}
-.ba-label.after-l{color:var(--accent2)}
-
-/* ── live demo card (styled) ────────────────────────── */
-.demo-card-plain{
-  border:1px solid #e2e8f0;border-radius:4px;padding:16px;
-  font-family:sans-serif;
-}
-.demo-card-plain h3{font-size:15px;color:#1a1a1a;margin-bottom:6px}
-.demo-card-plain p{font-size:13px;color:#555;line-height:1.5}
-
-.demo-card-styled{
-  background:linear-gradient(135deg,#ffd6e8,#c7d8ff);
-  border-radius:22px;padding:24px;
-  box-shadow:0 12px 28px rgba(124,77,255,.18);
-}
-.demo-card-styled h3{font-size:20px;font-weight:700;color:#3d2a5c;margin-bottom:8px}
-.demo-card-styled p{font-size:14px;color:#6a5a8d;line-height:1.7}
-.demo-card-styled .tag-pill{
-  display:inline-block;background:#7c4dff;color:#fff;
-  font-size:11px;font-weight:700;padding:4px 10px;border-radius:20px;margin-top:12px;
-}
-
-/* ── end ────────────────────────────────────────────── */
-.end-line{width:60px;height:4px;background:var(--grad);border-radius:2px;margin:22px 0}
-.e-tag{font-size:17px;color:var(--mute);margin-bottom:30px;line-height:1.75;max-width:620px}
-.next-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:4px}
-.next-cards .clay{padding:20px}
-.next-cards .emoji{font-size:30px;display:block;margin-bottom:10px}
-.next-cards h4{font-size:14px;color:var(--fg);margin-bottom:5px}
-.next-cards p{font-size:12px;color:var(--mute);line-height:1.65}
-
-@media print{
-  @page{size:1280px 800px;margin:0}
-  html,body{height:auto;overflow:visible;background:#fff}
-  .topbar,.footbar,.progress,.nav-arrow{display:none !important}
-  .stage{position:static}
-  .slide{
-    position:relative;inset:auto;width:100%;height:800px;
-    page-break-after:always;break-after:page;
-    opacity:1!important;visibility:visible!important;transform:none!important;
-    transition:none!important;animation:none!important;overflow:hidden;
-  }
-  .slide:last-child{page-break-after:auto;break-after:auto}
-  .slide *{animation:none!important;transition:none!important}
-}
-</style>
+        @media (max-width: 900px) {
+            .sidebar { display: none; }
+            .main { margin-left: 0; padding: 1rem; }
+            .info-grid, .two-col { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8rem; }
+        }
+    </style>
 </head>
 <body>
 
-<div class="topbar">
-  <div class="brand">CSS 入门 · Lite</div>
-  <div id="topCh"></div>
-</div>
+<!-- ==================== 侧边栏目录 ==================== -->
+<nav class="sidebar" id="sidebar">
+    <h3>📚 全书章节目录</h3>
+    <ul class="toc-list">
+        <li><a href="#header">📖 书籍信息</a></li>
+        <li><a href="#knowledge-tree">🌳 全书知识结构树</a></li>
+        <li><a href="#part1">🪙 货币篇（第1-2篇）</a></li>
+        <li><a href="#ch1" class="toc-l2">货币与货币制度</a></li>
+        <li><a href="#ch2" class="toc-l2">国际货币体系</a></li>
+        <li><a href="#part2">💹 信用与利率篇（第3-4篇）</a></li>
+        <li><a href="#ch3" class="toc-l2">信用</a></li>
+        <li><a href="#ch4" class="toc-l2">利息与利率</a></li>
+        <li><a href="#ch5" class="toc-l2">外汇与汇率</a></li>
+        <li><a href="#part3">🏦 金融市场篇（第5篇）</a></li>
+        <li><a href="#ch6" class="toc-l2">金融市场概述</a></li>
+        <li><a href="#ch7" class="toc-l2">资本市场与货币市场</a></li>
+        <li><a href="#ch8" class="toc-l2">衍生工具市场</a></li>
+        <li><a href="#part4">🏛️ 金融机构篇（第6篇）</a></li>
+        <li><a href="#ch9" class="toc-l2">金融机构概述</a></li>
+        <li><a href="#ch10" class="toc-l2">存款类金融机构</a></li>
+        <li><a href="#ch11" class="toc-l2">非存款类金融机构</a></li>
+        <li><a href="#part5">⚙️ 货币机制篇（第7-10篇）</a></li>
+        <li><a href="#ch12" class="toc-l2">现代货币创造机制</a></li>
+        <li><a href="#ch13" class="toc-l2">货币需求</a></li>
+        <li><a href="#ch14" class="toc-l2">货币供给</a></li>
+        <li><a href="#ch15" class="toc-l2">货币均衡与失衡</a></li>
+        <li><a href="#part6">📉 宏观调控篇（第11-12篇）</a></li>
+        <li><a href="#ch16" class="toc-l2">通货膨胀与通货紧缩</a></li>
+        <li><a href="#ch17" class="toc-l2">货币政策</a></li>
+        <li><a href="#part7">🛡️ 金融监管与发展篇（第13-14篇）</a></li>
+        <li><a href="#ch18" class="toc-l2">金融监管</a></li>
+        <li><a href="#ch19" class="toc-l2">金融发展与金融创新</a></li>
+        <li><a href="#cognition">🧠 贯穿主线</a></li>
+        <li><a href="#extension">🔍 延伸与比较</a></li>
+    </ul>
+</nav>
 
-<div class="stage" id="stage">
+<!-- ==================== 主内容区 ==================== -->
+<div class="main">
 
-  <!-- P1 封面 -->
-  <section class="slide active" data-name="封面">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">For Absolute Beginners · 零基础友好版</span></div>
-      <h1 class="reveal">给网页<br><b>穿衣服的那门课</b></h1>
-      <p class="deck reveal">HTML 搭好了骨架，接下来用 CSS 决定颜色、字体、间距、卡片——一切"好不好看"的事，都在这里。</p>
-      <div class="meta reveal">
-        <div><b>难度</b><span>⭐ 入门</span></div>
-        <div><b>页数</b><span>8 页</span></div>
-        <div><b>结尾</b><span>能给自己的网页换颜色和样式</span></div>
-      </div>
+    <!-- ==================== 头部 ==================== -->
+    <div class="header" id="header">
+        <h1>《金融学》（人大版·黄达主编）</h1>
+        <div class="subtitle">货币、信用、市场、机构与宏观调控的系统框架</div>
+        <div class="meta">
+            <span><strong>主编</strong>：黄达</span>
+            <span><strong>出版社</strong>：中国人民大学出版社</span>
+            <span><strong>类型</strong>：B类·教材通识型</span>
+            <span><strong>色彩方案</strong>：墨绿哲思</span>
+        </div>
+        <div class="framework-badges">
+            <span class="badge">🪙 货币制度</span>
+            <span class="badge">💹 信用与利率</span>
+            <span class="badge">🏦 金融市场</span>
+            <span class="badge">⚙️ 货币宏观</span>
+            <span class="badge">🛡️ 监管与创新</span>
+        </div>
+        <p style="margin-top:1rem; color:#0f766e; font-size:0.92rem;">
+            <strong>贯穿主线</strong>：从微观金融工具到宏观货币运行，从静态制度到动态均衡，从国内到国际
+        </p>
     </div>
-  </section>
 
-  <!-- P2 目录 -->
-  <section class="slide" data-name="目录">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">Index · 今天聊这 6 件事</span></div>
-      <h1 class="reveal">我们要<b>聊什么</b></h1>
-      <div class="toc reveal">
-        <div class="toc-item" onclick="goto(2)"><div class="ti-num">01</div><div class="ti-t">CSS 是个啥，怎么和 HTML 搭档</div><div class="ti-a">→</div></div>
-        <div class="toc-item" onclick="goto(3)"><div class="ti-num">02</div><div class="ti-t">一句 CSS 长什么样</div><div class="ti-a">→</div></div>
-        <div class="toc-item" onclick="goto(4)"><div class="ti-num">03</div><div class="ti-t">最常用的 9 个属性</div><div class="ti-a">→</div></div>
-        <div class="toc-item" onclick="goto(5)"><div class="ti-num">04</div><div class="ti-t">盒模型：每个元素都是个盒子</div><div class="ti-a">→</div></div>
-        <div class="toc-item" onclick="goto(6)"><div class="ti-num">05</div><div class="ti-t">同一个 HTML，换一套 CSS 就换了脸</div><div class="ti-a">→</div></div>
-        <div class="toc-item" onclick="goto(7)"><div class="ti-num">06</div><div class="ti-t">下一步学什么</div><div class="ti-a">→</div></div>
-      </div>
+    <!-- ==================== 全书知识结构树 ==================== -->
+    <div class="section" id="knowledge-tree">
+        <h2>全书知识结构树</h2>
+        <div style="background:var(--accent-light); border-radius:8px; padding:1.5rem 2rem; font-family:var(--font-sans); line-height:2.2;">
+            <div style="font-weight:700; color:#0d3b30; font-size:1.05rem;">《金融学》七模块 × 19核心章节</div>
+            <div style="border-top:1px dashed #a0c8a0; margin:0.6rem 0;"></div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#0f766e;">├─ 货币篇（第1-2篇）—— 货币的本质与制度</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 货币的定义与职能 · 从商品货币到信用货币</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 货币制度 · 国际货币体系的演变</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#0f766e;">├─ 信用与利率篇（第3-4篇）—— 金融的基石</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 信用形式与信用工具 · 高利贷到现代信用</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 利息的本质与利率决定理论</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 外汇与汇率 · 开放经济下的货币关系</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#0f766e;">├─ 金融市场篇（第5篇）—— 资金配置的核心平台</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 金融市场概述 · 功能与结构</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 资本市场与货币市场</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 衍生工具市场 · 期货、期权、互换</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#0f766e;">├─ 金融机构篇（第6篇）—— 金融活动的组织载体</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 存款类金融机构（商业银行等）</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 非存款类金融机构（保险、信托、基金等）</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#0f766e;">├─ 货币机制篇（第7-10篇）—— 货币运行的内在逻辑</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 现代货币创造机制 · 存款乘数与基础货币</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 货币需求理论 · 从费雪到弗里德曼</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 货币供给 · 内生性与外生性之争</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 货币均衡与社会总供求</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#0f766e;">├─ 宏观调控篇（第11-12篇）—— 货币失衡的治理</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 通货膨胀与通货紧缩</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 货币政策的目标、工具与传导</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#0f766e;">└─ 监管与发展篇（第13-14篇）—— 金融体系的边界</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 金融监管 · 巴塞尔协议与系统性风险</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 金融发展与金融创新 · 金融深化与金融约束</div>
+        </div>
     </div>
-  </section>
 
-  <!-- P3 CSS 是什么 + 三种连接方式 -->
-  <section class="slide" data-name="CSS 是什么">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">Section 01</span></div>
-      <h2 class="reveal">CSS 是<b>造型师</b>，HTML 是<b>模特</b></h2>
-      <p class="lead reveal">CSS（层叠样式表）专门告诉浏览器"怎么画"。HTML 只管&ldquo;有什么&rdquo;，CSS 才管&ldquo;好不好看&rdquo;。它们是永远搭档的两个人。</p>
+    <!-- ==================== 货币篇 ==================== -->
+    <div class="section" id="part1">
+        <h2>货币篇 · 货币的本质与制度（第1-2篇）</h2>
 
-      <div class="connect-cards reveal">
-        <div class="connect-card">
-          <span class="emoji">📄</span>
-          <h3>写在单独文件里</h3>
-          <p>新建 <code>style.css</code>，在 HTML 里用 <code>&lt;link&gt;</code> 引入。</p>
-          <div class="rec rec-best">✅ 推荐做法</div>
-          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:14px 16px">
-<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="str">"stylesheet"</span>
-      <span class="attr">href</span>=<span class="str">"style.css"</span><span class="tag">&gt;</span>
-          </div>
-        </div>
-        <div class="connect-card">
-          <span class="emoji">🏷️</span>
-          <h3>写在 &lt;style&gt; 标签里</h3>
-          <p>直接放在 HTML 的 <code>&lt;head&gt;</code> 里，不用额外文件。</p>
-          <div class="rec rec-ok">⚡ 快速测试用</div>
-          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:14px 16px">
-<span class="tag">&lt;style&gt;</span>
-  <span class="sel">h1</span> <span class="pun">{</span> <span class="prop">color</span><span class="pun">:</span> <span class="val">red</span><span class="pun">; }</span>
-<span class="tag">&lt;/style&gt;</span>
-          </div>
-        </div>
-        <div class="connect-card">
-          <span class="emoji">✍️</span>
-          <h3>直接写在标签上</h3>
-          <p>用 <code>style="..."</code> 属性，直接给某个元素设样式。</p>
-          <div class="rec rec-bad">⚠️ 不建议滥用</div>
-          <div class="code-block" style="margin-top:14px;font-size:11.5px;padding:14px 16px">
-<span class="tag">&lt;p</span> <span class="attr">style</span>=<span class="str">"color:red"</span><span class="tag">&gt;</span>
-  文字
-<span class="tag">&lt;/p&gt;</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- P4 一句 CSS 的解剖 + 选择器 -->
-  <section class="slide" data-name="CSS 语法解剖">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">Section 02</span></div>
-      <h2 class="reveal">一句 CSS 由<b>三个部分</b>组成</h2>
-
-      <div class="two-col reveal">
-        <div>
-          <div class="preview-box" style="text-align:center;padding:36px 28px">
-            <div style="font-family:var(--mono);font-size:clamp(18px,2.8vw,32px);font-weight:700;line-height:1.9;color:var(--fg)">
-              <span style="color:#ffb951">h1</span>
-              <span style="color:var(--mute)"> { </span><br>
-              &nbsp;&nbsp;<span style="color:#7ad1ff">color</span><span style="color:var(--mute)">: </span><span style="color:#a3e635">purple</span><span style="color:var(--mute)">;</span><br>
-              <span style="color:var(--mute)">}</span>
-            </div>
-            <div style="display:flex;justify-content:space-around;margin-top:28px;gap:10px">
-              <div style="text-align:center">
-                <div style="width:12px;height:12px;background:var(--accent4);border-radius:50%;margin:0 auto 6px"></div>
-                <div style="font-size:12px;font-weight:700;color:var(--accent4)">选择器</div>
-                <div style="font-size:11px;color:var(--mute);margin-top:3px">"要打扮谁"</div>
-              </div>
-              <div style="text-align:center">
-                <div style="width:12px;height:12px;background:var(--accent3);border-radius:50%;margin:0 auto 6px"></div>
-                <div style="font-size:12px;font-weight:700;color:var(--accent3)">属性</div>
-                <div style="font-size:11px;color:var(--mute);margin-top:3px">"打扮什么"</div>
-              </div>
-              <div style="text-align:center">
-                <div style="width:12px;height:12px;background:var(--accent5);border-radius:50%;margin:0 auto 6px"></div>
-                <div style="font-size:12px;font-weight:700;color:var(--accent5)">值</div>
-                <div style="font-size:11px;color:var(--mute);margin-top:3px">"打扮成啥样"</div>
-              </div>
-            </div>
-          </div>
-
-          <p style="font-size:13px;color:var(--mute);text-align:center;margin-top:14px">💡 每条声明末尾都有分号 <code>;</code>，别忘了</p>
-        </div>
-
-        <div>
-          <h3 style="margin-bottom:14px;color:var(--fg)">三种最常用的选择器</h3>
-          <div class="selector-rows">
-            <div class="selector-row">
-              <span class="selector-tag">标签名</span>
-              <div class="selector-explain">选中页面上所有这个标签<br><span style="font-size:12px;opacity:.8">比如所有 h1 都变红</span></div>
-              <span class="selector-example">h1 { color: red; }</span>
-            </div>
-            <div class="selector-row">
-              <span class="selector-tag">.class 名</span>
-              <div class="selector-explain">选中带这个 class 的元素<br><span style="font-size:12px;opacity:.8">精准点名，推荐用这个</span></div>
-              <span class="selector-example">.card { ... }</span>
-            </div>
-            <div class="selector-row">
-              <span class="selector-tag">#id 名</span>
-              <div class="selector-explain">选中这个唯一 id 的元素<br><span style="font-size:12px;opacity:.8">全页面只有一个目标</span></div>
-              <span class="selector-example">#logo { ... }</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- P5 最常用的 9 个属性 -->
-  <section class="slide" data-name="9 个常用属性">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">Section 03</span></div>
-      <h2 class="reveal">先记住<b>这 9 个属性</b>就能玩转样式</h2>
-
-      <div class="prop-grid reveal">
-        <div class="prop-card">
-          <span class="emoji">🎨</span>
-          <span class="prop-name">color</span>
-          <h4>文字颜色</h4>
-          <p><code>color: red;</code><br><code>color: #7c4dff;</code><br>颜色名或十六进制码</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">🖼️</span>
-          <span class="prop-name">background</span>
-          <h4>背景颜色/图片</h4>
-          <p><code>background: pink;</code><br><code>background: #fff;</code><br>也可以放渐变或图片</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">🔤</span>
-          <span class="prop-name">font-size</span>
-          <h4>字号大小</h4>
-          <p><code>font-size: 16px;</code><br><code>font-size: 1.5rem;</code><br>px 是像素，最直观</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">💪</span>
-          <span class="prop-name">font-weight</span>
-          <h4>文字粗细</h4>
-          <p><code>font-weight: bold;</code><br><code>font-weight: 700;</code><br>400 = 正常，700 = 粗</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">📐</span>
-          <span class="prop-name">padding</span>
-          <h4>内边距</h4>
-          <p><code>padding: 20px;</code><br>内容和边框之间的空白<br>像给礼物盒子加泡沫</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">🏕️</span>
-          <span class="prop-name">margin</span>
-          <h4>外边距</h4>
-          <p><code>margin: 16px auto;</code><br>元素和元素之间的距离<br>auto 可以实现居中</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">🔲</span>
-          <span class="prop-name">border-radius</span>
-          <h4>圆角</h4>
-          <p><code>border-radius: 12px;</code><br>数值越大越圆<br>50% = 变成圆形</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">🌫️</span>
-          <span class="prop-name">box-shadow</span>
-          <h4>投影</h4>
-          <p><code>box-shadow: 0 4px 12px rgba(0,0,0,.15);</code><br>让卡片"浮"起来</p>
-        </div>
-        <div class="prop-card">
-          <span class="emoji">📏</span>
-          <span class="prop-name">width / height</span>
-          <h4>宽 / 高</h4>
-          <p><code>width: 300px;</code><br><code>width: 100%;</code><br>% 是相对父元素的比例</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- P6 盒模型 -->
-  <section class="slide" data-name="盒模型">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">Section 04 · Box Model</span></div>
-      <h2 class="reveal">每个元素都是一个<b>嵌套的盒子</b></h2>
-      <p class="lead reveal">这是 CSS 最重要的概念。看懂这张图，布局就不再玄学了。</p>
-
-      <div class="two-col reveal" style="align-items:center">
-        <div class="box-model">
-          <div class="bm-margin">
-            <div class="bm-label">Margin · 外边距</div>
-            <div class="bm-border">
-              <div class="bm-label">Border · 边框</div>
-              <div class="bm-padding">
-                <div class="bm-label">Padding · 内边距</div>
-                <div class="bm-content" style="position:relative">
-                  <div class="bm-label">Content · 内容</div>
-                  你好
+        <h3 id="ch1">货币与货币制度</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">货币的定义：从职能视角切入</div>
+                <div class="content">
+                    马克思定义：货币是固定充当一般等价物的特殊商品。<br>
+                    现代视角：货币是在商品与劳务支付及债务清偿中被普遍接受的任何东西。<br>
+                    <strong>五大职能</strong>：价值尺度（标价）、流通手段（交易媒介）、支付手段（延期支付）、贮藏手段（保存价值）、世界货币（跨国流通）。其中<strong>价值尺度与流通手段</strong>是基本职能。
                 </div>
-              </div>
+                <div class="example">💡 <strong>例子</strong>：你在超市买一瓶水付3元——3元是价值尺度（标价），支付行为是流通手段。而你用信用卡先买后付，则是支付手段的体现。纸币本身没有使用价值，但全社会"普遍接受"它，所以它是货币。</div>
             </div>
-          </div>
+            <div class="info-card history">
+                <div class="label">货币形态的演化</div>
+                <div class="content">
+                    <strong>实物货币</strong>（贝壳、牛羊）→ <strong>金属货币</strong>（金、银、铜）→ <strong>信用货币</strong>（纸币、存款货币）→ <strong>电子货币</strong>（数字支付）。<br>
+                    每一次演化都降低了交易成本：金属货币解决了实物货币不可分割的问题，信用货币解决了金属运输的麻烦，电子货币进一步消除了物理媒介。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：中国古代"交子"是世界上最早的纸币，出现在北宋四川。当时四川用铁钱，买一匹丝绸要带几十斤铁钱出门，纸币的出现是交易效率的革命。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">货币制度的核心要素</div>
+                <div class="content">
+                    <strong>货币材料</strong>（本位币用什么金属）→ <strong>货币单位</strong>（名称与含金属量）→ <strong>流通中货币的种类</strong>（本位币与辅币）→ <strong>法定支付能力</strong>（无限法偿 vs 有限法偿）→ <strong>铸造权与发行权</strong>。<br>
+                    <strong>本位币</strong>是主币，具有无限法偿能力（任何数额的支付对方不得拒绝）；<strong>辅币</strong>是小面额货币，有限法偿（超出一定数额对方可以拒收）。
+                </div>
+            </div>
+            <div class="info-card history">
+                <div class="label">货币制度的演变</div>
+                <div class="content">
+                    <strong>银本位制</strong> → <strong>金银复本位制</strong>（格雷欣法则：劣币驱逐良币）→ <strong>金本位制</strong>（金币自由铸造、自由兑换、自由输出）→ <strong>金块本位制与金汇兑本位制</strong>（残缺的金本位）→ <strong>不兑现的信用货币制度</strong>（当今世界的主流）。<br>
+                    格雷欣法则：当两种法定面值相同但实际价值不同的货币同时流通时，实际价值高的（良币）会被贮藏或熔化退出流通，实际价值低的（劣币）充斥市场。
+                </div>
+            </div>
         </div>
 
-        <div>
-          <div class="clay" style="margin-bottom:16px">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:14px;height:14px;border-radius:4px;background:rgba(255,185,81,.6);border:2px dashed var(--accent4)"></div>
-              <h4 style="color:var(--accent4)">Margin — 外边距</h4>
+        <h3 id="ch2">国际货币体系</h3>
+        <div class="info-grid">
+            <div class="info-card history">
+                <div class="label">国际货币体系的演进</div>
+                <div class="content">
+                    <strong>国际金本位制</strong>（19世纪后半期—一战前）：汇率由铸币平价决定，波动范围限于黄金输送点，自动调节国际收支。<br>
+                    <strong>布雷顿森林体系</strong>（1944—1971）：美元与黄金挂钩（1盎司=35美元），其他国家货币与美元挂钩，实行可调整的固定汇率。特里芬难题——美元要同时满足世界清偿力需求和维持对黄金的信心，二者不可兼得。<br>
+                    <strong>牙买加体系</strong>（1976至今）：浮动汇率合法化、黄金非货币化、多种货币并存。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：布雷顿森林体系崩溃的直接原因是 Nixon Shock——1971年尼克松宣布美元不再兑换黄金，因为美国黄金储备已不足以支撑全球美元流通量。</div>
             </div>
-            <p style="font-size:13px">元素和其它元素之间的距离。就像两栋楼之间的间隔。</p>
-            <div style="font-family:var(--mono);font-size:12px;background:rgba(124,77,255,.07);padding:8px 12px;border-radius:8px;margin-top:10px;color:var(--accent)">margin: 上 右 下 左;</div>
-          </div>
-          <div class="clay" style="margin-bottom:16px">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:14px;height:14px;border-radius:4px;background:rgba(255,112,166,.3);border:2px solid var(--accent2)"></div>
-              <h4 style="color:var(--accent2)">Border — 边框</h4>
+            <div class="info-card concept">
+                <div class="label">特里芬难题</div>
+                <div class="content">
+                    储备货币发行国必须向世界提供足够的清偿力（需要大量输出美元），但同时要维持货币信心（需要控制美元发行量保证可兑黄金）。<br>
+                    <strong>清偿力需求</strong> → 美元超发 → 信心下降 → 挤兑黄金 → 体系崩溃。这个逻辑链条精确预言了布雷顿森林体系的命运。<br>
+                    今天美元体系同样面临类似矛盾——只是不再有"兑黄金"的硬约束，信心更多来自美国经济实力和军事霸权。
+                </div>
             </div>
-            <p style="font-size:13px">元素的外框线。可以设粗细、颜色、实线/虚线。</p>
-            <div style="font-family:var(--mono);font-size:12px;background:rgba(124,77,255,.07);padding:8px 12px;border-radius:8px;margin-top:10px;color:var(--accent)">border: 2px solid #ccc;</div>
-          </div>
-          <div class="clay">
-            <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-              <div style="width:14px;height:14px;border-radius:4px;background:rgba(74,222,128,.3);border:2px solid var(--accent5)"></div>
-              <h4 style="color:#16a34a">Padding — 内边距</h4>
-            </div>
-            <p style="font-size:13px">内容和边框之间的呼吸空间。让文字不贴着边框，像礼盒里的泡沫。</p>
-            <div style="font-family:var(--mono);font-size:12px;background:rgba(124,77,255,.07);padding:8px 12px;border-radius:8px;margin-top:10px;color:var(--accent)">padding: 16px 24px;</div>
-          </div>
         </div>
-      </div>
     </div>
-  </section>
 
-  <!-- P7 Before / After 对比 -->
-  <section class="slide" data-name="样式前后对比">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">Section 05 · Before vs After</span></div>
-      <h2 class="reveal">同一个 HTML，换一套 CSS <b>就换了脸</b></h2>
-      <p class="lead reveal" style="margin-bottom:16px">这是你上次写的那个 HTML 卡片，左边没有 CSS，右边加了 12 行 CSS。</p>
+    <!-- ==================== 信用与利率篇 ==================== -->
+    <div class="section" id="part2">
+        <h2>信用与利率篇 · 金融的基石（第3-4篇）</h2>
 
-      <div class="ba-grid reveal">
-        <div class="ba-card">
-          <div class="ba-label before-l">▼ 没有 CSS 的样子</div>
-          <div class="demo-card-plain">
-            <h3>我最喜欢的书</h3>
-            <p>《活着》——余华。读完合上书，很久说不出话来。</p>
-          </div>
-          <div class="code-block" style="margin-top:16px;font-size:12px;padding:16px">
-<span class="cmt">/* 什么都没写 */</span><br>
-<span class="cmt">/* 浏览器默认样式 */</span>
-          </div>
+        <h3 id="ch3">信用</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">信用的本质：以偿还为条件的价值单方面转移</div>
+                <div class="content">
+                    信用与商品买卖不同：商品买卖是价值的双向对等转移（一手交钱一手交货），信用是价值的<strong>单方面转移</strong>（现在借出、将来偿还）。<br>
+                    信用关系包含三个要素：<strong>债权债务关系</strong>、<strong>时间间隔</strong>（借与还之间的时间差）、<strong>信任</strong>（相信对方会偿还）。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">信用形式分类</div>
+                <div class="content">
+                    <strong>商业信用</strong>：企业之间以商品形式提供的信用（赊销、预付），是最基础的信用形式。<br>
+                    <strong>银行信用</strong>：银行以货币形式提供的信用，克服了商业信用的规模和方向限制。<br>
+                    <strong>国家信用</strong>：政府以债务人身份发行的信用（国债）。<br>
+                    <strong>消费信用</strong>：对消费者个人提供的信用（信用卡、房贷、车贷）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：工厂赊销钢材给下游制造商——这是商业信用，以商品为媒介。但制造商需要货币而非钢材时，就转向银行信用。银行信用的出现使信用活动不再受限于具体的商品交易方向。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">信用工具（金融工具）</div>
+                <div class="content">
+                    信用关系的书面凭证就是信用工具/金融工具。<br>
+                    <strong>特征</strong>：偿还期（到期时间）、流动性（可变现速度）、本金安全性（违约风险）、收益率。<br>
+                    四者之间存在权衡关系：偿还期越长 → 流动性越低、风险越高 → 收益率往往越高。
+                </div>
+            </div>
+            <div class="info-card history">
+                <div class="label">高利贷与信用的历史</div>
+                <div class="content">
+                    高利贷是人类最早的信用形式，利息极高，几乎不可偿还。<br>
+                    资本主义的发展需要两件事：<strong>1. 有足够多的货币可供借贷</strong>（资金供给）；<strong>2. 利息率不能太高</strong>（资金成本可控）。高利贷既限制了资金供给又提高了成本，所以新兴资产阶级必然要反对它。<br>
+                    现代信用制度是在反对高利贷的斗争中逐步确立的。
+                </div>
+            </div>
         </div>
 
-        <div class="ba-card">
-          <div class="ba-label after-l">✨ 加了 12 行 CSS 的样子</div>
-          <div class="demo-card-styled">
-            <h3>我最喜欢的书</h3>
-            <p>《活着》——余华。读完合上书，很久说不出话来。</p>
-            <span class="tag-pill">📚 文学</span>
-          </div>
-          <div class="code-block" style="margin-top:16px;font-size:11.5px;padding:16px;line-height:1.8">
-<span class="sel">.card</span> <span class="pun">{</span>
-  <span class="prop">background</span><span class="pun">:</span> <span class="val">linear-gradient(135deg,#ffd6e8,#c7d8ff)</span><span class="pun">;</span>
-  <span class="prop">border-radius</span><span class="pun">:</span> <span class="val">22px</span><span class="pun">;</span>
-  <span class="prop">padding</span><span class="pun">:</span> <span class="val">24px</span><span class="pun">;</span>
-  <span class="prop">box-shadow</span><span class="pun">:</span> <span class="val">0 12px 28px rgba(124,77,255,.18)</span><span class="pun">;</span>
-<span class="pun">}</span>
-<span class="sel">.card h3</span> <span class="pun">{</span>
-  <span class="prop">font-size</span><span class="pun">:</span> <span class="val">20px</span><span class="pun">;</span>
-  <span class="prop">color</span><span class="pun">:</span> <span class="val">#3d2a5c</span><span class="pun">;</span>
-<span class="pun">}</span>
-<span class="sel">.card p</span> <span class="pun">{</span>
-  <span class="prop">color</span><span class="pun">:</span> <span class="val">#6a5a8d</span><span class="pun">;</span>
-  <span class="prop">line-height</span><span class="pun">:</span> <span class="val">1.7</span><span class="pun">;</span>
-<span class="pun">}</span>
-          </div>
+        <h3 id="ch4">利息与利率</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">利息的本质</div>
+                <div class="content">
+                    <strong>马克思视角</strong>：利息是利润的一部分，是职能资本家因使用借贷资本而支付给借贷资本家的报酬。利息率的上限是平均利润率，下限是零。<br>
+                    <strong>西方经济学视角</strong>：利息是推迟消费的补偿（时间偏好理论）、是资本的边际生产率、是流动性偏好的报酬（凯恩斯）。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">利率决定理论（三大经典）</div>
+                <div class="content">
+                    <strong>古典利率理论</strong>（费雪）：利率由储蓄供给和投资需求决定。储蓄是延迟消费的报酬，投资是资本边际收益，二者均衡决定利率。<br>
+                    <strong>流动性偏好理论</strong>（凯恩斯）：利率由货币供求决定。人们持有货币的三种动机：交易、预防、投机。利率是"放弃流动性偏好的报酬"。<br>
+                    <strong>可贷资金理论</strong>（希克斯等）：综合了古典和凯恩斯——利率由可贷资金的供给（储蓄+新增货币）和需求（投资+窖藏）共同决定。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：央行降息——在凯恩斯框架下，央行增加货币供给，流动性偏好的均衡点下移，利率下降。在古典框架下，利率本身不由央行决定，而是由实体经济中的储蓄和投资意愿决定。两种理论对"央行能否控制利率"给出了截然不同的回答。</div>
+            </div>
+            <div class="info-card tool">
+                <div class="label">利率的种类与换算</div>
+                <div class="content">
+                    <strong>名义利率 vs 实际利率</strong>：实际利率 = 名义利率 - 通货膨胀率（费雪方程）。<br>
+                    <strong>固定利率 vs 浮动利率</strong>：借款期间利率是否可调整。<br>
+                    <strong>即期利率 vs 远期利率</strong>：当前生效 vs 未来某时点生效。<br>
+                    <strong>单利 vs 复利</strong>：复利是"利滚利"，长期差异巨大——100元按5%复利30年变为432元，单利仅250元。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">利率的风险结构与期限结构</div>
+                <div class="content">
+                    <strong>风险结构</strong>：同样期限的债券，利率为何不同？违约风险、流动性、税收因素（如国债利息免税导致利率低于同品质公司债）。<br>
+                    <strong>期限结构</strong>：同样品质的债券，不同期限的利率如何排列？正常情况下长期利率>短期利率（收益率曲线向上倾斜）。三种解释：预期理论、市场分割理论、流动性偏好理论。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：收益率曲线倒挂（短期利率高于长期利率）通常被视为经济衰退的信号——2023年美国国债收益率曲线深度倒挂，市场预期未来利率将大幅下降（即经济下行迫使央行降息）。</div>
+            </div>
         </div>
-      </div>
+
+        <h3 id="ch5">外汇与汇率</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">外汇与汇率的基本概念</div>
+                <div class="content">
+                    <strong>外汇</strong>：以外币表示的国际支付手段，包括外国货币、外币支付凭证、外币有价证券等。<br>
+                    <strong>汇率</strong>：两种货币之间的兑换比率。<br>
+                    <strong>直接标价法</strong>：1单位外币 = ?本币（中国使用，如1美元=7.2人民币）。<strong>间接标价法</strong>：1单位本币 = ?外币（英国使用）。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">汇率决定理论</div>
+                <div class="content">
+                    <strong>购买力平价理论（PPP）</strong>：汇率由两国物价水平之比决定。同一篮子商品在两国的价格应该相等→汇率调整使两国价格一致。绝对PPP（静态比较）和相对PPP（通胀差异决定汇率变动）。<br>
+                    <strong>利率平价理论</strong>：两国利率差异决定远期汇率与即期汇率的差异。高利率国家的货币远期会贬值（抵消利差收益）。<br>
+                    <strong>弹性价格货币模型</strong>：汇率由两国货币供给、产出、利率的相对水平决定。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：如果美国年利率5%、日本年利率1%，投资者会借日元买美元资产套取4%利差。但利率平价意味着一年后美元会贬值约4%，正好抵消利差——无套利利润。这就是汇率市场的"自动均衡"机制。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">汇率制度</div>
+                <div class="content">
+                    <strong>固定汇率</strong>：央行将汇率钉住某一水平，通过买卖外汇维持。<br>
+                    <strong>浮动汇率</strong>：汇率由市场供求决定，央行不干预。<br>
+                    <strong>管理浮动</strong>：主要由市场决定，但央行在异常波动时干预（中国现行制度）。<br>
+                    <strong>三元悖论</strong>（蒙代尔-弗莱明）：货币政策独立性、汇率稳定、资本自由流动三者不可兼得，最多同时实现两个。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：中国选择货币政策独立+汇率基本稳定，代价是资本账户不完全开放。香港选择汇率稳定+资本自由流动，代价是没有独立货币政策（利率必须跟随美联储）。</div>
+            </div>
+        </div>
     </div>
-  </section>
 
-  <!-- P8 结尾 -->
-  <section class="slide" data-name="结尾">
-    <div class="canvas">
-      <div class="reveal"><span class="eyebrow">The End · 你已经会化妆了</span></div>
-      <h1 class="reveal">骨架有了，<br><b>造型也会了</b></h1>
-      <div class="end-line reveal"></div>
-      <p class="e-tag reveal">HTML 是搭骨架，CSS 是化妆——这两件事加在一起，你已经能做出一个真实的静态网页了。接下来加点动作？</p>
+    <!-- ==================== 金融市场篇 ==================== -->
+    <div class="section" id="part3">
+        <h2>金融市场篇 · 资金配置的核心平台（第5篇）</h2>
 
-      <div class="reveal">
-        <h3 style="color:var(--fg);margin-bottom:14px;font-size:17px">下一步可以看的</h3>
-        <div class="next-cards">
-          <div class="clay">
-            <span class="emoji">⚡</span>
-            <h4>学一点 JavaScript</h4>
-            <p>骨架 + 化妆都有了，加点动作——点击、动画、弹窗</p>
-          </div>
-          <div class="clay">
-            <span class="emoji">📐</span>
-            <h4>CSS 布局进阶</h4>
-            <p>Flexbox 和 Grid：把卡片排成一排、两排，做响应式</p>
-          </div>
-          <div class="clay">
-            <span class="emoji">🛝</span>
-            <h4>直接去玩</h4>
-            <p>打开 codepen.io，左边敲代码，右边实时看效果——最快的学法</p>
-          </div>
+        <h3 id="ch6">金融市场概述</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">金融市场的定义与功能</div>
+                <div class="content">
+                    金融市场是金融工具交易的场所或机制。<br>
+                    <strong>核心功能</strong>：资金聚积（零散资金汇成大额投资）、资源配置（资金流向效率最高的部门）、风险分散与转移、价格发现（利率、汇率、股价由市场交易形成）、提供流动性、降低交易成本。<br>
+                    <strong>聚积功能</strong>是金融市场最基础的功能——没有它，大企业无法融资建厂，国家无法筹资修路。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">金融市场的分类</div>
+                <div class="content">
+                    <strong>按交易期限</strong>：货币市场（≤1年：国库券、商业票据、同业拆借）vs 资本市场（>1年：股票、长期债券）。<br>
+                    <strong>按交割方式</strong>：现货市场 vs 衍生工具市场（期货、期权、远期、互换）。<br>
+                    <strong>按交易程序</strong>：发行市场（一级市场）vs 流通市场（二级市场）。<br>
+                    二级市场为一级市场提供流动性保障——如果投资者无法在二级市场卖出，就不会在一级市场买入。
+                </div>
+            </div>
         </div>
-      </div>
+
+        <h3 id="ch7">资本市场与货币市场</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">资本市场：股票与长期债券</div>
+                <div class="content">
+                    <strong>股票市场</strong>：股权融资，投资者获得公司剩余索取权。普通股（投票权+分红权）vs 优先股（优先分红但无投票权）。<br>
+                    <strong>债券市场</strong>：债务融资，发行人承诺按期付息到期还本。国债（无违约风险）、公司债（有违约风险）、金融债。<br>
+                    股票与债券的根本区别：<strong>股票是所有权凭证，债券是债权凭证</strong>。股票收益不确定（分红取决于利润），债券收益确定（固定利息）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：一家公司同时发行股票和债券——股票投资者承担经营风险，享受增长收益；债券投资者获取固定回报，但在公司破产时优先获偿。两种工具对应不同风险偏好。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">货币市场：短期资金的周转池</div>
+                <div class="content">
+                    <strong>同业拆借市场</strong>：银行之间调剂短期头寸，利率（如SHIBOR）是市场基准利率的风向标。<br>
+                    <strong>商业票据市场</strong>：企业短期融资工具，信用评级决定利率。<br>
+                    <strong>国库券市场</strong>：政府短期融资，无风险利率的基准。<br>
+                    <strong>回购协议市场</strong>：以证券为质押的短期借贷，实质是抵押贷款。<br>
+                    货币市场的核心意义：<strong>为金融机构提供流动性管理工具，为市场提供基准利率</strong>。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch8">衍生工具市场</h3>
+        <div class="info-grid">
+            <div class="info-card tool">
+                <div class="label">四大衍生工具</div>
+                <div class="content">
+                    <strong>远期</strong>：双方约定未来某日以约定价格交易。在场外交易，可定制但流动性低。<br>
+                    <strong>期货</strong>：标准化远期合约，在交易所交易。保证金制度+每日盯市结算。<br>
+                    <strong>期权</strong>：买方支付权利金获得选择权（看涨期权=买入权，看跌期权=卖出权），卖方收取权利金承担义务。<br>
+                    <strong>互换</strong>：双方约定在未来一段时期内定期交换现金流（利率互换、货币互换最常见）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：航空公司买入原油期货锁定未来燃油成本——这不是投机，是对冲经营风险。若油价上涨，期货盈利抵消燃油成本上升；若油价下跌，期货亏损但燃油成本降低了。对冲的本质是<strong>放弃可能的收益来规避可能的损失</strong>。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">衍生工具的双重属性</div>
+                <div class="content">
+                    <strong>对冲功能</strong>：锁定未来价格，规避不确定性——实体经济必需。<br>
+                    <strong>投机功能</strong>：杠杆交易，以小博大——放大收益也放大风险。<br>
+                    2008年金融危机的根源之一：CDS（信用违约互换）被大量用于投机而非对冲，当次贷集中违约时，CDS卖方（如AIG）无法赔付，引发系统性崩溃。<br>
+                    <strong>关键洞察</strong>：衍生工具本身不创造风险，它转移和放大已有的风险。问题不在工具，在于使用方式。
+                </div>
+            </div>
+        </div>
     </div>
-  </section>
+
+    <!-- ==================== 金融机构篇 ==================== -->
+    <div class="section" id="part4">
+        <h2>金融机构篇 · 金融活动的组织载体（第6篇）</h2>
+
+        <h3 id="ch9">金融机构概述</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">金融机构的功能与分类</div>
+                <div class="content">
+                    <strong>核心功能</strong>：信用中介（连接储蓄者与投资者）、降低交易成本、分散风险、解决信息不对称。<br>
+                    <strong>信息不对称</strong>是金融机构存在的根本理由——借款人比贷款人更了解自己的还款能力和项目风险，金融机构通过专业审查和监督降低了这种不对称。<br>
+                    <strong>逆向选择</strong>（事前）：最可能违约的人最积极申请贷款。<strong>道德风险</strong>（事后）：拿到贷款后借款人可能从事高风险活动。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">存款类与非存款类</div>
+                <div class="content">
+                    <strong>存款类</strong>：通过吸收存款获得资金（商业银行、储蓄银行、信用合作社）。<br>
+                    <strong>非存款类</strong>：通过其他方式获得资金（保险公司收取保费、投资基金募集份额、证券公司、信托公司）。<br>
+                    关键区别：<strong>存款类金融机构创造信用货币</strong>（贷款生成存款），非存款类只是转移资金。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch10">存款类金融机构：商业银行</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">商业银行的性质与职能</div>
+                <div class="content">
+                    商业银行是以经营存贷款为主要业务、以利润为主要目标的金融企业。<br>
+                    <strong>信用中介</strong>：吸收存款、发放贷款——最基本职能。<br>
+                    <strong>支付中介</strong>：为客户办理货币收付与转账——经济运行的"血脉系统"。<br>
+                    <strong>信用创造</strong>：通过贷款创造出派生存款——这是商业银行独有的、也是最具宏观影响的职能。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">商业银行的业务体系</div>
+                <div class="content">
+                    <strong>负债业务</strong>（资金来源）：吸收存款（活期、定期）、借款（同业拆借、央行借款、发行金融债）。<br>
+                    <strong>资产业务</strong>（资金运用）：贷款（最主要）、证券投资、现金资产（库存现金+存款准备金）。<br>
+                    <strong>中间业务和表外业务</strong>：不直接占用资金但收取手续费（结算、代理、担保、承诺、衍生交易）。<br>
+                    三类业务的风险与收益逻辑不同：资产业务承担信用风险获取利息，中间业务几乎无风险赚手续费，表外业务或有风险。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch11">非存款类金融机构</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">保险公司</div>
+                <div class="content">
+                    <strong>人身险</strong>（寿险、健康险、意外险）vs <strong>财产险</strong>（车险、火险、责任险）。<br>
+                    保险的本质是<strong>风险 pooling</strong>：大量投保人缴纳小额保费，形成资金池，少数出险者获得大额赔付。<br>
+                    保险公司的投资端同样重要——保费收入形成的保险资金是资本市场重要的长期资金来源。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">投资基金与信托</div>
+                <div class="content">
+                    <strong>投资基金</strong>：汇集众多小投资者的资金，由专业管理人统一投资。公募基金（开放型/封闭型）vs 私募基金。按投资标的分：股票基金、债券基金、混合基金、货币市场基金。<br>
+                    <strong>信托</strong>：委托人将财产权转移给受托人，受托人为受益人利益管理和处分财产。"受人之托，代人理财"。信托的灵活性极强——可投资实业、房地产、金融资产等几乎所有领域。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 货币机制篇 ==================== -->
+    <div class="section" id="part5">
+        <h2>货币机制篇 · 货币运行的内在逻辑（第7-10篇）</h2>
+
+        <h3 id="ch12">现代货币创造机制</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">存款货币的创造：从1元到多元</div>
+                <div class="content">
+                    假设法定准备金率10%，A银行收到100元原始存款→留10元准备金→贷出90元→借款人将90元存入B银行→B留9元→贷出81元→存入C银行……<br>
+                    <strong>存款乘数</strong> = 1/法定准备金率 = 1/0.1 = 10。100元原始存款最终可创造出1000元存款货币。<br>
+                    <strong>条件</strong>：银行不保留超额准备金、借款人将全部贷款存回银行体系、无现金漏损。现实中有现金漏损和超额准备金，实际乘数小于理论乘数。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：央行降低法定准备金率从10%到8%——理论乘数从10升至12.5，同等基础货币可支撑更多存款，市场流动性增加。这就是"降准"释放流动性的原理。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">基础货币与货币供给量</div>
+                <div class="content">
+                    <strong>基础货币（B）</strong> = 法定准备金 + 超额准备金 + 流通中现金 = 央行负债。<br>
+                    <strong>货币供给量（M）</strong> = 基础货币 × 货币乘数（m）<br>
+                    M = m × B。央行通过控制B（增减基础货币）来影响M，但m受银行和公众行为影响（现金偏好、超额准备金意愿），央行不能完全控制。<br>
+                    <strong>货币层次</strong>：M0（流通现金）、M1（M0+活期存款）、M2（M1+定期存款+储蓄存款+其他存款）。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch13">货币需求</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">货币需求理论演进</div>
+                <div class="content">
+                    <strong>费雪交易方程</strong>：MV = PT。货币需求由交易量（T）和价格水平（P）决定，V是货币流通速度（假设稳定）。<br>
+                    <strong>剑桥方程</strong>：Md = kPY。k是人们愿意以货币形式持有的收入比例——从微观角度解释货币需求。<br>
+                    <strong>凯恩斯流动性偏好</strong>：三种动机（交易、预防、投机），投机动机是凯恩斯的独创——利率低时人们预期其上升，持有货币等待购买债券的机会。<br>
+                    <strong>弗里德曼现代货币数量论</strong>：货币需求是持久收入的稳定函数，利率影响很小。货币需求主要取决于持久收入而非当前收入。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：凯恩斯认为利率下降→投机性货币需求上升→人们持币观望→货币流通速度V并不稳定。这推翻了费雪的V稳定假设，也意味着MV=PT的预测力有限。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">中国货币需求的特殊性</div>
+                <div class="content">
+                    中国处于金融深化过程中，货币化程度（M2/GDP）持续上升，导致货币需求增速高于GDP增速。<br>
+                    大量货币被"窖藏"在储蓄存款中（预防性需求强），而非用于交易和投资——这是中国高M2/GDP比率的一个重要解释。<br>
+                    <strong>金融深化指标</strong>（M2/GDP）从1990年的0.8升至近年超过2.0，反映金融资产膨胀速度远超实体经济。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch14">货币供给</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">外生性与内生性之争</div>
+                <div class="content">
+                    <strong>外生性观点</strong>：央行可以独立控制货币供给量——货币是政策工具而非经济结果。这是传统货币主义的立场。<br>
+                    <strong>内生性观点</strong>：货币供给量由经济体系内部决定——银行根据贷款需求创造存款，央行被动适应。经济繁荣→贷款需求增加→存款增加→货币供给增加。<br>
+                    <strong>后凯恩斯主义</strong>强调内生性：贷款创造存款，而非存款创造贷款。央行只能影响利率，无法精确控制货币量。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：2020年疫情后美国M2暴增——不是因为央行"主动"注入了那么多货币，而是因为央行将利率降至零+大规模购债，银行在极低利率环境下积极放贷，贷款需求旺盛推动了存款扩张。货币供给量的增加更像经济系统的内生结果。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">央行控制货币供给的工具</div>
+                <div class="content">
+                    <strong>公开市场操作</strong>：买卖国债→增减基础货币（最灵活、最常用）。<br>
+                    <strong>法定准备金率</strong>：调整→改变乘数（力度最大、冲击最强，不轻易使用）。<br>
+                    <strong>再贴现率</strong>：调整央行向商业银行贷款的利率→影响银行借款意愿（信号意义大于实际效果）。<br>
+                    三种工具各有特点：公开市场操作灵活精确，法定准备金率威力大但粗暴，再贴现率偏被动。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch15">货币均衡与社会总供求</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">货币均衡的含义</div>
+                <div class="content">
+                    货币供给与货币需求大致相等的状态。不是严格相等，而是<strong>偏离在可容忍范围内</strong>。<br>
+                    货币均衡的标志：<strong>物价基本稳定</strong>（没有持续上涨或下降）、<strong>利率水平稳定</strong>、<strong>经济增长处于潜在水平</strong>。<br>
+                    货币均衡≠社会总供求均衡。货币是总量概念，社会总供求涉及结构和效率。货币均衡是总供求均衡的必要条件，但不是充分条件。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">货币失衡的两种表现</div>
+                <div class="content">
+                    <strong>货币供给 > 货币需求</strong> → 通货膨胀（物价持续上涨）。<br>
+                    <strong>货币供给 < 货币需求</strong> → 通货紧缩（物价持续下降、经济萎缩）。<br>
+                    但因果关系可能反过来：成本推动型通胀不是货币过多造成的；需求不足型通缩中增加货币供给未必能解决问题（流动性陷阱）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：日本长期通缩中央行持续增加货币供给，但银行不愿放贷、企业不愿投资、消费者不愿消费——货币到了银行就停下来，无法进入实体经济。这就是<strong>流动性陷阱</strong>：货币供给增加但货币需求下降更快，利率已降至零无法再降。</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 宏观调控篇 ==================== -->
+    <div class="section" id="part6">
+        <h2>宏观调控篇 · 货币失衡的治理（第11-12篇）</h2>
+
+        <h3 id="ch16">通货膨胀与通货紧缩</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">通货膨胀的定义与度量</div>
+                <div class="content">
+                    <strong>定义</strong>：一般物价水平持续、明显上涨的过程。不是一次性的价格上涨，也不是个别商品涨价。<br>
+                    <strong>度量</strong>：CPI（消费者物价指数，最常用）、PPI（生产者物价指数）、GDP平减指数。<br>
+                    <strong>通胀率计算</strong>：本期CPI - 上期CPI / 上期CPI × 100%。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：2022年全球高通胀——美国CPI一度超过9%，原因是供应链受阻+能源价格暴涨+疫情后需求反弹+此前超宽松货币政策。这不是"货币过多"单一原因，而是供给冲击和需求膨胀叠加的结果。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">通胀的成因分类</div>
+                <div class="content">
+                    <strong>需求拉动型</strong>：总需求过度增长超过总供给→"过多的货币追逐过少的商品"。凯恩斯框架下的解释。<br>
+                    <strong>成本推动型</strong>：生产成本上升（工资、原材料）推高物价→即使需求没有过度增长也会通胀。<br>
+                    <strong>结构性通胀</strong>：某些部门需求旺盛→价格上涨→传导到其他部门→整体物价上涨。发展中国家常见。<br>
+                    现实中的通胀往往是混合型——既有需求因素也有成本因素。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">通胀的社会经济效应</div>
+                <div class="content">
+                    <strong>分配效应</strong>：有利于债务人、不利于债权人（债务的实际价值缩水）。有利于浮动收入者、不利于固定收入者。<br>
+                    <strong>资源配置效应</strong>：扭曲价格信号→资金流向投机领域而非生产领域。<br>
+                    <strong>恶性通胀</strong>：货币丧失职能→经济回到实物交易→社会秩序崩溃。德国1923年通胀率超过1,000,000%——工人每天领两次工资，中午赶去买东西，因为下午价格又会翻倍。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">通货紧缩</div>
+                <div class="content">
+                    <strong>定义</strong>：一般物价水平持续下降的过程。<br>
+                    <strong>危害</strong>：债务实际负担加重→企业破产增加→银行坏账上升→信贷收缩→需求进一步下降→物价继续下降——<strong>通缩螺旋</strong>。<br>
+                    通缩比通胀更难治理：通胀可以加息遏制，但通缩中降息到零后就没有常规工具了——必须依赖非常规政策（量化宽松等）。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch17">货币政策</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">货币政策的目标体系</div>
+                <div class="content">
+                    <strong>最终目标</strong>：稳定物价、充分就业、经济增长、国际收支平衡。四大目标之间存在矛盾——<br>
+                    稳定物价 vs 充分就业（菲利普斯曲线：通胀率与失业率反向变动）。<br>
+                    中国央行法定的货币政策目标是<strong>保持货币币值稳定，并以此促进经济增长</strong>——以稳定物价为优先。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：美联储的双重使命——充分就业+稳定物价。2022年面对高通胀，美联储激进加息牺牲就业目标来压通胀，就是典型的目标权衡。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">货币政策工具</div>
+                <div class="content">
+                    <strong>一般性工具</strong>（总量调控）：公开市场操作、法定准备金率、再贴现率。<br>
+                    <strong>选择性工具</strong>（结构调控）：消费者信用控制、证券市场信用控制、不动产信用控制。<br>
+                    <strong>直接信用控制</strong>：利率管制、信用配额。<br>
+                    <strong>间接信用控制</strong>：窗口指导（道义劝告）。<br>
+                    中国特色工具：<strong>MLF</strong>（中期借贷便利）、<strong>SLF</strong>（常备借贷便利）、<strong>PSL</strong>（抵押补充贷款）——定向投放流动性。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">货币政策的传导机制</div>
+                <div class="content">
+                    <strong>利率渠道</strong>（凯恩斯）：央行操作→货币供给变化→利率变化→投资变化→产出变化。<br>
+                    <strong>信贷渠道</strong>：央行操作→银行可贷资金变化→贷款规模变化→投资与消费变化→产出变化。对银行依赖度高的经济体（如中国）更显著。<br>
+                    <strong>资产价格渠道</strong>：央行操作→资产价格变化→财富效应/托宾q效应→消费与投资变化。<br>
+                    <strong>汇率渠道</strong>：央行操作→利率变化→汇率变化→进出口变化→产出变化。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：中国降准→银行可贷资金增加→贷款利率下降→企业融资成本降低→投资增加→产出增加。这条信贷传导渠道在中国比利率渠道更直接有效，因为中国企业的融资以银行贷款为主。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">货币政策规则 vs 相机抉择</div>
+                <div class="content">
+                    <strong>规则论</strong>：按事先公布的规则行事（如泰勒规则：利率 = 均衡利率 + 0.5(通胀缺口) + 0.5(产出缺口)），减少不确定性。<br>
+                    <strong>相机抉择论</strong>：根据经济形势灵活调整，应对突发冲击。<br>
+                    实践中两者结合：以规则为框架，在规则内做相机调整。美联储的"依赖数据"决策模式就是这种思路。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 监管与发展篇 ==================== -->
+    <div class="section" id="part7">
+        <h2>监管与发展篇 · 金融体系的边界（第13-14篇）</h2>
+
+        <h3 id="ch18">金融监管</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">金融监管的必要性</div>
+                <div class="content">
+                    金融市场存在<strong>外部性</strong>（一家银行倒闭波及整个银行体系）、<strong>信息不对称</strong>（存款人无法评估银行风险）、<strong>道德风险</strong>（有存款保险的银行更倾向冒险）。<br>
+                    金融是"负外部性"极强的行业——一家机构的问题可以传染整个体系，所以需要政府介入监管。<br>
+                    <strong>系统性风险</strong>：单个机构的风险不足以触发监管，但当风险通过关联关系传导至整个体系时，就需要宏观审慎监管。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：2008年雷曼兄弟倒闭→全球金融市场恐慌→信贷冻结→实体经济衰退。一家投资银行的破产引发全球经济危机——这就是金融外部性的极端体现。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">巴塞尔协议：全球监管框架</div>
+                <div class="content">
+                    <strong>巴塞尔Ⅰ</strong>（1988）：资本充足率≥8%，只考虑信用风险。<br>
+                    <strong>巴塞尔Ⅱ</strong>（2004）：三大支柱——最低资本要求（信用+市场+操作风险）、监管审查、市场纪律。<br>
+                    <strong>巴塞尔Ⅲ</strong>（2010后）：提高资本质量要求、引入流动性覆盖率（LCR）和净稳定资金比率（NSFR）、宏观审慎工具（逆周期资本缓冲）。<br>
+                    核心逻辑：<strong>让银行用自有资本承担更多风险</strong>，减少对公共资源的依赖。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">中国金融监管体制的演变</div>
+                <div class="content">
+                    <strong>一行三会</strong>（央行+银监会+证监会+保监会）→ <strong>一委一行一局一会</strong>（金融委+央行+金管局+证监会）。<br>
+                    从分业监管向综合监管转变——因为金融机构的业务边界日益模糊（银行做理财、保险做投资、证券做信贷），分业监管留下了监管真空和套利空间。
+                </div>
+            </div>
+        </div>
+
+        <h3 id="ch19">金融发展与金融创新</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">金融深化与金融约束</div>
+                <div class="content">
+                    <strong>麦金农-肖的金融深化论</strong>：发展中国家金融抑制（利率管制、信贷配额、高通胀）→储蓄低、投资少、增长慢。解除管制→利率市场化→储蓄增加→投资增加→增长加速。<br>
+                    <strong>赫尔曼等的金融约束论</strong>：完全自由化可能导致银行过度冒险。在一定阶段，政府适度创造"租金机会"（限制利率竞争、准入管制）反而能激励银行稳健经营和拓展服务面。<br>
+                    两种理论看似对立，实则针对不同发展阶段：金融深化适用于严重抑制的经济，金融约束适用于市场化初期。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：中国利率市场化改革——从完全管制→贷款利率上限放开→存款利率上限放开→基本市场化。整个过程持续了近20年，并非一步到位，体现了金融约束论"渐进放开"的思路。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">金融创新</div>
+                <div class="content">
+                    <strong>动力</strong>：规避管制、降低成本、分散风险、技术进步。<br>
+                    <strong>形式</strong>：新产品（ABS、CDO）、新业务（资产证券化）、新机构（金融超市）、新技术（电子支付、区块链）。<br>
+                    金融创新的双面性：<strong>正面</strong>提高效率、增加选择、分散风险；<strong>负面</strong>可能规避监管、放大风险、增加复杂性。<br>
+                    2008年危机前的大量金融创新（CDO、CDS等）本质上是规避资本监管——将高风险资产打包出售以降低账面资本要求，但风险并未真正消除，只是被隐藏和扩散。
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 贯穿主线 ==================== -->
+    <div class="section" id="cognition">
+        <h2>贯穿全书的认知主线</h2>
+        <div class="two-col">
+            <div>
+                <div class="insight-card">
+                    <h4>主线一：从微观到宏观</h4>
+                    <p>货币→信用→市场→机构→货币创造→货币供求→宏观调控。全书从最微观的货币概念出发，逐层向上构建宏观框架。理解金融的起点不是央行和政策，而是"什么是货币"和"信用为何存在"。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>主线二：从静态制度到动态均衡</h4>
+                    <p>前半部分介绍制度与工具（货币制度、信用形式、市场结构），后半部分转向动态运行（货币创造过程、需求供给均衡、通胀通缩循环）。金融不是静态的制度安排，而是活的、不断自我调整的系统。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>主线三：从国内到国际</h4>
+                    <p>汇率、国际货币体系、三元悖论——金融不是封闭系统。开放经济下的货币政策不再完全自主，汇率制度选择深刻影响宏观经济治理空间。</p>
+                </div>
+            </div>
+            <div>
+                <div class="insight-card">
+                    <h4>主线四：内生性与外生性的张力</h4>
+                    <p>货币供给是央行外生决定的，还是经济体系内生创造的？利率由央行设定，还是由市场决定？通胀是"货币过多"还是"成本上升"？全书反复呈现这类张力，揭示金融变量不是简单的因果关系，而是复杂互动。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>主线五：效率与稳定的永恒权衡</h4>
+                    <p>金融创新提高效率但可能放大风险；金融管制保障稳定但可能抑制活力；巴塞尔协议要求更多资本但提高了融资成本。金融的核心矛盾始终是：如何在效率与稳定之间找到平衡。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>核心金句</h4>
+                    <p style="font-style:italic;">"金融是现代经济的核心。"</p>
+                    <p style="font-style:italic;">"货币不是面纱，而是经济的引擎。"</p>
+                    <p style="font-style:italic;">"信用是金融的基石，利率是信心的价格。"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 延伸与比较 ==================== -->
+    <div class="section" id="extension">
+        <h2>延伸与比较</h2>
+        <table class="extension">
+            <thead>
+                <tr><th>思考维度</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>本书的核心定位</td>
+                    <td>国内金融学入门的"标准教材"，覆盖宏观金融的完整框架，从货币制度到监管创新。侧重制度描述和理论梳理，不深入数学推导和实证检验。适合作为"建立金融学骨架"的第一本书。</td>
+                </tr>
+                <tr>
+                    <td>本书的理论倾向</td>
+                    <td>兼容马克思经济学与西方经济学两大体系——货币本质论偏马克思，利率和货币政策理论偏西方主流。这种"双轨并行"是人大版教材的传统特色，也是争议点：两种体系的基础假设不同，简单并列而非深层对话。</td>
+                </tr>
+                <tr>
+                    <td>本书可能的局限</td>
+                    <td>1. 以宏观金融为主，微观金融（资产定价、公司金融、行为金融）覆盖不足，需补充米什金《货币金融学》或罗斯《公司理财》。2. 理论部分偏陈述而非批判，对各流派的局限和争议展开不够。3. 对数字货币、金融科技等前沿议题的覆盖较少（近年版本有增加但深度有限）。4. 篇章组织较传统，缺乏跨章节的逻辑串联——如"信用→利率→汇率→衍生工具"这条逻辑链被分散在不同篇章中。</td>
+                </tr>
+                <tr>
+                    <td>推荐对照阅读</td>
+                    <td><strong>米什金《货币金融学》</strong>：西方视角的同级教材，微观金融（金融市场、金融机构）覆盖更深入，案例以美国为主，可作为本书的互补视角。<br><strong>易纲《中国的货币化进程》</strong>：聚焦中国货币需求与供给的特殊性，深化本书第7-10篇的现实背景。<br><strong>默顿《金融学》</strong>：偏微观金融和资产定价的教材，功能视角（金融体系六大核心功能）与本书的制度视角形成互补。</td>
+                </tr>
+                <tr>
+                    <td>跨书链接</td>
+                    <td><strong>《经济学原理》（曼昆）</strong>：金融学的宏观部分（货币政策、通胀）是宏观经济学的一个子领域，曼昆提供了更完整的宏观框架。<br><strong>《思考，快与慢》（卡尼曼）</strong>：行为金融学挑战了本书隐含的理性人假设——现实中人们并非理性地评估风险和收益，金融决策充满认知偏差。<br><strong>《历代的变革》（吴晓波）</strong>：中国金融制度变迁的历史背景，理解"为什么中国金融体系是这样"需要回溯制度演变。</td>
+                </tr>
+                <tr>
+                    <td>现实应用</td>
+                    <td>理解央行的每一次政策操作（降准、降息、MLF投放）背后的逻辑链条。读懂CPI、M2增速、社融数据的经济含义。评估金融创新（数字货币、理财子公司）对金融稳定的影响。理解国际金融新闻（美元加息、汇率波动）对中国经济的传导路径。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="text-align:center; margin-top:3rem; padding:1.5rem; color:var(--text-muted); font-size:0.85rem; border-top:1px solid var(--border);">
+        《金融学》（人大版·黄达主编）完整知识图谱 · 基于教材框架整理 · 仅供个人学习回顾使用
+    </div>
 
 </div>
 
-<button class="nav-arrow prev" onclick="goto(current-1)" aria-label="上一页">‹</button>
-<button class="nav-arrow next" onclick="goto(current+1)" aria-label="下一页">›</button>
+<!-- 返回顶部按钮 -->
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-<div class="footbar">
-  <div>CSS 零基础入门 · Lite Edition</div>
-  <div class="pg"><span id="curr">1</span> / <span id="total">8</span></div>
-</div>
-<div class="progress" id="progress"></div>
-
+<!-- 侧边栏高亮当前位置的脚本 -->
 <script>
-(function(){
-  const slides = document.querySelectorAll('.slide');
-  const total = slides.length;
-  const totalEl = document.getElementById('total');
-  const currEl = document.getElementById('curr');
-  const progress = document.getElementById('progress');
-  const topCh = document.getElementById('topCh');
-  if(totalEl) totalEl.textContent = total;
-  let current = 0, locked = false;
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const sections = [];
 
-  function setHeader(i){
-    if(!topCh) return;
-    topCh.textContent = slides[i].dataset.name || '';
-  }
-  function goto(i){
-    if(locked || i===current || i<0 || i>=total) return;
-    locked = true;
-    slides[current].classList.remove('active');
-    current = i;
-    slides[current].classList.add('active');
-    if(progress) progress.style.width = ((current+1)/total*100)+'%';
-    if(currEl) currEl.textContent = current+1;
-    setHeader(current);
-    setTimeout(()=>locked=false, 600);
-  }
-  Object.defineProperty(window,'current',{get:()=>current,set:(v)=>{current=v}});
-  window.goto = goto;
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const target = document.getElementById(href.substring(1));
+                if (target) sections.push({ link, target });
+            }
+        });
 
-  document.addEventListener('keydown', e => {
-    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
-    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();goto(current+1);}
-    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();goto(current-1);}
-    else if(e.key==='Home') goto(0);
-    else if(e.key==='End') goto(total-1);
-    else if(e.key==='f'||e.key==='F'){
-      if(!document.fullscreenElement) document.documentElement.requestFullscreen();
-      else document.exitFullscreen();
-    }
-  });
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
 
-  let wheelLock = false;
-  document.addEventListener('wheel', e => {
-    if(wheelLock) return;
-    wheelLock = true;
-    if(e.deltaY>30) goto(current+1);
-    else if(e.deltaY<-30) goto(current-1);
-    setTimeout(()=>wheelLock=false, 800);
-  },{passive:true});
-
-  let touchY=0,touchX=0;
-  document.addEventListener('touchstart', e=>{touchY=e.touches[0].clientY;touchX=e.touches[0].clientX;});
-  document.addEventListener('touchend', e=>{
-    const dy=touchY-e.changedTouches[0].clientY;
-    const dx=touchX-e.changedTouches[0].clientX;
-    if(Math.abs(dy)>50&&Math.abs(dy)>Math.abs(dx)) goto(current+(dy>0?1:-1));
-    else if(Math.abs(dx)>50) goto(current+(dx>0?1:-1));
-  });
-
-  if(progress) progress.style.width=(1/total*100)+'%';
-  setHeader(0);
-})();
+        window.addEventListener('scroll', function() {
+            let current = null;
+            const scrollTop = window.scrollY + 100;
+            sections.forEach(section => {
+                if (section.target.offsetTop <= scrollTop) current = section.link;
+            });
+            if (current) {
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                current.classList.add('active');
+            }
+        });
+    });
 </script>
+
 <script type="text/javascript" src="/accessproxy_statics/h5_fp.js" defer></script>
 <script type="text/javascript" src="/accessproxy_statics/wm.js" defer></script>
 </body>

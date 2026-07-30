@@ -1,312 +1,983 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>辜朝明“资产负债表衰退”理论详解</title>
-    <style>
-        body {
-            font-family: "PingFang SC", "Microsoft YaHei", "Helvetica Neue", sans-serif;
-            line-height: 1.7;
-            margin: 0;
-            padding: 20px;
-            background-color: #f8f9fa;
-            color: #2c3e50;
-        }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px 50px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            border-radius: 8px;
-        }
-        h1 {
-            text-align: center;
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            color: #1a1a1a;
-            border-bottom: 3px solid #2980b9;
-            padding-bottom: 15px;
-        }
-        h2 {
-            font-size: 1.6em;
-            color: #2c3e50;
-            border-left: 5px solid #2980b9;
-            padding-left: 12px;
-            margin-top: 40px;
-            margin-bottom: 20px;
-        }
-        h3 {
-            font-size: 1.25em;
-            color: #34495e;
-            margin-top: 25px;
-            margin-bottom: 10px;
-        }
-        p {
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-        .assumption {
-            background-color: #f0f7fb;
-            border-left: 4px solid #3498db;
-            padding: 12px 18px;
-            margin: 15px 0;
-            border-radius: 4px;
-            font-style: normal;
-        }
-        .assumption strong {
-            color: #c0392b;
-        }
-        .case-study {
-            background-color: #fff9e6;
-            border-left: 4px solid #f39c12;
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 4px;
-        }
-        .case-study h4 {
-            margin-top: 0;
-            color: #e67e22;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 0.95em;
-        }
-        th, td {
-            border: 1px solid #dcdde1;
-            padding: 12px 15px;
-            text-align: left;
-        }
-        th {
-            background-color: #ecf0f1;
-            color: #2c3e50;
-            font-weight: 600;
-        }
-        ul, ol {
-            margin-bottom: 15px;
-            padding-left: 25px;
-        }
-        li {
-            margin-bottom: 6px;
-        }
-        .logic-step {
-            background: #eaf2f8;
-            padding: 10px 18px;
-            margin: 12px 0;
-            border-radius: 6px;
-        }
-        .logic-step p {
-            margin: 5px 0;
-        }
-        .highlight {
-            background: #fcf3cf;
-            padding: 0 3px;
-        }
-        hr {
-            border: none;
-            border-top: 1px dashed #ccc;
-            margin: 40px 0;
-        }
-        blockquote {
-            background: #f9f9f9;
-            border-left: 4px solid #95a5a6;
-            padding: 10px 18px;
-            margin: 15px 0;
-            color: #555;
-            font-style: italic;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社会心理学 · 知识图谱</title>
+<style>
+/* ===== CSS 变量主题（蓝色系·科技通识） ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+  --primary: #1a5276; --primary-light: #eaf2f8; --primary-dark: #0d2b40;
+  --accent: #2e86c1; --accent-deep: #1b4f72;
+  --bg: #f7f9fc; --bg-card: #ffffff; --bg-soft: #f0f4f8; --bg-softer: #e8eef5;
+  --bg-tag: #d4e6f1;
+  --text: #2c3e50; --text-heading: #1a3a50; --text-muted: #7f8c8d; --text-light: #95a5a6;
+  --border: #d5dbdb; --border-soft: #e5e7eb;
+  --highlight: #eaf2f8; --highlight-strong: #d4e6f1;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #2471a3; --color-case: #1e8449;
+  --color-history: #b9770e; --color-insight: #117864; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #2e86c1;
+  --color-effect: #8e44ad; --color-core: #1a5276;
+  --warn-bg: #fef9e7; --warn-border: #f9e79f; --example-bg: #fffef9;
+  --reflect-bg: #f8f4f0; --quote-border: #2e86c1;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  line-height: 1.6;
+}
+
+/* ===== 页面区块 ===== */
+.section {
+  margin-bottom: 28px;
+}
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+  overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.7;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 {
+  font-size: 14px; color: var(--primary-dark); margin-bottom: 6px;
+}
+.law-card p {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ===== 知识结构树 ===== */
+.knowledge-tree {
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin: 14px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 两栏布局 ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 14px 0;
+}
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+/* ===== 评述标签 ===== */
+.tag-critical {
+  display: inline-block;
+  background: #fdebd0;
+  color: #935116;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-right: 4px;
+}
+
+/* ===== 水平分割线 ===== */
+hr.divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 32px 0;
+}
+
+/* ===== 页脚 ===== */
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 2px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+}
+</style>
 </head>
-<body>
-    <div class="container">
-        <h1>辜朝明的“资产负债表衰退”理论</h1>
-        <p style="text-align:center; color:#7f8c8d; font-size:1.1em;">——从微观行为到宏观灾难的逻辑链</p>
+<body data-theme="tech">
 
-        <!-- 引言 -->
-        <h2>一、理论背景与核心问题</h2>
-        <p>1990年代初，日本资产价格泡沫（股市、房地产）破灭，资产价值蒸发超过1500万亿日元。随后日本经济并未如传统经济学预期的那样在低利率下复苏，反而陷入了长达数十年的停滞。野村综合研究所首席经济学家辜朝明通过观察发现，企业行为发生了根本性转变，并由此提出“资产负债表衰退”概念，系统性地挑战了主流宏观经济学的若干基本前提。</p>
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar">
+  <h3>📖 知识图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#book-overview">全书概览</a></li>
+    <li class="toc-l2"><a href="#mindset-shift">核心思维转变</a></li>
+    <li><a href="#branch-social-thinking">社会思维</a></li>
+    <li class="toc-l2"><a href="#self">自我</a></li>
+    <li class="toc-l2"><a href="#beliefs">社会信念</a></li>
+    <li class="toc-l2"><a href="#attitudes">态度</a></li>
+    <li><a href="#branch-social-influence">社会影响</a></li>
+    <li class="toc-l2"><a href="#conformity">从众与服从</a></li>
+    <li class="toc-l2"><a href="#persuasion">说服</a></li>
+    <li class="toc-l2"><a href="#group">群体影响</a></li>
+    <li><a href="#branch-social-relations">社会关系</a></li>
+    <li class="toc-l2"><a href="#prejudice">偏见</a></li>
+    <li class="toc-l2"><a href="#aggression">攻击</a></li>
+    <li class="toc-l2"><a href="#attraction">吸引与亲密</a></li>
+    <li class="toc-l2"><a href="#helping">助人行为</a></li>
+    <li><a href="#classic-experiments">经典实验</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与局限</a></li>
+  </ul>
+</nav>
 
-        <!-- 核心机制逻辑链 -->
-        <h2>二、核心机制：逻辑推论与关键假设</h2>
-        <p>辜朝明的理论是一组层层递进的<strong>逻辑推论</strong>，每一步都建立在明确的<strong>核心假设</strong>之上。下面将其拆解为四个关键步骤。</p>
+<div class="main">
 
-        <!-- 第一步 -->
-        <h3>2.1 微观目标的突变：从“利润最大化”到“债务最小化”</h3>
-        <div class="logic-step">
-            <p><strong>逻辑推论1：</strong>资产价格暴跌后，企业的首要目标从追求利润最大化转变为追求债务最小化。</p>
-        </div>
-        <div class="assumption">
-            <strong>核心假设A（资产负债表严重受损）：</strong>许多企业在泡沫期大量借贷购买资产。泡沫破灭后，资产市值暴跌，但负债的名义价值不变。这导致企业在会计上陷入<strong>技术性破产</strong>（负债远大于资产），或偿债能力受到严重质疑。
-        </div>
-        <div class="assumption">
-            <strong>核心假设B（生存优先于增长）：</strong>此时，企业管理层将“活下去、修复资产负债表”视为压倒一切的目标，优先级远高于为股东追求更高的长期利润。
-        </div>
-        <p><strong>论证：</strong>一个负责任的企业，在资产严重缩水而债务缠身时，会将所有现金流（利润、折旧、甚至出售资产）优先用于偿还债务。即便存在回报率为正的投资机会，只要需要新增负债，企业也会放弃——因为报表已无法承受再增加一丝债务。</p>
-
-        <!-- 第二步 -->
-        <h3>2.2 微观行为导致宏观困境：合成谬误与流动性陷阱</h3>
-        <div class="logic-step">
-            <p><strong>逻辑推论2：</strong>私人部门出现大面积的“借款人消失”，导致总需求崩溃。</p>
-        </div>
-        <div class="assumption">
-            <strong>核心假设C（合成谬误）：</strong>此处谬误在于错误地将微观上成立的关系平行推及宏观整体。单个企业可以通过削减开支、偿还债务来修复自身资产负债表。但如果认为所有企业同时采取这一策略就能同步修复整体经济，则构成逻辑谬误。宏观经济恒等式揭示了这一推论的必然失效。
-        </div>
-        <p><strong>论证（基于宏观经济恒等式）：</strong></p>
-        <p>由国民收入核算恒等式可知：<em>国民总收入 = 消费 + 投资</em>，同时<em>国民总储蓄 ≡ 投资</em>（会计恒等式）。当所有企业同时停止投资（“投资”项骤降），根据恒等式，国民总收入和国民总储蓄必然等量下降。这意味着：</p>
-        <ul>
-            <li>企业作为一个整体，其可用于偿债的总利润和现金流反而因总收入的下降而减少。</li>
-            <li>单个企业可以通过“减少支出”来还债，但当所有企业都这样做时，整体经济中“可以还债的总收入”却坍缩了。</li>
-        </ul>
-        <p>因此，将微观有效的清偿策略平行加总到宏观层面，在恒等式约束下必然失效。这正是合成谬误在资产负债表衰退中的核心体现：<strong>对局部成立的关系，因忽略整体约束，无法成立在整体层面。</strong></p>
-
-        <div class="logic-step">
-            <p><strong>逻辑推论3：</strong>货币政策完全失效，经济陷入“流动性陷阱”。</p>
-        </div>
-        <div class="assumption">
-            <strong>核心假设D（借贷意愿对利率不敏感）：</strong>当企业目标是“债务最小化”时，其借贷决策对利率的弹性几乎为零。借钱与不借钱是0和1的区别，与利率是1%还是10%无关。
-        </div>
-        <p><strong>论证：</strong>传统货币传导机制为：降息→借贷成本降低→刺激企业借贷投资。但在资产负债表衰退中，企业根本不想要任何新债务，利息再低也无用。央行提供再多的廉价资金也找不到合格的借款人。辜朝明比喻道：“<span class="highlight">你可以把马牵到河边，但不能强迫它喝水</span>。”</p>
-
-        <p><strong>传统衰退与资产负债表衰退的根本区别：</strong></p>
-        <table>
-            <tr>
-                <th>特征</th>
-                <th>传统经济衰退</th>
-                <th>资产负债表衰退</th>
-            </tr>
-            <tr>
-                <td>病灶</td>
-                <td>资金成本过高（借款太贵）</td>
-                <td>资产泡沫破灭，私人部门技术性破产</td>
-            </tr>
-            <tr>
-                <td>企业目标</td>
-                <td>利润最大化（仍想借钱）</td>
-                <td><strong>债务最小化</strong>（只想还钱）</td>
-            </tr>
-            <tr>
-                <td>问题所在</td>
-                <td>贷款方的问题（利率太高）</td>
-                <td>借款方缺失（根本没人想借）</td>
-            </tr>
-            <tr>
-                <td>有效政策</td>
-                <td>货币政策（降息）</td>
-                <td>货币政策失效，必须依赖<strong>财政政策</strong></td>
-            </tr>
-        </table>
-
-        <!-- 第三步 -->
-        <h3>2.3 唯一政策处方：政府充当“最后借款人”</h3>
-        <div class="logic-step">
-            <p><strong>逻辑推论4：</strong>必须由政府通过大规模、持续的财政刺激来维持总需求。</p>
-        </div>
-        <div class="assumption">
-            <strong>核心假设E（政府是唯一有效的替代借款人）：</strong>当私人部门都在净储蓄和偿还债务时，必须有一个主体执行完全相反的操作——净借款和支出，才能填补总需求窟窿。在信心崩溃的环境中，只有主权级别的政府具备这种能力和信用。
-        </div>
-        <p><strong>论证：</strong>政府通过发行国债借钱，投入基础设施建设等公共项目，直接将资金注入实体经济。这笔钱成为企业和工人的收入，他们再用这些收入消费、还债。企业利用新增利润偿还旧债，<strong>而不需要自己借新债</strong>。这样，在GDP保持增长的同时，私人部门资产负债表得以稳步修复。</p>
-
-        <div class="logic-step">
-            <p><strong>逻辑推论5：</strong>只要财政刺激足够持续，就能实现无痛去杠杆。</p>
-        </div>
-        <div class="assumption">
-            <strong>核心假设F（GDP增长与还债的正向循环）：</strong>企业偿债的资金主要来源于政府支出所创造的新增收入，而非牺牲自身投资。这个过程是：政府支出 → GDP增长 → 企业收入增加 → 用利润还债 → 资产负债表修复。
-        </div>
-
-        <div class="logic-step">
-            <p><strong>逻辑推论6：</strong>在资产负债表修复完成前，任何财政紧缩都是致命错误。</p>
-        </div>
-        <div class="assumption">
-            <strong>核心假设G（复苏完全依赖政府支出）：</strong>此时观察到的GDP增长和利润改善，不是由私人部门自发投资驱动的，而是完全由财政赤字支撑的。好比病人依赖呼吸机维持生命体征——看到脸色红润就撤掉呼吸机，病人会立刻窒息。
-        </div>
-        <p><strong>历史论据：</strong>日本1997年桥本政府误以为经济复苏，将消费税从3%上调至5%，并终止所得税减免。结果经济立即陷入五个季度的严重衰退，银行业危机随之爆发。这成为辜朝明反复引用的典型教训。</p>
-
-        <h3>2.4 量化宽松为何无效？</h3>
-        <p>在资产负债表衰退中，央行通过量化宽松（QE）向银行体系注入大量准备金，但对实体经济刺激甚微：</p>
-        <ul>
-            <li>企业不借钱，银行的超额准备金无法通过信贷渠道流入实体经济。</li>
-            <li>大量流动性沉淀在银行体系内，只会压低极短期利率，无法激发投资和消费。</li>
-            <li>辜朝明将此比作“用一根绳子去推东西”：货币政策（绳子）可以轻松拉住过热的经济，但在衰退时想用宽松政策去“推”，是推不动的。</li>
-        </ul>
-
-        <!-- 扩展：家庭与个人 -->
-        <h2>三、理论扩展：家庭与个人的行为</h2>
-        <p>资产负债表衰退的分析框架同样适用于家庭部门，且个人即使没有负债，其行为也会通过“预防性储蓄”加剧衰退。</p>
-
-        <h3>3.1 家庭部门：消费的崩溃</h3>
-        <p>当房地产泡沫破灭，家庭资产（房产）暴跌，而房贷余额不变时，许多家庭陷入<strong>负资产</strong>。其目标从“效用最大化”转向“债务最小化”——大幅削减消费、停止房产投资，并拼命储蓄、提前还贷。这与企业行为逻辑一致。</p>
-        <p>这种以家庭部门为主的资产负债表衰退正是<strong>2008年美国次贷危机</strong>的核心特征。房价暴跌导致家庭消费骤降，进而引发深度经济衰退。</p>
-
-        <h3>3.2 个人行为：预防性储蓄的放大效应</h3>
-        <p>即使个人资产负债表健康，大规模失业和企业倒闭会使其对未来收入与就业前景极度悲观。个人将本能地<strong>增加预防性储蓄、削减非必要消费</strong>。个人层面的理性行为通过合成谬误导致社会总消费需求急剧下降，进一步挤压企业收入，引发更多裁员，形成恶性循环。</p>
-        <p>综上所述，在完整的资产负债表衰退中，<strong>企业压缩投资、家庭压缩消费、个人增加储蓄</strong>三者叠加，使总需求缺口极度扩大，货币政策彻底失效。</p>
-
-        <!-- 案例 -->
-        <h2>四、经典案例解析</h2>
-
-        <div class="case-study">
-            <h4>案例1：日本“失去的十年/数十年”（1990年代至今）</h4>
-            <p><strong>病灶：</strong>1980年代末史无前例的股市与房地产泡沫，企业和银行大量交叉持股、持有土地。1990年泡沫破灭，资产价格暴跌，企业资产负债表严重受损。</p>
-            <p><strong>行为：</strong>日本企业集体转向偿债，即使利率降至零附近，借贷需求依然枯竭。1990年至2005年，日本企业从净借款人变成净储蓄者，累计偿还了超过200万亿日元的债务。</p>
-            <p><strong>政策失误：</strong>1997年、2014年两次消费税上调，均在私人部门资产负债表尚未修复时过早紧缩财政，导致经济两次二次探底。</p>
-            <p><strong>结果：</strong>经济陷入长期通缩螺旋，GDP增长停滞，政府债务持续攀升（因持续财政刺激），但避免了类似大萧条的彻底崩溃。直到2010年代后期，企业偿债基本完成，经济才开始出现复苏迹象。</p>
-        </div>
-
-        <div class="case-study">
-            <h4>案例2：美国2008年次贷危机</h4>
-            <p><strong>病灶：</strong>房地产泡沫破灭，家庭部门资产负债表崩溃。大量家庭房贷余额超过房屋市值，陷入负资产。</p>
-            <p><strong>行为：</strong>美国家庭迅速从消费和借贷转向储蓄和去杠杆，消费支出断崖式下跌。这与日本企业部门的行为机制完全相同，只是主体换成了家庭。</p>
-            <p><strong>政策应对：</strong>美联储将利率降至零并启动QE，但私人部门贷款需求依然疲弱。真正阻止经济自由落体的，是布什和奥巴马政府的大规模财政刺激（问题资产救助计划、复苏与再投资法案）。这在一定程度上印证了辜朝明的理论——财政扩张充当了最后的借款人。</p>
-            <p><strong>结果：</strong>家庭资产负债表经过数年去杠杆后逐步修复，经济回到正常增长轨道。但复苏过程漫长，且量化宽松的副作用（贫富分化、资产泡沫）引发广泛讨论。</p>
-        </div>
-
-        <div class="case-study">
-            <h4>案例3：欧元区2010年代——叠加“被追赶”的困境</h4>
-            <p><strong>病灶：</strong>2008年后，欧元区多个国家（如西班牙、爱尔兰）遭遇房地产泡沫破灭，同时南欧国家在加入欧元区后工资上涨，企业竞争力下降，面临“被追赶经济体”的困境。</p>
-            <p><strong>行为：</strong>私人部门去杠杆，企业投资意愿低迷，即便欧洲央行推行负利率，信贷需求依然疲弱。</p>
-            <p><strong>政策约束：</strong>欧元区统一的货币政策和各自独立的财政政策之间存在根本矛盾。部分国家在衰退中被迫紧缩财政（如希腊），结果加剧了衰退，与辜朝明的逻辑推论6相符。</p>
-            <p><strong>结果：</strong>欧元区经历了“二次衰退”，复苏远慢于美国。德国等核心国家因持续贸易顺差，在一定程度上扮演了区域内的“储蓄吸收者”，但这也延缓了南欧国家的内部调整。</p>
-        </div>
-
-        <!-- 宏观思想体系 -->
-        <h2>五、辜朝明的宏观思想体系</h2>
-        <h3>5.1 阴阳经济周期：宏观经济学的另一半</h3>
-        <p>辜朝明认为，传统经济学只研究了“阳”态周期（企业资产负债表健康，追求利润最大化，货币政策有效），而完全忽略了“阴”态周期。在“阴”态下，企业追求债务最小化，传统模型的前提崩塌，需要一套全新的逻辑。他将发现“阴”态周期称为寻找“宏观经济学的圣杯”。</p>
-
-        <h3>5.2 被追赶的经济体：更深层的需求不足</h3>
-        <p>在后期著作《被追赶的经济体》中，他进一步指出，即使企业修复了资产负债表，也可能因更深层的原因不在国内投资。经济体可分为三个阶段：</p>
-        <ol>
-            <li><strong>城镇化阶段（刘易斯拐点前）：</strong>无限廉价劳动力，投资机会充足。</li>
-            <li><strong>黄金时代：</strong>劳动力不再无限供给，工资上涨，但企业仍有动力投资提高生产率，形成正向循环。</li>
-            <li><strong>被追赶的阶段：</strong>国内工资过高，企业发现将工厂迁至工资更低的新兴国家回报更高。此时，即使资产负债表健康，企业也缺乏国内投资机会，成为<strong>净储蓄者</strong>。这会导致国内需求长期不足，货币政策失效，必须再次依赖财政政策。</li>
-        </ol>
-        <p>辜朝明认为，今天的日本、部分西欧国家已进入这一阶段，这解释了为何在资产负债表修复后，这些经济体依然难以摆脱低增长和低利率。</p>
-
-        <!-- 批判与评价 -->
-        <h2>六、批判与评价</h2>
-        <p><strong>积极贡献：</strong></p>
-        <ul>
-            <li>对日本“失去的十年/数十年”、全球金融危机后的“长期停滞”提供了具有说服力的解释框架。</li>
-            <li>为大规模财政刺激提供了理论依据，影响了全球危机应对的政策讨论。</li>
-            <li>将经济学家的注意力从“资金的价格”重新拉回到“借款的主体”，提供了独特的分析视角。</li>
-        </ul>
-        <p><strong>主要批评：</strong></p>
-        <ul>
-            <li><strong>过于简化：</strong>将复杂衰退归因于单一企业行为，忽略了劳动市场僵化、僵尸企业、银行业危机等结构性问题。</li>
-            <li><strong>财政可行性：</strong>无限制的财政扩张可能带来债务不可持续、通胀或挤出效应。辜朝明认为只要投资有效便无需担心债务，但这需要政府投资永远高效精准，现实操作难度极大。</li>
-            <li><strong>适用范围：</strong>对通缩型衰退解释力很强，但对滞胀（高通胀+衰退）或并非由资产泡沫破灭引发的衰退解释力有限。</li>
-        </ul>
-
-        <!-- 总结 -->
-        <h2>七、总结</h2>
-        <p>辜朝明的资产负债表衰退理论，从企业（及家庭）的微观行为出发，通过<strong>合成谬误</strong>这一关键机制，构建了一个逻辑自洽的宏观经济学框架。其核心洞见在于：当私人部门集体转向“债务最小化”时，经济会陷入一种传统理论无法解释的“阴”态，货币政策完全失效，唯有政府充当最后借款人才能打破通缩螺旋。这一思想不仅解释了日本、美国、欧元区的历史经验，也为理解当今全球经济长期停滞和“被追赶”的困境提供了重要的分析工具。</p>
-        <p>最终，该理论迫使人们思考一个教科书里从未涉及的问题：当没有人愿意借钱时，经济该如何运转？</p>
-
-        <hr>
-        <p style="text-align:center; color:#95a5a6; font-size:0.9em;">文件生成于2026年6月27日 · 仅供学习记录使用</p>
+  <!-- ===== 页头 ===== -->
+  <div class="header" id="book-overview">
+    <h1>社会心理学</h1>
+    <div class="subtitle">Social Psychology · 第11版</div>
+    <div class="meta">
+      <span><strong>作者</strong> 戴维·迈尔斯 (David G. Myers)</span>
+      <span><strong>出版年份</strong> 1983（首版）</span>
+      <span><strong>分类</strong> 教材通识型 · 知识树</span>
     </div>
+    <div class="framework-badges">
+      <span class="badge">社会思维</span>
+      <span class="badge">社会影响</span>
+      <span class="badge">社会关系</span>
+      <span class="badge">经典实验</span>
+      <span class="badge">教材</span>
+    </div>
+    <div class="core-narrative">
+      一部系统解释"人的思想、情感和行为如何受他人真实或想象的存在影响"的经典教材。全书围绕<strong>社会思维→社会影响→社会关系</strong>三大板块展开，将抽象的社会心理学理论拆解为可理解的概念、可复现的实验和可迁移的日常智慧。
+    </div>
+  </div>
+
+  <!-- ===== 知识结构树 ===== -->
+  <div class="section" id="knowledge-tree">
+    <h2>知识结构树</h2>
+    <div class="knowledge-tree"><code>社会心理学
+├── 第一编 · 社会思维
+│   ├── 社会心理学导论
+│   ├── 自我：在社会情境中认识自己
+│   ├── 社会信念与判断
+│   └── 态度与行为
+├── 第二编 · 社会影响
+│   ├── 基因、文化与性别
+│   ├── 从众与服从
+│   ├── 说服
+│   └── 群体影响
+├── 第三编 · 社会关系
+│   ├── 偏见
+│   ├── 攻击
+│   ├── 吸引与亲密
+│   ├── 助人行为
+│   └── 冲突与和解
+└── 第四编 · 应用
+    └── 社会心理学在临床、司法、管理中的实践</code></div>
+  </div>
+
+  <!-- ===== 核心思维转变 ===== -->
+  <div class="section" id="mindset-shift">
+    <h2>核心思维转变</h2>
+    <div class="insight-card">
+      <div class="insight-title">转变一：情境的力量远大于性格——"好人"也会作恶</div>
+      <div class="insight-body">人们倾向于把行为归因为人的品性（基本归因错误），但Milgram电击实验和Stanford监狱实验反复证明：情境压力可以压倒道德良知。理解了这一点，你就不会再简单地用"好人/坏人"标签来判断他人。</div>
+      <div class="insight-evidence">证据：Milgram实验（普通人在权威指令下将电击增加到致命水平）、Stanford监狱实验（普通学生扮演狱卒后迅速出现虐待行为）</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">转变二：你对自己的认知并不准确——"自知之明"是奢侈品</div>
+      <div class="insight-body">人们存在自我服务偏见（将成功归己、失败归外）、虚假普遍性（高估自己观点普及度）、规划谬误（系统性低估任务完成时间）等一整套认知偏差。意识到这些偏差的存在，是规避它们的第一步。</div>
+      <div class="insight-evidence">证据：90%的司机认为自己水平高于平均；学生在预估毕业论文完成时间时，平均低估了3周</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">转变三：态度不决定行为，行为反而塑造态度</div>
+      <div class="insight-body">传统直觉认为"我有什么信念就会怎么行动"，但大量研究显示：态度对行为的预测力相当有限。反之，行为（尤其是公开的、主动的、反复的行为）会通过自我归因和认知失调反向塑造态度。</div>
+      <div class="insight-evidence">证据：Festinger认知失调实验（做无聊任务后说"很有趣"的人，报酬越少反而越相信任务有趣）；角色扮演改变态度</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 第一分支：社会思维 ===== -->
+  <div class="section" id="branch-social-thinking">
+    <h2>分支一：社会思维</h2>
+    <p style="font-size:14px;color:var(--text-muted);margin-bottom:8px;">研究我们如何理解自己、他人和我们所处的社会世界。</p>
+
+    <!-- 自我 -->
+    <div class="section" id="self">
+      <h3>自我：社会中的我</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">自我概念的形成</div>
+          <div class="content">
+            自我概念并非与生俱来，而是由三部分构成：<strong>自我认识</strong>（我是谁）、<strong>自尊</strong>（我对自己价值的评价）、<strong>社会自我</strong>（别人怎么看我）。社会比较理论认为，我们通过与相似他人比较来定义自己。
+          </div>
+          <div class="example"><strong>例子：</strong>新员工在入职第一周通常不确定自己的工作能力，直到观察到同事的表现——向上的社会比较让人焦虑，向下的社会比较让人安心。</div>
+        </div>
+        <div class="info-card concept">
+          <div class="label">自我服务偏见</div>
+          <div class="content">
+            人们倾向于把成功归于自己（能力/努力），把失败归于外部因素（运气/他人/环境）。这是人类最根深蒂固的认知偏差之一，具有维护自尊的适应功能，但也会阻碍从错误中学习。
+          </div>
+          <div class="example"><strong>例子：</strong>考试拿A → "我学得好"；拿C → "题目出得太偏了/老师改卷不公"。夫妻双方各自认为自己承担的家务比例之和超过100%。</div>
+        </div>
+        <div class="info-card concept">
+          <div class="label">自我展示与自我监控</div>
+          <div class="content">
+            人们在不同社会情境中会调整自我呈现的方式。<strong>高自我监控者</strong>像变色龙一样敏感于社会线索并调整行为；<strong>低自我监控者</strong>更倾向于"做自己"。
+          </div>
+          <div class="example"><strong>例子：</strong>和老板吃饭时高自我监控者会更注意礼仪和话题选择，而在朋友聚会上他们可能会更放松。低自我监控者在两种场合表现一致。</div>
+        </div>
+        <div class="info-card tool">
+          <div class="label">应对策略：自我觉察训练</div>
+          <div class="content">
+            培养对自己思维过程的觉察能力（元认知），是打破认知偏差最有效的方法。具体做法包括：决策前记录自己的预期和归因、寻求"魔鬼代言人"的质疑、定期做"白板反思"——假设自己可能是错的。
+          </div>
+          <div class="example"><strong>实操：</strong>下次遇到争论，先问自己：<br>1. 我是否预设了自己的"正确性"？<br>2. 如果角色互换，我会怎么看这个问题？<br>3. 证据是否真的支持我的判断？</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 社会信念 -->
+    <div class="section" id="beliefs">
+      <h3>社会信念与判断</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">基本归因错误</div>
+          <div class="content">
+            解释他人行为时，人们倾向于过度强调内在特质（性格/能力）而低估情境因素。这是社会心理学最重要的发现之一。观察者与行动者之间存在视角不对称——行动者知道自己面临的情境约束，观察者只能看到行为结果。
+          </div>
+          <div class="example"><strong>例子：</strong>看到同事开会迟到 → "他太不负责了"（特质归因），而自己迟到 → "路上太堵了"（情境归因）。</div>
+        </div>
+        <div class="info-card concept">
+          <div class="label">信念固着与证实偏差</div>
+          <div class="content">
+            一旦形成了某种信念，人们会倾向于寻找支持它的证据，忽略或贬低否定它的证据。即使最初的证据被推翻，原始信念往往仍会部分保留。（<span class="tag-critical">批判</span>这也是"反转"类辟谣文章效果有限的原因——纠正信息需要两倍于虚假信息的认知资源。）
+          </div>
+          <div class="example"><strong>例子：</strong>相信"疫苗有害"的人，会收集所有疫苗不良反应的报道，无视数十亿接种者的安全数据。即使研究显示最初的"有害"结论是造假，信念仍会残存。</div>
+        </div>
+        <div class="info-card effect">
+          <div class="label">自证预言</div>
+          <div class="content">
+            一个人持有某种预期 → 行为方式随之改变 → 这种改变促使预期成为现实。罗森塔尔效应（教师期望效应）是其最著名的实验证据。
+          </div>
+          <div class="example"><strong>例子：</strong>Rosenthal & Jacobson 实验：告诉小学教师某些学生"即将有智力爆发"，这些学生的IQ在学年末真的显著提升——不是因为预言本身，而是因为教师对其投入了更多关注、鼓励和耐心。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 态度 -->
+    <div class="section" id="attitudes">
+      <h3>态度与行为</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">认知失调理论</div>
+          <div class="content">
+            Festinger提出的经典理论：当一个人同时持有两种矛盾的认知（或行为与信念不一致）时，会产生心理不适。为了消除这种不适，人们通常会调整信念来匹配行为（而非反之），因为行为已经发生、无法改变。这是"行为塑造态度"的核心机制。
+          </div>
+          <div class="example"><strong>经典实验：</strong>Festinger & Carlsmith（1959）——被试做了一小时极其无聊的任务后，被要求对外面等候的人说"任务很有趣"。获得20美元报酬的小组认为任务确实无聊（外部理由充足，不失调），但获得1美元报酬的小组反而真的认为任务"还挺有意思"（外部理由不足，只能内部调整态度）。</div>
+        </div>
+        <div class="info-card mechanism">
+          <div class="label">态度何时预测行为？</div>
+          <div class="content">
+            态度对行为的影响在以下条件最强：①态度是直接从经验中形成的（而非听说的）；②态度是具体的（"我对这个品牌的看法"比"我对环保的看法"更预测具体行为）；③态度很容易被提取（经常思考和表达）。
+          </div>
+          <div class="example"><strong>应用：</strong>与其问"你环保吗？"（抽象态度），不如问"你愿意每周骑一次自行车上班吗？"（具体态度）。后者对实际行为的预测力大约是前者的3倍。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 第二分支：社会影响 ===== -->
+  <div class="section" id="branch-social-influence">
+    <h2>分支二：社会影响</h2>
+    <p style="font-size:14px;color:var(--text-muted);margin-bottom:8px;">研究外部社会力量如何塑造我们的行为、信念和情感。</p>
+
+    <!-- 从众与服从 -->
+    <div class="section" id="conformity">
+      <h3>从众与服从</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">从众的类型</div>
+          <div class="content">
+            从众分三种：<strong>顺从</strong>（表面配合，内心不一定接受）、<strong>认同</strong>（因为喜欢某个群体而接受其影响）、<strong>内化</strong>（真诚地接受了该行为或信念）。区分它们的关键：当外部压力消失后，行为是否持续。
+          </div>
+          <div class="example"><strong>例子：</strong>公司要求穿正装——如果你只在办公室穿（顺从），因为崇拜老板而穿（认同），因为自己也觉得穿正装能提升状态而继续穿（内化）。</div>
+        </div>
+        <div class="info-card core">
+          <div class="label">影响从众的因素</div>
+          <div class="content">
+            ①群体规模：3-5人时从众效果达峰值，继续增加人数不影响；②一致性：一旦有一个人打破一致，从众率急剧下降（即使"盟友"的判断也是错的）；③凝聚力：群体越有凝聚力，从众压力越大；④公开性：匿名情境下从众率大幅降低；⑤文化：集体主义文化比个人主义文化有更高的从众率。
+          </div>
+        </div>
+        <div class="info-card case">
+          <div class="label">Milgram电击实验</div>
+          <div class="content">
+            社会心理学最著名的实验之一。被试被告知在"学习实验"中扮演教师，在"学习者"答错时施加电击，电压从15V逐渐升高至450V（致命级别）。实际上"学习者"是演员，没有真的被电击。<strong>结果：65%的被试将电击升到了最高档——即使"学习者"痛苦尖叫、要求停止。</strong>
+          </div>
+          <div class="example"><strong>启示：</strong>在权威指令下，普通人可以违背基本道德。关键触发因素：①权威的"合法性"（穿白大褂的研究者）；②渐进的承诺（15V一步，每步都很小）；③责任的被剥夺（"实验要求你继续"）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 说服 -->
+    <div class="section" id="persuasion">
+      <h3>说服</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">说服的双路径模型</div>
+          <div class="content">
+            Petty & Cacioppo提出的精细化可能性模型（ELM）：说服有两条路径——<strong>中心路径</strong>（受众仔细分析论据，逻辑驱动）和<strong>外周路径</strong>（受众依赖直觉线索，如发言人吸引力、权威头衔、信息长度）。中心路径产生的态度更持久、更抗反驳。
+          </div>
+          <div class="example"><strong>例子：</strong>购买电脑——如果你研究CPU参数、内存速度和评测数据，走的是中心路径；如果因为喜欢的明星代言就下单，走的是外周路径。</div>
+        </div>
+        <div class="info-card tool">
+          <div class="label">说服的六项原则（Cialdini）</div>
+          <div class="content">
+            <strong>①互惠</strong>：先给予再索取 → 餐厅送薄荷糖后小费增加<br>
+            <strong>②承诺与一致</strong>：让人先做小承诺 → 先答应放广告牌，后答应在院子里立大牌子（成功率76%）<br>
+            <strong>③社会认同</strong>：从众心理 → "85%的住客会重复使用毛巾"比"请为了环保重复使用"效果好<br>
+            <strong>④喜好</strong>：喜欢的人更容易说服我们<br>
+            <strong>⑤权威</strong>：白大褂、头衔、制服<br>
+            <strong>⑥稀缺</strong>："仅剩3件"、"限时优惠"
+          </div>
+          <div class="example"><strong>实战：</strong>这就是为什么电商促销页面总是先展示"XX人已购买"（社会认同），然后倒计时（稀缺），再免费送优惠券（互惠）。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 群体影响 -->
+    <div class="section" id="group">
+      <h3>群体影响</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">社会助长与社会懈怠</div>
+          <div class="content">
+            <strong>社会助长</strong>：他人在场会增强简单/熟练任务的表现，但削弱复杂/生疏任务的表现（Zajonc理论：唤醒→优势反应增强）。<strong>社会懈怠</strong>：群体越大，个体付出的努力越小——因为个人贡献被"稀释"了。
+          </div>
+          <div class="example"><strong>例子：</strong>你一个人打游戏通关很快（社会助长），但让朋友看着你打高难度关卡反而容易失误。拔河比赛中，人数越多每个人实际出的力越少（社会懈怠）。</div>
+        </div>
+        <div class="info-card concept">
+          <div class="label">去个体化与群体极化</div>
+          <div class="content">
+            <strong>去个体化</strong>：在群体中个体丧失自我意识，更容易做出平时不会做的行为（匿名+唤醒+责任分散）。<strong>群体极化</strong>：群体讨论后，成员的观点会变得更加极端——原本倾向风险的人变得更冒进，原本谨慎的人变得更保守。
+          </div>
+          <div class="example"><strong>例子：</strong>网络匿名评论比实名评论更恶毒（去个体化）。陪审团中温和的"有罪倾向"成员在讨论后变成坚定的"有罪"派（群体极化）。</div>
+        </div>
+        <div class="info-card crisis">
+          <div class="label">群体思维（Groupthink）</div>
+          <div class="content">
+            高凝聚力群体为了维持团结而抑制异议、忽略外部信息，导致灾难性决策。Janis提出群体思维的八大症状：无可置疑的错觉、集体合理化、对对手的刻板印象、自我审查、一致同意的错觉等。
+          </div>
+          <div class="example"><strong>经典案例：</strong>猪湾入侵（肯尼迪内阁几乎一致通过，事后承认"我们太团结了"）。<strong>预防：</strong>指定"魔鬼代言人"、领导最后发言、邀请外部专家、设立匿名意见通道。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 第三分支：社会关系 ===== -->
+  <div class="section" id="branch-social-relations">
+    <h2>分支三：社会关系</h2>
+    <p style="font-size:14px;color:var(--text-muted);margin-bottom:8px;">研究人与人之间的吸引与排斥、爱与恨。</p>
+
+    <!-- 偏见 -->
+    <div class="section" id="prejudice">
+      <h3>偏见</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">偏见的三成分模型</div>
+          <div class="content">
+            偏见不是单一态度，而是三合一：<strong>刻板印象</strong>（认知→"群体A懒惰"）、<strong>偏见态度</strong>（情感→"我讨厌群体A"）、<strong>歧视行为</strong>（行为→"不聘用群体A"）。三者可以独立存在——有刻板印象不一定有歧视。
+          </div>
+          <div class="example"><strong>例子：</strong>一个招聘官可能没有明显的偏见态度（情感），但无意识地认为某一性别更适合某个岗位（刻板印象），因此在筛选简历时无意识地做了区分（隐性歧视）。</div>
+        </div>
+        <div class="info-card mechanism">
+          <div class="label">偏见的根源</div>
+          <div class="content">
+            ①<strong>社会分类</strong>：大脑自动把人为"我们"和"他们"（内群体偏爱），甚至基于随机分配（如掷硬币分组）也会产生内群体偏爱；<br>
+            ②<strong>替罪羊理论</strong>：挫折感 → 寻找可指责的"替罪羊"；<br>
+            ③<strong>现实冲突理论</strong>：资源稀缺时群体间竞争加剧偏见；<br>
+            ④<strong>正当化刻板印象</strong>：人们倾向于认为现状是合理的（"既然他们做得不好，说明他们确实不行"）。
+          </div>
+        </div>
+        <div class="info-card solution">
+          <div class="label">减少偏见的路径：接触假说</div>
+          <div class="content">
+            Allport提出的接触假说指出，仅仅让不同群体接触是不够的，有效的跨群体接触需要四个条件：①平等的地位；②共同的目标；③互相合作（而非竞争）；④制度支持。Sherif的"罗伯斯山洞实验"完美展示了这一过程。
+          </div>
+          <div class="example"><strong>罗伯斯山洞实验：</strong>两组夏令营男孩先制造对立（旗帜被烧、食堂冲突），随后通过设置"共同敌人"（共同修复故障的供水车）和"超常目标"（一起筹钱租电影）逐步消除了敌意。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 攻击 -->
+    <div class="section" id="aggression">
+      <h3>攻击</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">攻击的分类与根源</div>
+          <div class="content">
+            攻击分<strong>敌意性攻击</strong>（以伤害为目的，冲动型）和<strong>工具性攻击</strong>（以伤害为手段，计算型）。生物因素（睾丸激素、额叶功能、酒精）和情境因素（挫折、高温、攻击性线索）共同起作用——挫折-攻击理论认为挫折总会引发某种形式的攻击。
+          </div>
+          <div class="example"><strong>武器效应（Berkowitz）：</strong>情境中存在攻击性线索（如枪支、刀具、暴力画面）会显著增加攻击行为，即使当事人并未意识到。这就是为什么很多国家限制影视作品中的枪支特写镜头。</div>
+        </div>
+        <div class="info-card concept">
+          <div class="label">媒体暴力的影响</div>
+          <div class="content">
+            大量元分析表明：长期暴露于媒体暴力会①增加攻击行为；②减少对暴力的敏感度（失敏效应）；③改变对现实世界危险程度的认知（"世界是危险的"）。这些效应在儿童身上最为显著。
+          </div>
+          <div class="example"><strong>数据：</strong>一项追踪15年的研究发现，8岁观看暴力电视节目的时间与30岁时的严重犯罪率呈正相关（r=0.31），控制社会经济地位后效应仍然显著。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 吸引与亲密 -->
+    <div class="section" id="attraction">
+      <h3>吸引与亲密</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">谁会被谁吸引？</div>
+          <div class="content">
+            吸引力的四大规律：①<strong>接近性</strong>——物理距离越近，建立联系的概率越大（宿舍分配实验）；②<strong>相似性</strong>——"物以类聚"而非"互补"，态度相似度与喜欢程度强相关；③<strong>熟悉性</strong>——单纯曝光效应（即使无意识接触，多见面就会更喜欢）；④<strong>外表吸引力</strong>——美貌刻板印象（"美的就是好的"）。
+          </div>
+          <div class="example"><strong>有趣的数据：</strong>Festinger对麻省理工学院宿舍楼的经典研究发现，朋友关系形成的最强预测因子不是性格相似，而是——你们的房间相隔几扇门。楼梯口和走廊尽头的住户社交圈明显更小。</div>
+        </div>
+        <div class="info-card concept">
+          <div class="label">爱情的三角理论（Sternberg）</div>
+          <div class="content">
+            完美的爱由三部分组成：<strong>激情</strong>（强烈的渴望与性吸引 → 热恋期）、<strong>亲密</strong>（理解、分享和情感支持 → 陪伴期）、<strong>承诺</strong>（维持关系的决定 → 长期期）。缺少任何一部分都会形成"不完整"的爱。
+          </div>
+          <div class="example"><strong>组合：</strong>只有激情→迷恋；只有亲密→喜欢；只有承诺→空洞的爱；激情+亲密→浪漫之爱；亲密+承诺→伴侣之爱；激情+承诺→虚幻之爱；三者俱全→圆满之爱。</div>
+        </div>
+        <div class="info-card tool">
+          <div class="label">亲密关系的维护</div>
+          <div class="content">
+            ①<strong>积极错觉</strong>：对伴侣的评价略高于伴侣对自己的评价，这是长期关系满意度的重要预测指标；②<strong>自我表露</strong>：深度的、相互的、渐进的自我分享是亲密感的核心；③<strong>主动建设性回应</strong>：当伴侣分享好消息时，热情地、具体地回应（而非敷衍的"不错啊"）；④<strong>公平感知</strong>：不要求绝对平等，但双方都觉得"大致公平"。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 助人行为 -->
+    <div class="section" id="helping">
+      <h3>助人行为</h3>
+      <div class="info-grid">
+        <div class="info-card concept">
+          <div class="label">旁观者效应</div>
+          <div class="content">
+            Latane & Darley的核心发现：目击紧急事件的旁观者越多，每个人出手相助的可能性越低。这并非因为人性冷漠，而是因为：①<strong>责任分散</strong>——"别人会做的"；②<strong>多元无知</strong>——"别人都没反应，说明可能不是紧急情况"；③<strong>评价恐惧</strong>——"如果搞错了会很丢脸"。
+          </div>
+          <div class="example"><strong>经典案例：</strong>1964年Kitty Genovese谋杀案——38名邻居在30分钟内目睹袭击却无人报警（至少无人及时报警）。后续实验室实验证明：独自一人听到隔壁人摔倒时，70%会去帮忙；但如果"听到有其他人"在场，只有7%会行动。</div>
+        </div>
+        <div class="info-card tool">
+          <div class="label">如何增加助人行为？</div>
+          <div class="content">
+            ①减少模糊性——明确求助（"请帮我打120"而非"谁能帮帮我"）；②锚定个人责任——指定一个人（"穿红衣服的先生，请帮我报警"）；③塑造助人规范——让"互帮互助"成为可见的群体价值观；④替代强化——看到他人被奖励的助人行为会增加自己的助人倾向。
+          </div>
+          <div class="example"><strong>应用：</strong>急救培训课程不仅教技能，还强调"告诉特定的人去做什么"——这能将紧急情况中的存活率提升数倍。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 经典实验 ===== -->
+  <div class="section" id="classic-experiments">
+    <h2>经典实验速览</h2>
+    <div class="two-col">
+      <div class="info-card case">
+        <div class="label">Stanford监狱实验</div>
+        <div class="content">Zimbardo（1971）——随机分配大学生扮演"狱卒"和"囚犯"。实验到第6天因狱卒虐待行为过于恶劣而被迫终止。<br><strong>揭示：</strong>情境力量可以迅速改变人的行为模式，"好人"在特定制度下会变成"施虐者"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">Asch线段判断实验</div>
+        <div class="content">Asch（1955）——被试在明显错误的标准线段判断中，有37%的人选择了顺从群体错误答案。<br><strong>揭示：</strong>群体压力可以让人否定自己的感知。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">Festinger认知失调实验</div>
+        <div class="content">Festinger & Carlsmith（1959）——先做无聊任务，再告诉下一个人"任务有趣"。获1美元的被试最终真的觉得任务有趣，获20美元的不觉得。<br><strong>揭示：</strong>缺乏外部理由时，人会改变态度来匹配行为。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">Sherif"自动运动效应"实验</div>
+        <div class="content">Sherif（1936）——利用视觉错觉（黑暗中光点看起来会移动）让被试单独判断光点移动距离，然后在群体中讨论。每个人的判断逐渐趋同，形成"群体规范"。<br><strong>揭示：</strong>在模糊情境中，人们会互相参考来定义"现实"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">Darley & Batson"好撒玛利亚人"实验</div>
+        <div class="content">Darley & Batson（1973）——让神学院学生从一个楼走到另一个楼，途中遇到一个倒地不起的人。被告诉"即将迟到了"的学生中只有10%停下来帮忙，而"时间充裕"的学生中有63%提供了帮助。<br><strong>揭示：</strong>时间压力比宗教信仰更能预测助人行为。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">Rosenthal教师期望实验</div>
+        <div class="content">Rosenthal & Jacobson（1968）——告诉小学教师某些学生将在未来一年内"智力爆发"，这些学生的IQ在学年末确实显著提升。<br><strong>揭示：</strong>他人的期望会通过行为改变自证预言。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 核心金句 ===== -->
+  <div class="section" id="quotes">
+    <h2>核心金句</h2>
+    <blockquote class="quote-block">
+      <p>"我们人类是'意义构建者'——我们不断为自己和他人的行为寻找解释，但这些解释往往只是'基本归因错误'的产物。"</p>
+      <span class="cite">—— 戴维·迈尔斯，《社会心理学》</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"行为不仅取决于情境，而且情境本身常常是由我们的行为创造的。我们既是环境的产物，也是环境的创造者。"</p>
+      <span class="cite">—— 戴维·迈尔斯，《社会心理学》</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"发生在你身上的事情并不重要，重要的是你如何解释它——而在社会情境中，这种解释深受他人的影响。"</p>
+      <span class="cite">—— 社会心理学核心理念（自拟综合提炼）</span>
+    </blockquote>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 延伸与比较 ===== -->
+  <div class="section" id="extension">
+    <h2>延伸与局限</h2>
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>社会心理学领域的标准入门教材，以"社会思维→社会影响→社会关系"三块骨架系统地铺开了整个学科版图，强调科学实证而非主观思辨。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>迈尔斯持<strong>温和的情境主义</strong>立场——既承认人格和个体差异的稳定性，也强调情境力量对人的深层塑造。他偏向于"环境可改变行为"这一应用取向。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>①作为教材，覆盖的经典研究多、最新研究少（尤其是神经科学和跨文化研究的最新进展）；②偏重西方样本（欧美大学生），一些结论的跨文化普适性仍需验证；③对"社会结构""权力不平等"等宏观因素的讨论相对薄弱，更侧重于个体层面的心理机制。</td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《影响力》（Robert Cialdini）</strong>——将社会影响细化为6条可操作性原则，更偏应用场景。<br>
+            <strong>《思考，快与慢》（Daniel Kahneman）</strong>——从认知心理学角度解释决策偏差，与本教材的"社会信念与判断"一章互补。<br>
+            <strong>《乌合之众》（古斯塔夫·勒庞）</strong>——群体心理的早期经典，但偏思辨而非实证，适合与本教材的"群体影响"章节对比阅读。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与 <strong>《思考，快与慢》</strong> 在认知偏差和双系统模型上呼应；<br>
+            与 <strong>《影响力》</strong> 在说服和从众机制上呼应；<br>
+            与 <strong>《乌合之众》</strong> 在群体行为和去个体化上形成"现代实证 vs 经典思辨"的对照。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>教育：</strong>教师期望效应的启示——让学生感受到高期待比批评更有效；<br>
+            <strong>管理：</strong>避免群体思维——在决策会议中引入"魔鬼代言人"机制；<br>
+            <strong>产品设计：</strong>利用社会规范和承诺一致原则来设计用户行为引导；<br>
+            <strong>个人成长：</strong>觉察基本归因错误和自证预言，减少对他人的judge和对自己的设限。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨</div>
+      <p>社会心理学最迷人的地方在于——它研究的"人"就是正在研究它的"我们"。每一次阅读，实验都在拿我们自己做样本。当你意识到"基本归因错误"的存在，你不会再轻易给别人贴标签；当你理解了"旁观者效应"，你会成为在紧急情况下主动锚定责任的人。</p>
+      <p style="margin-top:8px;">迈尔斯用一句话概括了这种自觉的力量：<em>"社会心理学是一门让我们学会质疑自己直觉的科学——因为很多时候，我们的直觉恰好是错的。"</em></p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《社会心理学》知识图谱 · 基于戴维·迈尔斯第11版整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<!-- 术语弹窗（预留） -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- 返回顶部 -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// 术语弹窗
+const glossary = {}; // 本图谱暂未使用术语弹窗，预留接口
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// 侧边栏滚动高亮
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+// 返回顶部按钮显隐
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
 </body>
 </html>

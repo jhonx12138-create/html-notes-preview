@@ -3,403 +3,775 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI时代管理幅度四象限 · 14种设计风格</title>
+    <title>《中国哲学简史》· 知识图谱</title>
     <style>
         :root {
-            --bg: #f5f5f5; --card-bg: #fff; --text: #212121; --text-secondary: #616161;
-            --border: #e0e0e0; --shadow: 0 1px 3px rgba(0,0,0,0.12); --radius: 12px;
-            --q1-bg: #e0f2f1; --q2-bg: #fff8e1; --q3-bg: #ffebee; --q4-bg: #e3f2fd;
-            --q1-color: #00897b; --q2-color: #ef6c00; --q3-color: #d32f2f; --q4-color: #1565c0;
-            --axis-color: #424242; --grid-color: #bdbdbd;
-            --font: Roboto, "PingFang SC", sans-serif;
-            --chart-radius: 8px; --chart-stroke: #e0e0e0; --chart-stroke-width: 1.5;
-            --detail-top: 4px;
-            --backdrop: none; --glass-border: none; --glass-bg: #fff;
+            --bg: #faf9f7;
+            --card-bg: #ffffff;
+            --border: #d8d0c4;
+            --text: #2c2416;
+            --text-muted: #6b6258;
+            --accent: #5c3a2e;
+            --accent-light: #f8f4f0;
+            --accent-glow: rgba(92, 58, 46, 0.15);
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            --font-serif: 'Noto Serif SC', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         body {
-            margin: 0; background: var(--bg); color: var(--text); font-family: var(--font);
-            transition: background 0.3s, color 0.3s;
+            font-family: var(--font-serif);
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.9;
+            display: flex;
+            -webkit-font-smoothing: antialiased;
         }
-        .style-bar {
-            position: sticky; top: 0; z-index: 100; background: rgba(30,30,30,0.9);
-            backdrop-filter: blur(10px); padding: 10px 16px; display: flex; flex-wrap: wrap;
-            gap: 8px; justify-content: center; border-bottom: 1px solid rgba(255,255,255,0.1);
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: #f8f5f0;
+            border-right: 1px solid var(--border);
+            overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 100;
+            font-family: var(--font-sans);
+            font-size: 0.86rem;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02);
         }
-        .style-bar button {
-            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-            color: #ccc; padding: 6px 14px; border-radius: 20px; cursor: pointer;
-            font-size: 13px; transition: all 0.2s; white-space: nowrap;
+        .sidebar h3 {
+            font-size: 0.95rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent);
+            letter-spacing: 0.04em;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
-        .style-bar button:hover, .style-bar button.active {
-            background: rgba(255,255,255,0.25); color: white; border-color: rgba(255,255,255,0.5);
+        .sidebar .toc-list {
+            list-style: none;
+            padding: 0;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 24px 24px 80px; }
-        .header { text-align: center; margin-bottom: 32px; }
-        .header h1 { font-size: 2.5rem; font-weight: 500; letter-spacing: -0.5px; }
-        .header p { color: var(--text-secondary); margin-top: 8px; }
-        .chart-wrapper {
-            background: var(--glass-bg); border-radius: var(--radius); box-shadow: var(--shadow);
-            border: var(--border); padding: 32px 20px 16px; margin-bottom: 48px;
-            display: flex; flex-direction: column; align-items: center;
-            backdrop-filter: var(--backdrop); -webkit-backdrop-filter: var(--backdrop);
+        .sidebar .toc-list li {
+            margin-bottom: 0.1rem;
         }
-        .chart-wrapper h2 { font-weight: 500; font-size: 1.5rem; margin-bottom: 24px; }
-        .svg-container { width: 100%; max-width: 700px; }
-        .criteria-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 48px; }
-        .criteria-card {
-            background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
-            border: var(--border); padding: 24px; backdrop-filter: var(--backdrop);
-            -webkit-backdrop-filter: var(--backdrop);
+        .sidebar .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            color: #4a3f33;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-size: 0.82rem;
         }
-        .criteria-card h3 { font-size: 1.2rem; font-weight: 500; margin-bottom: 12px; }
-        .criteria-card table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-        .criteria-card th { text-align: left; font-weight: 500; color: var(--text-secondary); padding: 8px 8px 6px 0; border-bottom: 1px solid var(--border); }
-        .criteria-card td { padding: 8px 8px 8px 0; border-bottom: 1px solid var(--grid-color); }
-        .detail-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 48px; }
-        .detail-card {
-            background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
-            border: var(--border); padding: 24px; border-top: var(--detail-top) solid transparent;
-            backdrop-filter: var(--backdrop); -webkit-backdrop-filter: var(--backdrop);
+        .sidebar .toc-list a:hover {
+            background: #e0d8cc;
+            color: #1a1508;
         }
-        .detail-card.q1 { border-top-color: var(--q1-color); }
-        .detail-card.q2 { border-top-color: var(--q2-color); }
-        .detail-card.q3 { border-top-color: var(--q3-color); }
-        .detail-card.q4 { border-top-color: var(--q4-color); }
-        .detail-card h3 { font-size: 1.4rem; font-weight: 500; margin-bottom: 4px; }
-        .detail-card .subtitle { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 8px; }
-        .detail-card .badge {
-            display: inline-block; background: var(--bg); font-weight: 500; font-size: 0.82rem;
-            padding: 3px 12px; border-radius: 4px; margin-bottom: 14px;
+        .sidebar .toc-list a.active {
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
         }
-        .detail-card h4 { font-size: 0.9rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); margin: 16px 0 8px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        .detail-card ul { list-style: none; padding-left: 0; }
-        .detail-card ul li { position: relative; padding-left: 20px; margin-bottom: 6px; font-size: 0.9rem; color: var(--text); }
-        .detail-card ul li::before { content: "›"; position: absolute; left: 0; font-weight: bold; font-size:1.1rem; }
-        .detail-card.q1 ul li::before { color: var(--q1-color); }
-        .detail-card.q2 ul li::before { color: var(--q2-color); }
-        .detail-card.q3 ul li::before { color: var(--q3-color); }
-        .detail-card.q4 ul li::before { color: var(--q4-color); }
-        .example-box { background: var(--bg); border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 0.87rem; color: var(--text-secondary); }
-        .dialectical h2 { text-align: center; font-size: 1.5rem; font-weight: 500; margin-bottom: 24px; }
-        .dialectical-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .dialectical-card {
-            background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow);
-            border: var(--border); padding: 20px; backdrop-filter: var(--backdrop);
-            -webkit-backdrop-filter: var(--backdrop);
+        .main {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            padding: 2rem 2.5rem;
+            max-width: 1100px;
         }
-        .dialectical-card h4 { font-weight: 500; margin-bottom: 8px; }
-        .dialectical-card p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
-        @media (max-width: 900px) { .detail-grid, .dialectical-grid { grid-template-columns: 1fr; } }
-
-        /* 各主题特有变量 */
-        body[data-theme="skeuo"] {
-            --bg: #e9e3d5; --card-bg: #fcfaf2; --text: #3d392e; --text-secondary: #6b6353;
-            --border: 1px solid #c4b99a; --shadow: 0 10px 30px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.06);
-            --radius: 18px; --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
-            --q1-bg: #fef7e0; --q2-bg: #e6f2f0; --q3-bg: #f9e7e5; --q4-bg: #e5edf8;
-            --axis-color: #5b4e3c; --grid-color: #b8a88c; --font: "Palatino Linotype", "Book Antiqua", Palatino, "PingFang SC", serif;
-            --chart-radius: 14px; --chart-stroke: #c4b99a; --chart-stroke-width: 1.5; --detail-top: 6px;
+        .header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
         }
-        body[data-theme="flat"] {
-            --bg: #f0f2f5; --card-bg: #fff; --text: #1a1a2e; --text-secondary: #5a6475;
-            --border: 1px solid #d5dae3; --shadow: none; --radius: 8px;
-            --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
-            --q1-bg: #f0fdfa; --q2-bg: #fffbeb; --q3-bg: #fef2f2; --q4-bg: #eff6ff;
-            --axis-color: #2e3540; --grid-color: #d5dae3; --font: "Inter", "PingFang SC", sans-serif;
-            --chart-radius: 8px; --chart-stroke: #d5dae3; --detail-top: 4px;
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.3rem;
+            color: #1e1508;
         }
-        body[data-theme="material"] {
-            --bg: #f5f5f5; --card-bg: #fff; --text: #212121; --text-secondary: #616161;
-            --border: 1px solid #e0e0e0; --shadow: 0 3px 6px rgba(0,0,0,0.15); --radius: 12px;
-            --q1-color: #00897b; --q2-color: #ef6c00; --q3-color: #d32f2f; --q4-color: #1565c0;
-            --q1-bg: #e0f2f1; --q2-bg: #fff8e1; --q3-bg: #ffebee; --q4-bg: #e3f2fd;
-            --axis-color: #424242; --grid-color: #bdbdbd; --font: Roboto, "PingFang SC", sans-serif;
-            --chart-radius: 8px; --chart-stroke: #e0e0e0;
+        .header .subtitle {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.2rem;
         }
-        body[data-theme="neumorphism"] {
-            --bg: #e0e5ec; --card-bg: #e0e5ec; --text: #2d3436; --text-secondary: #636e72;
-            --border: none; --shadow: 8px 8px 16px #b8bcc2, -8px -8px 16px #ffffff; --radius: 24px;
-            --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
-            --q1-bg: #d6e4e3; --q2-bg: #ece3d1; --q3-bg: #e8d6d5; --q4-bg: #d5e0f0;
-            --axis-color: #2d3436; --grid-color: #b0b8c0; --font: "Inter", "PingFang SC", sans-serif;
-            --chart-radius: 14px; --chart-stroke: #b0b8c0; --detail-top: 6px;
+        .header .meta {
+            font-size: 0.88rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.2rem;
         }
-        body[data-theme="glassmorphism"] {
-            --bg: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); --card-bg: rgba(255,255,255,0.25);
-            --text: #1e1e2f; --text-secondary: #3a3a5c; --border: 1px solid rgba(255,255,255,0.4);
-            --shadow: 0 8px 32px rgba(0,0,0,0.1); --radius: 20px;
-            --backdrop: blur(12px); --glass-bg: rgba(255,255,255,0.2);
-            --q1-color: #0d9488; --q2-color: #d97706; --q3-color: #dc2626; --q4-color: #2563eb;
-            --q1-bg: rgba(13,148,136,0.15); --q2-bg: rgba(217,119,6,0.15); --q3-bg: rgba(220,38,38,0.15); --q4-bg: rgba(37,99,235,0.15);
-            --axis-color: #2d2d44; --grid-color: rgba(255,255,255,0.4); --font: "Inter", "PingFang SC", sans-serif;
-            --chart-radius: 12px; --chart-stroke: rgba(255,255,255,0.4); --detail-top: 4px;
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
         }
-        body[data-theme="claymorphism"] {
-            --bg: #f3e8ff; --card-bg: #ffffff; --text: #4a2c6e; --text-secondary: #6b4d8a;
-            --border: none; --shadow: 0 12px 24px rgba(180,140,220,0.3), 0 4px 8px rgba(0,0,0,0.08); --radius: 32px;
-            --q1-color: #00b894; --q2-color: #fdcb6e; --q3-color: #ff7675; --q4-color: #6c5ce7;
-            --q1-bg: #e6f9f5; --q2-bg: #fff4e0; --q3-bg: #ffe8e6; --q4-bg: #ede8fd;
-            --axis-color: #4a2c6e; --grid-color: #c8b6d6; --font: "Comic Neue", "PingFang SC", cursive;
-            --chart-radius: 28px; --chart-stroke: #c8b6d6; --detail-top: 8px;
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #c4b4a0;
+            border-radius: 18px;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.8rem;
+            color: var(--accent);
+            font-family: var(--font-sans);
+            font-weight: 500;
         }
-        body[data-theme="liquid-glass"] {
-            --bg: #0f0c29; --card-bg: rgba(255,255,255,0.08);
-            --text: #e0e0f0; --text-secondary: #a0a0c0;
-            --border: 1px solid rgba(255,255,255,0.2); --shadow: 0 10px 40px rgba(0,0,0,0.4); --radius: 24px;
-            --backdrop: blur(20px); --glass-bg: rgba(255,255,255,0.05);
-            --q1-color: #00e5ff; --q2-color: #ffb300; --q3-color: #ff5252; --q4-color: #448aff;
-            --q1-bg: rgba(0,229,255,0.12); --q2-bg: rgba(255,179,0,0.12); --q3-bg: rgba(255,82,82,0.12); --q4-bg: rgba(68,138,255,0.12);
-            --axis-color: #c0c0e0; --grid-color: rgba(255,255,255,0.25); --font: "Inter", "PingFang SC", sans-serif;
-            --chart-radius: 16px; --chart-stroke: rgba(255,255,255,0.25);
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.6rem 1.8rem;
+            margin-bottom: 1.8rem;
+            box-shadow: var(--shadow);
+            scroll-margin-top: 1rem;
         }
-        body[data-theme="neo-brutalism"] {
-            --bg: #ffeb3b; --card-bg: #fff; --text: #000; --text-secondary: #333;
-            --border: 3px solid #000; --shadow: 6px 6px 0 #000; --radius: 0px;
-            --q1-color: #000; --q2-color: #000; --q3-color: #000; --q4-color: #000;
-            --q1-bg: #a5f3fc; --q2-bg: #fde68a; --q3-bg: #fca5a5; --q4-bg: #93c5fd;
-            --axis-color: #000; --grid-color: #000; --font: "Impact", "Arial Black", "PingFang SC", sans-serif;
-            --chart-radius: 0px; --chart-stroke: #000; --chart-stroke-width: 3; --detail-top: 6px;
+        .section h2 {
+            font-size: 1.3rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.8rem;
+            margin-bottom: 1rem;
+            color: #3a2010;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        body[data-theme="minimalism"] {
-            --bg: #fff; --card-bg: #fff; --text: #111; --text-secondary: #666;
-            --border: 1px solid #eaeaea; --shadow: none; --radius: 4px;
-            --q1-color: #111; --q2-color: #111; --q3-color: #111; --q4-color: #111;
-            --q1-bg: #f5f5f5; --q2-bg: #f5f5f5; --q3-bg: #f5f5f5; --q4-bg: #f5f5f5;
-            --axis-color: #111; --grid-color: #ddd; --font: "Helvetica Neue", "PingFang SC", sans-serif;
-            --chart-radius: 2px; --chart-stroke: #ddd; --detail-top: 2px;
+        .section h3 {
+            font-size: 1.05rem;
+            margin: 1.5rem 0 0.6rem;
+            padding: 0.3rem 0;
+            border-bottom: 1px dashed var(--border);
+            color: #5c3a2e;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
         }
-        body[data-theme="bauhaus"] {
-            --bg: #f4f0e6; --card-bg: #fff; --text: #1a1a1a; --text-secondary: #444;
-            --border: 2px solid #1a1a1a; --shadow: none; --radius: 0px;
-            --q1-color: #e63946; --q2-color: #f4a261; --q3-color: #264653; --q4-color: #2a9d8f;
-            --q1-bg: #fce4e4; --q2-bg: #fff3e0; --q3-bg: #e0f2f1; --q4-bg: #e3f2fd;
-            --axis-color: #1a1a1a; --grid-color: #1a1a1a; --font: "Futura", "Century Gothic", "PingFang SC", sans-serif;
-            --chart-radius: 0px; --chart-stroke: #1a1a1a; --chart-stroke-width: 2; --detail-top: 4px;
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.6rem;
         }
-        body[data-theme="retrofuturism"] {
-            --bg: #0a0a1a; --card-bg: rgba(20,20,40,0.8); --text: #e0f0ff; --text-secondary: #a0b0d0;
-            --border: 1px solid #ff00ff; --shadow: 0 0 20px rgba(255,0,255,0.3); --radius: 8px;
-            --backdrop: blur(8px); --glass-bg: rgba(10,10,30,0.7);
-            --q1-color: #00ffff; --q2-color: #ff00ff; --q3-color: #ff5555; --q4-color: #00ff88;
-            --q1-bg: rgba(0,255,255,0.1); --q2-bg: rgba(255,0,255,0.1); --q3-bg: rgba(255,85,85,0.1); --q4-bg: rgba(0,255,136,0.1);
-            --axis-color: #ff00ff; --grid-color: #444; --font: "Orbitron", "Courier New", "PingFang SC", monospace;
-            --chart-radius: 6px; --chart-stroke: #ff00ff;
+        .info-card {
+            background: #fdfaf6;
+            border-radius: 10px;
+            padding: 0.9rem 1.1rem;
+            border-left: 5px solid #ccc;
+            transition: all 0.25s;
+            position: relative;
         }
-        body[data-theme="brutalism"] {
-            --bg: #e5e5e5; --card-bg: #d3d3d3; --text: #1a1a1a; --text-secondary: #333;
-            --border: 2px solid #1a1a1a; --shadow: none; --radius: 0px;
-            --q1-color: #1a1a1a; --q2-color: #1a1a1a; --q3-color: #1a1a1a; --q4-color: #1a1a1a;
-            --q1-bg: #c8c8c8; --q2-bg: #c8c8c8; --q3-bg: #c8c8c8; --q4-bg: #c8c8c8;
-            --axis-color: #1a1a1a; --grid-color: #999; --font: "Courier New", monospace;
-            --chart-radius: 0; --chart-stroke: #1a1a1a; --chart-stroke-width: 2; --detail-top: 4px;
+        .info-card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+            transform: translateY(-2px);
         }
-        body[data-theme="anti-design"] {
-            --bg: #ff6b6b; --card-bg: #4ecdc4; --text: #1a1a2e; --text-secondary: #2d2d44;
-            --border: 3px dashed #ffe66d; --shadow: 10px -10px 0 #f7fff7; --radius: 12px 4px 24px 8px;
-            --q1-color: #1a535c; --q2-color: #ff9f1c; --q3-color: #e71d36; --q4-color: #2ec4b6;
-            --q1-bg: #f7fff7; --q2-bg: #f7fff7; --q3-bg: #f7fff7; --q4-bg: #f7fff7;
-            --axis-color: #1a1a2e; --grid-color: #1a1a2e; --font: "Comic Sans MS", "Chalkboard SE", cursive;
-            --chart-radius: 8px; --chart-stroke: #1a1a2e; --detail-top: 6px;
+        .info-card.confucian {
+            border-color: #c46040;
+            background: #fefaf6;
         }
-        body[data-theme="acid-graphics"] {
-            --bg: #120c1c; --card-bg: rgba(30,20,50,0.7); --text: #d4f0f0; --text-secondary: #a0c0c0;
-            --border: 1px solid #39ff14; --shadow: 0 0 30px rgba(57,255,20,0.3); --radius: 20px;
-            --backdrop: blur(15px); --glass-bg: rgba(20,10,30,0.5);
-            --q1-color: #ff007f; --q2-color: #ffcc00; --q3-color: #00ffcc; --q4-color: #bf00ff;
-            --q1-bg: rgba(255,0,127,0.15); --q2-bg: rgba(255,204,0,0.15); --q3-bg: rgba(0,255,204,0.15); --q4-bg: rgba(191,0,255,0.15);
-            --axis-color: #39ff14; --grid-color: #555; --font: "Monaco", "Courier New", monospace;
-            --chart-radius: 14px; --chart-stroke: #39ff14;
+        .info-card.taoist {
+            border-color: #5a9050;
+            background: #fafdfa;
+        }
+        .info-card.buddhist {
+            border-color: #c48840;
+            background: #fefcf6;
+        }
+        .info-card.neo {
+            border-color: #5088b0;
+            background: #fafcfe;
+        }
+        .info-card.modern {
+            border-color: #7a5a90;
+            background: #fdfafe;
+        }
+        .info-card .label {
+            font-weight: 700;
+            font-size: 0.82rem;
+            margin-bottom: 0.35rem;
+            letter-spacing: 0.04em;
+            font-family: var(--font-sans);
+            color: #3a2a1a;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .info-card .content {
+            font-size: 0.9rem;
+            color: #4a3f33;
+        }
+        .info-card .content ul {
+            margin-top: 0.2rem;
+            padding-left: 1.2rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.2rem;
+        }
+        .glossary-trigger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background: var(--accent);
+            color: #fff;
+            border-radius: 50%;
+            font-size: 0.7rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin-left: 0.35rem;
+            transition: all 0.2s;
+            font-family: var(--font-sans);
+            border: none;
+            vertical-align: middle;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .glossary-trigger:hover {
+            background: #7a4a30;
+            transform: scale(1.15);
+            box-shadow: 0 4px 10px var(--accent-glow);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.hidden {
+            display: none;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 1.8rem;
+            max-width: 560px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border);
+            position: relative;
+            font-family: var(--font-sans);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-card h4 {
+            font-size: 1.15rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .modal-card p {
+            font-size: 0.92rem;
+            color: #4a3f33;
+            line-height: 1.7;
+            margin-bottom: 0.7rem;
+        }
+        .modal-card .close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: #999;
+        }
+        .modal-card .close-btn:hover {
+            color: #333;
+        }
+        blockquote {
+            background: var(--accent-light);
+            border-left: 4px solid #8a5a3a;
+            margin: 1rem 0;
+            padding: 0.9rem 1.3rem;
+            font-style: italic;
+            border-radius: 0 8px 8px 0;
+            color: #3a2010;
+            font-size: 0.92rem;
+        }
+        .timeline-track {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 0.3rem;
+            margin-bottom: 2rem;
+            padding: 1.2rem 0.8rem;
+            background: linear-gradient(180deg, #fdfcfa, #f8f5f0);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow-x: auto;
+        }
+        .timeline-node {
+            text-align: center;
+            min-width: 75px;
+            flex: 1;
+            position: relative;
+        }
+        .timeline-node .era {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.2rem;
+            font-family: var(--font-sans);
+        }
+        .timeline-node .dot {
+            width: 10px;
+            height: 10px;
+            background: var(--accent);
+            border-radius: 50%;
+            margin: 0 auto 0.3rem;
+            box-shadow: 0 0 6px var(--accent-glow);
+        }
+        .timeline-node .name {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #3a2010;
+            font-family: var(--font-sans);
+        }
+        .timeline-node .subtitle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+        .diagram-wrap {
+            text-align: center;
+            margin: 1.2rem 0;
+            background: #fafcfe;
+            border-radius: 10px;
+            padding: 1rem;
+            border: 1px solid #e0e8ee;
+        }
+        .diagram-wrap svg {
+            max-width: 100%;
+        }
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        table.extension th {
+            background: #f5ede3;
+            padding: 0.5rem 0.8rem;
+            text-align: left;
+            font-weight: 700;
+            color: #5c3a2e;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
+        }
+        table.extension td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid var(--border);
+            color: #4a3f33;
+            vertical-align: top;
+        }
+        hr.divider {
+            border: none;
+            border-top: 1px dashed var(--border);
+            margin: 2rem 0;
+        }
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 42px;
+            height: 42px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .back-to-top:hover {
+            background: #7a4a30;
+            transform: translateY(-3px);
+        }
+        @media (max-width: 800px) {
+            .sidebar {
+                display: none;
+            }
+            .main {
+                margin-left: 0;
+                padding: 1rem;
+            }
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
         }
     </style>
 </head>
-<body data-theme="material">
+<body>
+    <nav class="sidebar" id="sidebar">
+        <h3>📚 中国哲学简史</h3>
+        <ul class="toc-list">
+            <li><a href="#header">📖 书籍信息</a></li>
+            <li><a href="#timeline">⏳ 哲学发展时间轴</a></li>
+            <li><a href="#part1">🏛️ 先秦：诸子百家</a></li>
+            <li><a href="#part2">📜 汉代：经学统一</a></li>
+            <li><a href="#part3">🌿 魏晋：玄学清谈</a></li>
+            <li><a href="#part4">🪷 隋唐：佛学兴盛</a></li>
+            <li><a href="#part5">🏔️ 宋明：理学高峰</a></li>
+            <li><a href="#part6">📝 清代：实学转向</a></li>
+            <li><a href="#part7">🌐 现代：中西交汇</a></li>
+            <li><a href="#laws">🧠 贯穿主线</a></li>
+            <li><a href="#extension">🔍 延伸与比较</a></li>
+        </ul>
+    </nav>
 
-<div class="style-bar">
-    <button onclick="setTheme('skeuo')">拟物化</button>
-    <button onclick="setTheme('flat')">扁平化</button>
-    <button onclick="setTheme('material')" class="active">Material</button>
-    <button onclick="setTheme('neumorphism')">新拟态</button>
-    <button onclick="setTheme('glassmorphism')">玻璃拟态</button>
-    <button onclick="setTheme('claymorphism')">粘土拟态</button>
-    <button onclick="setTheme('liquid-glass')">液态玻璃</button>
-    <button onclick="setTheme('neo-brutalism')">新粗野主义</button>
-    <button onclick="setTheme('minimalism')">极简主义</button>
-    <button onclick="setTheme('bauhaus')">包豪斯</button>
-    <button onclick="setTheme('retrofuturism')">复古未来</button>
-    <button onclick="setTheme('brutalism')">粗野主义</button>
-    <button onclick="setTheme('anti-design')">反设计</button>
-    <button onclick="setTheme('acid-graphics')">酸性设计</button>
-</div>
-
-<div class="container">
-    <div class="header">
-        <h1>AI 时代管理幅度四象限框架</h1>
-        <p>横轴：AI 可接管度（低 → 高）&nbsp;&nbsp;|&nbsp;&nbsp;纵轴：关系依赖度（低 → 高）</p>
-    </div>
-
-    <div class="chart-wrapper">
-        <h2>📐 管理幅度定位象限图</h2>
-        <div class="svg-container">
-            <svg viewBox="-30 -50 780 720" xmlns="http://www.w3.org/2000/svg">
-                <rect x="60" y="40" width="250" height="250" fill="var(--q2-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
-                <rect x="330" y="40" width="250" height="250" fill="var(--q1-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
-                <rect x="60" y="310" width="250" height="250" fill="var(--q3-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
-                <rect x="330" y="310" width="250" height="250" fill="var(--q4-bg)" rx="var(--chart-radius)" stroke="var(--chart-stroke)" stroke-width="var(--chart-stroke-width)"/>
-
-                <line x1="320" y1="45" x2="320" y2="585" stroke="var(--axis-color)" stroke-width="2.5"/>
-                <line x1="40" y1="300" x2="600" y2="300" stroke="var(--axis-color)" stroke-width="2.5"/>
-                <polygon points="320,38 314,52 326,52" fill="var(--axis-color)"/>
-                <polygon points="607,300 593,294 593,306" fill="var(--axis-color)"/>
-
-                <text x="610" y="306" font-size="14" font-weight="500" fill="var(--axis-color)">AI 可接管度</text>
-                <text x="326" y="26" font-size="14" font-weight="500" fill="var(--axis-color)">关系依赖度</text>
-                <text x="560" y="290" font-size="11" fill="var(--text-secondary)">高 →</text>
-                <text x="306" y="62" font-size="11" fill="var(--text-secondary)">↑ 高</text>
-                <text x="306" y="598" font-size="11" fill="var(--text-secondary)">↓ 低</text>
-                <text x="22" y="290" font-size="11" fill="var(--text-secondary)">← 低</text>
-                <circle cx="320" cy="300" r="4" fill="var(--axis-color)"/>
-
-                <text x="390" y="95" font-size="16" font-weight="500" fill="var(--q1-color)">Ⅰ 增强型精英体</text>
-                <text x="390" y="120" font-size="12" fill="var(--q1-color)">高关系 + 高AI</text>
-                <rect x="390" y="133" width="95" height="24" rx="4" fill="var(--q1-bg)" stroke="var(--q1-color)" stroke-width="1"/>
-                <text x="400" y="150" font-size="11" font-weight="500" fill="var(--q1-color)">幅度 10-30人</text>
-                <text x="390" y="180" font-size="10" fill="var(--q1-color)">例：对冲基金策略组</text>
-                <text x="390" y="198" font-size="10" fill="var(--q1-color)">　　AI咨询顾问团队</text>
-                <text x="390" y="216" font-size="10" fill="var(--q1-color)">　　精品游戏创意组</text>
-
-                <text x="110" y="95" font-size="16" font-weight="500" fill="var(--q2-color)">Ⅱ 传统精耕型</text>
-                <text x="110" y="120" font-size="12" fill="var(--q2-color)">高关系 + 低AI</text>
-                <rect x="110" y="133" width="90" height="24" rx="4" fill="var(--q2-bg)" stroke="var(--q2-color)" stroke-width="1"/>
-                <text x="120" y="150" font-size="11" font-weight="500" fill="var(--q2-color)">幅度 5-15人</text>
-                <text x="110" y="180" font-size="10" fill="var(--q2-color)">例：心理咨询督导组</text>
-                <text x="110" y="198" font-size="10" fill="var(--q2-color)">　　特种部队小队</text>
-                <text x="110" y="216" font-size="10" fill="var(--q2-color)">　　硬科技初创团队</text>
-
-                <text x="110" y="375" font-size="16" font-weight="500" fill="var(--q3-color)">Ⅲ 高摩擦作坊型</text>
-                <text x="110" y="400" font-size="12" fill="var(--q3-color)">低关系 + 低AI</text>
-                <rect x="110" y="413" width="90" height="24" rx="4" fill="var(--q3-bg)" stroke="var(--q3-color)" stroke-width="1"/>
-                <text x="120" y="430" font-size="11" font-weight="500" fill="var(--q3-color)">幅度 20-50人</text>
-                <text x="110" y="460" font-size="10" fill="var(--q3-color)">例：传统猎头公司</text>
-                <text x="110" y="478" font-size="10" fill="var(--q3-color)">　　社区医院行政办</text>
-                <text x="110" y="496" font-size="10" fill="var(--q3-color)">　　小型工程分包商</text>
-
-                <text x="390" y="375" font-size="16" font-weight="500" fill="var(--q4-color)">Ⅳ 算法规模型</text>
-                <text x="390" y="400" font-size="12" fill="var(--q4-color)">低关系 + 高AI</text>
-                <rect x="390" y="413" width="110" height="24" rx="4" fill="var(--q4-bg)" stroke="var(--q4-color)" stroke-width="1"/>
-                <text x="400" y="430" font-size="11" font-weight="500" fill="var(--q4-color)">幅度 数百-数千人</text>
-                <text x="390" y="460" font-size="10" fill="var(--q4-color)">例：电商仓储分拣中心</text>
-                <text x="390" y="478" font-size="10" fill="var(--q4-color)">　　数据标注众包平台</text>
-                <text x="390" y="496" font-size="10" fill="var(--q4-color)">　　自动化内容审核团队</text>
-
-                <line x1="320" y1="55" x2="320" y2="285" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
-                <line x1="75" y1="300" x2="305" y2="300" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
-                <line x1="335" y1="300" x2="580" y2="300" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
-                <line x1="320" y1="315" x2="320" y2="570" stroke="var(--grid-color)" stroke-width="0.8" stroke-dasharray="4,4"/>
-            </svg>
+    <div class="main">
+        <div class="header" id="header">
+            <h1>《中国哲学简史》</h1>
+            <div class="subtitle">一部跨越三千年的中国哲学通览</div>
+            <div class="meta">
+                <span><strong>作者</strong>：冯友兰</span>
+                <span><strong>首版</strong>：1948年（英文版）</span>
+                <span><strong>学科</strong>：中国哲学 / 思想史</span>
+            </div>
+            <div class="framework-badges">
+                <span class="badge">📘 教材通识型</span>
+                <span class="badge">🏛️ 中国哲学</span>
+                <span class="badge">📜 思想史</span>
+                <span class="badge">🧠 文化经典</span>
+            </div>
         </div>
-    </div>
 
-    <div class="criteria-grid">
-        <div class="criteria-card">
-            <h3>🤝 维度一：关系依赖度</h3>
-            <p>组织核心目标在多大程度上依赖成员间的高信任、心理安全与非正式默契。</p>
-            <table>
-                <tr><th>判断指标</th><th>高关系依赖 (4-5分)</th><th>低关系依赖 (1-2分)</th></tr>
-                <tr><td>任务互依性</td><td>频繁、难以预定的互相调整</td><td>任务可独立完成、标准化</td></tr>
-                <tr><td>创新不确定性</td><td>依赖创造性碰撞，需要心理安全</td><td>产出明确，流程固定</td></tr>
-                <tr><td>情感劳动含量</td><td>工作本身涉及处理人的情绪</td><td>极少情绪互动需求</td></tr>
-                <tr><td>价值观一致性</td><td>需要对"为何而做"有共享信念</td><td>契约即可，不需深层价值认同</td></tr>
-                <tr><td>关键人才流失影响</td><td>隐性关系网断裂，严重损害产出</td><td>人员替换成本低</td></tr>
+        <!-- 时间轴 -->
+        <div class="section" id="timeline">
+            <h2>⏳ 中国哲学发展时间轴</h2>
+            <div class="timeline-track">
+                <div class="timeline-node"><div class="era">约前6-3世纪</div><div class="dot"></div><div class="name">先秦</div><div class="subtitle">诸子百家</div></div>
+                <div class="timeline-node"><div class="era">前2-后2世纪</div><div class="dot"></div><div class="name">汉代</div><div class="subtitle">经学统一</div></div>
+                <div class="timeline-node"><div class="era">3-5世纪</div><div class="dot"></div><div class="name">魏晋</div><div class="subtitle">玄学清谈</div></div>
+                <div class="timeline-node"><div class="era">6-10世纪</div><div class="dot"></div><div class="name">隋唐</div><div class="subtitle">佛学兴盛</div></div>
+                <div class="timeline-node"><div class="era">11-16世纪</div><div class="dot"></div><div class="name">宋明</div><div class="subtitle">理学高峰</div></div>
+                <div class="timeline-node"><div class="era">17-19世纪</div><div class="dot"></div><div class="name">清代</div><div class="subtitle">实学转向</div></div>
+                <div class="timeline-node"><div class="era">20世纪</div><div class="dot"></div><div class="name">现代</div><div class="subtitle">中西交汇</div></div>
+            </div>
+        </div>
+
+        <!-- 第一部分：先秦诸子 -->
+        <div class="section" id="part1">
+            <h2>🏛️ 先秦：诸子百家（中国哲学的黄金时代）</h2>
+            <div class="info-grid">
+                <div class="info-card confucian">
+                    <div class="label">🎓 儒家：孔子 <button class="glossary-trigger" onclick="openModal('ren')">?</button></div>
+                    <div class="content">孔子（前551-前479）的核心思想是<strong>"仁"</strong>——爱人、推己及人。他强调<strong>"礼"</strong>作为社会秩序的基础，通过<strong>"正名"</strong>使社会各安其位。儒家的理想人格是<strong>"君子"</strong>，其政治理想是<strong>"德治"</strong>和<strong>"王道"</strong>。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">🧠 儒家：孟子与荀子 <button class="glossary-trigger" onclick="openModal('mengxun')">?</button></div>
+                    <div class="content"><strong>孟子</strong>主张<strong>"性善论"</strong>，认为人皆有四端（恻隐、羞恶、辞让、是非之心），修养方法是"存心养性"。<strong>荀子</strong>持<strong>"性恶论"</strong>，认为人性本恶，需通过"礼"来约束和教化。两人从不同方向继承了孔子思想。</div>
+                </div>
+                <div class="info-card taoist">
+                    <div class="label">🌿 道家：老子 <button class="glossary-trigger" onclick="openModal('dao')">?</button></div>
+                    <div class="content">老子思想的核心是<strong>"道"</strong>——宇宙万物的本源和规律。他主张<strong>"无为而治"</strong>，认为过度干预会适得其反。老子崇尚<strong>柔弱胜刚强</strong>的智慧，提出"上善若水"的处世哲学。《道德经》短短五千言，影响了整个中国文化的深层结构。</div>
+                </div>
+                <div class="info-card taoist">
+                    <div class="label">🦋 道家：庄子 <button class="glossary-trigger" onclick="openModal('zhuangzi')">?</button></div>
+                    <div class="content">庄子将道家思想推向极致，追求<strong>绝对的精神自由</strong>。他通过"逍遥游"的理想和"齐物论"的思辨，消解了生死、是非、物我的界限，达到了"天地与我并生，万物与我为一"的境界。庄子的文风汪洋恣肆，是中国文学和哲学的双重瑰宝。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">⚖️ 墨家：兼爱非攻 <button class="glossary-trigger" onclick="openModal('mozi')">?</button></div>
+                    <div class="content">墨子主张<strong>"兼爱"</strong>（无差别地爱所有人）和<strong>"非攻"</strong>（反对侵略战争）。墨家强调功利主义色彩，认为行为的价值在于是否对人民有利。墨家还发展了逻辑学和自然科学，但汉代以后逐渐式微。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">📏 法家：韩非子 <button class="glossary-trigger" onclick="openModal('legalism')">?</button></div>
+                    <div class="content">韩非子集法家大成，主张以<strong>法、术、势</strong>三者治国。法是公开的法律，术是统治的技巧，势是君主的权威。法家认为人性自私，必须用严刑峻法来约束。秦朝以法家思想统一天下，但过于严苛导致二世而亡。</div>
+                </div>
+                <div class="info-card taoist">
+                    <div class="label">🌀 阴阳家与名家</div>
+                    <div class="content"><strong>阴阳家</strong>（邹衍）用阴阳五行解释宇宙变化和历史更替，影响了后世的中医和风水思想。<strong>名家</strong>（公孙龙、惠施）专注于逻辑和语言分析，"白马非马"的命题探讨了概念与实在的关系。名家虽未成主流，但代表了逻辑思辨的萌芽。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">🔗 承接逻辑</div>
+                    <div class="content">先秦是中国哲学最富创造力的时期。儒家关注社会伦理，道家追求自然自由，墨家提倡兼爱功利，法家强调制度控制。这些思想的碰撞与融合，为后世两千年的中国哲学奠定了全部基础。</div>
+                </div>
+            </div>
+            <blockquote>"为天地立心，为生民立命，为往圣继绝学，为万世开太平。" —— 张载（宋代理学家对儒家理想的总结）</blockquote>
+        </div>
+
+        <!-- 第二部分：汉代 -->
+        <div class="section" id="part2">
+            <h2>📜 汉代：经学统一与儒术独尊</h2>
+            <div class="info-grid">
+                <div class="info-card confucian">
+                    <div class="label">🏛️ 董仲舒与独尊儒术 <button class="glossary-trigger" onclick="openModal('dong')">?</button></div>
+                    <div class="content">董仲舒建议汉武帝"罢黜百家，独尊儒术"，将儒家提升为官方意识形态。他将阴阳五行学说融入儒学，建立了<strong>"天人感应"</strong>理论——天象与人事相互影响，皇帝的行为会引发天的回应。这一理论既为君权提供了神圣基础，也构成了一定的约束。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">📚 古文经学与今文经学之争</div>
+                    <div class="content">汉代经学分为两大流派：<strong>今文经学</strong>注重微言大义，将经典与现实政治结合；<strong>古文经学</strong>注重文字训诂和历史考据。两派之争不仅关乎学术方法，更涉及政治立场和思想正统性的争夺。</div>
+                </div>
+                <div class="info-card taoist">
+                    <div class="label">🌐 淮南子与道家余韵</div>
+                    <div class="content">《淮南子》是汉代道家思想的集大成之作，融合了道家、儒家和阴阳家思想。它试图建立一个包罗万象的宇宙论体系，探讨了从天地开辟到人事治理的完整图景，展现了汉代思想的宏大格局。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">🔗 承接逻辑</div>
+                    <div class="content">从"百家争鸣"到"一家独大"，儒家在汉代完成了从民间学说到官方意识形态的转变。这一转变使得儒学获得了空前的影响力，但也使其带上了政治依附的色彩。经学的繁琐和僵化，最终引发了魏晋时期的反动。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三部分：魏晋玄学 -->
+        <div class="section" id="part3">
+            <h2>🌿 魏晋：玄学清谈与自然觉醒</h2>
+            <div class="info-grid">
+                <div class="info-card taoist">
+                    <div class="label">🌬️ 何晏、王弼与"贵无论" <button class="glossary-trigger" onclick="openModal('xuanxue')">?</button></div>
+                    <div class="content">魏晋玄学以《老子》《庄子》《周易》为核心文本，探讨<strong>"有无"、"本末"、"名教与自然"</strong>等抽象问题。何晏和王弼主张"贵无论"，认为"无"是宇宙的本体，"有"从"无"中产生。他们重新解读儒家经典，在名教中寻找自然的根基。</div>
+                </div>
+                <div class="info-card taoist">
+                    <div class="label">🎋 竹林七贤与自由精神 <button class="glossary-trigger" onclick="openModal('bamboo')">?</button></div>
+                    <div class="content">嵇康、阮籍等竹林七贤以放达不羁的生活方式对抗虚伪的礼教。他们"越名教而任自然"，追求个性的解放和精神的自由。这种反叛精神虽然短暂，却在中国文化中留下了追求独立人格的宝贵传统。</div>
+                </div>
+                <div class="info-card taoist">
+                    <div class="label">📖 郭象与"独化论"</div>
+                    <div class="content">郭象通过《庄子注》发展出"独化论"：万物都是自生自化，不需要外在的"无"作为本体。他调和名教与自然的关系，认为遵守名教本身就是顺应自然。郭象的注解深刻影响了后世对庄子的理解。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">🔗 承接逻辑</div>
+                    <div class="content">魏晋玄学是对汉代经学繁琐僵化的反拨。当儒家经典研究变成了咬文嚼字的训诂之学时，知识分子转向了道家的超越精神。玄学清谈虽然看似远离现实，但其中蕴含的"自然"观念，为后来的宋明理学提供了重要的思想资源。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四部分：隋唐佛学 -->
+        <div class="section" id="part4">
+            <h2>🪷 隋唐：佛学兴盛与中国化</h2>
+            <div class="info-grid">
+                <div class="info-card buddhist">
+                    <div class="label">🧘 佛教中国化的历程 <button class="glossary-trigger" onclick="openModal('buddhism_china')">?</button></div>
+                    <div class="content">佛教自汉代传入中国，经过数百年与本土文化的碰撞融合，在隋唐达到鼎盛。中国佛教形成了<strong>天台宗、华严宗、禅宗、净土宗</strong>等本土宗派，其中<strong>禅宗</strong>被冯友兰称为"中国化最彻底的佛教"，它将高深的佛理融入日常生活。</div>
+                </div>
+                <div class="info-card buddhist">
+                    <div class="label">🌺 禅宗：不立文字，明心见性 <button class="glossary-trigger" onclick="openModal('chan')">?</button></div>
+                    <div class="content">禅宗主张<strong>"教外别传，不立文字，直指人心，见性成佛"</strong>。六祖慧能强调顿悟的可能——人人都具有佛性，只需要唤醒。禅宗反对繁琐的理论，用公案、机锋等非逻辑方式启发觉悟。它深刻影响了中国的诗歌、绘画和生活方式。</div>
+                </div>
+                <div class="info-card buddhist">
+                    <div class="label">🪞 华严宗与天台宗</div>
+                    <div class="content"><strong>华严宗</strong>以"法界缘起"为核心，认为一切事物相互依存、圆融无碍，呈现了一个完美和谐的宇宙图景。<strong>天台宗</strong>以《法华经》为根本，提出了"一心三观"的修行方法，强调止观并重，理论体系极为精密。</div>
+                </div>
+                <div class="info-card confucian">
+                    <div class="label">🔗 承接逻辑</div>
+                    <div class="content">佛教的传入对中国哲学产生了深远影响。它带来了系统化的宇宙论和心性论，填补了儒家在形而上学层面的空白。宋明理学家正是在消化佛教思想的基础上，重建了儒学的理论体系。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五部分：宋明理学 -->
+        <div class="section" id="part5">
+            <h2>🏔️ 宋明：理学高峰与心学革命</h2>
+            <div class="info-grid">
+                <div class="info-card neo">
+                    <div class="label">🏔️ 程朱理学 <button class="glossary-trigger" onclick="openModal('chengzhu')">?</button></div>
+                    <div class="content">程颢、程颐兄弟和朱熹建立了庞大的理学体系。核心命题是<strong>"理"</strong>（宇宙万物的原理和规律）与<strong>"气"</strong>（构成万物的物质材料）。朱熹主张<strong>"格物致知"</strong>——通过研究事物来穷尽其理，最终达到对天理的理解。理学成为元明清三代的官方正统思想。</div>
+                </div>
+                <div class="info-card neo">
+                    <div class="label">❤️ 陆王心学 <button class="glossary-trigger" onclick="openModal('xinli')">?</button></div>
+                    <div class="content">陆九渊和<strong>王阳明</strong>反对程朱的繁琐格物方法。王阳明提出<strong>"心即理"</strong>——理不在外部事物中，就在每个人的心中。他倡导<strong>"知行合一"</strong>，认为真知必然付诸行动。晚年提出<strong>"致良知"</strong>，将道德修养归结为发现和扩充内心的良知。心学对后来的思想解放产生了重要影响。</div>
+                </div>
+                <div class="info-card neo">
+                    <div class="label">📖 理学与心学的根本分歧</div>
+                    <div class="content">程朱理学主张<strong>"性即理"</strong>——天理客观存在于宇宙万物之中，需要通过格物来认识。陆王心学主张<strong>"心即理"</strong>——天理就在每个人的心中，需要通过反省来体悟。这一分歧贯穿了整个宋明时期，也延续到了后来的思想史中。</div>
+                </div>
+                <div class="info-card neo">
+                    <div class="label">🔗 承接逻辑</div>
+                    <div class="content">宋明理学是中国哲学的高峰。它在吸收佛教和道家思想的基础上，重建了儒学的形而上体系。从"理"到"心"的转向，从"格物"到"致良知"的发展，反映了中国哲学向内转的深化趋势。</div>
+                </div>
+            </div>
+            <blockquote>"宇宙便是吾心，吾心即是宇宙。" —— 陆九渊</blockquote>
+        </div>
+
+        <!-- 第六部分：清代 -->
+        <div class="section" id="part6">
+            <h2>📝 清代：实学转向与考据之学</h2>
+            <div class="info-grid">
+                <div class="info-card modern">
+                    <div class="label">🔬 顾炎武与实学精神 <button class="glossary-trigger" onclick="openModal('guyanwu')">?</button></div>
+                    <div class="content">顾炎武是明末清初的启蒙思想家，提出<strong>"天下兴亡，匹夫有责"</strong>。他批判空谈心性的学风，主张<strong>"经世致用"</strong>——学问必须有益于社会实际。他的考据方法为清代朴学奠定了基础。</div>
+                </div>
+                <div class="info-card modern">
+                    <div class="label">📚 乾嘉考据学</div>
+                    <div class="content">清代中期形成了以<strong>考据、训诂、校勘</strong>为核心的学术传统。戴震、段玉裁、王念孙等学者致力于恢复古代经典的原貌，发展出了严谨的实证方法。这一学派虽然被批评为"为学问而学问"，但其治学精神与现代学术方法论有着内在的相通之处。</div>
+                </div>
+                <div class="info-card modern">
+                    <div class="label">💡 戴震的哲学突破</div>
+                    <div class="content">戴震不仅是一位考据大家，更是一位深刻的哲学家。他在《孟子字义疏证》中批判了宋明理学"以理杀人"的弊端，提出<strong>"理存于欲"</strong>——道德原则不能脱离人的自然欲望。这一思想具有鲜明的启蒙色彩。</div>
+                </div>
+                <div class="info-card neo">
+                    <div class="label">🔗 承接逻辑</div>
+                    <div class="content">清代学术是对宋明理学空谈倾向的修正。从"尊德性"到"道问学"的转向，从形而上思辨到实证考据的转变，标志着中国学术方法的重要转型。但考据学的象牙塔化也使得思想活力有所减弱。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第七部分：现代 -->
+        <div class="section" id="part7">
+            <h2>🌐 现代：中西交汇与哲学新命</h2>
+            <div class="info-grid">
+                <div class="info-card modern">
+                    <div class="label">🌍 西学东渐的冲击</div>
+                    <div class="content">19世纪末至20世纪初，西方哲学（特别是进化论、自由主义、马克思主义）大规模传入中国。中国传统哲学面临前所未有的挑战：如何在现代世界中保持生命力？这催生了多种回应方式——从康有为的"托古改制"到胡适的"全盘西化"，再到新儒家的"返本开新"。</div>
+                </div>
+                <div class="info-card modern">
+                    <div class="label">🏯 新儒家运动 <button class="glossary-trigger" onclick="openModal('newconfucian')">?</button></div>
+                    <div class="content">熊十力、梁漱溟、牟宗三、唐君毅等学者致力于在现代化背景下重建儒家哲学。他们吸收了西方哲学的严密方法，重新阐释儒家传统，试图证明中国哲学具有普遍价值。牟宗三的"道德的形上学"是这一运动的巅峰之作。</div>
+                </div>
+                <div class="info-card modern">
+                    <div class="label">📖 冯友兰的贡献 <button class="glossary-trigger" onclick="openModal('fengyulan')">?</button></div>
+                    <div class="content">冯友兰本人就是中国哲学现代化的关键人物。他的"新理学"体系试图用西方逻辑分析方法重建程朱理学。他在《中国哲学简史》中展现了宽广的学术视野和清晰的思想脉络，为中国哲学走向世界做出了奠基性贡献。</div>
+                </div>
+                <div class="info-card modern">
+                    <div class="label">🔗 承接逻辑</div>
+                    <div class="content">中国哲学的现代化不是简单的"西化"，而是在对话中重新发现自身。冯友兰认为，中国哲学的特长在于"负的方法"——通过直觉体悟来把握不可言说的境界。在现代世界中，中西两种哲学传统正在走向互补与融合。</div>
+                </div>
+            </div>
+            <blockquote>"哲学的任务不是为了增加积极的知识，而是为了提高心灵的境界——达到超乎现世的境界，获得高于道德价值的价值。" —— 冯友兰《中国哲学简史》</blockquote>
+        </div>
+
+        <hr class="divider">
+
+        <!-- 核心规律 -->
+        <div class="section" id="laws">
+            <h2>🧠 贯穿全书的核心主线</h2>
+            <div class="info-grid">
+                <div class="info-card confucian"><div class="label">主线一：内圣外王——中国哲学的核心关怀</div><div class="content">从孔子到王阳明，中国哲学始终围绕"内圣外王"展开：通过内在修养成为圣人，然后将圣人之道推行于天下。这一关怀贯穿了儒家、道家乃至中国化佛教的全部历程。</div></div>
+                <div class="info-card taoist"><div class="label">主线二：儒道互补——中国文化的双重基因</div><div class="content">儒家提供入世的社会伦理和责任感，道家提供超越的精神境界和自由感。中国知识分子往往是"达则兼济天下，穷则独善其身"，在两家之间自如切换。</div></div>
+                <div class="info-card buddhist"><div class="label">主线三：外来文化的中国化</div><div class="content">佛教从印度传入后，经过数百年的融合，最终形成了中国化的禅宗。这一过程展示了中国文化的包容力和转化力，也为今天中西哲学的对话提供了历史参照。</div></div>
+                <div class="info-card modern"><div class="label">主线四：从"尊德性"到"道问学"</div><div class="content">宋明理学强调道德直觉和内心体悟（尊德性），清代考据学强调外在实证和文本研究（道问学）。这两种取向的张力贯穿了中国哲学的后期发展。</div></div>
+            </div>
+        </div>
+
+        <!-- 延伸 -->
+        <div class="section" id="extension">
+            <h2>🔍 延伸与比较</h2>
+            <table class="extension">
+                <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+                <tbody>
+                    <tr><td>与西方哲学的比较</td><td>冯友兰指出，西方哲学擅长"正的方法"（逻辑分析），中国哲学擅长"负的方法"（直觉体悟）。两者并非对立，而是互补——最高的哲学境界需要两种方法的结合。</td></tr>
+                    <tr><td>"哲学"在中国文化中的地位</td><td>冯友兰认为，中国哲学的功能类似于西方宗教——它提供了一种安身立命的精神归宿。中国人不是通过信仰上帝，而是通过哲学修养来达到"天人合一"的境界。</td></tr>
+                    <tr><td>本书的历史贡献</td><td>《中国哲学简史》是20世纪向西方介绍中国哲学最成功的著作之一。它既有学者的严谨，又有通识的可读性，至今仍是全球理解中国哲学的首选入门读物。</td></tr>
+                    <tr><td>推荐对照阅读</td><td><strong>冯友兰《中国哲学史》</strong>：两卷本，本书的详细学术版本。<br><strong>胡适《中国哲学史大纲》</strong>：现代学术方法研究中国哲学的开山之作。<br><strong>钱穆《中国思想史》</strong>：与冯友兰视角互补的思想史论述。<br><strong>牟宗三《中国哲学十九讲》</strong>：新儒家视角的深度解读。</td></tr>
+                </tbody>
             </table>
         </div>
-        <div class="criteria-card">
-            <h3>🤖 维度二：AI 可接管度</h3>
-            <p>日常运营中有多大比例的决策与操作可被AI端到端可靠完成。</p>
-            <table>
-                <tr><th>判断指标</th><th>高可接管度 (4-5分)</th><th>低可接管度 (1-2分)</th></tr>
-                <tr><td>任务结构化</td><td>步骤清晰，例外有明确边界</td><td>高度非结构化，例外频繁</td></tr>
-                <tr><td>数据完整性</td><td>数据充分、干净、可获取</td><td>数据匮乏、质量差</td></tr>
-                <tr><td>错误可逆性</td><td>错误成本低、可逆</td><td>错误代价极高、不可逆</td></tr>
-                <tr><td>环境稳定性</td><td>业务环境变化缓慢</td><td>频繁出现全新模式</td></tr>
-                <tr><td>当前AI表现</td><td>实际可用性高，异常率＜1%</td><td>AI难以胜任核心环节</td></tr>
-            </table>
-        </div>
+        <div style="text-align:center; margin-top:3rem; padding:1.2rem; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">《中国哲学简史》知识图谱 · 基于冯友兰原著整理 · 仅供个人学习回顾</div>
     </div>
 
-    <div class="detail-grid">
-        <div class="detail-card q1">
-            <h3>Ⅰ 增强型精英体</h3>
-            <div class="subtitle">高关系依赖 · 高AI可接管</div>
-            <span class="badge">管理幅度 10–30人</span>
-            <p>AI端到端接管80%以上的常规决策与执行，管理者将所有精力投入"赋意义"和深度人文连接。</p>
-            <h4>📌 如何判断自己在此象限</h4>
-            <ul><li>团队高度互依，需要频繁的非正式沟通与信任</li><li>AI已深度嵌入核心流程</li><li>管理者聚焦于愿景与意义</li></ul>
-            <h4>🧠 管理者应对思路</h4>
-            <ul><li>从"做决定"升级为"问正确的问题"</li><li>成为团队的意义建构者</li><li>投资哲学与人文素养</li></ul>
-            <h4>💼 员工应对思路</h4>
-            <ul><li>不可替代性来自"在场"</li><li>基于人文视角质疑AI方案</li><li>主动寻求职业意义对话</li></ul>
-            <div class="example-box"><strong>典型案例：</strong>量化对冲基金策略团队、AI辅助顶级咨询顾问组、精品游戏创意核心组。</div>
-        </div>
-        <div class="detail-card q2">
-            <h3>Ⅱ 传统精耕型</h3>
-            <div class="subtitle">高关系依赖 · 低AI可接管</div>
-            <span class="badge">管理幅度 5–15人</span>
-            <p>核心工作高度不确定，AI仅提供浅层辅助。管理者是全能型的"教练+家长"。</p>
-            <h4>📌 如何判断自己在此象限</h4>
-            <ul><li>成员间需深厚信任</li><li>AI仅完成信息检索等辅助工作</li><li>管理者大量时间用于一对一辅导</li></ul>
-            <h4>🧠 管理者应对思路</h4>
-            <ul><li>把AI当作"高级实习生"</li><li>绝不用AI"监控"人</li><li>坦诚表达依赖是最好的粘合剂</li></ul>
-            <h4>💼 员工应对思路</h4>
-            <ul><li>成为管理者的"外挂大脑"</li><li>理解混乱的价值</li></ul>
-            <div class="example-box"><strong>典型案例：</strong>心理咨询师督导小组、特种部队小队、初创期硬科技科学家团队。</div>
-        </div>
-        <div class="detail-card q3">
-            <h3>Ⅲ 高摩擦作坊型</h3>
-            <div class="subtitle">低关系依赖 · 低AI可接管</div>
-            <span class="badge">管理幅度 20–50人</span>
-            <p>任务可标准化但依赖人工协调。最需要转型的象限。</p>
-            <h4>📌 如何判断自己在此象限</h4>
-            <ul><li>工作流程本可标准化</li><li>员工间无需深层情感连接</li><li>管理者陷于低价值劳动</li></ul>
-            <h4>🧠 管理者应对思路</h4>
-            <ul><li>改造重复性协调环节</li><li>成为"流程诊断者"</li><li>启动初步数字化</li></ul>
-            <h4>💼 员工应对思路</h4>
-            <ul><li>成为"数字化接口"</li><li>从电子化清单开始</li></ul>
-            <div class="example-box"><strong>典型案例：</strong>传统猎头公司、社区医院行政办公室、小型工程项目分包商。</div>
-        </div>
-        <div class="detail-card q4">
-            <h3>Ⅳ 算法规模型</h3>
-            <div class="subtitle">低关系依赖 · 高AI可接管</div>
-            <span class="badge">管理幅度 数百–数千人</span>
-            <p>AI端到端管理执行。管理者是"系统管理员"。</p>
-            <h4>📌 如何判断自己在此象限</h4>
-            <ul><li>任务高度标准化</li><li>AI自动完成绩效评估</li><li>管理者极少一对一沟通</li></ul>
-            <h4>🧠 管理者应对思路</h4>
-            <ul><li>核心KPI是无人工干预率</li><li>警惕算法偏见</li><li>价值在于设计系统规则</li></ul>
-            <h4>💼 员工应对思路</h4>
-            <ul><li>成为高评分节点</li><li>寻找转岗象限Ⅱ/Ⅰ</li><li>管理自己的数字孪生</li></ul>
-            <div class="example-box"><strong>典型案例：</strong>大型电商仓储分拣中心、大模型数据标注众包平台、自动化内容审核团队。</div>
+    <!-- 弹窗容器 -->
+    <div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+        <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+            <button class="close-btn" onclick="closeModal()">✕</button>
+            <div id="modalContent"></div>
         </div>
     </div>
+    <button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-    <div class="dialectical">
-        <h2>🧠 辩证思考：框架的动态性与现实启示</h2>
-        <div class="dialectical-grid">
-            <div class="dialectical-card"><h4>🔄 同一组织，多象限并存</h4><p>前沿研究院是象限Ⅰ，销售铁军是象限Ⅳ，HR是象限Ⅱ。一刀切的管理必然失败。</p></div>
-            <div class="dialectical-card"><h4>⏳ 同一团队，随生命周期迁移</h4><p>立项期是象限Ⅱ，增长期变象限Ⅳ，危机时退回象限Ⅱ。管理者需有意识升降维。</p></div>
-            <div class="dialectical-card"><h4>🚀 AI进化推动象限位移</h4><p>随着AI共情能力突破，象限Ⅱ可转为象限Ⅰ。技术决定象限边界的动态性。</p></div>
-            <div class="dialectical-card"><h4>🌐 "双幅度"分形结构</h4><p>管理者做30人社区的"意义市长"，只直连5-8位"长老"，由其辐射社区。</p></div>
-            <div class="dialectical-card"><h4>🧭 转型的两个基本方向</h4><p>向右投资AI提升可接管度；向下重新设计工作降低关系依赖。</p></div>
-            <div class="dialectical-card"><h4>⚠️ 警惕"伪象限Ⅰ"</h4><p>引入AI不等于象限Ⅰ。需同时满足高关系与高AI，否则只是更精致的螺丝钉。</p></div>
-        </div>
-    </div>
-</div>
+    <script>
+        const glossary = {
+            ren: { title: '🎓 仁：孔子的核心思想', content: '<p><strong>仁</strong>是孔子思想的核心概念，在《论语》中出现了一百多次。其基本含义是<strong>"爱人"</strong>——关心他人、推己及人。</p><p>孔子对仁的具体表述包括：</p><ul><li><strong>"己所不欲，勿施于人"</strong>：自己不想要的，不强加给别人。这被后世称为道德上的"金律"。</li><li><strong>"己欲立而立人，己欲达而达人"</strong>：自己希望成功，也帮助他人成功。</li><li><strong>"克己复礼为仁"</strong>：约束自己的欲望，使行为符合礼的规范。</li></ul><p>仁不是一套固定的规则，而是一种内在的道德情感和对他人的深切关怀。孔子认为，践行仁不需要特殊的能力——"我欲仁，斯仁至矣"——只要真心愿意，仁就在身边。</p>' },
+            mengxun: { title: '🧠 性善论与性恶论', content: '<p><strong>孟子的性善论</strong>：孟子认为人性本善，人天生具有<strong>"四端"</strong>——恻隐之心（仁之端）、羞恶之心（义之端）、辞让之心（礼之端）、是非之心（智之端）。修养的任务是"扩而充之"——将这些萌芽培育壮大。</p><p><strong>荀子的性恶论</strong>：荀子认为人性本恶，"人之性恶，其善者伪也"。人生来就有欲望，不加约束就会导致争斗混乱。因此需要<strong>"礼"</strong>和<strong>"师法"</strong>来教化人民。荀子的"伪"不是虚伪，而是后天的人为努力。</p><p>两人虽然出发点不同，但都强调教育和修养的重要性——孟子主张"存心养性"，荀子主张"化性起伪"，殊途同归。</p>' },
+            dao: { title: '🌿 道：老子的核心概念', content: '<p><strong>道</strong>是老子哲学的最高范畴。它既是宇宙的本源，也是万物运行的规律。</p><p>道的特点：</p><ul><li><strong>无形无名</strong>："道可道，非常道；名可名，非常名。"可以用语言描述的就不是真正的道。</li><li><strong>自然无为</strong>：道生育万物却不加干预，"道法自然"——道以自己为法则。</li><li><strong>柔弱胜刚强</strong>：老子认为柔弱是生命力的表现，"天下莫柔弱于水，而攻坚强者莫之能胜"。</li><li><strong>反者道之动</strong>：事物发展到极致就会向相反方向转化——"祸兮福之所倚，福兮祸之所伏"。</li></ul><p>老子的哲学对中国文化的影响极为深远，从政治智慧到养生之道，从军事谋略到艺术审美，都能看到道家思想的影子。</p>' },
+            zhuangzi: { title: '🦋 庄子：逍遥与齐物', content: '<p>庄子将道家哲学推向了艺术化和生命化的高峰。</p><p><strong>逍遥游</strong>：庄子追求绝对的精神自由，不受任何外在条件的束缚。"鹏之徙于南冥也，水击三千里，抟扶摇而上者九万里"——这是一种超越世俗限制的理想境界。</p><p><strong>齐物论</strong>：庄子认为，万物从更高角度看都是一样的。生与死、梦与醒、彼与此的区分都是相对的。"不知周之梦为蝴蝶与，蝴蝶之梦为周与"——这句著名的寓言消解了物我之间的绝对界限。</p><p><strong>庖丁解牛</strong>：庄子的修养方法不是死板的修炼，而是通过高度熟练达到"以神遇而不以目视"的自由境界。这既是技艺的极致，也是精神的解放。</p>' },
+            mozi: { title: '⚖️ 墨家的兼爱思想', content: '<p>墨子是先秦时期与儒家并列的显学。他的核心主张是<strong>"兼爱"</strong>——无差别地爱所有人，而不是儒家那种有亲疏差等的爱。</p><p>墨子的论证具有鲜明的功利主义色彩：</p><ul><li>兼爱能带来最大的社会利益——"爱人者，人必从而爱之；利人者，人必从而利之"。</li><li>不相爱是社会混乱的根源——盗贼、战争、纷争都源于"别爱"（只爱自己人）。</li><li>兼爱需要"非攻"——反对侵略战争，因为战争对双方人民都是灾难。</li></ul><p>墨家还注重逻辑论证和实用技术，在几何学、光学和力学上有开创性研究。但汉代以后，墨家思想几乎中断，直到近代才被重新发现和重视。</p>' },
+            legalism: { title: '📏 法家：法治与权力', content: '<p>韩非子是法家的集大成者。他主张以<strong>法、术、势</strong>三者来治理国家：</p><ul><li><strong>法</strong>：公开统一的法律，所有人都必须遵守。商鞅的"徙木立信"就是树立法律权威的典范。</li><li><strong>术</strong>：统治者驾驭臣下的技巧，包括赏罚、用人、考核等。术是隐秘的，不能让臣下揣摩到。</li><li><strong>势</strong>：君主拥有的权位和威严。韩非子认为，即使才能平庸的君主，只要掌握势也能有效统治。</li></ul><p>法家对人性的假设是冷峻的——人是自私的，趋利避害是本能。因此不能用道德说教治国，而必须用利益和惩罚来引导。秦朝以法家思想治国取得了统一天下的巨大成功，但也因过于严苛而迅速崩溃。</p>' },
+            dong: { title: '🏛️ 董仲舒与天人感应', content: '<p>董仲舒是汉代儒学的关键人物。他建议汉武帝"罢黜百家，独尊儒术"，使儒学成为官方正统。</p><p>他的核心理论是<strong>"天人感应"</strong>：</p><ul><li>天与人之间存在着相互感应的关系。天是有意志的，会通过祥瑞和灾异来表达对人间治理的态度。</li><li>皇帝是"天子"，是连接天与人的中介。如果皇帝行德政，天就降祥瑞；如果皇帝失德，天就降灾异以示警告。</li><li>这一理论既有神化君权的作用，也构成了对君权的约束——皇帝必须遵循天道，否则会招致天的惩罚。</li></ul><p>董仲舒还将阴阳五行纳入儒学体系，建立了一个包罗万象的宇宙论框架，深刻影响了后世的政治哲学和自然观念。</p>' },
+            xuanxue: { title: '🌬️ 魏晋玄学', content: '<p>玄学是魏晋时期的主流哲学思潮，以《老子》《庄子》《周易》——合称<strong>"三玄"</strong>——为主要研究对象。</p><p>玄学的核心辩题包括：</p><ul><li><strong>有无之辩</strong>：世界的本体是"无"还是"有"？何晏、王弼主张"贵无论"——无是本体，有是现象。</li><li><strong>名教与自然</strong>：儒家的礼法规范（名教）与道家的自然之道是否冲突？玄学家试图调和两者。</li><li><strong>言意之辩</strong>：语言能否完全表达意义？王弼提出"得意忘言"——抓住意思后就可以忘记语言工具。</li></ul><p>玄学清谈常被认为空疏无用，但它对抽象思辨的推进为中国哲学开辟了新的维度，也为后来佛教的深入传播准备了思想土壤。</p>' },
+            bamboo: { title: '🎋 竹林七贤', content: '<p>竹林七贤是魏晋时期最具代表性的文人群体，包括嵇康、阮籍、山涛、向秀、刘伶、王戎、阮咸七人。</p><p>他们以放达不羁的生活方式表达对虚伪礼教的反抗：</p><ul><li>刘伶嗜酒，常乘鹿车携酒，让人扛着锄头跟在后面——"死便埋我"。</li><li>阮籍驾车任意而行，走到路的尽头便大哭而返——"穷途之哭"。</li><li>嵇康在刑场上弹奏《广陵散》，从容赴死，成为中国文人风骨的象征。</li></ul><p>竹林七贤的行为虽然极端，但他们追求的"越名教而任自然"体现了对个体精神自由的强烈渴望。在中国文化传统中，他们代表了与儒家正统相对峙的自由精神一脉。</p>' },
+            buddhism_china: { title: '🧘 佛教中国化', content: '<p>佛教约在西汉末年传入中国，经过数百年的发展，在隋唐时期完成了中国化进程。</p><p>中国化的关键步骤：</p><ul><li><strong>格义</strong>：早期用道家术语翻译佛经，如用"无"译"空"。</li><li><strong>宗派形成</strong>：形成了天台、华严、禅、净土等中国本土宗派。</li><li><strong>与儒道融合</strong>：吸收儒家孝道观念，调和道家自然思想。</li><li><strong>简化修行</strong>：从繁琐的经典研读转向简易的修行方法——禅宗的顿悟、净土的念佛。</li></ul><p>佛教中国化是中国文化包容力的典范。它既保留了佛教的核心教义，又使其适应了中国人的思维方式和生活方式。</p>' },
+            chan: { title: '🌺 禅宗：不立文字的智慧', content: '<p>禅宗是中国化最彻底的佛教宗派。它的核心主张是<strong>"教外别传，不立文字，直指人心，见性成佛"</strong>。</p><p>禅宗的关键人物和思想：</p><ul><li><strong>六祖慧能</strong>：一个不识字的樵夫成为中国禅宗最伟大的祖师。他的《坛经》是唯一一部被称为"经"的中国佛教著作。</li><li><strong>顿悟</strong>：觉悟可以瞬间发生，不需要漫长的修行。慧能听到"应无所住而生其心"便豁然大悟。</li><li><strong>平常心是道</strong>：禅不在深山古寺，而在日常生活的担水砍柴之中。穿衣吃饭、屙屎送尿，都是禅的体现。</li><li><strong>公案</strong>：看似荒诞的问答，旨在打破逻辑思维的束缚，直指本心。如著名的"只手之声"、"狗子有佛性也无"。</li></ul><p>禅宗对中国艺术影响深远——水墨画的留白、诗歌的意境、茶道的仪式感，都浸润着禅的精神。</p>' },
+            chengzhu: { title: '🏔️ 程朱理学', content: '<p>程朱理学是宋明时期最重要的哲学体系，由程颢、程颐兄弟开创，朱熹集大成。</p><p>核心概念：</p><ul><li><strong>理</strong>：宇宙万物的规律和原理。万物都有各自的理，而万理归于一理——"理一分殊"。</li><li><strong>气</strong>：构成万物的物质材料。理是形式，气是质料。</li><li><strong>格物致知</strong>：通过研究具体事物来穷尽其理。格一草一木，日久功深就能豁然贯通。</li><li><strong>存天理，灭人欲</strong>：不是禁绝一切欲望，而是克服过分的私欲，使行为符合天理。</li></ul><p>朱熹将《大学》《中庸》《论语》《孟子》合为"四书"，其《四书章句集注》成为此后六百年科举考试的标准教材。理学的影响远远超出学术，深刻塑造了中国社会伦理和思维方式。</p>' },
+            xinli: { title: '❤️ 陆王心学', content: '<p>心学是对程朱理学的反思和超越，由陆九渊开创，王阳明集大成。</p><p>核心命题：</p><ul><li><strong>心即理</strong>：理不在外部事物中，就在每个人的心中。王阳明说："心外无物，心外无理。"</li><li><strong>知行合一</strong>：真知必然付诸行动。"知是行之始，行是知之成。"——知道孝顺就自然会去孝敬父母，不去做说明并非真知。</li><li><strong>致良知</strong>：每个人都有天赋的道德直觉（良知），修养就是去除遮蔽良知的私欲，让良知的光芒显现。"满街都是圣人"——人人都有成为圣人的潜能。</li></ul><p>王阳明的思想在明代产生了巨大的社会影响，尤其是"满街都是圣人"的观念极大地鼓舞了普通人的道德自信。他的心学思想传到日本后，对明治维新的思想先驱产生了重要影响。</p>' },
+            guyanwu: { title: '🔬 顾炎武与实学', content: '<p>顾炎武是明末清初最重要的思想家之一，被视为清代实学的开创者。</p><p>他的核心贡献：</p><ul><li><strong>"天下兴亡，匹夫有责"</strong>：将政治责任从统治者扩展到每一个普通人。</li><li><strong>"经世致用"</strong>：学问必须对社会有用，反对空谈心性的学风。</li><li><strong>考据方法</strong>：开创了严谨的文本考证方法，主张"每一事必详其始末，参以证佐"。</li><li><strong>"天下"与"国"的区分</strong>："亡国"是朝代更替，"亡天下"是文化沦丧。前者肉食者谋之，后者匹夫有责。</li></ul><p>顾炎武的思想对近代中国的民族意识和实证学风都产生了深远影响。</p>' },
+            newconfucian: { title: '🏯 新儒家运动', content: '<p>新儒家是20世纪最重要的中国哲学运动之一。代表人物包括熊十力、梁漱溟、牟宗三、唐君毅等。</p><p>他们的共同追求：</p><ul><li><strong>返本开新</strong>：回到儒家经典的精神本源，在此基础上开出适应现代世界的新思想。</li><li><strong>回应西方挑战</strong>：在民主与科学的时代，重新论证儒家思想的当代价值。</li><li><strong>哲学体系的建构</strong>：吸收康德、黑格尔等西方哲学家的方法，建立严密的理论体系。牟宗三的"道德的形上学"是其中的巅峰之作。</li></ul><p>新儒家运动至今仍在继续发展，代表着中国文化在现代化进程中寻求自我更新的不懈努力。</p>' },
+            fengyulan: { title: '📖 冯友兰的哲学贡献', content: '<p>冯友兰本人就是中国哲学现代化进程中的关键人物。</p><p>他的核心贡献：</p><ul><li><strong>"新理学"体系</strong>：用西方逻辑分析方法重建程朱理学，将传统概念赋予现代哲学形式。</li><li><strong>四境界说</strong>：将人生境界分为自然境界、功利境界、道德境界和天地境界——哲学的最高任务是帮助人达到天地境界。</li><li><strong>"正的方法"与"负的方法"</strong>：西方哲学擅长逻辑分析（正的方法），中国哲学擅长直觉体悟（负的方法），两者结合才能达到完整的哲学。</li><li><strong>《中国哲学简史》</strong>：这本书本身就是中国哲学走向世界的里程碑，至今仍是全球读者理解中国哲学的首选。</li></ul><p>冯友兰展示了如何用现代学术语言讲好中国哲学故事，为中国哲学的世界传播做出了不可替代的贡献。</p>' }
+        };
 
-<script>
-    function setTheme(name) {
-        document.body.setAttribute('data-theme', name);
-        document.querySelectorAll('.style-bar button').forEach(btn => btn.classList.remove('active'));
-        document.querySelector(`.style-bar button[onclick="setTheme('${name}')"]`).classList.add('active');
-    }
-</script>
+        function openModal(key) {
+            const data = glossary[key];
+            if (!data) return;
+            document.getElementById('modalContent').innerHTML = `<h4>${data.title}</h4>${data.content}`;
+            document.getElementById('modalOverlay').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('modalOverlay').classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('.sidebar a');
+            const sections = [];
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && href.startsWith('#')) {
+                    const target = document.getElementById(href.substring(1));
+                    if (target) sections.push({ link, target });
+                }
+            });
+            links.forEach(link => link.addEventListener('click', function() {
+                links.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            }));
+            window.addEventListener('scroll', () => {
+                let current = null;
+                const scrollTop = window.scrollY + 120;
+                for (let i = sections.length - 1; i >= 0; i--) {
+                    if (sections[i].target.offsetTop <= scrollTop) { current = sections[i].link; break; }
+                }
+                if (current) {
+                    links.forEach(l => l.classList.remove('active'));
+                    current.classList.add('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>

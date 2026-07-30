@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v7.6</title>
+<title>📚 书阁 v8.0</title>
 <style>
 /* ========== Design System ========== */
 :root {
@@ -198,7 +198,7 @@ html, body {
 .note-item .note-title { font-size: 0.88rem; font-weight: 500; color: var(--text-primary); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .note-item .note-meta { display: flex; align-items: center; gap: 6px; margin-top: 4px; font-size: 0.75rem; color: var(--text-muted); flex-wrap: wrap; }
 .note-item .note-date { flex-shrink: 0; }
-.note-item .note-tags { display: flex; gap: 6px; flex-wrap: nowrap; overflow: hidden; }
+.note-item .note-meta-author { display: flex; gap: 6px; flex-wrap: nowrap; overflow: hidden; }
 
 .note-cat-chip {
   display: inline-flex; padding: 1px 8px; border-radius: 10px;
@@ -213,12 +213,11 @@ html, body {
 }
 .pinned-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-.tag-pill {
+.author-pill {
   display: inline-flex; align-items: center; gap: 4px;
   padding: 1px 8px; border-radius: 10px; font-size: 0.7rem; font-weight: 500;
-  white-space: nowrap; background: var(--accent-soft); color: var(--accent);
+  white-space: nowrap; color: var(--text-secondary);
 }
-.tag-pill .tag-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 
 .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px; text-align: center; color: var(--text-muted); }
 .empty-state .empty-icon { font-size: 3rem; margin-bottom: 12px; opacity: 0.6; }
@@ -681,10 +680,10 @@ html, body {
 .category-detail-grid .book-date {
   font-size: 10px;
 }
-.category-detail-grid .book-tags {
+.category-detail-grid .book-author {
   gap: 2px;
 }
-.category-detail-grid .book-tag {
+.category-detail-grid .book-author-text {
   font-size: 9px;
   padding: 1px 5px;
 }
@@ -757,10 +756,10 @@ html, body {
 
 .book-info { padding: 10px 14px; background: var(--bg-card); }
 .book-date { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
-.book-tags { display: flex; flex-wrap: wrap; gap: 4px; }
-.book-tag {
+.book-author { display: flex; gap: 4px; }
+.book-author-text {
   font-size: 10px; padding: 2px 8px; border-radius: 10px;
-  background: var(--accent-soft); color: var(--accent); font-weight: 500;
+  color: var(--text-secondary); font-weight: 500;
 }
 
 /* Category cover colors */
@@ -813,7 +812,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v7.6</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.0</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -876,8 +875,8 @@ html, body {
               <select id="uploadCategory"><option value="">请选择分类</option></select>
             </div>
             <div class="form-group">
-              <label for="uploadTagsInput">标签（逗号分隔，可选）</label>
-              <input type="text" id="uploadTagsInput" placeholder="例如：笔记, 阅读, 学习" maxlength="200">
+              <label for="uploadAuthorInput">作者姓名</label>
+              <input type="text" id="uploadAuthorInput" placeholder="例如：吴军" maxlength="100">
             </div>
             <div class="form-group">
               <label>选择文件</label>
@@ -922,11 +921,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v7.1</span>
+                <span class="setting-value">v8.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v7.6</div>
+              <div class="about-version">📚 书阁 v8.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1004,8 +1003,8 @@ html, body {
         <select id="editCategory"></select>
       </div>
       <div class="form-group">
-        <label for="editTagsInput">标签（逗号分隔）</label>
-        <input type="text" id="editTagsInput" maxlength="200" placeholder="例如：笔记, 阅读">
+        <label for="editAuthorInput">作者姓名</label>
+        <input type="text" id="editAuthorInput" maxlength="100" placeholder="例如：吴军">
       </div>
     </div>
     <div class="edit-modal-actions">
@@ -1055,7 +1054,7 @@ html, body {
 
 <script>
 /* ===================================================================
- * 笔记预览 APP v7.1 — 书阁设计
+ * 笔记预览 APP v8.0 — 书阁设计
  * =================================================================== */
 (function() {
   'use strict';
@@ -1096,7 +1095,7 @@ html, body {
   // Upload form
   const uploadTitle     = $('#uploadTitle');
   const uploadCategory  = $('#uploadCategory');
-  const uploadTagsInput = $('#uploadTagsInput');
+  const uploadAuthorInput = $('#uploadAuthorInput');
   const uploadFileDisplay = $('#uploadFileDisplay');
   const uploadBrowseBtn = $('#uploadBrowseBtn');
   const uploadSubmitBtn = $('#uploadSubmitBtn');
@@ -1142,7 +1141,7 @@ html, body {
   const editModal       = $('#editModal');
   const editTitle       = $('#editTitle');
   const editCategory    = $('#editCategory');
-  const editTagsInput   = $('#editTagsInput');
+  const editAuthorInput   = $('#editAuthorInput');
   const editModalCancel = $('#editModalCancel');
   const editModalSave   = $('#editModalSave');
   const editModalTitle  = $('#editModalTitle');
@@ -1200,8 +1199,6 @@ html, body {
   };
 
   /* ---- Helpers ---- */
-  const TAG_COLORS = ['#e74c3c','#e67e22','#2980b9','#27ae60','#8e44ad','#16a085','#d35400','#2c3e50'];
-  function tagColor(t) { let h=0; for(let i=0;i<t.length;i++){h=((h<<5)-h)+t.charCodeAt(i);h|=0;} return TAG_COLORS[Math.abs(h)%TAG_COLORS.length]; }
   function formatDate(d) { if(!d) return ''; try { const dt=new Date(d); if(isNaN(dt.getTime())) return d; return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; } catch(_){return d;} }
   function checkMobile() { STATE.isMobile = window.innerWidth < 768; }
   function escapeHtml(s) { const el=document.createElement('div'); el.textContent=s; return el.innerHTML; }
@@ -1401,7 +1398,7 @@ html, body {
     if (!note) return;
     editTargetId = noteId;
     editTitle.value = note.title || '';
-    editTagsInput.value = (note.tags || []).join(', ');
+    editAuthorInput.value = note.author || '';
     const cats = loadCategories().filter(c => c !== '全部');
     editCategory.innerHTML = cats.map(c => `<option value="${escapeHtml(c)}"${c === (note.category || '其他') ? ' selected' : ''}>${escapeHtml(c)}</option>`).join('');
     if (!cats.length) editCategory.innerHTML = '<option value="">请选择分类</option>';
@@ -1420,20 +1417,20 @@ html, body {
     if (!note) return;
     const newTitle = editTitle.value.trim() || note.title;
     const newCategory = editCategory.value || note.category || '其他';
-    const newTags = editTagsInput.value.trim().split(',').map(t => t.trim()).filter(Boolean);
-    note.title = newTitle; note.category = newCategory; note.tags = newTags;
+    const newAuthor = editAuthorInput.value.trim();
+    note.title = newTitle; note.category = newCategory; note.author = newAuthor;
     if (note.source === 'user') {
       try {
         const idx = STATE.userNotesIndex.findIndex(n => n.id === editTargetId);
-        if (idx >= 0) { STATE.userNotesIndex[idx].title = newTitle; STATE.userNotesIndex[idx].category = newCategory; STATE.userNotesIndex[idx].tags = newTags; saveUserNotesIndex(); }
+        if (idx >= 0) { STATE.userNotesIndex[idx].title = newTitle; STATE.userNotesIndex[idx].category = newCategory; STATE.userNotesIndex[idx].author = newAuthor; saveUserNotesIndex(); }
         const rec = await DB.get(editTargetId);
-        if (rec) { rec.title = newTitle; rec.category = newCategory; rec.tags = newTags; await DB.put(rec); }
+        if (rec) { rec.title = newTitle; rec.category = newCategory; rec.author = newAuthor; await DB.put(rec); }
       } catch(err) { console.error(err); showToast('保存失败：'+err.message); }
     } else {
       const bi = STATE.builtInNotes.findIndex(n => n.id === editTargetId);
-      if (bi >= 0) { STATE.builtInNotes[bi].title = newTitle; STATE.builtInNotes[bi].category = newCategory; STATE.builtInNotes[bi].tags = newTags; }
+      if (bi >= 0) { STATE.builtInNotes[bi].title = newTitle; STATE.builtInNotes[bi].category = newCategory; STATE.builtInNotes[bi].author = newAuthor; }
       const edits = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
-      edits._mod[editTargetId] = { title: newTitle, category: newCategory, tags: newTags };
+      edits._mod[editTargetId] = { title: newTitle, category: newCategory, author: newAuthor };
       localStorage.setItem('notes-edits', JSON.stringify(edits));
     }
     closeEditModal(); closeAllSwipes(); mergeNotes(); refreshCurrentView();
@@ -1546,9 +1543,9 @@ html, body {
       const delSet = new Set(edits._del || []);
       const modMap = edits._mod || {};
       STATE.builtInNotes = data
-        .map((n,i) => ({...n,id:n.id||String(i+1),title:n.title||'未命名笔记',file:n.file||'',date:n.date||'',tags:Array.isArray(n.tags)?n.tags:[],category:n.category||'其他',source:'builtin'}))
+        .map((n,i) => ({...n,id:n.id||String(i+1),title:n.title||'未命名笔记',file:n.file||'',date:n.date||'',author:n.author||'',category:n.category||'其他',source:'builtin'}))
         .filter(n => !delSet.has(n.id))
-        .map(n => modMap[n.id] ? { ...n, title: modMap[n.id].title, category: modMap[n.id].category, tags: modMap[n.id].tags } : n);
+        .map(n => modMap[n.id] ? { ...n, title: modMap[n.id].title, category: modMap[n.id].category, author: modMap[n.id].author } : n);
     } catch(err) {
       console.error(err); STATE.builtInNotes=[];
       noteList.innerHTML=`<div class="error-banner">⚠️ 加载笔记失败：${err.message}</div>`;
@@ -1632,14 +1629,14 @@ html, body {
   function renderBookCard(n, colorClass) {
     const active = n.id === STATE.selectedId;
     const pinned = isPinned(n.id);
-    const tags = (n.tags || []).slice(0, 3);
+    const author = n.author || '';
     return `<div class="book-card ${colorClass}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}">
       <div class="book-cover">
         <span class="book-title">${escapeHtml(n.title)}${pinned ? ' 📌' : ''}</span>
       </div>
       <div class="book-info">
         ${n.date ? `<div class="book-date">📅 ${formatDate(n.date)}</div>` : ''}
-        ${tags.length ? `<div class="book-tags">${tags.map(t => `<span class="book-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+        ${author ? `<div class="book-author"><span class="book-author-text">✍️ ${escapeHtml(author)}</span></div>` : ''}
       </div>
     </div>`;
   }
@@ -1687,7 +1684,7 @@ html, body {
     let f=STATE.notes;
     if(STATE.selectedCategory!=='全部') { f=f.filter(n=>(n.category||'其他')===STATE.selectedCategory); }
     const q=(STATE._sq||'').trim().toLowerCase();
-    if(q) f=f.filter(n=>n.title.toLowerCase().includes(q)||(n.tags||[]).some(t=>t.toLowerCase().includes(q)));
+    if(q) f=f.filter(n=>n.title.toLowerCase().includes(q)||(n.author||'').toLowerCase().includes(q));
     return f;
   }
 
@@ -1725,7 +1722,7 @@ html, body {
           <div class="note-meta">
             ${cat?`<span class="note-cat-chip">${escapeHtml(cat)}</span>`:''}
             ${n.date?`<span class="note-date">${formatDate(n.date)}</span>`:''}
-            <span class="note-tags">${(n.tags||[]).map(t=>`<span class="tag-pill"><span class="tag-dot" style="background:${tagColor(t)}"></span>${escapeHtml(t)}</span>`).join('')}</span>
+            <span class="note-meta-author">${(n.author) ? `<span class="author-pill">✍️ ${escapeHtml(n.author)}</span>` : ''}</span>
           </div>
         </div>
       </div>
@@ -1738,9 +1735,9 @@ html, body {
   function renderSearchResults(q) {
     const t=q.trim().toLowerCase();
     if(!t) { searchResults.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索笔记</p></div>'; return; }
-    const f=STATE.notes.filter(n=>n.title.toLowerCase().includes(t)||(n.tags||[]).some(tg=>tg.toLowerCase().includes(t)));
+    const f=STATE.notes.filter(n=>n.title.toLowerCase().includes(t)||(n.author||'').toLowerCase().includes(t));
     if(!f.length) { searchResults.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><p>没有匹配的笔记</p></div>'; return; }
-    searchResults.innerHTML=f.map(n=>`<div class="note-item" data-id="${n.id}" role="button" tabindex="0"><div class="note-info"><div class="note-title">${escapeHtml(n.title)}</div><div class="note-meta">${n.category?`<span class="note-cat-chip">${escapeHtml(n.category)}</span>`:''}${n.date?`<span class="note-date">${formatDate(n.date)}</span>`:''}<span class="note-tags">${(n.tags||[]).map(t=>`<span class="tag-pill"><span class="tag-dot" style="background:${tagColor(t)}"></span>${escapeHtml(t)}</span>`).join('')}</span></div></div></div>`).join('');
+    searchResults.innerHTML=f.map(n=>`<div class="note-item" data-id="${n.id}" role="button" tabindex="0"><div class="note-info"><div class="note-title">${escapeHtml(n.title)}</div><div class="note-meta">${n.category?`<span class="note-cat-chip">${escapeHtml(n.category)}</span>`:''}${n.date?`<span class="note-date">${formatDate(n.date)}</span>`:''}<span class="note-meta-author">${n.author?`<span class="author-pill">✍️ ${escapeHtml(n.author)}</span>`:''}</span></div></div></div>`).join('');
   }
   function renderSearchHistory() {
     if(!STATE.searchHistory.length) { searchHistoryEl.style.display='none'; return; }
@@ -1790,7 +1787,7 @@ html, body {
     if(!cats.length) uploadCategory.innerHTML='<option value="">请选择分类</option>';
   }
   function resetUploadForm() {
-    uploadTitle.value=''; uploadTagsInput.value=''; uploadFileDisplay.textContent='未选择文件';
+    uploadTitle.value=''; uploadAuthorInput.value=''; uploadFileDisplay.textContent='未选择文件';
     uploadFileInput.value=''; uploadSubmitBtn.disabled=true;
     populateUploadCategories();
   }
@@ -1804,12 +1801,12 @@ html, body {
     try {
       const content=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=e=>rej(e.target.error);r.readAsText(file,'UTF-8');});
       let title=uploadTitle.value.trim()||file.name.replace(/\.html$/i,'').trim()||'未命名笔记';
-      const tags=uploadTagsInput.value.trim().split(',').map(t=>t.trim()).filter(Boolean);
+      const author=uploadAuthorInput.value.trim();
       const allTitles=STATE.notes.map(n=>n.title); let final=title, c=1;
       while(allTitles.includes(final)) { final=title+' ('+(c++)+')'; }
       const id=genId(), now=new Date().toISOString().slice(0,10);
-      await DB.put({id,title:final,file:file.name,date:now,tags,category:cat,content});
-      STATE.userNotesIndex.unshift({id,title:final,file:file.name,date:now,tags,category:cat});
+      await DB.put({id,title:final,file:file.name,date:now,author,category:cat,content});
+      STATE.userNotesIndex.unshift({id,title:final,file:file.name,date:now,author,category:cat});
       saveUserNotesIndex(); mergeNotes(); refreshCurrentView(); resetUploadForm();
       switchTab('home'); showToast('✅ 笔记上传成功！');
     } catch(err) { console.error(err); showToast('上传失败：'+err.message); }

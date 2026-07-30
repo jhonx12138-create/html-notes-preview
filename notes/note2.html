@@ -3,405 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>《中国国家治理的制度逻辑》· 知识图谱（增强版）</title>
+    <title>AI Agent 运行时序图 (含MCP · 布局优化)</title>
     <style>
         :root {
-            --bg: #faf9f7;
+            --bg: #f7faf8;
             --card-bg: #ffffff;
-            --border: #d8d0c4;
-            --text: #2c2416;
-            --text-muted: #6b6258;
-            --accent: #2c4a5e;
-            --accent-light: #eef3f6;
-            --accent-glow: rgba(44,74,94,0.18);
-            --shadow: 0 4px 16px rgba(0,0,0,0.04);
+            --text: #3a4a3f;
+            --text-secondary: #5f6d63;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 28px rgba(0, 0, 0, 0.1);
             --radius: 12px;
-            --font-sans: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
-            --font-serif: 'Noto Serif SC', 'STSong', Georgia, serif;
-            --sidebar-width: 260px;
+            --radius-sm: 8px;
         }
-        * { margin:0; padding:0; box-sizing:border-box; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: var(--font-serif);
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.9;
+            background: linear-gradient(160deg, #f2f8f4 0%, #f8faf9 30%, #f5f7f9 60%, #faf9f6 100%);
+            font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', system-ui, sans-serif;
             display: flex;
-            -webkit-font-smoothing:antialiased;
+            justify-content: center;
+            padding: 28px 16px 50px;
+            min-height: 100vh;
+            color: var(--text);
+            -webkit-font-smoothing: antialiased;
         }
-        .sidebar {
-            position: fixed; top:0; left:0;
-            width: var(--sidebar-width); height: 100vh;
-            background: #f8f5f0; border-right:1px solid var(--border);
-            overflow-y:auto; padding:1.5rem 1rem; z-index:100;
-            font-family: var(--font-sans); font-size:0.86rem;
-            box-shadow:2px 0 10px rgba(0,0,0,0.02);
+
+        .container {
+            width: 100%;
+            max-width: 1160px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            padding: 36px 32px 32px;
+            position: relative;
+            overflow: hidden;
         }
-        .sidebar h3 {
-            font-size:0.95rem; color:var(--accent); margin-bottom:1rem;
-            padding-bottom:0.5rem; border-bottom:2px solid var(--accent);
-            letter-spacing:0.04em; display:flex; align-items:center; gap:0.4rem;
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #7eb8da 0%, #5dbaa0 20%, #a59cc8 40%, #7b9cc2 60%, #b5a4c7 80%, #e88d7d 100%);
+            border-radius: 20px 20px 0 0;
         }
-        .sidebar .toc-list { list-style:none; padding:0; }
-        .sidebar .toc-list li { margin-bottom:0.1rem; }
-        .sidebar .toc-list a {
-            display:block; padding:0.35rem 0.6rem; color:#4a3f33;
-            text-decoration:none; border-radius:6px; transition:all 0.2s; font-size:0.82rem;
-        }
-        .sidebar .toc-list a:hover { background:#e0d8cc; color:#1a1508; }
-        .sidebar .toc-list a.active { background:var(--accent); color:#fff; font-weight:600; }
-        .main {
-            margin-left: var(--sidebar-width); flex:1;
-            padding:2rem 2.5rem; max-width:1100px;
-        }
+
         .header {
-            text-align:center; margin-bottom:2.5rem;
-            padding-bottom:2rem; border-bottom:2px solid var(--border);
+            text-align: center;
+            margin-bottom: 10px;
+            padding-top: 6px;
         }
-        .header h1 { font-size:2.2rem; font-weight:700; letter-spacing:0.04em; margin-bottom:0.3rem; color:#1e1508; }
-        .header .subtitle { font-size:1.05rem; color:var(--text-muted); font-style:italic; margin-bottom:1.2rem; }
-        .header .meta { font-size:0.88rem; color:var(--text-muted); display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem 1.5rem; margin-bottom:1.2rem; }
-        .framework-badges { display:flex; flex-wrap:wrap; justify-content:center; gap:0.5rem; }
-        .badge { display:inline-block; background:var(--accent-light); border:1px solid #b0c4d0; border-radius:18px; padding:0.4rem 1.2rem; font-size:0.8rem; color:var(--accent); font-family:var(--font-sans); font-weight:500; }
-        .section {
-            background:var(--card-bg); border:1px solid var(--border);
-            border-radius:var(--radius); padding:1.6rem 1.8rem; margin-bottom:1.8rem;
-            box-shadow:var(--shadow); scroll-margin-top:1rem;
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2c3e33;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
-        .section h2 { font-size:1.3rem; border-left:4px solid var(--accent); padding-left:0.8rem; margin-bottom:1rem; color:#1c3040; font-weight:700; display:flex; align-items:center; gap:0.5rem; }
-        .section h3 { font-size:1.05rem; margin:1.5rem 0 0.6rem; padding:0.3rem 0; border-bottom:1px dashed var(--border); color:#2c4a5e; font-weight:700; display:flex; align-items:center; gap:0.4rem; }
-        .info-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.8rem; margin-top:0.6rem; }
-        .info-card {
-            background:#fdfaf6; border-radius:10px; padding:0.9rem 1.1rem;
-            border-left:5px solid #ccc; transition:all 0.25s; position:relative;
+
+        .header .subtitle {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+            line-height: 1.6;
+            max-width: 700px;
+            margin: 0 auto;
         }
-        .info-card:hover { box-shadow:0 6px 16px rgba(0,0,0,0.06); transform:translateY(-2px); }
-        .info-card.core { border-color:#c46060; background:#fefafa; }
-        .info-card.mechanism { border-color:#5088b0; background:#fafcfe; }
-        .info-card.effect { border-color:#5a9050; background:#fafdfa; }
-        .info-card.insight { border-color:#9060b0; background:#fdfafe; }
-        .info-card .label { font-weight:700; font-size:0.82rem; margin-bottom:0.35rem; letter-spacing:0.04em; font-family:var(--font-sans); color:#2a3a45; display:flex; align-items:center; gap:0.4rem; }
-        .info-card .content { font-size:0.9rem; color:#4a3f33; }
-        .info-card .content ul { margin-top:0.2rem; padding-left:1.2rem; }
-        .info-card .content li { margin-bottom:0.2rem; }
-        .glossary-trigger {
-            display:inline-flex; align-items:center; justify-content:center;
-            width:20px; height:20px; background:var(--accent); color:#fff;
-            border-radius:50%; font-size:0.7rem; font-weight:700; cursor:pointer;
-            margin-left:0.35rem; transition:all 0.2s; font-family:var(--font-sans);
-            border:none; vertical-align:middle; box-shadow:0 2px 4px rgba(0,0,0,0.1);
+
+        .header .subtitle strong {
+            color: #3a6b55;
+            font-weight: 600;
         }
-        .glossary-trigger:hover { background:#3a5a70; transform:scale(1.15); }
-        .modal-overlay {
-            position:fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); z-index:200;
-            display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s ease;
+
+        .svg-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            margin: 16px 0 20px;
+            border-radius: var(--radius);
+            background: #fcfdfc;
+            border: 1px solid #eef3ef;
+            padding: 8px 4px;
+            box-shadow: var(--shadow-sm);
         }
-        .modal-overlay.hidden { display:none; }
-        @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-        .modal-card {
-            background:#fff; border-radius:16px; padding:1.8rem; max-width:560px; width:90%;
-            box-shadow:0 20px 40px rgba(0,0,0,0.2); border:1px solid var(--border);
-            position:relative; font-family:var(--font-sans); max-height:80vh; overflow-y:auto;
+
+        .svg-wrapper svg {
+            display: block;
+            width: 100%;
+            min-width: 950px;
+            height: auto;
         }
-        .modal-card h4 { font-size:1.15rem; color:var(--accent); margin-bottom:1rem; display:flex; align-items:center; gap:0.4rem; }
-        .modal-card p { font-size:0.92rem; color:#4a3f33; line-height:1.7; margin-bottom:0.7rem; }
-        .modal-card .close-btn { position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.3rem; cursor:pointer; color:#999; }
-        .modal-card .close-btn:hover { color:#333; }
-        blockquote {
-            background:var(--accent-light); border-left:4px solid #4a7080;
-            margin:1rem 0; padding:0.9rem 1.3rem; font-style:italic;
-            border-radius:0 8px 8px 0; color:#1c3040; font-size:0.92rem;
+
+        .legend-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 22px;
+            justify-content: center;
+            margin: 18px 0 22px;
         }
-        .diagram-wrap { text-align:center; margin:1.2rem 0; background:#fafcfe; border-radius:10px; padding:1rem; border:1px solid #e0e8ee; }
-        .diagram-wrap svg { max-width:100%; }
-        table.extension { width:100%; border-collapse:collapse; font-size:0.9rem; margin-top:0.5rem; }
-        table.extension th { background:#eef3f6; padding:0.5rem 0.8rem; text-align:left; font-weight:700; color:#2c4a5e; border-bottom:2px solid var(--border); font-family:var(--font-sans); width:24%; }
-        table.extension td { padding:0.5rem 0.8rem; border-bottom:1px solid var(--border); color:#4a3f33; vertical-align:top; }
-        hr.divider { border:none; border-top:1px dashed var(--border); margin:2rem 0; }
-        .back-to-top {
-            position:fixed; bottom:2rem; right:2rem; background:var(--accent);
-            color:#fff; border:none; border-radius:50%; width:42px; height:42px;
-            font-size:1.1rem; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.2);
-            z-index:99; transition:all 0.3s; display:flex; align-items:center; justify-content:center;
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-size: 0.82rem;
+            color: #4a5a4f;
+            font-weight: 500;
         }
-        .back-to-top:hover { background:#3a5a70; transform:translateY(-3px); }
-        @media (max-width:800px) {
-            .sidebar { display:none; }
-            .main { margin-left:0; padding:1rem; }
-            .info-grid { grid-template-columns:1fr; }
-            .header h1 { font-size:1.6rem; }
+
+        .legend-dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 4px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .dot-user {
+            background: #7eb8da;
+        }
+        .dot-agent {
+            background: #5dbaa0;
+        }
+        .dot-memory {
+            background: #a59cc8;
+        }
+        .dot-llm {
+            background: #7b9cc2;
+        }
+        .dot-mcp {
+            background: #b5a4c7;
+        }
+        .dot-tools {
+            background: #e88d7d;
+        }
+
+        .concept-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .concept-card {
+            background: #fafcfa;
+            border: 1px solid #e8efe9;
+            border-radius: var(--radius-sm);
+            padding: 16px 18px;
+            box-shadow: var(--shadow-sm);
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+
+        .concept-card:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .concept-card .card-icon {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .concept-card h4 {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #2c3e33;
+            margin: 0 0 5px;
+        }
+
+        .concept-card p {
+            font-size: 0.8rem;
+            color: #5a6b5f;
+            line-height: 1.55;
+            margin: 0;
+        }
+
+        .concept-card .tag {
+            display: inline-block;
+            font-size: 0.7rem;
+            background: #eaf5ef;
+            color: #3a6b55;
+            padding: 3px 9px;
+            border-radius: 20px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 12px 18px;
+                border-radius: 14px;
+            }
+            .header h1 {
+                font-size: 1.4rem;
+            }
+            .concept-cards {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
-<nav class="sidebar" id="sidebar">
-    <h3>📚 本书知识结构</h3>
-    <ul class="toc-list">
-        <li><a href="#header">📖 书籍信息</a></li>
-        <li><a href="#core">🎯 核心矛盾：权威体制 vs 有效治理</a></li>
-        <li><a href="#ch2">📐 制度基础：一统体制与行政发包</a></li>
-        <li><a href="#ch3">⚖️ 矛盾展开：政策执行偏差与机制衍生</a></li>
-        <li><a href="#ch4">🌪️ 纠偏机制：运动型治理</a></li>
-        <li><a href="#ch5">🤝 基层应对：共谋行为</a></li>
-        <li><a href="#ch6">🧩 基层策略：拼凑应对</a></li>
-        <li><a href="#ch7">🔗 多重逻辑与晋升锦标赛</a></li>
-        <li><a href="#ch8">💡 理论反思与制度韧性</a></li>
-        <li><a href="#laws">🧠 贯穿主线与核心规律</a></li>
-        <li><a href="#extension">🔍 延伸与比较</a></li>
-    </ul>
-</nav>
-
-<div class="main">
-    <div class="header" id="header">
-        <h1>《中国国家治理的制度逻辑》</h1>
-        <div class="subtitle">组织学视角下的中国治理模式深度剖析</div>
-        <div class="meta">
-            <span><strong>作者</strong>：周雪光</span>
-            <span><strong>出版年份</strong>：2017年</span>
-            <span><strong>出版社</strong>：生活·读书·新知三联书店</span>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>🤖</span> AI Agent 运行时序图 <span style="font-size:1.6rem;">⚡</span>
+            </h1>
+            <p class="subtitle">
+                展示 <strong>AI Agent</strong> 从接收用户任务到返回结果的完整运行流程，
+                涵盖<strong>LLM规划</strong>、<strong>记忆检索</strong>、<strong>MCP协议工具调用</strong>及<strong>ReAct循环</strong>，层级职责与异常出口清晰。
+            </p>
         </div>
-        <div class="framework-badges">
-            <span class="badge">🏛️ 核心论点型</span>
-            <span class="badge">📊 组织社会学</span>
-            <span class="badge">🇨🇳 中国政治</span>
-            <span class="badge">🔍 制度分析</span>
-        </div>
-    </div>
 
-    <!-- 核心矛盾 -->
-    <div class="section" id="core">
-        <h2>🎯 核心矛盾：权威体制与有效治理的张力</h2>
-        <p style="margin-bottom:1rem;">全书围绕一个根本矛盾展开：<strong>权威体制</strong>（中央统一决策、自上而下控制）与<strong>有效治理</strong>（因地制宜、灵活高效解决问题）之间存在结构性张力。这一矛盾是理解中国国家治理一切现象的逻辑起点。</p>
-        <div class="diagram-wrap">
-            <svg width="700" height="220" viewBox="0 0 700 220">
-                <rect x="30" y="30" width="220" height="60" rx="10" fill="#fefafa" stroke="#c46060" stroke-width="2"/>
-                <text x="140" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#a04040" font-family="'PingFang SC',sans-serif">权威体制</text>
-                <text x="140" y="75" text-anchor="middle" font-size="11" fill="#666">中央统一决策 · 自上而下控制</text>
-                <rect x="450" y="30" width="220" height="60" rx="10" fill="#fafdfa" stroke="#5a9050" stroke-width="2"/>
-                <text x="560" y="55" text-anchor="middle" font-size="14" font-weight="bold" fill="#3a6030" font-family="'PingFang SC',sans-serif">有效治理</text>
-                <text x="560" y="75" text-anchor="middle" font-size="11" fill="#666">因地制宜 · 灵活高效解决问题</text>
-                <line x1="250" y1="50" x2="450" y2="50" stroke="#888" stroke-width="2" stroke-dasharray="6"/>
-                <text x="350" y="45" text-anchor="middle" font-size="12" fill="#c46060" font-weight="bold">结构性张力</text>
-                <text x="350" y="115" text-anchor="middle" font-size="12" fill="#2c4a5e" font-weight="bold">↓ 衍生出多种制度机制 ↓</text>
-                <rect x="40" y="130" width="135" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
-                <text x="107" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">行政发包制</text>
-                <rect x="195" y="130" width="120" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
-                <text x="255" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">运动型治理</text>
-                <rect x="335" y="130" width="120" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
-                <text x="395" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">基层共谋</text>
-                <rect x="475" y="130" width="120" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
-                <text x="535" y="149" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">拼凑应对</text>
-                <rect x="150" y="170" width="200" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
-                <text x="250" y="189" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">晋升锦标赛</text>
-                <rect x="380" y="170" width="180" height="28" rx="6" fill="#eef3f6" stroke="#5088b0" stroke-width="1.5"/>
-                <text x="470" y="189" text-anchor="middle" font-size="11" fill="#2c4a5e" font-family="'PingFang SC',sans-serif">多重制度逻辑</text>
+        <div class="legend-row">
+            <span class="legend-item"><span class="legend-dot dot-user"></span> 用户</span>
+            <span class="legend-item"><span class="legend-dot dot-agent"></span> Agent 核心</span>
+            <span class="legend-item"><span class="legend-dot dot-memory"></span> 记忆系统</span>
+            <span class="legend-item"><span class="legend-dot dot-llm"></span> LLM引擎</span>
+            <span class="legend-item"><span class="legend-dot dot-mcp"></span> MCP协议</span>
+            <span class="legend-item"><span class="legend-dot dot-tools"></span> 工具集</span>
+        </div>
+
+        <div class="svg-wrapper">
+            <svg viewBox="0 0 1100 990" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="AI Agent运行时序图">
+                <defs>
+                    <!-- 向右箭头 (实线正向调用) -->
+                    <marker id="arrowRight" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+                        <path d="M0,0 L10,4 L0,8 L1.5,4 Z" fill="#4a6658" />
+                    </marker>
+                    <!-- 向左箭头 (虚线反向返回) · 固定指向左，不自动旋转 -->
+                    <marker id="arrowLeft" markerWidth="10" markerHeight="8" refX="9" refY="4">
+                        <path d="M10,0 L0,4 L10,8 L8.5,4 Z" fill="#4a6658" />
+                    </marker>
+                    <!-- 循环返回专用向左箭头 · 固定指向左 -->
+                    <marker id="arrowLeftLoop" markerWidth="10" markerHeight="8" refX="9" refY="4">
+                        <path d="M10,0 L0,4 L10,8 L8.5,4 Z" fill="#6b8a78" />
+                    </marker>
+                    <!-- 自环无箭头圆点 -->
+                    <marker id="dotOnly" markerWidth="6" markerHeight="6" refX="3" refY="3">
+                        <circle cx="3" cy="3" r="2.5" fill="#4a6658" />
+                    </marker>
+                    <filter id="shadowHead" x="-15%" y="10%" width="130%" height="140%">
+                        <feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#00000018" />
+                    </filter>
+                    <linearGradient id="gradStage1" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#e8f4ee" stop-opacity="0.7" />
+                        <stop offset="100%" stop-color="#e8f4ee" stop-opacity="0.25" />
+                    </linearGradient>
+                    <linearGradient id="gradStage2" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#eaf2f8" stop-opacity="0.75" />
+                        <stop offset="100%" stop-color="#eaf2f8" stop-opacity="0.2" />
+                    </linearGradient>
+                    <linearGradient id="gradStage3" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#fdf5ea" stop-opacity="0.8" />
+                        <stop offset="100%" stop-color="#fdf5ea" stop-opacity="0.3" />
+                    </linearGradient>
+                </defs>
+
+                <!-- 三阶段背景 (阶段三高度扩展以容纳调整后的元素) -->
+                <rect x="30" y="122" width="1040" height="210" rx="10" fill="url(#gradStage1)" stroke="#d5e8db" stroke-width="1" stroke-dasharray="4,3" />
+                <rect x="30" y="340" width="1040" height="380" rx="10" fill="url(#gradStage2)" stroke="#d0dde8" stroke-width="1" stroke-dasharray="4,3" />
+                <rect x="30" y="728" width="1040" height="215" rx="10" fill="url(#gradStage3)" stroke="#efe5d5" stroke-width="1" stroke-dasharray="4,3" />
+
+                <rect x="36" y="130" width="6" height="194" rx="3" fill="#5dbaa0" opacity="0.7" />
+                <text x="52" y="232" font-size="12" font-weight="700" fill="#3a6b55">阶段一 · 理解与规划</text>
+
+                <rect x="36" y="348" width="6" height="364" rx="3" fill="#7b9cc2" opacity="0.7" />
+                <text x="52" y="535" font-size="12" font-weight="700" fill="#4a6880">阶段二 · 推理-行动循环 (ReAct)</text>
+
+                <rect x="36" y="736" width="6" height="198" rx="3" fill="#f0b860" opacity="0.7" />
+                <text x="52" y="838" font-size="12" font-weight="700" fill="#8a6528">阶段三 · 记忆与响应</text>
+
+                <!-- 参与者生命线 -->
+                <line x1="85" y1="95" x2="85" y2="940" stroke="#b8d4e6" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="245" y1="95" x2="245" y2="940" stroke="#a3d5c5" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="425" y1="95" x2="425" y2="940" stroke="#cbc4e2" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="605" y1="95" x2="605" y2="940" stroke="#bcc8d8" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="785" y1="95" x2="785" y2="940" stroke="#d4cbe0" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+                <line x1="965" y1="95" x2="965" y2="940" stroke="#f2c8bf" stroke-width="1.5" stroke-dasharray="6,5" opacity="0.7" />
+
+                <!-- 参与者头部 -->
+                <rect x="35" y="52" width="100" height="42" rx="21" fill="#7eb8da" filter="url(#shadowHead)" />
+                <text x="85" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">👤 用户</text>
+                <text x="85" y="84" text-anchor="middle" font-size="9.5" fill="#e3f0f7">User</text>
+
+                <rect x="185" y="52" width="120" height="42" rx="21" fill="#5dbaa0" filter="url(#shadowHead)" />
+                <text x="245" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🤖 Agent 核心</text>
+                <text x="245" y="84" text-anchor="middle" font-size="9.5" fill="#d5f2e8">Agent Core</text>
+
+                <rect x="365" y="52" width="120" height="42" rx="21" fill="#a59cc8" filter="url(#shadowHead)" />
+                <text x="425" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🧠 记忆系统</text>
+                <text x="425" y="84" text-anchor="middle" font-size="9.5" fill="#ece9f5">Memory</text>
+
+                <rect x="545" y="52" width="120" height="42" rx="21" fill="#7b9cc2" filter="url(#shadowHead)" />
+                <text x="605" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">💭 LLM引擎</text>
+                <text x="605" y="84" text-anchor="middle" font-size="9.5" fill="#dce6f0">LLM Engine</text>
+
+                <rect x="725" y="52" width="120" height="42" rx="21" fill="#b5a4c7" filter="url(#shadowHead)" />
+                <text x="785" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🔌 MCP协议</text>
+                <text x="785" y="84" text-anchor="middle" font-size="9.5" fill="#f3eff8">MCP</text>
+
+                <rect x="905" y="52" width="120" height="42" rx="21" fill="#e88d7d" filter="url(#shadowHead)" />
+                <text x="965" y="70" text-anchor="middle" font-size="12.5" font-weight="700" fill="#fff">🔧 工具集</text>
+                <text x="965" y="84" text-anchor="middle" font-size="9.5" fill="#fce8e4">Tools</text>
+
+                <!-- 步骤1：用户 → Agent -->
+                <line x1="92" y1="150" x2="237" y2="150" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="85" cy="150" r="9" fill="#7eb8da" stroke="#fff" stroke-width="2.2" />
+                <text x="85" y="154" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">1</text>
+                <text x="162" y="141" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">发送任务目标与约束</text>
+
+                <!-- 步骤2：Agent → Memory 查询 -->
+                <line x1="252" y1="195" x2="417" y2="195" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="195" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="199" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">2</text>
+                <text x="332" y="186" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">查询相关历史上下文</text>
+
+                <!-- 步骤3：Memory → Agent (反向虚线) -->
+                <line x1="418" y1="240" x2="253" y2="240" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="425" cy="240" r="9" fill="#a59cc8" stroke="#fff" stroke-width="2.2" />
+                <text x="425" y="244" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">3</text>
+                <text x="338" y="231" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回相关经验与上下文</text>
+
+                <!-- 步骤4：Agent → LLM 请求规划 -->
+                <line x1="252" y1="285" x2="597" y2="285" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="285" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="289" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">4</text>
+                <text x="422" y="276" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">发送任务与上下文，请求LLM规划分解</text>
+
+                <!-- 步骤5：LLM → Agent 返回计划 (反向虚线) -->
+                <line x1="598" y1="330" x2="253" y2="330" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="605" cy="330" r="9" fill="#7b9cc2" stroke="#fff" stroke-width="2.2" />
+                <text x="605" y="334" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">5</text>
+                <text x="428" y="321" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回分解后的任务计划</text>
+
+                <!-- 循环框 -->
+                <rect x="50" y="372" width="1020" height="340" rx="14" fill="none" stroke="#8cb8a6" stroke-width="2" stroke-dasharray="10,5" opacity="0.65" />
+                <rect x="58" y="362" width="190" height="22" rx="11" fill="#eaf5ef" stroke="#8cb8a6" stroke-width="1.2" />
+                <text x="153" y="377" text-anchor="middle" font-size="10.5" font-weight="700" fill="#3a6b55">🔄 ReAct 推理-行动循环</text>
+
+                <!-- 步骤6：Agent → LLM 请求Action决策 -->
+                <line x1="252" y1="415" x2="597" y2="415" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="415" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="419" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">6</text>
+                <text x="422" y="405" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">[Plan+Context] 请求Action决策</text>
+
+                <!-- 步骤7：LLM → Agent 返回行动建议 (反向虚线) -->
+                <line x1="598" y1="460" x2="253" y2="460" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="605" cy="460" r="9" fill="#7b9cc2" stroke="#fff" stroke-width="2.2" />
+                <text x="605" y="464" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">7</text>
+                <text x="428" y="450" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回行动建议（含工具选择与参数）</text>
+
+                <!-- 步骤7.5：Agent 自环校验 -->
+                <path d="M252,485 Q272,485 272,500 Q272,515 252,515" fill="none" stroke="#4a6658" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#dotOnly)" />
+                <text x="285" y="503" font-size="9.5" fill="#4a6658" font-weight="500">安全/权限校验</text>
+
+                <!-- 步骤8：Agent → MCP 请求工具调用 -->
+                <line x1="252" y1="535" x2="777" y2="535" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="535" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="539" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">8</text>
+                <text x="510" y="525" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">通过MCP协议请求工具执行</text>
+
+                <!-- 步骤9：MCP → Tools 转发 -->
+                <line x1="792" y1="580" x2="957" y2="580" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="785" cy="580" r="9" fill="#b5a4c7" stroke="#fff" stroke-width="2.2" />
+                <text x="785" y="584" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">9</text>
+                <text x="875" y="571" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">调用具体工具接口</text>
+
+                <!-- 步骤10：Tools → MCP 返回 (反向虚线) -->
+                <line x1="958" y1="625" x2="793" y2="625" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="965" cy="625" r="9" fill="#e88d7d" stroke="#fff" stroke-width="2.2" />
+                <text x="965" y="629" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">10</text>
+                <text x="876" y="615" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回工具执行结果</text>
+
+                <!-- 步骤11：MCP → Agent 返回 (反向虚线) -->
+                <line x1="778" y1="670" x2="253" y2="670" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="785" cy="670" r="9" fill="#b5a4c7" stroke="#fff" stroke-width="2.2" />
+                <text x="785" y="674" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">11</text>
+                <text x="515" y="660" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回标准化工具结果</text>
+
+                <!-- 步骤12：Agent → Memory 写入工作记忆 -->
+                <line x1="252" y1="715" x2="417" y2="715" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="715" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="719" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">12</text>
+                <text x="332" y="705" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">写入本轮观察结果（短期记忆）</text>
+
+                <!-- 步骤13：Agent → LLM 请求反思评估 -->
+                <line x1="252" y1="760" x2="597" y2="760" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="760" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="764" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">13</text>
+                <text x="422" y="750" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">[Observation+History] 请求Reflection评估</text>
+
+                <!-- 步骤14：LLM → Agent 返回评估与完成标记 (反向虚线) -->
+                <line x1="598" y1="805" x2="253" y2="805" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="605" cy="805" r="9" fill="#7b9cc2" stroke="#fff" stroke-width="2.2" />
+                <text x="605" y="809" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">14</text>
+                <text x="428" y="795" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回评估结果与完成标记</text>
+
+                <!-- 判断菱形 (步骤15) -->
+                <polygon points="245,835 265,845 245,855 225,845" fill="#fef7ec" stroke="#f0b860" stroke-width="2" />
+                <text x="245" y="849" text-anchor="middle" font-size="9" font-weight="700" fill="#8a6528">15</text>
+
+                <!-- 循环返回箭头 -->
+                <path d="M265,845 Q300,845 300,750 Q300,415 258,415" fill="none" stroke="#6b8a78" stroke-width="1.2" stroke-dasharray="5,4" marker-end="url(#arrowLeftLoop)" opacity="0.7" />
+                <text x="308" y="635" font-size="10" fill="#6b8a78" font-weight="600" transform="rotate(-90, 308, 635)">未完成则返回步骤6</text>
+                <text x="280" y="865" font-size="10" fill="#8a6528" font-weight="600">[Agent解析完成标记] 任务完成?</text>
+                <text x="280" y="879" font-size="9" fill="#a08050">是 → 跳出循环，继续步骤16</text>
+                <text x="280" y="893" font-size="9" fill="#a08050">否/超时/异常 → 返回用户并说明原因</text>
+
+                <!-- 步骤16：Agent → Memory 存储最终经验 (位置下移) -->
+                <line x1="252" y1="920" x2="417" y2="920" stroke="#4a6658" stroke-width="1.8" marker-end="url(#arrowRight)" />
+                <circle cx="245" cy="920" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="924" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">16</text>
+                <text x="332" y="910" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">存储最终经验与知识</text>
+
+                <!-- 步骤17：Agent → User 返回结果 (反向虚线, 位置下移) -->
+                <line x1="238" y1="955" x2="93" y2="955" stroke="#4a6658" stroke-width="1.4" stroke-dasharray="6,5" marker-end="url(#arrowLeft)" />
+                <circle cx="245" cy="955" r="9" fill="#5dbaa0" stroke="#fff" stroke-width="2.2" />
+                <text x="245" y="959" text-anchor="middle" font-size="10" font-weight="700" fill="#fff">17</text>
+                <text x="162" y="945" text-anchor="middle" font-size="10.5" fill="#4a6658" font-weight="600">返回最终执行结果</text>
+
+                <circle cx="85" cy="955" r="14" fill="#e8f5ee" stroke="#5dbaa0" stroke-width="2.2" />
+                <text x="85" y="960" text-anchor="middle" font-size="14">✅</text>
             </svg>
-            <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.3rem;">图：核心矛盾及其衍生的治理机制（强化主线）</p>
         </div>
-    </div>
 
-    <!-- 第二章：制度基础 -->
-    <div class="section" id="ch2">
-        <h2>📐 制度基础：一统体制与行政发包制</h2>
-        <div class="info-grid">
-            <div class="info-card core">
-                <div class="label">🏛️ 一统体制 <button class="glossary-trigger" onclick="openModal('unitary')">?</button></div>
-                <div class="content">中国自古以来就是一个<strong>一统体制</strong>的国家，核心特征是中央掌握最终决策权、人事任命权和资源分配权。这一体制通过层级结构向下传导权威，但也面临着治理规模庞大带来的信息与激励难题。</div>
+        <div class="concept-cards">
+            <div class="concept-card">
+                <span class="card-icon">🔄</span>
+                <h4>ReAct 推理-行动循环</h4>
+                <p>Agent 在<strong>思考</strong>与<strong>行动</strong>间迭代：LLM决策动作，通过<strong>MCP协议</strong>调用工具，观察结果后再反思评估，直至任务完成或触发安全上限。</p>
+                <span class="tag">核心模式</span>
             </div>
-            <div class="info-card mechanism">
-                <div class="label">📋 行政发包制 <button class="glossary-trigger" onclick="openModal('administrative')">?</button></div>
-                <div class="content">中央将治理任务<strong>打包发包</strong>给下级政府，明确规定目标、时限和奖惩，但给予一定执行自主权。行政发包制有效调动了地方积极性，但也导致地方选择性执行和偏差行为——因为发包方难以完全监督代理方的执行过程。</div>
+            <div class="concept-card">
+                <span class="card-icon">🧠</span>
+                <h4>双层记忆系统</h4>
+                <p><strong>短期工作记忆：</strong>循环内每步观察即时写入，支持多轮上下文连续。<strong>长期记忆：</strong>跨会话经验积累，用于规划时的RAG检索增强。</p>
+                <span class="tag">上下文管理</span>
             </div>
-            <div class="info-card insight">
-                <div class="label">🔗 与核心矛盾的关系</div>
-                <div class="content">行政发包制是权威体制在治理实践中的具体体现：中央通过发包实现控制，但发包过程中的信息不对称和激励扭曲恰恰体现了权威体制与有效治理之间的张力。它是连接核心矛盾与后续衍生机制的关键制度安排。</div>
+            <div class="concept-card">
+                <span class="card-icon">🔌</span>
+                <h4>MCP 协议中间层</h4>
+                <p>Agent 通过<strong>Model Context Protocol</strong>标准化调用工具，解耦工具实现与Agent逻辑，支持动态发现工具、统一错误处理和权限控制。</p>
+                <span class="tag">工具标准化</span>
             </div>
-        </div>
-    </div>
-
-    <!-- 第三章：矛盾展开 -->
-    <div class="section" id="ch3">
-        <h2>⚖️ 矛盾展开：政策执行偏差与机制衍生</h2>
-        <div class="info-grid">
-            <div class="info-card mechanism">
-                <div class="label">📉 政策执行偏差 <button class="glossary-trigger" onclick="openModal('deviation')">?</button></div>
-                <div class="content">由于行政发包制中的信息不对称和激励不相容，地方政府在执行中央政策时出现系统性偏差：<strong>选择性执行</strong>（只做容易考核的）、<strong>象征性执行</strong>（以会议落实会议）、<strong>附加执行</strong>（层层加码）等现象层出不穷。</div>
-            </div>
-            <div class="info-card effect">
-                <div class="label">⚡ 矛盾的后果</div>
-                <div class="content">执行偏差积累到一定程度，会触发中央的纠偏机制——<strong>运动型治理</strong>。同时，基层政府在高压下发展出<strong>共谋行为</strong>和<strong>拼凑应对</strong>等策略以求自保。这些机制共同构成了中国治理的动态循环。</div>
+            <div class="concept-card">
+                <span class="card-icon">📋</span>
+                <h4>LLM驱动的规划</h4>
+                <p>任务规划不再是独立组件，而是Agent核心调用<strong>LLM的规划模式(COT/TOT)</strong>完成，结合历史记忆生成可执行的任务分解计划。</p>
+                <span class="tag">任务分解</span>
             </div>
         </div>
     </div>
-
-    <!-- 第四章：运动型治理 -->
-    <div class="section" id="ch4">
-        <h2>🌪️ 纠偏机制：运动型治理</h2>
-        <div class="info-grid">
-            <div class="info-card mechanism">
-                <div class="label">🌪️ 运动型治理 <button class="glossary-trigger" onclick="openModal('campaign')">?</button></div>
-                <div class="content">当常规官僚体系出现严重僵化或偏离时，中央通过<strong>政治动员</strong>打破常规程序，集中力量突破阻力。运动型治理是权威体制维护自身统一性的<strong>纠偏手段</strong>，但其非制度化特征也带来矫枉过正和周期性循环的问题。</div>
-            </div>
-            <div class="info-card effect">
-                <div class="label">🔄 周期性循环</div>
-                <div class="content">运动型治理往往形成“问题积累—运动爆发—问题缓解—问题再积累”的循环。每一次运动在短期内解决旧问题，但长期可能创造新问题，下一次运动则在更高起点上启动。这种循环恰是权威体制与有效治理矛盾无法根本解决的体现。</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 第五章：共谋行为 -->
-    <div class="section" id="ch5">
-        <h2>🤝 基层应对：共谋行为</h2>
-        <div class="info-grid">
-            <div class="info-card mechanism">
-                <div class="label">🤝 共谋行为 <button class="glossary-trigger" onclick="openModal('collusion')">?</button></div>
-                <div class="content">基层政府之间形成<strong>非正式合作关系</strong>，共同应对上级检查、应付政策要求。这不是个别腐败，而是<strong>组织层面的系统性行为</strong>——在高压问责和资源有限的双重约束下，共谋是基层降低风险的理性策略。</div>
-            </div>
-            <div class="info-card insight">
-                <div class="label">🔍 组织学解释</div>
-                <div class="content">共谋行为的根源在于<strong>激励结构</strong>：上级考核指标多、时间紧、惩罚重，而下级资源不足。基层官员为完成考核、避免问责，倾向于相互配合来修饰数据、应付检查。这种行为一旦成为普遍模式，就形成了制度化的非正式规则。</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 第六章：拼凑应对 -->
-    <div class="section" id="ch6">
-        <h2>🧩 基层策略：拼凑应对</h2>
-        <div class="info-grid">
-            <div class="info-card mechanism">
-                <div class="label">🧩 拼凑应对 <button class="glossary-trigger" onclick="openModal('bricolage')">?</button></div>
-                <div class="content">基层政府在面对多重、冲突的上级指令时，采取灵活变通策略——<strong>选择性执行、象征性达标、数据修饰</strong>等——在有限资源和时间内完成任务。这一概念借用人类学“拼凑”一词，强调行动者利用手头有限资源进行创造性应对。</div>
-            </div>
-            <div class="info-card effect">
-                <div class="label">📊 双重后果</div>
-                <div class="content">拼凑应对短期内缓解了基层执行压力，体现了基层<strong>适应性</strong>；但长期来看，它导致<strong>政策目标偏离</strong>、<strong>治理效能衰减</strong>，并使中央难以获得真实信息，进一步加剧了权威体制与有效治理之间的矛盾。</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 第七章：多重逻辑与晋升锦标赛 -->
-    <div class="section" id="ch7">
-        <h2>🔗 多重逻辑与晋升锦标赛</h2>
-        <div class="info-grid">
-            <div class="info-card mechanism">
-                <div class="label">🏆 晋升锦标赛 <button class="glossary-trigger" onclick="openModal('tournament')">?</button></div>
-                <div class="content">地方政府官员之间的竞争可以理解为一场<strong>晋升锦标赛</strong>：上级设定考核指标（如GDP增长、招商引资），下级官员为了获得晋升机会而展开激烈竞争。这一机制有效激发了经济活力，但也导致唯指标论、数据造假等问题。</div>
-            </div>
-            <div class="info-card insight">
-                <div class="label">🧭 多重制度逻辑 <button class="glossary-trigger" onclick="openModal('multilogic')">?</button></div>
-                <div class="content">国家治理不是单一逻辑驱动，而是<strong>科层制逻辑</strong>（层级控制）、<strong>政治逻辑</strong>（意识形态）、<strong>社会逻辑</strong>（公众期望）、<strong>市场逻辑</strong>（效率追求）等多重逻辑交织博弈的结果。晋升锦标赛正是政治逻辑与科层制逻辑结合的产物。</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 第八章：理论反思 -->
-    <div class="section" id="ch8">
-        <h2>💡 理论反思与制度韧性</h2>
-        <div class="info-grid">
-            <div class="info-card insight">
-                <div class="label">🏗️ 制度韧性 <button class="glossary-trigger" onclick="openModal('resilience')">?</button></div>
-                <div class="content">尽管矛盾重重，中国治理体系表现出强大韧性。周雪光认为，<strong>运动型治理的纠偏能力</strong>和<strong>基层适应性行为</strong>共同构成“动态平衡”——矛盾不断产生也不断被消化，这正是制度韧性的来源。</div>
-            </div>
-            <div class="info-card insight">
-                <div class="label">🔮 出路何在？</div>
-                <div class="content">周雪光没有给出简单的解决方案，但暗示了方向：<strong>制度化的权力分配</strong>和<strong>法治化的治理转型</strong>。只要核心矛盾存在，各种衍生机制就会不断再生。真正的出路在于调整权威体制与有效治理之间的制度安排。</div>
-            </div>
-        </div>
-        <blockquote>
-            “中国国家治理的困境，不在于官员的个人素质或道德水平，而在于制度结构本身的内在矛盾。”
-            <span class="cite">——周雪光《中国国家治理的制度逻辑》</span>
-        </blockquote>
-    </div>
-
-    <hr class="divider">
-
-    <!-- 核心规律 -->
-    <div class="section" id="laws">
-        <h2>🧠 贯穿主线与核心规律</h2>
-        <div class="info-grid">
-            <div class="info-card insight"><div class="label">主线：权威体制与有效治理的矛盾 → 行政发包 → 执行偏差 → 运动式纠偏 + 基层策略应对 → 动态平衡</div><div class="content">全书的逻辑链条清晰：核心矛盾催生行政发包制，发包过程中的信息不对称导致执行偏差，偏差积累触发运动型治理，基层在高压下发展出共谋与拼凑应对，这些机制循环往复形成中国治理的独特韧性。</div></div>
-            <div class="info-card insight"><div class="label">规律一：结构性矛盾无法根除，只能管理</div><div class="content">权威体制与有效治理的矛盾是制度性的，无法通过更换官员或技术手段彻底解决。任何改革都在原有框架内调整，改变的是矛盾的表现形式而非矛盾本身。</div></div>
-            <div class="info-card insight"><div class="label">规律二：基层行为是制度环境的理性反应</div><div class="content">共谋、拼凑应对等看似消极的行为，实际上是基层官员在激励结构和资源约束下的最优策略。要改变行为，必须先改变制度环境。</div></div>
-            <div class="info-card insight"><div class="label">规律三：多重逻辑交织决定治理走向</div><div class="content">单一逻辑无法解释中国治理的复杂性。科层制、政治、社会和市场逻辑同时作用，彼此冲突又互补。理解中国治理，必须接受这种复杂性而非追求单一解释。</div></div>
-        </div>
-    </div>
-
-    <!-- 延伸 -->
-    <div class="section" id="extension">
-        <h2>🔍 延伸与比较</h2>
-        <table class="extension">
-            <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
-            <tbody>
-                <tr><td>与《历代经济变革得失》的对话</td><td>吴晓波从历史叙事角度总结“分权-集权循环律”，周雪光从组织社会学角度提供微观机制解释。两者互补：吴晓波讲“是什么”，周雪光讲“为什么”。</td></tr>
-                <tr><td>与“数目字管理”的关联</td><td>黄仁宇在《万历十五年》中提出中国古代缺乏“数目字管理”能力。周雪光的研究表明，信息失真和上下博弈恰恰是现代治理中“数目字管理”困境的表现。</td></tr>
-                <tr><td>行政发包制与晋升锦标赛的理论贡献</td><td>周雪光在书中融合了周黎安等人的“晋升锦标赛”理论和自身对行政发包制的分析，形成了理解中国地方政府行为的完整框架。这两个概念已成为中国政治经济学研究的核心分析工具。</td></tr>
-                <tr><td>推荐对照阅读</td><td><strong>吴晓波《历代经济变革得失》</strong>：历史维度观察中国治理周期性。<br><strong>黄仁宇《万历十五年》</strong>：微观叙事透视制度困境。<br><strong>福山《政治秩序与政治衰败》</strong>：比较视角下的国家治理理论。</td></tr>
-            </tbody>
-        </table>
-    </div>
-    <div style="text-align:center; margin-top:3rem; padding:1.2rem; color:var(--text-muted); font-size:0.8rem; border-top:1px solid var(--border);">《中国国家治理的制度逻辑》知识图谱 · 基于周雪光原著整理 · 仅供个人学习回顾</div>
-</div>
-
-<!-- 弹窗 -->
-<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
-    <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
-        <button class="close-btn" onclick="closeModal()">✕</button>
-        <div id="modalContent"></div>
-    </div>
-</div>
-<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
-
-<script>
-    const glossary = {
-        unitary: { title:'🏛️ 一统体制', content:'<p>中国历史延续至今的<strong>大一统</strong>政治传统，核心是中央掌握最终决策权和人事权。周雪光指出，一统体制面临两个根本挑战：一是治理规模——幅员辽阔、人口众多带来的管理困难；二是信息不对称——中央难以获取地方真实情况。为应对这些挑战，发展出了行政发包制等制度安排。</p><p>一统体制并非一成不变，它在历史上经历了郡县制、封建制、现代党政体制等多种形态，但“中央统揽”的基本逻辑始终延续。这是理解中国一切治理现象的出发点。</p>' },
-        administrative: { title:'📋 行政发包制', content:'<p><strong>行政发包制</strong>是周雪光用来描述中国中央与地方关系的核心概念。它不同于韦伯式科层制（完全按规则办事），也不同于纯粹的市场外包（完全自主）。其特点包括：</p><ul><li><strong>任务打包</strong>：中央将治理任务整体发包给地方，而非逐项指令。</li><li><strong>目标责任制</strong>：明确考核指标（如GDP、维稳），下级对结果负责。</li><li><strong>执行自主权</strong>：地方在如何完成任务上有一定灵活性。</li><li><strong>强激励</strong>：完成好的官员获得晋升，差的被问责。</li></ul><p>行政发包制有效调动了地方积极性，是改革开放后经济腾飞的重要制度基础。但其代价是信息失真和执行偏差——地方可能选择性地完成那些容易考核的指标，忽视难以量化的公共服务。</p>' },
-        deviation: { title:'📉 政策执行偏差', content:'<p>在行政发包制下，政策执行偏差是系统性现象，而非个别失误。主要表现形式包括：</p><ul><li><strong>选择性执行</strong>：只执行容易考核、与晋升挂钩的任务，忽视软指标（如教育质量、环境保护）。</li><li><strong>象征性执行</strong>：以文件落实文件，以会议落实会议，形式上完成但实际效果有限。</li><li><strong>附加执行</strong>：在中央政策基础上层层加码，导致政策走样。</li><li><strong>替换执行</strong>：表面执行上级政策，实际上用本地做法替代。</li></ul><p>执行偏差的积累是触发运动型治理的直接原因：当偏差达到一定程度，中央感到失控，就会启动运动来纠偏。</p>' },
-        campaign: { title:'🌪️ 运动型治理', content:'<p>运动型治理是中国治理体系中一种与常规行政并存的特殊机制。其核心特征包括：</p><ul><li><strong>政治动员</strong>：越过常规行政程序，通过高层政治权威直接推动。</li><li><strong>高压推动</strong>：集中大量资源，在短时间内突破阻力。</li><li><strong>非制度化</strong>：不受常规法律和程序的严格约束，具有临时性和灵活性。</li><li><strong>矫枉过正倾向</strong>：为了打破既得利益僵局，往往用力过猛，造成新问题。</li><li><strong>周期性循环</strong>：运动过后问题可能复发，导致新一轮运动。</li></ul><p>运动型治理并非简单的“人治”，而是权威体制在面对治理失效时的一种理性应对——当常规手段无法解决基层偏差时，启动运动是恢复中央权威的唯一有效手段。</p>' },
-        collusion: { title:'🤝 基层共谋行为', content:'<p>周雪光通过田野调查发现，基层政府之间常常形成<strong>非正式的合作网络</strong>，共同应对上级检查。这并非个别官员的腐败，而是组织层面的系统性行为。其形成条件包括：</p><ul><li><strong>高压问责</strong>：上级考核指标严格，一旦不达标面临严厉惩罚。</li><li><strong>资源有限</strong>：基层人力、财力不足，无法完全按规定执行所有政策。</li><li><strong>信息优势</strong>：基层掌握本地真实信息，上级难以核查。</li><li><strong>重复互动</strong>：基层官员之间长期共事，建立了信任和互惠关系。</li></ul><p>共谋行为的本质是基层在制度约束下的理性选择。要减少共谋，不能只靠加强监督，而需要调整激励结构和资源配置方式。</p>' },
-        bricolage: { title:'🧩 拼凑应对', content:'<p>“拼凑应对”（bricolage）一词源自法国人类学家列维-斯特劳斯，指利用手头有限资源进行创造性组合以解决眼前问题。周雪光用这一概念描述基层政府面对多重、冲突的上级指令时的行为模式：</p><ul><li><strong>优先级排序</strong>：在众多任务中，优先完成与考核权重最大、与晋升最相关的任务。</li><li><strong>数据修饰</strong>：通过技术性调整使统计数据达标，而非实质改善。</li><li><strong>资源重组</strong>：将一个项目的资源挪用于另一个更紧急的项目。</li><li><strong>时间缓冲</strong>：利用信息上报的时间差来争取调整空间。</li></ul><p>拼凑应对体现了基层的适应性和创造力，但它本质上是一种“治标不治本”的策略，长期可能加剧治理效能衰减。</p>' },
-        tournament: { title:'🏆 晋升锦标赛', content:'<p>“晋升锦标赛”理论由周黎安提出，周雪光在书中将其融入自己的分析框架。该理论认为，中国地方政府官员之间的竞争类似于一场体育锦标赛：</p><ul><li><strong>考核指标清晰</strong>：上级设定明确的量化指标（如GDP增长率、招商引资额），下级官员的晋升取决于这些指标的相对排名。</li><li><strong>零和竞争</strong>：晋升名额有限，一个官员的升迁意味着其他人的落选，因此竞争异常激烈。</li><li><strong>强激励效应</strong>：这种竞争极大激发了地方官员发展经济的积极性，是“中国奇迹”的重要制度解释。</li><li><strong>扭曲效应</strong>：过度关注量化指标导致官员忽视教育、医疗、环保等不易测量的公共服务，也催生了数据造假。</li></ul><p>晋升锦标赛与行政发包制相辅相成：发包制提供了任务框架，锦标赛提供了激励结构。两者共同塑造了中国地方政府的行为模式。</p>' },
-        multilogic: { title:'🧭 多重制度逻辑', content:'<p>周雪光强调，中国国家治理不能被单一逻辑解释，而是多重制度逻辑共同作用的结果。这些逻辑包括：</p><ul><li><strong>科层制逻辑</strong>：追求规则化、程序化和可预测性，但容易走向僵化和形式主义。</li><li><strong>政治逻辑</strong>：以意识形态和政治忠诚为核心，强调“政治正确”和服从。</li><li><strong>社会逻辑</strong>：回应公众期望和民意压力，近年来随着社交媒体发展日益重要。</li><li><strong>市场逻辑</strong>：追求效率和资源配置优化，与科层制逻辑常常产生冲突。</li></ul><p>这些逻辑彼此既互补又对抗：科层制逻辑要求稳定和程序，政治逻辑要求忠诚和动员，市场逻辑要求效率和创新。治理的难点在于如何在多重逻辑之间取得平衡，而这一平衡永远是动态和不稳定的。</p>' },
-        resilience: { title:'🏗️ 制度韧性的来源', content:'<p>尽管存在深刻矛盾，中国治理体系展现出惊人的韧性。周雪光认为，韧性的来源恰恰在于<strong>矛盾本身</strong>：</p><ul><li><strong>运动型治理的纠偏功能</strong>：当常规官僚体系走向僵化，运动型治理可以快速打破困局，恢复中央对地方的控制。</li><li><strong>基层适应性行为</strong>：共谋、拼凑应对等行为虽然消极，但也起到了“减压阀”的作用——它们在刚性制度中创造了一定的弹性空间，避免了系统因压力过大而崩溃。</li><li><strong>制度冗余</strong>：多重逻辑的存在意味着系统不会因为单一逻辑的失败而彻底瘫痪，总有一种逻辑可以接管。</li></ul><p>但周雪光同时警告：韧性不等于健康。一个不断依赖运动纠偏和基层应付的系统，长期来看可能消耗其合法性和治理能力。</p>' }
-    };
-    function openModal(key) {
-        const data = glossary[key];
-        if (!data) return;
-        document.getElementById('modalContent').innerHTML = `<h4>${data.title}</h4>${data.content}`;
-        document.getElementById('modalOverlay').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-    }
-    function closeModal() {
-        document.getElementById('modalOverlay').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-    document.addEventListener('DOMContentLoaded', () => {
-        const links = document.querySelectorAll('.sidebar a');
-        const sections = [];
-        links.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('#')) {
-                const target = document.getElementById(href.substring(1));
-                if (target) sections.push({ link, target });
-            }
-        });
-        links.forEach(link => link.addEventListener('click', function() {
-            links.forEach(l => l.classList.remove('active'));
-            this.classList.add('active');
-        }));
-        window.addEventListener('scroll', () => {
-            let current = null;
-            const scrollTop = window.scrollY + 120;
-            for (let i = sections.length - 1; i >= 0; i--) {
-                if (sections[i].target.offsetTop <= scrollTop) { current = sections[i].link; break; }
-            }
-            if (current) {
-                links.forEach(l => l.classList.remove('active'));
-                current.classList.add('active');
-            }
-        });
-    });
-</script>
 </body>
 </html>

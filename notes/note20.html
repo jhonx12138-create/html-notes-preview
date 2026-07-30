@@ -1,1549 +1,908 @@
 <!DOCTYPE html>
-<html lang="zh-CN"><head>
+<html lang="zh-CN">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>云上书阁 · 我的书架</title>
+    <title>《吴军数学通识讲义》· 完整知识图谱</title>
     <style>
         :root {
-            --bg: #faf8f5;
-            --surface: #ffffff;
-            --border: #e8e2d8;
+            --bg: #fdfdf9;
+            --sidebar-bg: #f5f0e8;
+            --card-bg: #ffffff;
+            --border: #e0d8cc;
             --text: #2c2416;
-            --text-secondary: #6b6052;
-            --text-muted: #9b8e7c;
-            --accent: #8b5a3c;
-            --accent-light: #f5efe6;
-            --accent-hover: #a07050;
-            --danger: #c45555;
-            --danger-light: #fdf5f5;
-            --success: #5a9b6e;
-            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.1);
-            --radius-sm: 8px;
-            --radius: 12px;
-            --radius-lg: 16px;
-            --font: 'Segoe UI', 'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', system-ui, sans-serif;
-            --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            --text-muted: #6b6258;
+            --accent: #1a5276;
+            --accent-light: #eaf2f8;
+            --shadow: 0 2px 12px rgba(0,0,0,0.06);
+            --highlight: #eaf2f8;
+            --radius: 10px;
+            --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --font-serif: 'Noto Serif SC', 'Songti SC', 'SimSun', 'STSong', Georgia, serif;
+            --sidebar-width: 260px;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: var(--font);
-            background: var(--bg);
+            font-family: var(--font-serif);
+            background-color: var(--bg);
             color: var(--text);
-            min-height: 100vh;
+            line-height: 1.9;
             -webkit-font-smoothing: antialiased;
-            line-height: 1.6;
+            display: flex;
         }
-
-        /* ========== 布局 ========== */
-        .app { display: flex; min-height: 100vh; }
 
         /* ========== 侧边栏 ========== */
         .sidebar {
-            width: 240px;
-            background: var(--surface);
-            border-right: 1px solid var(--border);
-            padding: 1.2rem 0.8rem;
-            display: flex;
-            flex-direction: column;
-            flex-shrink: 0;
-            position: sticky;
+            position: fixed;
             top: 0;
+            left: 0;
+            width: var(--sidebar-width);
             height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
             overflow-y: auto;
+            padding: 1.5rem 1rem;
+            z-index: 100;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
         }
-        .sidebar-logo {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--accent);
-            margin-bottom: 1.2rem;
-            padding: 0 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .sidebar h3 {
+            font-size: 1rem;
+            color: #1a5276;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #1a5276;
+            letter-spacing: 0.04em;
         }
-        .sidebar-logo .logo-icon {
-            width: 32px; height: 32px;
-            background: var(--accent-light);
-            border-radius: 8px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem;
-        }
-        .sidebar-section {
-            margin-bottom: 1.2rem;
-        }
-        .sidebar-section-title {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            padding: 0 0.6rem;
-            margin-bottom: 0.4rem;
-        }
-        .sidebar-nav {
+        .sidebar .toc-list {
             list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
+            padding: 0;
         }
-        .sidebar-nav button {
-            width: 100%;
-            text-align: left;
-            padding: 0.5rem 0.7rem;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-family: inherit;
-            color: var(--text-secondary);
-            transition: all var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .sidebar .toc-list li {
+            margin-bottom: 0.15rem;
         }
-        .sidebar-nav button:hover {
-            background: var(--accent-light);
-            color: var(--text);
+        .sidebar .toc-list a {
+            display: block;
+            padding: 0.35rem 0.6rem;
+            color: #4a3f33;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.2s;
         }
-        .sidebar-nav button.active {
-            background: var(--accent);
+        .sidebar .toc-list a:hover {
+            background: #d4c8b0;
+            color: #1a1508;
+        }
+        .sidebar .toc-list a.active {
+            background: #1a5276;
             color: #fff;
             font-weight: 600;
         }
-        .sidebar-nav .count {
-            margin-left: auto;
-            font-size: 0.7rem;
-            opacity: 0.75;
-            background: rgba(0, 0, 0, 0.06);
-            padding: 0.1rem 0.5rem;
-            border-radius: 10px;
-            min-width: 22px;
-            text-align: center;
+        .sidebar .toc-list .toc-l2 {
+            padding-left: 0.8rem;
+            font-size: 0.83rem;
         }
-        .sidebar-nav button.active .count {
-            background: rgba(255, 255, 255, 0.22);
-        }
-        .sidebar-action-btn {
-            width: 100%;
-            text-align: left;
-            padding: 0.5rem 0.7rem;
-            border-radius: 8px;
-            border: none;
-            background: transparent;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-family: inherit;
-            color: var(--text-secondary);
-            transition: all var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .sidebar-action-btn:hover {
-            background: var(--accent-light);
-            color: var(--text);
-        }
-        .sidebar-action-btn.primary {
-            background: var(--accent);
-            color: #fff;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        .sidebar-action-btn.primary:hover {
-            background: var(--accent-hover);
-            color: #fff;
-        }
-        .sidebar-footer {
-            margin-top: auto;
-            padding: 0.8rem 0.6rem 0.2rem;
-            border-top: 1px solid var(--border);
-            font-size: 0.7rem;
+        .sidebar .toc-list .toc-l3 {
+            padding-left: 1.6rem;
+            font-size: 0.78rem;
             color: var(--text-muted);
-            display: flex;
-            flex-direction: column;
-            gap: 0.3rem;
-        }
-        .sidebar-footer .stat-line {
-            display: flex;
-            justify-content: space-between;
-        }
-        .backup-warn {
-            color: #c98b3f;
-            font-weight: 600;
         }
 
         /* ========== 主内容区 ========== */
         .main {
+            margin-left: var(--sidebar-width);
             flex: 1;
-            padding: 1.5rem 2rem;
-            overflow-y: auto;
-        }
-        .main-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.2rem;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-        }
-        .main-header-left h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .main-header-left .subtitle {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 0.15rem;
-        }
-        .header-actions {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .search-box {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 0.45rem 1rem;
-            transition: all var(--transition);
-        }
-        .search-box:focus-within {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(139, 90, 60, 0.08);
-        }
-        .search-box input {
-            border: none; outline: none;
-            font-size: 0.85rem;
-            background: transparent;
-            font-family: inherit;
-            color: var(--text);
-            width: 200px;
-        }
-        .search-box input::placeholder { color: var(--text-muted); }
-        .search-icon { color: var(--text-muted); font-size: 0.9rem; }
-
-        .sort-select {
-            padding: 0.45rem 0.8rem;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            font-family: inherit;
-            font-size: 0.82rem;
-            color: var(--text);
-            outline: none;
-            cursor: pointer;
+            padding: 2rem 2rem 2rem 2.5rem;
+            max-width: 1100px;
         }
 
-        .btn {
-            padding: 0.5rem 1.1rem;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            background: var(--surface);
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-family: inherit;
-            font-weight: 500;
-            color: var(--text);
-            transition: all var(--transition);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            white-space: nowrap;
-        }
-        .btn:hover { background: var(--accent-light); border-color: #d4c4b0; }
-        .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-        .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); box-shadow: 0 2px 8px rgba(139, 90, 60, 0.25); }
-        .btn.danger { color: var(--danger); }
-        .btn.danger:hover { background: var(--danger-light); border-color: #e8c8c8; }
-        .btn.small { padding: 0.3rem 0.7rem; font-size: 0.75rem; border-radius: 16px; }
-
-        /* ========== 书籍网格 ========== */
-        .book-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-            gap: 1rem;
-        }
-        .book-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem 1rem 0.8rem;
-            box-shadow: var(--shadow-sm);
-            transition: all var(--transition);
-            cursor: pointer;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            min-height: 170px;
-        }
-        .book-card:hover {
-            box-shadow: var(--shadow-lg);
-            border-color: #d4c4b0;
-            transform: translateY(-2px);
-        }
-        .book-card .card-category {
-            font-size: 0.68rem;
-            letter-spacing: 0.3px;
-            color: var(--accent);
-            font-weight: 600;
-            background: var(--accent-light);
-            display: inline-block;
-            padding: 0.15rem 0.6rem;
-            border-radius: 10px;
-            align-self: flex-start;
-        }
-        .book-card h3 {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--text);
-            line-height: 1.3;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .book-card .card-author {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-        .book-card .card-meta {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            display: flex;
-            gap: 0.8rem;
-            flex-wrap: wrap;
-            margin-top: auto;
-            padding-top: 0.5rem;
-            border-top: 1px solid #f0ebe0;
-        }
-        .book-card .card-actions {
-            position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            display: flex;
-            gap: 2px;
-            opacity: 0;
-            transition: opacity var(--transition);
-        }
-        .book-card:hover .card-actions { opacity: 1; }
-        .book-card .card-actions button {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            width: 28px; height: 28px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex; align-items: center; justify-content: center;
-            transition: all var(--transition);
-            color: var(--text-secondary);
-        }
-        .book-card .card-actions button:hover {
-            background: var(--accent-light);
-            border-color: #d4c4b0;
-            color: var(--accent);
-        }
-        .book-card .card-actions button.delete-btn:hover {
-            background: var(--danger-light);
-            border-color: #e8c8c8;
-            color: var(--danger);
-        }
-        .book-card .read-badge {
-            position: absolute;
-            top: 0.5rem;
-            left: 0.5rem;
-            font-size: 0.65rem;
-            color: var(--success);
-            background: #e8f3ec;
-            padding: 0.1rem 0.45rem;
-            border-radius: 8px;
-            font-weight: 600;
-        }
-        .empty-state {
+        /* Header */
+        .header {
             text-align: center;
-            padding: 4rem 2rem;
-            color: var(--text-muted);
-            grid-column: 1 / -1;
+            margin-bottom: 3rem;
+            padding-bottom: 2.5rem;
+            border-bottom: 2px solid var(--border);
         }
-        .empty-state .empty-icon {
-            font-size: 3rem;
-            margin-bottom: 0.8rem;
-            opacity: 0.5;
+        .header h1 {
+            font-size: 2.4rem;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.4rem;
+            color: #1e1508;
         }
-        .empty-state p { font-size: 0.9rem; }
-        .empty-state .empty-tips {
-            margin-top: 1rem;
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            line-height: 1.8;
-        }
-
-        /* ========== 弹窗 ========== */
-        .modal-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            animation: fadeIn 0.15s ease;
-            padding: 1rem;
-        }
-        .modal-overlay.hidden { display: none; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            padding: 1.5rem;
-            width: 520px;
-            max-width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-lg);
-            border: 1px solid var(--border);
-        }
-        .modal h3 {
+        .header .subtitle {
             font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text);
+            color: var(--text-muted);
+            font-style: italic;
+            margin-bottom: 1.4rem;
         }
-        .modal .drop-zone {
-            border: 2px dashed #d8c8b4;
-            border-radius: var(--radius);
-            padding: 1.8rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all var(--transition);
-            margin-bottom: 1rem;
-            background: #fdfaf6;
-            color: var(--text-secondary);
+        .header .meta {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem 1.5rem;
+            margin-bottom: 1.6rem;
         }
-        .modal .drop-zone:hover {
-            border-color: var(--accent);
-            background: #fef8f2;
-            color: var(--text);
+        .framework-badges {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.6rem;
         }
-        .modal .drop-zone.dragover {
-            border-color: var(--accent);
-            background: #fef6ec;
-            box-shadow: 0 0 0 3px rgba(139, 90, 60, 0.08);
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #85a5c0;
+            border-radius: 20px;
+            padding: 0.5rem 1.4rem;
+            font-size: 0.9rem;
+            color: var(--accent);
+            font-family: var(--font-sans);
         }
-        .modal .drop-zone .drop-icon { font-size: 2rem; margin-bottom: 0.4rem; }
-        .modal .drop-zone .drop-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.3rem; }
 
-        .modal .form-group { margin-bottom: 0.7rem; }
-        .modal .form-group label {
-            display: block;
-            font-size: 0.78rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 0.25rem;
-        }
-        .modal .form-group input,
-        .modal .form-group select,
-        .modal .form-group textarea {
-            width: 100%;
-            padding: 0.5rem 0.7rem;
-            border-radius: 8px;
+        /* Section */
+        .section {
+            background: var(--card-bg);
             border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2.2rem;
+            box-shadow: var(--shadow);
+            scroll-margin-top: 1rem;
+        }
+        .section h2 {
+            font-size: 1.5rem;
+            border-left: 4px solid var(--accent);
+            padding-left: 0.9rem;
+            margin-bottom: 1.3rem;
+            color: #0d2b40;
+            font-weight: 700;
+        }
+        .section h3 {
+            font-size: 1.2rem;
+            margin: 2rem 0 0.8rem;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid var(--border);
+            color: #1a5276;
+            font-weight: 700;
+        }
+        .section h4 {
+            font-size: 1.05rem;
+            margin: 1.5rem 0 0.6rem;
+            color: #2a6280;
+            font-weight: 600;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-top: 0.8rem;
+        }
+        .info-card {
             background: #fdfaf6;
-            font-family: inherit;
+            border-radius: 8px;
+            padding: 1rem 1.3rem;
+            border-left: 4px solid #ccc;
+        }
+        .info-card.concept  { border-color: #1a5276; background: #eaf2f8; }
+        .info-card.case     { border-color: #b8956a; background: #fdf8f2; }
+        .info-card.tool     { border-color: #7a9f7a; background: #f5faf5; }
+        .info-card.history  { border-color: #8b7aaa; background: #f8f5fb; }
+        .info-card .label {
+            font-weight: 700;
             font-size: 0.85rem;
-            color: var(--text);
-            outline: none;
-            transition: all var(--transition);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            font-family: var(--font-sans);
+            color: #1a3a50;
         }
-        .modal .form-group input:focus,
-        .modal .form-group select:focus,
-        .modal .form-group textarea:focus {
-            border-color: var(--accent);
-            box-shadow: 0 0 0 3px rgba(139, 90, 60, 0.06);
+        .info-card .content {
+            font-size: 0.94rem;
+            color: #4a3f33;
         }
-        .modal .btn-row {
-            display: flex; gap: 0.5rem; justify-content: flex-end;
+        .info-card .content ul {
+            margin-top: 0.3rem;
+            padding-left: 1.3rem;
+        }
+        .info-card .content li {
+            margin-bottom: 0.3rem;
+        }
+        .info-card .example {
+            margin-top: 0.5rem;
+            padding: 0.5rem 0.8rem;
+            background: #fffef9;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: #5c4a2a;
+            border-left: 3px solid #d4b896;
+        }
+
+        /* Insight Cards */
+        .insight-card {
+            background: var(--highlight);
+            border: 1px solid #b0c8d8;
+            border-radius: 8px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .insight-card h4 {
+            color: #1a5276;
+            margin-bottom: 0.4rem;
+            font-size: 1.05rem;
+        }
+        .insight-card p { font-size: 0.94rem; color: #4a3f33; }
+
+        /* Two column */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
             margin-top: 1rem;
         }
 
-        /* 批量上传文件列表 */
-        .file-list {
-            max-height: 240px;
-            overflow-y: auto;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            margin-bottom: 0.8rem;
+        /* Blockquote */
+        blockquote {
+            background: var(--highlight);
+            border-left: 4px solid #5f9ea0;
+            margin: 1.2rem 0;
+            padding: 1rem 1.4rem;
+            font-style: italic;
+            border-radius: 0 6px 6px 0;
+            color: #1a3a50;
         }
-        .file-item {
-            display: flex;
-            gap: 0.6rem;
-            padding: 0.6rem 0.7rem;
+        blockquote .cite {
+            display: block;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            font-style: normal;
+            color: var(--text-muted);
+        }
+
+        /* Table */
+        table.extension {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.94rem;
+        }
+        table.extension th {
+            background: #eaf2f8;
+            padding: 0.6rem 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #1a5276;
+            border-bottom: 2px solid var(--border);
+            font-family: var(--font-sans);
+            width: 24%;
+        }
+        table.extension td {
+            padding: 0.6rem 1rem;
             border-bottom: 1px solid var(--border);
-            align-items: center;
-            font-size: 0.82rem;
+            color: #4a3f33;
+            vertical-align: top;
         }
-        .file-item:last-child { border-bottom: none; }
-        .file-item .file-name {
-            flex: 1;
-            min-width: 0;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+        table.extension tr:hover td {
+            background: #fdfaf6;
         }
-        .file-item input.file-title {
-            flex: 2;
-            padding: 0.3rem 0.5rem;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 0.8rem;
-            background: #fff;
-            min-width: 0;
-            font-family: inherit;
-        }
-        .file-item select.file-cat {
-            padding: 0.3rem 0.5rem;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 0.78rem;
-            background: #fff;
-            font-family: inherit;
-        }
-        .file-item .file-remove {
-            background: none;
+        hr.divider {
             border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 0.95rem;
-            padding: 0 0.2rem;
-        }
-        .file-item .file-remove:hover { color: var(--danger); }
-        .file-item .file-status {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-        }
-        .file-item .file-status.success { color: var(--success); }
-        .file-item .file-status.error { color: var(--danger); }
-        .batch-apply-row {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            margin-bottom: 0.8rem;
-            font-size: 0.78rem;
-            color: var(--text-secondary);
-        }
-        .batch-apply-row select {
-            padding: 0.35rem 0.6rem;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            font-size: 0.8rem;
-            font-family: inherit;
+            border-top: 1px dashed var(--border);
+            margin: 2.5rem 0;
         }
 
-        /* ========== 查看弹窗 ========== */
-        .viewer-overlay {
-            position: fixed; inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 100;
-            display: flex; align-items: center; justify-content: center;
-            animation: fadeIn 0.15s ease;
-        }
-        .viewer-overlay.hidden { display: none; }
-        .viewer {
-            background: var(--surface);
-            border-radius: var(--radius-lg);
-            width: 92vw; height: 92vh;
-            display: flex; flex-direction: column;
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
-        }
-        .viewer-header {
-            padding: 0.7rem 1.2rem;
-            background: var(--accent);
-            color: #fff;
-            display: flex; justify-content: space-between; align-items: center;
-            font-weight: 600; font-size: 0.9rem;
-            flex-shrink: 0;
-            gap: 0.5rem;
-        }
-        .viewer-header .viewer-title-text {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        .viewer-header .viewer-actions {
-            display: flex;
-            gap: 0.3rem;
-        }
-        .viewer-header button {
-            background: rgba(255,255,255,0.15);
-            border: none;
-            color: #fff;
-            font-size: 0.82rem;
-            cursor: pointer;
-            padding: 0.35rem 0.7rem;
-            border-radius: 6px;
-            transition: all var(--transition);
-            line-height: 1;
-            font-family: inherit;
-        }
-        .viewer-header button:hover { background: rgba(255, 255, 255, 0.28); }
-        .viewer-header button.close-btn {
-            background: transparent;
-            font-size: 1.2rem;
-            padding: 0.2rem 0.55rem;
-        }
-        .viewer-body { flex: 1; overflow: auto; }
-        .viewer-body iframe { width: 100%; height: 100%; border: none; }
-
-        /* ========== Toast ========== */
-        .toast-container {
+        /* Back to top */
+        .back-to-top {
             position: fixed;
-            bottom: 1.2rem;
-            right: 1.2rem;
-            z-index: 200;
-            display: flex;
-            flex-direction: column;
-            gap: 0.4rem;
-            pointer-events: none;
-        }
-        .toast {
-            background: #2c2416;
-            color: #f0e8d8;
-            padding: 0.65rem 1.2rem;
-            border-radius: 20px;
-            font-size: 0.82rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            animation: toastIn 0.3s ease;
-            pointer-events: auto;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-        }
-        .toast.with-action {
-            padding-right: 0.4rem;
-        }
-        .toast button.toast-action {
-            background: rgba(255,255,255,0.15);
+            bottom: 2rem;
+            right: 2rem;
+            background: #1a5276;
             color: #fff;
             border: none;
-            padding: 0.3rem 0.8rem;
-            border-radius: 14px;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            font-size: 1.2rem;
             cursor: pointer;
-            font-size: 0.78rem;
-            font-family: inherit;
-            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            z-index: 99;
         }
-        .toast button.toast-action:hover { background: rgba(255,255,255,0.28); }
-        .toast.fade-out {
-            animation: toastOut 0.35s ease forwards;
-        }
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes toastOut {
-            from { opacity: 1; }
-            to { opacity: 0; transform: translateY(-6px); }
+        .back-to-top:hover {
+            background: #0d2b40;
         }
 
-        /* 响应式 */
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             .sidebar {
-                width: 180px;
-                padding: 1rem 0.5rem;
+                display: none;
             }
-            .sidebar-logo { font-size: 1rem; }
-            .sidebar-nav button, .sidebar-action-btn {
-                font-size: 0.78rem;
-                padding: 0.4rem 0.5rem;
+            .main {
+                margin-left: 0;
+                padding: 1rem;
             }
-            .main { padding: 1rem; }
-            .book-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-                gap: 0.6rem;
-            }
-            .book-card { padding: 0.8rem; min-height: 150px; }
-            .search-box input { width: 100px; }
+            .info-grid, .two-col { grid-template-columns: 1fr; }
+            .header h1 { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
-    <div class="app">
-        <!-- 侧边栏 -->
-        <aside class="sidebar">
-            <div class="sidebar-logo">
-                <span class="logo-icon">📚</span>我的云书架</div>
 
-            <!-- 快捷视图 -->
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">快捷视图</div>
-                <ul class="sidebar-nav">
-                    <li><button class="active" data-view="全部">📖 全部书籍 <span class="count" id="countAll">0</span></button></li>
-                    <li><button data-view="最近阅读">⭐ 最近阅读 <span class="count" id="countRecent">0</span></button></li>
-                    <li><button data-view="最近添加">🆕 最近添加 <span class="count" id="countNew">0</span></button></li>
-                </ul>
-            </div>
+<!-- ==================== 侧边栏目录 ==================== -->
+<nav class="sidebar" id="sidebar">
+    <h3>📚 全书章节目录</h3>
+    <ul class="toc-list">
+        <li><a href="#header">📖 书籍信息</a></li>
+        <li><a href="#knowledge-tree">🌳 全书知识结构树</a></li>
+        <li><a href="#part1">📐 基础篇（第1-3章）</a></li>
+        <li><a href="#ch1" class="toc-l2">第1章 数学是什么</a></li>
+        <li><a href="#ch2" class="toc-l2">第2章 勾股定理与逻辑</a></li>
+        <li><a href="#ch3" class="toc-l2">第3章 数列与级数</a></li>
+        <li><a href="#part2">🔢 数字篇（第4-5章）</a></li>
+        <li><a href="#ch4" class="toc-l2">第4章 方程与函数</a></li>
+        <li><a href="#ch5" class="toc-l2">第5章 无穷与极限</a></li>
+        <li><a href="#part3">📏 几何篇（第6-7章）</a></li>
+        <li><a href="#ch6" class="toc-l2">第6章 公理化体系</a></li>
+        <li><a href="#ch7" class="toc-l2">第7章 解析几何</a></li>
+        <li><a href="#part4">📊 代数篇（第8-9章）</a></li>
+        <li><a href="#ch8" class="toc-l2">第8章 函数与向量</a></li>
+        <li><a href="#ch9" class="toc-l2">第9章 矩阵与线性代数</a></li>
+        <li><a href="#part5">∫ 微积分篇（第10-11章）</a></li>
+        <li><a href="#ch10" class="toc-l2">第10章 导数与微分</a></li>
+        <li><a href="#ch11" class="toc-l2">第11章 积分</a></li>
+        <li><a href="#part6">🎲 概率统计篇（第12-15章）</a></li>
+        <li><a href="#ch12" class="toc-l2">第12章 概率论起源</a></li>
+        <li><a href="#ch13" class="toc-l2">第13章 泊松与高斯分布</a></li>
+        <li><a href="#ch14" class="toc-l2">第14章 贝叶斯公式</a></li>
+        <li><a href="#ch15" class="toc-l2">第15章 统计学</a></li>
+        <li><a href="#part7">🌐 终篇（第16章）</a></li>
+        <li><a href="#ch16" class="toc-l2">第16章 数学的位置</a></li>
+        <li><a href="#cognition">🧠 认知升级主线</a></li>
+        <li><a href="#extension">🔍 延伸与比较</a></li>
+    </ul>
+</nav>
 
-            <!-- 分类导航 -->
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">内容分类</div>
-                <ul class="sidebar-nav">
-                    <li><button data-category="经济·商业">💼 经济·商业 <span class="count" id="countEcon">0</span></button></li>
-                    <li><button data-category="历史·文明">🏛️ 历史·文明 <span class="count" id="countHist">0</span></button></li>
-                    <li><button data-category="数学·科学">🔬 数学·科学 <span class="count" id="countMath">0</span></button></li>
-                    <li><button data-category="哲学·思维">💭 哲学·思维 <span class="count" id="countPhil">0</span></button></li>
-                    <li><button data-category="社会·文化">🌍 社会·文化 <span class="count" id="countSoc">0</span></button></li>
-                    <li><button data-category="文学·艺术">🎨 文学·艺术 <span class="count" id="countLit">0</span></button></li>
-                    <li><button data-category="其他">📁 其他 <span class="count" id="countOther">0</span></button></li>
-                </ul>
-            </div>
+<!-- ==================== 主内容区 ==================== -->
+<div class="main">
 
-            <!-- 书架管理 -->
-            <div class="sidebar-section">
-                <div class="sidebar-section-title">书架管理</div>
-                <div style="display:flex;flex-direction:column;gap:2px;">
-                    <button class="sidebar-action-btn primary" id="uploadBtn">📤 上传图谱</button>
-                    <button class="sidebar-action-btn" id="exportBtn">⬇️ 导出备份</button>
-                    <button class="sidebar-action-btn" id="importBtn">⬆️ 导入备份</button>
-                    <input type="file" id="importFileInput" accept=".json" style="display:none;">
-                </div>
-            </div>
-
-            <!-- 底部信息 -->
-            <div class="sidebar-footer">
-                <div class="stat-line">
-                    <span>书架共</span>
-                    <span id="footerTotal">0 本</span>
-                </div>
-                <div class="stat-line">
-                    <span>上次备份</span>
-                    <span id="footerBackup" class="backup-warn">未备份</span>
-                </div>
-                <div style="text-align:center;margin-top:0.4rem;opacity:0.7;">数据存储于浏览器</div>
-            </div>
-        </aside>
-
-        <!-- 主内容 -->
-        <main class="main">
-            <div class="main-header">
-                <div class="main-header-left">
-                    <h1 id="mainTitle">📖 全部书籍</h1>
-                    <div class="subtitle" id="mainSubtitle">浏览你书架中的全部图谱</div>
-                </div>
-                <div class="header-actions">
-                    <div class="search-box">
-                        <span class="search-icon">🔍</span>
-                        <input type="text" id="searchInput" placeholder="搜索书名或作者...">
-                    </div>
-                    <select class="sort-select" id="sortSelect">
-                        <option value="addedDesc">最近添加</option>
-                        <option value="readDesc">最近阅读</option>
-                        <option value="titleAsc">书名 A→Z</option>
-                        <option value="readCount">阅读次数</option>
-                    </select>
-                </div>
-            </div>
-            <div class="book-grid" id="bookGrid">
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <p>书架空空如也</p>
-                        <p class="empty-tips">点击左侧「上传图谱」添加第一本书吧</p>
-                    </div></div>
-        </main>
+    <!-- ==================== 头部 ==================== -->
+    <div class="header" id="header">
+        <h1>《吴军数学通识讲义》</h1>
+        <div class="subtitle">原来数学可以这样用 —— 一本写给所有人的数学通识讲义</div>
+        <div class="meta">
+            <span><strong>作者</strong>：吴军</span>
+            <span><strong>出版年份</strong>：2021年4月</span>
+            <span><strong>出版社</strong>：新星出版社（得到图书出品）</span>
+            <span><strong>豆瓣评分</strong>：8.5</span>
+        </div>
+        <div class="framework-badges">
+            <span class="badge">📐 数学思维</span>
+            <span class="badge">🎓 通识教育</span>
+            <span class="badge">🧠 认知升级</span>
+        </div>
+        <p style="margin-top:1rem; color:#1a5276; font-size:0.92rem;">
+            <strong>贯穿主线</strong>：从直观到抽象，从静态到动态，从宏观到微观，从确定到随机
+        </p>
     </div>
 
-    <!-- 上传弹窗（支持批量） -->
-    <div class="modal-overlay hidden" id="uploadModal">
-        <div class="modal">
-            <h3>📤 上传知识图谱</h3>
-            <div class="drop-zone" id="dropZone">
-                <div class="drop-icon">📂</div>
-                <p>拖拽 HTML 文件到此处（支持多文件）</p>
-                <p class="drop-hint">或点击选择文件</p>
-                <input type="file" id="fileInput" accept=".html,.htm" style="display:none;" multiple="">
-            </div>
+    <!-- ==================== 全书知识结构树 ==================== -->
+    <div class="section" id="knowledge-tree">
+        <h2>全书知识结构树</h2>
+        <div style="background:var(--accent-light); border-radius:8px; padding:1.5rem 2rem; font-family:var(--font-sans); line-height:2.2;">
+            <div style="font-weight:700; color:#0d2b40; font-size:1.05rem;">《吴军数学通识讲义》七篇 × 16章</div>
+            <div style="border-top:1px dashed #b0c8d8; margin:0.6rem 0;"></div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 基础篇（第1-3章）—— 数学是什么</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 毕达哥拉斯定理 · 逻辑证明 vs 经验证实</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 无理数与黄金分割 · 数学的预见性与美学</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 数列与级数 · 趋势比当下重要</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 数字篇（第4-5章）—— 从静态数值到动态趋势</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 方程 · 逆向思维的工具</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 虚数与无穷 · 虚构概念的现实力量</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 几何篇（第6-7章）—— 公理化体系</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 欧几里得几何 · 5条公理构建世界</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 非欧几何与解析几何 · 创新的路径</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 代数篇（第8-9章）—— 从个体到整体</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 函数 · 从静态到动态的认知升级</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 向量与矩阵 · 多元思维的工具</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 微积分篇（第10-11章）—— 理解变化</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 导数 · 微观变化看宏观趋势</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 积分 · 从微观累积到宏观总量</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">├─ 概率统计篇（第12-15章）—— 把握不确定性</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 古典概率与伯努利试验</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  ├─ 泊松分布与高斯分布</div>
+            <div style="margin-left:3.6rem; color:#4a6a80;">│  └─ 贝叶斯公式与统计学</div>
+            <div style="margin-left:1.8rem; font-weight:600; color:#1a5276;">└─ 终篇（第16章）—— 数学的位置</div>
+        </div>
+    </div>
 
-            <div id="batchPanel" style="display:none;">
-                <div class="batch-apply-row">
-                    <span>批量设置分类：</span>
-                    <select id="batchCategorySelect">
-                        <option value="">— 选择分类 —</option>
-                        <option value="经济·商业">经济·商业</option>
-                        <option value="历史·文明">历史·文明</option>
-                        <option value="数学·科学">数学·科学</option>
-                        <option value="哲学·思维">哲学·思维</option>
-                        <option value="社会·文化">社会·文化</option>
-                        <option value="文学·艺术">文学·艺术</option>
-                        <option value="其他">其他</option>
-                    </select>
-                    <button class="btn small" id="applyBatchBtn">应用到全部</button>
+    <!-- ==================== 基础篇 ==================== -->
+    <div class="section" id="part1">
+        <h2>基础篇 · 数学是什么（第1-3章）</h2>
+
+        <!-- 第1章 -->
+        <h3 id="ch1">第1章 · 数学与自然科学的本质区别</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">核心区别一：测量 vs 逻辑推理</div>
+                <div class="content">
+                    自然科学依靠实验和测量来证实结论——比如伽利略在比萨斜塔上扔铁球，用实验验证自由落体规律。但数学不同，数学的结论只能从定义和公理出发，使用逻辑严格证明，不能靠实验。<br>
+                    <strong>为什么重要</strong>：这意味着数学的结论具有绝对性——一旦被证明，就永远为真，不会像科学结论那样被新的实验推翻。
                 </div>
-                <div class="file-list" id="fileList"></div>
+                <div class="example">💡 <strong>例子</strong>：在数学上证明了“不存在最大的素数”，这个结论就永远不会被推翻。而物理学中，“地球是宇宙中心”曾经也是被“证实”的——但它后来被推翻了。</div>
             </div>
+            <div class="info-card concept">
+                <div class="label">核心区别二：用事实证明 vs 用逻辑证明</div>
+                <div class="content">
+                    科学可以用大量事实来支撑一个理论——看到1000只白天鹅，就倾向于相信“所有天鹅都是白的”。但数学不行：一个反例就足以推翻整个定理。如果一个命题声称对所有自然数成立，那么只要找到一个反例，整个命题就是假的。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：费马大定理——费马在1637年写下“我找到了一个美妙的证明”，但后来的数学家花了358年才真正证明它。在这358年中，尽管验证了无数个具体的n值都成立，数学家们仍然不认为它已经得证——直到1994年安德鲁·怀尔斯给出了完整的逻辑证明。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学定理的确立过程</div>
+                <div class="content">
+                    特例 → 发现规律 → 提出猜想 → 严格证明 → 成为定理 → 产生推论 → 新的定理与新的应用。<br>
+                    <strong>关键</strong>：猜想和定理的区别在于有没有经过严格证明。哥德巴赫猜想（任何一个大于2的偶数都可以写成两个素数之和）至今没有被证明，所以它仍然是“猜想”，不是“定理”。
+                </div>
+            </div>
+            <div class="info-card history">
+                <div class="label">数学预见性：无理数的发现</div>
+                <div class="content">
+                    毕达哥拉斯学派信奉“万物皆数”（有理数）。但希帕索斯用毕达哥拉斯定理（勾股定理）本身，严格证明了√2不是有理数。这个发现是颠覆性的，因为它是<strong>从体系内部用逻辑推出</strong>的，不依赖任何外部经验。<br>
+                    这体现了数学的强大力量：它能看到人类直觉和经验无法触及的盲区。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：现代数学中，四维空间、高维球体、虚数——这些都无法“看见”或“触摸”，但数学可以用逻辑严格研究它们的性质。爱因斯坦后来发现，四维时空的数学模型恰好描述了我们所在的宇宙。</div>
+            </div>
+        </div>
 
-            <div class="btn-row">
-                <button class="btn" id="cancelUploadBtn">取消</button>
-                <button class="btn primary" id="confirmUploadBtn">📥 全部放入书架</button>
+        <!-- 第2章 -->
+        <h3 id="ch2">第2章 · 勾股定理与逻辑的力量</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">毕达哥拉斯定理（勾股定理）</div>
+                <div class="content">
+                    <strong>内容</strong>：直角三角形两条直角边的平方和等于斜边的平方（a² + b² = c²）。<br>
+                    中国古代的勾股定理（勾三股四弦五）是经验总结。毕达哥拉斯则给出了<strong>逻辑证明</strong>——这是质的飞跃。<br>
+                    该定理有超过400种证明方法，包括欧几里得的面积法、印度数学家婆什迦罗的图解法、美国第20任总统加菲尔德的梯形证明。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">黄金分割：数学与美学的桥梁</div>
+                <div class="content">
+                    <strong>黄金分割比例</strong> φ = (1+√5)/2 ≈ 1.618。<br>
+                    美感来自几何图形的<strong>相似性</strong>——将一个矩形切掉一个正方形后，剩下的小矩形与原矩形相似，这个比例就是黄金分割。<br>
+                    <strong>等角螺旋线</strong>：蜗牛壳、台风、银河系的旋臂都呈现这种形状——每转过一个固定角度，到中心的距离就乘以一个固定比例（φ）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：华罗庚推广的<strong>优选法</strong>——在生产实验中寻找最佳配比时，每次在黄金分割点做实验，可以最快逼近最优解。比如调试咖啡豆的烘焙温度，用优选法可以用最少的实验次数找到最佳温度。</div>
+            </div>
+        </div>
+
+        <!-- 第3章 -->
+        <h3 id="ch3">第3章 · 数列与级数：趋势比当下重要</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">数列与级数的核心思维</div>
+                <div class="content">
+                    <strong>数列</strong>帮助我们“从孤立事件中发现规律”。<br>
+                    <strong>斐波那契数列</strong>：1, 1, 2, 3, 5, 8, 13, 21…——每一项是前两项之和。相邻两项的比值越来越接近黄金分割（1.618）。这个数列广泛出现在自然界中：花瓣数量（百合3瓣、梅花5瓣、雏菊34或55瓣）、菠萝表皮的螺旋线数。
+                </div>
+                <div class="example">💡 <strong>例子：传销骗局与等比级数</strong>——如果一个传销组织要求每人发展5个下线，只需12层就能覆盖2.4亿人（比全中国人口还多）。这说明任何承诺指数增长的商业模式都必然不可持续——识别庞氏骗局不需要懂金融，只需要懂等比数列。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学边界：希尔伯特第十问题</div>
+                <div class="content">
+                    1900年，希尔伯特提出23个数学问题。第十问题：是否存在一个通用算法，可以判断任意一个多项式方程是否有整数解？1970年，马蒂亚塞维奇证明：<strong>不存在</strong>这样的算法——有些数学问题是不可判定的。<br>
+                    <strong>启示</strong>：数学不是万能的，承认局限性恰恰是理性的标志。哥德尔不完备定理同样指出：任何足够强大的数学体系中，都存在既不能证明也不能证伪的命题。
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 编辑弹窗 -->
-    <div class="modal-overlay hidden" id="editModal">
-        <div class="modal">
-            <h3>✏️ 编辑书籍信息</h3>
-            <div class="form-group">
-                <label>书名</label>
-                <input type="text" id="editTitle">
-            </div>
-            <div class="form-group">
-                <label>作者</label>
-                <input type="text" id="editAuthor">
-            </div>
-            <div class="form-group">
-                <label>分类</label>
-                <select id="editCategory">
-                    <option value="经济·商业">经济·商业</option>
-                    <option value="历史·文明">历史·文明</option>
-                    <option value="数学·科学">数学·科学</option>
-                    <option value="哲学·思维">哲学·思维</option>
-                    <option value="社会·文化">社会·文化</option>
-                    <option value="文学·艺术">文学·艺术</option>
-                    <option value="其他">其他</option>
-                </select>
-            </div>
-            <div class="btn-row">
-                <button class="btn" id="cancelEditBtn">取消</button>
-                <button class="btn primary" id="confirmEditBtn">💾 保存修改</button>
-            </div>
-        </div>
-    </div>
+    <!-- ==================== 数字篇 ==================== -->
+    <div class="section" id="part2">
+        <h2>数字篇 · 从静态数值到动态趋势（第4-5章）</h2>
 
-    <!-- 查看弹窗 -->
-    <div class="viewer-overlay hidden" id="viewerOverlay">
-        <div class="viewer">
-            <div class="viewer-header">
-                <span class="viewer-title-text" id="viewerTitle">📄 知识图谱</span>
-                <div class="viewer-actions">
-                    <button id="openNewTabBtn" title="在新标签页打开">↗ 新标签</button>
-                    <button class="close-btn" id="closeViewerBtn" title="关闭">✕</button>
+        <h3 id="ch4">第4章 · 方程与虚数</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">方程：逆向思维的工具</div>
+                <div class="content">
+                    <strong>方程的本质</strong>是逆向思维——对要求解的问题先存疑，把已知条件和未知量之间的关系用等式表达清楚，然后反向推理，一步步得到答案。<br>
+                    <strong>鸡兔同笼问题</strong>：用方程解，设鸡x只、兔y只，列出“x+y=35, 2x+4y=94”，一步到位。用算术凑数法只能解决特定问题，方程则是通用的。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：笛卡尔方法论——把任何复杂问题分解为若干简单问题，用方程表示未知量之间的关系，然后逐步求解。这种思维方式不仅用于数学，也适用于商业分析、工程规划等任何需要“从已知推导未知”的场景。</div>
+            </div>
+            <div class="info-card history">
+                <div class="label">虚数的诞生与意义</div>
+                <div class="content">
+                    <strong>i² = -1</strong>——在解一元三次方程的过程中，数学家发现公式中出现了负数开根号，这在当时被认为是无意义的。<br>
+                    但数学家没有放弃，而是创造性地定义了虚数i = √(-1)。从实数到虚数再到复数，人类对数的理解“从形象具体真实的对象，上升到了纯粹理性的抽象认识”。<br>
+                    今天，虚数是电子工程、量子力学和信号处理的基础——这些“虚构”的数字支撑着整个现代科技。
                 </div>
             </div>
-            <div class="viewer-body">
-                <iframe id="viewerIframe" srcdoc=""></iframe>
+        </div>
+
+        <h3 id="ch5">第5章 · 无穷大、无穷小与极限</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">无穷大的本质</div>
+                <div class="content">
+                    <strong>无穷大不是一个具体的数</strong>，它反映的是“一种无限增加的趋势”。在无穷大的世界里，部分可以完全和整体等价——比如正整数（1,2,3…）和正偶数（2,4,6…）虽然看起来后者是前者的一半，但它们的“个数”实际上一样多（因为它们之间可以建立一一对应关系）。<br>
+                    <strong>希尔伯特旅馆</strong>：一个有无穷多个房间的旅馆即使住满了，也能通过让每位客人移到下一个房间，给新来的客人腾出空间。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">极限与第二次数学危机</div>
+                <div class="content">
+                    <strong>芝诺悖论</strong>：阿喀琉斯永远追不上乌龟——每次到达乌龟之前的位置，乌龟又前进了一点。这个悖论的破解需要极限理论：无穷多段距离之和可以是一个有限值。<br>
+                    <strong>0.999… = 1</strong>：不是约等于，而是严格等于。1/3 = 0.333…，两边乘3得到0.999… = 1。这是极限概念的直观体现。<br>
+                    牛顿和莱布尼茨发明微积分后，贝克莱主教批评无穷小量“既是零又不是零”。后来数学家通过ε-δ的严格定义彻底解决了这个问题。
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast容器 -->
-    <div class="toast-container" id="toastContainer"></div>
+    <!-- ==================== 几何篇 ==================== -->
+    <div class="section" id="part3">
+        <h2>几何篇 · 公理化体系的建立与发展（第6-7章）</h2>
 
-    <script>
-    (function() {
-        // ============ IndexedDB ============
-        const DB_NAME = 'BookGraphLibraryV4';
-        const DB_VERSION = 1;
-        const STORE_NAME = 'books';
-        let db = null;
+        <h3 id="ch6">第6章 · 欧几里得几何与非欧几何</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">公理化体系：5条公理构建世界</div>
+                <div class="content">
+                    欧几里得《几何原本》只用<strong>5条公理</strong>（如“两点之间可以画一条直线”“所有直角都相等”等）加上5条公设，推导出了整个几何学大厦——400多条定理，无一例外地从这几条公理逻辑推导出来。<br>
+                    <strong>核心启示</strong>：“有什么样的公理，就有什么样的结果，这就如同有什么样的DNA就会得到什么样的物种一样。”
+                </div>
+                <div class="example">💡 <strong>例子：法律体系与公理化</strong>——宪法就是法律体系的“公理”，所有下位法都必须从宪法原则出发。宪法的细微差异会导致整个法律体系的不同（比如美国的言论自由法系 vs 德国的诽谤罪优先体系）。</div>
+            </div>
+            <div class="info-card history">
+                <div class="label">非欧几何：换一条公理会怎样</div>
+                <div class="content">
+                    欧几里得的第五公理（平行公理）看起来不那么“自明”：过直线外一点有且只有一条平行线。<br>
+                    罗巴切夫斯基修改了这条公理——允许过一点做多条平行线——结果推导出了一套完全不同但逻辑自洽的几何体系（双曲几何）。后来黎曼又发展了椭圆几何（没有平行线）。<br>
+                    非欧几何在发明之时被认为“毫无实际用处”，但后来成为爱因斯坦广义相对论的数学基础——时空在大质量天体附近是弯曲的，用黎曼几何来描述。
+                </div>
+            </div>
+        </div>
 
-        const CATEGORIES = ['经济·商业', '历史·文明', '数学·科学', '哲学·思维', '社会·文化', '文学·艺术', '其他'];
-        const RECENT_LIMIT = 12; // 最近阅读/新增 展示数量上限
+        <h3 id="ch7">第7章 · 解析几何</h3>
+        <div class="info-grid">
+            <div class="info-card tool">
+                <div class="label">解析几何：代数与几何的融合</div>
+                <div class="content">
+                    笛卡尔发明坐标系，将几何问题转化为代数方程——这是人类认知史上一次重大的跨领域融合。一条曲线不再是“画出来的那个形状”，而是一个方程 f(x, y) = 0。<br>
+                    <strong>方法论意义</strong>：“工具能弥补理解力和记忆力的不足。”——当你遇到一个很难直观想象的几何问题，把它转化为方程，用代数工具来解决。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：判断卫星轨道是否与某个天体相交——用几何方法需要画图、测量、估算。用解析几何，只需要把轨道方程和天体方程联立，看方程组有没有解。</div>
+            </div>
+            <div class="info-card case">
+                <div class="label">公理化思维的实际意义</div>
+                <div class="content">
+                    公理化的精髓不是“记住那几条公理”，而是：<strong>1. 明确你的基本假设</strong>（你默认了什么前提）；<strong>2. 从这些假设出发进行逻辑推理</strong>；<strong>3. 如果结论有问题，检查假设是否正确。</strong><br>
+                    这种思维方式适用于政策制定、商业决策、软件架构设计等所有需要逻辑一致性的领域。
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function openDB() {
-            return new Promise((resolve, reject) => {
-                const req = indexedDB.open(DB_NAME, DB_VERSION);
-                req.onupgradeneeded = (e) => {
-                    const d = e.target.result;
-                    if (!d.objectStoreNames.contains(STORE_NAME)) {
-                        const store = d.createObjectStore(STORE_NAME, { keyPath: 'id' });
-                        store.createIndex('category', 'category', { unique: false });
-                        store.createIndex('title', 'title', { unique: false });
-                        store.createIndex('uploadTime', 'uploadTime', { unique: false });
-                    }
-                };
-                req.onsuccess = (e) => { db = e.target.result; resolve(db); };
-                req.onerror = (e) => reject(e.target.error);
-            });
-        }
-        async function saveBook(book) {
-            if (!db) await openDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction(STORE_NAME, 'readwrite');
-                tx.objectStore(STORE_NAME).put(book);
-                tx.oncomplete = resolve;
-                tx.onerror = (e) => reject(e.target.error);
-            });
-        }
-        async function getAllBooks() {
-            if (!db) await openDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction(STORE_NAME, 'readonly');
-                const req = tx.objectStore(STORE_NAME).getAll();
-                req.onsuccess = () => resolve(req.result || []);
-                req.onerror = (e) => reject(e.target.error);
-            });
-        }
-        async function deleteBookFromDB(id) {
-            if (!db) await openDB();
-            return new Promise((resolve, reject) => {
-                const tx = db.transaction(STORE_NAME, 'readwrite');
-                tx.objectStore(STORE_NAME).delete(id);
-                tx.oncomplete = resolve;
-                tx.onerror = (e) => reject(e.target.error);
-            });
-        }
+    <!-- ==================== 代数篇 ==================== -->
+    <div class="section" id="part4">
+        <h2>代数篇 · 从数量到趋势，从个体到整体（第8-9章）</h2>
 
-        // ============ 状态 ============
-        let allBooks = [];
-        let currentView = { type: 'all', value: '全部' }; // type: all | category | recent | new
-        let currentSort = 'addedDesc';
-        let pendingFiles = []; // 批量上传待处理文件 [{name, content, title, category, status}]
-        let editingBookId = null;
+        <h3 id="ch8">第8章 · 函数与向量</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">函数：从静态到动态的认知升级</div>
+                <div class="content">
+                    “理解函数，我们就从小学思维上升到中学思维了。”小学关注的是具体的数（1+2=3），函数关注的是<strong>变量之间的关系</strong>和<strong>变化趋势</strong>。<br>
+                    函数的本质：给一个输入x，对应一个确定的输出f(x)。这与因果关系区分开来：<strong>决定性关系</strong>（函数：给定x必有确定的y）vs <strong>相关性关系</strong>（x和y统计上相关，但不是确定的）。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：学习时间与考试成绩是相关性关系（不是函数关系）——你不能说“学习10小时就一定考95分”。但自由落体距离是时间的函数：h = 1/2gt²，给定t就有确定的h。理解这两种关系的区别，是科学思维的基础。</div>
+            </div>
+            <div class="info-card tool">
+                <div class="label">向量：多元思维的工具</div>
+                <div class="content">
+                    <strong>向量</strong>是既有大小又有方向的量——不是单一的数值，而是一组数值的组合。两个人拉一辆车，力的大小和方向不同，合力由向量加法确定。<br>
+                    <strong>高维向量</strong>：一个人的信用评分可以是多维的（收入、资产、历史还款记录、消费习惯），这是一个高维空间中的向量。余弦定理可以计算两个向量的夹角，用来判断相似度。
+                </div>
+            </div>
+        </div>
 
-        // ============ 工具函数 ============
-        function escapeHtml(s) {
-            const d = document.createElement('div');
-            d.textContent = s || '';
-            return d.innerHTML;
-        }
-        function formatDate(isoStr) {
-            if (!isoStr) return '未知';
-            const d = new Date(isoStr);
-            const now = new Date();
-            const diff = now - d;
-            if (diff < 86400000) return '今天';
-            if (diff < 172800000) return '昨天';
-            if (diff < 604800000) return Math.floor(diff / 86400000) + '天前';
-            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        }
-        function extractTitle(html, fallback) {
-            try {
-                const doc = new DOMParser().parseFromString(html, 'text/html');
-                const h1 = doc.querySelector('h1');
-                if (h1) {
-                    let t = h1.textContent.trim().replace(/《|》|知识图谱|·.*$/g, '').trim();
-                    if (t.length > 2) return t;
-                }
-                const tt = doc.querySelector('title');
-                if (tt) {
-                    let t = tt.textContent.trim().replace(/知识图谱|·.*$/g, '').trim();
-                    if (t.length > 2) return t;
-                }
-            } catch (e) {}
-            return fallback.replace(/\.html?$/i, '').replace(/[-_]/g, ' ');
-        }
-        function extractAuthor(html) {
-            try {
-                const doc = new DOMParser().parseFromString(html, 'text/html');
-                const meta = doc.querySelector('.meta,.author,.header .subtitle');
-                if (meta) {
-                    const t = meta.textContent;
-                    const m = t.match(/作者[：:]\s*(.+?)(?:\s|$|·|出版)/);
-                    if (m) return m[1].trim();
-                    const m2 = t.match(/([^\s·]+)\s*·\s*\d{4}/);
-                    if (m2) return m2[1].trim();
-                }
-            } catch (e) {}
-            return '未知作者';
-        }
+        <h3 id="ch9">第9章 · 矩阵与线性代数</h3>
+        <div class="info-grid">
+            <div class="info-card tool">
+                <div class="label">矩阵：从个体思维到整体思维</div>
+                <div class="content">
+                    “矩阵是一个让我们对事物的理解从个体到整体的工具。”一个矩阵可以同时描述多个对象在多个维度上的属性。<br>
+                    <strong>核心应用：线性方程组</strong>——几十个变量、几十个方程的方程组，用矩阵来描述和求解非常简洁。今天几乎所有工程计算都在与矩阵打交道。
+                </div>
+                <div class="example">💡 <strong>例子：余弦定理与文本分类</strong>——将每篇文档表示为词频向量（每个词出现的次数构成的向量），计算两篇文档向量的余弦值：余弦值越接近1，两篇文档内容越相似。搜索引擎、推荐系统、垃圾邮件分类都基于这个原理。</div>
+            </div>
+            <div class="info-card case">
+                <div class="label">简历筛选的数学原理</div>
+                <div class="content">
+                    将每个候选人表示为一个向量（学历、工作经验、技能匹配度等维度），将职位要求也表示为向量，计算两个向量的余弦相似度。得分最高者即为最佳匹配。<br>
+                    这不是“拍脑袋”，而是有严格数学基础的决策方法。
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // ============ 数据筛选与排序 ============
-        function getFilteredBooks() {
-            const searchTerm = (document.getElementById('searchInput')?.value || '').trim().toLowerCase();
-            let list = [...allBooks];
+    <!-- ==================== 微积分篇 ==================== -->
+    <div class="section" id="part5">
+        <h2>微积分篇 · 理解变化与积累（第10-11章）</h2>
 
-            // 视图筛选
-            if (currentView.type === 'category') {
-                list = list.filter(b => b.category === currentView.value);
-            } else if (currentView.type === 'recent') {
-                list = list.filter(b => b.lastReadTime)
-                    .sort((a, b) => new Date(b.lastReadTime) - new Date(a.lastReadTime))
-                    .slice(0, RECENT_LIMIT);
-            } else if (currentView.type === 'new') {
-                list = [...list].sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime)).slice(0, RECENT_LIMIT);
-            }
+        <h3 id="ch10">第10章 · 导数与微分</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">导数：从宏观深入到微观</div>
+                <div class="content">
+                    <strong>导数的本质</strong>：揭示事物变化的<strong>瞬时速率</strong>。不是你走了多远（距离），而是你正在以多快的速度走（瞬时速度）。不是你赚了多少钱（总量），而是你赚钱的速度正在加快还是放慢（增长率的变化）。<br>
+                    <strong>极值问题</strong>：利润最大化的产量是多少？导数等于零的点就是可能的极值点——边际收益等于边际成本。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：企业决策——如果每多生产一件产品的额外成本（边际成本）高于额外收入（边际收益），就不应该继续增产。最优产量恰好是边际成本等于边际收益的那个点。这种分析方法来自微积分。</div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">微积分的认知价值</div>
+                <div class="content">
+                    吴军指出，微积分能够“帮助一个年轻人把自己对世界、对变化、对规律的理解，从静态的、孤立的和具体的层面，上升到动态的、连续的和规律性的层面”。<br>
+                    你不一定需要会算复杂的微积分题，但理解“变化率”“累积效应”和“最优化”这三个概念，已经能让你用完全不同的视角看世界。
+                </div>
+            </div>
+        </div>
 
-            // 搜索
-            if (searchTerm) {
-                list = list.filter(b =>
-                    b.title.toLowerCase().includes(searchTerm) ||
-                    (b.author || '').toLowerCase().includes(searchTerm)
-                );
-            }
+        <h3 id="ch11">第11章 · 积分：从微观到宏观</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">积分的本质</div>
+                <div class="content">
+                    积分是微分的逆运算——从无数个微小的瞬时变化，累积出宏观的总量。<br>
+                    <strong>一个生动的类比</strong>：“能力是努力的积分，成绩是能力的积分，好形象是成绩的积分。”每一个微小的努力积累起来，最终决定一个人的能力水平。
+                </div>
+                <div class="example">💡 <strong>例子：求不规则图形的面积</strong>——切成无数个细长的矩形，每个矩形的面积趋近于0，但无穷多个加起来就是精确的总面积。这就是定积分的直观理解：把一个复杂的宏观问题分解为无数个简单的微观问题，再汇总。</div>
+            </div>
+            <div class="info-card history">
+                <div class="label">牛顿与莱布尼茨之争</div>
+                <div class="content">
+                    两人几乎同时独立发明微积分，牛顿可能是先发明者，但莱布尼茨的符号系统（dy/dx、∫）更优越，一直沿用至今。这场争论导致英国数学界与欧洲大陆隔绝了将近100年——教训是，一个好的符号系统和表达方式，有时候比发明本身还重要。
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // 排序（最近阅读/最近添加 视图保留自身顺序）
-            if (currentView.type !== 'recent' && currentView.type !== 'new') {
-                if (currentSort === 'addedDesc') {
-                    list.sort((a, b) => new Date(b.uploadTime) - new Date(a.uploadTime));
-                } else if (currentSort === 'readDesc') {
-                    list.sort((a, b) => {
-                        const ta = a.lastReadTime ? new Date(a.lastReadTime).getTime() : 0;
-                        const tb = b.lastReadTime ? new Date(b.lastReadTime).getTime() : 0;
-                        return tb - ta;
-                    });
-                } else if (currentSort === 'titleAsc') {
-                    list.sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));
-                } else if (currentSort === 'readCount') {
-                    list.sort((a, b) => (b.readCount || 0) - (a.readCount || 0));
-                }
-            }
-            return list;
-        }
+    <!-- ==================== 概率统计篇 ==================== -->
+    <div class="section" id="part6">
+        <h2>概率和数理统计篇 · 把握不确定性（第12-15章）</h2>
 
-        // ============ 渲染 ============
-        function renderBookGrid() {
-            const grid = document.getElementById('bookGrid');
-            const filtered = getFilteredBooks();
-            if (filtered.length === 0) {
-                let msg = '书架空空如也';
-                let tips = '点击左侧「上传图谱」添加第一本书吧';
-                if (currentView.type === 'category') {
-                    msg = `「${currentView.value}」分类下还没有书`;
-                    tips = '上传时可以选择这个分类，或编辑现有书籍归入此分类';
-                } else if (currentView.type === 'recent') {
-                    msg = '还没有阅读记录';
-                    tips = '打开任意一本书，它就会出现在这里';
-                }
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <p>${msg}</p>
-                        <p class="empty-tips">${tips}</p>
-                    </div>`;
-            } else {
-                grid.innerHTML = filtered.map(book => {
-                    const readBadge = book.readCount > 0
-                        ? `<span class="read-badge">已读 ${book.readCount}次</span>`
-                        : '';
-                    return `
-                    <div class="book-card" data-id="${book.id}">
-                        ${readBadge}
-                        <span class="card-category">${escapeHtml(book.category)}</span>
-                        <h3>${escapeHtml(book.title)}</h3>
-                        <div class="card-author">${escapeHtml(book.author || '未知作者')}</div>
-                        <div class="card-meta">
-                            <span>📅 添加于 ${formatDate(book.uploadTime)}</span>
-                            ${book.lastReadTime ? `<span>👁 ${formatDate(book.lastReadTime)}阅</span>` : ''}
-                        </div>
-                        <div class="card-actions">
-                            <button title="编辑" data-action="edit" data-id="${book.id}">✏️</button>
-                            <button class="delete-btn" title="删除" data-action="delete" data-id="${book.id}">🗑</button>
-                        </div>
-                    </div>`;
-                }).join('');
-            }
-            updateSidebarCounts();
-            updateFooterInfo();
-            bindCardEvents();
-        }
+        <h3 id="ch12">第12章 · 概率论起源：来自赌徒的学问</h3>
+        <div class="info-grid">
+            <div class="info-card history">
+                <div class="label">古典概率</div>
+                <div class="content">
+                    概率论起源于17世纪的赌博问题：两个赌徒在赌博中途被迫停止，如何公平分配赌注？帕斯卡和费马的通信奠定了概率论的基础。<br>
+                    拉普拉斯系统化了<strong>古典概率</strong>：基于所有可能结果的等可能性进行计算。比如掷一枚公平的骰子，每个面朝上的概率都是1/6。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">伯努利试验与大数定律</div>
+                <div class="content">
+                    <strong>伯努利试验</strong>：在相同条件下重复进行只有两种可能结果（成功/失败）的实验。<br>
+                    <strong>大数定律</strong>：实验次数足够多时，事件发生的频率会趋近于其真实概率。抛硬币10次可能是7次正面，抛10000次则正面比例非常接近50%。<br>
+                    <strong>启示</strong>：随机事件在单次实验中不可预测，但在大量实验中呈现出确定的规律。
+                </div>
+            </div>
+        </div>
 
-        function bindCardEvents() {
-            document.querySelectorAll('.book-card').forEach(card => {
-                card.addEventListener('click', (e) => {
-                    if (e.target.closest('[data-action]')) return;
-                    const bookId = card.dataset.id;
-                    const book = allBooks.find(b => b.id === bookId);
-                    if (book) openViewer(book);
-                });
-            });
-            document.querySelectorAll('[data-action="delete"]').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    const bookId = btn.dataset.id;
-                    const book = allBooks.find(b => b.id === bookId);
-                    if (!book) return;
-                    // 软删除 + 撤销
-                    const removed = book;
-                    await deleteBookFromDB(bookId);
-                    allBooks = allBooks.filter(b => b.id !== bookId);
-                    renderBookGrid();
-                    showToast(`已移除《${book.title}》`, {
-                        actionText: '撤销',
-                        onAction: async () => {
-                            await saveBook(removed);
-                            allBooks.push(removed);
-                            renderBookGrid();
-                            showToast('已恢复');
-                        }
-                    });
-                });
-            });
-            document.querySelectorAll('[data-action="edit"]').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const bookId = btn.dataset.id;
-                    openEditModal(bookId);
-                });
-            });
-        }
+        <h3 id="ch13">第13章 · 泊松分布与高斯分布</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">泊松分布：稀有事件的规律</div>
+                <div class="content">
+                    <strong>描述什么</strong>：在固定时间或空间内，稀有事件发生次数的概率分布。比如一天内交通事故的数量、一本书中的错别字数、一个呼叫中心每小时接到的电话数。<br>
+                    <strong>实际应用</strong>：保险公司为什么必须有足够大的客户群？因为如果只有100个客户，一次大的理赔就可能让公司破产。当客户数量达到百万级，每年的总赔付额就非常稳定可预测了。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">高斯分布（正态分布）：大概率事件的规律</div>
+                <div class="content">
+                    自然界和社会中大量现象都近似服从正态分布——身高、体重、考试成绩、测量误差。分布的形状是钟形曲线：大多数数据集中在均值附近，离均值越远出现的概率越低。<br>
+                    <strong>均值与方差</strong>：均值描述“理想状态”（中心在哪里），方差描述“现实与理想的差距”（数据有多分散）。标准差σ刻画了波动的幅度。
+                </div>
+                <div class="example">💡 <strong>例子</strong>：质量控制——工厂生产螺丝，目标直径10mm。如果实际直径服从均值为10mm、标准差为0.01mm的正态分布，那么99.7%的螺丝直径在9.97mm到10.03mm之间（±3σ）。质检人员据此设置合格范围。</div>
+            </div>
+        </div>
 
-        function updateSidebarCounts() {
-            const counts = {};
-            CATEGORIES.forEach(c => counts[c] = 0);
-            counts['全部'] = allBooks.length;
-            let recentCount = 0, newCount = 0;
-            allBooks.forEach(b => {
-                if (counts[b.category] !== undefined) counts[b.category]++;
-                else counts['其他']++;
-                if (b.lastReadTime) recentCount++;
-            });
-            newCount = Math.min(allBooks.length, RECENT_LIMIT);
-            recentCount = Math.min(recentCount, RECENT_LIMIT);
+        <h3 id="ch14">第14章 · 贝叶斯公式：机器翻译的原理</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">贝叶斯公式</div>
+                <div class="content">
+                    <strong>P(A|B) = P(B|A) × P(A) / P(B)</strong><br>
+                    <strong>白话解读</strong>：在观察到新证据B之后，我们对假说A的信念应该如何更新。新信念 = 旧信念 × 证据的力度。<br>
+                    <strong>先验概率</strong>P(A)：在看到任何证据之前，我们对A的初始信念。<strong>后验概率</strong>P(A|B)：看到证据B之后更新过的信念。
+                </div>
+                <div class="example">💡 <strong>例子：机器翻译</strong>——给定英文句子E，计算中文句子C的翻译概率P(C|E)。这个概率难以直接计算，但贝叶斯公式将其转化为P(E|C)×P(C)/P(E)。P(C)是中文句子本身的自然程度（语言模型），P(E|C)是翻译回英文的准确性（翻译模型）。现代机器翻译系统（如谷歌翻译）的核心思想就源于此。</div>
+            </div>
+            <div class="info-card case">
+                <div class="label">贝叶斯思维的实际价值</div>
+                <div class="content">
+                    贝叶斯主义的核心是<strong>不断根据新信息更新信念</strong>。你不需要算出精确的后验概率，只需要养成“看到新证据后调整自己的判断”的习惯。这与固执己见相反——贝叶斯主义者永远是开放的、可修正的。
+                </div>
+            </div>
+        </div>
 
-            document.getElementById('countAll').textContent = counts['全部'];
-            document.getElementById('countRecent').textContent = recentCount;
-            document.getElementById('countNew').textContent = newCount;
-            document.getElementById('countEcon').textContent = counts['经济·商业'];
-            document.getElementById('countHist').textContent = counts['历史·文明'];
-            document.getElementById('countMath').textContent = counts['数学·科学'];
-            document.getElementById('countPhil').textContent = counts['哲学·思维'];
-            document.getElementById('countSoc').textContent = counts['社会·文化'];
-            document.getElementById('countLit').textContent = counts['文学·艺术'];
-            document.getElementById('countOther').textContent = counts['其他'];
-        }
+        <h3 id="ch15">第15章 · 统计学：方法论与世界观</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">概率是世界观，统计是方法论</div>
+                <div class="content">
+                    <strong>概率论</strong>：已知概率分布，推断事件发生的可能性（从因到果）。<br>
+                    <strong>统计学</strong>：已知观测到的数据，推断背后的概率分布（从果到因）。<br>
+                    比如：已知硬币公平（概率50%），推算连抛10次正面朝上的概率——这是概率论。抛了1000次得到530次正面，推断这枚硬币是否公平——这是统计学。
+                </div>
+            </div>
+            <div class="info-card tool">
+                <div class="label">古德-图灵折扣估计：防范黑天鹅</div>
+                <div class="content">
+                    如果你从未见过某种事件发生，应该给它的概率分配多少？0吗？那如果它真的发生了，你的模型就彻底崩溃。<br>
+                    <strong>古德-图灵方法</strong>：将一部分概率“预算”留给从未发生过的事件，这样当罕见事件发生时，模型不会完全失效。这在金融风险管理（应对市场崩盘）和自然语言处理（遇到从未见过的词）中都有重要应用。
+                </div>
+            </div>
+        </div>
+    </div>
 
-        function updateFooterInfo() {
-            document.getElementById('footerTotal').textContent = allBooks.length + ' 本';
-            const lastBackup = localStorage.getItem('lastBackupTime');
-            const el = document.getElementById('footerBackup');
-            if (!lastBackup) {
-                el.textContent = '未备份';
-                el.className = 'backup-warn';
-            } else {
-                el.textContent = formatDate(lastBackup);
-                el.className = '';
-            }
-        }
+    <!-- ==================== 终篇 ==================== -->
+    <div class="section" id="part7">
+        <h2>终篇 · 数学在人类知识体系中的位置（第16章）</h2>
+        <h3 id="ch16">第16章 · 数学与哲学、科学、逻辑的关系</h3>
+        <div class="info-grid">
+            <div class="info-card concept">
+                <div class="label">数学与哲学：一头一尾</div>
+                <div class="content">
+                    哲学追问最根本的问题（存在是什么？知识是什么？），数学提供最根本的工具（如何严格地推理？）。<br>
+                    吴军指出：“无用之用是为大用，一个人只有在深刻理解了人类知识的普遍性原理之后，才能站在一个制高点往下俯视。”
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学与自然科学</div>
+                <div class="content">
+                    数学是自然科学的语言——牛顿用微积分描述力学，爱因斯坦用黎曼几何描述引力，海森堡用矩阵描述量子力学。每一次物理学革命背后，都或前或后地伴随着数学工具的革新。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">数学是更底层的工具</div>
+                <div class="content">
+                    数学不能直接解决实际问题，但能提供思路。“数学思维不是指算小账算得清楚，而是说善于基于数学知识，使用逻辑发现问题，或者预见到不得不做的事情。”<br>
+                    学好数学的目的不是会解题，而是“让我们变成更好的人”。
+                </div>
+            </div>
+            <div class="info-card concept">
+                <div class="label">通识教育的本质</div>
+                <div class="content">
+                    “通识教育的本质，即能够将这些知识用于许多地方，而不仅仅是直接用来做具体的事情。”——你不需要记住所有公式，但你应该知道数学有哪些分支、每个分支解决什么问题、以及这套思维方式如何迁移到生活中。
+                </div>
+            </div>
+        </div>
+    </div>
 
-        // ============ 查看器 ============
-        async function openViewer(book) {
-            document.getElementById('viewerTitle').textContent = `📄 《${book.title}》 · ${book.category}`;
-            document.getElementById('viewerIframe').srcdoc = book.htmlContent;
-            document.getElementById('viewerOverlay').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+    <!-- ==================== 认知升级主线 ==================== -->
+    <div class="section" id="cognition">
+        <h2>贯穿全书的认知升级主线</h2>
+        <div class="two-col">
+            <div>
+                <div class="insight-card">
+                    <h4>升级一：从直观到抽象</h4>
+                    <p>无理数→虚数→无穷大→高维空间。数学不断超越感官经验，训练纯理性的抽象思维能力。“虚构”的概念（虚数、四维空间）反而成为理解真实世界最强大的工具。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>升级二：从静态到动态</h4>
+                    <p>数字→方程→函数→微积分。从关注“是什么”到关注“怎么变”，从单个数值到变化趋势。“趋势比当下重要”——斐波那契数列、导数、增长率都是动态思维的体现。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>升级三：从宏观到微观</h4>
+                    <p>导数让我们看到宏观现象背后的微观机制（瞬时速度），积分让我们从微观变化累积出宏观趋势（总路程）。两者互为逆运算，形成一个完整的认知循环。</p>
+                </div>
+            </div>
+            <div>
+                <div class="insight-card">
+                    <h4>升级四：从确定到随机</h4>
+                    <p>从决定论（经典数学：给定初始条件就确定结果）到概率论（承认不确定性，用概率分布描述世界）。这并非放弃理性，而是更高级的理性——承认“不知道”恰恰是智慧的起点。</p>
+                </div>
+                <div class="insight-card">
+                    <h4>数学思维的核心定义</h4>
+                    <p style="font-style:italic;">“数学思维不是指算小账算得清楚，而是说善于基于数学知识，使用逻辑发现问题，或者预见到不得不做的事情。”</p>
+                </div>
+                <div class="insight-card">
+                    <h4>核心金句</h4>
+                    <p style="font-style:italic;">“数学的本质，是一种高级的常识。”</p>
+                    <p style="font-style:italic;">“无用之用是为大用。”</p>
+                    <p style="font-style:italic;">“通识教育的本质，是能够将这些知识用于许多地方，而不仅仅是直接用来做具体的事情。”</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
-            // 更新阅读记录
-            book.lastReadTime = new Date().toISOString();
-            book.readCount = (book.readCount || 0) + 1;
-            await saveBook(book);
-            // 静默更新（不立刻刷新当前网格，避免视觉跳动），等关闭时刷
-        }
-        function closeViewer() {
-            document.getElementById('viewerOverlay').classList.add('hidden');
-            document.body.style.overflow = '';
-            document.getElementById('viewerIframe').srcdoc = '';
-            renderBookGrid(); // 关闭时刷新，更新阅读时间
-        }
-        document.getElementById('closeViewerBtn').addEventListener('click', closeViewer);
-        document.getElementById('viewerOverlay').addEventListener('click', function(e) {
-            if (e.target === this) closeViewer();
-        });
-        document.getElementById('openNewTabBtn').addEventListener('click', () => {
-            const iframe = document.getElementById('viewerIframe');
-            const html = iframe.srcdoc;
-            const blob = new Blob([html], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            window.open(url, '_blank');
-            setTimeout(() => URL.revokeObjectURL(url), 60000);
-        });
+    <!-- ==================== 延伸与比较 ==================== -->
+    <div class="section" id="extension">
+        <h2>延伸与比较</h2>
+        <table class="extension">
+            <thead>
+                <tr><th>思考维度</th><th>内容</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>本书的核心定位</td>
+                    <td>不是数学教科书，而是数学思维启蒙书。不讲难题、不考计算，而是让你理解数学的底层逻辑和思维方式。吴军强调：“学好数学的目的不是会解题，而是让我们变成更好的人。”</td>
+                </tr>
+                <tr>
+                    <td>通识教育理念</td>
+                    <td>通识教育的本质是“将这些知识用于许多地方，而不仅仅是直接用来做具体的事情”。数学的通识意义在于：训练抽象思维、逻辑推理、建模能力和对不确定性的理解——这些能力迁移到任何领域都有价值。</td>
+                </tr>
+                <tr>
+                    <td>本书可能的局限</td>
+                    <td>有书评指出：前半部分（基础篇到代数篇）与生活联系紧密，后半部分（微积分到概率统计）与教科书的差异变小，公式密度增大，可能对非专业读者造成阅读负担。部分数学史细节存在争议（如毕达哥拉斯是否真的“证明”了勾股定理）。</td>
+                </tr>
+                <tr>
+                    <td>推荐对照阅读</td>
+                    <td><strong>吴军《数学之美》</strong>：更侧重数学在计算机科学（搜索、自然语言处理）中的应用，可作为本书的应用深化版。<br><strong>米卡埃尔·洛奈《万物皆数》</strong>：从数学史和美学的角度展示数学的感性之美，与本书的“实用理性”视角形成互补。<br><strong>刘嘉《概率论通识讲义》</strong>：同为得到讲义系列，对概率论专题有更深入的展开。</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-        // ============ 上传弹窗（批量）============
-        function openUploadModal() {
-            document.getElementById('uploadModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-            renderBatchPanel();
-        }
-        function closeUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-            document.body.style.overflow = '';
-            pendingFiles = [];
-            document.getElementById('batchPanel').style.display = 'none';
-            document.getElementById('fileList').innerHTML = '';
-            document.getElementById('dropZone').classList.remove('dragover');
-        }
-        document.getElementById('uploadBtn').addEventListener('click', openUploadModal);
-        document.getElementById('cancelUploadBtn').addEventListener('click', closeUploadModal);
-        document.getElementById('uploadModal').addEventListener('click', function(e) {
-            if (e.target === this) closeUploadModal();
-        });
+    <div style="text-align:center; margin-top:3rem; padding:1.5rem; color:var(--text-muted); font-size:0.85rem; border-top:1px solid var(--border);">
+        《吴军数学通识讲义》完整知识图谱 · 基于吴军原著整理 · 仅供个人学习回顾使用
+    </div>
 
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        dropZone.addEventListener('click', () => fileInput.click());
-        dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-        dropZone.addEventListener('drop', (e) => {
-            e.preventDefault();
-            dropZone.classList.remove('dragover');
-            handleFiles(e.dataTransfer.files);
-        });
-        fileInput.addEventListener('change', (e) => { handleFiles(e.target.files); fileInput.value = ''; });
+</div>
 
-        function handleFiles(files) {
-            if (!files || files.length === 0) return;
-            let added = 0;
-            const tasks = [];
-            for (const file of files) {
-                if (!file.name.endsWith('.html') && !file.name.endsWith('.htm')) continue;
-                tasks.push(new Promise((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
-                        const content = e.target.result;
-                        pendingFiles.push({
-                            name: file.name,
-                            content,
-                            title: extractTitle(content, file.name),
-                            author: extractAuthor(content),
-                            category: '其他',
-                            status: 'pending'
-                        });
-                        added++;
-                        resolve();
-                    };
-                    reader.onerror = () => resolve();
-                    reader.readAsText(file);
-                }));
-            }
-            Promise.all(tasks).then(() => {
-                if (added === 0) {
-                    showToast('⚠️ 请选择 HTML 文件');
-                    return;
-                }
-                renderBatchPanel();
-                showToast(`已加载 ${added} 个文件，请确认信息`);
-            });
-        }
+<!-- 返回顶部按钮 -->
+<button class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
 
-        function renderBatchPanel() {
-            const panel = document.getElementById('batchPanel');
-            const list = document.getElementById('fileList');
-            if (pendingFiles.length === 0) {
-                panel.style.display = 'none';
-                return;
-            }
-            panel.style.display = 'block';
-            list.innerHTML = pendingFiles.map((f, idx) => {
-                const statusText = f.status === 'success' ? '✓ 已添加'
-                    : f.status === 'error' ? '✗ 失败' : '';
-                const statusClass = f.status === 'success' ? 'success' : f.status === 'error' ? 'error' : '';
-                return `
-                <div class="file-item">
-                    <input class="file-title" data-idx="${idx}" type="text" value="${escapeHtml(f.title)}" placeholder="书名">
-                    <select class="file-cat" data-idx="${idx}">
-                        ${CATEGORIES.map(c => `<option value="${c}" ${f.category === c ? 'selected' : ''}>${c}</option>`).join('')}
-                    </select>
-                    <span class="file-status ${statusClass}">${statusText}</span>
-                    <button class="file-remove" data-idx="${idx}" title="移除">✕</button>
-                </div>`;
-            }).join('');
+<!-- 侧边栏高亮当前位置的脚本 -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const sections = [];
 
-            list.querySelectorAll('input.file-title').forEach(input => {
-                input.addEventListener('input', (e) => {
-                    const i = parseInt(e.target.dataset.idx);
-                    pendingFiles[i].title = e.target.value;
-                });
-            });
-            list.querySelectorAll('select.file-cat').forEach(sel => {
-                sel.addEventListener('change', (e) => {
-                    const i = parseInt(e.target.dataset.idx);
-                    pendingFiles[i].category = e.target.value;
-                });
-            });
-            list.querySelectorAll('.file-remove').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const i = parseInt(e.target.dataset.idx);
-                    pendingFiles.splice(i, 1);
-                    renderBatchPanel();
-                });
-            });
-        }
-
-        document.getElementById('applyBatchBtn').addEventListener('click', () => {
-            const cat = document.getElementById('batchCategorySelect').value;
-            if (!cat) { showToast('⚠️ 请先选择分类'); return; }
-            pendingFiles.forEach(f => f.category = cat);
-            renderBatchPanel();
-            showToast(`已批量设置为「${cat}」`);
-        });
-
-        document.getElementById('confirmUploadBtn').addEventListener('click', async () => {
-            if (pendingFiles.length === 0) { showToast('⚠️ 请先选择 HTML 文件'); return; }
-            let successCount = 0;
-            for (const f of pendingFiles) {
-                const title = (f.title || '').trim() || '未命名';
-                const book = {
-                    id: 'bk-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
-                    title,
-                    author: f.author || '未知作者',
-                    category: f.category || '其他',
-                    htmlContent: f.content,
-                    uploadTime: new Date().toISOString(),
-                    lastReadTime: null,
-                    readCount: 0
-                };
-                try {
-                    await saveBook(book);
-                    allBooks.push(book);
-                    f.status = 'success';
-                    successCount++;
-                } catch (err) {
-                    console.error(err);
-                    f.status = 'error';
+        // 收集所有锚点目标
+        sidebarLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const target = document.getElementById(href.substring(1));
+                if (target) {
+                    sections.push({ link: link, target: target });
                 }
             }
-            renderBookGrid();
-            closeUploadModal();
-            showToast(`✅ 成功放入书架 ${successCount} 本`);
         });
 
-        // ============ 编辑弹窗 ============
-        function openEditModal(bookId) {
-            const book = allBooks.find(b => b.id === bookId);
-            if (!book) return;
-            editingBookId = bookId;
-            document.getElementById('editTitle').value = book.title || '';
-            document.getElementById('editAuthor').value = book.author || '';
-            document.getElementById('editCategory').value = book.category || '其他';
-            document.getElementById('editModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-        function closeEditModal() {
-            document.getElementById('editModal').classList.add('hidden');
-            document.body.style.overflow = '';
-            editingBookId = null;
-        }
-        document.getElementById('cancelEditBtn').addEventListener('click', closeEditModal);
-        document.getElementById('editModal').addEventListener('click', function(e) {
-            if (e.target === this) closeEditModal();
-        });
-        document.getElementById('confirmEditBtn').addEventListener('click', async () => {
-            if (!editingBookId) return;
-            const book = allBooks.find(b => b.id === editingBookId);
-            if (!book) return;
-            const newTitle = document.getElementById('editTitle').value.trim();
-            if (!newTitle) { showToast('⚠️ 书名不能为空'); return; }
-            book.title = newTitle;
-            book.author = document.getElementById('editAuthor').value.trim() || '未知作者';
-            book.category = document.getElementById('editCategory').value;
-            try {
-                await saveBook(book);
-                renderBookGrid();
-                closeEditModal();
-                showToast('✅ 已保存');
-            } catch (err) {
-                console.error(err);
-                showToast('❌ 保存失败');
-            }
-        });
-
-        // ============ 导出 / 导入 ============
-        document.getElementById('exportBtn').addEventListener('click', () => {
-            if (allBooks.length === 0) {
-                showToast('⚠️ 书架为空，没有可导出的内容');
-                return;
-            }
-            const payload = {
-                app: '云上书阁',
-                version: 1,
-                exportTime: new Date().toISOString(),
-                books: allBooks
-            };
-            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            const dateStr = new Date().toISOString().slice(0, 10);
-            a.href = url;
-            a.download = `云上书阁-备份-${dateStr}-${allBooks.length}本.json`;
-            document.body.appendChild(a);
-            a.click();
-            a.remove();
-            URL.revokeObjectURL(url);
-            localStorage.setItem('lastBackupTime', new Date().toISOString());
-            updateFooterInfo();
-            showToast(`✅ 已导出 ${allBooks.length} 本书`);
-        });
-
-        document.getElementById('importBtn').addEventListener('click', () => {
-            document.getElementById('importFileInput').click();
-        });
-        document.getElementById('importFileInput').addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = async (ev) => {
-                try {
-                    const data = JSON.parse(ev.target.result);
-                    if (!data.books || !Array.isArray(data.books)) {
-                        showToast('❌ 文件格式不正确');
-                        return;
-                    }
-                    const existingIds = new Set(allBooks.map(b => b.id));
-                    let added = 0, skipped = 0;
-                    for (const b of data.books) {
-                        if (!b.id || !b.title || !b.htmlContent) { skipped++; continue; }
-                        if (existingIds.has(b.id)) { skipped++; continue; }
-                        // 补全可能缺失的字段
-                        b.lastReadTime = b.lastReadTime || null;
-                        b.readCount = b.readCount || 0;
-                        b.category = b.category || '其他';
-                        try {
-                            await saveBook(b);
-                            allBooks.push(b);
-                            added++;
-                        } catch (err) {
-                            console.error(err);
-                            skipped++;
-                        }
-                    }
-                    renderBookGrid();
-                    showToast(`✅ 导入完成：新增 ${added} 本${skipped > 0 ? `，跳过 ${skipped} 本` : ''}`);
-                } catch (err) {
-                    console.error(err);
-                    showToast('❌ 导入失败，文件可能已损坏');
-                }
-            };
-            reader.readAsText(file);
-            e.target.value = '';
-        });
-
-        // ============ 搜索 ============
-        document.getElementById('searchInput').addEventListener('input', () => {
-            renderBookGrid();
-        });
-
-        // ============ 排序 ============
-        document.getElementById('sortSelect').addEventListener('change', (e) => {
-            currentSort = e.target.value;
-            renderBookGrid();
-        });
-
-        // ============ 侧边栏导航 ============
-        function setView(type, value, labelEl) {
-            currentView = { type, value };
-            document.querySelectorAll('.sidebar-nav button').forEach(btn => btn.classList.remove('active'));
-            if (labelEl) labelEl.classList.add('active');
-
-            let title = '📖 全部书籍';
-            let subtitle = '浏览你书架中的全部图谱';
-            if (type === 'category') {
-                title = `📖 ${value}`;
-                subtitle = `「${value}」分类下的图谱`;
-            } else if (type === 'recent') {
-                title = '⭐ 最近阅读';
-                subtitle = `最近打开过的 ${RECENT_LIMIT} 本书`;
-            } else if (type === 'new') {
-                title = '🆕 最近添加';
-                subtitle = `最近上传的 ${RECENT_LIMIT} 本书`;
-            }
-            document.getElementById('mainTitle').textContent = title;
-            document.getElementById('mainSubtitle').textContent = subtitle;
-            renderBookGrid();
-        }
-        document.querySelectorAll('.sidebar-nav button').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (btn.dataset.category) {
-                    setView('category', btn.dataset.category, btn);
-                } else if (btn.dataset.view) {
-                    const v = btn.dataset.view;
-                    if (v === '全部') setView('all', '全部', btn);
-                    else if (v === '最近阅读') setView('recent', '最近阅读', btn);
-                    else if (v === '最近添加') setView('new', '最近添加', btn);
-                }
+        // 点击高亮
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
             });
         });
 
-        // ============ Toast ============
-        function showToast(msg, opts = {}) {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.className = 'toast' + (opts.actionText ? ' with-action' : '');
-            toast.innerHTML = `<span>${escapeHtml(msg)}</span>`;
-            if (opts.actionText) {
-                const btn = document.createElement('button');
-                btn.className = 'toast-action';
-                btn.textContent = opts.actionText;
-                btn.addEventListener('click', () => {
-                    if (opts.onAction) opts.onAction();
-                    toast.remove();
-                });
-                toast.appendChild(btn);
-            }
-            container.appendChild(toast);
-            const duration = opts.actionText ? 5000 : 2600;
-            setTimeout(() => {
-                toast.classList.add('fade-out');
-                setTimeout(() => toast.remove(), 400);
-            }, duration);
-        }
+        // 滚动高亮
+        window.addEventListener('scroll', function() {
+            let current = null;
+            const scrollTop = window.scrollY + 100;
 
-        // ============ 备份提醒 ============
-        function checkBackupReminder() {
-            if (allBooks.length < 5) return;
-            const last = localStorage.getItem('lastBackupTime');
-            const reminded = sessionStorage.getItem('backupReminded');
-            if (reminded) return;
-            if (!last) {
-                setTimeout(() => {
-                    showToast(`📦 你已有 ${allBooks.length} 本书，建议导出备份以防数据丢失`, {
-                        actionText: '立即导出',
-                        onAction: () => document.getElementById('exportBtn').click()
-                    });
-                    sessionStorage.setItem('backupReminded', '1');
-                }, 1500);
-            } else {
-                const days = (Date.now() - new Date(last).getTime()) / 86400000;
-                if (days > 30) {
-                    setTimeout(() => {
-                        showToast(`📦 距离上次备份已 ${Math.floor(days)} 天，建议重新导出`, {
-                            actionText: '立即导出',
-                            onAction: () => document.getElementById('exportBtn').click()
-                        });
-                        sessionStorage.setItem('backupReminded', '1');
-                    }, 1500);
+            sections.forEach(section => {
+                if (section.target.offsetTop <= scrollTop) {
+                    current = section.link;
                 }
-            }
-        }
+            });
 
-        // ============ 键盘快捷键 ============
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                if (!document.getElementById('viewerOverlay').classList.contains('hidden')) closeViewer();
-                else if (!document.getElementById('uploadModal').classList.contains('hidden')) closeUploadModal();
-                else if (!document.getElementById('editModal').classList.contains('hidden')) closeEditModal();
+            if (current) {
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                current.classList.add('active');
             }
-            if (e.ctrlKey && e.key === 'u') { e.preventDefault(); openUploadModal(); }
-            if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('searchInput').focus(); }
         });
+    });
+</script>
 
-        // ============ 初始化 ============
-        async function init() {
-            try {
-                await openDB();
-                allBooks = await getAllBooks();
-                // 补全旧数据字段
-                allBooks.forEach(b => {
-                    if (b.readCount === undefined) b.readCount = 0;
-                    if (b.lastReadTime === undefined) b.lastReadTime = null;
-                });
-                renderBookGrid();
-                checkBackupReminder();
-                console.log('📚 云上书阁 已就绪');
-                console.log('   书架现存：' + allBooks.length + ' 本');
-                console.log('   快捷键：Ctrl+U 上传 | Ctrl+F 搜索 | Esc 关闭弹窗');
-            } catch (err) {
-                console.error('初始化失败:', err);
-                showToast('⚠️ 存储初始化失败');
-            }
-        }
-        init();
-    })();
-    </script>
-
-
-</body></html>
+</body>
+</html>
