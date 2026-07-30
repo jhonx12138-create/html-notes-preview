@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.1</title>
+<title>📚 书阁 v8.2</title>
 <style>
 /* ========== Design System ========== */
 :root {
@@ -493,38 +493,6 @@ html, body {
 .overlay-tool-btn.active { background: var(--accent); color: #fff; }
 .overlay-tool-btn.preview-dark-active { background: var(--text-primary); color: #fff; }
 
-/* Brightness mask */
-.overlay-brightness-mask {
-  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-  background: #000; pointer-events: none; z-index: 2;
-  opacity: 0; transition: opacity 0.15s ease;
-}
-
-/* Brightness slider popup */
-.brightness-slider-popup {
-  position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%);
-  background: var(--bg-card); border-radius: 24px; padding: 10px 22px;
-  box-shadow: var(--shadow-lg); z-index: 100;
-  transition: all 0.25s ease;
-}
-.brightness-slider-popup.hidden {
-  opacity: 0; pointer-events: none; transform: translateX(-50%) translateY(8px);
-}
-.brightness-slider-popup input[type="range"] {
-  width: 200px; height: 6px; -webkit-appearance: none; appearance: none;
-  background: var(--border); border-radius: 3px; outline: none; display: block;
-}
-.brightness-slider-popup input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none; appearance: none;
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--accent); cursor: pointer; box-shadow: var(--shadow-sm);
-  border: 2px solid #fff;
-}
-.brightness-slider-popup input[type="range"]::-moz-range-thumb {
-  width: 24px; height: 24px; border-radius: 50%;
-  background: var(--accent); cursor: pointer; border: 2px solid #fff;
-}
-
 /* Preview dark theme */
 .preview-overlay.preview-dark .overlay-body { background: #1a1a2e; }
 .preview-overlay.preview-dark .overlay-body iframe {
@@ -806,7 +774,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.1</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.2</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -915,11 +883,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.1</span>
+                <span class="setting-value">v8.2</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.1</div>
+              <div class="about-version">📚 书阁 v8.2</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -954,16 +922,11 @@ html, body {
     <button class="overlay-back-btn" id="overlayBackBtn" aria-label="返回列表">←</button>
     <span class="overlay-title" id="overlayTitle">选择一篇笔记</span>
     <div class="overlay-toolbar" id="overlayToolbar">
-      <button class="overlay-tool-btn" id="overlayBrightnessBtn" title="亮度" aria-label="亮度调节">🔆</button>
       <button class="overlay-tool-btn" id="overlayThemeBtn" title="主题" aria-label="切换预览主题">🌓</button>
       <button class="overlay-tool-btn" id="overlayLandscapeBtn" title="横屏" aria-label="切换横屏">🔄</button>
     </div>
   </div>
   <div class="overlay-body" id="overlayBody">
-    <div class="overlay-brightness-mask" id="overlayBrightnessMask"></div>
-    <div class="brightness-slider-popup hidden" id="brightnessSliderPopup">
-      <input type="range" id="brightnessSlider" min="0" max="80" value="0" step="1">
-    </div>
     <div id="overlayBodyContent">
       <div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>
     </div>
@@ -1048,7 +1011,7 @@ html, body {
 
 <script>
 /* ===================================================================
- * 笔记预览 APP v8.1 — 书阁设计
+ * 笔记预览 APP v8.2 — 书阁设计
  * =================================================================== */
 (function() {
   'use strict';
@@ -1110,12 +1073,8 @@ html, body {
 
   // Preview overlay toolbar
   const overlayToolbar    = $('#overlayToolbar');
-  const overlayBrightnessBtn = $('#overlayBrightnessBtn');
   const overlayThemeBtn   = $('#overlayThemeBtn');
   const overlayLandscapeBtn = $('#overlayLandscapeBtn');
-  const overlayBrightnessMask = $('#overlayBrightnessMask');
-  const brightnessSliderPopup = $('#brightnessSliderPopup');
-  const brightnessSlider  = $('#brightnessSlider');
 
   // Category detail view
   const categoryDetailView = $('#categoryDetailView');
@@ -1185,10 +1144,8 @@ html, body {
     selectedCategory: '全部',
     blobUrl: null,
     overlayBlobUrl: null,
-    previewBrightness: 0,
     previewDark: false,
     isLandscape: false,
-    brightnessTimer: null,
     landscapeHideTimer: null,
   };
 
@@ -2037,46 +1994,6 @@ html, body {
     }, 3000);
   }
 
-  /* ---- Brightness Control ---- */
-  function loadBrightness() {
-    try {
-      const v = localStorage.getItem('notes-brightness');
-      if (v !== null) {
-        STATE.previewBrightness = parseInt(v, 10);
-        if (isNaN(STATE.previewBrightness)) STATE.previewBrightness = 0;
-        STATE.previewBrightness = Math.max(0, Math.min(80, STATE.previewBrightness));
-      }
-    } catch(_) { STATE.previewBrightness = 0; }
-    brightnessSlider.value = STATE.previewBrightness;
-    applyBrightness();
-  }
-
-  function saveBrightness() {
-    try { localStorage.setItem('notes-brightness', String(STATE.previewBrightness)); } catch(_) {}
-  }
-
-  function applyBrightness() {
-    const opacity = STATE.previewBrightness / 100;
-    overlayBrightnessMask.style.opacity = String(opacity);
-  }
-
-  function toggleBrightnessSlider() {
-    const hidden = brightnessSliderPopup.classList.toggle('hidden');
-    if (!hidden) {
-      brightnessSlider.value = STATE.previewBrightness;
-      brightnessSlider.focus();
-      if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); }
-      STATE.brightnessTimer = setTimeout(() => {
-        brightnessSliderPopup.classList.add('hidden');
-      }, 4000);
-    }
-  }
-
-  function hideBrightnessSlider() {
-    brightnessSliderPopup.classList.add('hidden');
-    if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); STATE.brightnessTimer = null; }
-  }
-
   /* ---- Preview Theme Toggle ---- */
   function togglePreviewTheme() {
     STATE.previewDark = !STATE.previewDark;
@@ -2095,7 +2012,6 @@ html, body {
   function closePreviewOverlay() {
     previewOverlay.classList.add('hidden');
     sidebar.classList.remove('hidden');
-    hideBrightnessSlider();
     if (STATE.isLandscape) {
       STATE.isLandscape = false;
       applyLandscapeState();
@@ -2108,7 +2024,6 @@ html, body {
     }
     bottomNav.style.display = '';
     if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); STATE.landscapeHideTimer = null; }
-    if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); STATE.brightnessTimer = null; }
   }
 
   /* ===================================================================
@@ -2146,20 +2061,8 @@ html, body {
   overlayBackBtn.addEventListener('click',()=>closePreviewOverlay());
 
   // Preview toolbar buttons
-  overlayBrightnessBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleBrightnessSlider(); });
   overlayThemeBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePreviewTheme(); });
   overlayLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
-
-  // Brightness slider
-  brightnessSlider.addEventListener('input', () => {
-    STATE.previewBrightness = parseInt(brightnessSlider.value, 10);
-    applyBrightness();
-    saveBrightness();
-    if (STATE.brightnessTimer) { clearTimeout(STATE.brightnessTimer); }
-    STATE.brightnessTimer = setTimeout(() => {
-      brightnessSliderPopup.classList.add('hidden');
-    }, 3000);
-  });
 
   // Landscape toolbar — tap to show
   overlayHeader.addEventListener('click', () => {
@@ -2248,7 +2151,7 @@ html, body {
    *  INIT
    * =================================================================== */
   async function init() {
-    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile(); loadBrightness();
+    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
     else{mainContent.style.display='none';history.pushState({view:'home'},'');}
