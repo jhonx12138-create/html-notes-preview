@@ -1,11 +1,11 @@
 # Test Report — 分类详情页 3 列网格验证
 ## Summary
-- **Total Tests**: 58 | **Passed**: 58 | **Failed**: 0
-- **Pass Rate**: 100.0%
+- **Total Tests**: 58 | **Passed**: 52 | **Failed**: 6
+- **Pass Rate**: 89.7%
 - **JS Errors**: 0
 
 ## Routing Decision
-→ **Send To: NoOne** — All tests pass. Category detail 3-column grid works correctly.
+→ **Send To: Engineer** — Some tests failed. See details below.
 
 ## Test Coverage
 - ① 书架首页回归: 4 tests
@@ -21,7 +21,12 @@
 - ⑪ 最终回归: 5 tests
 
 ## Failed Tests
-None. All tests passed! ✅
+- **SIZE-004: 分类详情页 tag 字体 9px**: .category-detail-grid .book-tag CSS must exist
+- **SIZE-006: book-cover min-height: 60px**: Cover min-height should be 60px
+- **SIZE-007: book-info 内边距适配（8px 10px）**: Info padding should be 8px 10px
+- **SIZE-008: book-tags gap 为 2px**: .category-detail-grid .book-tags CSS must exist
+- **SIZE-009: tag padding 为 1px 5px**: Tag padding should be 1px 5px
+- **STRUCT-005: book-cover 有分类颜色 class（如 .philosophy, .history）**: Book card should have a category color class, got: book-card ai-tech
 
 ## All Results
 1. [PASS] REGR-001: 书架首页正常渲染
@@ -48,17 +53,17 @@ None. All tests passed! ✅
 22. [PASS] SIZE-001: 分类详情页 title 字体 12px
 23. [PASS] SIZE-002: 分类详情页 title 两行截断
 24. [PASS] SIZE-003: 分类详情页 date 字体 10px
-25. [PASS] SIZE-004: 分类详情页 tag 字体 9px
+25. [FAIL] SIZE-004: 分类详情页 tag 字体 9px — .category-detail-grid .book-tag CSS must exist
 26. [PASS] SIZE-005: book-cover 内边距适配（12px 8px）
-27. [PASS] SIZE-006: book-cover min-height: 60px
-28. [PASS] SIZE-007: book-info 内边距适配（8px 10px）
-29. [PASS] SIZE-008: book-tags gap 为 2px
-30. [PASS] SIZE-009: tag padding 为 1px 5px
+27. [FAIL] SIZE-006: book-cover min-height: 60px — Cover min-height should be 60px
+28. [FAIL] SIZE-007: book-info 内边距适配（8px 10px） — Info padding should be 8px 10px
+29. [FAIL] SIZE-008: book-tags gap 为 2px — .category-detail-grid .book-tags CSS must exist
+30. [FAIL] SIZE-009: tag padding 为 1px 5px — Tag padding should be 1px 5px
 31. [PASS] STRUCT-001: 分类详情页 grid 中有 book-card
 32. [PASS] STRUCT-002: 每张 card 有 book-cover 和 book-info
 33. [PASS] STRUCT-003: book-cover 包含书名（.book-title）
 34. [PASS] STRUCT-004: book-info 包含日期（.book-date）
-35. [PASS] STRUCT-005: book-cover 有分类颜色 class（如 .philosophy, .history）
+35. [FAIL] STRUCT-005: book-cover 有分类颜色 class（如 .philosophy, .history） — Book card should have a category color class, got: book-card ai-tech
 36. [PASS] STRUCT-006: book-card 有 data-id 属性
 37. [PASS] STRUCT-007: 每行 3 列 — grid 中卡片数量 > 3 时验证结构
 38. [PASS] CLICK-001: categoryDetailGrid 有 click 事件处理器（JS 源码）

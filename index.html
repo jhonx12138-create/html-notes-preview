@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.3</title>
+<title>📚 书阁 v8.4</title>
 <style>
 /* ========== Design System ========== */
 :root {
@@ -298,6 +298,20 @@ html, body {
 .preview-header .note-date-display { font-size: 0.78rem; color: var(--text-muted); flex-shrink: 0; }
 .preview-body { flex: 1; position: relative; background: var(--bg-card); }
 .preview-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
+
+/* 桌面端专注(横屏)阅读模式 */
+.app.focus-mode .sidebar { display: none; }
+.app.focus-mode .main-content .preview-header {
+  position: fixed; top: 12px; right: 16px; z-index: 60;
+  background: rgba(0,0,0,0.55); border: none; border-radius: 28px; padding: 4px;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+}
+.app.focus-mode .main-content .preview-header.show-focus { opacity: 1; pointer-events: auto; }
+.app.focus-mode .main-content .preview-header .note-title-display,
+.app.focus-mode .main-content .preview-header .note-date-display { display: none; }
+.app.focus-mode .main-content .preview-header .overlay-tool-btn { color: #fff; width: 38px; height: 38px; }
+.app.focus-mode .preview-body { background: #fff; }
 
 .welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: var(--text-muted); text-align: center; padding: 40px; }
 .welcome .welcome-icon { font-size: 5rem; margin-bottom: 20px; opacity: 0.5; }
@@ -774,7 +788,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.3</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.4</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -887,7 +901,7 @@ html, body {
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.3</div>
+              <div class="about-version">📚 书阁 v8.4</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -902,6 +916,7 @@ html, body {
     <div class="preview-header">
       <span class="note-title-display" id="previewTitle">选择一篇笔记</span>
       <span class="note-date-display" id="previewDate"></span>
+      <button class="overlay-tool-btn" id="desktopLandscapeBtn" title="横屏" aria-label="切换横屏">🔄</button>
     </div>
     <div class="preview-body" id="previewBody">
       <div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>
@@ -1062,6 +1077,7 @@ html, body {
   const previewTitle = $('#previewTitle');
   const previewDate  = $('#previewDate');
   const previewBody  = $('#previewBody');
+  const desktopLandscapeBtn = $('#desktopLandscapeBtn');
 
   // Mobile preview overlay
   const previewOverlay    = $('#previewOverlay');
@@ -1147,6 +1163,7 @@ html, body {
     previewDark: false,
     isLandscape: false,
     landscapeHideTimer: null,
+    focusHideTimer: null,
   };
 
   /* ---- Helpers ---- */
@@ -1964,26 +1981,47 @@ html, body {
 
   function applyLandscapeState() {
     if (STATE.isLandscape) {
-      previewOverlay.classList.add('landscape');
-      sidebar.classList.add('hidden');
-      bottomNav.style.display = 'none';
-      overlayLandscapeBtn.classList.add('active');
-      overlayLandscapeBtn.textContent = '↩️';
-      showLandscapeToolbar();
+      if (STATE.isMobile) {
+        // 原有移动端逻辑保持不变
+        previewOverlay.classList.add('landscape');
+        sidebar.classList.add('hidden');
+        bottomNav.style.display = 'none';
+        overlayLandscapeBtn.classList.add('active');
+        overlayLandscapeBtn.textContent = '↩️';
+        showLandscapeToolbar();
+      } else {
+        // 桌面端专注模式
+        app.classList.add('focus-mode');
+        sidebar.classList.add('hidden');
+        desktopLandscapeBtn.classList.add('active');
+        desktopLandscapeBtn.textContent = '↩️';
+        showFocusHeader();
+      }
     } else {
-      previewOverlay.classList.remove('landscape');
-      bottomNav.style.display = '';
-      overlayLandscapeBtn.classList.remove('active');
-      overlayLandscapeBtn.textContent = '🔄';
-      overlayHeader.classList.remove('show');
-      if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); STATE.landscapeHideTimer = null; }
+      if (STATE.isMobile) {
+        // 原有移动端逻辑保持不变
+        previewOverlay.classList.remove('landscape');
+        bottomNav.style.display = '';
+        overlayLandscapeBtn.classList.remove('active');
+        overlayLandscapeBtn.textContent = '🔄';
+        overlayHeader.classList.remove('show');
+        if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); STATE.landscapeHideTimer = null; }
+      } else {
+        app.classList.remove('focus-mode');
+        sidebar.classList.remove('hidden');
+        desktopLandscapeBtn.classList.remove('active');
+        desktopLandscapeBtn.textContent = '🔄';
+        if (STATE.focusHideTimer) { clearTimeout(STATE.focusHideTimer); STATE.focusHideTimer = null; }
+        const mh = document.querySelector('.main-content .preview-header');
+        if (mh) mh.classList.remove('hidden-header');
+      }
     }
   }
 
   function toggleLandscape() {
     STATE.isLandscape = !STATE.isLandscape;
     applyLandscapeState();
-    if (!STATE.isLandscape) {
+    if (!STATE.isLandscape && STATE.isMobile) {
       if (!previewOverlay.classList.contains('hidden')) { sidebar.classList.add('hidden'); }
     }
   }
@@ -1994,6 +2032,14 @@ html, body {
     STATE.landscapeHideTimer = setTimeout(() => {
       overlayHeader.classList.remove('show');
     }, 3000);
+  }
+
+  function showFocusHeader() {
+    const mh = document.querySelector('.main-content .preview-header');
+    if (!mh) return;
+    mh.classList.add('show-focus');
+    if (STATE.focusHideTimer) clearTimeout(STATE.focusHideTimer);
+    STATE.focusHideTimer = setTimeout(() => { mh.classList.remove('show-focus'); }, 3000);
   }
 
   /* ---- Preview Theme Toggle ---- */
@@ -2065,6 +2111,7 @@ html, body {
   // Preview toolbar buttons
   overlayThemeBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePreviewTheme(); });
   overlayLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
+  desktopLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
 
   // Landscape toolbar — tap to show
   overlayHeader.addEventListener('click', () => {
@@ -2136,11 +2183,13 @@ html, body {
 
   window.matchMedia('(orientation: landscape)').addEventListener('change',()=>checkLandscape());
 
+  window.addEventListener('mousemove', () => { if (STATE.isLandscape && !STATE.isMobile) showFocusHeader(); });
+
   let rt=null;
   window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
     const was=STATE.isMobile; checkMobile();
     if(was!==STATE.isMobile){
-      if(!STATE.isMobile){closePreviewOverlay();mainContent.style.display='';bottomNav.style.display='none';mainContent.classList.remove('hidden');sidebar.classList.remove('hidden');}
+      if(!STATE.isMobile){closePreviewOverlay();mainContent.style.display='';bottomNav.style.display='none';mainContent.classList.remove('hidden');sidebar.classList.remove('hidden');STATE.isLandscape=false;app.classList.remove('focus-mode');if(desktopLandscapeBtn){desktopLandscapeBtn.classList.remove('active');desktopLandscapeBtn.textContent='🔄';}}
       else{mainContent.style.display='none';bottomNav.style.display='';if(!previewOverlay.classList.contains('hidden')){sidebar.classList.add('hidden');}}
     }
     checkLandscape();
