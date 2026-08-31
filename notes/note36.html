@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-page-node-id="rOwdpagqmjKKq39EjVPaax">
+<head data-page-node-id="TXP6YiSV2Ue1f24v5dNCWY">
+<meta charset="UTF-8" data-page-node-id="gzARwpoVEoEC0yUFMWS4Wq">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" data-page-node-id="45aAEiFOfNZkWxeBvr4YJK">
+<title>《信息与激励经济学》· 知识图谱</title>
+<style>
+/* ===== CSS 变量主题 ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 蓝色系（科技/通识/默认） */
+[data-theme="tech"] {
+  --primary: #1a5276; --primary-light: #eaf2f8; --primary-dark: #0d2b40;
+  --accent: #2e86c1; --accent-deep: #1b4f72;
+  --bg: #f7f9fc; --bg-card: #ffffff; --bg-soft: #f0f4f8; --bg-softer: #e8eef5;
+  --bg-tag: #d4e6f1;
+  --text: #2c3e50; --text-heading: #1a3a50; --text-muted: #7f8c8d; --text-light: #95a5a6;
+  --border: #d5dbdb; --border-soft: #e5e7eb;
+  --highlight: #eaf2f8; --highlight-strong: #d4e6f1;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #2471a3; --color-case: #1e8449;
+  --color-history: #b9770e; --color-insight: #117864; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #2e86c1;
+  --color-effect: #8e44ad; --color-core: #1a5276;
+  --warn-bg: #fef9e7; --warn-border: #f9e79f; --example-bg: #fffef9;
+  --reflect-bg: #f8f4f0; --quote-border: #2e86c1;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 240px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 240px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  line-height: 1.6;
+}
+
+/* ===== 页面区块 ===== */
+.section {
+  margin-bottom: 28px;
+}
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+  overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+/* 左侧彩色条 */
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.7;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 {
+  font-size: 14px; color: var(--primary-dark); margin-bottom: 6px;
+}
+.law-card p {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+
+/* ===== 规律网格（模式卡片） ===== */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ===== 两栏布局 ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 14px 0;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 四象限地图 ===== */
+.quadrant-map {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0;
+}
+.quadrant-map .q-head {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-align: center;
+}
+.quadrant-map .q-label {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: var(--text-muted);
+  writing-mode: vertical-rl;
+  text-align: center;
+  padding: 6px;
+}
+.quadrant-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.quadrant-box .q-title { font-weight: 700; color: var(--primary-dark); margin-bottom: 4px; }
+.quadrant-box .q-tag {
+  display: inline-block;
+  font-size: 11px;
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  border-radius: 10px;
+  padding: 1px 8px;
+  margin: 2px 4px 0 0;
+}
+.quadrant-box.highlight { background: var(--highlight); border-color: var(--primary); }
+
+/* ===== ASCII 结构树 ===== */
+.tree-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+.tree-box pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre;
+}
+
+/* ===== 时间轴（水平） ===== */
+.timeline-track {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding: 20px 0;
+  margin: 14px 0;
+  position: relative;
+}
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 32px; left: 0; right: 0;
+  height: 3px;
+  background: var(--primary-light);
+  border-radius: 2px;
+}
+.timeline-node-tl {
+  flex: 0 0 auto;
+  text-align: center;
+  padding: 0 16px;
+  position: relative;
+  z-index: 1;
+  min-width: 90px;
+}
+.timeline-node-tl .era {
+  font-size: 12px; font-weight: 700;
+  color: var(--primary); margin-bottom: 6px;
+}
+.timeline-node-tl .dot {
+  width: 14px; height: 14px;
+  background: var(--primary);
+  border: 3px solid var(--primary-light);
+  border-radius: 50%;
+  margin: 0 auto 8px;
+}
+.timeline-node-tl .name {
+  font-size: 13px; font-weight: 600;
+  color: var(--text-heading); margin-bottom: 2px;
+}
+.timeline-node-tl .tl-sub {
+  font-size: 11px; color: var(--text-muted); line-height: 1.4;
+}
+
+/* ===== 术语弹窗系统 ===== */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 2px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 {
+  font-size: 16px; color: var(--text-heading); margin-bottom: 10px;
+}
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+/* ===== 水平分割线 ===== */
+hr.divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 32px 0;
+}
+
+/* ===== 页脚 ===== */
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .quadrant-map { grid-template-columns: 1fr; }
+  .quadrant-map .q-head { grid-template-columns: 1fr; }
+  .quadrant-map .q-label { writing-mode: horizontal-tb; }
+  .header h1 { font-size: 22px; }
+  .timeline-track::before { top: 28px; }
+  .timeline-node-tl { padding: 0 10px; min-width: 70px; }
+  .modal-card { padding: 20px; }
+}
+</style>
+</head>
+<body data-theme="tech" data-page-node-id="VDVWQpKHCPSaU2uwgA9WYm">
+
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar" data-page-node-id="zu9m3m8esSg51KOCZWH4Uq">
+  <h3 data-page-node-id="VDLyNFz8eb4BLDcaGkORQv">📖 本书图谱导航</h3>
+  <ul class="toc-list" data-page-node-id="EkYiMPKfQfT6OoZ0b96es3">
+    <li data-page-node-id="O1Y7fhdk8FFPACGJwfEbbl"><a href="#header" data-page-node-id="vnbExtPoQoOBWmZtrv9HSW">📌 页头</a></li>
+    <li data-page-node-id="0DWnaam5J5WiDIiwggVhnQ"><a href="#map" data-page-node-id="TEypOOPvNTLh308ubgAyvn">🗺️ 学科地图（Ch1-2）</a></li>
+    <li class="toc-l2" data-page-node-id="t9V22eBntve8BU4lv0NhN0"><a href="#quadrant" data-page-node-id="NFtDFSKm9iNpGrR2NesWYA">信息问题四象限</a></li>
+    <li data-page-node-id="9GDWyQOreSi0KIotPmeCEz"><a href="#adverse" data-page-node-id="IcYXIQ4iVEsiSjdjBBowMH">⚖️ 问题一：逆向选择（Ch3）</a></li>
+    <li data-page-node-id="7Hcm6sDvnqgNNNkMSX9Nkn"><a href="#signal" data-page-node-id="nnu4NOsFDGpR9xoFRDC0Fj">📡 问题二：信号与甄别（Ch4）</a></li>
+    <li data-page-node-id="OGUbxSkAwvHu5Q54nGnOmL"><a href="#moral" data-page-node-id="suOwFTuUUzNepBBNxk4FmX">🎭 问题三：道德风险（Ch5）</a></li>
+    <li data-page-node-id="C6x1VGJHAh6pBvL5FOyW0y"><a href="#nonverif" data-page-node-id="wAAoXPf9q3SJSk42nfJcWS">🔒 问题四：不可验证性（Ch6）</a></li>
+    <li data-page-node-id="AJRIAnj3AtlRL7B0ii2kwE"><a href="#mechanism" data-page-node-id="pJL7wXFXsxdQ8mzgKckM3d">🧩 统一解法：机制设计（Ch7）</a></li>
+    <li data-page-node-id="xwBZ2WblzIp0MYbq61dtr3"><a href="#firm" data-page-node-id="NsVax4LkMAasXco16HJknc">🏢 企业内激励（Ch8）</a></li>
+    <li data-page-node-id="XRxeEySdYPsq1vT5shLBpG"><a href="#china" data-page-node-id="JWBINyGdwOpHbQTArIuJZ4">🇨🇳 转型的中国（Ch9）</a></li>
+    <li data-page-node-id="wvdkrMO0HZqSUSJmLXwN35"><a href="#boundary" data-page-node-id="2TwjlfJoHABBDEPuQ6OCBe">🪢 组织边界（Ch10）</a></li>
+    <li data-page-node-id="ESwZtYxcJ1PomIIBihW92a"><a href="#insights" data-page-node-id="BXAQCLpKRTopWkovb6y2BR">🧠 认知升级主线</a></li>
+    <li data-page-node-id="dT5iPGBUGGO4jLQiXmz2CI"><a href="#laws" data-page-node-id="ZfuvV0ckXnzgn4sCjxcOuA">🔄 贯穿规律</a></li>
+    <li data-page-node-id="fKH0qsJQghfxC9HfvlFlAm"><a href="#quotes" data-page-node-id="Appc4WZPgim5IyGUII8TTf">💬 核心金句</a></li>
+    <li data-page-node-id="YE5nbGNAzP16THHt8x21r6"><a href="#extension" data-page-node-id="aMMSCHPtue0BsDsTx2PYbY">📊 延伸与比较</a></li>
+    <li data-page-node-id="IRTj7usTWY2H6LpikObcvk"><a href="#reflection" data-page-node-id="bDS9D5z75QWvW8GS0QEHTl">💭 延伸思辨</a></li>
+  </ul>
+</nav>
+
+<!-- 主内容 -->
+<div class="main" data-page-node-id="rU04MQWcVwk5Oc8prPqh6X">
+
+  <!-- 页头 -->
+  <div class="header" id="header" data-page-node-id="IVhnEMF5YXDmqrZR6zYiDh">
+    <h1 data-page-node-id="9aWWJ1dNoJf8DLzXaNJxY0">《信息与激励经济学》</h1>
+    <div class="subtitle" data-page-node-id="N71VsvT5zL7Kbnpq4aWphn">陈钊 · 复旦大学出版社（当代经济学系列丛书·第三版） · "十一五"国家级规划教材</div>
+    <div class="meta" data-page-node-id="GaCy3pc1sClQxHHGiVV7Fy">
+      <span data-page-node-id="cW2CR948FEPRtSKARkYczc"><strong data-page-node-id="Q278YpXgG0CqjxjJTovzFa">作者</strong>：陈钊（复旦大学经济学院教授）</span>
+      <span data-page-node-id="lh2tSBtqOfxttlCZ0Qxoq3"><strong data-page-node-id="BlpNme9GEoBwJh5ChKDoMa">类型</strong>：信息经济学教材</span>
+      <span data-page-node-id="UYXfFl5EGgmDolzAA74Y3j"><strong data-page-node-id="thw3CQKgmWWhCnf5piMqgh">核心线索</strong>：信息不对称 × 激励设计</span>
+      <span data-page-node-id="9xgRmF6DHO0yHn8S7Ds5e9"><strong data-page-node-id="V4qBAJQJDIhEBeu4hEpkT3">理论谱系</strong>：Akerlof / Spence / Stiglitz / Mirrlees / Myerson</span>
+    </div>
+    <div class="framework-badges" data-page-node-id="eFw6Frrb99GJWDe2OMBcdA">
+      <span class="badge" data-page-node-id="X1gHNnnTKcTfbQE66iR2FC">信息经济学</span>
+      <span class="badge" data-page-node-id="7n8cE496b1aWDiF0CZQ2Kr">非对称信息</span>
+      <span class="badge" data-page-node-id="O98W5nAICT1Vfnb1RVXE4t">委托-代理</span>
+      <span class="badge" data-page-node-id="oLKyUX1sP5LH0dzHCazONh">机制设计</span>
+      <span class="badge" data-page-node-id="G47dtDEDNzVpESzmvMtJ7R">中国经济</span>
+    </div>
+    <div class="core-narrative" data-page-node-id="4uq6zrdCkIxyQGr2QiOGvw">
+      <strong data-page-node-id="DwBt4PoL3jdCr3CJtadNus">一句话灵魂：</strong>当"看不见的手"遇上"看不见的信息"，市场如何失灵、制度如何补救、中国改革如何被这套框架照亮。全书用逆向选择、信号与甄别、道德风险、不可验证性四条线索搭起信息经济学的骨架，并始终把中国案例（承包制、双轨制、国企）当作理论的检验场。
+    </div>
+  </div>
+
+  <!-- 学科地图 -->
+  <div class="section" id="map" data-page-node-id="zylD76Xn7FB2WtKkroI4Uh">
+    <h2 data-page-node-id="d7eIeo0JH6dX4jJRol51b0">🗺️ 学科地图：信息经济学从哪来、研究什么（第1-2章）</h2>
+    <div class="tree-box" data-page-node-id="pLhpqpFXwlgqVsrz8Pw77e">
+<pre data-page-node-id="cIAIsZU3qIKRJfZncfzILF">
+信息与激励经济学（陈钊 · 第三版）
+│
+├── 学科地图（Ch1-2）
+│   ├── 新古典的完全信息假设 → 被现实质疑
+│   ├── 非对称信息问题的分类（事前/事后 × 特征/行动）
+│   └── 应用领域：产业组织 / 规制 / 公共 / 政治经济学
+│
+├── 三大经典问题（Ch3-5）
+│   ├── 逆向选择（Ch3）——事前 · 隐藏特征
+│   ├── 信号发送与信息甄别（Ch4）——传递与筛选信息
+│   └── 道德风险（Ch5）——事后 · 隐藏行动
+│
+├── 扩展问题（Ch6）
+│   └── 不可验证性——双方都知道，第三方说不清
+│
+├── 统一解法（Ch7）——机制设计：显示原理 + 激励相容
+│
+├── 企业应用（Ch8）——内部激励：绝对 / 相对绩效、锦标赛
+│
+└── 现实检验（Ch9-10）
+    ├── 转型的中国：计划vs市场、产权、双轨制
+    └── 组织边界：市场失灵与组织失灵的权衡
+</pre>
+    </div>
+    <div class="info-grid" data-page-node-id="jRhID0nQzSUfBldohXuDev">
+      <div class="info-card core" data-page-node-id="2q74dgmATnX8g0YYxCjB4r">
+        <div class="label" data-page-node-id="XaJ24SaXMEdOkXvg2KEvZd">核心主线：激励问题 = 信息问题</div>
+        <div class="content" data-page-node-id="90IM8QafEfo6Y38TXb4cHi">全书反复强调一个判断：凡是激励失效的地方，深挖下去多半是信息不对称在作祟。委托方想让人好好干（激励），但看不见对方是否努力（信息）；想让对方说真话（激励），但辨别不了真伪（信息）。所以信息经济学研究的是"信息约束下的最优制度设计"。</div>
+        <div class="example" data-page-node-id="UlKsy1AXFdxvzfBiXGFnEC">💡 <strong data-page-node-id="uGyG4KeG88ZP9rDrEUqHbV">类比</strong>：经理人偷懒就像"学生在自习课打瞌睡"——老师（委托人）想让所有人专注，但不可能时刻盯着每个人，于是只能靠考试（绩效契约）来间接约束。</div>
+      </div>
+      <div class="info-card concept" data-page-node-id="NUkMLaHnChFFPZn3g4q11A">
+        <div class="label" data-page-node-id="3ewC1ZlNAA63FDQDiQTXkZ">起点：新古典的完全信息假设</div>
+        <div class="content" data-page-node-id="KLOShIR3Xs47cCsjD5ULm7">传统新古典经济学假设所有参与者拥有完全信息：商品质量、对方行为、未来状态都一目了然。在这个世界里价格是万能协调器，市场自动有效，制度设计没有用武之地。信息经济学正是从这个"完美世界基准"出发，逐一松动假设。</div>
+        <div class="example" data-page-node-id="9EgFzOb8TDoFnfRcV5zMqg">💡 <strong data-page-node-id="hM8KdS3M68H7TIPYC8HQCe">类比</strong>：完全信息世界就像"摊开的一副明牌"——所有玩家都知道彼此的底牌，博弈结果唯一且高效；现实却是各人攥着各人的牌。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="li6C6iHFC99loVEXhyoCTp">
+        <div class="label" data-page-node-id="gJ7mDW8B5AybwtcW7NWaRc">学科立场：解释现实，而非精致模型</div>
+        <div class="content" data-page-node-id="cIilymmqXBzdQeaFE6WN7e">作者在导读中强调这门学科的"现实解释力"定位：学习它需要注重观察、善于提问，并始终做"基准模型与现实"的对照——模型给出逻辑基准，现实检验模型的适用边界。这正是本书区别于纯数理教科书的气质。</div>
+        <div class="example" data-page-node-id="q3EMg6szoaF5fvXLbvwWQu">💡 <strong data-page-node-id="DohZqJqhZwAS7xPMK2iGVW">例子</strong>：旧车市场模型（Akerlof）本是一个极端简化的"柠檬市场"，但书里用它解释中国信贷市场、劳动力市场的真实扭曲，而非停留在纸面。</div>
+      </div>
+      <div class="info-card tool" data-page-node-id="YnKVqcRn8f1j0LrEZ7dQdX">
+        <div class="label" data-page-node-id="HDBsJDNQLXRMtOiPE2uVWI">分类工具：非对称信息的三分法</div>
+        <div class="content" data-page-node-id="nkOH4EEBjcnHaNbpXZxNCj">信息经济学把"有人知道、有人不知道"的情形分为三类：<strong data-page-node-id="lU6LTHYF9noO0ai84gRHrm">隐藏特征</strong>（缔约前，如旧车质量）、<strong data-page-node-id="5VbpbEG3VzRiW66qNIFV96">隐藏行动</strong>（缔约后，如员工偷懒）、<strong data-page-node-id="KnlEt8N3RtFKDsuvPOnSh5">不可验证性</strong>（双方都知道但第三方无法证实）。每一类对应不同的模型和药方。</div>
+        <div class="example" data-page-node-id="c4HzYSnxUtR7110A8fyjcT">💡 <strong data-page-node-id="NAsFTHkT35DKwQKuyAEuIk">记忆</strong>：三类问题=买前骗你（特征）、买后坑你（行动）、对簿公堂说不清（不可验证）。</div>
+      </div>
+    </div>
+
+    <h3 data-page-node-id="9E2wsLNFWYIt1D8x4fWqEb">📜 学科发展简史：一条从"市场失灵"到"机制设计"的演进线</h3>
+    <div class="timeline-track" data-page-node-id="NqV3D6rMUYTPbNK3Q6stEW">
+      <div class="timeline-node-tl" data-page-node-id="RFKrbxO7S4PIqpq5oGA1Aq">
+        <div class="era" data-page-node-id="HX4kH94XXsDEPBv4SprU9W">1945</div>
+        <div class="dot" data-page-node-id="xTbWjVChoXyBUxq8bUpBAF"></div>
+        <div class="name" data-page-node-id="Cazlkx7I1Mck3ZFg4q9Brn">哈耶克</div>
+        <div class="tl-sub" data-page-node-id="HKUCJHRepJcKvWApgaw6s8">《知识在社会中的利用》<br data-page-node-id="A459FUnFJv6vpE97bgPooW">价格是分散信息的载体</div>
+      </div>
+      <div class="timeline-node-tl" data-page-node-id="84qLCzZuY8hSrClLD9u6uw">
+        <div class="era" data-page-node-id="sDTnsZYiXTZZVTvDQcaDRR">1970</div>
+        <div class="dot" data-page-node-id="LxT6MvUwLgHwr986QQbNne"></div>
+        <div class="name" data-page-node-id="EhLHumisBMGW9jgdDWyP0a">阿克洛夫</div>
+        <div class="tl-sub" data-page-node-id="SQ0BVkKqUmDwA0oCfG96lR">《柠檬市场》<br data-page-node-id="AnUWNbd2I6ahDvEipLG4vD">逆向选择的奠基</div>
+      </div>
+      <div class="timeline-node-tl" data-page-node-id="7xWLkjD2HZyGftvhpZ8bV8">
+        <div class="era" data-page-node-id="483Hpc98WyF9AB2ux2EyJv">1973</div>
+        <div class="dot" data-page-node-id="tXHzdUjajj3sKRWdbZftTO"></div>
+        <div class="name" data-page-node-id="yhPRs3w3JKfbx3s5iZFNEz">斯彭斯</div>
+        <div class="tl-sub" data-page-node-id="oCFdyX36Mpkj0SFT80KLlf">劳动力市场信号<br data-page-node-id="utj6Pc9nLQScsmxWrOXnsr">信号发送模型</div>
+      </div>
+      <div class="timeline-node-tl" data-page-node-id="4faFAT15VhmWcaBEh9ejJP">
+        <div class="era" data-page-node-id="0HC8wKvqTbYtUoRllVDIaR">1976</div>
+        <div class="dot" data-page-node-id="W5jctEhBAoBQh966RAI4Ox"></div>
+        <div class="name" data-page-node-id="lwMCuonjpcfoFS1FnSnXfT">斯蒂格利茨</div>
+        <div class="tl-sub" data-page-node-id="3ChvZz7Cl1MpVoT6h8ryU3">信息甄别<br data-page-node-id="irvbtIE99nKi9USaiNzUXb">（Rothschild-Stiglitz）</div>
+      </div>
+      <div class="timeline-node-tl" data-page-node-id="Xx37zr7gfEyNeeaY04UoM8">
+        <div class="era" data-page-node-id="GVmaJzBOhpF2nT77qjuoDW">1974-79</div>
+        <div class="dot" data-page-node-id="egIItynM4KCgBbMHnH8MDM"></div>
+        <div class="name" data-page-node-id="EBULXEYsznO0fQh8vUm1jc">米尔利斯等</div>
+        <div class="tl-sub" data-page-node-id="ChxzGAyFtKmBQ5ffaSnUrN">委托-代理<br data-page-node-id="JdbXqXoOHUJBXPMrlnfNHe">最优契约理论</div>
+      </div>
+      <div class="timeline-node-tl" data-page-node-id="YaHLNJYKscrsBxB1TafU3q">
+        <div class="era" data-page-node-id="o7oRXQAtTauPLJXT1TicnG">1979</div>
+        <div class="dot" data-page-node-id="trYm9GHoXB3z7PUdxaeeul"></div>
+        <div class="name" data-page-node-id="cjzEd1foA8hqDHG3Gwn6MZ">迈尔森</div>
+        <div class="tl-sub" data-page-node-id="4DYTCCiBMToYuKgBqGXUTi">显示原理<br data-page-node-id="TAadROwc069OGTDUvqZCyh">机制设计奠基</div>
+      </div>
+      <div class="timeline-node-tl" data-page-node-id="Yeu1Fsq0Q4lTei2djA86UK">
+        <div class="era" data-page-node-id="C18no244ezRcfIMH5v5J1N">2001</div>
+        <div class="dot" data-page-node-id="nyS0hRBnh02SKHcoI8WnVV"></div>
+        <div class="name" data-page-node-id="Cvj7VzK3UHyoKi9Q9jrgNr">诺贝尔奖</div>
+        <div class="tl-sub" data-page-node-id="AKcFEZDnp81MeX6nI4O6uj">阿克洛夫·斯彭斯<br data-page-node-id="TvQG3ZYrBKe7G7EO9adrD7">斯蒂格利茨同获</div>
+      </div>
+    </div>
+
+    <h3 id="quadrant" data-page-node-id="36nw9tKVLXCPjMKt0RhAfE">🗄️ 全书地图：非对称信息问题分类框架</h3>
+    <p style="font-size:14px;color:var(--text-muted);" data-page-node-id="KPOFwYWEoTjnbBfcs0Uk1E">按"信息不对称发生在什么时候"（横轴：事前/事后）与"隐藏的是什么"（纵轴：特征/行动）划分，就得到这张贯穿全书的分类地图——每一格对应一类经典问题与应对工具：</p>
+    <div class="quadrant-map" data-page-node-id="RcFB0AsUmNHNQKaehrPOPK">
+      <div class="q-head" data-page-node-id="eZP3oY94OX8ZFTxgNdIYFv">
+        <div data-page-node-id="CT0Hx3l9LEum30QYnCujKE">缔约之前（事前）</div>
+        <div data-page-node-id="HGayViSW1pDusReFBqutHX">缔约之后（事后）</div>
+      </div>
+      <div class="quadrant-box highlight" data-page-node-id="33ElBZznp9tmiD50l9BxmP">
+        <div class="q-title" data-page-node-id="pFV0BDZ4wYxu9qsmJZuQC9">🧬 隐藏特征</div>
+        一方在缔约前就拥有对方不知道的"类型"（质量/能力/风险），如旧车质量、借款人风险。
+        <div data-page-node-id="erpqHVQctyLpg701G9MQLB"><span class="q-tag" data-page-node-id="Wc2fC0l7KLZsQbpFU8FfF3">逆向选择 Ch3</span><span class="q-tag" data-page-node-id="aRPugCihO0Leowtsmb9LzJ">应对：信号/甄别 Ch4</span></div>
+      </div>
+      <div class="quadrant-box" data-page-node-id="Dt1ilJfwuG8QhwRjYrv1BH">
+        <div class="q-title" data-page-node-id="1IVmUfvotJtQIHSVfQo3Ub">🧬 隐藏特征（事后显现）</div>
+        缔约后一方才了解对方类型，或类型随时间变化（如代理人缔约后得知成本高低），构成"隐藏信息"型问题。
+        <div data-page-node-id="gC8H0OXGB5l9F7DF4e9Zwf"><span class="q-tag" data-page-node-id="HGFiMyouR50rnyabrBCd2I">道德风险变体 Ch5</span><span class="q-tag" data-page-node-id="AuPkfcWbxRttj4bdH0XP0A">应对：激励机制</span></div>
+      </div>
+      <div class="quadrant-box" data-page-node-id="09yNMryHpNnNEfpCK2Q6X7">
+        <div class="q-title" data-page-node-id="Exa1NClFUhSsYzXO3cNaJp">🎭 隐藏行动（事前承诺）</div>
+        缔约时一方承诺未来做出不可观察的行动（如答应尽力而为），事后才见分晓——本质上归入事后激励问题。
+        <div data-page-node-id="SI3NrrbQN2KV7K2el5a01W"><span class="q-tag" data-page-node-id="L4aSBrm610gbt8m8lRKKIt">委托-代理 Ch5</span></div>
+      </div>
+      <div class="quadrant-box highlight" data-page-node-id="TrcDuYKFDI7OsZzm5zf0Ge">
+        <div class="q-title" data-page-node-id="6ygLe4GoLOOKe5V1t5LfGw">🎭 隐藏行动（事后）</div>
+        缔约后一方行动不可观察（努力与否、谨慎与否）——最经典的委托-代理问题。
+        <div data-page-node-id="YenJrxeaUI714fkIYo2NHh"><span class="q-tag" data-page-node-id="beKapLJkPCtmeSJiuieXeC">道德风险 Ch5</span><span class="q-tag" data-page-node-id="xT85fXmUD8xR0tUOR6ZGN8">应对：激励契约</span></div>
+      </div>
+    </div>
+    <div class="quadrant-box" style="margin-top:10px;" data-page-node-id="VRFjN83cRhWR61I4EuKx65">
+      <div class="q-title" data-page-node-id="q6NWIpvJ23VxVumRe9SZpm">⚖️ 第三维度：不可验证性（Ch6）——信息对称但举证不能</div>
+      以上四格都假设"知情的一方知道、不知情的一方不知道"。还有一类更刁钻的情形：<strong data-page-node-id="LeISQOwpeDpOIZfgc0buqf">双方都知道，但第三方（法院/仲裁者）无法证实</strong>——契约写也白写、告也告不赢，只能靠产权重构与"说真话"机制来解决。它不是"不对称"，而是"不可证实"。
+      <div data-page-node-id="BcxVYcJNj2DuH7hJDyCAdu"><span class="q-tag" data-page-node-id="emDBfHfDK9ju0HY1DqLRuB">不可验证性 Ch6</span><span class="q-tag" data-page-node-id="9AyFmeiVdiw1PfhrZC9mDO">应对：承包制 / 说真话机制</span></div>
+    </div>
+  </div>
+
+  <!-- 逆向选择 -->
+  <div class="section" id="adverse" data-page-node-id="GD8VMtnYcAFLqaVWMV7zA5">
+    <h2 data-page-node-id="HIK3RJn1cEI12V6CB4pAQg">⚖️ 问题一：逆向选择——劣币驱逐良币（第3章）</h2>
+    <div class="info-grid" data-page-node-id="JJGEO0xnSirjwESQ0Rlofu">
+      <div class="info-card concept" data-page-node-id="KrBtqUb1i1us0Ua11WDsy1">
+        <div class="label" data-page-node-id="VCle6dKjyMbnDF55FWOsyL">核心概念：逆向选择
+          <button class="glossary-trigger" onclick="openModal('adverse')" data-page-node-id="MaIWuo1lvEqPu5sy3rgtUv">?</button>
+        </div>
+        <div class="content" data-page-node-id="BHqD9SnaRz7ihRI9CLyvCn">缔约前一方掌握对方不知道的私有信息，导致交易中"好货退出、次货留下"——市场自发地把高质量供给者排挤出去。名称里的"逆向"指选择的方向与常理相反：本该选到好的，结果挑到坏的。</div>
+        <div class="example" data-page-node-id="GNCPMOqwMw5sRfF1qrQSa4">💡 <strong data-page-node-id="R8fEyXgIVyFJPFI9ovq3iJ">类比</strong>：不是市场"失灵"，而是信息分布本身出了问题——买卖双方信息不对称，价格不再是可靠的信号。</div>
+      </div>
+      <div class="info-card case" data-page-node-id="ukryvXb39VVJ9uLYB5AtbV">
+        <div class="label" data-page-node-id="P7o7D1vYRNfSMAZ44NW5aW">奠基案例：旧车市场（柠檬市场）
+          <button class="glossary-trigger" onclick="openModal('lemon')" data-page-node-id="9yMKhc3tyAkcM5Uorg3uJj">?</button>
+        </div>
+        <div class="content" data-page-node-id="EVWVPCGGrFKAnzz9ZjRu7d">Akerlof（1970，《The Market for "Lemons"》）的经典设定：旧车有"好车"与"柠檬"（次品），只有卖主知道真实质量。买主只愿付平均质量的价钱，于是好车卖不上价、退出市场，留下更多次品，均衡价格进一步下移——最极端时市场消失。</div>
+        <div class="example" data-page-node-id="AGCbvtVOqejwmz6t1zxbaU">💡 <strong data-page-node-id="yZuZ8QkYiRN0E2rwL4Ks2a">例子</strong>：二手车市场、二手电子产品——"卖车的人急着出手多半是车有问题"，这句民间直觉正是逆向选择的朴素版本。</div>
+      </div>
+      <div class="info-card effect" data-page-node-id="GumNQJNmkqu9pQgHygEG3i">
+        <div class="label" data-page-node-id="VIgp6IOTFRqkID8GGOYJ9H">后果：价格机制的双重失灵</div>
+        <div class="content" data-page-node-id="xu90AYdA7ZZhYau2J4gTaD">价格原本同时承担"配置资源"和"传递信息"两种职能。逆向选择出现时，价格作为信息传递者失真了——高价格不再意味着高质量，而可能意味着"卖家想多骗点"。配置与信息职能冲突，市场均衡被扭曲。</div>
+        <div class="example" data-page-node-id="SbsYBIoxadKxCUYKwPCMqo">💡 <strong data-page-node-id="5ZAvyhVj6qaPD56vcu41Uj">延伸</strong>：书里点出"旧车市场与价格机制"的讨论——不是价格失灵，而是仅靠价格无法同时完成两件事。</div>
+      </div>
+      <div class="info-card mechanism" data-page-node-id="krVF2XLFX8IpadQW61LrKd">
+        <div class="label" data-page-node-id="J1FSNTTSiYqYQg9ZBCEtyQ">延伸应用：信贷市场的逆向选择</div>
+        <div class="content" data-page-node-id="IpG0lGs9ruxEU6SZF3DeVI">Stiglitz-Weiss 信贷配给逻辑：银行提高利率，反而吸引来更多高风险借款人（敢借高息的人更可能还不起），银行预期收益未必上升。所以银行宁可"配给"——定量放贷而不靠利率出清市场。</div>
+        <div class="example" data-page-node-id="pRC96NtNczEueSVlUJDxjK">💡 <strong data-page-node-id="RsiZE9uaCtwEJa5k1dewvt">例子</strong>：网贷/小额贷平台的高息陷阱——高利率筛选出"最缺钱也最可能违约"的人群，正是逆向选择的现实版。</div>
+      </div>
+      <div class="info-card case" data-page-node-id="gzgxt1hAfXW5mze5OiXkCy">
+        <div class="label" data-page-node-id="mImHOSNzYsJGiO0PluIlDf">书内案例：当教授还是做搬运工</div>
+        <div class="content" data-page-node-id="TO7uDGF3HtwcwmSqbggFSl">作者用职业选择的例子说明逆向选择的普适性：若薪酬与个人能力脱钩，回报丰厚的职业会吸引能力不足者涌入，挤占真正胜任者的位置——"能者上"的机制被信息不对称破坏。（据书中案例综合提炼）</div>
+        <div class="example" data-page-node-id="xx0hBgLjvyXnga8NCZvbqY">💡 <strong data-page-node-id="LeSDBhAieu7864nmUT8KU9">类比</strong>：类似"劣币驱逐良币"——能力不匹配者把高薪岗位当作"柠檬"，好岗位逐渐被拉低均值。</div>
+      </div>
+      <div class="info-card solution" data-page-node-id="bsWDGfBPwVOazHClrA6kSI">
+        <div class="label" data-page-node-id="3WVN5IXnoHgKaUoIc2eo8y">解法方向：让信息流动起来</div>
+        <div class="content" data-page-node-id="bOGU1B3DcnlFCUnN7lWd9T">逆向选择的出路不是放弃市场，而是创造信息传递通道：①信号发送（好货主动亮明身份）②信息甄别（买方设计筛选菜单）③担保/声誉机制 ④标准化（消除质量不确定性）——这直接引出第4章。</div>
+        <div class="example" data-page-node-id="EMPQmrJ1nRMmr0isuqdf6i">💡 <strong data-page-node-id="3zBHHv5g7m7LLdkF85YTET">例子</strong>：二手车平台提供"无事故报告+第三方检测+质保"，就是用标准化与担保对抗柠檬问题。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 信号与甄别 -->
+  <div class="section" id="signal" data-page-node-id="XaMeVI5YT0l2XTh9rakPGw">
+    <h2 data-page-node-id="M7tTxv4b3v9v3vlXMd6TJu">📡 问题二：信号发送与信息甄别——让信息动起来的两种姿势（第4章）</h2>
+    <div class="info-grid" data-page-node-id="jQmEC85pmEBdFf5QaM1fOJ">
+      <div class="info-card concept" data-page-node-id="JL1qCpoqT0a88ucULPNXfe">
+        <div class="label" data-page-node-id="wHpxzo46tbGoig64hb84Yt">核心概念：信号发送（Signaling）
+          <button class="glossary-trigger" onclick="openModal('signal')" data-page-node-id="Xgw71ns6nupC6r3ASUQEnm">?</button>
+        </div>
+        <div class="content" data-page-node-id="60bznAX2fnHgtuPndFYkIF">有信息优势的一方（卖方/求职者/借款人）主动向对方传递信息以证明自己的"类型"。Spence（1973）以劳动力市场为例：教育文凭本身不增加生产率（这是信号观与人力资本观的分野），但高能力者获取文凭的成本更低，所以文凭能区分人群。</div>
+        <div class="example" data-page-node-id="gGGaIZJqEmwQGhegrSSQeP">💡 <strong data-page-node-id="Ec4YZkxMd9N7Wf2nWJ35pb">类比</strong>：孔雀开屏——美丽的大尾巴耗费资源、行动笨拙，但正因为"昂贵且难造假"，才证明基因足够好（Zahavi 累赘原理）。</div>
+      </div>
+      <div class="info-card concept" data-page-node-id="KFGjlSFZWtGltIaiempcru">
+        <div class="label" data-page-node-id="l4n6KCw3JKC8Ix31xqcw28">核心概念：信息甄别（Screening）
+          <button class="glossary-trigger" onclick="openModal('screening')" data-page-node-id="uQd1d4G4GjlHKQe9vgRLDF">?</button>
+        </div>
+        <div class="content" data-page-node-id="4E2iXuhz566xl6iDG7qcXC">信息劣势的一方（买方/雇主/保险公司）主动设计一组"菜单"，让不同类型的人自己选择、从而暴露类型。Rothschild-Stiglitz 保险模型：保险公司提供高保费低保额/低保费高免赔额两种合同，高风险者选前者、低风险者选后者，风险类型被"筛"出来。</div>
+        <div class="example" data-page-node-id="ZXn8owVIriHLljxb8jgNQC">💡 <strong data-page-node-id="GodV0rb1ROOLu3Z9lC6ruT">例子</strong>：保险条款里的"免赔额"设计——愿意承担更高免赔额的人，倾向于自认风险更低。</div>
+      </div>
+      <div class="info-card mechanism" data-page-node-id="tCjqqxTpLOwdv5oZnMOOe8">
+        <div class="label" data-page-node-id="5tahu8If4S8eWOsHJJ5Uyn">关键机制：分离均衡 vs 混同均衡
+          <button class="glossary-trigger" onclick="openModal('sepeq')" data-page-node-id="HtofF6NJv4RETbyBfE9g4q">?</button>
+        </div>
+        <div class="content" data-page-node-id="DEwBFd93gEwTxgofKe9TDN">信号/甄别的结果有两种：<strong data-page-node-id="lSFXlcZSN1tG0MSIzmQEGD">分离均衡</strong>——不同类型的人选择不同行为（高能力者受教育、低能力者不读），类型被完全区分；<strong data-page-node-id="KTEBDRqsUrOlZBHYPBHd9x">混同均衡</strong>——所有人都选择同样行为，类型无法区分。均衡取哪种，取决于信号的"分离条件"是否满足。</div>
+        <div class="example" data-page-node-id="gAbEetM08GwDAXecxKL6te">💡 <strong data-page-node-id="PWZGsrdeHIGi0dbGUnFVn4">类比</strong>：分离均衡像"体检报告分三档"，混同均衡像"所有人拿到同一张合格证"——前者信息量高，后者保护了弱者但模糊了信息。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="R3SfoYdSnfcApam99Uvgfx">
+        <div class="label" data-page-node-id="zR6OWnqqFPJ9lHMjTo4J1D">洞察：好信号必须"贵到造不起假"</div>
+        <div class="content" data-page-node-id="a6lyC0CAKvg0utYIEdLYL6">信号要起作用，关键不在内容而在<strong data-page-node-id="WNhOMJXhDIecaq7VfMCrMu">成本结构</strong>：不同类型发出同一信号的成本差异越大，信号越可靠。如果文凭人人都能轻易拿到（信号成本趋同），均衡就滑向混同，文凭贬值——这解释了"学历通胀"背后的信息经济学逻辑。</div>
+        <div class="example" data-page-node-id="7oK48lkBXniZu9Wxotq2a8">💡 <strong data-page-node-id="bCUBwtRUkLAyRb6HpxafXy">例子</strong>：为什么顶级公司看重名校？不是名校知识更值钱，而是名校信号更难伪造——入学本身就是一场高成本的甄别。</div>
+      </div>
+      <div class="info-card case" data-page-node-id="3GvoOn1rARBpDjFY6ifSpS">
+        <div class="label" data-page-node-id="rFFtn1KBElKbHrHrAgeMOZ">应用一：工资与工龄的正相关</div>
+        <div class="content" data-page-node-id="2krjCPLTfrECwi6htft9wz">如果能力一开始不被观察，雇主按均值付薪，随后通过产出逐渐"学会"每个员工的能力——高能力者被发现后加薪，低能力者被淘汰，于是样本中呈现"工资随工龄上升"的正相关。这是"学习型契约"的解释。</div>
+        <div class="example" data-page-node-id="FYZEjA16wz4nvhEiekl3ui">💡 <strong data-page-node-id="ajQCnno7Lxx1obXTyJCZJU">对照</strong>：另一种解释是"隐性的内部劳动力市场承诺"（防止员工跳槽），两者在书中并列讨论。</div>
+      </div>
+      <div class="info-card case" data-page-node-id="tbfgOzh3TYadqOfpcaePje">
+        <div class="label" data-page-node-id="3POOqkehFjuSAVS3ipZYoD">应用二：企业进入阻挠与资本结构</div>
+        <div class="content" data-page-node-id="Z7GcdwCTNXXYLDAM3u6LAW">在位企业可以通过"不可回收的专用性投资"作为承诺信号，让潜在进入者相信"我会死磕到底"，从而阻挠进入；Ross 模型则把负债率当作信号——敢背高债务的企业主，向市场传递"我对未来现金流有信心"。</div>
+        <div class="example" data-page-node-id="kQk0uxAXPDRdVcmBEpXF7A">💡 <strong data-page-node-id="VbqPCjcywWqIUyOz4xTLkH">延伸</strong>：物种繁衍（雄孔雀开屏）也被作者收入本章——信号理论在生物学里同样成立，跨学科印证。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 道德风险 -->
+  <div class="section" id="moral" data-page-node-id="yEv0MMe5udhFMvUgFtOmXU">
+    <h2 data-page-node-id="i0blEE68qFVB06LeKyrDsV">🎭 问题三：道德风险——看不见的偷懒（第5章）</h2>
+    <div class="info-grid" data-page-node-id="c2I4YEZ9rwxFXuY1NdxdCg">
+      <div class="info-card concept" data-page-node-id="0wLEl8gMc3PfgPfFFymEgG">
+        <div class="label" data-page-node-id="Yw0GFIjm5kk6FaacmQnRIl">核心概念：道德风险 / 委托-代理
+          <button class="glossary-trigger" onclick="openModal('moral')" data-page-node-id="BMPPl4Hc56Q8twB8U7RfYz">?</button>
+        </div>
+        <div class="content" data-page-node-id="Y23TMU386LHz3PVkAl42TG">缔约后，代理人（经理/员工/承包商）的行动无法被委托人（股东/雇主/发包方）直接观察，代理人就可能偷懒、敷衍、冒险——因为代价由委托人承担。委托-代理模型就是研究在这种信息结构下如何设计报酬契约。</div>
+        <div class="example" data-page-node-id="X3KXjxppKyM5tuUCisI9i8">💡 <strong data-page-node-id="2WGGI1q7eLY1TaoPj1t385">例子</strong>：股东雇职业经理人——经理天天在场，股东一年开几次会，经理是否"全力以赴"根本无从查证。</div>
+      </div>
+      <div class="info-card mechanism" data-page-node-id="0tzSGz9ephaTfA2cq57qVE">
+        <div class="label" data-page-node-id="DMRHzE0ZpEOGOdoLMgjNA0">模型骨架：委托-代理的基本设定
+          <button class="glossary-trigger" onclick="openModal('principal')" data-page-node-id="Gfyndl3KI2Mo5OtAI2FYab">?</button>
+        </div>
+        <div class="content" data-page-node-id="Yn2wAWklwzUaSIcu6xRWlb">委托人提供契约、代理人选择努力水平、产出取决于努力与随机因素、报酬由产出决定。核心张力：产出不完全归因于努力（有噪声），若把报酬全押在产出上，风险被转嫁给厌恶风险的代理人——他要求风险溢价，激励成本上升。</div>
+        <div class="example" data-page-node-id="F8gCkuvGP0yFcAZeEQm2UZ">💡 <strong data-page-node-id="CjwV8Bl2SkT2q6m3TBsObK">类比</strong>：就像给学生"唯成绩论"发奖学金——成绩受智商、运气影响，努力型学生被误伤，久而久之没人肯努力。</div>
+      </div>
+      <div class="info-card tool" data-page-node-id="qpCYweyIsgnMFBYqYb5znn">
+        <div class="label" data-page-node-id="x3vLJUX34V8Jm8y401qDW6">工具箱：三种信息结构下的最优契约</div>
+        <div class="content" data-page-node-id="xetSxutCqIrk6hyM8mhpEb">①<strong data-page-node-id="BdHCYi3SUmIQdve6RkAxaI">完全信息</strong>：努力可直接观察，最优是"固定工资+要求努力"，保险与激励兼得；②<strong data-page-node-id="7dvfBkijUyxdVBj92mpb3Y">非对称信息+代理人风险规避</strong>：只能在保险与激励间折中——契约是"固定部分+产出分成"；③<strong data-page-node-id="9AGYy7PgWER7cW4psGk3tr">非对称信息+代理人风险中性</strong>：把全部剩余交给代理人（"卖断"），激励最大化。</div>
+        <div class="example" data-page-node-id="cDeU4KqF2GoK2GtfdjIhLN">💡 <strong data-page-node-id="V4rYBFR6W7yUIkLs12FqXp">对比</strong>：风险中性时"全部产出归代理人"最干净——这正是承包制、买断制、加盟制的理论依据。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="trgsNRDBwKQP5ggFmRg0mp">
+        <div class="label" data-page-node-id="4sqgHHGaTdkJqU4kGlI3xF">洞察：风险分摊与激励的此消彼长</div>
+        <div class="content" data-page-node-id="xfvWdWLCHBBeOUUR4qOFTa">非对称信息下，保险（帮代理人平滑风险）与激励（让代理人承担后果）不可兼得：给代理人越多保险，他越敢偷懒；让他承担越多风险，激励越强但他越不满。最优契约是权衡点——这比"高薪养廉"或"重罚懒人"的一刀切深刻得多。</div>
+        <div class="example" data-page-node-id="BRRifpN7J4OFw8rNQYzwa3">💡 <strong data-page-node-id="OGuAp2yDqWEjiehpJ1H4DX">现实</strong>：销售提成高（激励强、风险大）vs 底薪+低提成（保险足、激励弱），两类岗位的薪酬结构差异就是这条权衡的产物。</div>
+      </div>
+      <div class="info-card debate" data-page-node-id="9vi1pyZeEtYA3M3TK2nA7P">
+        <div class="label" data-page-node-id="tWVmdo7pxlj8RYuusMGdMj">延伸争论：道德风险与 MM 定理</div>
+        <div class="content" data-page-node-id="TOtE8QeddH6Ki0axcm2u9F">MM 定理（资本结构与公司价值无关）隐含假设"不存在道德风险"。一旦引入经理可能偷懒/滥用的现实，资本结构就重新变得重要：债务带来"硬约束"（还本付息的刚性压力）和破产威胁，能部分替代股东的监督——资本结构因此成为激励工具。</div>
+        <div class="example" data-page-node-id="HDWDTtNljuDTHzn5D14Fpz">💡 <strong data-page-node-id="RhxTa1vnTmphjxw0zkBuRY">例子</strong>：杠杆收购（LBO）让管理层背上债务，被诟病"压榨"，但理论上看恰是用债务约束经理行为的激励设计。</div>
+      </div>
+      <div class="info-card effect" data-page-node-id="2aSy7RqyDhvYtBKxhafZd2">
+        <div class="label" data-page-node-id="MNnQmwr0WgglNX6fKe5nqD">后果：代理成本与监督成本的权衡</div>
+        <div class="content" data-page-node-id="EQYOQmeuCDo4chTiWBbiWf">委托人可以选择"监督"（观察努力）或"激励"（让代理人自担后果），但两者都有成本。最优治理是让"边际监督成本 = 边际激励成本"。现实中往往混用：KPI考核+提成+期权，本质是监督与激励的组合拳。</div>
+        <div class="example" data-page-node-id="mCrpCMwMKs028WYfr4pSqO">💡 <strong data-page-node-id="YimQd19ggoHcHnbNlv45p9">类比</strong>：家长管孩子写作业——全程盯着（监督）累且失真，完全放手（激励）怕失控，多数家庭用的是"抽查+奖励"的折中。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 不可验证性 -->
+  <div class="section" id="nonverif" data-page-node-id="bjIlZeWarfdH0ntCHhuxPl">
+    <h2 data-page-node-id="SFe5YjAZA501JuIQCmCCko">🔒 问题四：不可验证性——对簿公堂都说不清（第6章）</h2>
+    <div class="info-grid" data-page-node-id="of9D4ok7FaRdvNhbH3hwaB">
+      <div class="info-card concept" data-page-node-id="OyWjuHYrm3nhpGT7c1N3BC">
+        <div class="label" data-page-node-id="zvqvlWhN7PhEvLGgvANifr">核心概念：不可验证性
+          <button class="glossary-trigger" onclick="openModal('nonverif')" data-page-node-id="G66rHQjG7BLACRK3BBEfFA">?</button>
+        </div>
+        <div class="content" data-page-node-id="Q4hW4GKWweMUEg3HdpRmSM">一种比道德风险更"刁钻"的信息问题：契约双方都清楚事实真相，但第三方（法院、仲裁者）无法证实。于是写在纸上的条款形同虚设——违约了也无法强制执行，契约的"法律兜底"失效。</div>
+        <div class="example" data-page-node-id="N3leAewUVkFiuhhEwZFRl5">💡 <strong data-page-node-id="U0YtvLpk5OUTNrGngYH45l">类比</strong>：夫妻间的口头承诺——双方都心知肚明，但没有"证据"能拿到法庭上，只能靠信任和机制自洽。</div>
+      </div>
+      <div class="info-card mechanism" data-page-node-id="d6LaNgcem4f53RaSk3cm06">
+        <div class="label" data-page-node-id="805odpZUkYYLuDVyjiuxVh">事前有契约 vs 事前无契约</div>
+        <div class="content" data-page-node-id="oc6OC3P3Ufe0uB3dCuWMvf">不可验证性下，<strong data-page-node-id="26zmoB1ai8gq4zMQLUAmRD">事前契约</strong>（把所有情形写清楚）往往不可行——因为关键变量无法被第三方证实，写也白写；<strong data-page-node-id="T5WXRynqXwOgxVYMZ2DKgj">事前无契约</strong>（默认"到时候再谈"）则陷入事后谈判的敲竹杠风险（hold-up）：投入了专用性投资的一方被对方"锁定"宰割。</div>
+        <div class="example" data-page-node-id="Oj9FbCrDcagJXoiX54YVa7">💡 <strong data-page-node-id="5yhuICSJ18YYDSgipBebnB">例子</strong>：供应商为某大客户定制了专用产线，事后客户压价——产线只对这个客户有价值，"不降价就散伙"的威胁是可信的。</div>
+      </div>
+      <div class="info-card tool" data-page-node-id="ihpoecY1AydyHK0eUjFCFJ">
+        <div class="label" data-page-node-id="kHx8KgSE1h2HDPjvrZcIgA">解法：说真话的纳什均衡</div>
+        <div class="content" data-page-node-id="6heaq80vSp1CAa6yr1a3V3">当事实无法被第三方验证，可以设计一种机制让"说真话"成为各方的均衡策略：谁撒谎谁承担后果，诚实反而收益最高。比如"由对方出价、自己选择接受或拒绝"式的安排，逼着有信息的一方自我披露。</div>
+        <div class="example" data-page-node-id="orFAis4zcu6N9OkJvmtmpl">💡 <strong data-page-node-id="GHsHULP800HV5qnb14UMRu">类比</strong>："分蛋糕的人最后拿"——分者为了不让自己吃亏，会尽量分得公平，这是靠利益结构逼出"诚实行为"。</div>
+      </div>
+      <div class="info-card case" data-page-node-id="m9IF7r734a20lWlcYZ2ZbZ">
+        <div class="label" data-page-node-id="CosunDoABygWyP11zxTA7B">书内重磅案例：承包制与不可验证性</div>
+        <div class="content" data-page-node-id="PHt3hprX2xNDrasp2CQc5t">家庭联产承包制为何比集体生产有效？核心在于：农业的"努力"高度不可验证（风里雨里、上工磨洋工），监督成本极高。承包制把剩余索取权直接交给农户——"交够国家的、留足集体的、剩下都是自己的"，用自我激励绕开了不可验证性。</div>
+        <div class="example" data-page-node-id="ZuEpc9fhnFrlRBFBL1Wuuq">💡 <strong data-page-node-id="bZ0iYBPYDzmqNw5i9fuXmT">洞察</strong>：不是农民变勤快了，而是制度让"偷懒"的收益归自己、损失也归自己——激励结构变了。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="yAEJIgSEwWjBdRFmWToeDZ">
+        <div class="label" data-page-node-id="tGbj4a6se53ltqQlcXnWw1">洞察：制度的本质是"应对信息约束"</div>
+        <div class="content" data-page-node-id="2ZFtRsHCsIk1FyKJF6z4v9">为什么有的制度"多此一举"、有的制度"不可思议地有效"？信息经济学给出的答案是：制度形态由信息结构决定。当努力不可验证时，最优解不是更多监督（成本无穷大），而是重新配置产权与剩余索取权——这是理解改革开放的一把钥匙。</div>
+        <div class="example" data-page-node-id="ebdH7XMp0X1DuI13fLG8V2">💡 <strong data-page-node-id="5ygtujDRkFKRMNu63xVv7U">延伸</strong>：国企"办社会"、机关"写材料"等看似无效率的安排，换个视角看都可能是对某种信息约束的次优适应。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 机制设计 -->
+  <div class="section" id="mechanism" data-page-node-id="38rnElRvqbfiIvFiNA8GSj">
+    <h2 data-page-node-id="GCSVJp2EliNlZL3BXjP0Zk">🧩 统一解法：机制设计——把规则变成"说真话+好好干"的游戏（第7章）</h2>
+    <div class="info-grid" data-page-node-id="w6in43jzxTYO5Y0tuimIdw">
+      <div class="info-card concept" data-page-node-id="fhT3bBDpOuxgmEDZUF9ga5">
+        <div class="label" data-page-node-id="S8inIjVganO313MPYL5HcY">核心概念：机制设计
+          <button class="glossary-trigger" onclick="openModal('mechanism')" data-page-node-id="E4EcxEZzuSqGiBWE256MPm">?</button>
+        </div>
+        <div class="content" data-page-node-id="H2H7CcJ0PT0Tvr72Tbo1Oj">前三章的思路是"给定信息结构，求最优契约"；机制设计反其道而行：<strong data-page-node-id="RAA8r9mbuLpBioHkogyG8B">先定目标（如效率、收入、公平），再设计博弈规则</strong>，让参与者在自利动机下恰好实现目标。它是"逆向的博弈论"——规则是设计出来的，不是给定的。</div>
+        <div class="example" data-page-node-id="0B1Rnngzj1DgUTDoqDT1tn">💡 <strong data-page-node-id="qRkfMCp72BfTL1sdyKU4LG">类比</strong>：普通博弈论是"裁判看比赛"，机制设计是"教练设计规则让比赛打出想要的结果"。</div>
+      </div>
+      <div class="info-card tool" data-page-node-id="ls8Bd3jyMPCJS69K2YyvBv">
+        <div class="label" data-page-node-id="6sfHQ7nKyxnM85P3icjPaU">核心工具：显示原理
+          <button class="glossary-trigger" onclick="openModal('revelation')" data-page-node-id="d3vllN6kHwCDOUssdjP1kP">?</button>
+        </div>
+        <div class="content" data-page-node-id="MPcW0coWkKR9naPfAbZaco">Myerson（1979）的显示原理是机制设计的"降维打击"：任何复杂机制（拍卖、菜单、谈判）都可以等价地转化为一个"直接机制"——让大家直接汇报自己的类型，并保证说真话是均衡。于是设计者只需搜索"激励相容的直接揭示机制"。</div>
+        <div class="example" data-page-node-id="mLJY9FM5TMDkjSPm3q3hrD">💡 <strong data-page-node-id="chUQbt2aWSJYPSvdT3BOLQ">意义</strong>：把"设计任何规则"的无限问题，压缩成"找让诚实成为最优策略的规则"的有限问题。</div>
+      </div>
+      <div class="info-card mechanism" data-page-node-id="Yc0ChOjK3C8kwAlCC6bKbx">
+        <div class="label" data-page-node-id="WwEiLuEYefdFqIp6G4GaYx">两道约束：参与约束 + 激励相容
+          <button class="glossary-trigger" onclick="openModal('incentive')" data-page-node-id="6E1bicwlc3PJ3sGlytH9gi">?</button>
+        </div>
+        <div class="content" data-page-node-id="pDkZKGeo054UqGEM25nB4O">好机制必须同时满足：<strong data-page-node-id="x7Z4Z4tgIc3C8IhfS4re1J">参与约束（IR）</strong>——参与者愿意加入，收益不低于其外部选项；<strong data-page-node-id="wOvGQ6AzYE2xaHq2cNybEP">激励相容（IC）</strong>——参与者在自利动机下愿意说真话/好好干，而非阳奉阴违。机制的难度在于：两约束可能冲突。</div>
+        <div class="example" data-page-node-id="tYktBlDmRVobMArAxRKkiB">💡 <strong data-page-node-id="1fEPY41p33hzavjBkNMpND">例子</strong>：想让人工便宜又真实地报成本——报得高违反 IC（虚报），报得低违反 IR（亏本），好机制是在夹缝里找平衡。</div>
+      </div>
+      <div class="info-card case" data-page-node-id="jIHsLbutw649F5fvO3jAuC">
+        <div class="label" data-page-node-id="txIXU9KC91LIZbIfaY7fDD">应用场域：拍卖、公共品、最优税制</div>
+        <div class="content" data-page-node-id="YsQ0lUDkWvoJpRWL0TmfiB">机制设计是拍卖理论（维克里二价拍卖：出价真实即为最优）、公共品供给（如何让人为公共品如实付费）、最优税制（如何在公平与激励间取舍）的统一框架。Vickrey 拍卖至今是互联网广告竞价的底稿。</div>
+        <div class="example" data-page-node-id="ZJr1qjyhoBlizfbuKIkDKT">💡 <strong data-page-node-id="LbgDF6KcoXRnwT2X4SFtCm">例子</strong>：Google 的广义二价广告拍卖，就是让广告主"报真实意愿价"的机制设计实战。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="vbGau0uKZlxAxR4FoL6v4p">
+        <div class="label" data-page-node-id="yDqp5ppqD0jcAMavX0AA6o">洞察：机制设计是"计划与市场之争"的第三路径</div>
+        <div class="content" data-page-node-id="VRms0t9MiUrhTKxfvD11Ef">计划经济最根本的困难不是算力不够，而是"信息问题"：中央无法获得真实偏好与成本信息，且下级有动机虚报。机制设计的启示是——与其纠结"谁配置资源"，不如设计"让说谎无利可图"的制度。这为理解第9章的中国改革提供了理论坐标。</div>
+        <div class="example" data-page-node-id="pGpUjfEwHoZiqWupODZjCg">💡 <strong data-page-node-id="voIb6AKB33QJQqqSp8aJbp">延伸</strong>：承包制、双轨制、国企放权，都可以被重新表述为"面向中国国情的机制设计实验"。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 企业内激励 -->
+  <div class="section" id="firm" data-page-node-id="uKhdI1OsgEys4gwHZr0kVA">
+    <h2 data-page-node-id="d7qUeAuh9PEA3FHXqTlgra">🏢 企业内激励：机制设计在企业里的落地（第8章）</h2>
+    <div class="info-grid" data-page-node-id="Ci5M9rdgLraxsr2JFebSDD">
+      <div class="info-card concept" data-page-node-id="chOTn3p919PygQJey07HJ7">
+        <div class="label" data-page-node-id="7YRhcDx7DBeUx1nR8jfZpO">核心概念：企业内部劳动力市场</div>
+        <div class="content" data-page-node-id="2CXi9yIS6jsYaaWHIdAYFc">企业内部存在一个区别于外部市场的劳动力市场：长期雇佣、内部晋升、薪酬与工龄挂钩、岗位内部流动。它的存在部分是为了解决外部市场难以解决的信息问题——内部长期观察积累了对员工能力的更准确信息。</div>
+        <div class="example" data-page-node-id="pfoqoWxVqpuhtPOAYEtPut">💡 <strong data-page-node-id="QMOCSWFxKMOAJFHaO1hyRl">例子</strong>：日本企业的年功序列制，在信息经济学视角下不是僵化，而是"用长期雇佣换信息积累"的制度安排。</div>
+      </div>
+      <div class="info-card tool" data-page-node-id="1cMBdPpydACwcBNte8dbeQ">
+        <div class="label" data-page-node-id="WG0gdhLWFv6UYECH2gDeWN">工具：激励指标的选择标准</div>
+        <div class="content" data-page-node-id="BwDXBVDiylwVtXy8U7alKj">设计激励契约先要选"考核什么"。好指标应满足：①与努力相关；②可验证（第三方能查证）；③不易被操纵。现实中常见困境是——完美的指标不存在，只能用"近似指标"，于是出现考核扭曲。</div>
+        <div class="example" data-page-node-id="alm8ajGWhlrLQsbDJfmAmz">💡 <strong data-page-node-id="Qq28m1g1a29DxNoINEj7id">例子</strong>：医院考核"门诊量"，医生就多开快诊；考核"治愈率"，医生就拒收重病人——指标会"长出反作用"。</div>
+      </div>
+      <div class="info-card mechanism" data-page-node-id="z49g6SKDq0zQMiCCKAgYq3">
+        <div class="label" data-page-node-id="OcrcgkS6jdlFN3vBsSSyY0">机制：绝对绩效 vs 相对绩效（锦标赛）
+          <button class="glossary-trigger" onclick="openModal('tournament')" data-page-node-id="1EXF9X5CUcEASVlKBsSlS1">?</button>
+        </div>
+        <div class="content" data-page-node-id="4bhlFf1zHeKRYPmgtoZvkH"><strong data-page-node-id="diC6nvnDRJv5G7x6OCDewe">绝对绩效</strong>：报酬挂钩个人产出——简单直接，但受共同噪声干扰（市场好时人人达标）；<strong data-page-node-id="xi2VVcj7aXSUxTc2Czb614">相对绩效</strong>：报酬挂钩"排名/相对位置"（锦标赛）——自动滤掉共同冲击（市场差大家一起差），但会诱发员工间的恶性竞争与合谋。现实常两者混用。</div>
+        <div class="example" data-page-node-id="XqwK4dxDGbDGcIQG90dXk0">💡 <strong data-page-node-id="VOVqu0NmObrsBOOHyzuQ2M">例子</strong>：销售团队"业绩排名奖"滤掉了行情好坏，但容易导致抢单、藏单；纯提成则把行情风险甩给了销售员。</div>
+      </div>
+      <div class="info-card effect" data-page-node-id="XotJ0qkmMejQNB2DI46Z8G">
+        <div class="label" data-page-node-id="EkEz1fY7SEpZwSGXjsH8mX">后果：晋升锦标赛的激励与扭曲</div>
+        <div class="content" data-page-node-id="4RUULdOZVK1kTlxohebV4I">科层组织里的晋升就像一场场锦标赛：赢家通吃（级别越高薪酬差距越大），激励下层拼命竞争。但锦标赛的代价是：①容易诱发"做表面功夫"；②层级越往上名额越少，落选者激励崩溃；③"论资排辈"可能是组织为避免过度竞争的次优选择。</div>
+        <div class="example" data-page-node-id="XegppwM8IqX92nHMqvEFUt">💡 <strong data-page-node-id="klA6MGc9imDvlmWNa7msKe">洞察</strong>：为什么大厂晋升"PPT 文化"盛行？因为相对绩效评价下，可比性、可见性变得比真实产出更重要。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="FdQxiel1w9yRpguTx6v3bl">
+        <div class="label" data-page-node-id="AVz4TubufywV54M2tGXNtD">洞察：考核什么，就得到什么（含多任务问题）</div>
+        <div class="content" data-page-node-id="UkGycjwq3xq69AgWrG3NNn">当员工承担多项任务、而只有部分任务可考核时，可考核的任务会被挤爆、不可考核的被荒废——因为激励指向哪里，注意力就流向哪里。这是"考核指标的黑暗面"：KPI 化的世界必然出现"指标优雅、实质空心"。</div>
+        <div class="example" data-page-node-id="VRjGKCHaRvL7afGnw10LTG">💡 <strong data-page-node-id="zx5mo723LakNRjBzUffck4">例子</strong>：老师考核成绩→只抓应试；警察考核破案数→选择性立案。多任务理论为"指标通胀"提供了严格解释。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 转型的中国 -->
+  <div class="section" id="china" data-page-node-id="3VljDPB60GCCgUPOY2NtPY">
+    <h2 data-page-node-id="21lKFKrWhZDDBQkr5V6yrG">🇨🇳 转型的中国：信息视角下的改革叙事（第9章）</h2>
+    <div class="info-grid" data-page-node-id="POCenh735Aq3CntIHUtxo6">
+      <div class="info-card debate" data-page-node-id="e1ZgjffE2zFXEEUsIHBAfD">
+        <div class="label" data-page-node-id="sH562YPA9GCjhFkjLXEUeA">世纪之辩：计划经济 vs 市场经济（信息维度）
+          <button class="glossary-trigger" onclick="openModal('hayek')" data-page-node-id="375FAnsJ5jVy1oFah0Jksu">?</button>
+        </div>
+        <div class="content" data-page-node-id="MnBv16AGaaUzwZrY09gsXl">兰格-勒纳的市场社会主义设想：中央计划机关用"试错法"模拟市场价格（会计价格），照样能实现有效配置。哈耶克（1945）反驳：知识是分散的、情境化的、无法集中上传的，价格体系的伟大在于它让分散知识自发汇聚——且价格同时承担激励功能。</div>
+        <div class="example" data-page-node-id="CKW1iGmQl3ZXK2D0HCpj66">💡 <strong data-page-node-id="4MaDaAqHy8MVFDXqdWfVg8">洞察</strong>：这场争论的本质是"信息能否被集中处理"——信息经济学的答案倾向哈耶克：信息不仅难以集中，还会被下级策略性扭曲。</div>
+      </div>
+      <div class="info-card concept" data-page-node-id="BAvSphzSMBLT5kp54u9Pph">
+        <div class="label" data-page-node-id="SmwFRiFUKMiqGoTwMzzOZD">产权制度的效率特征</div>
+        <div class="content" data-page-node-id="JqW0F7gpDwpN6vHnscA5j9">产权安排决定"收益与成本归谁"，也就决定了信息与激励的配置方向。产权清晰=行为后果可归因=激励相容；产权模糊=后果外部化=机会主义空间大。国企困境的制度根源，正在于剩余索取权与剩余控制权长期分离。</div>
+        <div class="example" data-page-node-id="re9gUBmSjDjPMysgTaIjpq">💡 <strong data-page-node-id="ztCvYL4Q0KbaQUsouXXA0B">例子</strong>："公地悲剧"的信息经济学版本：地是公家的，没人有动力去了解它、爱护它——因为改良的收益不被个人占有。</div>
+      </div>
+      <div class="info-card history" data-page-node-id="Y0CT6yCKjoDQT8YOEOnHpr">
+        <div class="label" data-page-node-id="0FDXHF7CzVPfpgzYrGf8KO">历史案例：从计划到市场的中国路径</div>
+        <div class="content" data-page-node-id="Zh0Bhb8e31FA2qxQQuCP9t">中国改革不是"休克疗法"式的整体切换，而是增量式的制度渐变：家庭联产承包制（重构农业激励）→价格双轨制（边际放开市场定价）→国企放权让利→非公经济成长。每一步都是对特定信息约束的应对，而非教条选择。</div>
+        <div class="example" data-page-node-id="gydLJw2nJ44WcMiTVzRqJz">💡 <strong data-page-node-id="U08RixUQMOkqICy6sFawaz">细节</strong>：双轨制的精妙在于"增量改革"——计划内存量不动（稳），计划外增量按市场价（活），既保稳定又引入竞争。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="yBJtfIz73KQ1sqXEUGRC20">
+        <div class="label" data-page-node-id="SnC9Dp2ioh95T2ANIxn6tB">洞察：中国改革的成功=利用分散信息+激励相容</div>
+        <div class="content" data-page-node-id="cIHrhBD3fdXIQp6iBEygDy">本书的核心判断：中国改革之所以"摸着石头过河"却整体有效，是因为它一次次把决策权与剩余索取权下放给掌握当地信息的人（农户、企业、地方），让"信息优势方"同时成为"收益承担方"——这正是一切好机制的共同结构。</div>
+        <div class="example" data-page-node-id="6ZPVtFSEapOADheNVI9d1U">💡 <strong data-page-node-id="EujphUq2S46zaNb7CFu8Rl">呼应</strong>：与第6章承包制、第8章内部激励同构——改革的底层逻辑是信息与激励的再配置，不是简单的"放权"或"收紧"。</div>
+      </div>
+      <div class="info-card effect" data-page-node-id="5obee5YDn6hBObCF3bq8UY">
+        <div class="label" data-page-node-id="Gxx8q249OYTeIxcAo85L6w">遗留难题：国企改革与委托链条</div>
+        <div class="content" data-page-node-id="MsaKzIyHtMoa4AtT6HaFoE">国企的所有者（全民/国家）→ 多级委托 → 经营者，链条极长，每一环都存在信息损失与激励衰减：所有者缺位、内部人控制、预算软约束。信息经济学指出其病根不是"某个人不好"，而是结构性的信息与激励错配。</div>
+        <div class="example" data-page-node-id="JbPfV1FkLsdorCE6VLdvo4">💡 <strong data-page-node-id="XV9cTDyAEociZ7fPzTqaiY">类比</strong>：像"所有人委托管家看房子，管家又雇了十几个包工头"——每一层都看不到真实情况，最终房子维护的好坏无人真正负责。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 组织边界 -->
+  <div class="section" id="boundary" data-page-node-id="kEj9AZJD7dFvtgg5OKe16p">
+    <h2 data-page-node-id="pFimyucSctQSd4BrVECLcJ">🪢 组织边界：市场与企业的分界是"信息与激励"的分界（第10章）</h2>
+    <div class="info-grid" data-page-node-id="EEYxMMcFVlfvQbGaLEVIAe">
+      <div class="info-card concept" data-page-node-id="kz7IPSOC1XKTrKvQWL61zF">
+        <div class="label" data-page-node-id="TbFuyBCvrRuOsce5yL6RMU">核心问题：企业为什么存在？</div>
+        <div class="content" data-page-node-id="8Bw5fBIHnXMX1nEdgnMpge">科斯的回答：交易成本——市场不是免费的，谈判、签约、执行都有成本，企业用内部命令替代市场契约以节约交易成本。本书补充信息维度：市场机制依赖价格信号，但当信息不对称严重、价格信号失真时，企业内部的权威与监督反而更高效。</div>
+        <div class="example" data-page-node-id="Zl5bFzwJL7D1DFILzjpUEY">💡 <strong data-page-node-id="jqm8B9d61QwT2SqlfA9vZR">类比</strong>：市场是"外包"，企业是"自建"——选哪个，取决于"外部契约的摩擦"与"内部管理的成本"谁更大。</div>
+      </div>
+      <div class="info-card debate" data-page-node-id="fnsENeOx4OEgFlLIHhCrIV">
+        <div class="label" data-page-node-id="leKk5hu5NSOjUPDmIHSw7C">两难：市场失灵 vs 组织失灵</div>
+        <div class="content" data-page-node-id="BkOSsrJMoCt3gygxLmryj4">市场有失灵（信息不对称下的逆向选择、道德风险），组织也有失灵（内部官僚成本、监督失效、激励衰减、X-低效率）。企业的边界不是"越大越好"或"越小越好"，而是两种失灵在边际上的平衡点。</div>
+        <div class="example" data-page-node-id="MlHdKxJVZpxrSLmrGBj5mN">💡 <strong data-page-node-id="MkzQmDqSVVa4vYSjxHay9L">例子</strong>：为什么互联网巨头什么业务都想自研、最后又纷纷"聚焦主业"？——边界的摆动正是两类失灵的角力。</div>
+      </div>
+      <div class="info-card mechanism" data-page-node-id="EM5Zgc25M7zBWl3aDxG7t7">
+        <div class="label" data-page-node-id="ufSBnFbrE3cqiRMARWpW1Y">组织内部的激励与协调</div>
+        <div class="content" data-page-node-id="h3FiSHwP0aEbuRXtqhnZrC">组织之所以能存在，靠的是内部治理机制：权威命令、部门分工、内部市场、文化认同、晋升激励。但组织越大，信息传递越失真（层层上报的信息损耗），协调成本越高——这是"大企业病"的信息经济学根源。</div>
+        <div class="example" data-page-node-id="mQD3pQlVdjminJncuCGtiO">💡 <strong data-page-node-id="rGCSC2yLv93y9F1qLcejif">例子</strong>："大公司做不成创新"的流行说法，可翻译为：组织规模增长后，激励相容与信息传递的边际成本超过了协同收益。</div>
+      </div>
+      <div class="info-card insight" data-page-node-id="kxgmRMqrOSfI6w7pjS3IJe">
+        <div class="label" data-page-node-id="F2ncak8i6WAxlvM9gL067I">收束洞察：边界=信息与激励的平衡点</div>
+        <div class="content" data-page-node-id="BY9g89WIpgum7vIgcAXfDm">全书的终点落在组织理论上：无论是市场、企业还是介于两者之间的混合形态（战略联盟、平台、生态），本质上都是"在特定信息结构下，寻找激励与协调成本最小化的治理安排"。制度形态万千，底层逻辑一致。</div>
+        <div class="example" data-page-node-id="hFs75TPmAzFAEDgaGZmhAC">💡 <strong data-page-node-id="lI3q3UDDCdk15CyRUbVscC">现实</strong>：平台经济把"交易撮合"外部化、把"信任"制度化（评分体系、担保交易），正是用技术手段重塑信息结构、改变治理边界。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" data-page-node-id="5MHvyy9ZTDzU5deA8Zfi2G">
+
+  <!-- 认知升级主线 -->
+  <div class="section" id="insights" data-page-node-id="eyYKqAfVfy95en7bg0CPaY">
+    <h2 data-page-node-id="OnJgZMZMZRZhPpp5KxAfz0">🧠 认知升级主线：读完这本书，你的思维应该被改变的四件事</h2>
+    <div class="insight-card" data-page-node-id="6lNbqZNlLgnqRGSDznIcer">
+      <div class="insight-title" data-page-node-id="Rtb6pnCkL4L5qIdJulbxgm">升级一：从"市场失灵"到"信息不对称"——不是市场坏了，是信息分布出了问题</div>
+      <div class="insight-body" data-page-node-id="ByvG2Dm6N73mVv28E30Q8U">传统争论喜欢在"市场 vs 政府"之间站队。信息经济学的视角更底层：许多"市场失灵"其实是信息不对称的结果，而制度（契约、产权、机制）正是对信息约束的反应。看到信息结构，就看到了制度设计的真正约束条件。</div>
+      <div class="insight-evidence" data-page-node-id="qdl1ljDqxyRqocT6MDSXsj">证据：旧车市场（Ch3）、信贷配给（Ch3）、兰格-哈耶克之争（Ch9）——同一把"信息"钥匙贯穿。</div>
+    </div>
+    <div class="insight-card" data-page-node-id="wVTL3jCiZIKGfKwtAyHqEv">
+      <div class="insight-title" data-page-node-id="IM6QJsQ7CSv4ExGZOijxXX">升级二：价格不是唯一信号——信息可以"发"出去，也可以"筛"出来</div>
+      <div class="insight-body" data-page-node-id="Sn2YsSGPABTdBmfd21Drmv">教科书里的价格万能论被打破后，我们看到信息传递的完整工具箱：信号发送（主动亮明）、信息甄别（菜单筛选）、担保声誉（抵押信任）、标准化（消除不确定）。理解"信号成本决定信号可信度"，能解释文凭、广告、认证、口碑背后的统一逻辑。</div>
+      <div class="insight-evidence" data-page-node-id="UJ4sh0i1DpVlPp2oNcifAi">证据：Spence 教育信号（Ch4）、保险免赔额设计（Ch4）、孔雀开屏（Ch4）——跨学科的同一结构。</div>
+    </div>
+    <div class="insight-card" data-page-node-id="8EwFNKR1ZXiKzz2gHsvfqw">
+      <div class="insight-title" data-page-node-id="SEr6wJ6DZi11vcPmfFOFjZ">升级三：激励问题=信息问题——一切"管不住"背后都是"看不见"</div>
+      <div class="insight-body" data-page-node-id="kBtCHDp5z493jXphjdhOBX">委托-代理、不可验证性、多任务考核……看似各异的难题共享同一根源：委托方看不见、验证不了代理方的行为。于是最优解不是"加强监督"（成本无穷大），而是重构剩余索取权、设计说真话机制、选择恰当的考核指标。管理学的许多常识，在信息经济学里都有严格版。</div>
+      <div class="insight-evidence" data-page-node-id="nUz56lOrBie5kY5WiPasCg">证据：委托-代理模型（Ch5）、承包制（Ch6）、考核扭曲（Ch8）——从理论到中国实践的闭环。</div>
+    </div>
+    <div class="insight-card" data-page-node-id="7NyN88Ba0le8qzPCM1UQpY">
+      <div class="insight-title" data-page-node-id="MbpINVB7PCHyNEDCbWafXS">升级四：制度设计=机制设计——"看得见的制度"背后都是"激励相容"的较量</div>
+      <div class="insight-body" data-page-node-id="3Cea94LYIKNo1cwhfhJPuu">机制设计给出终极视角：任何制度（税制、拍卖、公司治理、改革方案）都可以被评判为"是否满足参与约束与激励相容"。改革的智慧不是挑选"好人"，而是设计"让坏人也不敢使坏"的规则——中国改革的故事，正是这一视角的宏大实践。</div>
+      <div class="insight-evidence" data-page-node-id="ZsWtE3XHFjECHYfyQHaZmN">证据：显示原理（Ch7）、双轨制（Ch9）、组织边界（Ch10）——规则设计学，而非道德劝诫学。</div>
+    </div>
+  </div>
+
+  <!-- 贯穿规律 -->
+  <div class="section" id="laws" data-page-node-id="bDEuZyvYsKEjt9Tz4VYZpn">
+    <h2 data-page-node-id="Dxv7L5vjVcFQ29z2YpJliS">🔄 贯穿规律：全书中反复出现的三种模式</h2>
+    <div class="pattern-grid" data-page-node-id="YP3vXSXimigRyqwnlyxQoI">
+      <div class="pattern-card" data-page-node-id="HdurNRZ9t6DFngOMZ8zwAf">
+        <div class="pattern-name" data-page-node-id="msn8oAWAmtMGFsm6g00N0B">规律一：信息劣势方设计规则，信息优势方发出信号</div>
+        <div class="pattern-desc" data-page-node-id="TvONCb380dNT0YyDJbyXd9">全书各章的角色分工高度一致：拥有信息优势的一方主动"发信号"（卖车人、求职者、借款人），信息劣势的一方"设计机制"（买方、雇主、银行）。谁信息少，谁就该把规则定得更聪明。</div>
+        <div class="pattern-examples" data-page-node-id="r1nNWPjTqEk5rYboWp525d">信号发送 Ch4 · 信息甄别 Ch4 · 信贷配给 Ch3 · 机制设计 Ch7</div>
+      </div>
+      <div class="pattern-card" data-page-node-id="kNjol0ndGSgVfYOwbVXkCv">
+        <div class="pattern-name" data-page-node-id="s6c9EtVcSN2nZUYIgtDv90">规律二：任何制度都要过"两道关"——参与约束与激励相容</div>
+        <div class="pattern-desc" data-page-node-id="XRtfAwYKTdmSG9vTFLNsiP">从最优契约到承包制、从拍卖到双轨制，检验制度优劣的标尺始终是：参与者愿不愿意来（IR）、来了愿不愿意说真话/好好干（IC）。制度失败，几乎都可以归因于某一道关没守住。</div>
+        <div class="pattern-examples" data-page-node-id="0NYSWrYMOr26nAy2CsIl80">委托-代理 Ch5 · 机制设计 Ch7 · 企业内部激励 Ch8 · 产权改革 Ch9</div>
+      </div>
+      <div class="pattern-card" data-page-node-id="hwTDq0V9OdaHtYRsJeJchq">
+        <div class="pattern-name" data-page-node-id="laUxmTWJiOvKt4GgXQYAJI">规律三：中国改革=信息与激励的再配置</div>
+        <div class="pattern-desc" data-page-node-id="4qYHspq19EwJFkXCHgk0iq">承包制把剩余索取权给农户、双轨制让边际信息用市场定价、国企放权让利、地方竞争调动信息优势——改革的核心动作不是意识形态的站队，而是反复把"知道的人"变成"受益/担责的人"。</div>
+        <div class="pattern-examples" data-page-node-id="kD1zEnWTFTFMi0eJ55BLrU">不可验证性 Ch6 · 从计划到市场 Ch9 · 组织边界 Ch10</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心金句 -->
+  <div class="section" id="quotes" data-page-node-id="yl0XDwCIN9SEwBb49qKLtO">
+    <h2 data-page-node-id="fXqKnzVPEGE8S9nHKDYohk">💬 核心金句</h2>
+    <blockquote class="quote-block" data-page-node-id="lkkjgWKp6QqKxQXJO8czGZ">
+      <p data-page-node-id="ixfkBEB0hs855WnCnlUWOK">"激励的困难，本质上都是信息的困难——凡是激励失效的地方，仔细看，多半是信息不对称在作祟。"</p>
+      <span class="cite" data-page-node-id="6IWv7BCKQZZh8CQxGr9OE1">——《信息与激励经济学》主旨（综合提炼）</span>
+    </blockquote>
+    <blockquote class="quote-block" data-page-node-id="YNrLJwgwFKf1d4uGqhJlwG">
+      <p data-page-node-id="PT2jbTIvj7FPZmCaOrC7XD">"当'看不见的手'变成'看不见的信息'，市场依然伟大，但需要制度为它补上'看得见的机制'。"</p>
+      <span class="cite" data-page-node-id="AT9Zz1zXXXbtGgocsmqBR7">——信息经济学的学科立场（综合提炼）</span>
+    </blockquote>
+    <blockquote class="quote-block" data-page-node-id="XoB9gRGBob0K7t3h6iM5Mf">
+      <p data-page-node-id="OaI1Oy5GpZ7OnxzSaDyJqN">"改革不是挑选好人，而是设计一种让坏人也不敢使坏的规则；承包制之所以伟大，正因为它让农民自己激励自己。"</p>
+      <span class="cite" data-page-node-id="Dvm8q0Zj4oGGoKNhS1SZGn">——关于机制设计与中国改革（综合提炼）</span>
+    </blockquote>
+  </div>
+
+  <!-- 延伸与比较 -->
+  <div class="section" id="extension" data-page-node-id="ysHhs0SjxPx24b4GEtHLza">
+    <h2 data-page-node-id="yv9enp5m2KKCBpgGcPNM2p">📊 延伸与比较</h2>
+    <table class="extension" data-page-node-id="4N4H35VfMT1YnZq2Vt3oyu">
+      <thead data-page-node-id="utFGYuRNGB2XeWYeN05eNq"><tr data-page-node-id="yHtgMuDGy1AGujV0xb2GIf"><th data-page-node-id="wly7xkp756Jv477lMY3reT">思考维度</th><th data-page-node-id="wX3VFWCT9fGTlEkDVP0qds">内容</th></tr></thead>
+      <tbody data-page-node-id="cjGFjtnN3ew6RDOvdDG8E3">
+        <tr data-page-node-id="0BqoDbgSjFMwYOypbXnCGT">
+          <td data-page-node-id="xMsLqI2yD9FTu8O0HkxK0D">本书定位</td>
+          <td data-page-node-id="ZWv3hzWPY6otzjKBmb83bq">中文语境下最经典的信息经济学入门教材之一：模型清晰、推导适度，且始终以中国改革（承包制、双轨制、国企）为案例检验理论，是"理论与现实对照"的教学典范。适合经济学入门者、管理实践者与对中国改革感兴趣的读者。</td>
+        </tr>
+        <tr data-page-node-id="8qs8Mi2ovaWYtHMXgCjFw3">
+          <td data-page-node-id="3xFX0cQKIC3r909OSgrxnr">方法论特点</td>
+          <td data-page-node-id="yFIBTSNkQ9riTehS6G9Non">不追求数学炫技，重在"基准模型→现实对照"的思维训练；信息分类框架（逆向选择/道德风险/不可验证性）贯穿全书，形成清晰的"问题-模型-药方"结构。</td>
+        </tr>
+        <tr data-page-node-id="asEEPa7foYUfls8h1AimRu">
+          <td data-page-node-id="p0tGwQ801ZiTCLzpBoDBoc">局限</td>
+          <td data-page-node-id="Gx8tH7QpvvAHQti2yOht4r">①作为教材，各模型以静态、一次性博弈为主，对重复博弈、声誉机制着墨有限；②不可验证性、机制设计的处理相对简要，深度不如专门的机制设计教材；③成书较早（首版2010年前后），对大数据、平台经济、AI 时代的信息结构变化未及展开。</td>
+        </tr>
+        <tr data-page-node-id="thE6Atn0JZ6rVJsqPndY2u">
+          <td data-page-node-id="zBwcGKYoy1euHTWRC6ZDID">对照阅读</td>
+          <td data-page-node-id="ZG8CcWtWytfovby1Pk4DJP"><strong data-page-node-id="lkZdw5zpcRk4KFtiEAIhbt">《博弈论与信息经济学》（张维迎）</strong>：同一理论谱系的国内经典，工具更重，可衔接本书进阶；<br data-page-node-id="q5C20g8MCJ3pWLeWlK7SsO"><strong data-page-node-id="9n5U51xofMAHp6pAO6hD0q">《信息经济学：原理与在机制设计中的应用》（许永国译）</strong>：机制设计方向更系统的延伸读物；<br data-page-node-id="HrroBQRHqkrO5MERhLLEZC"><strong data-page-node-id="E0OFrr0kKfaGEevrm61QxF">《置身事内》（兰小欢）</strong>：以中国财政与政府行为讲改革的"现实篇"，与本书第9-10章互为印证；<br data-page-node-id="XEdMuvDxI61nuiROHF4KYr"><strong data-page-node-id="sQDE2DKxZzJBMKr6s3CiFF">《微观经济学：现代观点》（Varian）</strong>：完全竞争基准的教科书参照，适合对照"完全信息世界"的假设。</td>
+        </tr>
+        <tr data-page-node-id="PNy1andiiBSg7q3BYf9foT">
+          <td data-page-node-id="fFQ7C3RPs3ApC06TIZzebO">跨书链接</td>
+          <td data-page-node-id="wmy4GG872YNsJusovssQu4">与《通向繁荣之路：经济学家为什么争论》的"计划与市场"章直接对话（哈耶克 vs 兰格之争）；与《失控》形成奇妙对照——凯文·凯利讲"去中心化涌现智能"，本书讲"信息不对称下的制度设计"，一个拥抱无序的创造力，一个驯服无序的激励，恰是同一枚硬币的两面。</td>
+        </tr>
+        <tr data-page-node-id="ihebVnCOvYLCVmrgmFyDfr">
+          <td data-page-node-id="BuszFU4gjeFt09n3B6ThEo">现实应用</td>
+          <td data-page-node-id="59HQcvWIT9WBXS5yX3rs5L">薪酬与绩效设计（绝对/相对绩效取舍）、平台规则与信任机制（评分/担保/保证金）、监管设计（信息披露制度）、组织治理（授权与监督的平衡）、激励机制改革（承包/分成/期权）——信息与激励的框架在管理、金融、公共政策中处处可用。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection" data-page-node-id="o9dqyCFgpmH1gVKsRoYrad">
+    <h2 data-page-node-id="rakaZvFBIIwxVro7TdnDKd">💭 延伸思辨</h2>
+    <div class="reflection-block" data-page-node-id="6UNYiLa36xVKV9JslzJurT">
+      <div class="reflection-title" data-page-node-id="G940tIUysFOy5HlizTNCpH">延伸思辨：信息经济学在 AI 时代的开放问题</div>
+      <p data-page-node-id="C2vquCwtpqHdELcPcCjRAj">本书的价值在当下反而被放大：当数据、算法让"验证"和"预测"的成本急剧下降时，传统信息经济学的许多前提正在松动——监控摄像头、行为数据、信用评分正在部分替代"激励契约"，用"预测+监控"取代"说真话机制"。但信息经济学给我们的真正遗产不是具体模型，而是一个提问方式：<strong data-page-node-id="rGUyj7VCsLhuo2wEbutAg8">在任何技术条件下，谁拥有信息、谁承担后果、制度如何让两者对齐？</strong>技术改变的是信息成本，不变的是"信息与激励"这对永恒的约束。另外值得警惕的是：模型中的"信息"总是可定义的，而现实中的信息是被权力塑造的——信息不对称不仅是技术事实，也是利益结构。读懂这本书，等于拿到了一副看待制度、组织与改革的新眼镜。</p>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer-note" data-page-node-id="tT3hMVd4s2QXnJ1eUosqHU">
+    《信息与激励经济学》知识图谱 · 基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<!-- 术语弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()" data-page-node-id="pGj6C6Z3QugDEDqQjOlB4O">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()" data-page-node-id="H3gnYXvYZrPq61OhaA3X64">
+    <button class="close-btn" onclick="closeModal()" data-page-node-id="wz2C7jT1Ugyl1OAzPGAnRc">✕</button>
+    <div id="modalContent" data-page-node-id="22XQCbJ0920VwAA6BTCTVN"></div>
+  </div>
+</div>
+
+<!-- 返回顶部 -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" data-page-node-id="P4wBkxletWWDARLHLwTiXd">↑</button>
+
+<script>
+// 术语弹窗
+const glossary = {
+  adverse: {
+    title: '逆向选择（Adverse Selection）',
+    content: '<p>缔约<strong>之前</strong>，一方掌握另一方不知道的私人信息（如旧车质量、借款人风险），导致交易中"好货退出、次货留下"的现象。</p><ul><li>时间点：事前</li><li>隐藏对象：特征/类型</li><li>奠基文献：Akerlof 1970《柠檬市场》</li><li>典型场景：旧车市场、信贷市场、保险市场</li></ul>'
+  },
+  lemon: {
+    title: '柠檬市场 / 旧车市场（The Market for Lemons）',
+    content: '<p>Akerlof（1970）的经典论文设定：旧车分"好车"与"次品（柠檬）"，只有卖主知道真实质量。买主只愿支付平均质量的价格，导致好车退出市场，剩余车均质量进一步下降，极端情况下市场萎缩甚至消失。</p><ul><li>证明：信息不对称可以让市场完全失灵</li><li>获奖：2001年诺贝尔经济学奖（与 Spence、Stiglitz 共享）</li></ul>'
+  },
+  signal: {
+    title: '信号发送（Signaling）',
+    content: '<p>有信息优势的一方主动采取<strong>高成本且难以伪造</strong>的行动，向对方传递自身"类型"的信息。</p><ul><li>奠基：Spence 1973 劳动力市场信号模型</li><li>经典例子：教育文凭作为能力信号</li><li>关键条件：信号成本在类型间差异足够大（分离条件）</li><li>生物学对应：孔雀开屏（Zahavi 累赘原理）</li></ul>'
+  },
+  screening: {
+    title: '信息甄别（Screening）',
+    content: '<p>信息<strong>劣势</strong>的一方设计一组可供选择的"菜单"（合同组合），让不同类型的人通过自选暴露自己的类型。</p><ul><li>奠基：Rothschild &amp; Stiglitz 1976 保险市场模型</li><li>经典例子：保险菜单（高免赔低保费 vs 低免赔高保费）</li><li>与信号发送的区别：甄别由不知情方发起，信号由知情方发起</li></ul>'
+  },
+  moral: {
+    title: '道德风险（Moral Hazard）',
+    content: '<p>缔约<strong>之后</strong>，一方（代理人）的行动无法被另一方（委托人）观察，代理人可能偷懒、敷衍或过度冒险，因为后果由委托人承担。</p><ul><li>时间点：事后</li><li>隐藏对象：行动</li><li>经典场景：股东-经理、雇主-雇员、保险-被保险人</li><li>解决：设计激励相容的报酬契约（分成/期权/承包）</li></ul>'
+  },
+  principal: {
+    title: '委托-代理问题（Principal-Agent Problem）',
+    content: '<p>委托人（principal）雇佣代理人（agent）执行任务，但代理人的行动不可观察、且与委托人利益不一致，由此产生激励问题。</p><ul><li>核心张力：保险 vs 激励的权衡</li><li>最优契约形态：固定部分 + 与产出挂钩的激励部分</li><li>理论脉络：Mirrlees 1974、Holmström 1979（2016年诺奖）</li></ul>'
+  },
+  nonverif: {
+    title: '不可验证性（Non-verifiability）',
+    content: '<p>契约双方<strong>都知道</strong>事实真相，但第三方（法院/仲裁者）无法<strong>证实</strong>，导致契约难以强制执行。</p><ul><li>比道德风险更"刁钻"：信息对称却无法举证</li><li>后果：事前契约不可行、事后敲竹杠（hold-up）</li><li>解法：设计"说真话"机制、重构产权与剩余索取权（如承包制）</li></ul>'
+  },
+  mechanism: {
+    title: '机制设计（Mechanism Design）',
+    content: '<p>先确定目标（效率/收入/公平），再<strong>设计博弈规则</strong>，使参与者在自利动机下恰好实现目标。常被称为"逆向博弈论"或"规则设计学"。</p><ul><li>核心工具：显示原理（Myerson 1979）</li><li>两大约束：参与约束（IR）+ 激励相容（IC）</li><li>应用：拍卖、公共品、税制、公司治理</li></ul>'
+  },
+  revelation: {
+    title: '显示原理（Revelation Principle）',
+    content: '<p>Myerson（1979）证明：任何机制都可以等价地转化为一个<strong>直接揭示机制</strong>——让参与者直接汇报自己的类型，且"说真话"是最优策略。</p><ul><li>意义：把机制设计的无限搜索简化为"找激励相容的直接机制"</li><li>注意：显示原理是存在性工具，不解决多重均衡与实施细节问题</li></ul>'
+  },
+  sepeq: {
+    title: '分离均衡 / 混同均衡',
+    content: '<p>信号或甄别博弈的两种可能结果：</p><ul><li><strong>分离均衡（Separating）</strong>：不同类型选择不同行为，类型被完全区分（如高能力者受教育、低能力者不读）</li><li><strong>混同均衡（Pooling）</strong>：所有人选择相同行为，类型无法区分</li><li>均衡类型取决于信号的"分离条件"（成本差异是否足够大）</li></ul>'
+  },
+  incentive: {
+    title: '参与约束与激励相容',
+    content: '<p>好机制必须同时满足的两道约束：</p><ul><li><strong>参与约束（IR）</strong>：参与者愿意加入——其收益不低于外部选项（保留效用）</li><li><strong>激励相容（IC）</strong>：参与者在自利动机下愿意说真话/好好干——诚实与努力是最优策略</li><li>机制设计的难度：两道约束可能冲突，好机制在夹缝中求平衡</li></ul>'
+  },
+  tournament: {
+    title: '锦标赛激励（Tournament）',
+    content: '<p>一种<strong>相对绩效</strong>评价机制：报酬取决于"排名"而非绝对产出，像体育锦标赛一样按名次发奖。</p><ul><li>优点：自动滤除共同冲击（市场行情、宏观环境）</li><li>缺点：诱发恶性竞争、合谋、做表面功夫</li><li>典型场景：科层组织晋升、销售排名、绩效评级</li></ul>'
+  },
+  hayek: {
+    title: '哈耶克知识问题（Hayekian Knowledge Problem）',
+    content: '<p>哈耶克（1945，《知识在社会中的利用》）的核心论点：经济知识是<strong>分散、情境化、难以集中</strong>的，中央计划机关无法收集全部知识；市场价格体系的价值在于让分散知识自发汇聚，同时承担激励功能。</p><ul><li>对立面：兰格-勒纳市场社会主义（中央试错模拟市场）</li><li>信息经济学立场：信息不仅难以集中，还会被下级策略性扭曲（虚报）</li><li>理论意义：为"计划 vs 市场"之争提供了信息维度</li></ul>'
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// 侧边栏滚动高亮
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+// 返回顶部按钮显隐
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

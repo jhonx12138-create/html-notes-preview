@@ -278,5 +278,29 @@
     "date": "2026-05-29",
     "category": "金融与财务",
     "author": "黄达"
+  },
+  {
+    "id": "36",
+    "title": "《信息与激励经济学》",
+    "file": "notes/note36.html",
+    "date": "2026-08-31",
+    "category": "政治与经济",
+    "author": "陈钊"
+  },
+  {
+    "id": "37",
+    "title": "《县乡中国》",
+    "file": "notes/note37.html",
+    "date": "2026-08-31",
+    "category": "政治与经济",
+    "author": "杨华"
+  },
+  {
+    "id": "38",
+    "title": "《通向繁荣之路》",
+    "file": "notes/note38.html",
+    "date": "2026-08-31",
+    "category": "政治与经济",
+    "author": "王东京"
   }
 ]

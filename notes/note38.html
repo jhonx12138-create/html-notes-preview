@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>通向繁荣之路 · 知识图谱</title>
+<style>
+/* ===== CSS 变量主题（蓝色系·科技通识） ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+  --primary: #1a5276; --primary-light: #eaf2f8; --primary-dark: #0d2b40;
+  --accent: #2e86c1; --accent-deep: #1b4f72;
+  --bg: #f7f9fc; --bg-card: #ffffff; --bg-soft: #f0f4f8; --bg-softer: #e8eef5;
+  --bg-tag: #d4e6f1;
+  --text: #2c3e50; --text-heading: #1a3a50; --text-muted: #7f8c8d; --text-light: #95a5a6;
+  --border: #d5dbdb; --border-soft: #e5e7eb;
+  --highlight: #eaf2f8; --highlight-strong: #d4e6f1;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #2471a3; --color-case: #1e8449;
+  --color-history: #b9770e; --color-insight: #117864; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #2e86c1;
+  --color-effect: #8e44ad; --color-core: #1a5276;
+  --warn-bg: #fef9e7; --warn-border: #f9e79f; --example-bg: #fffef9;
+  --reflect-bg: #f8f4f0; --quote-border: #2e86c1;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  line-height: 1.6;
+  background: var(--highlight);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+}
+
+/* ===== 页面区块 ===== */
+.section {
+  margin-bottom: 28px;
+}
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+  overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.7;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 辩论区（中心议题图核心组件） ===== */
+.debate-issue {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+}
+.debate-issue .issue-title {
+  font-size: 15px; font-weight: 700;
+  color: var(--primary-dark);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.debate-sides {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.debate-side {
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 13px;
+}
+.debate-side .side-tag {
+  display: inline-block;
+  font-size: 11px; font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+}
+.debate-side.pro {
+  background: var(--highlight);
+  border: 1px solid var(--highlight-strong);
+}
+.debate-side.pro .side-tag { background: var(--primary); color: #fff; }
+.debate-side.con {
+  background: #fdf0f0;
+  border: 1px solid #f5c6c6;
+}
+.debate-side.con .side-tag { background: var(--color-debate); color: #fff; }
+.debate-side .side-who { font-weight: 700; color: var(--text-heading); margin-bottom: 4px; }
+.debate-side p { color: var(--text); line-height: 1.65; }
+.issue-verdict {
+  font-size: 13px;
+  color: var(--primary-dark);
+  background: var(--bg-soft);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  line-height: 1.7;
+}
+.issue-verdict strong { color: var(--accent-deep); }
+
+/* ===== 横向比较表 ===== */
+table.compare {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.compare th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+}
+table.compare td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.compare tr:hover td { background: var(--bg-soft); }
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+/* ===== 页脚 ===== */
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .debate-issue, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .debate-sides { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body data-theme="tech">
+
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar">
+  <h3>📖 图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#book-overview">全书概览</a></li>
+    <li><a href="#central-issue">中心议题</a></li>
+    <li class="toc-l2"><a href="#key-method">定律 vs 定理</a></li>
+    <li><a href="#debate-market">辩论一：政府与市场</a></li>
+    <li><a href="#debate-growth">辩论二：增长与发展</a></li>
+    <li><a href="#debate-employment">辩论三：均衡与就业</a></li>
+    <li><a href="#debate-supply">辩论四：供给学派与改革</a></li>
+    <li><a href="#debate-others">辩论五：产权价格与公平</a></li>
+    <li><a href="#compare">横向比较</a></li>
+    <li><a href="#stance">作者立场</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与局限</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <!-- ===== 页头 ===== -->
+  <div class="header" id="book-overview">
+    <h1>通向繁荣之路</h1>
+    <div class="subtitle">经济学家为什么争论</div>
+    <div class="meta">
+      <span><strong>作者</strong> 王东京</span>
+      <span><strong>出版年份</strong> 2024</span>
+      <span><strong>分类</strong> 多视角辩论型 · 中心议题图</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">经济学说史</span>
+      <span class="badge">理论辨析</span>
+      <span class="badge">政府与市场</span>
+      <span class="badge">九大议题</span>
+      <span class="badge">中国经济</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：两百多年来经济学家一直在争论——不是因为他们不聪明，而是很多"定律"只在一定时空条件下成立，"定理"则常常经不起事实检验。王东京以中央党校经济学讲台为背景，把经济学说史上最著名的争论逐个拆开，教读者一套辨别理论真伪的方法论。
+    </div>
+  </div>
+
+  <!-- ===== 中心议题 ===== -->
+  <div class="section" id="central-issue">
+    <h2>中心议题</h2>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">总辩题：经济学家为什么争论？</div>
+        <div class="content">
+          从亚当·斯密1776年出版《国富论》起，历代经济学家围绕"国家如何致富"提出了无数理论，却彼此打架：有人主张政府干预，有人信奉市场自由；有人说需求创造供给，有人说供给自动创造需求。王东京的核心追问是：<strong>争论的根源是什么？普通读者该信谁？</strong>
+        </div>
+        <div class="example"><strong>作者的答案（全书钥匙）：</strong>争论大多源于把"定律"当成放之四海而皆准，或把"定理"建立在经不起检验的假设上。分清这两类理论，争论自然化解大半。</div>
+      </div>
+      <div class="info-card concept" id="key-method">
+        <div class="label">核心方法论：经济学定律 vs 经济学定理</div>
+        <div class="content">
+          <strong>定律（Law）</strong>：根据特定时期的经验事实、用归纳法提炼。受"时空条件"约束——时过境迁，条件变了，定律就失效（如配第-克拉克定律、菲利普斯曲线）。<br><br>
+          <strong>定理（Theorem）</strong>：从特定假设出发、用演绎逻辑推导的命题。不受时空条件约束，但<strong>假设与推论之间必须存在真实因果关系</strong>，且假设与推论都须是可用事实检验的。
+        </div>
+        <div class="example"><strong>用法：</strong>批判前人理论前先问两句——它是定律还是定理？约束条件变了吗？假设成立吗？"时空条件差之毫厘，推理往往失之千里。"</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 辩论一：政府与市场 ===== -->
+  <div class="section" id="debate-market">
+    <h2>辩论一：政府与市场——"无形之手"与"有形之手"</h2>
+    <div class="debate-issue">
+      <div class="issue-title">资源配置靠市场还是靠政府？</div>
+      <div class="debate-sides">
+        <div class="debate-side pro">
+          <span class="side-tag">正方 · 市场派</span>
+          <div class="side-who">斯密 → 米塞斯、哈耶克、科斯</div>
+          <p>"无形之手"：每个人追求私利，在市场机制下自动达成社会整体福利。米塞斯、哈耶克进一步论证计划经济的不可行（信息分散、计算不可能）；科斯则从交易成本角度证明产权清晰时市场能自发解决外部性。</p>
+        </div>
+        <div class="debate-side con">
+          <span class="side-tag">反方 · 政府派</span>
+          <div class="side-who">凯恩斯及干预传统</div>
+          <p>市场存在失灵：公共品无人供给、外部性无人纠正、周期波动无人熨平。30年代大萧条被视为市场自发失败的铁证，由此诞生凯恩斯革命——政府必须用财政货币手段"有形之手"干预经济。</p>
+        </div>
+      </div>
+      <div class="issue-verdict">
+        <strong>作者的辨析（以"灯塔"为例）：</strong>公共品"灯塔"常被用来论证必须由政府提供，但王东京指出"搭便车"在竞争不受限的条件下难以持久——他逐一驳斥红绿灯、"三个和尚没水喝"、失火救邻等经典案例。结论：<strong>政府与市场的边界要靠具体条件判断，让市场在资源配置中起决定性作用，同时更好发挥政府作用</strong>——这是从斯密到科斯再到中国改革的经验总结。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 辩论二：增长与发展 ===== -->
+  <div class="section" id="debate-growth">
+    <h2>辩论二：增长与发展——经济发展的规律可靠吗？</h2>
+    <div class="debate-issue">
+      <div class="issue-title">经济增长的"规律"会不会过时？</div>
+      <div class="debate-sides">
+        <div class="debate-side pro">
+          <span class="side-tag">定律派 · 经验归纳</span>
+          <div class="side-who">配第-克拉克定律、罗斯托阶段论</div>
+          <p>配第-克拉克定律：随经济发展，劳动力先从农业流向工业、再从工业流向服务业——被视为工业化进程的"铁律"。"中等收入陷阱"也被当作发展中国家绕不开的宿命。</p>
+        </div>
+        <div class="debate-side con">
+          <span class="side-tag">质疑派 · 时空变迁</span>
+          <div class="side-who">王东京及当代观察</div>
+          <p>这些只是对工业化初期、中期经验事实的描述：今天欧美制造业大规模回归，直接推翻了"服务业比重必然无限上升"的结论。"中等收入陷阱"也并非宿命，而是特定发展模式下的政策结果。</p>
+        </div>
+      </div>
+      <div class="issue-verdict">
+        <strong>作者的辨析：</strong>增长类理论大多是"定律"——受时空条件约束。借鉴西方理论必须警惕"刻舟求剑"：<strong>条件不同，定律不成立；与其照搬，不如先检验约束条件是否一致。</strong>这也是中国走自己发展道路的经济学依据。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 辩论三：均衡与就业 ===== -->
+  <div class="section" id="debate-employment">
+    <h2>辩论三：均衡与就业——萨伊定律 vs 凯恩斯革命</h2>
+    <div class="debate-issue">
+      <div class="issue-title">市场会自动实现充分就业吗？机器会抢走饭碗吗？</div>
+      <div class="debate-sides">
+        <div class="debate-side pro">
+          <span class="side-tag">萨伊定律 · 古典传统</span>
+          <div class="side-who">让-巴蒂斯特·萨伊</div>
+          <p>"供给自动创造需求"：生产即购买，市场不会出现普遍过剩，失业只是暂时的摩擦——长期看市场会自动出清，政府无需干预。</p>
+        </div>
+        <div class="debate-side con">
+          <span class="side-tag">凯恩斯革命 · 现代宏观</span>
+          <div class="side-who">约翰·梅纳德·凯恩斯</div>
+          <p>大萧条证明市场可能长期非均衡：总需求不足导致持续失业，政府必须用扩张性政策刺激需求。菲利普斯曲线进一步给出"通胀与失业此消彼长"的政策权衡表。</p>
+        </div>
+      </div>
+      <div class="issue-verdict">
+        <strong>作者的辨析：</strong>①"储蓄等于投资"并非无条件成立——前提假设与现实有出入；②<strong>质疑奥肯法则</strong>：就业并不必然靠追求经济高速度实现，而应立足于高质量发展，靠结构优化和产业升级；③"机器会增加失业吗"——技术进步的就业效应需分行业、分时期具体分析，不能一概而论。<strong>结论：宏观理论要验证假设与现实是否相符，不能把特殊条件下的结论当普遍真理。</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 辩论四：供给学派与改革 ===== -->
+  <div class="section" id="debate-supply">
+    <h2>辩论四：供给学派与中国的供给侧改革</h2>
+    <div class="debate-issue">
+      <div class="issue-title">"供给侧改革"= 西方的供给学派吗？</div>
+      <div class="debate-sides">
+        <div class="debate-side pro">
+          <span class="side-tag">西方供给学派</span>
+          <div class="side-who">拉弗、费尔德斯坦（里根时代）</div>
+          <p>主张从供给端发力：核心工具是<strong>减税、放松管制、扩大投资</strong>，用供给侧的激励带动整个经济（"拉弗曲线"：减税反而可能增加税收）。</p>
+        </div>
+        <div class="debate-side con">
+          <span class="side-tag">中国供给侧结构性改革</span>
+          <div class="side-who">王东京的解读</div>
+          <p>中国的供给侧改革核心是<strong>"调结构"</strong>：让市场在资源配置中起决定性作用，<strong>从供给端发力、通过市场机制调结构，而不是由政府直接调结构</strong>。这与西方供给学派的"减税扩投资"有本质区别——学界常见的混同是误解。</p>
+        </div>
+      </div>
+      <div class="issue-verdict">
+        <strong>作者的辨析：</strong>理论可以借鉴，但药方必须因时因国情而变。王东京提出深化供给侧改革的具体建议：<strong>进一步放开价格、提供公共品、保护产权</strong>——用市场机制完成结构调整，而非回到行政手段。
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 辩论五：产权价格与公平 ===== -->
+  <div class="section" id="debate-others">
+    <h2>辩论五：产权、价格与公平效率</h2>
+    <div class="info-grid">
+      <div class="info-card debate">
+        <div class="label">"价格歧视"是歧视吗？</div>
+        <div class="content">
+          <strong>常被误解的术语：</strong>"价格歧视"字面像"不公平对待"，但经济学中它是<strong>中性概念</strong>——指供给稳定而需求不稳定条件下自然产生的市场行为（如同一商品对不同支付意愿的消费者定不同价），本身不具道德色彩。
+        </div>
+        <div class="example"><strong>例子：</strong>电影票分学生票/成人票、航空公司按购票时间差异定价——这些是价格歧视，但既合法也普遍，未必伤害消费者。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">"合成谬误"是市场失灵吗？</div>
+        <div class="content">
+          <strong>另一个被误解的概念：</strong>"合成谬误"（对个体理性的选择、加总后却对整体不利）常被当作市场失灵的证据。王东京认为它并非市场失灵，而是<strong>供求规律作用的必然结果，本身就是经济规律</strong>——应善加利用，而非试图改变。
+        </div>
+        <div class="example"><strong>例子：</strong>"一人多存钱→经济反而可能衰退"（节俭悖论）——不是市场坏了，而是储蓄与投资的宏观关系在起作用。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">公平与效率：鱼与熊掌？</div>
+        <div class="content">
+          公平与效率的争论贯穿经济学说史：主张效率优先者强调激励与增长（蛋糕做大才能分）；主张公平优先者强调分配正义（防止贫富分化侵蚀社会稳定）。王东京的取向是：<strong>在发展中兼顾公平</strong>——脱离效率谈公平是空谈，脱离公平谈效率则不可持续。
+        </div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">研究方法的公理化反思</div>
+        <div class="content">
+          第九大议题回到方法论本身：经济学的"公理性假设"是否可靠？王东京强调——假设必须接近现实、推论必须能被事实检验。卢卡斯获诺奖时评委会称其"让70年代前的大部分理论站不住脚"，正说明<strong>理论的生命力在于可证伪、可检验</strong>。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 横向比较 ===== -->
+  <div class="section" id="compare">
+    <h2>横向比较</h2>
+    <table class="compare">
+      <thead>
+        <tr><th>对比维度</th><th>经济学定律</th><th>经济学定理</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>来源</strong></td><td>经验事实 + 归纳法</td><td>假设前提 + 演绎逻辑</td></tr>
+        <tr><td><strong>约束</strong></td><td>受特定时空条件约束</td><td>不受时空约束，但受假设-推论因果关系约束</td></tr>
+        <tr><td><strong>失效方式</strong></td><td>条件改变 → 定律失效</td><td>假设不实或缺乏因果 → 定理被推翻</td></tr>
+        <tr><td><strong>典型</strong></td><td>配第-克拉克定律、菲利普斯曲线</td><td>萨伊定律（存争议）、奥肯定律（被质疑）</td></tr>
+        <tr><td><strong>使用警示</strong></td><td>先查"时空条件"是否一致</td><td>先验"假设-推论"能否用事实检验</td></tr>
+      </tbody>
+    </table>
+    <table class="compare">
+      <thead>
+        <tr><th>对比维度</th><th>西方供给学派</th><th>中国供给侧结构性改革</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>核心手段</strong></td><td>减税、放松管制、扩大投资</td><td>调结构：市场机制引导产能、产业升级</td></tr>
+        <tr><td><strong>调整主体</strong></td><td>政府减税激励供给</td><td>市场机制调结构，政府提供制度环境</td></tr>
+        <tr><td><strong>价值取向</strong></td><td>供给创造需求、刺激生产</td><td>提高供给体系质量、实现高质量发展</td></tr>
+        <tr><td><strong>政策建议</strong></td><td>拉弗曲线式减税</td><td>放开价格、提供公共品、保护产权</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 作者立场 ===== -->
+  <div class="section" id="stance">
+    <h2>作者立场与综合结论</h2>
+    <div class="insight-card">
+      <div class="insight-title">立场一：经济学争论的答案不在"站队"，而在"检验"</div>
+      <div class="insight-body">王东京不为任何学派背书，而是给出了一把通用"尺子"：凡是定律，先问时空条件变没变；凡是定理，先问假设-推论是否经得起事实检验。这把尺子比记住任何结论都值钱。</div>
+      <div class="insight-evidence">证据：配第-克拉克定律被制造业回归推翻、奥肯定律在中国情境下被质疑——理论没有永动机，检验才是硬道理。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">立场二：中国经验是检验西方理论的"试金石"</div>
+      <div class="insight-body">全书以中国改革开放与高质量发展为对照系：供给侧改革与西方供给学派的区别、市场经济与计划经济的争论、产权保护与价格机制——中国实践既验证了部分理论的普遍性，也暴露了另一些理论的时空局限。</div>
+      <div class="insight-evidence">证据：改革开放的成功经验、金融体制改革的作用、宏观经济政策在不同形势下的实际运用——都是"理论与现实逻辑相统一"的活案例。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">立场三：经济学的归宿是"经世致用"</div>
+      <div class="insight-body">书名的"通向繁荣之路"点明全书关怀：经济学不是书斋里的智力游戏，而是解释世界、指导决策的工具。王东京坚持"问题导向、实用导向"——理论的唯一合法性，是能帮人们理解现实、作出更明智的决策。</div>
+      <div class="insight-evidence">证据：从"企业为什么存在"到"储蓄为何等于投资"，每个辨析都落到普通读者关心的现实问题。</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 核心金句 ===== -->
+  <div class="section" id="quotes">
+    <h2>核心金句</h2>
+    <blockquote class="quote-block">
+      <p>"理论争论的不是对错本身，而是约束条件——时空条件差之毫厘，推理往往失之千里。"</p>
+      <span class="cite">—— 王东京，《通向繁荣之路》（综合提炼）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"真理往往隐藏在激烈的争论之中——辩论的价值，是逼着每个理论接受事实的检验。"</p>
+      <span class="cite">—— 王东京，《通向繁荣之路》（综合提炼）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"繁荣的选择不是一成不变——好的经济学药方，必须因时而变、因国情而变。"</p>
+      <span class="cite">—— 王东京，《通向繁荣之路》（综合提炼）</span>
+    </blockquote>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 延伸与局限 ===== -->
+  <div class="section" id="extension">
+    <h2>延伸与局限</h2>
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>以"经济学家为什么争论"为线索的经济学说史辨读书。作者是中央党校（国家行政学院）原副校(院)长、第十三届全国人大财经委委员，长期给省部级、地厅级干部班讲经济学——这本书是二十年党校课堂思辨的浓缩，兼具理论辨析与政策解读功能。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>王东京持<strong>务实的市场取向 + 理论批判主义</strong>立场：相信市场在资源配置中的决定性作用，同时拒绝把任何西方理论奉为教条。他对"定律"随时空而变的强调，本质上是一种反教条主义的科学态度——理论必须接受现实检验。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>①<strong>议题取舍主观</strong>——九大议题的选择与详略由作者裁量，部分当代前沿（行为经济学、信息经济学、数字经济学）着墨有限；②<strong>立场预置</strong>——作为党校学者，其政策解读天然站在现行政策框架内，对某些争论的呈现带有倾向性；③<strong>辨析结论可再商榷</strong>——如对"搭便车""合成谬误"的驳斥，学界仍有不同看法；④<strong>入门门槛</strong>——虽深入浅出，但仍要求读者具备基本经济学常识。</td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《国富论》（亚当·斯密）</strong>——全书争论的起点，"无形之手"的原典。<br>
+            <strong>《就业、利息和货币通论》（凯恩斯）</strong>——凯恩斯革命的原典，理解"有形之手"必读。<br>
+            <strong>《经济学底层逻辑》（王东京）</strong>——作者同系列著作，更系统地梳理经济学原理。<br>
+            <strong>《置身事内》（兰小欢）</strong>——用中国经济实例讲政府与市场关系，与本书的"中国视角"互补。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与 <strong>《国富论》</strong> 在"政府与市场"议题上构成"原典 → 现代辨析"的呼应；<br>
+            与 <strong>《经济学底层逻辑》</strong> 是同一作者"原理版 → 争论版"的姊妹篇；<br>
+            与 <strong>《置身事内》</strong> 在"中国经济的政府逻辑"上互为印证；<br>
+            与 <strong>《县乡中国》</strong> 在"制度如何落地、政策如何执行"上形成宏观-微观对照。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>决策者：</strong>用"定律/定理"二分法检验政策依据，避免照搬他国经验；<br>
+            <strong>学习者：</strong>建立"先验假设、再验事实"的经济学批判性思维；<br>
+            <strong>投资者：</strong>理解政策背后的理论逻辑（供给侧、货币、财政），看懂宏观信号；<br>
+            <strong>普通读者：</strong>用"时空条件"视角看待日常听到的经济学结论——多问一句"这个结论成立的前提是什么？"
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨</div>
+      <p>这本书最值得带走的，不是任何一个经济学结论，而是那把"尺子"：<em>定律看时空，定理验因果。</em>——它不只是读书方法，也是面对一切"专家观点"的通用防身术。</p>
+      <p style="margin-top:8px;">当网红经济学家断言"XX定律决定了中国经济必然……"时，你可以问：这是定律还是定理？约束条件变了吗？假设经得起检验吗？——绝大多数经不起这三问。</p>
+      <p style="margin-top:8px;">也许这就是"通向繁荣之路"的隐喻：通向繁荣的路不止一条，但都需要清醒的头脑——不盲从权威，不迷信教条，让理论与现实互相校准。这既是经济学的方法论，也是做人的方法论。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《通向繁荣之路：经济学家为什么争论》知识图谱 · 基于王东京原书整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

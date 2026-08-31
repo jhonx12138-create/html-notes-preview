@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>县乡中国 · 知识图谱</title>
+<style>
+/* ===== CSS 变量主题（棕褐色系·人文政治） ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+  --primary: #6b3a1f; --primary-light: #fdf2e9; --primary-dark: #4a2511;
+  --accent: #935116; --accent-deep: #6b3a1f;
+  --bg: #fefaf6; --bg-card: #ffffff; --bg-soft: #faf3eb; --bg-softer: #f5e6d3;
+  --bg-tag: #fdebd0;
+  --text: #3e2723; --text-heading: #2c1810; --text-muted: #8d6e63; --text-light: #a1887f;
+  --border: #d7ccc8; --border-soft: #e8d5c4;
+  --highlight: #fdf2e9; --highlight-strong: #fdebd0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6b3a1f; --color-tool: #935116; --color-case: #7d6608;
+  --color-history: #b9770e; --color-insight: #6b3a1f; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #935116;
+  --color-effect: #7d3c98; --color-core: #4a2511;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #fdfaf6;
+  --reflect-bg: #f5ede1; --quote-border: #935116;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  line-height: 1.6;
+  background: var(--highlight);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+}
+
+/* ===== 页面区块 ===== */
+.section {
+  margin-bottom: 28px;
+}
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+  overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.7;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律网格 ===== */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ===== 知识结构树 ===== */
+.knowledge-tree {
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin: 14px 0;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--text);
+  overflow-x: auto;
+  white-space: pre;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 两栏布局 ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 14px 0;
+}
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+/* ===== 页脚 ===== */
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+}
+</style>
+</head>
+<body data-theme="history">
+
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar">
+  <h3>📖 图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#book-overview">全书概览</a></li>
+    <li class="toc-l2"><a href="#knowledge-tree">知识结构树</a></li>
+    <li><a href="#branch-system">县域体制</a></li>
+    <li><a href="#branch-operation">县乡运作</a></li>
+    <li><a href="#branch-grassroots">基层治理</a></li>
+    <li><a href="#branch-cadre">干部行为</a></li>
+    <li><a href="#mindset">认知升级主线</a></li>
+    <li><a href="#laws">治理规律</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与局限</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <!-- ===== 页头 ===== -->
+  <div class="header" id="book-overview">
+    <h1>县乡中国</h1>
+    <div class="subtitle">县域治理现代化</div>
+    <div class="meta">
+      <span><strong>作者</strong> 杨华</span>
+      <span><strong>出版年份</strong> 2022</span>
+      <span><strong>分类</strong> 教材通识型 · 知识树</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">县域治理</span>
+      <span class="badge">条块关系</span>
+      <span class="badge">基层治理</span>
+      <span class="badge">田野调查</span>
+      <span class="badge">体制研究</span>
+    </div>
+    <div class="core-narrative">
+      一句话定位：用大量田野调查还原"郡县治、天下安"的微观肌理——中国县域政治体制如何运转、县乡两级如何互动、基层干部如何在激励与约束之间行动。杨华（武汉大学社会学院教授）以体制内与学术界的双重视角，把"县乡治理"这个巨大黑箱拆开给读者看。
+    </div>
+  </div>
+
+  <!-- ===== 知识结构树 ===== -->
+  <div class="section" id="knowledge-tree">
+    <h2>知识结构树</h2>
+    <div class="knowledge-tree"><code>县乡中国：县域治理现代化
+├── 第一部分 · 县域体制
+│   ├── 政治统合制：县委如何"统"住各方
+│   ├── 条块关系：条条与块块的博弈
+│   └── 四大班子与县委书记
+├── 第二部分 · 县乡政府运作
+│   ├── 压力型体制：指标层层分解
+│   ├── 考核督查与运动式治理
+│   ├── 会议、材料与形式主义
+│   └── 县乡关系：上面千条线，下面一根针
+├── 第三部分 · 基层治理
+│   ├── 乡镇治理：权小责大的空转困境
+│   ├── 村级治理：行政化与资源匮乏
+│   └── 信访维稳与矛盾化解
+├── 第四部分 · 干部行为逻辑
+│   ├── 激励结构：晋升锦标赛与考核
+│   ├── 避责逻辑：多做多错下的自我保护
+│   └── 忙闲不均与"躺平"
+└── 第五部分 · 治理现代化
+    └── 治理下沉、数字治理与基层减负</code></div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 分支一：县域体制 ===== -->
+  <div class="section" id="branch-system">
+    <h2>分支一：县域体制——理解治理的"总开关"</h2>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">政治统合制：县域治理的核心体制</div>
+        <div class="content">
+          杨华提出的核心分析框架：中国县域治理不是简单的科层制（按部门职能分工、依法办事），而是<strong>"政治统合制"</strong>——以县委（尤其县委书记）为核心，通过人事任命权、重大事项决策权和督查考核权，把政府、人大、政协、纪委监委、群团等各方力量统合到一个盘子里的体制。
+        </div>
+        <div class="example"><strong>类比：</strong>科层制像"铁路时刻表"（各走各的轨道），政治统合制像"交响乐指挥"（所有乐手听一个人的手势）。杨华强调：县域权力运行的实际逻辑，必须从"统合"而非"分工"去理解。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">条块关系：中国政治的"骨架"</div>
+        <div class="content">
+          <strong>"条"</strong>：垂直领导的部门体系（公安、税务、市场监管、自然资源等，业务上听上级部门）。<strong>"块"</strong>：地方政府（县、乡镇，党务政务归本级党委政府）。条块之间存在"双重领导"与持续的张力：条条要"政令畅通"，块块要"因地制宜"。
+        </div>
+        <div class="example"><strong>例子：</strong>县税务局业务上听市税务局（条），但县委县政府希望它服务本地招商引资（块）——当两条指令冲突时，干部的现实行动最能折射体制的真实运行逻辑。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">县委书记："一把手"的权力结构</div>
+        <div class="content">
+          县委书记处于县域权力结构的顶点：管方向（发展战略）、管干部（提名推荐权）、管资源（重大项目与财政）。"一把手"现象背后是政治统合制的必然——统合需要核心，核心必然集中权力。这也解释了为什么县域治理的成败，高度系于"一把手"的个体能力与担当。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 分支二：县乡运作 ===== -->
+  <div class="section" id="branch-operation">
+    <h2>分支二：县乡政府运作——压力如何传导</h2>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">压力型体制：指标的层层分解</div>
+        <div class="content">
+          上级的政策目标（经济发展、乡村振兴、环保、维稳）被量化为指标，逐级分解下压到县、乡镇，最终落到具体干部头上。指标完成情况与考核、晋升直接挂钩，形成"层层加码"的动力机制——上级要成绩，下级只能加码完成。
+        </div>
+        <div class="example"><strong>类比：</strong>像奥运会指标分配——省里定了金牌数，市里加码，县里再加码，最后乡镇的任务已经远超当初的规划。加码不是恶意，而是体制自保的理性行为。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">考核督查与"一票否决"</div>
+        <div class="content">
+          目标责任制 + 定期督查 + 考核排名，构成了县域运作的"指挥棒"。其中维稳、安全生产、环保等实行<strong>"一票否决"</strong>——其他成绩再好，这些领域出事就全盘否定。这解释了为什么基层干部对"底线任务"极度敏感，甚至不惜投入超额资源。
+        </div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">形式主义：不是道德问题，是制度结果</div>
+        <div class="content">
+          杨华对形式主义的分析很尖锐：基层干部并不天生爱"留痕"、爱开务虚的会、爱写材料。但当任务多、人手少、责任重、又要求"事事有痕迹可查"时，<strong>以形式应对考核成为基层唯一的理性选择</strong>——材料做得漂亮，比工作做得扎实更容易通过检查。
+        </div>
+        <div class="example"><strong>机制：</strong>上级检查依赖"痕迹"（台账、照片、会议记录）来确认工作完成，于是下级生产"痕迹"来应对检查。检查与应对互相成就，形成闭环。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">县乡关系："上面千条线，下面一根针"</div>
+        <div class="content">
+          乡镇是政策落地的"最后一公里"：县级几十个部门的任务最终都汇聚到乡镇干部身上。乡镇"权小责大"——权力（执法、审批）多被上收，责任（落实、兜底）却层层下压，导致乡镇长期处于"小马拉大车"的状态。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 分支三：基层治理 ===== -->
+  <div class="section" id="branch-grassroots">
+    <h2>分支三：基层治理——治理的"神经末梢"</h2>
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">乡镇治理：空转与承压并存</div>
+        <div class="content">
+          杨华观察到乡镇的"两副面孔"：一方面承担大量上级布置的事务性工作（报表、迎检、维稳），忙于"事务性运转"；另一方面对真正的治理难题（产业发展、公共服务）却缺乏资源和权力抓手。乡镇干部大量时间消耗在"应付"上，实质治理能力被稀释。
+        </div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">村级治理：行政化与资源匮乏</div>
+        <div class="content">
+          村干部名义上是村民自治的产物，实际上越来越"行政化"——承接县乡派发的任务（党建、台账、网格、防疫、防返贫监测），村干部报酬低、人手少、年轻人外流，村级组织面临"有人办事、无钱办事、无人愿意办事"的深层困境。
+        </div>
+        <div class="example"><strong>例子：</strong>一个村可能只有3-5名村干部，却要对接县乡十几个部门的表格与检查，同时兼任网格员、信息员、调解员——村级治理的"多面手"困境由此而来。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">信访维稳：底线治理的逻辑</div>
+        <div class="content">
+          信访是观察基层治理的窗口：群众把矛盾抛给政府，政府通过接访、包案、化解、稳控来"兜底"。杨华指出，信访工作背后是"属地管理"和"一票否决"的压力——矛盾不化解要追责，于是"化解矛盾"与"控制风险"在基层实践中常常混合在一起。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 分支四：干部行为 ===== -->
+  <div class="section" id="branch-cadre">
+    <h2>分支四：干部行为逻辑——激励如何塑造行动</h2>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">激励结构：晋升锦标赛</div>
+        <div class="content">
+          县域干部的行为很大程度上被"晋升激励"塑造：在有限职数、有限任期内，谁在考核中胜出，谁获得提拔。这种锦标赛机制驱动干部争先进位，也解释了"唯GDP""迎检锦标赛""运动式突击"等现象——都是激励结构的自然产物。
+        </div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">避责逻辑：多做多错下的理性选择</div>
+        <div class="content">
+          当问责日益严厉（终身追责、一票否决），干部行为从"邀功"转向"避责"：能不做就不做、能推就推、事事留痕自保、创新让位于合规。"不作为"不是干部变懒了，而是<strong>在激励与约束失衡的制度环境下，求稳成为最优策略</strong>。
+        </div>
+        <div class="example"><strong>类比：</strong>奖励是"彩票"（概率小），问责是"罚单"（概率大且损失大）——理性的选择自然是少做事、少出错。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">忙闲不均与"躺平"</div>
+        <div class="content">
+          县域干部内部高度分化：核心部门（两办、组织、纪检）忙到"白加黑"，边缘部门清闲；年轻干部承担大量急难险重，临近退休干部基本脱产。"躺平"现象的本质是激励失效——当晋升无望、待遇有限、问责不减，"躺平"成为部分干部重新平衡投入产出的选择。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 认知升级主线 ===== -->
+  <div class="section" id="mindset">
+    <h2>认知升级主线</h2>
+    <div class="insight-card">
+      <div class="insight-title">洞察一：理解中国政治，要从"统合"而非"分工"出发</div>
+      <div class="insight-body">教科书里的政府是"三权分立、部门分工"，但县域的真实运行逻辑是"政治统合"——一切以党委为核心统合。看不懂这一点，就会对"为什么县委书记一句话比制度规定更管用""为什么部门之间会扯皮"等现象百思不解。</div>
+      <div class="insight-evidence">证据：条块矛盾、部门协调难、跨部门推诿——这些"体制病"的根源都在"统合不足"而非"分工不清"。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">洞察二：形式主义是制度的产物，批判它之前先理解它</div>
+      <div class="insight-body">公众舆论常把形式主义归因于干部作风，但杨华的田野调查显示：当考核依赖"痕迹"、当责任重于资源、当问责严于容错，基层的"以形式对形式"是理性选择。不改革考核方式，仅靠"反对形式主义"的运动，只会催生新的形式主义。</div>
+      <div class="insight-evidence">证据：减负文件层层转发本身成了新的材料负担；督查检查"回头看"催生"迎检文化"。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">洞察三：县域是国家治理的"枢纽"——上面是制度，下面是社会</div>
+      <div class="insight-body">县一级既是国家政策的执行端，又是社会诉求的感知端。政策在县域"落地变形"不全是执行问题，而是制度与社会之间的必然摩擦。县域治理现代化的关键，不是让政策"不走样"，而是让体制具备吸收和转化社会复杂性的能力。</div>
+      <div class="insight-evidence">证据：同样的政策在不同县域效果迥异——地方主官的统筹能力、基层组织的动员能力、群众工作的传统，共同决定政策落地的成色。</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 治理规律 ===== -->
+  <div class="section" id="laws">
+    <h2>治理规律</h2>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">规律一：任务下压，资源上收</div>
+        <div class="pattern-desc">越往基层，任务越多、责任越重，但权力与资源（财权、执法权、编制）越向上集中。这是"基层负担重"的结构性根源，也是治理重心下移改革要解决的核心矛盾。</div>
+        <div class="pattern-examples">乡镇执法权上收→乡镇"看得见管不着"；村级报酬低→村级组织运转靠"情怀"</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">规律二：考核指挥棒决定行为方向</div>
+        <div class="pattern-desc">什么被考核，什么就会被超额完成；什么不考核，什么就被边缘化。考核指标的设计质量，直接决定了县域治理的成色——指标错位，干部的努力就会错位。</div>
+        <div class="pattern-examples">考核GDP→"唯GDP"；考核留痕→"痕迹主义"；考核维稳→"花钱买平安"</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">规律三：激励与约束必须配套</div>
+        <div class="pattern-desc">只有激励没有约束→失控（乱作为）；只有约束没有激励→躺平（不作为）。基层治理的效率取决于二者的动态平衡，任何一头的失衡都会引发干部行为的系统性偏移。</div>
+        <div class="pattern-examples">问责从严→避责文化；晋升通道窄化→"躺平"蔓延</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 核心金句 ===== -->
+  <div class="section" id="quotes">
+    <h2>核心金句</h2>
+    <blockquote class="quote-block">
+      <p>"县域治理是国家治理的基本盘——郡县治，则天下安；县域乱，则根基动摇。"</p>
+      <span class="cite">—— 杨华，《县乡中国》（综合提炼）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"理解县域，不能只看文件怎么写，要看干部怎么活——体制的真实逻辑藏在每天的具体行为里。"</p>
+      <span class="cite">—— 杨华，《县乡中国》（综合提炼）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"形式主义不是作风问题，是激励结构问题——你考核什么，基层就生产什么。"</p>
+      <span class="cite">—— 杨华，《县乡中国》（综合提炼）</span>
+    </blockquote>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 延伸与局限 ===== -->
+  <div class="section" id="extension">
+    <h2>延伸与局限</h2>
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>中国县域治理研究的现象级作品：基于作者在全国多省份、大量县市乡镇的长期田野调查写成。它不是纯理论著作，而是"田野报告 + 体制分析"的结合体——用鲜活的基层故事承载结构性的分析框架，兼具学术价值与可读性。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>杨华持<strong>体制内的务实理解主义</strong>立场：他既不一味唱赞歌，也不简单批判，而是试图"解释为什么体制以这种方式运转"。他对形式主义、基层负担等问题的分析尖锐，但落脚点是"改革建议"而非"制度否定"——属于建设性的内部批评。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>①<strong>田野代表性</strong>——调查样本以中西部农业型县域为主，对东部发达地区、城市型县域的覆盖有限；②<strong>时效性</strong>——2022年出版后，机构改革、基层减负政策持续演进，部分具体描述可能滞后；③<strong>规范分析不足</strong>——重"实然"（实际如何运转）轻"应然"（应当如何设计），对改革路径的讨论相对零散；④<strong>作者立场</strong>——作为体制内视角的研究者，对某些敏感议题的剖析深度受客观条件限制。</td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《置身事内：中国政府与经济发展》（兰小欢）</strong>——从经济学视角讲政府运作，与《县乡中国》的政治学视角互补。<br>
+            <strong>《中国国家治理的制度逻辑》（周雪光）</strong>——组织社会学的理论化版本，"政治统合"可在此找到更系统的学术框架。<br>
+            <strong>《小镇喧嚣：一个乡镇政治运作的演绎与阐释》（吴毅）</strong>——乡镇治理的经典田野专著，与《县乡中国》互为印证。<br>
+            <strong>《转型中的地方政府》（周黎安）</strong>——"晋升锦标赛"与官员激励的学术源头。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与 <strong>《置身事内》</strong> 在"政府如何运作"上互为表里（一个讲经济、一个讲治理）；<br>
+            与 <strong>《中国国家治理的制度逻辑》</strong> 在"统合/集权"的分析上呼应；<br>
+            与 <strong>《转型中的地方政府》</strong> 在"官员激励"上形成田野与理论的印证。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>政策研究者：</strong>理解基层执行"走样"的结构性原因，避免开"拍脑袋"药方；<br>
+            <strong>企业/创业者：</strong>与县域打交道的"通关地图"——知道县里谁说了算、项目如何落地、乡镇如何运作；<br>
+            <strong>县域工作者：</strong>在压力型体制中理解自己的处境，找到激励与避责之外的第三条路；<br>
+            <strong>普通读者：</strong>看懂新闻里"基层减负""形式主义整治"等话题背后的真实逻辑。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨</div>
+      <p>《县乡中国》最珍贵的价值，是它让"体制"从抽象概念变成了可以理解的具体行为：<em>为什么乡镇干部总在加班填表？为什么部门之间互相推诿？为什么好政策落地会变形？</em>——答案不在个人品质，而在激励结构。</p>
+      <p style="margin-top:8px;">读懂这本书，你会对基层多一份理解，对"改革"少一份天真。它提醒我们：治理现代化不是换一套口号，而是改变激励结构——让做好事的人受益，让做假事的人吃亏，让基层有资源、有权力、有尊严地完成使命。</p>
+      <p style="margin-top:8px;">这大概是所有"治理类"书籍的终极命题：制度是死的，人是活的；制度设计得再好，最终都要靠具体的人去执行、去承受、去创造。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《县乡中国：县域治理现代化》知识图谱 · 基于杨华原书整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>
