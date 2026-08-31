@@ -6,7 +6,8 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.4.2</title>
+<title>📚 书阁 v8.5.0</title>
+<link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
 :root {
@@ -457,6 +458,8 @@ html, body {
 .preview-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background: var(--bg-card); z-index: 500; display: flex; flex-direction: column;
+  /* P1-4: 顶栏基准高度，由 syncHeaderHeight() 实测后覆写 */
+  --header-h: 63px;
   transform: translateX(0); transition: transform 0.25s ease;
 }
 .preview-overlay.hidden { transform: translateX(100%); pointer-events: none; }
@@ -468,11 +471,14 @@ html, body {
 .preview-overlay .overlay-back-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .preview-overlay .overlay-header {
   display: flex; align-items: center; gap: 10px;
-  padding: 12px 16px; padding-top: max(12px, env(safe-area-inset-top, 12px));
+  /* P1-7: 顶栏补齐顶部安全区 */
+  padding: 12px 16px; padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  box-sizing: border-box;
   background: var(--bg-card); border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .preview-overlay .overlay-header .overlay-title { font-size: 0.95rem; font-weight: 600; color: var(--text-primary); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.preview-overlay .overlay-body { flex: 1; position: relative; background: #fff; }
+/* P1-7: 正文区补齐底部安全区 */
+.preview-overlay .overlay-body { flex: 1; position: relative; background: #fff; box-sizing: border-box; padding-bottom: env(safe-area-inset-bottom, 0px); }
 .preview-overlay .overlay-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
 #overlayBodyContent { width: 100%; height: 100%; }
 
@@ -488,8 +494,12 @@ html, body {
 .preview-overlay.landscape .overlay-header .overlay-title { color: #fff; font-size: 0.85rem; }
 .preview-overlay.landscape .overlay-toolbar { background: rgba(255,255,255,0.15); }
 .preview-overlay.landscape .overlay-tool-btn { color: #fff; }
-.preview-overlay.landscape .overlay-body { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 501; }
-.landscape-float-back { display: none; }
+/* P1-7: 横屏下补齐左右两侧安全区 */
+.preview-overlay.landscape .overlay-body {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 501;
+  padding-left: env(safe-area-inset-left, 0px); padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
 
 /* ========== Preview Overlay Toolbar ========== */
 .overlay-toolbar {
@@ -517,6 +527,71 @@ html, body {
 .preview-overlay.preview-dark .overlay-body canvas {
   filter: invert(0.9) hue-rotate(180deg) !important;
 }
+
+/* ========== 移动端阅读增强 (v8.5.0) ========== */
+/* ---- P0-1 字号调节面板 ---- */
+#fontPanel {
+  display: none; position: absolute; z-index: 530;
+  top: calc(var(--header-h, 63px) + 8px); right: 12px;
+  flex-direction: column; gap: 10px; padding: 12px;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
+}
+#fontPanel.show { display: flex; }
+#fontPanel .font-panel-row { display: flex; align-items: center; gap: 8px; }
+.font-panel-btn {
+  min-width: 46px; height: 38px; padding: 0 10px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+  background: var(--bg-page); color: var(--text-secondary);
+  font-size: 0.9rem; font-weight: 600; font-family: inherit; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.font-panel-btn:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+.font-panel-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+#fontLevelText { flex: 1; text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
+#fontResetBtn { width: 100%; }
+
+/* ---- P0-2 预览加载态 ---- */
+#overlayLoading {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 508; background: var(--bg-card);
+  align-items: center; justify-content: center;
+}
+#overlayLoading.show { display: flex; }
+#overlayLoading .loading-spinner { padding: 40px; }
+/* 预览暗色模式下加载态跟随变暗 */
+.preview-overlay.preview-dark #overlayLoading { background: #1a1a2e; }
+.preview-overlay.preview-dark #overlayLoading .loading-spinner { color: #b0b8c1; }
+.preview-overlay.preview-dark #overlayLoading .spinner { border-color: #2d3f5e; border-top-color: var(--accent); }
+
+/* ---- P1-4 竖屏顶栏随滚动隐藏（横屏不生效） ---- */
+.preview-overlay:not(.landscape) .overlay-header { transition: margin-top 0.28s ease, opacity 0.2s ease; }
+.preview-overlay:not(.landscape).reading-mode .overlay-header {
+  margin-top: calc(-1 * var(--header-h, 63px)); opacity: 0; pointer-events: none;
+}
+
+/* ---- P1-5 横屏常驻退出按钮 ---- */
+.landscape-exit-btn {
+  display: none; position: fixed; z-index: 520;
+  top: calc(12px + env(safe-area-inset-top, 0px));
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  width: 44px; height: 44px; padding: 0;
+  border: none; border-radius: 50%; background: rgba(0,0,0,0.5); color: #fff;
+  font-size: 1.15rem; line-height: 1; cursor: pointer;
+  align-items: center; justify-content: center;
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  transition: opacity var(--transition);
+}
+.preview-overlay.landscape .landscape-exit-btn { display: flex; }
+
+/* ---- P1-6 左缘侧滑返回（纯标记层，pointer-events:none 保证不挡正文点击） ---- */
+.edge-swipe-zone {
+  display: none; position: absolute; top: 0; left: 0;
+  width: 24px; height: 100%; z-index: 515;
+  background: transparent; pointer-events: none;
+}
+.preview-overlay:not(.landscape):not(.hidden) .edge-swipe-zone { display: block; }
 
 /* Mobile responsive for category detail */
 @media (max-width: 767px) {
@@ -788,7 +863,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.4.2</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.5.0</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -901,7 +976,7 @@ html, body {
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.4.2</div>
+              <div class="about-version">📚 书阁 v8.5.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -938,6 +1013,7 @@ html, body {
     <span class="overlay-title" id="overlayTitle">选择一篇笔记</span>
     <div class="overlay-toolbar" id="overlayToolbar">
       <button class="overlay-tool-btn" id="overlayThemeBtn" title="主题" aria-label="切换预览主题">🌓</button>
+      <button class="overlay-tool-btn" id="overlayFontBtn" title="字号" aria-label="调节阅读字号">🔠</button>
       <button class="overlay-tool-btn" id="overlayLandscapeBtn" title="横屏" aria-label="切换横屏">🔄</button>
     </div>
   </div>
@@ -945,6 +1021,23 @@ html, body {
     <div id="overlayBodyContent">
       <div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>
     </div>
+    <!-- P0-2 加载态 -->
+    <div id="overlayLoading">
+      <div class="loading-spinner"><div class="spinner"></div>正在加载笔记…</div>
+    </div>
+  </div>
+  <!-- P1-5 横屏常驻退出按钮 -->
+  <button class="landscape-exit-btn" id="landscapeExitBtn" title="退出横屏" aria-label="退出横屏">↩️</button>
+  <!-- P1-6 左缘侧滑返回热区（仅作几何标记，不拦截点击） -->
+  <div class="edge-swipe-zone" id="edgeSwipeZone" aria-hidden="true"></div>
+  <!-- P0-1 字号调节面板 -->
+  <div id="fontPanel" role="dialog" aria-label="阅读字号">
+    <div class="font-panel-row">
+      <button class="font-panel-btn" id="fontMinusBtn" title="缩小字号" aria-label="缩小字号">A-</button>
+      <span id="fontLevelText">100%</span>
+      <button class="font-panel-btn" id="fontPlusBtn" title="放大字号" aria-label="放大字号">A+</button>
+    </div>
+    <button class="font-panel-btn" id="fontResetBtn" title="恢复默认字号">恢复默认</button>
   </div>
 </div>
 
@@ -1090,7 +1183,18 @@ html, body {
   // Preview overlay toolbar
   const overlayToolbar    = $('#overlayToolbar');
   const overlayThemeBtn   = $('#overlayThemeBtn');
+  const overlayFontBtn    = $('#overlayFontBtn');
   const overlayLandscapeBtn = $('#overlayLandscapeBtn');
+
+  // 移动端阅读增强 (v8.5.0)
+  const overlayLoading    = $('#overlayLoading');      // P0-2 加载态
+  const landscapeExitBtn  = $('#landscapeExitBtn');    // P1-5 横屏常驻退出
+  const edgeSwipeZone     = $('#edgeSwipeZone');       // P1-6 左缘侧滑热区
+  const fontPanel         = $('#fontPanel');           // P0-1 字号面板
+  const fontMinusBtn      = $('#fontMinusBtn');
+  const fontLevelText     = $('#fontLevelText');
+  const fontPlusBtn       = $('#fontPlusBtn');
+  const fontResetBtn      = $('#fontResetBtn');
 
   // Category detail view
   const categoryDetailView = $('#categoryDetailView');
@@ -1164,7 +1268,21 @@ html, body {
     isLandscape: false,
     landscapeHideTimer: null,
     focusHideTimer: null,
+    // v8.5.0 阅读增强
+    fontLevelIndex: 1,          // P0-1 当前字号档位下标，默认 1（即 1.0）
+    loadingFallbackTimer: null, // P0-2 加载态兜底定时器
+    readerLastScrollY: 0,       // P1-4 上一次滚动位置，用于方向判定
+    readerScrollBound: false,   // P1-4 是否已成功绑定 iframe 内滚动
   };
+
+  /* ---- 阅读增强常量 (v8.5.0) ---- */
+  const FONT_LEVELS = [0.85, 1.0, 1.15, 1.3, 1.5];   // P0-1 字号档位
+  const FONT_DEFAULT_INDEX = 1;
+  const FONT_STORAGE_KEY = 'notes-reader-font';
+  const READER_SCROLL_THRESHOLD = 8;   // P1-4 滚动方向阈值（px），避免快速抖动
+  const EDGE_SWIPE_MIN_DX = 60;        // P1-6 侧滑触发的最小水平位移
+  const EDGE_SWIPE_MAX_DY = 50;        // P1-6 侧滑允许的最大垂直偏移
+  const LOADING_FALLBACK_MS = 8000;    // P0-2 加载态兜底隐藏时间
 
   /* ---- Helpers ---- */
   function formatDate(d) { if(!d) return ''; try { const dt=new Date(d); if(isNaN(dt.getTime())) return d; return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; } catch(_){return d;} }
@@ -1934,16 +2052,30 @@ html, body {
 
   /* ---- Preview (shared logic) ---- */
   function buildIframeHTML(note, targetBody, blobKey) {
+    // v8.5.0：移动端（overlayBodyContent）才启用加载态 / 字号 / 滚动收起等增强
+    const isOverlayTarget = (targetBody === overlayBodyContent);
+    if (isOverlayTarget) showOverlayLoading();
     if(STATE[blobKey]) { URL.revokeObjectURL(STATE[blobKey]); STATE[blobKey]=null; }
     if(note.source==='user') {
       DB.get(note.id).then(rec=>{
-        if(rec&&rec.content) { const b=new Blob([rec.content],{type:'text/html'}); const u=URL.createObjectURL(b); STATE[blobKey]=u; targetBody.innerHTML=`<iframe src="${u}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe>`; }
-        else targetBody.innerHTML=`<div class="welcome"><div class="welcome-icon">⚠️</div><h3>笔记内容为空</h3><p>「${escapeHtml(note.title)}」的内容似乎丢失了。</p></div>`;
-      }).catch(()=>{ targetBody.innerHTML=`<div class="welcome"><div class="welcome-icon">⚠️</div><h3>加载失败</h3><p>无法读取「${escapeHtml(note.title)}」。</p></div>`; });
+        if(rec&&rec.content) {
+          const b=new Blob([rec.content],{type:'text/html'}); const u=URL.createObjectURL(b); STATE[blobKey]=u;
+          targetBody.innerHTML=`<iframe src="${u}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe>`;
+          if (isOverlayTarget) bindOverlayIframe();
+        }
+        else {
+          targetBody.innerHTML=`<div class="welcome"><div class="welcome-icon">⚠️</div><h3>笔记内容为空</h3><p>「${escapeHtml(note.title)}」的内容似乎丢失了。</p></div>`;
+          if (isOverlayTarget) hideOverlayLoading();
+        }
+      }).catch(()=>{
+        targetBody.innerHTML=`<div class="welcome"><div class="welcome-icon">⚠️</div><h3>加载失败</h3><p>无法读取「${escapeHtml(note.title)}」。</p></div>`;
+        if (isOverlayTarget) hideOverlayLoading();
+      });
     } else {
       targetBody.innerHTML=`<iframe src="${escapeHtml(note.file)}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe><div class="welcome" style="display:none"><div class="welcome-icon">⚠️</div><h3>笔记加载失败</h3><p>无法加载「${escapeHtml(note.title)}」。</p></div>`;
       const ifr=targetBody.querySelector('iframe'), err=targetBody.querySelector('.welcome');
       if(ifr&&err) ifr.addEventListener('error',()=>{ifr.style.display='none';err.style.display='';});
+      if (isOverlayTarget) bindOverlayIframe();
     }
   }
 
@@ -1951,6 +2083,7 @@ html, body {
     if(!note) return; STATE.selectedId=note.id;
     if(STATE.isMobile) {
       overlayTitle.textContent=note.title;
+      resetReaderState(); closeFontPanel(); syncHeaderHeight();
       buildIframeHTML(note, overlayBodyContent, 'overlayBlobUrl');
       previewOverlay.classList.remove('hidden'); sidebar.classList.add('hidden');
       checkLandscape(); history.pushState({view:'preview',noteId:note.id},'');
@@ -1966,6 +2099,7 @@ html, body {
     previewTitle.textContent='选择一篇笔记'; previewDate.textContent='';
     previewBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>';
     overlayBodyContent.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>';
+    resetReaderState(); hideOverlayLoading();
     renderShelf();
   }
 
@@ -1988,6 +2122,8 @@ html, body {
         bottomNav.style.display = 'none';
         overlayLandscapeBtn.classList.add('active');
         overlayLandscapeBtn.textContent = '↩️';
+        // v8.5.0：横屏不走顶栏收起逻辑，同时收起字号面板避免浮层残留
+        setReadingMode(false); closeFontPanel();
         showLandscapeToolbar();
       } else {
         // 桌面端专注模式
@@ -2033,7 +2169,7 @@ html, body {
     if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); }
     STATE.landscapeHideTimer = setTimeout(() => {
       overlayHeader.classList.remove('show');
-    }, 3000);
+    }, 5000);   // v8.5.0：3000ms → 5000ms，给退出按钮留足操作时间
   }
 
   function showFocusHeader() {
@@ -2042,6 +2178,216 @@ html, body {
     mh.classList.add('show-focus');
     if (STATE.focusHideTimer) clearTimeout(STATE.focusHideTimer);
     STATE.focusHideTimer = setTimeout(() => { mh.classList.remove('show-focus'); }, 3000);
+  }
+
+  /* ===================================================================
+   *  移动端阅读增强 (v8.5.0)
+   *  P0-1 字号调节 / P0-2 加载态 / P1-4 顶栏滚动隐藏
+   *  P1-5 横屏退出 / P1-6 左缘侧滑 / P1-7 安全区（CSS 部分）
+   *  以下所有行为只在 targetBody === overlayBodyContent 时生效，桌面端无副作用
+   * =================================================================== */
+
+  /* ---- P0-1 字号调节 ---- */
+  function loadFontIndex() {
+    let idx = FONT_DEFAULT_INDEX;
+    try {
+      const raw = localStorage.getItem(FONT_STORAGE_KEY);
+      if (raw !== null && raw !== '') {
+        const n = parseInt(raw, 10);
+        if (!isNaN(n) && n >= 0 && n < FONT_LEVELS.length) idx = n;
+      }
+    } catch (_) { idx = FONT_DEFAULT_INDEX; }
+    STATE.fontLevelIndex = idx;
+  }
+
+  function saveFontIndex() {
+    try { localStorage.setItem(FONT_STORAGE_KEY, String(STATE.fontLevelIndex)); } catch (_) {}
+  }
+
+  /** 取移动端正文 iframe（不存在时返回 null） */
+  function getOverlayIframe() {
+    return overlayBodyContent ? overlayBodyContent.querySelector('iframe') : null;
+  }
+
+  /** 把当前字号档位写进 iframe 的 body。contentDocument 不可用时静默降级 */
+  function applyFontLevel() {
+    const ifr = getOverlayIframe();
+    if (!ifr) return;
+    try {
+      const doc = ifr.contentDocument;
+      if (doc && doc.body) doc.body.style.zoom = String(FONT_LEVELS[STATE.fontLevelIndex]);
+    } catch (_) {
+      // file:// 或跨域 iframe 读取 contentDocument 会抛 SecurityError，静默降级
+    }
+  }
+
+  /** 刷新字号面板文案与按钮可用态 */
+  function updateFontPanel() {
+    if (fontLevelText) fontLevelText.textContent = Math.round(FONT_LEVELS[STATE.fontLevelIndex] * 100) + '%';
+    if (fontMinusBtn) fontMinusBtn.disabled = (STATE.fontLevelIndex <= 0);
+    if (fontPlusBtn) fontPlusBtn.disabled = (STATE.fontLevelIndex >= FONT_LEVELS.length - 1);
+    if (overlayFontBtn) overlayFontBtn.classList.toggle('active', STATE.fontLevelIndex !== FONT_DEFAULT_INDEX);
+  }
+
+  function setFontIndex(idx) {
+    let next = parseInt(idx, 10);
+    if (isNaN(next)) next = FONT_DEFAULT_INDEX;
+    next = Math.max(0, Math.min(FONT_LEVELS.length - 1, next));
+    if (next === STATE.fontLevelIndex) { updateFontPanel(); return; }
+    STATE.fontLevelIndex = next;
+    saveFontIndex();
+    applyFontLevel();
+    updateFontPanel();
+  }
+
+  function openFontPanel() {
+    if (!fontPanel) return;
+    updateFontPanel();
+    fontPanel.classList.add('show');
+  }
+
+  function closeFontPanel() {
+    if (fontPanel) fontPanel.classList.remove('show');
+  }
+
+  function toggleFontPanel() {
+    if (!fontPanel) return;
+    if (fontPanel.classList.contains('show')) closeFontPanel(); else openFontPanel();
+  }
+
+  /* ---- P0-2 预览加载态 ---- */
+  function showOverlayLoading() {
+    // 每次新的加载开始前先清掉上一个兜底定时器，避免定时器叠加
+    if (STATE.loadingFallbackTimer) { clearTimeout(STATE.loadingFallbackTimer); STATE.loadingFallbackTimer = null; }
+    if (overlayLoading) overlayLoading.classList.add('show');
+    STATE.loadingFallbackTimer = setTimeout(function() {
+      STATE.loadingFallbackTimer = null;
+      if (overlayLoading) overlayLoading.classList.remove('show');
+    }, LOADING_FALLBACK_MS);
+  }
+
+  function hideOverlayLoading() {
+    if (STATE.loadingFallbackTimer) { clearTimeout(STATE.loadingFallbackTimer); STATE.loadingFallbackTimer = null; }
+    if (overlayLoading) overlayLoading.classList.remove('show');
+  }
+
+  /* ---- P0-2 / P0-1 / P1-4 统一的 iframe 事件绑定 ---- */
+  function bindOverlayIframe() {
+    const ifr = getOverlayIframe();
+    if (!ifr) { hideOverlayLoading(); return; }
+    ifr.addEventListener('load', function() {
+      hideOverlayLoading();
+      applyFontLevel();       // iframe 重渲染会丢失 body.style，需要重新应用
+      bindReaderScroll(ifr);
+    });
+    ifr.addEventListener('error', function() { hideOverlayLoading(); });
+  }
+
+  /* ---- P1-4 竖屏顶栏随滚动隐藏 ---- */
+  function setReadingMode(on) {
+    if (!previewOverlay) return;
+    previewOverlay.classList.toggle('reading-mode', !!on);
+  }
+
+  function resetReaderState() {
+    STATE.readerLastScrollY = 0;
+    STATE.readerScrollBound = false;
+    setReadingMode(false);
+  }
+
+  /** 点击正文区域切换顶栏显隐（contentDocument 不可用时的降级方案） */
+  function toggleReaderHeader() {
+    if (STATE.isLandscape) return;
+    if (!previewOverlay) return;
+    setReadingMode(!previewOverlay.classList.contains('reading-mode'));
+  }
+
+  function onReaderScroll(e) {
+    if (STATE.isLandscape) return;
+    const doc = e && e.target ? e.target : null;
+    if (!doc) return;
+    let y = 0;
+    try {
+      const scroller = doc.scrollingElement || doc.documentElement || doc.body;
+      y = (scroller && typeof scroller.scrollTop === 'number') ? scroller.scrollTop : 0;
+    } catch (_) { return; }
+    const dy = y - STATE.readerLastScrollY;
+    if (Math.abs(dy) < READER_SCROLL_THRESHOLD) return;   // 阈值内不响应，避免快速抖动
+    STATE.readerLastScrollY = y;
+    if (dy > 0 && y > 40) setReadingMode(true);           // 向下滚动收起顶栏
+    else if (dy < 0) setReadingMode(false);               // 向上滚动展开顶栏
+  }
+
+  /**
+   * 绑定 iframe 内部滚动事件实现顶栏自动收起。
+   * 拿不到 contentDocument 时降级为「点击正文区域切换顶栏显隐」。
+   */
+  function bindReaderScroll(ifr) {
+    if (!ifr) return;
+    STATE.readerLastScrollY = 0;
+    let doc = null;
+    try { doc = ifr.contentDocument; } catch (_) { doc = null; }
+    if (doc) {
+      try {
+        doc.addEventListener('scroll', onReaderScroll, { passive: true });
+        STATE.readerScrollBound = true;
+        overlayBody.removeEventListener('click', toggleReaderHeader);
+        return;
+      } catch (_) { /* 继续走降级分支 */ }
+    }
+    // 降级：iframe 内滚动不可监听，改为点击正文区域切换
+    STATE.readerScrollBound = false;
+    overlayBody.removeEventListener('click', toggleReaderHeader);
+    overlayBody.addEventListener('click', toggleReaderHeader);
+  }
+
+  /** P1-4 依赖顶栏真实高度，实测后写入 --header-h */
+  function syncHeaderHeight() {
+    if (!overlayHeader || !previewOverlay) return;
+    try {
+      const h = overlayHeader.offsetHeight;
+      if (h && h > 0) previewOverlay.style.setProperty('--header-h', h + 'px');
+    } catch (_) {}
+  }
+
+  /* ---- P1-5 横屏退出 ---- */
+  function exitLandscape() {
+    if (STATE.isLandscape) toggleLandscape();
+  }
+
+  /* ---- P1-6 左缘侧滑返回（只在竖屏生效） ---- */
+  function bindEdgeSwipe() {
+    if (!previewOverlay) return;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+
+    previewOverlay.addEventListener('touchstart', function(e) {
+      if (STATE.isLandscape || !e.touches || !e.touches.length) { tracking = false; return; }
+      let zoneW = 24;
+      if (edgeSwipeZone) {
+        try {
+          const rect = edgeSwipeZone.getBoundingClientRect();
+          if (rect && rect.width > 0) zoneW = rect.width;
+        } catch (_) { zoneW = 24; }
+      }
+      const t = e.touches[0];
+      startX = t.clientX; startY = t.clientY;
+      tracking = (t.clientX <= zoneW);   // 只有从左缘区域起步的滑动才参与判定
+    }, { passive: true });
+
+    previewOverlay.addEventListener('touchend', function(e) {
+      if (!tracking) return;
+      tracking = false;
+      if (STATE.isLandscape || !e.changedTouches || !e.changedTouches.length) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      // 只在真正触发侧滑时才消费（返回），其余手势完全不干预正文
+      if (dx > EDGE_SWIPE_MIN_DX && Math.abs(dy) < EDGE_SWIPE_MAX_DY) closePreviewOverlay();
+    }, { passive: true });
+
+    previewOverlay.addEventListener('touchcancel', function() { tracking = false; }, { passive: true });
   }
 
   /* ---- Preview Theme Toggle ---- */
@@ -2062,6 +2408,8 @@ html, body {
   function closePreviewOverlay() {
     previewOverlay.classList.add('hidden');
     sidebar.classList.remove('hidden');
+    // v8.5.0：关闭预览时重置所有阅读增强状态
+    closeFontPanel(); hideOverlayLoading(); resetReaderState();
     if (STATE.isLandscape) {
       STATE.isLandscape = false;
       applyLandscapeState();
@@ -2112,13 +2460,38 @@ html, body {
 
   // Preview toolbar buttons
   overlayThemeBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePreviewTheme(); });
+  overlayFontBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFontPanel(); });
   overlayLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
   desktopLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
 
-  // Landscape toolbar — tap to show
-  overlayHeader.addEventListener('click', () => {
-    if (STATE.isLandscape) showLandscapeToolbar();
+  // P1-5 横屏常驻退出按钮
+  landscapeExitBtn.addEventListener('click', (e) => { e.stopPropagation(); exitLandscape(); });
+
+  // P0-1 字号面板按钮
+  fontMinusBtn.addEventListener('click', (e) => { e.stopPropagation(); setFontIndex(STATE.fontLevelIndex - 1); });
+  fontPlusBtn.addEventListener('click', (e) => { e.stopPropagation(); setFontIndex(STATE.fontLevelIndex + 1); });
+  fontResetBtn.addEventListener('click', (e) => { e.stopPropagation(); setFontIndex(FONT_DEFAULT_INDEX); });
+  fontPanel.addEventListener('click', (e) => { e.stopPropagation(); });
+
+  // P0-1 点击面板外区域关闭字号面板
+  document.addEventListener('click', (e) => {
+    if (!fontPanel || !fontPanel.classList.contains('show')) return;
+    const t = e.target;
+    if (t && t.closest && (t.closest('#fontPanel') || t.closest('#overlayFontBtn'))) return;
+    closeFontPanel();
   });
+
+  // P1-5 横屏唤出工具栏 —— 监听整个 overlay。
+  // 原监听挂在 #overlayHeader 上，而横屏下 header 为 opacity:0，点不到，导致横屏后唤不出退出按钮。
+  previewOverlay.addEventListener('click', (e) => {
+    if (!STATE.isLandscape) return;
+    const t = e.target;
+    if (t && t.closest && (t.closest('#landscapeExitBtn') || t.closest('#overlayBackBtn'))) return;
+    showLandscapeToolbar();
+  });
+
+  // P1-6 左缘侧滑返回（只绑定一次，内部自行判断横竖屏）
+  bindEdgeSwipe();
 
   // Category detail back button
   backCatBtn.addEventListener('click', () => closeCategoryDetail());
@@ -2195,6 +2568,7 @@ html, body {
       else{mainContent.style.display='none';bottomNav.style.display='';if(!previewOverlay.classList.contains('hidden')){sidebar.classList.add('hidden');}}
     }
     checkLandscape();
+    syncHeaderHeight();   // v8.5.0：顶栏高度随视口变化重新测量
   },200);});
 
   window.addEventListener('popstate',e=>{if(STATE.isMobile&&!previewOverlay.classList.contains('hidden')){closePreviewOverlay();history.pushState({view:'home'},'');}});
@@ -2204,6 +2578,8 @@ html, body {
    *  INIT
    * =================================================================== */
   async function init() {
+    // v8.5.0 阅读增强初始化
+    loadFontIndex(); updateFontPanel(); syncHeaderHeight();
     loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
