@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>失控 · 知识图谱</title>
+<style>
+/* ===== CSS 变量主题（深紫色系·前沿科学） ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+  --primary: #4a235a; --primary-light: #f4ecf7; --primary-dark: #2e1033;
+  --accent: #7d3c98; --accent-deep: #4a235a;
+  --bg: #faf8fc; --bg-card: #ffffff; --bg-soft: #f5eef8; --bg-softer: #ede0f5;
+  --bg-tag: #e8daef;
+  --text: #2c1540; --text-heading: #1a0a2a; --text-muted: #7f6b8d; --text-light: #9b8ea8;
+  --border: #d5c8de; --border-soft: #e8ddf2;
+  --highlight: #f4ecf7; --highlight-strong: #e8daef;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #7d3c98; --color-case: #8e44ad;
+  --color-history: #9b59b6; --color-insight: #6c3483; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #7d3c98;
+  --color-effect: #8e44ad; --color-core: #4a235a;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #faf8fc;
+  --reflect-bg: #f0e8f4; --quote-border: #7d3c98;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  font-weight: 600;
+  line-height: 1.6;
+  background: var(--highlight);
+  padding: 12px 16px;
+  border-radius: var(--radius);
+}
+
+/* ===== 页面区块 ===== */
+.section {
+  margin-bottom: 28px;
+}
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+  overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.7;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 {
+  font-size: 14px; color: var(--primary-dark); margin-bottom: 6px;
+}
+.law-card p {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+
+/* ===== 规律网格 ===== */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ===== 论证链 ===== */
+.argument-chain {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.argument-chain .chain-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.chain-steps {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  margin: 10px 0;
+}
+.chain-step {
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text);
+  max-width: 220px;
+}
+.chain-arrow { color: var(--accent); font-size: 14px; font-weight: 700; }
+.argument-chain .chain-note {
+  font-size: 13px; color: var(--text-muted); line-height: 1.7;
+  margin-top: 8px;
+}
+
+/* ===== 记忆钩子 ===== */
+.hook-block {
+  background: linear-gradient(135deg, var(--primary-light), var(--bg-card));
+  border: 1px solid var(--highlight-strong);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin: 14px 0;
+  text-align: center;
+}
+.hook-block .hook-title {
+  font-size: 13px; color: var(--text-muted); margin-bottom: 10px; letter-spacing: 1px;
+}
+.hook-block .hook-formula {
+  font-family: var(--font-mono);
+  font-size: 20px; font-weight: 700;
+  color: var(--primary-dark);
+  line-height: 1.6;
+}
+.hook-block .hook-desc {
+  font-size: 13px; color: var(--text-muted); margin-top: 10px; line-height: 1.7;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 两栏布局 ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 14px 0;
+}
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+/* ===== 页脚 ===== */
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 2px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block, .argument-chain { page-break-inside: avoid; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+  .hook-block .hook-formula { font-size: 16px; }
+}
+</style>
+</head>
+<body data-theme="quantum">
+
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar">
+  <h3>📖 图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#book-overview">全书概览</a></li>
+    <li><a href="#core-question">核心问题</a></li>
+    <li><a href="#thesis-1">论点一：蜂群思维</a></li>
+    <li><a href="#thesis-2">论点二：生物逻辑</a></li>
+    <li><a href="#thesis-3">论点三：控制的失控</a></li>
+    <li><a href="#thesis-4">论点四：共同进化</a></li>
+    <li><a href="#thesis-5">论点五：九律</a></li>
+    <li><a href="#evidence">关键证据</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与局限</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <!-- ===== 页头 ===== -->
+  <div class="header" id="book-overview">
+    <h1>失控</h1>
+    <div class="subtitle">Out of Control · 全人类的最终命运和结局</div>
+    <div class="meta">
+      <span><strong>作者</strong> 凯文·凯利（Kevin Kelly）</span>
+      <span><strong>出版年份</strong> 1994（英文原版）</span>
+      <span><strong>分类</strong> 核心论点型 · 论点论证链</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">去中心化</span>
+      <span class="badge">涌现</span>
+      <span class="badge">自组织</span>
+      <span class="badge">人工生命</span>
+      <span class="badge">复杂系统</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：工业时代靠"控制"驾驭世界，而生命、机器与网络进化的共同方向，是"失控"——把控制权交给底层的分布式智能，让系统自己长出来。凯文·凯利在互联网诞生前夜写下这本书，用蜂群、进化、人工生命预测了今天的网络世界。
+    </div>
+  </div>
+
+  <!-- ===== 核心问题 ===== -->
+  <div class="section" id="core-question">
+    <h2>核心问题</h2>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">作者试图回答什么？</div>
+        <div class="content">
+          为什么自然界的生命系统（蜂群、蚁群、大脑、生态系统）没有"中央控制者"，却能表现出远超任何单个个体的智能与秩序？KK由此追问一个更根本的问题：<strong>当机器、组织、社会系统不断复杂化，"自上而下的控制"还是最优解吗？还是说，"失控"——去中心化、自下而上、自组织——才是复杂系统的进化方向？</strong>
+        </div>
+        <div class="example"><strong>时代背景：</strong>1994年，互联网刚向公众开放。KK以"赛博预言者"的姿态，在万维网起飞前就断言：分布式网络的逻辑将重塑一切。30年后的今天，开源运动、区块链、大模型集群，几乎都在印证这本书的框架。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">核心概念：什么是"失控"？</div>
+        <div class="content">
+          "失控"不是混乱、不是失控的崩盘，而是<strong>放弃对每个细节的直接控制，把决策权交给系统的底层单元</strong>，让秩序从大量简单个体的相互作用中"涌现"出来。个体是简单的，整体是智能的——这是蜂群给KK的启示，也是全书的总纲。
+        </div>
+        <div class="example"><strong>类比：</strong>指挥一支乐队是"控制"；而股市、语言、互联网是"失控"——没有总指挥，但整体呈现惊人的秩序与智能。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 论点一 ===== -->
+  <div class="section" id="thesis-1">
+    <h2>论点一：蜂群思维——涌现的智慧</h2>
+    <div class="argument-chain">
+      <div class="chain-title">论证链</div>
+      <div class="chain-steps">
+        <span class="chain-step">单只蜜蜂极其简单</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">数万只蜜蜂形成蜂群</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">没有中央指挥，却涌现出选址/分工等智能决策</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">结论：群体智能 ≠ 个体智能之和</span>
+      </div>
+      <div class="chain-note">
+        蜂群在选择新巢址时，侦察蜂用"舞蹈"传递信息，通过大量个体间的竞争性投票，最终选出一个最优位置——全程没有"蜂王拍板"。KK称这种模式为"蜂群思维"（hive mind）：局部简单 + 分布式交互 = 整体智能。这是全书最重要的隐喻。
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">涌现（Emergence）</div>
+        <div class="content">
+          涌现是《失控》的核心机制：大量简单个体按简单规则互动，整体层面出现个体根本不具备的新属性。水分子不湿，但大量水分子汇聚成"湿"；神经元不懂思考，但百亿神经元涌现出意识。复杂性的魔法，不在个体里，而在连接中。
+        </div>
+        <div class="example"><strong>例子：</strong>蚁群可以找到食物最优路径、构建精巧巢穴，但任何一只蚂蚁都不知道"全局计划"——智能不在蚁脑里，而在蚁群的关系网络里。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">深层洞察：控制论的"反向操作"</div>
+        <div class="content">
+          20世纪的自动控制理论强调"负反馈纠偏"——系统向目标逼近靠中央校正。KK反其道而行：真正的复杂性系统不是靠纠偏维持的，而是靠<strong>正反馈放大</strong>（赢家通吃、雪球效应）和<strong>冗余备份</strong>（个体死了，群体无损）运转的。这颠覆了"精确控制"的工程师直觉。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 论点二 ===== -->
+  <div class="section" id="thesis-2">
+    <h2>论点二：生物逻辑——机器应该向生命学习</h2>
+    <div class="argument-chain">
+      <div class="chain-title">论证链</div>
+      <div class="chain-steps">
+        <span class="chain-step">传统机器：刚性、可预测、服从指令</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">复杂环境需要柔性、容错、自适应</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">进化是已知最强的"自适应算法"</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">机器越复杂，越要"生物化"</span>
+      </div>
+      <div class="chain-note">
+        KK的预言：未来最强大的机器不是被设计出来的，而是被"进化"出来的。他用遗传算法、人工生命等90年代初的实验证明：与其逐行编写复杂行为，不如写一个"进化规则"，让系统自己演化出行为——这直接指向了今天的机器学习范式。
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">遗传算法与进化式设计</div>
+        <div class="content">
+          不直接设计"答案"，而是设计"进化环境"：随机生成一批候选方案，用适应度函数筛选，让"优胜者"杂交、变异、繁衍下一代。经过若干代，复杂而优秀的方案自己涌现出来。KK称之为"培育"而非"制造"。
+        </div>
+        <div class="example"><strong>例子：</strong>书中描绘的虚拟生物实验——程序生成的"生物"在屏幕上自主演化出移动、捕食策略，没有人告诉它们怎么做。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">人工生命：生命是"涌现"出来的，不是"造"出来的</div>
+        <div class="content">
+          KK追踪了"人工生命"（A-Life）学科的诞生：Langton等人试图在计算机里重建生命的底层规则——自我复制、新陈代谢、变异。他们得出的哲学结论是：<strong>生命的本质不是物质，而是"模式"和"组织"</strong>，可以在硅基世界里以另一种形态存在。
+        </div>
+        <div class="example"><strong>延伸：</strong>这个思想直接呼应今天的"数字生命""具身智能"讨论——生命与智能的载体可能无关。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 论点三 ===== -->
+  <div class="section" id="thesis-3">
+    <h2>论点三：控制的失控——去中心化是复杂系统的宿命</h2>
+    <div class="argument-chain">
+      <div class="chain-title">论证链</div>
+      <div class="chain-steps">
+        <span class="chain-step">系统越复杂，中央控制越吃力</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">信息传递延迟、决策瓶颈、单点故障</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">把控制权下放到边缘（分布式）</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">"失控"成为维持秩序的最优方式</span>
+      </div>
+      <div class="chain-note">
+        这是全书书名"Out of Control"的真正含义：控制论者梦想的"总控室"（Everything is controlled）在大尺度复杂系统中必然失效。KK断言，未来属于"分布式存在"——从互联网架构到社会组织，控制权将不可逆地从中心流向边缘。
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">互联网就是"失控"的活证据</div>
+        <div class="content">
+          书中对互联网的预见极其精准：没有中心节点、没有中央大脑、协议简单而开放、节点随意加入退出、整体却稳定成长——这就是分布式系统的最佳标本。KK还预见了"全球协作知识库"（日后以维基百科等形式出现）和"集体智能"的雏形。
+        </div>
+        <div class="example"><strong>对照今天：</strong>区块链的共识机制、开源社区的协作、甚至大模型的分布式训练，都是"失控哲学"在工程上的延续。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">争议：去中心化是万灵药吗？</div>
+        <div class="content">
+          批评者指出：完全去中心化的系统也会失灵——公地悲剧、群体狂热、分布式系统的效率损耗。"失控"不是没有代价的：蜂群没有计划性，网络会滋生混乱。KK的回应是：成熟的复杂系统总是在"中心化"与"去中心化"之间寻找动态平衡，而非非此即彼。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 论点四 ===== -->
+  <div class="section" id="thesis-4">
+    <h2>论点四：共同进化——协同演化而非零和竞争</h2>
+    <div class="argument-chain">
+      <div class="chain-title">论证链</div>
+      <div class="chain-steps">
+        <span class="chain-step">物种不是孤立进化的</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">捕食者与猎物互相塑造（红皇后效应）</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">共生、协作比对抗更能产生复杂性</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">进化=共同进化，竞争与协作是一体两面</span>
+      </div>
+      <div class="chain-note">
+        生物学家发现：花朵与蜜蜂、宿主与共生菌、捕食者与猎物——没有谁能单独"胜利"，大家都在对方的压力下不断演化。KK把这种"共同进化"推广到技术与商业：创新不是孤军奋战，而是在与环境的相互作用中"被塑造"出来的。
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">红皇后效应</div>
+        <div class="content">
+          典出《爱丽丝镜中奇遇》：你必须拼命奔跑，才能停留在原地。在共同进化的世界里，任何一方的"进步"都会成为另一方的"压力"，于是所有参与者被迫持续演化——这正是技术竞争、军备竞赛、商业竞争的底层逻辑。
+        </div>
+        <div class="example"><strong>例子：</strong>猎豹跑得越快，羚羊也必须跑得更快；AI模型能力越强，防御与对齐技术也必须跟进——这就是现代版的"共同进化"。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">深层洞察：网络的胜利不是"消灭"而是"连接"</div>
+        <div class="content">
+          工业思维是"征服"——打败对手、占有资源。网络思维是"连接"——把自己变成网络中不可替代的节点。KK观察到，真正伟大的生态系统（无论是生物还是商业）都以高连接度取胜：连接越多，涌现越多，进化越快。这是"失控"的正面收益。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 论点五 ===== -->
+  <div class="section" id="thesis-5">
+    <h2>论点五：九律——"失控"世界的通用法则</h2>
+    <div class="argument-chain">
+      <div class="chain-title">论证链</div>
+      <div class="chain-steps">
+        <span class="chain-step">前四章从生物学、机器、网络、进化四个角度观察</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">归纳出复杂系统的共性</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">提炼为九条通用法则（书末"九律"章）</span>
+        <span class="chain-arrow">→</span>
+        <span class="chain-step">作为理解一切复杂系统的"操作手册"</span>
+      </div>
+      <div class="chain-note">
+        《失控》以"九律"收尾——这是KK全书论证的浓缩：无论生物、机器还是社会，凡是有生命力的复杂系统，都遵循这九条法则。它们既是描述性的（解释系统为何如此），也是规范性的（指导我们如何设计系统）。
+      </div>
+    </div>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">1. 分布式（Distribute being）</div>
+        <div class="pattern-desc">把智能和控制分布到全体，而非集中在中心。任何中心化的单点，都是系统最脆弱的软肋。</div>
+        <div class="pattern-examples">蜂群、互联网、P2P网络</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">2. 自下而上的控制</div>
+        <div class="pattern-desc">从底部控制：让局部单元在简单规则下自主行动，秩序自然涌现，而非靠顶层指令。</div>
+        <div class="pattern-examples">蚁群觅食、市场定价</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">3. 递增收益（正反馈）</div>
+        <div class="pattern-desc">创造能自我强化的机制——用得多→变得更好→用得更广。指数级增长来自正反馈而非线性投入。</div>
+        <div class="pattern-examples">网络效应、语言普及</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">4. 模块化生长</div>
+        <div class="pattern-desc">用可复用的标准模块拼装出复杂整体。模块可独立演化、替换、复制，系统的复杂性靠堆叠而非特制。</div>
+        <div class="pattern-examples">细胞、开源组件、乐高</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">5. 边缘最大化</div>
+        <div class="pattern-desc">变化与创新大多发生在边缘而非中心。系统的活力取决于边缘的多样性是否被容忍和利用。</div>
+        <div class="pattern-examples">突变、小众文化、前沿实验室</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">6. 宽容错误</div>
+        <div class="pattern-desc">不要追求零错误——错误是进化的原料。系统要靠试错来探索，完美主义是复杂系统的敌人。</div>
+        <div class="pattern-examples">变异、A/B测试、试错迭代</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">7. 不求最优，但求多目标</div>
+        <div class="pattern-desc">复杂系统不追求单目标最大化（那会僵化），而是维持多个目标间的张力与平衡，保持可塑性。</div>
+        <div class="pattern-examples">生物体内稳态、多目标优化</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">8. 谋求持久的不均衡</div>
+        <div class="pattern-desc">真正的活系统不待在均衡态（均衡=死寂），而是维持在"远离均衡"的边缘，那里才有创造性。</div>
+        <div class="pattern-examples">心跳、波动、永续变革</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">9. 变自生变</div>
+        <div class="pattern-desc">最高级的系统能改变自身的演化规则——学会学习，进化出"进化的能力"。这是创新的最终形态。</div>
+        <div class="pattern-examples">元学习、语言的出现、文化的自我演化</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 关键证据 ===== -->
+  <div class="section" id="evidence">
+    <h2>关键证据（经典案例）</h2>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">蜂群决策：无王的"民主"</div>
+        <div class="content">
+          书中开篇的经典案例：蜜蜂分蜂时，侦察蜂各自探查巢址、用舞蹈"投票"，数百只蜜蜂经过反复竞争，最终"群议"选出一个最佳新址。整个过程没有蜂王决策，是纯粹的分布式协商——KK用这个案例立起全书的总论点。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">人工生命实验：进化的机器</div>
+        <div class="content">
+          KK深入报道了90年代初的人工生命研究：计算机里"养"出会自我复制、会竞争、会突变的虚拟生物。这些实验证明"进化"本身可以在数字世界里重新发生——机器不是被设计出来的，而是可以被"培育"出来的。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">赛博格与"神一样的科技"</div>
+        <div class="content">
+          书中讨论了人与机器的融合（赛博格）、遥控生物学等前沿，描绘了技术"生物化"、生物"技术化"的双向运动。KK的立场是乐观的：这种融合不是异化，而是人类进化的下一个阶段。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 记忆钩子 ===== -->
+  <div class="section" id="hook">
+    <h2>记忆钩子</h2>
+    <div class="hook-block">
+      <div class="hook-title">🪤 一图记住全书</div>
+      <div class="hook-formula">
+        失控 = 去中心化（没有总指挥）<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;+ 涌现（局部简单→整体智能）<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;+ 进化（试错中自己长出来）<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;+ 九律（复杂系统的通用法则）
+      </div>
+      <div class="hook-desc">
+        蜂群隐喻：蜜蜂不聪明，蜂群聪明。<br>
+        记住一句话：<strong>放弃控制，才能获得更大的控制——复杂系统的智慧在连接里，不在中心里。</strong>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 核心金句 ===== -->
+  <div class="section" id="quotes">
+    <h2>核心金句</h2>
+    <blockquote class="quote-block">
+      <p>"低层的傻瓜数量庞大，高层的傻瓜数量稀少——当无数简单的部件连接在一起，复杂性的魔法就出现了。"</p>
+      <span class="cite">—— 凯文·凯利，《失控》（意译）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"去中心化没有中心的力量，却有无数外围的合力；它没有领袖的意志，却有无穷的集体智慧。"</p>
+      <span class="cite">—— 凯文·凯利，《失控》（意译）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"进化的代价是错误，而错误的价格是系统的未来——宽容错误，是复杂系统最深刻的智慧。"</p>
+      <span class="cite">—— 凯文·凯利，《失控》（综合提炼）</span>
+    </blockquote>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ===== 延伸与局限 ===== -->
+  <div class="section" id="extension">
+    <h2>延伸与局限</h2>
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>复杂性科学、网络思想的开山级"预言书"。1994年出版，以蜂群/进化/人工生命为素材，论证"去中心化与涌现"是生物、机器与社会系统的共同宿命。它不是严格的学术著作，而是思想密度极高的跨界思辨，至今被创业者、工程师、研究者反复引用。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>KK持<strong>技术乐观主义 + 生态中心视角</strong>：他相信技术不是冷酷的工具，而是生命进化的延续；"失控"不是危险而是解放。他对分布式、自组织、进化的推崇近乎信仰，这既是本书的感染力来源，也是需要读者自行校准的立场。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>①<strong>非学术化</strong>——叙事性强、论证跳跃，很多论断缺乏严格实证，更像"洞察合集"而非"论证体系"；②<strong>去中心化的浪漫化</strong>——对中心化的价值（效率、秩序、责任）着墨太少；③<strong>时代局限</strong>——书中大量案例（90年代实验）已经过时，其价值在于框架而非细节；④<strong>预言光环的风险</strong>——读者容易"印证式阅读"，只记住被验证的预言，忽略未兑现的部分。</td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《复杂》（梅拉妮·米歇尔）</strong>——把"涌现/自组织/遗传算法"用严谨科学语言讲清楚，是《失控》的"学术补课书"。<br>
+            <strong>《规模》（杰弗里·韦斯特）</strong>——用标度律解释复杂系统的统一规律，比《失控》更定量。<br>
+            <strong>《必然》（凯文·凯利）</strong>——KK二十多年后的续篇，用12个趋势描绘"失控世界"如何演进。<br>
+            <strong>《人类简史》（赫拉利）</strong>——同样讲"大规模协作与虚构秩序"，可对照"失控"的集体智能观。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与 <strong>《复杂》</strong> 在涌现、遗传算法等概念上互为表里（一个思辨、一个实证）；<br>
+            与 <strong>《必然》</strong> 构成同一思想的"过去与未来"；<br>
+            与 <strong>《规模》</strong> 在"复杂系统的共性规律"上呼应；<br>
+            与 <strong>《人类简史》</strong> 在"大规模协作如何可能"上形成生物学-历史学双视角。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>技术架构：</strong>微服务、去中心化协议、开源协作——"失控"哲学的工程化落地；<br>
+            <strong>组织管理：</strong>减少中央指令、给一线自治权、容忍试错——"自下而上的控制"的实践；<br>
+            <strong>产品设计：</strong>模块化架构、正反馈机制、边缘创新——把九律当设计checklist；<br>
+            <strong>个人成长：</strong>"变自生变"——培养学习如何学习的能力，是个人版的第九律。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨</div>
+      <p>《失控》最厉害的地方，是它在你读到"蜂群没有蜂王"的那一刻，就悄悄改变了你理解世界的方式：从此你看公司、看市场、看互联网、看AI，都会忍不住问——<em>"这里谁是蜂王？还是根本没有蜂王？"</em></p>
+      <p style="margin-top:8px;">但30年后的今天读它，也要保持清醒：去中心化没有解决所有问题——中心化的平台反而接管了互联网，分布式加密货币也面临效率与治理的拷问。也许真正的智慧不是"中心 vs 去中心"的站队，而是KK九律之外的第十律：<strong>在什么尺度、什么场景下，该把控制交给谁。</strong></p>
+      <p style="margin-top:8px;">这本书的价值不在预测准确率，而在它提供的那副"失控"的眼镜——戴上它，你看见的世界会更立体。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《失控》知识图谱 · 基于凯文·凯利原书整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<!-- 术语弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

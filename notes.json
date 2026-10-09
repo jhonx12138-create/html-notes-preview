@@ -302,5 +302,53 @@
     "date": "2026-08-31",
     "category": "政治与经济",
     "author": "王东京"
+  },
+  {
+    "id": "39",
+    "title": "《失控》",
+    "file": "notes/note39.html",
+    "date": "2026-10-09",
+    "category": "AI与科技",
+    "author": "凯文·凯利"
+  },
+  {
+    "id": "40",
+    "title": "《技术的本质》",
+    "file": "notes/note40.html",
+    "date": "2026-10-09",
+    "category": "AI与科技",
+    "author": "布莱恩·阿瑟"
+  },
+  {
+    "id": "41",
+    "title": "《筚路维艰》",
+    "file": "notes/note41.html",
+    "date": "2026-10-09",
+    "category": "政治与经济",
+    "author": "萧冬连"
+  },
+  {
+    "id": "42",
+    "title": "《工作消费主义和新穷人》",
+    "file": "notes/note42.html",
+    "date": "2026-10-09",
+    "category": "社会与文化",
+    "author": "齐格蒙特·鲍曼"
+  },
+  {
+    "id": "43",
+    "title": "《流量池》",
+    "file": "notes/note43.html",
+    "date": "2026-10-09",
+    "category": "组织与管理",
+    "author": "杨飞"
+  },
+  {
+    "id": "44",
+    "title": "《控制论与科学方法论》",
+    "file": "notes/note44.html",
+    "date": "2026-10-09",
+    "category": "通识与科普",
+    "author": "金观涛、华国凡"
   }
 ]

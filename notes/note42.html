@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>工作、消费主义和新穷人 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+[data-theme="tech"] {
+  --primary: #1a5276; --primary-light: #eaf2f8; --primary-dark: #0d2b40;
+  --accent: #2e86c1; --accent-deep: #1b4f72;
+  --bg: #f7f9fc; --bg-card: #ffffff; --bg-soft: #f0f4f8; --bg-softer: #e8eef5;
+  --bg-tag: #d4e6f1;
+  --text: #2c3e50; --text-heading: #1a3a50; --text-muted: #7f8c8d; --text-light: #95a5a6;
+  --border: #d5dbdb; --border-soft: #e5e7eb;
+  --highlight: #eaf2f8; --highlight-strong: #d4e6f1;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #2471a3; --color-case: #1e8449;
+  --color-history: #b9770e; --color-insight: #117864; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #2e86c1;
+  --color-effect: #8e44ad; --color-core: #1a5276;
+  --warn-bg: #fef9e7; --warn-border: #f9e79f; --example-bg: #fffef9;
+  --reflect-bg: #f8f4f0; --quote-border: #2e86c1;
+}
+[data-theme="history"] {
+  --primary: #6b3a1f; --primary-light: #fdf2e9; --primary-dark: #4a2511;
+  --accent: #935116; --accent-deep: #6b3a1f;
+  --bg: #fefaf6; --bg-card: #ffffff; --bg-soft: #faf3eb; --bg-softer: #f5e6d3;
+  --bg-tag: #fdebd0;
+  --text: #3e2723; --text-heading: #2c1810; --text-muted: #8d6e63; --text-light: #a1887f;
+  --border: #d7ccc8; --border-soft: #e8d5c4;
+  --highlight: #fdf2e9; --highlight-strong: #fdebd0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6b3a1f; --color-tool: #935116; --color-case: #7d6608;
+  --color-history: #b9770e; --color-insight: #6b3a1f; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #935116;
+  --color-effect: #7d3c98; --color-core: #4a2511;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #fdfaf6;
+  --reflect-bg: #f5ede1; --quote-border: #935116;
+}
+[data-theme="quantum"] {
+  --primary: #4a235a; --primary-light: #f4ecf7; --primary-dark: #2e1033;
+  --accent: #7d3c98; --accent-deep: #4a235a;
+  --bg: #faf8fc; --bg-card: #ffffff; --bg-soft: #f5eef8; --bg-softer: #ede0f5;
+  --bg-tag: #e8daef;
+  --text: #2c1540; --text-heading: #1a0a2a; --text-muted: #7f6b8d; --text-light: #9b8ea8;
+  --border: #d5c8de; --border-soft: #e8ddf2;
+  --highlight: #f4ecf7; --highlight-strong: #e8daef;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #7d3c98; --color-case: #8e44ad;
+  --color-history: #9b59b6; --color-insight: #6c3483; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #7d3c98;
+  --color-effect: #8e44ad; --color-core: #4a235a;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #faf8fc;
+  --reflect-bg: #f0e8f4; --quote-border: #7d3c98;
+}
+[data-theme="natural"] {
+  --primary: #1a5c2a; --primary-light: #eafaf1; --primary-dark: #0d3318;
+  --accent: #1e8449; --accent-deep: #145a32;
+  --bg: #f8fcf9; --bg-card: #ffffff; --bg-soft: #eef8f1; --bg-softer: #dff0e3;
+  --bg-tag: #d5f5e3;
+  --text: #1a3a24; --text-heading: #0d1f13; --text-muted: #6b8d73; --text-light: #8ba893;
+  --border: #c8d8cc; --border-soft: #dde8df;
+  --highlight: #eafaf1; --highlight-strong: #d5f5e3;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #1a5c2a; --color-tool: #1e8449; --color-case: #239b56;
+  --color-history: #b9770e; --color-insight: #117864; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #1e8449;
+  --color-effect: #8e44ad; --color-core: #0d3318;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #f8fcf9;
+  --reflect-bg: #e8f4ec; --quote-border: #1e8449;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 13px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1px; margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 12px; border-radius: var(--radius);
+  font-size: 13px; color: var(--text); transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light); color: var(--primary-dark);
+  font-weight: 600; border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+.main { margin-left: 220px; max-width: 1100px; padding: 36px 40px 120px 40px; }
+
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-size: 28px; color: var(--text-heading); margin-bottom: 6px;
+  padding-left: 12px; border-left: 5px solid var(--primary);
+}
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; padding-left: 17px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px; background: var(--bg-soft);
+  border-radius: var(--radius); margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.header .badge {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+}
+.header .core-narrative { margin-top: 14px; font-size: 14px; color: var(--primary-dark); line-height: 1.6; }
+
+.section { margin-bottom: 28px; }
+.section h2 {
+  font-size: 20px; color: var(--text-heading); margin-bottom: 14px;
+  padding-bottom: 8px; border-bottom: 2px solid var(--primary-light);
+}
+.section h3 { font-size: 16px; color: var(--text-heading); margin: 20px 0 10px; }
+
+.info-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px; margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 20px;
+  transition: box-shadow .2s; overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700; font-size: 14px; margin-bottom: 8px;
+  color: var(--text-heading); padding-left: 10px;
+}
+.info-card .content { font-size: 14px; color: var(--text); line-height: 1.7; }
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px; background: var(--example-bg);
+  border-radius: var(--radius-sm); font-size: 13px; color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+.insight-card {
+  background: var(--highlight); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 12px;
+}
+.insight-card .insight-title { font-weight: 700; font-size: 15px; color: var(--primary-dark); margin-bottom: 6px; }
+.insight-card .insight-body { font-size: 14px; color: var(--text); line-height: 1.7; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+.law-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px; margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 6px; }
+.law-card p { font-size: 13px; color: var(--text); line-height: 1.65; }
+
+.pattern-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px; margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px; border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc { font-size: 13px; color: var(--text); line-height: 1.65; }
+.pattern-card .pattern-examples { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+
+.reflection-block {
+  background: var(--reflect-bg); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 16px 20px; margin: 14px 0;
+}
+.reflection-block .reflection-title { font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px; }
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+blockquote.quote-block {
+  background: var(--bg-soft); border-left: 5px solid var(--quote-border);
+  margin: 18px 0; padding: 16px 20px;
+  font-family: var(--font-serif); font-style: italic;
+  font-size: 15px; color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px; font-size: 12px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+}
+
+table.extension { width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0; }
+table.extension th {
+  background: var(--primary-light); color: var(--primary-dark);
+  padding: 10px 14px; text-align: left; font-weight: 700;
+  border-bottom: 2px solid var(--border); width: 18%;
+}
+table.extension td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 18px; height: 18px; background: var(--accent); color: #fff;
+  border: none; border-radius: 50%; font-size: 11px; font-weight: 700;
+  cursor: pointer; vertical-align: middle; margin-left: 2px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 28px 32px; max-width: 580px; width: 90%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2); position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px; font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 32px 0; }
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* 论证链步骤条 */
+.arg-chain {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 8px; margin: 12px 0 16px;
+}
+.arg-chain .arg-step {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 6px 14px; border-radius: 20px;
+  font-size: 13px; font-weight: 600;
+}
+.arg-chain .arg-arrow { color: var(--text-light); font-size: 13px; }
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+}
+</style>
+</head>
+<body data-theme="history">
+
+<nav class="sidebar" id="sidebar">
+  <h3>📖 本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">页头</a></li>
+    <li><a href="#question">核心问题</a></li>
+    <li><a href="#chain">论点链总览</a></li>
+    <li><a href="#arg1">一、工作伦理是被制造的</a></li>
+    <li class="toc-l2"><a href="#arg1-pre">前工业时代的阻力</a></li>
+    <li class="toc-l2"><a href="#arg1-ethic">工作伦理的三条预设</a></li>
+    <li class="toc-l2"><a href="#arg1-real">它真正要的是什么</a></li>
+    <li><a href="#arg2">二、从生产者到消费者</a></li>
+    <li class="toc-l2"><a href="#arg2-shift">范式怎么换的</a></li>
+    <li class="toc-l2"><a href="#arg2-aesthetic">工作本身也被审美化</a></li>
+    <li><a href="#arg3">三、福利国家的兴衰</a></li>
+    <li class="toc-l2"><a href="#arg3-invest">从投资到负担</a></li>
+    <li class="toc-l2"><a href="#arg3-majority">心满意足的大多数</a></li>
+    <li><a href="#arg4">四、新穷人：有缺陷的消费者</a></li>
+    <li class="toc-l2"><a href="#arg4-flawed">核心转换</a></li>
+    <li class="toc-l2"><a href="#arg4-underclass">"底层阶级"这个标签</a></li>
+    <li class="toc-l2"><a href="#arg4-crime">贫穷即犯罪</a></li>
+    <li><a href="#arg5">五、从"失业"到"过剩"</a></li>
+    <li class="toc-l2"><a href="#arg5-global">全球化的转移</a></li>
+    <li class="toc-l2"><a href="#arg5-secure">从社会国家到"安全国家"</a></li>
+    <li><a href="#ending">六、新穷人的前景</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#insight">贯穿洞察</a></li>
+    <li><a href="#quote">核心金句</a></li>
+    <li><a href="#extension">延伸与比较</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <h1>工作、消费主义和新穷人</h1>
+    <div class="subtitle">当"穷人"不再是没有工作的人，而是"没资格消费的人"</div>
+    <div class="meta">
+      <span><strong>作者</strong>：齐格蒙特·鲍曼（Zygmunt Bauman）</span>
+      <span><strong>英文原版</strong>：1998 年</span>
+      <span><strong>中译</strong>：郭楠译，上海社会科学院出版社 2021</span>
+      <span><strong>结构</strong>：6 章</span>
+      <span><strong>类型</strong>：A类 · 核心论点型</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">社会学</span>
+      <span class="badge">消费社会批判</span>
+      <span class="badge">贫困研究</span>
+      <span class="badge">现代性</span>
+      <span class="badge">道德哲学</span>
+    </div>
+    <div class="core-narrative">
+      <strong>一句话灵魂：</strong>社会的钟摆从"生产者"荡到"消费者"之后，穷人没有变得更好或更坏，只是换了一种被嫌弃的方式——从"暂时闲置的工具"变成了"注定有罪的失败者"。
+    </div>
+  </div>
+
+  <!-- 核心问题 -->
+  <div class="section" id="question">
+    <h2>❓ 核心问题</h2>
+    <div class="info-card core" style="margin-bottom:14px;">
+      <div class="label">鲍曼要回答的到底是什么</div>
+      <div class="content">这本书的起点不是"为什么有穷人"——那是经济学问题。它问的是一个更冷的问题：<strong>为什么在一个物质空前丰裕的社会里，穷人不但没有被消除，反而被系统性地污名化、隔离甚至监狱化？</strong>鲍曼的答案是：因为"穷人"这个角色被重新定义了。在生产者社会，穷人是暂时闲置的劳动力，有用、可回收；在消费者社会，他们是"有缺陷的消费者"——无法参与这个社会唯一的通行游戏，因而既无用，又有罪。</div>
+    </div>
+    <div class="two-col">
+      <div class="info-card concept">
+        <div class="label">两种社会的分水岭</div>
+        <div class="content"><strong>生产者社会</strong>：成员的首要身份是生产者，社会整合靠工作场所，纪律来自车间，穷人是"劳动力后备军"。<br><strong>消费者社会</strong>：身份由消费能力定义，社会整合靠市场诱惑，纪律来自欲望，穷人是"有缺陷的消费者"。</div>
+        <div class="example">💡 一句话记住差异：以前富人需要穷人干活，现在富人只需要穷人别碍事。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">一个改写过的常识</div>
+        <div class="content">通常我们认为，贫困是"资源不足"的问题；鲍曼指出，现代的贫困越来越是一个<strong>资格问题</strong>——问题不在于你缺多少钱，而在于你是否被承认为"我们中的一员"。资源可以补贴，资格却难以恢复。</div>
+        <div class="example">💡 这也解释了为什么单纯发钱往往不能消除"贫穷的体验"——被排除感不因账户余额而消失。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 论点链总览 -->
+  <div class="section" id="chain">
+    <h2>⛓️ 论点链总览</h2>
+    <p style="font-size:14px;color:var(--text-muted);">鲍曼的论证像一条五节的链条，每一节都靠前一节推动。断掉任何一环，最后的结论都不成立——所以值得按顺序看。</p>
+    <div class="arg-chain">
+      <span class="arg-step">① 工作伦理是制造出来的</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">② 社会从生产转向消费</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">③ 福利国家失去理由</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">④ 穷人被重铸为"有缺陷的消费者"</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">⑤ 贫困被刑事化，穷人被逐出道德世界</span>
+    </div>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">链条的起点：一个"不自然"的发明</div>
+        <div class="pattern-desc">如果不先接受"工作伦理是被人为制造的"，后面的推论全部塌掉。所以第一章是全书的承重墙。</div>
+        <div class="pattern-examples">对应第一章</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">链条的中段：标准换了</div>
+        <div class="pattern-desc">评价人的尺子从"你能不能胜任工作"换成"你能不能选择、能不能消费"。同一批人，分数瞬间归零。</div>
+        <div class="pattern-examples">对应第二章</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">链条的转折：制度撤了</div>
+        <div class="pattern-desc">福利从"对劳动力再生产的投资"变成"对失败者的施舍"，公共支持随之瓦解。</div>
+        <div class="pattern-examples">对应第三章</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">链条的终点：人被除名</div>
+        <div class="pattern-desc">当贫穷被解释成个人品格缺陷，社会就获得了"不必负责"的许可。这是鲍曼最锋利的一刀。</div>
+        <div class="pattern-examples">对应第四、五章</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 论点一 -->
+  <div class="section" id="arg1">
+    <h2>① 工作伦理不是被发现的，是被制造出来的</h2>
+    <div class="arg-chain">
+      <span class="arg-step">工厂需要纪律化的人</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">但没人愿意进厂</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">于是制造一套道德律令</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">不工作 = 不道德</span>
+    </div>
+
+    <h3 id="arg1-pre">前工业时代的阻力：人们就是不进厂</h3>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">背景：工厂需要的不只是手，是"听话的人"</div>
+        <div class="content">工业化早期最大的难题不是找不到劳动力，而是找到了也不肯按工厂的方式干活。习惯于农作与手工劳作的人按自己的节奏生活，无法忍受连续十几个小时、枯燥重复、听命于钟表的生产方式。</div>
+        <div class="example">💡 <strong>关键</strong>：工厂要的从来不只是"会干活的手"，而是<b>能按时出现、服从指令、把单调重复当日常的身体</b>。这种品质不会自然生长，必须被培养出来。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">案例：要么工作，要么死亡</div>
+        <div class="content">把不工作与生存直接断开，是最粗暴也最有效的一步。济贫院一类的机构被刻意设计得比最差的工厂还难以忍受，用意在于：靠救济活着，必须比打工更痛苦。这样"工作"就不再是选项之一，而是唯一的出路。</div>
+        <div class="example">💡 <strong>逻辑</strong>：先让"不工作"变得无法生存，再把愿意工作解释成道德觉醒——于是被迫变成了自愿，服从变成了美德。</div>
+      </div>
+    </div>
+
+    <h3 id="arg1-ethic">工作伦理的三条预设</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">预设一：工作本身就有价值 <button class="glossary-trigger" onclick="openModal('workethic')">?</button></div>
+        <div class="content">工作的意义被从"产出"上剥离下来，附着到"做"这个动作本身。于是干什么变得不重要，重要的是你有没有在干。这为后来一切"为工作而工作"的说辞提供了道德豁免。</div>
+        <div class="example">💡 <strong>例子</strong>：做无用功也常被称赞为勤奋，因为被赞美的是投入本身，不是结果。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">预设二：工作是道德义务</div>
+        <div class="content">工作从谋生手段升格为责任。不工作不是"选择另一种活法"，而是"逃避义务"。这一步把经济安排偷换成道德律令，是这个观念最关键的滑动。</div>
+        <div class="example">💡 <strong>例子</strong>：福利领取者被质疑的往往不是"你缺不缺钱"，而是"你凭什么不工作"。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">预设三：不工作 = 品格缺陷</div>
+        <div class="content">既然工作是义务，那么不履行义务的人就是有缺陷的——懒惰、堕落、不值得帮助。<b>"不值得帮助的穷人"</b>这个分类由此诞生，成为后世所有贫困污名化的模板。</div>
+        <div class="example">💡 <strong>例子</strong>：把穷分成"值得帮"和"不值得帮"两类，是几百年来反复使用的技术，今天只是换了话术。</div>
+      </div>
+    </div>
+
+    <h3 id="arg1-real">它真正要的是什么：不是勤奋，是服从</h3>
+    <div class="info-card insight">
+      <div class="label">洞察：工作伦理的核心是"服从"，不是"勤奋"</div>
+      <div class="content">这是第一章最值得记住的一点。工作伦理并不真的关心人们是否创造了价值，它关心的是人们是否<strong>按指令行事、接受被安排的时间与节奏</strong>。它要培养的从来不是有创造力的劳动者，而是可管理的工人。用鲍曼的逻辑说：工作伦理保证的不是效率，而是秩序。</div>
+      <div class="example">💡 <strong>延伸</strong>：这也解释了为什么同一种伦理，在经济上早已过时之后依然顽强存活——因为它的功能从来就有一半是社会的，而非生产的。</div>
+    </div>
+    <div class="info-card effect">
+      <div class="label">配套观念：从"更好"到"更多"</div>
+      <div class="content">"制造生产者"完成后，社会目标也从追求质量转向追求数量增长。衡量进步的尺子不再是"东西做得更好了吗"，而是"产出又多了多少"。这条线一直延伸到今天的增长崇拜。</div>
+      <div class="example">💡 <strong>例子</strong>：产量、GDP、规模——数字增长的优先级长期高于品质提升，这让工作伦理与增长逻辑互为表里。</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 论点二 -->
+  <div class="section" id="arg2">
+    <h2>② 从生产者社会到消费者社会：尺子换了一把</h2>
+    <div class="arg-chain">
+      <span class="arg-step">大规模生产不再需要大规模劳动</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">社会整合从工作场所转向市场</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">身份从职业变成消费选择</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">"工作伦理"让位给"消费美学"</span>
+    </div>
+    <p style="font-size:14px;color:var(--text-muted);">这是全书最关键的一次范式转换。注意位移的不是经济结构，而是"什么算一个合格的社会成员"。鲍曼的锋利之处在于：他指出现代社会用来评价人的那把尺子，被整个换掉了，而大多数人没注意到。</p>
+
+    <h3 id="arg2-shift">范式怎么换的：从纪律到诱惑</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">生产者社会的整合方式：纪律</div>
+        <div class="content">人被安置在车间、工位、工号里。身份来自职业，秩序来自作息表，社会把人固定在稳定位置上。这套系统虽然压抑，但给出了明确的"你的位置在哪"。</div>
+        <div class="example">💡 <strong>例子</strong>：一辈子一个单位、一个工种、一个身份——这种生活形态让"我是谁"这个问题几乎不需要回答。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">消费者社会的整合方式：诱惑 <button class="glossary-trigger" onclick="openModal('aesthetics')">?</button></div>
+        <div class="content">整合不再靠强制，而靠持续提供诱惑。你不是被命令去生活，而是被引诱去选择。这套系统更自由、更愉快，代价是：<strong>无法被诱惑的人，就失去了被整合的资格。</strong></div>
+        <div class="example">💡 <strong>例子</strong>：广告、信用卡、购物节构建的不是需求，而是欲望——欲望的关键设定是永远不能满足，否则游戏就停了。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：消费社会的失败标准变了</div>
+        <div class="content">在生产者社会，失败是"没有工作"；在消费者社会，失败是"没有消费能力"。两者的社会后果截然不同：前者意味着"你暂时不在岗位上"，后者意味着"你不配成为我们中的一员"。</div>
+        <div class="example">💡 <strong>例子</strong>：有工作但收入不足以参与消费的人，在旧标准下是合格的劳动者，在新标准下却是失败者——这就是"新穷人"的真实处境。</div>
+      </div>
+    </div>
+
+    <h3 id="arg2-aesthetic">工作本身也被审美化了</h3>
+    <div class="info-grid">
+      <div class="info-card insight">
+        <div class="label">洞察：连工作都要"有趣"才配被尊重</div>
+        <div class="content">在消费美学的统治下，工作也按"体验价值"被评判。有趣、有创造性、有成长感的工作被赋予光环，枯燥重复的工作则被默认为是惩罚——做这种工作的人，不值得被同情，因为他们"只能"做这个。</div>
+        <div class="example">💡 <strong>例子</strong>："你要找到热爱的事"这类劝告听起来励志，但它暗含一个残酷前提：没找到的人是自己不够努力。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">争议点：使命是一种特权</div>
+        <div class="content">只有少数岗位能提供意义感与自我实现，多数岗位注定无法。把"工作应当有意义"当成普遍要求，结果是把结构问题转嫁给个人：达不到的人不仅收入低，还要额外承担"人生没活明白"的指责。</div>
+        <div class="example">💡 <strong>例子</strong>：同一种疲惫，发生在创意岗位上叫"燃烧"，发生在流水线上叫"没出息"——差别不在劳动，在社会给的剧本。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 论点三 -->
+  <div class="section" id="arg3">
+    <h2>③ 福利国家的兴衰：从投资到负担</h2>
+    <div class="arg-chain">
+      <span class="arg-step">穷人是劳动力后备军</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">投资他们划得来</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">资本可全球流动，后备军不再需要</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">福利变成纯支出 → 被拆解</span>
+    </div>
+
+    <h3 id="arg3-invest">从投资到负担：福利的国家理由变了</h3>
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">早期逻辑：福利是对生产力的投资</div>
+        <div class="content">在生产者社会，改善工人的健康、教育、居住条件对资本是有利的——因为这些人明天还要进厂干活。福利因此得以跨阶级获得支持：它不是慈善，而是一笔算得过来的投资。</div>
+        <div class="example">💡 <strong>关键</strong>：支持福利的力量从来不是单纯的善意，而是"穷人有朝一日还用得上"这个共识。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">转变：当穷人不再被需要</div>
+        <div class="content">劳动力过剩、生产不再依赖大量人手、资本可以自由跨境寻找更便宜的劳力——三重变化叠加后，本地的穷人不再是"备用资源"，而只是"需要供养的人"。福利的国家理由就此瓦解。</div>
+        <div class="example">💡 <strong>例子</strong>：一旦"投资回报"的账算不过来，福利就从明智之举变成财政漏洞，讨论的语气也随之从"我们应该"变成"我们负担不起"。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">危机：道德指责取代政策讨论</div>
+        <div class="content">当福利失去经济理由，对它的攻击就转向道德层面：领取救济被描述成"不工作"的证据，"依赖文化"成为流行指控。贫困重新被解释为品格问题——为削减福利提供了道德掩护。</div>
+        <div class="example">💡 <strong>例子</strong>：某些流行叙事塑造出"靠福利过好日子"的典型形象，用极端个案为整体削减辩护。这类形象的功能是制造敌意，不是描述事实。</div>
+      </div>
+    </div>
+
+    <h3 id="arg3-majority">心满意足的大多数：支持为什么消失</h3>
+    <div class="info-grid">
+      <div class="info-card insight">
+        <div class="label">洞察：不再害怕变穷的人，不再支持福利</div>
+        <div class="content">福利制度的政治基础，来自中产者"我也可能落到那一步"的恐惧。当有工作的人相信自己不会变成穷人，对福利的团结感就消失了——剩下的只有对税金的计算和对"白拿"的愤怒。</div>
+        <div class="example">💡 <strong>例子</strong>：福利被拆解时，最有力的反对声音常来自刚刚脱离贫困线不远的人——离得最近的，反而最难容忍。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">悖论：它的成功成了它的死因</div>
+        <div class="content">鲍曼提出的一个尖锐悖论：福利制度越成功地抹平了贫困的恐怖面貌，人们就越容易忘记没有它时是什么样子，于是支持它的紧迫感越弱，它越难存活。一项制度的成功，可能正在削弱它赖以存在的恐惧。</div>
+        <div class="example">💡 <strong>延伸</strong>：这是一种典型的公共品困境——成果被普遍享有，代价被少数人承担，于是政治上的耐心格外短。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 论点四 -->
+  <div class="section" id="arg4">
+    <h2>④ 新穷人：有缺陷的消费者</h2>
+    <div class="arg-chain">
+      <span class="arg-step">穷不再是"没工作"</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">而是"没能力参与消费"</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">被归因于个人品格</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">"底层阶级"标签 → 逐出道德义务</span>
+    </div>
+    <p style="font-size:14px;color:var(--text-muted);">这是全书的心脏，也是"新穷人"这个概念的诞生处。它的力量在于，它同时解释了贫困为什么更痛苦、更孤立、更难以摆脱。</p>
+
+    <h3 id="arg4-flawed">核心转换：从"没用"到"有罪"</h3>
+    <div class="two-col">
+      <div class="info-card concept">
+        <div class="label">旧穷人：劳动力后备军</div>
+        <div class="content">失业但有"就业潜力"。社会需要他，只是暂时用不上。他有位置——那个位置叫"等待复工"。因此他可以被同情，因为他只是运气不好。</div>
+        <div class="example">💡 <strong>关键</strong>：旧穷人的贫穷是<b>经济状况</b>，可以被下一次景气修复。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">新穷人：有缺陷的消费者 <button class="glossary-trigger" onclick="openModal('newpoor')">?</button></div>
+        <div class="content">他的问题不是"暂时没有工作"，而是"不具备参与这个社会基本游戏的能力"。他丧失了社会功能，也就丧失了被需要的位置。而无用，在这个社会里很快会被翻译成有罪。</div>
+        <div class="example">💡 <strong>关键</strong>：新穷人的贫穷是<b>人格判定</b>，无法靠任何一次经济回暖抹去。</div>
+      </div>
+    </div>
+    <div class="info-card insight">
+      <div class="label">洞察：这一步偷换，完成了道德卸责</div>
+      <div class="content">把结构性困境重新描述为个人失败，是最省事的社会处理方式：它不需要改革，只需要责难。一旦"穷是自己的问题"成为默认前提，社会就获得了一张不必负责的许可证。</div>
+      <div class="example">💡 <strong>延伸</strong>：这也解释了为什么贫困议题上，个案故事总比统计数据更有煽动性——个案能被讲成品格问题，统计只呈现系统问题。</div>
+    </div>
+
+    <h3 id="arg4-underclass">"底层阶级"这个标签：一个压缩工具</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">概念：底层阶级（underclass） <button class="glossary-trigger" onclick="openModal('underclass')">?</button></div>
+        <div class="content">鲍曼仔细剖析了这个流行概念，指出它的实际功能：把来源各异、成因完全不同的贫困——失业、低薪、病残、家庭破裂、产业外迁——压缩成一个统一的"低等人"形象，并为他们配上"共同的缺点"。于是一个复杂的社会问题被简化成一种人的问题。</div>
+        <div class="example">💡 <strong>后果</strong>：一旦被归为一个"类别"，这些人就失去了"集体"的属性——没有共同身份、无法组织、无法谈判。分类本身就是一种解除武装的方式。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">机制：定居者与游牧者</div>
+        <div class="content">全球化时代制造了两种截然不同的流动性：精英可以自由跨境，是"游牧者"；穷人被固定在原地，是"定居者"。富有的人不需要留下来，留下的人也没有能力离开——这使穷人的困境从"暂时落后"变成"无处可去"。</div>
+        <div class="example">💡 <strong>例子</strong>：资本与人才自由流动，而低技能劳动者被国界与成本牢牢锁住，这是当代不平等最容易被忽略的一层。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：穷人还有一项"用处"</div>
+        <div class="content">在消费者社会，穷人失去了生产价值，却保留了一种特殊的用途：作为反面教材。通过展示失败的可怕，帮助其他人确认自己的成功是应得的。这是最冷的洞察之一——被排除的人仍未真正"无用"，只是被用得极其残酷。</div>
+        <div class="example">💡 <strong>例子</strong>：关于"堕落者"的故事被反复讲述，其功能常常不是帮助谁，而是让听者安心。</div>
+      </div>
+    </div>
+
+    <h3 id="arg4-crime">贫穷即犯罪：从贫困到治安问题</h3>
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">转折：贫穷被刑事化 <button class="glossary-trigger" onclick="openModal('criminal')">?</button></div>
+        <div class="content">当贫困被判定为道德缺陷，处理方式就从"救济"转向"管制"。穷人不再被当作需要帮助的人，而是需要管理的人。问题从"为什么会有穷人"变成"如何让他们不出事"。</div>
+        <div class="example">💡 <strong>表现</strong>：同一批处境艰难的人，用福利的语言描述是"受助者"，用治安的语言描述是"隐患"——语言一换，政策全换。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">后果：逐出道德义务的世界</div>
+        <div class="content">最严重的后果不是待遇变差，而是<strong>道德资格被取消</strong>。一旦社会不再认为对某些人负有义务，这些人就被移出了共同体的道德边界——此后任何冷酷对待都不再引发愧疚。</div>
+        <div class="example">💡 <strong>例子</strong>：这正是隔离社区、驱逐贫民、监禁扩容能够顺利推进的社会心理前提。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 论点五 -->
+  <div class="section" id="arg5">
+    <h2>⑤ 从"失业"到"过剩"：排除技术的升级</h2>
+    <div class="arg-chain">
+      <span class="arg-step">剩余人口问题被全球化转移</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">本土贫困被重定义为治安问题</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">国家从"社会国家"转向"安全国家"</span>
+      <span class="arg-arrow">→</span>
+      <span class="arg-step">隔离、监控、监禁成为主要手段</span>
+    </div>
+
+    <h3 id="arg5-global">全球化的转移与"过剩"概念</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">核心区分：失业 vs 过剩 <button class="glossary-trigger" onclick="openModal('redundant')">?</button></div>
+        <div class="content">"失业"暗示一个空位终会出现，你只是暂时没对上；"过剩"则宣告了一个终结——不是没有工作留给你，而是这个系统不再需要你这个人。从失业到过剩，词变了，希望也就没了。</div>
+        <div class="example">💡 <strong>例子</strong>：同一个处境，被称为失业者的人会被安排再培训，被称为过剩人口的人只会被安排监控。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">背景：一道熟悉的历史影子</div>
+        <div class="content">鲍曼把当代的剩余人口问题与历史上的劳动力输出、殖民扩张并列观察：当一个社会消化不了多余的人口，向外转移曾经是一种解法。当这种转移不再可行，压力就只能在本土内部寻找出口。</div>
+        <div class="example">💡 <strong>延伸</strong>：出口一旦关闭，问题就会以"治安"与"身份政治"的形式回到国内——这是这本书尤其冷的一段推演。</div>
+      </div>
+    </div>
+
+    <h3 id="arg5-secure">从社会国家到"安全国家"</h3>
+    <div class="info-grid">
+      <div class="info-card insight">
+        <div class="label">洞察：国家职能的重心迁移 <button class="glossary-trigger" onclick="openModal('safestate')">?</button></div>
+        <div class="content">国家不再以"照顾成员"为合法性来源，而转向"保障安全"。福利预算收缩，监控与执法预算扩张；社会问题的语言被法律与秩序的语言替换。这不是某个政府的偏好，而是消费社会逻辑的必然延伸。</div>
+        <div class="example">💡 <strong>表现</strong>：门禁社区、无处不在的摄像、对"不安全人群"的提前防范——秩序的边界被重新画在"谁不该出现在这里"上。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">结果：空间上的双重隔离</div>
+        <div class="content">富人以自愿封闭的方式退出公共空间，穷人被安置在没人愿意去的地方。两个群体不再共享任何日常场景，"我们"与"他们"的区分因此从观念变成物理事实。</div>
+        <div class="example">💡 <strong>后果</strong>：当不同阶层不再见面，同情心就失去了赖以生长的土壤，剩下的只有想象与恐惧。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 结局 -->
+  <div class="section" id="ending">
+    <h2>⑥ 新穷人的前景：还能往哪走</h2>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">处境：失去位置的穷人</div>
+        <div class="content">鲍曼对终局的描述相当冷：在消费者社会里，新穷人的困境在于——他们既不能靠工作伦理获得救赎（因为工作不再需要他们），也无法通过消费融入主流（因为消费需要钱）。没有任何一条被社会承认的路径能让他们"回来"。</div>
+        <div class="example">💡 <strong>为什么"努力就能翻身"劝不动人</strong>：不是道理不对，而是这句话预设的那扇门，对他们已经关上了。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">出路一：工作伦理，还是生活道德</div>
+        <div class="content">鲍曼主张的根本转向是：把"人是否值得尊重"与"人是否出卖劳动力"脱钩。认可一个人，不该以他是否在劳动力市场上被雇用为前提。他借用"工艺伦理"一类的思路——重视人对所做之事本身的责任与投入，而非市场定价。</div>
+        <div class="example">💡 <strong>含义</strong>：照料家人、社区互助、创作、修修补补——这些不被计薪的"工作"，也应当有社会地位。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">批评：这个方案太浪漫了吗</div>
+        <div class="content">常见的批评很直接：把生存权与出卖劳动力脱钩，在现实制度上意味着什么？鲍曼本人没有给出具体的政策路径（如全民基本收入一类的方案只是被点到，未做操作层面的论证）。因此他的收尾常被评价为带着道德理想主义色彩。</div>
+        <div class="example">💡 <strong>公允地说</strong>：诊断的锋利与处方的模糊，是这本书最明显的失衡。但它对"问题在哪"的判断，几十年后依然站得住。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2>🪤 记忆钩子</h2>
+    <div class="info-card core" style="font-size:15px;line-height:1.9;">
+      <div class="label">一句话装下全书</div>
+      <div class="content">
+        生产者社会里，穷人是<strong>劳动力后备军</strong>——有用，只是暂时闲置，所以值得同情，也值得投资。<br>
+        消费者社会里，穷人是<strong>有缺陷的消费者</strong>——无用，且因为无用而被判定有罪，所以不值得投资，只值得管理。<br>
+        <span style="color:var(--accent-deep);font-weight:600;">变化的不是穷人的处境，而是社会看他们的眼神。</span>
+      </div>
+    </div>
+    <div class="two-col" style="margin-top:14px;">
+      <div class="info-card concept">
+        <div class="label">一把尺子：评价标准对照</div>
+        <div class="content">生产者社会问："<strong>你能干活吗？</strong>"<br>消费者社会问："<strong>你能消费吗？</strong>"<br>两个问题都把人分成合格与不合格，但只有后者会把失败者判成道德有问题。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">一个反直觉的推论</div>
+        <div class="content">物质越丰裕，穷人的处境可能越糟——因为在匮乏社会里穷人还有"未来可供开采"，在丰裕社会里他们连被开采的价值都失去了。</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 贯穿洞察 -->
+  <div class="section" id="insight">
+    <h2>💡 贯穿洞察</h2>
+    <div class="insight-card">
+      <div class="insight-title">洞察一：贫困的定义从"位置问题"变成了"品格问题"</div>
+      <div class="insight-body">这是全书最核心的一刀。当贫困被解释成个人缺陷，社会就同时得到了两样东西：不必改革的理由，和可以正当地冷漠下去的许可。识别这种偷换，是读这本书最实用的收获——它在今天的话术里无处不在。</div>
+      <div class="insight-evidence">对应章节：第一章（"不值得帮助的穷人"）与第四章（"底层阶级"标签）</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">洞察二：一个社会怎么定义穷人，暴露了它真正看重什么</div>
+      <div class="insight-body">生产者社会看重"有用"，所以衡量穷人的尺子是能否出力；消费者社会看重"能选择、能消费"，所以尺子换成了购买力与品味。看谁被称为穷人、为什么被如此称呼，比看它的口号更能判断这个社会在乎什么。</div>
+      <div class="insight-evidence">对应章节：第二章 · 从工作伦理到消费美学</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">洞察三：道德义务是可以被"取消"的，这是最危险的机制</div>
+      <div class="insight-body">鲍曼真正让人不安的地方，不在贫困本身，而在社会如何合法地把某些人排除在道德考虑之外。先污名化，再分类，最后隔离——每一步都不需要恶意，只需要"他们不一样"这个前提被接受。</div>
+      <div class="insight-evidence">对应章节：第四章"逐出道德义务的世界"与第五章"安全国家"</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">洞察四：制度的成功可能正在削弱它自己的政治基础</div>
+      <div class="insight-body">福利越有效，人们越忘记没有它时的样子，支持它的紧迫感就越弱。这个悖论不只适用于福利：任何靠"恐惧记忆"维持的公共安排，都会随着时间流逝而失去支撑。</div>
+      <div class="insight-evidence">对应章节：第三章 · 招致毁灭的成功</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 金句 -->
+  <div class="section" id="quote">
+    <h2>💬 核心金句</h2>
+    <blockquote class="quote-block">
+      <p>贫穷曾经意味着失业，如今它意味着做一个有缺陷的消费者——一个无法参与社会通行游戏的人。</p>
+      <span class="cite">——综合提炼自本书核心论述</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>工作伦理所要求的从来不是勤奋，而是服从；它塑造的不是创造者，而是可被安排的人。</p>
+      <span class="cite">——综合提炼自第一章"创造工作伦理"部分</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>最深的剥夺不是失去收入，而是失去位置——当一个人不再被社会需要，他也就慢慢不被认为值得对得起。</p>
+      <span class="cite">——综合提炼自第六章"失去位置的穷人"部分</span>
+    </blockquote>
+    <p style="font-size:12px;color:var(--text-muted);">说明：以上为对鲍曼核心论述的概括转述，非原文摘录，亦未标注页码以免误导。</p>
+  </div>
+
+  <hr class="divider">
+
+  <!-- 延伸与比较 -->
+  <div class="section" id="extension">
+    <h2>📊 延伸与比较</h2>
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>鲍曼最广为流传的一本小书。它不是贫困研究的方法论著作，而是一次<b>概念史的解剖</b>：把"工作伦理""穷人""贫困"这些日常词拆开，露出里面被换掉的零件。它的价值不在于提供数据，而在于提供一副能看穿贫困话语的眼镜。</td>
+        </tr>
+        <tr>
+          <td>核心贡献</td>
+          <td>三件事：① 把"工作伦理"从道德常识还原为一项人为发明的治理工具；② 提炼出<b>"新穷人 = 有缺陷的消费者"</b>这一极具解释力的概念，之后成为讨论当代贫困的常用框架；③ 指出贫困问题的真正战场是"道德资格"——谁有资格被善待，这个判断才是政策的地基。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>① <b>诊断远强于处方</b>：结尾提出的"生活道德／工艺伦理"缺少制度层面的可操作路径，常被批评带有浪漫主义甚至乌托邦色彩；② <b>对消费社会的描绘偏悲观</b>，较少讨论人们在消费之外（社群、创造、信仰、亲密关系）获得意义的实际可能与规模；③ 有批评认为他把消费与生产切得太开，忽略了消费中的体验性与精神性满足；④ 全书写作偏格言式，论证靠洞察串联而非经验数据支撑，读者容易被说服，也容易失去检验手段；⑤ 成书于 1998 年，此后零工经济、平台算法与全民基本收入等新变量，书中未能展开。</td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>韦伯《新教伦理与资本主义精神》</strong>：必须放在一起读。韦伯讲的是工作伦理如何从宗教土壤中<b>生长</b>出来；鲍曼讲的是它如何被<b>制造</b>、之后又如何被消费美学取代。两本合读，恰好构成"工作伦理"的完整生命史。<br>
+            <strong>马克思《资本论》</strong>：鲍曼的"劳动力后备军"直接承自马克思的产业后备军概念。马克思描述的是它被剥削的一面，鲍曼追问的是——当资本不再需要这支后备军时，人还剩什么位置。有书评曾感慨"这本书，马克思读后也会哀泣"。<br>
+            <strong>《贫穷的本质》（班纳吉、迪弗洛）</strong>：视角相反，值得对读。他们聚焦穷人的微观决策与行为约束，结论偏向"通过精准干预可以改善"；鲍曼则把镜头拉到结构层面，指出真正的问题是被排除的资格。一个讲<b>如何帮</b>，一个问<b>为何不愿帮</b>。<br>
+            <strong>皮凯蒂《21世纪资本论》</strong>：用数据刻画不平等的长期结构，为鲍曼的概念分析补上定量这一半。<br>
+            <strong>《信息与激励经济学》（陈钊）</strong>：书中讨论的福利依赖与道德风险，本质是同一现象的另一个镜像——鲍曼把"依赖"读作污名化的武器，激励理论则把它视为可以设计机制去化解的真实约束。两个角度都成立，合看更完整。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>本书的"身份由消费定义"与《失控》所描述的系统整合机制，指向同一种现代性体验：社会靠<b>引诱而非命令</b>来组织，因此"跟不上诱惑的人"会被系统无声地甩出，而不是被明文驱逐。而《技术的本质》里"技术自我供给、目的从何而来"的追问，到了劳动力市场上就变成另一个版本的问题——当生产不再需要这么多人手，人该以什么理由被承认？三本书串联起来，是同一个时代的三张切片：<b>系统如何组织、技术如何演化、人被放在哪里。</b></td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <b>看新闻</b>：留意贫困议题中"个案故事"的比重——个案越突出，越可能是在把结构问题讲成品格问题。<br>
+            <b>看职场</b>：当成"找不到热爱的工作"被说成个人失败时，可以回想"使命是一种特权"这一节——有意义的工作本就稀缺，稀缺不是你的错。<br>
+            <b>看消费</b>：区分"需要"与"欲望"，也是鲍曼给普通读者最直接的提醒：消费社会的游戏规则是欲望永不被满足，退出这个游戏本身是一种能力。<br>
+            <b>看自己</b>：全书最具刺痛感的一句潜台词是——今天读这本书的人，也可能正站在"新穷人"的门槛外侧，只是暂时还没被告知。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="reflection-block">
+      <div class="reflection-title">💭 延伸思辨</div>
+      <p>这本书最容易被误读成一本"为穷人鸣不平"的书。它其实更冷：鲍曼真正在问的不是"我们该怎样对穷人更好"，而是<b>"我们是如何一步步被说服，认为不必对他们好"</b>。这是一本关于道德如何被合法地撤走的书——比贫困本身更让人不安的，是撤走过程中没人觉得自己做错了什么。</p>
+      <p>它写于 1998 年，如今读来反而更贴切。零工、算法派单、平台评分、按件计酬的外卖与网约车，把"不稳定就业"变成了常态；同时"你不够努力"的叙事比任何时候都更畅销。鲍曼描述的机制没有过时，只是换了更精细的技术外壳。</p>
+      <p>它的边界也在这里：诊断如此锋利，处方却近乎沉默。读完能拿到的是一副看清问题的眼镜，不是一个解决方案。或许这正是它的诚实之处——先把问题看对，比急着开药方更要紧。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《工作、消费主义和新穷人》知识图谱 · 基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<!-- 术语弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  workethic: {
+    title: '工作伦理（work ethic）',
+    content: '<p>一套把工作从"谋生手段"升格为"道德义务"的观念系统。鲍曼的关键论点是：<b>它并非自古有之的天理，而是工业化时期被人为制造出来的治理工具。</b></p><ul><li>核心三条预设：工作本身即价值；工作是道德义务；不工作等于品格缺陷</li><li>真实功能：为早期工厂提供按时出现、服从纪律、能忍受单调重复的劳动力</li><li>被塑造的配套分类："值得帮助的穷人"与"不值得帮助的穷人"</li></ul><p>韦伯在《新教伦理与资本主义精神》中描述它如何从宗教土壤中生长出来；鲍曼追问的则是它后来如何被消费美学取代，以及为什么在失去经济功能之后仍然顽固存活。</p>'
+  },
+  aesthetics: {
+    title: '消费美学（the aesthetics of consumption）',
+    content: '<p>消费者社会取代工作伦理的主导规则：不再以纪律和责任评判人，而是以选择、体验、愉悦、新颖来评判。</p><ul><li><b>评判标准</b>：从"你是否尽责"转为"你是否懂得挑选与享受"</li><li><b>欲望机制</b>：消费社会靠持续提供诱惑来整合成员，因此欲望必须永远不被满足——满足了，游戏就结束了</li><li><b>连带效应</b>：工作本身也被审美化，有趣、有创造性才配获得尊重，枯燥重复则被视为个人的失败</li></ul><p>鲍曼认为，这套规则比纪律更自由也更温和，但代价是：无法被诱惑的人，就失去了被社会整合的资格。</p>'
+  },
+  newpoor: {
+    title: '新穷人（the new poor）',
+    content: '<p>本书最核心的概念。<b>新穷人不是"没有工作的人"，而是"有缺陷的消费者"</b>——消费能力不足以参与社会通行游戏的群体。</p><ul><li><b>与旧穷人的根本区别</b>：旧穷人的贫穷是经济状况（失业），可被下一次景气修复；新穷人的贫穷是人格判定，无法靠经济回暖抹去</li><li><b>身份后果</b>：不被需要的人很快被认定为"无用"，而无用在这个社会里极度接近"有罪"</li><li><b>覆盖范围</b>：注意——有工作但收入不足以参与消费的人，同样落入新穷人的范围</li></ul><p>这个概念的力量在于它同时解释了为什么当代贫困更痛苦、更孤立、也更难以摆脱。</p>'
+  },
+  underclass: {
+    title: '底层阶级（underclass）',
+    content: '<p>一个在讨论贫困时被广泛使用的标签。鲍曼对它的剖析是全书最锋利的部分之一。</p><ul><li><b>实际功能</b>：把成因完全不同的贫困（失业、低薪、病残、家庭破裂、产业外迁）压缩成一个统一的"低等人"形象，并为他们配上"共同的缺点"</li><li><b>修辞效果</b>：使一个复杂的社会问题被简化成一种人的问题，于是解决方案从"改革结构"变成"管理这些人"</li><li><b>政治后果</b>：被归为一个"类别"之后，这些人失去了"集体"属性——没有共同身份、无法组织、无法谈判</li></ul><p>换句话说，分类本身就是一种解除武装的技术。</p>'
+  },
+  criminal: {
+    title: '贫穷即犯罪 / 贫困的刑事化',
+    content: '<p>当贫困被判定为道德缺陷，对它的处理方式就会从救济转向管制——问题从"为什么会有穷人"变成"如何让他们不出事"。</p><ul><li><b>语言切换</b>：同一处境，用福利的语言描述是"受助者"，用治安的语言描述是"隐患"</li><li><b>空间表现</b>：隔离社区、驱逐贫民聚居区、监禁规模扩张</li><li><b>深层后果</b>：不是待遇变差，而是<b>道德资格被取消</b>——此后任何冷酷对待都不再引发愧疚</li></ul><p>鲍曼提醒：把人定义为危险，比把人定义为不幸，更容易让冷漠显得正当。</p>'
+  },
+  redundant: {
+    title: '从"失业"到"过剩"（redundant）',
+    content: '<p>鲍曼在语词层面做出的关键区分，看似微小，后果巨大。</p><ul><li><b>失业</b>：暗示一个空位终将出现，你只是暂时没对上——因此需要再培训、再就业服务</li><li><b>过剩</b>：宣告一个终结——不是没有工作留给你，而是这个系统不再需要你这个人——因此只需要监控与安置</li><li><b>社会后果</b>：同一个处境，被称为失业者的人会被安排培训，被称为过剩人口的人只会被安排管制</li></ul><p>词变了，希望也就没了。这是本书最冷的一处推演。</p>'
+  },
+  safestate: {
+    title: '从社会国家到"安全国家"',
+    content: '<p>鲍曼对当代国家职能迁移的判断：合法性基础从"照顾成员"转向"保障安全"。</p><ul><li><b>预算结构变化</b>：福利性支出收缩，监控与执法支出扩张</li><li><b>话语变化</b>：社会问题的语言被法律与秩序的语言替换，"贫困"被"治安"覆盖</li><li><b>空间结果</b>：门禁社区、无处不在的监控、对"不安全人群"的提前防范——秩序的边界被重新画在"谁不该出现在这里"上</li></ul><p>鲍曼强调这不是某一届政府的偏好，而是消费社会逻辑的延伸：当社会不再需要所有人作为生产者，它便转向只需要一部分人不构成威胁。</p>'
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>
