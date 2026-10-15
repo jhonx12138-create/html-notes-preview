@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.6.2</title>
+<title>📚 书阁 v8.7.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -747,18 +747,37 @@ html, body {
   padding: 1px 5px;
 }
 
-.shelf-section { padding: 0 16px 24px; }
+/* v8.7：分类区块改为独立卡片，强化类别之间的视觉分隔 */
+.shelf-section {
+  margin: 0 14px 14px;
+  padding: 14px 14px 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(26,26,46,0.05);
+  transition: box-shadow var(--transition), border-color var(--transition);
+}
+.shelf-section:hover { box-shadow: 0 4px 14px rgba(26,26,46,0.08); }
+.shelf-section:first-child { margin-top: 14px; }
+.shelf-section:last-child { margin-bottom: 20px; }
 .shelf-section-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 12px; padding-bottom: 10px;
+  border-bottom: 1px dashed var(--border);
 }
 .shelf-label {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 18px; font-weight: 600; color: var(--text-primary);
-  letter-spacing: -0.3px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 15px; font-weight: 600; color: var(--text-primary);
+  letter-spacing: -0.2px; transition: color var(--transition);
 }
-.shelf-label .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-.shelf-count { font-size: 13px; color: var(--text-muted); font-weight: 400; display: flex; align-items: center; gap: 2px; }
+.shelf-label .dot { width: 5px; height: 15px; border-radius: 3px; flex-shrink: 0; }
+.shelf-count {
+  font-size: 12px; color: var(--text-secondary); font-weight: 400;
+  display: flex; align-items: center; gap: 2px;
+  background: var(--bg-page); border: 1px solid var(--border);
+  padding: 3px 6px 3px 10px; border-radius: 999px;
+  transition: all var(--transition);
+}
 .shelf-arrow {
   font-size: 18px; color: var(--text-secondary);
   transition: all var(--transition);
@@ -769,10 +788,11 @@ html, body {
 }
 .shelf-section-header {
   cursor: pointer; user-select: none; -webkit-user-select: none;
-  border-radius: var(--radius-sm); padding: 4px 8px; margin: -4px -8px;
-  transition: background var(--transition);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
 }
-.shelf-section-header:hover { background: var(--accent-soft); }
+.shelf-section-header:hover .shelf-label { color: var(--accent); }
+.shelf-section-header:hover .shelf-count { border-color: var(--accent); color: var(--accent); }
 .shelf-section-header:active { opacity: 0.7; }
 
 /* v8.6.2：横向书排在 360px 侧栏内溢出 1400px 且无法滚动，改为纵向自适应网格 */
@@ -788,6 +808,25 @@ html, body {
 .book-row .book-title { font-size: 12px; line-height: 1.4; -webkit-line-clamp: 3; }
 .book-row .book-date { font-size: 10px; margin-bottom: 4px; }
 .book-row .book-author-text { font-size: 9px; padding: 1px 6px; }
+
+/* v8.7：每类最多两行；超出时第二行末位变「查看更多」，点击进入该分类详情 */
+.book-more-card {
+  min-width: 0; cursor: pointer;
+  border-radius: var(--radius-md);
+  background: var(--accent-soft);
+  border: 1px dashed var(--accent);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; padding: 10px 6px; color: var(--accent);
+  transition: all var(--transition);
+}
+.book-more-card:hover {
+  background: var(--accent); color: #fff; border-style: solid;
+  transform: translateY(-6px); box-shadow: 0 12px 32px rgba(26,26,46,0.14);
+}
+.book-more-card:active { transform: translateY(-2px); }
+.book-more-card:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.book-more-num { font-size: 16px; font-weight: 700; line-height: 1; }
+.book-more-text { font-size: 11px; font-weight: 500; letter-spacing: -0.2px; }
 
 /* ========== Book Card (New Vertical Cover Design) ========== */
 .book-card {
@@ -874,7 +913,9 @@ html, body {
   .tab-bar { display: none; }
   .main-content { display: none; }
   .bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; }
-  .shelf-section { padding: 0 16px 20px; }
+  /* v8.7：分类已改为独立卡片，原来的 padding-top:0 是给旧扁平设计的，
+     会让标题贴着卡片上边框（实测仅 2.6px）。这里改为卡片内边距 + 收紧外边距。 */
+  .shelf-section { padding: 12px 12px 6px; margin: 0 12px 12px; }
   .category-chips { padding: 8px 16px 12px; }
   .sidebar-header { padding: 16px 20px 10px; }
   .sidebar-header h1 { font-size: 24px; }
@@ -897,7 +938,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.6.2</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.7.0</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -1014,11 +1055,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.6.2</span>
+                <span class="setting-value">v8.7.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.6.2</div>
+              <div class="about-version">📚 书阁 v8.7.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1775,6 +1816,54 @@ html, body {
 
   function getBookColorClass(cat) { return CAT_COLOR_MAP[cat] || 'other'; }
 
+  /* v8.7：每个分类最多显示两行。
+     超出时把第二行最后一本替换成「查看更多」，点击进入该分类详情页。
+     列数从 grid 的实际渲染结果测量，所以不同视口宽度下都能正确截断。 */
+  const SHELF_MAX_ROWS = 2;
+  function clampShelfRows() {
+    if (!shelfContainer) return;
+    shelfContainer.querySelectorAll('.book-row').forEach(function(row) {
+      const cards = Array.prototype.slice.call(row.children)
+        .filter(function(el) { return el.classList.contains('book-card'); });
+      if (!cards.length) return;
+      let cols = 1;
+      try {
+        const tpl = getComputedStyle(row).gridTemplateColumns;
+        if (tpl && tpl !== 'none') cols = tpl.split(' ').filter(Boolean).length || 1;
+      } catch (_) { cols = 1; }
+      const cap = Math.max(1, cols * SHELF_MAX_ROWS);
+      if (cards.length <= cap) return;          // 两行装得下，不截断
+      const cat = row.getAttribute('data-cat') || '';
+      const hiddenCount = cards.length - (cap - 1);
+      cards.slice(cap - 1).forEach(function(el) { el.remove(); });
+      const more = document.createElement('div');
+      more.className = 'book-more-card';
+      more.setAttribute('role', 'button');
+      more.setAttribute('tabindex', '0');
+      more.setAttribute('aria-label', '查看更多 ' + cat + ' 的笔记');
+      more.innerHTML = '<span class="book-more-num">+' + hiddenCount + '</span>'
+                     + '<span class="book-more-text">查看更多</span>';
+      function go(ev) {
+        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
+        if (cat) openCategoryDetail(cat);
+      }
+      more.addEventListener('click', go);
+      more.addEventListener('keydown', function(ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') go(ev);
+      });
+      row.appendChild(more);
+    });
+  }
+
+  // 视口变化会改变网格列数，需重渲染后重新截断（防抖 180ms）
+  let shelfClampTimer = null;
+  window.addEventListener('resize', function() {
+    clearTimeout(shelfClampTimer);
+    shelfClampTimer = setTimeout(function() {
+      if (typeof renderShelf === 'function') renderShelf();
+    }, 180);
+  });
+
   function renderShelf() {
     // v8.6.2：支持分类筛选（分类筛选条恢复显示后，筛选需真正作用于书架）
     const src = (STATE.selectedCategory && STATE.selectedCategory !== '全部')
@@ -1797,7 +1886,7 @@ html, body {
           <span class="shelf-label"><span class="dot" style="background:${color}"></span>${escapeHtml(cat)}</span>
           <span class="shelf-count">${notes.length} 本书<span class="shelf-arrow">›</span></span>
         </div>
-        <div class="book-row">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
+        <div class="book-row" data-cat="${escapeHtml(cat)}">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
       </div>`;
     }
     for (const cat of Object.keys(grouped)) {
@@ -1811,13 +1900,14 @@ html, body {
           <span class="shelf-label"><span class="dot" style="background:${color}"></span>${escapeHtml(cat)}</span>
           <span class="shelf-count">${notes.length} 本书<span class="shelf-arrow">›</span></span>
         </div>
-        <div class="book-row">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
+        <div class="book-row" data-cat="${escapeHtml(cat)}">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
       </div>`;
     }
     if (!html) {
       html = `<div class="empty-state"><div class="empty-icon">📚</div><p>${(STATE.selectedCategory && STATE.selectedCategory !== '全部') ? '该分类暂无书籍' : '书架上还没有书'}</p></div>`;
     }
     shelfContainer.innerHTML = html;
+    clampShelfRows();          // v8.7：每类最多两行，超出则末位显示「查看更多」
     updateCount(src.length);   // v8.6.2：「共 N 篇」跟随当前筛选实时更新
   }
 
