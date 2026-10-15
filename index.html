@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.6.1</title>
+<title>📚 书阁 v8.6.2</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -159,7 +159,11 @@ html, body {
 .note-list::-webkit-scrollbar { width: 4px; }
 .note-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
-#notesViewArea { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+/* v8.6.2：#notesViewArea 恢复显示，仅承载分类筛选条 + 篇数（高度自适应，不挤占书架） */
+#notesViewArea { flex: 0 0 auto; display: flex; flex-direction: column; overflow: visible; }
+/* 笔记长列表与书架重复，主视图是书架，保持隐藏 */
+#notesViewArea .note-list { display: none; }
+#notesViewArea .toolbar { padding: 4px 24px 8px; border-bottom: none; }
 
 /* Swipe wrapper */
 .note-item-wrapper {
@@ -389,6 +393,8 @@ html, body {
 .toggle-switch input:checked + .slider::before { transform: translateX(20px); }
 .btn-setting { padding: 6px 14px; border: 1.5px solid var(--accent); border-radius: var(--radius-sm); background: transparent; color: var(--accent); font-size: 0.78rem; cursor: pointer; transition: all var(--transition); }
 .btn-setting:hover { background: var(--accent-soft); }
+/* v8.6.2 数据备份按钮组 */
+.setting-btn-group { display: flex; gap: 8px; flex-shrink: 0; }
 .profile-about { margin-top: 24px; padding: 14px 0; text-align: center; }
 .profile-about .about-version { font-size: 13px; color: var(--text-muted); font-weight: 500; margin-bottom: 6px; }
 .profile-about .about-desc { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
@@ -594,7 +600,7 @@ html, body {
 .preview-overlay:not(.landscape):not(.hidden) .edge-swipe-zone { display: block; }
 
 /* Mobile responsive for category detail */
-@media (max-width: 767px) {
+@media (max-width: 767px), (max-width: 1023px) and (any-pointer: coarse) {
   .category-detail-grid { padding: 10px 12px; }
   .category-detail-header { padding: 12px 16px; }
 }
@@ -605,7 +611,7 @@ html, body {
 .modal-card { background: var(--bg-card); border-radius: var(--radius-lg); padding: 24px; max-width: 380px; width: 90%; box-shadow: var(--shadow-lg); text-align: center; }
 .modal-card .modal-icon { font-size: 2.5rem; margin-bottom: 12px; }
 .modal-card h3 { font-size: 1.05rem; color: var(--text-primary); margin-bottom: 8px; font-weight: 600; }
-.modal-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; }
+.modal-card p { font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 20px; line-height: 1.5; white-space: pre-line; }
 .modal-card .modal-actions { display: flex; gap: 10px; justify-content: center; }
 .modal-card .btn { padding: 8px 24px; border: none; border-radius: var(--radius-sm); font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all var(--transition); }
 .modal-card .btn-cancel { background: var(--bg-page); color: var(--text-secondary); }
@@ -741,7 +747,7 @@ html, body {
   padding: 1px 5px;
 }
 
-.shelf-section { padding: 0 24px 28px; }
+.shelf-section { padding: 0 16px 24px; }
 .shelf-section-header {
   display: flex; align-items: center; justify-content: space-between;
   margin-bottom: 14px;
@@ -769,18 +775,24 @@ html, body {
 .shelf-section-header:hover { background: var(--accent-soft); }
 .shelf-section-header:active { opacity: 0.7; }
 
+/* v8.6.2：横向书排在 360px 侧栏内溢出 1400px 且无法滚动，改为纵向自适应网格 */
 .book-row {
-  display: flex; gap: 14px; overflow-x: auto;
-  padding: 4px 0 8px;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  scroll-snap-type: x proximity;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 12px 8px;
+  padding: 6px 0 10px;
 }
-.book-row::-webkit-scrollbar { display: none; }
+/* 网格下压缩卡片高度，保证侧栏首屏能看到更多书 */
+.book-row .book-cover { min-height: 76px; padding: 12px 8px; }
+.book-row .book-info { padding: 8px 8px; }
+.book-row .book-title { font-size: 12px; line-height: 1.4; -webkit-line-clamp: 3; }
+.book-row .book-date { font-size: 10px; margin-bottom: 4px; }
+.book-row .book-author-text { font-size: 9px; padding: 1px 6px; }
 
 /* ========== Book Card (New Vertical Cover Design) ========== */
 .book-card {
-  flex-shrink: 0; width: 120px;
-  scroll-snap-align: start;
+  position: relative;
+  width: auto; min-width: 0;
   border-radius: var(--radius-md); overflow: hidden;
   background: var(--bg-card);
   box-shadow: var(--shadow-book);
@@ -788,6 +800,20 @@ html, body {
   border: 1px solid transparent;
   user-select: none; -webkit-user-select: none;
 }
+/* v8.6.2：桌面端 hover 浮出的操作入口（移动端走长按，隐藏） */
+.book-card-menu {
+  position: absolute; top: 6px; right: 6px; z-index: 2;
+  width: 26px; height: 26px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%;
+  background: rgba(0,0,0,0.30); color: #fff;
+  font-size: 15px; line-height: 1; cursor: pointer;
+  opacity: 0; transition: opacity var(--transition);
+}
+.book-card:hover .book-card-menu, .book-card-menu:focus-visible { opacity: 1; }
+.book-card-menu:hover { background: rgba(0,0,0,0.48); }
+/* 触屏设备走长按，不显示 hover 按钮（any-pointer 与 checkMobile 的触屏判定保持一致） */
+@media (hover: none), (any-pointer: coarse), (max-width: 767px) { .book-card-menu { display: none; } }
 .book-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(26,26,46,0.12), 2px 0 0 rgba(0,0,0,0.06) inset; }
 .book-card:active { transform: translateY(-2px); }
 .book-card.active { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-book); }
@@ -832,12 +858,17 @@ html, body {
 .error-banner { margin: 12px 24px; padding: 12px 16px; border-radius: var(--radius-md); background: var(--accent-soft); color: var(--accent); font-size: 0.85rem; text-align: center; }
 
 /* ========== Bottom padding for safe area ========== */
-@media (max-width: 767px) {
+@media (max-width: 767px), (max-width: 1023px) and (any-pointer: coarse) {
   .sidebar { padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
 }
 
-/* ========== Responsive: Mobile ========== */
-@media (max-width: 767px) {
+/* ========== Responsive: Mobile ==========
+   v8.6.2 修复 P1：checkMobile() 对触屏设备放宽到 1024px（横屏不踢出预览层），
+   但 CSS 仍是 max-width:767px，导致触屏 768~1023px 区间 JS 判移动、CSS 判桌面，
+   出现底部导航消失 + 侧栏右侧空白。这里让 CSS 使用与 JS 相同的「设备维度」：
+   触屏（any-pointer:coarse，含触屏笔记本/平板）到 1023px 都走移动端布局；
+   非触屏设备 768px 以上的桌面布局完全不变。*/
+@media (max-width: 767px), (max-width: 1023px) and (any-pointer: coarse) {
   .app { flex-direction: column; position: relative; height: 100%; }
   .sidebar { width: 100%; min-width: 0; height: 100%; position: absolute; top: 0; left: 0; border-right: none; }
   .tab-bar { display: none; }
@@ -848,8 +879,9 @@ html, body {
   .sidebar-header { padding: 16px 20px 10px; }
   .sidebar-header h1 { font-size: 24px; }
 }
-@media (min-width: 768px) and (max-width: 1023px) { .sidebar { width: 300px; min-width: 300px; } .note-item { padding: 10px 12px; } .book-card { width: 120px; } }
-@media (min-width: 1024px) { .sidebar { width: 360px; min-width: 360px; } .book-card { width: 130px; } }
+/* v8.6.2：加 (any-pointer:fine) 限定，避免触屏设备在 768~1023px 同时命中移动端布局又被这里改回固定侧栏宽 */
+@media (min-width: 768px) and (max-width: 1023px) and (any-pointer: fine) { .sidebar { width: 300px; min-width: 300px; } .note-item { padding: 10px 12px; } }
+@media (min-width: 1024px) { .sidebar { width: 360px; min-width: 360px; } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 </style>
 </head>
@@ -857,13 +889,15 @@ html, body {
 
 <!-- Hidden file input for upload -->
 <input type="file" id="uploadFileInput" accept=".html" style="display:none">
+<!-- Hidden file input for backup import (v8.6.2) -->
+<input type="file" id="importFileInput" accept="application/json,.json" style="display:none">
 
 <div class="app" id="app">
 
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.6.1</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.6.2</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -879,8 +913,8 @@ html, body {
 
       <!-- Home Tab -->
       <div class="tab-panel active" id="tabHome">
-        <!-- Notes List View (hidden, kept for search) -->
-        <div id="notesViewArea" style="display:none">
+        <!-- 分类筛选条（v8.6.2 恢复显示；笔记长列表 #noteList 由 CSS 隐藏，主视图是书架） -->
+        <div id="notesViewArea">
           <div class="category-chips" id="categoryChips"></div>
           <div class="toolbar"><span class="count" id="noteCount">共 0 篇</span></div>
           <div class="note-list" id="noteList">
@@ -964,6 +998,14 @@ html, body {
                 <span class="setting-label"><span class="setting-icon">🗑️</span>清除用户笔记</span>
                 <button class="btn-setting" id="clearUserNotesBtn">清除全部</button>
               </li>
+              <!-- v8.6.2 数据备份：导出/导入 -->
+              <li class="profile-setting-item">
+                <span class="setting-label"><span class="setting-icon">💾</span>数据备份</span>
+                <span class="setting-value setting-btn-group">
+                  <button class="btn-setting" id="exportDataBtn">导出全部数据</button>
+                  <button class="btn-setting" id="importDataBtn">导入备份</button>
+                </span>
+              </li>
               <!-- Category Management -->
               <li class="profile-setting-item category-manager-item">
                 <span class="setting-label"><span class="setting-icon">📂</span>分类管理</span>
@@ -972,11 +1014,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.2</span>
+                <span class="setting-value">v8.6.2</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.6.1</div>
+              <div class="about-version">📚 书阁 v8.6.2</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1233,6 +1275,9 @@ html, body {
   const profileThemeToggle = $('#profileThemeToggle');
   const storageSize        = $('#storageSize');
   const clearUserNotesBtn  = $('#clearUserNotesBtn');
+  const exportDataBtn      = $('#exportDataBtn');
+  const importDataBtn      = $('#importDataBtn');
+  const importFileInput    = $('#importFileInput');
 
   // Category management
   const categoryManagerList = $('#categoryManagerList');
@@ -1258,6 +1303,7 @@ html, body {
     selectedId: null,
     theme: 'light',
     isMobile: false,
+    isTouchDevice: (navigator.maxTouchPoints > 0) || ('ontouchstart' in window),
     activeTab: 'home',
     pinnedIds: [],
     searchHistory: [],
@@ -1268,6 +1314,8 @@ html, body {
     isLandscape: false,
     landscapeHideTimer: null,
     focusHideTimer: null,
+    // v8.6.2：长按打开操作面板后，忽略抬手合成的那一次 click，避免面板自我关闭
+    actionSheetOpenedAt: 0,
     // v8.5.0 阅读增强
     fontLevelIndex: 1,          // P0-1 当前字号档位下标，默认 1（即 1.0）
     loadingFallbackTimer: null, // P0-2 加载态兜底定时器
@@ -1286,7 +1334,17 @@ html, body {
 
   /* ---- Helpers ---- */
   function formatDate(d) { if(!d) return ''; try { const dt=new Date(d); if(isNaN(dt.getTime())) return d; return `${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`; } catch(_){return d;} }
-  function checkMobile() { STATE.isMobile = window.innerWidth < 768; }
+  function checkMobile() {
+    const prev = STATE.isMobile;
+    // 触屏设备（含触屏笔记本/平板）：放宽到 1024px，手机横屏 844px 仍算移动端，转屏不会踢出预览层
+    // 非触屏设备：维持纯 768px 宽度判定，桌面断点行为不变
+    STATE.isMobile = STATE.isTouchDevice
+      ? (window.innerWidth < 1024)
+      : (window.innerWidth < 768);
+    return prev !== STATE.isMobile;
+  }
+  // v8.6.2：当前正在阅读的笔记（用于 resize 跨断点时迁移状态而非丢弃）
+  function getCurrentNote() { return STATE.notes.find(n => n.id === STATE.selectedId) || null; }
   function escapeHtml(s) { const el=document.createElement('div'); el.textContent=s; return el.innerHTML; }
   function genId() { return 'user-'+Date.now()+'-'+Math.random().toString(36).slice(2,8); }
   function showToast(msg) {
@@ -1314,6 +1372,22 @@ html, body {
   function saveCategories(c) { try { localStorage.setItem('notes-categories-v2',JSON.stringify(c)); } catch(_){} }
   // v8.2 升级：清除旧版本分类缓存（避免旧7类显示）
   try { localStorage.removeItem('notes-categories'); } catch(_){}
+
+  /* ---- Persistence: Built-in Note Edits ---- */
+  // v8.6.2 修复 P0：notes-edits 此前是唯一没有 try/catch 的解析点，
+  // 一旦损坏（导入坏备份 / 手改 localStorage），JSON.parse 抛错会让 loadBuiltInNotes
+  // 走进 catch 把 builtInNotes 清空 —— 43 篇内置笔记全部消失。此处统一兜底。
+  function emptyEdits() { return { _mod: {}, _del: [] }; }
+  function loadEdits() {
+    try {
+      const e = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
+      if (e && typeof e === 'object' && !Array.isArray(e)) {
+        return { _mod: (e._mod && typeof e._mod === 'object' && !Array.isArray(e._mod)) ? e._mod : {}, _del: Array.isArray(e._del) ? e._del : [] };
+      }
+    } catch(_) {}
+    return emptyEdits();
+  }
+  function saveEdits(e) { try { localStorage.setItem('notes-edits', JSON.stringify(e)); } catch(_){} }
 
   /* ---- Persistence: Theme ---- */
   function loadTheme() { try { const s=localStorage.getItem('notes-theme'); if(s==='dark'||s==='light') STATE.theme=s; } catch(_){STATE.theme='light';} applyTheme(); }
@@ -1467,9 +1541,9 @@ html, body {
       try {
         if (note.source !== 'user') {
           STATE.builtInNotes = STATE.builtInNotes.filter(n => n.id !== noteId);
-          const edits = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
+          const edits = loadEdits();
           edits._del.push(noteId);
-          localStorage.setItem('notes-edits', JSON.stringify(edits));
+          saveEdits(edits);
         }
         else { await DB.delete(noteId); STATE.userNotesIndex = STATE.userNotesIndex.filter(n => n.id !== noteId); saveUserNotesIndex(); }
         if (STATE.selectedId === noteId) { mergeNotes(); STATE.notes.length ? showPreview(STATE.notes[0]) : showWelcome(); }
@@ -1517,9 +1591,9 @@ html, body {
     } else {
       const bi = STATE.builtInNotes.findIndex(n => n.id === editTargetId);
       if (bi >= 0) { STATE.builtInNotes[bi].title = newTitle; STATE.builtInNotes[bi].category = newCategory; STATE.builtInNotes[bi].author = newAuthor; }
-      const edits = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
+      const edits = loadEdits();
       edits._mod[editTargetId] = { title: newTitle, category: newCategory, author: newAuthor };
-      localStorage.setItem('notes-edits', JSON.stringify(edits));
+      saveEdits(edits);
     }
     closeEditModal(); closeAllSwipes(); mergeNotes(); refreshCurrentView();
     showToast('✅ 笔记已更新');
@@ -1529,9 +1603,12 @@ html, body {
    *  ACTION SHEET
    * =================================================================== */
   function openActionSheet(noteId) {
-    actionSheetTargetId = noteId;
     const note = STATE.notes.find(n => n.id === noteId);
     if (!note) return;
+    // v8.6.2：记录打开时刻。移动端长按 800ms 触发后，浏览器还会合成一次 click，
+    // 此时遮罩已覆盖原坐标，会命中「点遮罩关闭」分支导致面板刚开就关。
+    STATE.actionSheetOpenedAt = Date.now();
+    actionSheetTargetId = noteId;
     actionSheetTitle.textContent = note.title || '笔记操作';
     asDeleteBtn.style.display = '';
     asPinBtn.innerHTML = isPinned(noteId) ? '<span class="as-icon">📌</span>取消置顶' : '<span class="as-icon">📌</span>置顶';
@@ -1539,7 +1616,12 @@ html, body {
   }
   function closeActionSheet() { actionSheetBackdrop.classList.add('hidden'); actionSheetTargetId = null; }
 
-  actionSheetBackdrop.addEventListener('click', function(e) { if (e.target === actionSheetBackdrop) closeActionSheet(); });
+  const ACTION_SHEET_GRACE_MS = 350;
+  actionSheetBackdrop.addEventListener('click', function(e) {
+    if (e.target !== actionSheetBackdrop) return;
+    if (Date.now() - STATE.actionSheetOpenedAt < ACTION_SHEET_GRACE_MS) return;  // 忽略抬手合成的那一次 click
+    closeActionSheet();
+  });
 
   actionSheet.addEventListener('click', function(e) {
     const btn = e.target.closest('[data-as-action]');
@@ -1593,15 +1675,35 @@ html, body {
   shelfContainer.addEventListener('click', function(e) {
     const card = e.target.closest('.book-card');
     if (!card) return;
+    // v8.6.2：hover 浮出的操作按钮 → 打开操作面板（不再触发打开笔记）
+    if (e.target.closest('[data-book-menu]')) { openActionSheet(card.getAttribute('data-id')); return; }
     const noteId = card.getAttribute('data-id');
     const note = STATE.notes.find(n => n.id === noteId);
     if (note) showPreview(note);
+  });
+
+  // v8.6.2：桌面端右键打开操作面板
+  shelfContainer.addEventListener('contextmenu', function(e) {
+    const card = e.target.closest('.book-card');
+    if (!card) return;
+    e.preventDefault();
+    const noteId = card.getAttribute('data-id');
+    if (noteId) openActionSheet(noteId);
   });
 
   shelfContainer.addEventListener('keydown', function(e) {
     if (e.key === 'Enter' || e.key === ' ') {
       const card = e.target.closest('.book-card');
       if (card) { e.preventDefault(); const note = STATE.notes.find(n => n.id === card.getAttribute('data-id')); if (note) showPreview(note); }
+      return;
+    }
+    // v8.6.2：桌面端键盘操作入口（E 键 = 操作面板，等价于移动端长按）
+    if (e.key === 'e' || e.key === 'E') {
+      const card = e.target.closest('.book-card');
+      if (!card) return;
+      e.preventDefault();
+      const noteId = card.getAttribute('data-id');
+      if (noteId) openActionSheet(noteId);
     }
   });
 
@@ -1627,9 +1729,9 @@ html, body {
       if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
       const data=await resp.json();
       if(!Array.isArray(data)) throw new Error('数据格式错误');
-      const edits = JSON.parse(localStorage.getItem('notes-edits') || '{"_mod":{},"_del":[]}');
-      const delSet = new Set(edits._del || []);
-      const modMap = edits._mod || {};
+      const edits = loadEdits();
+      const delSet = new Set(edits._del);
+      const modMap = edits._mod;
       STATE.builtInNotes = data
         .map((n,i) => ({...n,id:n.id||String(i+1),title:n.title||'未命名笔记',file:n.file||'',date:n.date||'',author:n.author||'',category:n.category||'其他',source:'builtin'}))
         .filter(n => !delSet.has(n.id))
@@ -1674,8 +1776,12 @@ html, body {
   function getBookColorClass(cat) { return CAT_COLOR_MAP[cat] || 'other'; }
 
   function renderShelf() {
+    // v8.6.2：支持分类筛选（分类筛选条恢复显示后，筛选需真正作用于书架）
+    const src = (STATE.selectedCategory && STATE.selectedCategory !== '全部')
+      ? STATE.notes.filter(n => (n.category || '其他') === STATE.selectedCategory)
+      : STATE.notes;
     const grouped = {};
-    for (const n of STATE.notes) {
+    for (const n of src) {
       const cat = n.category || '其他';
       if (!grouped[cat]) grouped[cat] = [];
       grouped[cat].push(n);
@@ -1709,9 +1815,10 @@ html, body {
       </div>`;
     }
     if (!html) {
-      html = '<div class="empty-state"><div class="empty-icon">📚</div><p>书架上还没有书</p></div>';
+      html = `<div class="empty-state"><div class="empty-icon">📚</div><p>${(STATE.selectedCategory && STATE.selectedCategory !== '全部') ? '该分类暂无书籍' : '书架上还没有书'}</p></div>`;
     }
     shelfContainer.innerHTML = html;
+    updateCount(src.length);   // v8.6.2：「共 N 篇」跟随当前筛选实时更新
   }
 
   function renderBookCard(n, colorClass) {
@@ -1719,6 +1826,7 @@ html, body {
     const pinned = isPinned(n.id);
     const author = n.author || '';
     return `<div class="book-card ${colorClass}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}">
+      <button class="book-card-menu" type="button" data-book-menu="1" aria-label="更多操作" title="更多操作">⋯</button>
       <div class="book-cover">
         <span class="book-title">${escapeHtml(n.title)}${pinned ? ' 📌' : ''}</span>
       </div>
@@ -1911,6 +2019,99 @@ html, body {
     } catch(err) { console.error(err); showToast('清除失败：'+err.message); }
   }
 
+  /* ---- Data Export / Import (v8.6.2) ---- */
+  // 参与备份的 localStorage 键（全部为用户在本机产生的数据）
+  const BACKUP_LS_KEYS = ['notes-pinned','notes-theme','notes-categories-v2','notes-edits','notes-reader-font','user-notes-index','notes-nickname','notes-search-history'];
+
+  async function exportAllData() {
+    try {
+      showToast('正在打包数据…');
+      const userNotes = await DB.getAll();   // 批量读取，一次 getAll
+      const ls = {};
+      for (const k of BACKUP_LS_KEYS) { const v = localStorage.getItem(k); if (v !== null) ls[k] = v; }
+      const payload = {
+        app: '书阁',
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        localStorage: ls,
+        userNotes
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const d = new Date();
+      const stamp = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+      const a = document.createElement('a');
+      a.href = url; a.download = `书阁备份-${stamp}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);   // 下载完成后释放
+      showToast(`✅ 已导出 ${userNotes.length} 篇笔记`);
+    } catch(err) { console.error(err); showToast('导出失败：'+err.message); }
+  }
+
+  // v8.6.2：导入前逐键校验。备份里存的是「字符串化的 JSON」，
+  // 损坏的 notes-edits 一旦写回会导致下次启动 43 篇内置笔记全部消失，必须拦在门外。
+  function validateBackupLs(ls) {
+    const bad = [];
+    for (const k of Object.keys(ls || {})) {
+      if (typeof ls[k] !== 'string') continue;
+      if (k === 'notes-edits') {
+        try {
+          const e = JSON.parse(ls[k]);
+          if (!e || typeof e !== 'object' || Array.isArray(e)) bad.push(k);
+        } catch (_) { bad.push(k); }
+      } else if (k === 'notes-pinned' || k === 'user-notes-index' || k === 'notes-search-history') {
+        try { const v = JSON.parse(ls[k]); if (!Array.isArray(v)) bad.push(k); } catch (_) { bad.push(k); }
+      } else if (k === 'notes-categories-v2') {
+        try { const v = JSON.parse(ls[k]); if (!Array.isArray(v) || !v.length) bad.push(k); } catch (_) { bad.push(k); }
+      } else if (k === 'notes-theme') {
+        if (ls[k] !== 'dark' && ls[k] !== 'light') bad.push(k);
+      } else if (k === 'notes-reader-font') {
+        const n = Number(ls[k]);
+        if (!Number.isInteger(n) || n < 0 || n >= 5) bad.push(k);
+      }
+    }
+    return bad;
+  }
+
+  async function importAllData(file) {
+    let payload;
+    try {
+      payload = JSON.parse(await file.text());
+    } catch (e) {
+      showToast('❌ 文件格式不正确，无法解析'); return;
+    }
+    if (!payload || typeof payload !== 'object' || (!payload.localStorage && !Array.isArray(payload.userNotes))) {
+      showToast('❌ 不是有效的书阁备份文件'); return;
+    }
+    const ls = payload.localStorage || {};
+    const bad = validateBackupLs(ls);
+    if (bad.length) { showToast('❌ 备份文件已损坏（' + bad.join('、') + '），已拒绝导入'); return; }
+
+    const nNotes = Array.isArray(payload.userNotes) ? payload.userNotes.length : 0;
+    const when = payload.exportedAt ? formatDate(payload.exportedAt) : '未知时间';
+    showConfirm('确认导入备份',
+      `备份时间：${when}\n\n` +
+      `导入会用备份内容覆盖当前的编辑、置顶、分类、昵称等设置${nNotes ? `，并写入 ${nNotes} 篇用户笔记` : ''}。备份中没有的笔记不会被删除（属合并覆盖，非清空还原）。\n\n` +
+      `⚠️ 导入之后你自己新做的改动将丢失，且无法恢复。`,
+      async () => {
+      try {
+        for (const k of BACKUP_LS_KEYS) { if (typeof ls[k] === 'string' && ls[k] !== null) localStorage.setItem(k, ls[k]); }
+        const notes = Array.isArray(payload.userNotes) ? payload.userNotes : [];
+        for (const rec of notes) { if (rec && rec.id) await DB.put(rec); }
+        showToast('✅ 导入成功，正在刷新…');
+        setTimeout(() => location.reload(), 600);
+      } catch(err) { console.error(err); showToast('导入失败：'+err.message); }
+    });
+  }
+
+  exportDataBtn.addEventListener('click', () => exportAllData());
+  importDataBtn.addEventListener('click', () => importFileInput.click());
+  importFileInput.addEventListener('change', function() {
+    const f = this.files && this.files[0];
+    this.value = '';
+    if (f) importAllData(f);
+  });
+
   /* ---- Category Management ---- */
   let catEditMode = 'add';
   let catEditOldName = '';
@@ -2080,7 +2281,9 @@ html, body {
   }
 
   function showPreview(note) {
-    if(!note) return; STATE.selectedId=note.id;
+    if(!note) return;
+    closeActionSheet();   // v8.6.2：切换笔记时先关掉操作面板，避免面板残留在预览之上
+    STATE.selectedId=note.id;
     if(STATE.isMobile) {
       overlayTitle.textContent=note.title;
       resetReaderState(); closeFontPanel(); syncHeaderHeight();
@@ -2434,6 +2637,7 @@ html, body {
     const chip=e.target.closest('.category-chip'); if(!chip) return;
     STATE.selectedCategory=chip.getAttribute('data-cat');
     renderCategoryChips(); renderNoteList();
+    closeCategoryDetail();   // v8.6.2：分类筛选作用于书架；closeCategoryDetail 内部会 renderShelf()
   });
 
   searchBtn.addEventListener('click',()=>openSearchPage());
@@ -2513,9 +2717,38 @@ html, body {
   categoryDetailGrid.addEventListener('click', (e) => {
     const card = e.target.closest('.book-card');
     if (!card) return;
+    if (e.target.closest('[data-book-menu]')) { openActionSheet(card.getAttribute('data-id')); return; }
     const noteId = card.getAttribute('data-id');
     const note = STATE.notes.find(n => n.id === noteId);
     if (note) showPreview(note);
+  });
+
+  // v8.6.2：分类详情页桌面端右键打开操作面板
+  categoryDetailGrid.addEventListener('contextmenu', (e) => {
+    const card = e.target.closest('.book-card');
+    if (!card) return;
+    e.preventDefault();
+    const noteId = card.getAttribute('data-id');
+    if (noteId) openActionSheet(noteId);
+  });
+
+  // v8.6.2：分类详情页键盘操作入口
+  categoryDetailGrid.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      const card = e.target.closest('.book-card');
+      if (!card) return;
+      e.preventDefault();
+      const note = STATE.notes.find(n => n.id === card.getAttribute('data-id'));
+      if (note) showPreview(note);
+      return;
+    }
+    if (e.key === 'e' || e.key === 'E') {
+      const card = e.target.closest('.book-card');
+      if (!card) return;
+      e.preventDefault();
+      const noteId = card.getAttribute('data-id');
+      if (noteId) openActionSheet(noteId);
+    }
   });
 
   // Category detail grid — long-press for action sheet
@@ -2562,10 +2795,19 @@ html, body {
 
   let rt=null;
   window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{
-    const was=STATE.isMobile; checkMobile();
-    if(was!==STATE.isMobile){
-      if(!STATE.isMobile){closePreviewOverlay();mainContent.style.display='';bottomNav.style.display='none';mainContent.classList.remove('hidden');sidebar.classList.remove('hidden');sidebar.style.display='';STATE.isLandscape=false;app.classList.remove('focus-mode');if(desktopLandscapeBtn){desktopLandscapeBtn.classList.remove('active');desktopLandscapeBtn.textContent='🔄';}}
-      else{mainContent.style.display='none';bottomNav.style.display='';if(!previewOverlay.classList.contains('hidden')){sidebar.classList.add('hidden');}}
+    const changed = checkMobile();
+    if(changed){
+      // v8.6.2：先取出当前笔记，跨断点时迁移而不是丢弃（原实现直接 closePreviewOverlay，导致 768→767 瞬间内容消失）
+      const cur = getCurrentNote();
+      if(!STATE.isMobile){
+        closePreviewOverlay();
+        mainContent.style.display='';bottomNav.style.display='none';mainContent.classList.remove('hidden');sidebar.classList.remove('hidden');sidebar.style.display='';STATE.isLandscape=false;app.classList.remove('focus-mode');if(desktopLandscapeBtn){desktopLandscapeBtn.classList.remove('active');desktopLandscapeBtn.textContent='🔄';}
+        if(cur) showPreview(cur);   // 移动→桌面：重建桌面 iframe
+      } else {
+        mainContent.style.display='none';bottomNav.style.display='';
+        if(cur) showPreview(cur);   // 桌面→移动：切到浮层预览，而不是留下空白
+        else if(!previewOverlay.classList.contains('hidden')){sidebar.classList.add('hidden');}
+      }
     }
     checkLandscape();
     syncHeaderHeight();   // v8.5.0：顶栏高度随视口变化重新测量
@@ -2585,7 +2827,7 @@ html, body {
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
     else{mainContent.style.display='none';history.pushState({view:'home'},'');}
     renderShelf(); showWelcome(); await loadAllNotes();
-    renderShelf();
+    renderShelf(); renderCategoryChips();   // v8.6.2：恢复分类筛选条初始渲染
   }
   init();
 })();
