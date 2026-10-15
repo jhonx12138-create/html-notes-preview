@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.7.0</title>
+<title>📚 书阁 v8.8.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -118,7 +118,7 @@ html, body {
 .tab-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: #fff; }
 
 /* ========== Sidebar Content Area ========== */
-.sidebar-content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.sidebar-content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
 
 /* Tab panels */
 .tab-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
@@ -225,7 +225,15 @@ html, body {
 .empty-state p { font-size: 0.9rem; }
 
 /* ========== Search Page ========== */
-.search-page { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+/* v8.8：搜索页绝对定位铺满侧栏内容区，搜索框固定在顶部。
+   原实现 .search-page 与 #tabHome 同为 .sidebar-content-area 的 flex:1 子元素，
+   两者各占一半高度 → 搜索页被挤到下半屏（实测 844px 视口里 top=415，正好在中间）。*/
+.search-page {
+  display: flex; flex-direction: column;
+  position: absolute; inset: 0; z-index: 5;
+  background: var(--bg-page);
+  overflow: hidden;
+}
 .search-page.hidden { display: none; }
 .search-page .search-header { display: flex; align-items: center; gap: 8px; padding: 12px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .search-page .search-header input {
@@ -234,6 +242,9 @@ html, body {
   font-size: 15px; font-family: inherit; outline: none; transition: all var(--transition);
 }
 .search-page .search-header input:focus { border-color: var(--accent); }
+/* v8.8：可搜索字段提示，紧贴搜索框下方 */
+.search-hint { padding: 8px 24px 0; font-size: 0.72rem; color: var(--text-muted); flex-shrink: 0; line-height: 1.4; }
+.search-hint b { color: var(--text-secondary); font-weight: 600; }
 .back-search-btn {
   width: 40px; height: 40px; border: none; border-radius: var(--radius-sm);
   background: transparent; color: var(--text-secondary); font-size: 1.1rem;
@@ -600,9 +611,10 @@ html, body {
 .preview-overlay:not(.landscape):not(.hidden) .edge-swipe-zone { display: block; }
 
 /* Mobile responsive for category detail */
+/* v8.8：这里的 padding 需与移动端 .shelf-section 的外缩（margin 12 + padding 12）保持一致 */
 @media (max-width: 767px), (max-width: 1023px) and (any-pointer: coarse) {
-  .category-detail-grid { padding: 10px 12px; }
-  .category-detail-header { padding: 12px 16px; }
+  .category-detail-grid { padding: 12px 24px 20px; }
+  .category-detail-header { padding: 12px 24px; }
 }
 
 /* ========== Modal ========== */
@@ -691,7 +703,7 @@ html, body {
 .category-detail-view.hidden { display: none; }
 .category-detail-header {
   display: flex; align-items: center; gap: 12px;
-  padding: 14px 24px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+  padding: 14px 28px; border-bottom: 1px solid var(--border); flex-shrink: 0;
 }
 .category-detail-header .back-cat-btn {
   width: 40px; height: 40px; border: none; border-radius: var(--radius-sm);
@@ -702,50 +714,23 @@ html, body {
 .category-detail-header .back-cat-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .category-detail-header .category-detail-title { font-size: 18px; font-weight: 600; color: var(--text-primary); flex: 1; }
 .category-detail-header .category-detail-count { font-size: 13px; color: var(--text-muted); flex-shrink: 0; }
-/* Category detail grid — 3-column wrapping layout */
+/* v8.8：分类详情网格与首页书架完全统一——同一套 auto-fill 网格 + 同一「外缩总量」。
+   首页卡片区的外缩 = .shelf-section 的 margin + padding（桌面 14+14=28px，移动 12+12=24px）。
+   这里用等值 padding 复现，使两者列数与卡片宽度逐像素一致：
+   注意 .shelf-container / 本网格都会各留 4px 滚动条，桌面端双方都是 301/300px → 3 列，
+   移动端双方都是 340/338px → 4 列。原先固定 repeat(3,1fr)+150px 高 + 一堆字号覆盖
+   是导致「详情页卡片和首页长得不一样」的根因，全部删除。*/
 .category-detail-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  padding: 12px 16px;
+  grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+  gap: 12px 8px;
+  padding: 12px 28px 20px;
   overflow-y: auto;
   flex: 1;
   min-height: 0;
 }
-.category-detail-grid .book-card {
-  display: flex;
-  flex-direction: column;
-  width: auto;
-  min-width: 0;
-  height: 150px;
-  overflow: visible;
-}
-.category-detail-grid .book-cover {
-  flex: 0 0 auto;
-  padding: 12px 8px;
-  height: 80px;
-  min-height: 80px;
-}
-.category-detail-grid .book-title {
-  font-size: 12px;
-  -webkit-line-clamp: 2;
-}
-.category-detail-grid .book-info {
-  flex: 1 0 auto;
-  display: block;
-  padding: 6px 8px;
-  min-height: 28px;
-}
-.category-detail-grid .book-date {
-  font-size: 10px;
-}
-.category-detail-grid .book-author {
-  gap: 2px;
-}
-.category-detail-grid .book-author-text {
-  font-size: 9px;
-  padding: 1px 5px;
-}
+.category-detail-grid::-webkit-scrollbar { width: 4px; }
+.category-detail-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
 /* v8.7：分类区块改为独立卡片，强化类别之间的视觉分隔 */
 .shelf-section {
@@ -802,12 +787,14 @@ html, body {
   gap: 12px 8px;
   padding: 6px 0 10px;
 }
-/* 网格下压缩卡片高度，保证侧栏首屏能看到更多书 */
-.book-row .book-cover { min-height: 76px; padding: 12px 8px; }
-.book-row .book-info { padding: 8px 8px; }
-.book-row .book-title { font-size: 12px; line-height: 1.4; -webkit-line-clamp: 3; }
-.book-row .book-date { font-size: 10px; margin-bottom: 4px; }
-.book-row .book-author-text { font-size: 9px; padding: 1px 6px; }
+/* 网格下压缩卡片高度，保证侧栏首屏能看到更多书。
+   v8.8：分类详情网格复用同一组规则（原来详情页自己写了一份近似值，
+   导致封面色块 80 vs 76、字号 12 vs 12 等细节对不上）。现在只有这一处定义。*/
+.book-row .book-cover,   .category-detail-grid .book-cover   { min-height: 76px; padding: 12px 8px; }
+.book-row .book-info,    .category-detail-grid .book-info    { padding: 8px 8px; }
+.book-row .book-title,   .category-detail-grid .book-title   { font-size: 12px; line-height: 1.4; -webkit-line-clamp: 3; }
+.book-row .book-date,    .category-detail-grid .book-date    { font-size: 10px; margin-bottom: 4px; }
+.book-row .book-author-text, .category-detail-grid .book-author-text { font-size: 9px; padding: 1px 6px; }
 
 /* v8.7：每类最多两行；超出时第二行末位变「查看更多」，点击进入该分类详情 */
 .book-more-card {
@@ -938,7 +925,7 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.7.0</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.8.0</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -981,9 +968,11 @@ html, body {
       <div class="search-page hidden" id="searchPage">
         <div class="search-header">
           <button class="back-search-btn" id="backSearchBtn" aria-label="返回笔记列表">←</button>
-          <input type="text" id="searchPageInput" placeholder="搜索笔记标题…" autocomplete="off">
+          <input type="text" id="searchPageInput" placeholder="搜索书名、作者或标签…" autocomplete="off">
         </div>
-        <div class="search-results" id="searchResults"><div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索笔记</p></div></div>
+        <!-- v8.8：把可搜索字段写清楚 -->
+        <div class="search-hint">可搜索 <b>书名</b>、<b>作者</b>、<b>标签（分类）</b></div>
+        <div class="search-results" id="searchResults"><div class="empty-state"><div class="empty-icon">🔍</div><p>输入书名、作者或标签开始搜索</p></div></div>
         <div class="search-history" id="searchHistory"></div>
       </div>
 
@@ -1055,11 +1044,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.7.0</span>
+                <span class="setting-value">v8.8.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.7.0</div>
+              <div class="about-version">📚 书阁 v8.8.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1097,7 +1086,7 @@ html, body {
     <div class="overlay-toolbar" id="overlayToolbar">
       <button class="overlay-tool-btn" id="overlayThemeBtn" title="主题" aria-label="切换预览主题">🌓</button>
       <button class="overlay-tool-btn" id="overlayFontBtn" title="字号" aria-label="调节阅读字号">🔠</button>
-      <button class="overlay-tool-btn" id="overlayLandscapeBtn" title="横屏" aria-label="切换横屏">🔄</button>
+      <!-- v8.8：移动端横屏按钮已移除，横竖屏由设备方向自动切换 -->
     </div>
   </div>
   <div class="overlay-body" id="overlayBody">
@@ -1267,7 +1256,7 @@ html, body {
   const overlayToolbar    = $('#overlayToolbar');
   const overlayThemeBtn   = $('#overlayThemeBtn');
   const overlayFontBtn    = $('#overlayFontBtn');
-  const overlayLandscapeBtn = $('#overlayLandscapeBtn');
+  // v8.8：移动端横屏按钮已移除（横竖屏自动切换），不再持有引用
 
   // 移动端阅读增强 (v8.5.0)
   const overlayLoading    = $('#overlayLoading');      // P0-2 加载态
@@ -1970,7 +1959,7 @@ html, body {
     let f=STATE.notes;
     if(STATE.selectedCategory!=='全部') { f=f.filter(n=>(n.category||'其他')===STATE.selectedCategory); }
     const q=(STATE._sq||'').trim().toLowerCase();
-    if(q) f=f.filter(n=>n.title.toLowerCase().includes(q)||(n.author||'').toLowerCase().includes(q));
+    if(q) f=f.filter(n=>noteMatches(n,q));
     return f;
   }
 
@@ -2018,10 +2007,19 @@ html, body {
   function updateCount(c) { noteCount.textContent = `共 ${c!==undefined?c:getFilteredNotes().length} 篇`; }
 
   /* ---- Search Page ---- */
+  /* v8.8：统一搜索范围——书名 / 作者 / 标签（标签即 category 字段）。
+     首页书架筛选与搜索页共用此函数，避免两处口径不一致。 */
+  function noteMatches(note, q) {
+    const t = (q || '').trim().toLowerCase();
+    if (!t) return true;
+    return (note.title    || '').toLowerCase().includes(t)
+        || (note.author   || '').toLowerCase().includes(t)
+        || (note.category || '').toLowerCase().includes(t);
+  }
   function renderSearchResults(q) {
-    const t=q.trim().toLowerCase();
-    if(!t) { searchResults.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><p>输入关键词搜索笔记</p></div>'; return; }
-    const f=STATE.notes.filter(n=>n.title.toLowerCase().includes(t)||(n.author||'').toLowerCase().includes(t));
+    const t=q.trim();
+    if(!t) { searchResults.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><p>输入书名、作者或标签开始搜索</p></div>'; return; }
+    const f=STATE.notes.filter(n=>noteMatches(n,t));
     if(!f.length) { searchResults.innerHTML='<div class="empty-state"><div class="empty-icon">📭</div><p>没有匹配的笔记</p></div>'; return; }
     searchResults.innerHTML=f.map(n=>`<div class="note-item" data-id="${n.id}" role="button" tabindex="0"><div class="note-info"><div class="note-title">${escapeHtml(n.title)}</div><div class="note-meta">${n.category?`<span class="note-cat-chip">${escapeHtml(n.category)}</span>`:''}${n.date?`<span class="note-date">${formatDate(n.date)}</span>`:''}<span class="note-meta-author">${n.author?`<span class="author-pill">✍️ ${escapeHtml(n.author)}</span>`:''}</span></div></div></div>`).join('');
   }
@@ -2413,8 +2411,6 @@ html, body {
         previewOverlay.classList.add('landscape');
         sidebar.classList.add('hidden');
         bottomNav.style.display = 'none';
-        overlayLandscapeBtn.classList.add('active');
-        overlayLandscapeBtn.textContent = '↩️';
         // v8.5.0：横屏不走顶栏收起逻辑，同时收起字号面板避免浮层残留
         setReadingMode(false); closeFontPanel();
         showLandscapeToolbar();
@@ -2432,8 +2428,6 @@ html, body {
         // 原有移动端逻辑保持不变
         previewOverlay.classList.remove('landscape');
         bottomNav.style.display = '';
-        overlayLandscapeBtn.classList.remove('active');
-        overlayLandscapeBtn.textContent = '🔄';
         overlayHeader.classList.remove('show');
         if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); STATE.landscapeHideTimer = null; }
       } else {
@@ -2755,7 +2749,7 @@ html, body {
   // Preview toolbar buttons
   overlayThemeBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePreviewTheme(); });
   overlayFontBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFontPanel(); });
-  overlayLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
+  // v8.8：移动端横屏按钮已移除（横竖屏自动切换），此处不再绑定
   desktopLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
 
   // P1-5 横屏常驻退出按钮
