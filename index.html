@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.8.0</title>
+<title>📚 书阁 v8.9.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -182,8 +182,6 @@ html, body {
 .swipe-btn .swipe-icon { font-size: 1.1rem; }
 .swipe-btn-edit { background: #2196F3; }
 .swipe-btn-delete { background: #f44336; }
-.swipe-btn-pin { background: #FF9800; }
-.swipe-btn-pin.pinned { background: #9E9E9E; }
 
 .note-item {
   display: flex; align-items: flex-start; gap: 10px;
@@ -207,12 +205,6 @@ html, body {
   background: var(--accent-soft); color: var(--accent); flex-shrink: 0;
 }
 
-.pinned-divider {
-  display: flex; align-items: center; gap: 8px;
-  padding: 8px 16px 4px; font-size: 0.7rem; color: var(--text-muted); font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.05em;
-}
-.pinned-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
 .author-pill {
   display: inline-flex; align-items: center; gap: 4px;
@@ -698,6 +690,74 @@ html, body {
 .shelf-container::-webkit-scrollbar { width: 4px; }
 .shelf-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+/* ========== v8.9 每日回顾（首页） ========== */
+#tabReview { overflow-y: auto; }              /* 视口偏矮时整页可滚 */
+.review-head { padding: 16px 20px 10px; flex-shrink: 0; }
+.review-date { font-size: 1.05rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.2px; }
+.review-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+.review-inner { flex: 1 0 auto; display: flex; flex-direction: column; min-height: 0; }
+.review-stage { position: relative; flex: 1 0 auto; min-height: 200px; }
+.review-track-wrap {
+  height: 100%;
+  overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.review-track-wrap::-webkit-scrollbar { display: none; }
+.review-track { display: flex; gap: 12px; padding: 6px 20px 14px; height: 100%; }
+.review-card {
+  scroll-snap-align: center; flex: 0 0 84%;
+  display: flex; flex-direction: column; min-height: 0;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 16px 16px 14px; box-shadow: var(--shadow-sm); cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+}
+.review-card:hover { box-shadow: 0 6px 18px rgba(26,26,46,0.10); border-color: var(--accent); transform: translateY(-2px); }
+.review-card:active { transform: translateY(0); }
+.review-card:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
+.review-card-head { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+.review-bar { width: 4px; height: 15px; border-radius: 2px; flex-shrink: 0; }
+.review-book { font-size: 0.82rem; font-weight: 600; color: var(--text-primary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.review-cat { font-size: 0.68rem; color: var(--text-muted); margin-bottom: 10px; padding-left: 12px; }
+/* 观点文字在卡片的弹性区域里垂直居中（像金句卡）：
+   长短不一时不至于都贴着顶端、把空白全留在下方。超长截断到 6 行。 */
+.review-point { flex: 1; min-height: 0; display: flex; align-items: center; overflow: hidden; }
+.review-point-text {
+  display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden;
+  font-size: 0.86rem; line-height: 1.65; color: var(--text-secondary);
+}
+.review-card-foot {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  margin-top: auto; padding-top: 10px; border-top: 1px dashed var(--border);
+}
+.review-section { font-size: 0.68rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.review-open { font-size: 0.7rem; color: var(--accent); font-weight: 500; flex-shrink: 0; }
+.review-nav {
+  position: absolute; top: 50%; transform: translateY(-50%); z-index: 2;
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--border);
+  background: var(--bg-card); color: var(--text-secondary); font-size: 1.1rem; line-height: 1;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.review-nav:hover { border-color: var(--accent); color: var(--accent); }
+.review-nav.prev { left: 4px; }
+.review-nav.next { right: 4px; }
+.review-dots { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 2px 0 12px; flex-shrink: 0; }
+.review-dot {
+  width: 6px; height: 6px; padding: 0; border: none; border-radius: 999px;
+  background: var(--border); cursor: pointer; transition: all var(--transition);
+}
+.review-dot.active { width: 18px; background: var(--accent); }
+.review-foot { display: flex; justify-content: center; padding-bottom: 16px; flex-shrink: 0; }
+.review-refresh {
+  font-size: 0.75rem; padding: 7px 16px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary);
+  cursor: pointer; transition: all var(--transition);
+}
+.review-refresh:hover { border-color: var(--accent); color: var(--accent); }
+/* 箭头只在桌面/鼠标设备显示（触屏本来就是左右滑动） */
+@media (max-width: 767px), (max-width: 1023px) and (any-pointer: coarse) { .review-nav { display: none; } }
+
 /* ========== Category Detail View ========== */
 .category-detail-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .category-detail-view.hidden { display: none; }
@@ -925,13 +985,14 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.8.0</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.9.0</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
     <!-- Desktop Tab Bar -->
     <div class="tab-bar" id="tabBar">
       <button class="tab-btn active" data-tab="home">🏠 首页</button>
+      <button class="tab-btn" data-tab="notes">📒 笔记</button>
       <button class="tab-btn" data-tab="upload">📤 上传</button>
       <button class="tab-btn" data-tab="profile">👤 我的</button>
     </div>
@@ -939,8 +1000,29 @@ html, body {
     <!-- Sidebar Content Area -->
     <div class="sidebar-content-area" id="sidebarContentArea">
 
-      <!-- Home Tab -->
-      <div class="tab-panel active" id="tabHome">
+      <!-- v8.9 每日回顾（首页）：3 张核心观点卡片，可左右滑动切换 -->
+      <div class="tab-panel active" id="tabReview">
+        <div class="review-inner">
+          <div class="review-head">
+            <div class="review-date" id="reviewDate"></div>
+            <div class="review-sub">每天 3 个核心观点 · 左右滑动切换</div>
+          </div>
+          <div class="review-stage">
+            <button class="review-nav prev" id="reviewPrev" aria-label="上一个观点">‹</button>
+            <div class="review-track-wrap" id="reviewWrap">
+              <div class="review-track" id="reviewTrack"></div>
+            </div>
+            <button class="review-nav next" id="reviewNext" aria-label="下一个观点">›</button>
+          </div>
+          <div class="review-dots" id="reviewDots"></div>
+          <div class="review-foot">
+            <button class="review-refresh" id="reviewRefresh">🔄 换一批</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- v8.9 笔记 Tab（原首页全部内容迁到这里） -->
+      <div class="tab-panel" id="tabNotes">
         <!-- 分类筛选条（v8.6.2 恢复显示；笔记长列表 #noteList 由 CSS 隐藏，主视图是书架） -->
         <div id="notesViewArea">
           <div class="category-chips" id="categoryChips"></div>
@@ -1044,11 +1126,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.8.0</span>
+                <span class="setting-value">v8.9.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.8.0</div>
+              <div class="about-version">📚 书阁 v8.9.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1072,7 +1154,8 @@ html, body {
 
   <!-- Mobile Bottom Nav -->
   <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" data-tab="home"><span class="nav-icon">📚</span><span>首页</span></button>
+    <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span>首页</span></button>
+    <button class="nav-item" data-tab="notes"><span class="nav-icon">📒</span><span>笔记</span></button>
     <button class="nav-item" data-tab="upload"><span class="nav-icon">📤</span><span>上传</span></button>
     <button class="nav-item" data-tab="profile"><span class="nav-icon">👤</span><span>我的</span></button>
   </nav>
@@ -1157,7 +1240,6 @@ html, body {
     <div class="action-sheet-title" id="actionSheetTitle">笔记操作</div>
     <button class="action-sheet-btn" data-as-action="edit"><span class="as-icon">📝</span>修改信息</button>
     <button class="action-sheet-btn" data-as-action="delete" id="asDeleteBtn"><span class="as-icon">🗑️</span>删除笔记</button>
-    <button class="action-sheet-btn" data-as-action="pin" id="asPinBtn"><span class="as-icon">📌</span>置顶</button>
     <button class="action-sheet-btn as-cancel" data-as-action="cancel">取消</button>
   </div>
 </div>
@@ -1208,9 +1290,19 @@ html, body {
 
   // Tabs
   const tabBar      = $('#tabBar');
-  const tabHome     = $('#tabHome');
+  const tabReview   = $('#tabReview');
+  const tabNotes    = $('#tabNotes');
   const tabUpload   = $('#tabUpload');
   const tabProfile  = $('#tabProfile');
+
+  // v8.9 每日回顾
+  const reviewDate    = $('#reviewDate');
+  const reviewWrap    = $('#reviewWrap');
+  const reviewTrack   = $('#reviewTrack');
+  const reviewDots    = $('#reviewDots');
+  const reviewPrev    = $('#reviewPrev');
+  const reviewNext    = $('#reviewNext');
+  const reviewRefresh = $('#reviewRefresh');
 
   // Home — notes
   const categoryChips = $('#categoryChips');
@@ -1297,7 +1389,6 @@ html, body {
   const actionSheet        = $('#actionSheet');
   const actionSheetTitle   = $('#actionSheetTitle');
   const asDeleteBtn        = $('#asDeleteBtn');
-  const asPinBtn           = $('#asPinBtn');
   let actionSheetTargetId = null;
 
   // Profile
@@ -1335,9 +1426,10 @@ html, body {
     isMobile: false,
     isTouchDevice: (navigator.maxTouchPoints > 0) || ('ontouchstart' in window),
     activeTab: 'home',
-    pinnedIds: [],
+    /* v8.9：置顶功能已移除，不再持有 pinnedIds 状态 */
     searchHistory: [],
     selectedCategory: '全部',
+    highlights: {},          // v8.9 每日回顾：noteId -> [{text, section}]
     blobUrl: null,
     overlayBlobUrl: null,
     previewDark: false,
@@ -1385,16 +1477,10 @@ html, body {
     setTimeout(()=>t.remove(),2200);
   }
 
-  /* ---- Persistence: Pinned Notes ---- */
-  function loadPinnedIds() { try { const r=localStorage.getItem('notes-pinned'); if(r) STATE.pinnedIds=JSON.parse(r); else STATE.pinnedIds=[]; } catch(_){STATE.pinnedIds=[];} }
-  function savePinnedIds() { try { localStorage.setItem('notes-pinned',JSON.stringify(STATE.pinnedIds)); } catch(_){} }
-  function isPinned(noteId) { return STATE.pinnedIds.includes(noteId); }
-  function togglePin(noteId) {
-    const idx = STATE.pinnedIds.indexOf(noteId);
-    if (idx >= 0) { STATE.pinnedIds.splice(idx,1); }
-    else { STATE.pinnedIds.unshift(noteId); }
-    savePinnedIds();
-  }
+  /* ---- v8.9：置顶功能已移除。
+     注意 notes-pinned 这个 localStorage 键**保留不动**：
+     一是里面可能还有你历史上置顶过的 id（不主动删用户数据），
+     二是导入白名单仍接受该键并静默忽略，保证旧备份文件依然能正常导入。 ---- */
 
   /* ---- Persistence: Categories ---- */
   const PRESET_CATEGORIES = ['全部','AI与科技','数学','政治与经济','社会与文化','组织与管理','通识与科普','金融与财务','其他'];
@@ -1538,7 +1624,6 @@ html, body {
       const action = sbtn.getAttribute('data-action');
       if (action === 'edit') openEditModal(noteId);
       else if (action === 'delete') deleteNoteById(noteId);
-      else if (action === 'pin') { togglePin(noteId); closeAllSwipes(); refreshCurrentView(); }
       return;
     }
     const wrapper = e.target.closest('.note-item-wrapper');
@@ -1641,7 +1726,6 @@ html, body {
     actionSheetTargetId = noteId;
     actionSheetTitle.textContent = note.title || '笔记操作';
     asDeleteBtn.style.display = '';
-    asPinBtn.innerHTML = isPinned(noteId) ? '<span class="as-icon">📌</span>取消置顶' : '<span class="as-icon">📌</span>置顶';
     actionSheetBackdrop.classList.remove('hidden');
   }
   function closeActionSheet() { actionSheetBackdrop.classList.add('hidden'); actionSheetTargetId = null; }
@@ -1663,7 +1747,6 @@ html, body {
     closeActionSheet();
     if (action === 'edit') { openEditModal(noteId); }
     else if (action === 'delete') { deleteNoteById(noteId); }
-    else if (action === 'pin') { togglePin(noteId); refreshCurrentView(); showToast(isPinned(noteId) ? '📌 已置顶' : '已取消置顶'); }
   });
 
   /* ===================================================================
@@ -1772,16 +1855,44 @@ html, body {
     }
   }
 
+  /* v8.9：全局按「日期倒序（新→旧）」排序，同一日期按标题升序。
+     此前只对用户上传的笔记排序，43 篇内置笔记仍按 notes.json 原始顺序（≈ id 升序），
+     所以书架实际上并没有按时间排。改在这里排序后，书架分组、分类详情、搜索三处自动继承。
+     标题升序是为了让同一天的多篇（如 2026-10-09 那 5 本）顺序稳定，不会每次刷新换位置。 */
+  function compareNotes(a, b) {
+    const da = a.date || '', db = b.date || '';
+    if (da !== db) {
+      if (!da) return 1;              // 无日期的排最后
+      if (!db) return -1;
+      return db.localeCompare(da);    // 日期倒序
+    }
+    return (a.title || '').localeCompare(b.title || '', 'zh-Hans');
+  }
   function mergeNotes() {
     const u=(STATE.userNotesIndex||[]).map(n=>({...n,category:n.category||'其他',source:'user'}));
-    u.sort((a,b)=>{if(!a.date)return 1;if(!b.date)return-1;return b.date.localeCompare(a.date);});
-    STATE.notes=[...u,...STATE.builtInNotes];
+    STATE.notes=[...u,...STATE.builtInNotes].sort(compareNotes);
+  }
+
+  /* v8.9 每日回顾：观点数据。加载失败不影响其他功能，只让首页显示空态。 */
+  async function loadHighlights() {
+    try {
+      const resp = await fetch('highlights.json');
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      const map = {};
+      (Array.isArray(data) ? data : []).forEach(o => { if (o && o.id) map[o.id] = o.points || []; });
+      STATE.highlights = map;
+    } catch (err) {
+      console.warn('highlights.json 加载失败，每日回顾将显示空态：', err);
+      STATE.highlights = {};
+    }
   }
 
   async function loadAllNotes() {
     noteList.innerHTML='<div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>';
-    await DB.open(); await loadBuiltInNotes(); mergeNotes();
+    await DB.open(); await loadBuiltInNotes(); await loadHighlights(); mergeNotes();
     renderShelf();
+    renderReview();            // v8.9 每日回顾（首页）
     populateUploadCategories();
   }
 
@@ -1811,6 +1922,10 @@ html, body {
   const SHELF_MAX_ROWS = 2;
   function clampShelfRows() {
     if (!shelfContainer) return;
+    // v8.9：书架现在位于「笔记」tab 内，该 tab 初始是 display:none，
+    // 此时网格列数测不出来（会算成 1 列，把每类截成只剩 1 本）。
+    // 所以不可见时直接跳过，等切到「笔记」tab 时由 switchTab 重新 renderShelf。
+    if (!shelfContainer.clientWidth) return;
     shelfContainer.querySelectorAll('.book-row').forEach(function(row) {
       const cards = Array.prototype.slice.call(row.children)
         .filter(function(el) { return el.classList.contains('book-card'); });
@@ -1902,12 +2017,11 @@ html, body {
 
   function renderBookCard(n, colorClass) {
     const active = n.id === STATE.selectedId;
-    const pinned = isPinned(n.id);
     const author = n.author || '';
     return `<div class="book-card ${colorClass}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}">
       <button class="book-card-menu" type="button" data-book-menu="1" aria-label="更多操作" title="更多操作">⋯</button>
       <div class="book-cover">
-        <span class="book-title">${escapeHtml(n.title)}${pinned ? ' 📌' : ''}</span>
+        <span class="book-title">${escapeHtml(n.title)}</span>
       </div>
       <div class="book-info">
         ${n.date ? `<div class="book-date">📅 ${formatDate(n.date)}</div>` : ''}
@@ -1970,12 +2084,8 @@ html, body {
       noteList.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>${STATE.selectedCategory!=='全部'||(STATE._sq||'')?'没有匹配的笔记':'暂无笔记'}</p></div>`;
       updateCount(0); return;
     }
-    const pinnedNotes = []; const unpinnedNotes = [];
-    for (const n of f) { if (isPinned(n.id)) pinnedNotes.push(n); else unpinnedNotes.push(n); }
     let html = '';
-    if (pinnedNotes.length) { html += `<div class="pinned-divider">📌 置顶</div>`; html += pinnedNotes.map(n => renderNoteItem(n)).join(''); }
-    if (pinnedNotes.length && unpinnedNotes.length) { html += `<div class="pinned-divider">📝 笔记</div>`; }
-    html += unpinnedNotes.map(n => renderNoteItem(n)).join('');
+    html += f.map(n => renderNoteItem(n)).join('');
     noteList.innerHTML = html;
     updateCount(f.length);
   }
@@ -1984,16 +2094,14 @@ html, body {
     const active = n.id === STATE.selectedId;
     const isUser = n.source === 'user';
     const cat = n.category || '';
-    const pinned = isPinned(n.id);
     return `<div class="note-item-wrapper" data-id="${n.id}">
       <div class="note-item-swipe-actions">
         <button type="button" class="swipe-btn swipe-btn-edit" data-action="edit"><span class="swipe-icon">✏️</span>修改</button>
         <button type="button" class="swipe-btn swipe-btn-delete" data-action="delete"><span class="swipe-icon">🗑️</span>删除</button>
-        <button type="button" class="swipe-btn swipe-btn-pin${pinned?' pinned':''}" data-action="pin"><span class="swipe-icon">${pinned?'📌':'📍'}</span>${pinned?'取消':'置顶'}</button>
       </div>
       <div class="note-item${active?' active':''}" role="button" tabindex="0">
         <div class="note-info">
-          <div class="note-title">${pinned ? '📌 ' : ''}${escapeHtml(n.title)}</div>
+          <div class="note-title">${escapeHtml(n.title)}</div>
           <div class="note-meta">
             ${cat?`<span class="note-cat-chip">${escapeHtml(cat)}</span>`:''}
             ${n.date?`<span class="note-date">${formatDate(n.date)}</span>`:''}
@@ -2005,6 +2113,125 @@ html, body {
   }
 
   function updateCount(c) { noteCount.textContent = `共 ${c!==undefined?c:getFilteredNotes().length} 篇`; }
+
+  /* ===================================================================
+   *  v8.9 每日回顾（首页）
+   *  3 张核心观点卡片，分别取自 3 本不同的书，左右滑动切换，点击进入该笔记详情。
+   *  观点数据来自 highlights.json（scripts/gen_highlights.py 生成，支持人工精修覆盖）。
+   * =================================================================== */
+  let reviewBatch = 0;        // 「换一批」的批次偏移
+  let reviewPicks = [];       // 当前展示的 3 项
+  let reviewIndex = 0;        // 当前居中的卡片下标
+  let reviewScrollTimer = null;
+
+  function daySeedNum(d) { return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function pickReviewItems() {
+    const pool = STATE.notes.filter(n => (STATE.highlights[n.id] || []).length);
+    if (!pool.length) return [];
+    // 用「日期 + 批次」做种子：同一天刷新结果不变，跨天自动换一批
+    const rnd = mulberry32(daySeedNum(new Date()) + reviewBatch * 7919);
+    const arr = pool.slice();
+    for (let i = arr.length - 1; i > 0; i--) {          // 确定性洗牌
+      const j = Math.floor(rnd() * (i + 1));
+      const t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    // 洗牌后取前 3 —— 天然就是 3 本不同的书
+    return arr.slice(0, 3).map(note => {
+      const pts = STATE.highlights[note.id];
+      return { note: note, point: pts[Math.floor(rnd() * pts.length)] };
+    });
+  }
+
+  function renderReview() {
+    reviewPicks = pickReviewItems();
+    const d = new Date();
+    reviewDate.textContent = (d.getMonth() + 1) + '月' + d.getDate() + '日 · 今日回顾';
+    if (!reviewPicks.length) {
+      reviewTrack.innerHTML = '<div class="empty-state"><div class="empty-icon">📖</div><p>还没有可回顾的观点</p></div>';
+      reviewDots.innerHTML = '';
+      return;
+    }
+    reviewTrack.innerHTML = reviewPicks.map(it => {
+      const n = it.note, p = it.point;
+      const color = CAT_COLORS[n.category] || '#8C8C94';
+      return `<div class="review-card" data-id="${n.id}" role="button" tabindex="0" aria-label="查看《${escapeHtml(n.title)}》笔记">
+        <div class="review-card-head">
+          <span class="review-bar" style="background:${color}"></span>
+          <span class="review-book">${escapeHtml(n.title)}</span>
+        </div>
+        <div class="review-cat">${escapeHtml(n.category || '其他')}${n.author ? ' · ' + escapeHtml(n.author) : ''}</div>
+        <div class="review-point"><span class="review-point-text">${escapeHtml(p.text)}</span></div>
+        <div class="review-card-foot">
+          <span class="review-section">${escapeHtml(p.section || '节选')}</span>
+          <span class="review-open">查看笔记 →</span>
+        </div>
+      </div>`;
+    }).join('');
+    reviewDots.innerHTML = reviewPicks.map((_, i) =>
+      `<button class="review-dot${i === 0 ? ' active' : ''}" data-i="${i}" aria-label="第 ${i + 1} 个观点"></button>`).join('');
+    reviewIndex = 0;
+    reviewWrap.scrollLeft = 0;
+  }
+
+  function syncReviewDots() {
+    const cards = reviewTrack.querySelectorAll('.review-card');
+    if (!cards.length) return;
+    const mid = reviewWrap.scrollLeft + reviewWrap.clientWidth / 2;
+    let best = 0, bestD = Infinity;
+    cards.forEach((c, i) => {
+      const dist = Math.abs((c.offsetLeft + c.offsetWidth / 2) - mid);
+      if (dist < bestD) { bestD = dist; best = i; }
+    });
+    reviewIndex = best;
+    reviewDots.querySelectorAll('.review-dot').forEach((el, i) => el.classList.toggle('active', i === best));
+  }
+
+  function reviewGoTo(i) {
+    const cards = reviewTrack.querySelectorAll('.review-card');
+    if (!cards[i]) return;
+    reviewWrap.scrollTo({ left: cards[i].offsetLeft - (reviewWrap.clientWidth - cards[i].offsetWidth) / 2, behavior: 'smooth' });
+  }
+
+  function openReviewNote(card) {
+    if (!card) return;
+    const note = STATE.notes.find(n => n.id === card.getAttribute('data-id'));
+    if (note) showPreview(note);     // 点卡片 → 打开对应读书笔记详情
+  }
+
+  function bindReviewEvents() {
+    reviewWrap.addEventListener('scroll', function () {
+      clearTimeout(reviewScrollTimer);
+      reviewScrollTimer = setTimeout(syncReviewDots, 90);
+    }, { passive: true });
+    reviewDots.addEventListener('click', function (e) {
+      const b = e.target.closest('.review-dot');
+      if (b) reviewGoTo(parseInt(b.getAttribute('data-i'), 10) || 0);
+    });
+    reviewPrev.addEventListener('click', () => reviewGoTo(Math.max(0, reviewIndex - 1)));
+    reviewNext.addEventListener('click', () => reviewGoTo(Math.min(reviewPicks.length - 1, reviewIndex + 1)));
+    reviewRefresh.addEventListener('click', function () {
+      reviewBatch++;
+      renderReview();
+      showToast('🔄 换了一批');
+    });
+    reviewTrack.addEventListener('click', function (e) { openReviewNote(e.target.closest('.review-card')); });
+    reviewTrack.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      const card = e.target.closest('.review-card');
+      if (!card) return;
+      e.preventDefault();
+      openReviewNote(card);
+    });
+  }
 
   /* ---- Search Page ---- */
   /* v8.8：统一搜索范围——书名 / 作者 / 标签（标签即 category 字段）。
@@ -2032,7 +2259,7 @@ html, body {
     $$('.history-delete',searchHistoryEl).forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeSearchHistory(b.getAttribute('data-del'));renderSearchHistory();}));
   }
   function openSearchPage() {
-    if (STATE.activeTab !== 'home') switchTab('home');
+    // v8.9：搜索页绝对定位铺满内容区，从任一 tab 打开都能正常显示，不再强制切到首页
     shelfContainer.style.display = 'none';
     if (!categoryDetailView.classList.contains('hidden')) categoryDetailView.classList.add('hidden');
     searchPage.classList.remove('hidden');
@@ -2052,16 +2279,20 @@ html, body {
   function switchTab(name) {
     if(STATE.activeTab===name && !searchPage.classList.contains('hidden')) { closeSearchPage(); return; }
     STATE.activeTab=name;
-    tabHome.classList.toggle('active',name==='home');
+    tabReview.classList.toggle('active',name==='home');   // v8.9：首页 = 每日回顾
+    tabNotes.classList.toggle('active',name==='notes');   // v8.9：新增「笔记」tab
     tabUpload.classList.toggle('active',name==='upload');
     tabProfile.classList.toggle('active',name==='profile');
     $$('.tab-btn',tabBar).forEach(b=>b.classList.toggle('active',b.getAttribute('data-tab')===name));
     $$('.nav-item',bottomNav).forEach(b=>b.classList.toggle('active',b.getAttribute('data-tab')===name));
     if(!searchPage.classList.contains('hidden')) closeSearchPage();
     closeAllSwipes();
-    if(name==='home' && !categoryDetailView.classList.contains('hidden')) { closeCategoryDetail(); }
+    // v8.9：分类详情属于「笔记」tab，离开它时收起
+    if(name!=='notes' && !categoryDetailView.classList.contains('hidden')) { closeCategoryDetail(); }
     if(name==='profile') { refreshProfileStorageSize(); renderCategoryManager(); }
     if(name==='upload') populateUploadCategories();
+    // v8.9：书架在隐藏状态下渲染时无法截断，切进来时重新渲染一次（此时可见，列数可测）
+    if(name==='notes') { renderShelf(); renderCategoryChips(); }
   }
 
   /* ---- Upload ---- */
@@ -2179,7 +2410,7 @@ html, body {
     const when = payload.exportedAt ? formatDate(payload.exportedAt) : '未知时间';
     showConfirm('确认导入备份',
       `备份时间：${when}\n\n` +
-      `导入会用备份内容覆盖当前的编辑、置顶、分类、昵称等设置${nNotes ? `，并写入 ${nNotes} 篇用户笔记` : ''}。备份中没有的笔记不会被删除（属合并覆盖，非清空还原）。\n\n` +
+      `导入会用备份内容覆盖当前的编辑、分类、昵称等设置${nNotes ? `，并写入 ${nNotes} 篇用户笔记` : ''}。备份中没有的笔记不会被删除（属合并覆盖，非清空还原）。\n\n` +
       `⚠️ 导入之后你自己新做的改动将丢失，且无法恢复。`,
       async () => {
       try {
@@ -2906,7 +3137,8 @@ html, body {
   async function init() {
     // v8.5.0 阅读增强初始化
     loadFontIndex(); updateFontPanel(); syncHeaderHeight();
-    loadTheme(); loadNickname(); loadPinnedIds(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
+    loadTheme(); loadNickname(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
+    bindReviewEvents();   // v8.9 每日回顾交互
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
     else{mainContent.style.display='none';history.pushState({view:'home'},'');}
