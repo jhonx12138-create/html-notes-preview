@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.1</title>
+<title>📚 书阁 v8.9.2</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -21,6 +21,9 @@
   --accent: #C97064;
   --accent-soft: #FDF0ED;
   --accent-deep: #A8584E;
+
+  /* v8.9.2：首页头图渐隐色（= --bg-page 的 rgb 三元组，随主题适配，勿写成十六进制） */
+  --hero-tint: 255,251,245;
 
   /* Category color palette */
   --cat-ai-tech: #5B9EA3;
@@ -53,6 +56,9 @@
   --accent: #e88070;
   --accent-soft: #3d2025;
   --accent-deep: #c97064;
+
+  /* v8.9.2：首页头图渐隐色（= --bg-page #1a1a2e 的 rgb 三元组） */
+  --hero-tint: 26,26,46;
 
   --cat-ai-tech: #6db3b8;
   --cat-math: #a87dc4;
@@ -334,11 +340,14 @@ html, body {
   width: 64px; height: 64px; border-radius: 50%;
   background: linear-gradient(135deg, var(--cat-math), var(--cat-society-culture));
   display: flex; align-items: center; justify-content: center; font-size: 2rem; margin-bottom: 10px;
-  color: #fff; flex-shrink: 0;
+  color: #fff; flex-shrink: 0; overflow: hidden; cursor: pointer;   /* v8.9.2：可点击更换头像 */
 }
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .profile-nickname { font-size: 20px; font-weight: 600; color: var(--text-primary); border: none; background: none; text-align: center; outline: none; padding: 4px 8px; border-radius: var(--radius-sm); transition: all var(--transition); max-width: 180px; }
 .profile-nickname:focus { background: var(--accent-soft); }
 .profile-nickname-edit { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+.profile-avatar-reset { margin-top: 6px; border: none; background: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 2px 6px; border-radius: var(--radius-sm); transition: all var(--transition); }
+.profile-avatar-reset:hover { background: var(--accent-soft); }
 
 /* iOS-style setting groups */
 .profile-settings { list-style: none; }
@@ -691,6 +700,40 @@ html, body {
 .shelf-container::-webkit-scrollbar { width: 4px; }
 .shelf-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
 
+/* ========== v8.9.2 首页头图（hero） ========== */
+/* 首页启用 hero 时隐藏上方品牌顶栏，避免两行品牌（笔记/上传/我的 tab 保持原样） */
+.sidebar.hero-mode .sidebar-header { display: none; }
+.hero { position: relative; height: 208px; flex-shrink: 0; overflow: hidden; }
+.hero-img { width: 100%; height: 100%; object-fit: cover; object-position: center 40%; display: block; }
+.hero-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg,
+    rgba(var(--hero-tint),.55) 0%,
+    rgba(var(--hero-tint),.10) 26%,
+    rgba(var(--hero-tint),0)   45%,
+    rgba(var(--hero-tint),.72) 80%,
+    rgba(var(--hero-tint),1)  100%);
+}
+.hero-topbar {
+  position: absolute; left: 0; right: 0; top: 34px; padding: 0 20px;
+  display: flex; align-items: center; justify-content: space-between; z-index: 3;
+}
+.hero-brand { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.hero-avatar {
+  width: 26px; height: 26px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--accent-soft); color: var(--accent); font-size: 15px; line-height: 1;
+}
+.hero-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.hero-name {
+  font-size: 21px; font-weight: 800; color: var(--text-primary); letter-spacing: -0.3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 150px;
+}
+.hero-version { font-size: 11px; color: var(--text-muted); align-self: flex-end; margin-bottom: 3px; }
+[data-theme="dark"] .hero-img { filter: brightness(.62) saturate(.88); }
+/* 桌面端侧栏较窄（<=360px），压低 hero，避免占满一屏 */
+@media (min-width: 768px) and (any-pointer: fine) { .hero { height: 168px; } }
+
 /* ========== v8.9 每日回顾（首页）· v8.9.1 改为堆叠卡组 ========== */
 #tabReview { overflow-y: auto; overflow-x: hidden; }   /* 视口偏矮时整页可滚；横向溢出裁掉（拖动时卡片会越界） */
 .review-inner { flex: 1 0 auto; display: flex; flex-direction: column; min-height: 0; }
@@ -1000,13 +1043,15 @@ html, body {
 <input type="file" id="uploadFileInput" accept=".html" style="display:none">
 <!-- Hidden file input for backup import (v8.6.2) -->
 <input type="file" id="importFileInput" accept="application/json,.json" style="display:none">
+<!-- Hidden file input for avatar (v8.9.2) -->
+<input type="file" id="profileAvatarInput" accept="image/*" style="display:none">
 
 <div class="app" id="app">
 
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.9.1</span></h1>
+      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.9.2</span></h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -1023,6 +1068,19 @@ html, body {
 
       <!-- v8.9 每日回顾（首页）· v8.9.1 左右堆叠卡组：3 张观点卡横向叠放，左右滑动切换 -->
       <div class="tab-panel active" id="tabReview">
+        <!-- v8.9.2 首页头图：换 B 版只改下面这一个文件名（assets/shuge-header-b.jpg） -->
+        <div class="hero">
+          <img class="hero-img" src="assets/shuge-header-a.jpg" alt="" draggable="false">
+          <div class="hero-veil"></div>
+          <div class="hero-topbar">
+            <div class="hero-brand">
+              <span class="hero-avatar" id="heroAvatar">📚</span>
+              <span class="hero-name" id="heroName">书阁</span>
+              <span class="hero-version">v8.9.2</span>
+            </div>
+            <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
+          </div>
+        </div>
         <div class="review-inner">
           <div class="review-head">
             <div class="review-date" id="reviewDate"></div>
@@ -1112,9 +1170,10 @@ html, body {
         <div class="profile-body">
           <div class="profile-body-inner">
             <div class="profile-avatar-section">
-              <div class="profile-avatar">📖</div>
+              <div class="profile-avatar" id="profileAvatar" role="button" tabindex="0" title="点击更换头像">📖</div>
               <input type="text" class="profile-nickname" id="profileNickname" maxlength="20" placeholder="设置昵称" value="">
-              <span class="profile-nickname-edit">点击昵称可编辑</span>
+              <span class="profile-nickname-edit">点击头像 / 昵称可编辑</span>
+              <button type="button" class="profile-avatar-reset" id="profileAvatarReset" hidden>恢复默认头像</button>
             </div>
             <ul class="profile-settings">
               <li class="profile-setting-item">
@@ -1145,11 +1204,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.9.1</span>
+                <span class="setting-value">v8.9.2</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.1</div>
+              <div class="about-version">📚 书阁 v8.9.2</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1322,6 +1381,11 @@ html, body {
   const reviewNext    = $('#reviewNext');
   const reviewRefresh = $('#reviewRefresh');
 
+  // v8.9.2 首页头图
+  const heroAvatar    = $('#heroAvatar');
+  const heroName      = $('#heroName');
+  const heroSearchBtn = $('#heroSearchBtn');
+
   // Home — notes
   const categoryChips = $('#categoryChips');
   const noteList    = $('#noteList');
@@ -1410,6 +1474,9 @@ html, body {
   let actionSheetTargetId = null;
 
   // Profile
+  const profileAvatar      = $('#profileAvatar');
+  const profileAvatarReset = $('#profileAvatarReset');
+  const profileAvatarInput = $('#profileAvatarInput');
   const profileNickname    = $('#profileNickname');
   const profileThemeToggle = $('#profileThemeToggle');
   const storageSize        = $('#storageSize');
@@ -1535,8 +1602,56 @@ html, body {
   function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
 
   /* ---- Persistence: Nickname ---- */
-  function loadNickname() { try { const s=localStorage.getItem('notes-nickname'); if(s) profileNickname.value=s; } catch(_){} }
+  // v8.9.2：昵称空则回退「书阁」；hero 名称与之实时同步
+  function syncHeroName() { heroName.textContent = (profileNickname.value || '').trim() || '书阁'; }
+  function loadNickname() { try { const s=localStorage.getItem('notes-nickname'); if(s) profileNickname.value=s; } catch(_){} syncHeroName(); }
   function saveNickname(n) { try { localStorage.setItem('notes-nickname',n.trim()); } catch(_){} }
+
+  /* ---- Persistence: Avatar (v8.9.2) ---- */
+  // 存 dataURL（JPEG 160×160 q.85）；无自定义时「我的」显示 📖、hero 显示 📚
+  function loadAvatarSrc() { try { return localStorage.getItem('notes-avatar') || ''; } catch(_){ return ''; } }
+  function renderAvatars() {
+    const src = loadAvatarSrc();
+    if (src) {
+      heroAvatar.innerHTML = `<img src="${src}" alt="">`;
+      profileAvatar.innerHTML = `<img src="${src}" alt="">`;
+      profileAvatarReset.hidden = false;
+    } else {
+      heroAvatar.textContent = '📚';
+      profileAvatar.textContent = '📖';
+      profileAvatarReset.hidden = true;
+    }
+  }
+  // 居中裁剪成正方形 → 缩放到 160×160 → JPEG q.85
+  function handleAvatarFile(file) {
+    if (!file || !/^image\//.test(file.type)) { showToast('请选择图片文件'); return; }
+    const r = new FileReader();
+    r.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        const S = 160;
+        const c = document.createElement('canvas'); c.width = S; c.height = S;
+        const ctx = c.getContext('2d');
+        const side = Math.min(img.width, img.height);
+        ctx.drawImage(img, (img.width - side) / 2, (img.height - side) / 2, side, side, 0, 0, S, S);
+        let url;
+        try { url = c.toDataURL('image/jpeg', 0.85); } catch(_) { showToast('图片处理失败'); return; }
+        try { localStorage.setItem('notes-avatar', url); } catch(_) { showToast('头像保存失败（可能过大）'); return; }
+        renderAvatars(); showToast('✅ 头像已更新');
+      };
+      img.onerror = () => showToast('图片解析失败');
+      img.src = r.result;
+    };
+    r.onerror = () => showToast('读取失败');
+    r.readAsDataURL(file);
+  }
+  function clearAvatar() {
+    try { localStorage.removeItem('notes-avatar'); } catch(_){}
+    renderAvatars(); showToast('已恢复默认头像');
+  }
+
+  /* ---- v8.9.2：首页 hero 显隐（仅首页隐藏品牌顶栏） ---- */
+  function applyHeroMode() { sidebar.classList.toggle('hero-mode', STATE.activeTab === 'home'); }
 
   /* ---- Persistence: Search History ---- */
   function loadSearchHistory() { try { const r=localStorage.getItem('notes-search-history'); if(r) STATE.searchHistory=JSON.parse(r); } catch(_){STATE.searchHistory=[];} }
@@ -2458,6 +2573,7 @@ html, body {
     if(name==='upload') populateUploadCategories();
     // v8.9：书架在隐藏状态下渲染时无法截断，切进来时重新渲染一次（此时可见，列数可测）
     if(name==='notes') { renderShelf(); renderCategoryChips(); }
+    applyHeroMode();   // v8.9.2：仅首页隐藏顶部品牌栏（hero 自带品牌行）
   }
 
   /* ---- Upload ---- */
@@ -2505,7 +2621,7 @@ html, body {
 
   /* ---- Data Export / Import (v8.6.2) ---- */
   // 参与备份的 localStorage 键（全部为用户在本机产生的数据）
-  const BACKUP_LS_KEYS = ['notes-pinned','notes-theme','notes-categories-v2','notes-edits','notes-reader-font','user-notes-index','notes-nickname','notes-search-history'];
+  const BACKUP_LS_KEYS = ['notes-pinned','notes-theme','notes-categories-v2','notes-edits','notes-reader-font','user-notes-index','notes-nickname','notes-avatar','notes-search-history'];
 
   async function exportAllData() {
     try {
@@ -3121,6 +3237,7 @@ html, body {
   });
 
   searchBtn.addEventListener('click',()=>openSearchPage());
+  heroSearchBtn.addEventListener('click',()=>openSearchPage());   // v8.9.2：hero 品牌行复用同一搜索逻辑
   backSearchBtn.addEventListener('click',()=>closeSearchPage());
   let sd=null; searchPageInput.addEventListener('input',function(){clearTimeout(sd);sd=setTimeout(()=>renderSearchResults(this.value),150);});
   searchResults.addEventListener('click',e=>{
@@ -3136,7 +3253,13 @@ html, body {
   uploadSubmitBtn.addEventListener('click',()=>{const f=uploadFileInput.files[0];if(f)handleUpload(f);});
 
   profileNickname.addEventListener('blur',function(){saveNickname(this.value);});
+  profileNickname.addEventListener('input',function(){syncHeroName();});   // v8.9.2：昵称实时同步到 hero
   profileNickname.addEventListener('keydown',function(e){if(e.key==='Enter')this.blur();});
+  // v8.9.2：头像点击 → 选图 → canvas 裁剪
+  profileAvatar.addEventListener('click',()=>profileAvatarInput.click());
+  profileAvatar.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();profileAvatarInput.click();}});
+  profileAvatarInput.addEventListener('change',function(){const f=this.files&&this.files[0];this.value='';if(f)handleAvatarFile(f);});
+  profileAvatarReset.addEventListener('click',clearAvatar);
   profileThemeToggle.addEventListener('change',()=>toggleTheme());
   clearUserNotesBtn.addEventListener('click',()=>showConfirm('确认清除全部用户笔记','此操作将永久删除所有用户上传的笔记内容，内置笔记不受影响。确定继续吗？',()=>clearAllUserNotes()));
 
@@ -3303,6 +3426,7 @@ html, body {
     // v8.5.0 阅读增强初始化
     loadFontIndex(); updateFontPanel(); syncHeaderHeight();
     loadTheme(); loadNickname(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
+    renderAvatars(); applyHeroMode();   // v8.9.2：初始渲染头像，并按当前 tab 决定是否隐藏品牌栏
     bindReviewEvents();   // v8.9 每日回顾交互
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}
