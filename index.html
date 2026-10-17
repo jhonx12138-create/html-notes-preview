@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.2</title>
+<title>📚 书阁 v8.9.3</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -107,7 +107,12 @@ html, body {
 .sidebar-header h1 {
   font-size: 28px; font-weight: 700; letter-spacing: -0.5px;
   color: var(--text-primary); display: flex; align-items: center; gap: 8px;
+  min-width: 0;
 }
+/* v8.9.3：复用 hero 的头像/名称样式，尺寸按顶栏微调 */
+.sidebar-header .hero-avatar { width: 30px; height: 30px; font-size: 16px; }
+.sidebar-header .hero-name { font-size: 26px; font-weight: 700; max-width: 148px; }
+.sidebar-header .hero-version { align-self: flex-end; margin-bottom: 5px; }
 
 /* ========== Desktop Tab Bar ========== */
 .tab-bar {
@@ -1042,7 +1047,7 @@ html, body {
 <!-- Hidden file input for upload -->
 <input type="file" id="uploadFileInput" accept=".html" style="display:none">
 <!-- Hidden file input for backup import (v8.6.2) -->
-<input type="file" id="importFileInput" accept="application/json,.json" style="display:none">
+<input type="file" id="importFileInput" accept=".zip,.json,application/zip,application/json" style="display:none">
 <!-- Hidden file input for avatar (v8.9.2) -->
 <input type="file" id="profileAvatarInput" accept="image/*" style="display:none">
 
@@ -1051,7 +1056,12 @@ html, body {
   <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1>📚 书阁 <span style="font-size:14px;font-weight:400;color:var(--text-muted)">v8.9.2</span></h1>
+      <!-- v8.9.3：笔记/上传/我的三页顶栏与首页 hero 共用同一套头像+昵称 -->
+      <h1>
+        <span class="hero-avatar" id="brandAvatar">📚</span>
+        <span class="hero-name" id="brandName">书阁</span>
+        <span class="hero-version">v8.9.3</span>
+      </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
@@ -1076,7 +1086,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.2</span>
+              <span class="hero-version">v8.9.3</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
           </div>
@@ -1184,11 +1194,7 @@ html, body {
                 <span class="setting-label"><span class="setting-icon">📊</span>存储管理</span>
                 <span class="setting-value" id="storageSize">计算中…</span>
               </li>
-              <li class="profile-setting-item">
-                <span class="setting-label"><span class="setting-icon">🗑️</span>清除用户笔记</span>
-                <button class="btn-setting" id="clearUserNotesBtn">清除全部</button>
-              </li>
-              <!-- v8.6.2 数据备份：导出/导入 -->
+              <!-- v8.6.2 数据备份：导出/导入（v8.9.3 起改为 zip 打包，含分类与书籍笔记文件） -->
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">💾</span>数据备份</span>
                 <span class="setting-value setting-btn-group">
@@ -1204,11 +1210,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.9.2</span>
+                <span class="setting-value">v8.9.3</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.2</div>
+              <div class="about-version">📚 书阁 v8.9.3</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1384,6 +1390,8 @@ html, body {
   // v8.9.2 首页头图
   const heroAvatar    = $('#heroAvatar');
   const heroName      = $('#heroName');
+  const brandAvatar   = $('#brandAvatar');
+  const brandName     = $('#brandName');
   const heroSearchBtn = $('#heroSearchBtn');
 
   // Home — notes
@@ -1480,7 +1488,6 @@ html, body {
   const profileNickname    = $('#profileNickname');
   const profileThemeToggle = $('#profileThemeToggle');
   const storageSize        = $('#storageSize');
-  const clearUserNotesBtn  = $('#clearUserNotesBtn');
   const exportDataBtn      = $('#exportDataBtn');
   const importDataBtn      = $('#importDataBtn');
   const importFileInput    = $('#importFileInput');
@@ -1602,22 +1609,29 @@ html, body {
   function toggleTheme() { STATE.theme = STATE.theme==='light'?'dark':'light'; applyTheme(); saveTheme(); }
 
   /* ---- Persistence: Nickname ---- */
-  // v8.9.2：昵称空则回退「书阁」；hero 名称与之实时同步
-  function syncHeroName() { heroName.textContent = (profileNickname.value || '').trim() || '书阁'; }
+  // v8.9.3：昵称空则回退「书阁」；hero 与顶栏两处同步刷新
+  function syncHeroName() {
+    const n = (profileNickname.value || '').trim() || '书阁';
+    heroName.textContent = n;
+    brandName.textContent = n;
+  }
   function loadNickname() { try { const s=localStorage.getItem('notes-nickname'); if(s) profileNickname.value=s; } catch(_){} syncHeroName(); }
   function saveNickname(n) { try { localStorage.setItem('notes-nickname',n.trim()); } catch(_){} }
 
   /* ---- Persistence: Avatar (v8.9.2) ---- */
-  // 存 dataURL（JPEG 160×160 q.85）；无自定义时「我的」显示 📖、hero 显示 📚
+  // 存 dataURL（JPEG 160×160 q.85）；无自定义时「我的」显示 📖、hero/顶栏显示 📚
   function loadAvatarSrc() { try { return localStorage.getItem('notes-avatar') || ''; } catch(_){ return ''; } }
   function renderAvatars() {
     const src = loadAvatarSrc();
     if (src) {
-      heroAvatar.innerHTML = `<img src="${src}" alt="">`;
-      profileAvatar.innerHTML = `<img src="${src}" alt="">`;
+      const html = `<img src="${src}" alt="">`;
+      heroAvatar.innerHTML = html;
+      brandAvatar.innerHTML = html;
+      profileAvatar.innerHTML = html;
       profileAvatarReset.hidden = false;
     } else {
       heroAvatar.textContent = '📚';
+      brandAvatar.textContent = '📚';
       profileAvatar.textContent = '📖';
       profileAvatarReset.hidden = true;
     }
@@ -2610,18 +2624,120 @@ html, body {
 
   /* ---- Profile ---- */
   async function refreshProfileStorageSize() { try { storageSize.textContent=formatBytes(await DB.estimateSize()); } catch(_){storageSize.textContent='未知';} }
-  async function clearAllUserNotes() {
-    try {
-      await DB.clear(); STATE.userNotesIndex=[]; saveUserNotesIndex();
-      if(STATE.selectedId) { const s=STATE.notes.find(n=>n.id===STATE.selectedId); if(s&&s.source==='user') { mergeNotes(); STATE.notes.length?showPreview(STATE.notes[0]):showWelcome(); } else { mergeNotes(); refreshCurrentView(); } }
-      else { mergeNotes(); refreshCurrentView(); }
-      refreshProfileStorageSize();
-    } catch(err) { console.error(err); showToast('清除失败：'+err.message); }
+
+  /* ---- Data Export / Import ---- */
+  // v8.9.3：备份改为 zip 打包，包含 data.json（设置/分类/用户笔记）+ notes.json + highlights.json
+  //         + 43 个内置笔记正文 notes/*.html + user-notes/*.html。
+  //         导入兼容旧的 .json 备份。
+  const BACKUP_LS_KEYS = ['notes-pinned','notes-theme','notes-categories-v2','notes-edits','notes-reader-font','user-notes-index','notes-nickname','notes-avatar','notes-search-history'];
+
+  /* ---- 极简 ZIP 写入（仅 store，不压缩；~60 行，避免引入第三方库） ---- */
+  const CRC_TABLE = (() => {
+    const t = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) { let c = i; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[i] = c >>> 0; }
+    return t;
+  })();
+  function crc32(u8) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < u8.length; i++) c = CRC_TABLE[(c ^ u8[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+  }
+  function makeZip(files) {
+    const enc = new TextEncoder();
+    const d = new Date();
+    const dosTime = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF;
+    const dosDate = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+    const parts = [], central = [];
+    let offset = 0;
+    for (const f of files) {
+      const nameBytes = enc.encode(f.name);
+      const data = f.data instanceof Uint8Array ? f.data : enc.encode(f.data);
+      const crc = crc32(data);
+      const lh = new Uint8Array(30 + nameBytes.length), dv = new DataView(lh.buffer);
+      dv.setUint32(0, 0x04034b50, true);      // 本地文件头签名
+      dv.setUint16(4, 20, true);              // 需要版本
+      dv.setUint16(6, 0x0800, true);          // 标记：文件名为 UTF-8
+      dv.setUint16(8, 0, true);               // 压缩方式：store
+      dv.setUint16(10, dosTime, true);
+      dv.setUint16(12, dosDate, true);
+      dv.setUint32(14, crc, true);
+      dv.setUint32(18, data.length, true);    // 压缩后大小
+      dv.setUint32(22, data.length, true);    // 原始大小
+      dv.setUint16(26, nameBytes.length, true);
+      dv.setUint16(28, 0, true);              // 扩展字段长度
+      lh.set(nameBytes, 30);
+      parts.push(lh, data);
+      central.push({ nameBytes, crc, size: data.length, offset });
+      offset += lh.length + data.length;
+    }
+    const cdParts = [];
+    let cdSize = 0;
+    for (const c of central) {
+      const cd = new Uint8Array(46 + c.nameBytes.length), dv = new DataView(cd.buffer);
+      dv.setUint32(0, 0x02014b50, true);      // 中央目录签名
+      dv.setUint16(4, 20, true);              // 创建版本
+      dv.setUint16(6, 20, true);              // 需要版本
+      dv.setUint16(8, 0x0800, true);
+      dv.setUint16(10, 0, true);
+      dv.setUint16(12, dosTime, true);
+      dv.setUint16(14, dosDate, true);
+      dv.setUint32(16, c.crc, true);
+      dv.setUint32(20, c.size, true);
+      dv.setUint32(24, c.size, true);
+      dv.setUint16(28, c.nameBytes.length, true);
+      dv.setUint32(42, c.offset, true);       // 本地头偏移
+      cd.set(c.nameBytes, 46);
+      cdParts.push(cd);
+      cdSize += cd.length;
+    }
+    const eocd = new Uint8Array(22), dv = new DataView(eocd.buffer);
+    dv.setUint32(0, 0x06054b50, true);
+    dv.setUint16(8, central.length, true);
+    dv.setUint16(10, central.length, true);
+    dv.setUint32(12, cdSize, true);
+    dv.setUint32(16, offset, true);
+    return new Blob([...parts, ...cdParts, eocd], { type: 'application/zip' });
+  }
+  /* ---- 极简 ZIP 读取（仅支持 store；本应用自己产出的包都是 store） ---- */
+  async function readZip(file) {
+    const buf = new Uint8Array(await file.arrayBuffer());
+    const dv = new DataView(buf.buffer);
+    let eo = -1;
+    const floor = Math.max(0, buf.length - 22 - 65557);
+    for (let i = buf.length - 22; i >= floor; i--) { if (dv.getUint32(i, true) === 0x06054b50) { eo = i; break; } }
+    if (eo < 0) throw new Error('不是有效的 zip 文件');
+    const count = dv.getUint16(eo + 10, true);
+    let p = dv.getUint32(eo + 16, true);
+    const dec = new TextDecoder(), out = {};
+    for (let i = 0; i < count; i++) {
+      if (dv.getUint32(p, true) !== 0x02014b50) throw new Error('zip 中央目录损坏');
+      if (dv.getUint16(p + 10, true) !== 0) throw new Error('备份包含压缩条目，暂不支持');
+      const csize = dv.getUint32(p + 20, true);
+      const nlen = dv.getUint16(p + 28, true), elen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true);
+      const lo = dv.getUint32(p + 42, true);
+      const name = dec.decode(buf.subarray(p + 46, p + 46 + nlen));
+      const lnlen = dv.getUint16(lo + 26, true), lelen = dv.getUint16(lo + 28, true);
+      const start = lo + 30 + lnlen + lelen;
+      out[name] = buf.subarray(start, start + csize);
+      p += 46 + nlen + elen + clen;
+    }
+    return out;
   }
 
-  /* ---- Data Export / Import (v8.6.2) ---- */
-  // 参与备份的 localStorage 键（全部为用户在本机产生的数据）
-  const BACKUP_LS_KEYS = ['notes-pinned','notes-theme','notes-categories-v2','notes-edits','notes-reader-font','user-notes-index','notes-nickname','notes-avatar','notes-search-history'];
+  async function fetchTextOrNull(url) {
+    try { const r = await fetch(url, { cache: 'no-store' }); return r.ok ? await r.text() : null; } catch (_) { return null; }
+  }
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1500);   // 下载完成后释放
+  }
+  function backupStamp() {
+    const d = new Date();
+    return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
+  }
 
   async function exportAllData() {
     try {
@@ -2629,22 +2745,66 @@ html, body {
       const userNotes = await DB.getAll();   // 批量读取，一次 getAll
       const ls = {};
       for (const k of BACKUP_LS_KEYS) { const v = localStorage.getItem(k); if (v !== null) ls[k] = v; }
-      const payload = {
+
+      // 站点自带的书单正文与论点库：随包归档，站点将来改版也能留住原始内容
+      const notesJsonText = await fetchTextOrNull('notes.json');
+      const highlightsText = await fetchTextOrNull('highlights.json');
+      const files = [];
+      let bundledNotes = 0;
+      let bundledBooks = 0;
+      if (notesJsonText) {
+        files.push({ name: 'notes.json', data: notesJsonText });
+        let list = [];
+        try { list = JSON.parse(notesJsonText); } catch (_) { list = []; }
+        const bodies = await Promise.all(list.map(n => fetchTextOrNull(n.file)));
+        list.forEach((n, i) => {
+          if (bodies[i] != null) { files.push({ name: n.file, data: bodies[i] }); bundledNotes++; }
+        });
+        bundledBooks = list.length;
+      }
+      if (highlightsText) files.push({ name: 'highlights.json', data: highlightsText });
+
+      // 用户在「我的」里改过的一切：分类、昵称、头像、内置笔记的改/删、阅读字号、搜索历史
+      let catCount = 0;
+      try { catCount = ls['notes-categories-v2'] ? JSON.parse(ls['notes-categories-v2']).length : 0; } catch (_) { catCount = 0; }
+      const meta = {
         app: '书阁',
-        version: 1,
+        version: 2,
         exportedAt: new Date().toISOString(),
+        counts: { categories: catCount, builtinBooks: bundledBooks, builtinNotes: bundledNotes, userNotes: userNotes.length },
         localStorage: ls,
         userNotes
       };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const d = new Date();
-      const stamp = `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
-      const a = document.createElement('a');
-      a.href = url; a.download = `书阁备份-${stamp}.json`;
-      document.body.appendChild(a); a.click(); a.remove();
-      setTimeout(() => URL.revokeObjectURL(url), 1000);   // 下载完成后释放
-      showToast(`✅ 已导出 ${userNotes.length} 篇笔记`);
+      files.unshift({ name: 'data.json', data: JSON.stringify(meta, null, 2) });
+
+      // 用户上传笔记的正文另存一份，解压后可直接用浏览器打开
+      // 文件名只用 ASCII（id），避免 macOS 自带 unzip 不认 UTF-8 标记导致中文名乱码；
+      // 标题对应关系写进 README。
+      const userMap = [];
+      for (const n of userNotes) {
+        if (!n || !n.content) continue;
+        const fname = `user-notes/${n.id}.html`;
+        files.push({ name: fname, data: String(n.content) });
+        userMap.push(`${fname}  ←  ${n.title || '(无标题)'}`);
+      }
+
+      files.push({ name: 'README.txt', data:
+`书阁备份包  ${new Date().toLocaleString('zh-CN')}
+
+data.json         设置与数据索引 —— 导入备份时读的就是这个文件
+                  （分类、昵称、头像、内置笔记的改/删、阅读字号、搜索历史、用户上传笔记原文）
+notes.json        内置书籍清单
+notes/*.html      内置书籍正文（${bundledNotes}/${bundledBooks} 篇，仅归档留存）
+highlights.json   每日回顾的论点库
+user-notes/*.html 你上传的笔记正文（${userNotes.length} 篇）
+
+说明：双击 .html 即可用浏览器打开阅读。导入时只会恢复 data.json 里的设置与用户笔记，
+内置书籍正文跟随站点版本走，包内副本仅作存档。
+${userMap.length ? '\n用户笔记对照：\n' + userMap.join('\n') + '\n' : ''}` });
+
+      downloadBlob(makeZip(files), `书阁备份-${backupStamp()}.zip`);
+      if (bundledNotes) showToast(`✅ 已打包 ${bundledNotes} 篇书正文 + ${userNotes.length} 篇用户笔记`);
+      else showToast(`✅ 已打包设置与 ${userNotes.length} 篇笔记（正文需在网页版下才能抓取）`);
     } catch(err) { console.error(err); showToast('导出失败：'+err.message); }
   }
 
@@ -2674,11 +2834,20 @@ html, body {
   }
 
   async function importAllData(file) {
-    let payload;
+    // v8.9.3：按文件头判断是 .zip 还是旧的 .json（不依赖扩展名，Safari/微信下取不到也能用）
+    let payload, archived = 0;
     try {
-      payload = JSON.parse(await file.text());
+      const head = new Uint8Array(await file.slice(0, 4).arrayBuffer());
+      if (head[0] === 0x50 && head[1] === 0x4B) {
+        const entries = await readZip(file);
+        if (!entries['data.json']) throw new Error('备份包里没有 data.json');
+        payload = JSON.parse(new TextDecoder().decode(entries['data.json']));
+        archived = Object.keys(entries).filter(n => /^notes\/.+\.html$/.test(n)).length;
+      } else {
+        payload = JSON.parse(await file.text());
+      }
     } catch (e) {
-      showToast('❌ 文件格式不正确，无法解析'); return;
+      showToast('❌ ' + (e && e.message ? e.message : '文件格式不正确，无法解析')); return;
     }
     if (!payload || typeof payload !== 'object' || (!payload.localStorage && !Array.isArray(payload.userNotes))) {
       showToast('❌ 不是有效的书阁备份文件'); return;
@@ -2691,11 +2860,13 @@ html, body {
     const when = payload.exportedAt ? formatDate(payload.exportedAt) : '未知时间';
     showConfirm('确认导入备份',
       `备份时间：${when}\n\n` +
-      `导入会用备份内容覆盖当前的编辑、分类、昵称等设置${nNotes ? `，并写入 ${nNotes} 篇用户笔记` : ''}。备份中没有的笔记不会被删除（属合并覆盖，非清空还原）。\n\n` +
+      `将恢复：分类、昵称、头像、主题、阅读字号、内置笔记的改/删${nNotes ? `，以及 ${nNotes} 篇用户笔记` : ''}。\n` +
+      (archived ? `包内 ${archived} 篇内置书正文只作存档，不会写入站点（正文跟随线上版本）。\n` : '') +
+      `\n备份中没有的笔记不会被删除（属合并覆盖，非清空还原）。\n\n` +
       `⚠️ 导入之后你自己新做的改动将丢失，且无法恢复。`,
       async () => {
       try {
-        for (const k of BACKUP_LS_KEYS) { if (typeof ls[k] === 'string' && ls[k] !== null) localStorage.setItem(k, ls[k]); }
+        for (const k of BACKUP_LS_KEYS) { if (typeof ls[k] === 'string') localStorage.setItem(k, ls[k]); }
         const notes = Array.isArray(payload.userNotes) ? payload.userNotes : [];
         for (const rec of notes) { if (rec && rec.id) await DB.put(rec); }
         showToast('✅ 导入成功，正在刷新…');
@@ -2703,6 +2874,14 @@ html, body {
       } catch(err) { console.error(err); showToast('导入失败：'+err.message); }
     });
   }
+
+  exportDataBtn.addEventListener('click', () => exportAllData());
+  importDataBtn.addEventListener('click', () => importFileInput.click());
+  importFileInput.addEventListener('change', function() {
+    const f = this.files && this.files[0];
+    this.value = '';
+    if (f) importAllData(f);
+  });
 
   exportDataBtn.addEventListener('click', () => exportAllData());
   importDataBtn.addEventListener('click', () => importFileInput.click());
@@ -3261,7 +3440,6 @@ html, body {
   profileAvatarInput.addEventListener('change',function(){const f=this.files&&this.files[0];this.value='';if(f)handleAvatarFile(f);});
   profileAvatarReset.addEventListener('click',clearAvatar);
   profileThemeToggle.addEventListener('change',()=>toggleTheme());
-  clearUserNotesBtn.addEventListener('click',()=>showConfirm('确认清除全部用户笔记','此操作将永久删除所有用户上传的笔记内容，内置笔记不受影响。确定继续吗？',()=>clearAllUserNotes()));
 
   overlayBackBtn.addEventListener('click',()=>closePreviewOverlay());
 
