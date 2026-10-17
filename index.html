@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.5</title>
+<title>📚 书阁 v8.9.6</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -25,6 +25,18 @@
   /* v8.9.5：底部 tab 图标墨色（常态暖灰 / 选中朱砂），与头图、书卡同一套暖色语言 */
   --tab-ink: #A79E92;
   --tab-ink-active: #B4563C;
+
+  /* v8.9.6：「我的」页列表图标暖墨色 + 书卡纸面/纸边 */
+  --setting-ink: #6B6258;
+  --book-paper: #FCF8EF;
+  --book-edge: #EADFCC;
+  --book-paper-ink: #4A423A;
+  --book-paper-muted: #857C6F;
+  --book-paper-unknown: #A79D8D;
+  --book-more-bg: #FBF6EA;
+  --book-more-line: #D8CBB4;
+  --book-more-num: #8A7B62;
+  --book-more-lb: #A2957E;
 
   /* v8.9.2：首页头图渐隐色（= --bg-page 的 rgb 三元组，随主题适配，勿写成十六进制） */
   --hero-tint: 255,251,245;
@@ -64,6 +76,18 @@
   /* v8.9.5：深色下 tab 图标改用偏冷的灰，避免暖灰在靛蓝底上发脏 */
   --tab-ink: #8b94a3;
   --tab-ink-active: #e88070;
+
+  /* v8.9.6：深色下书卡纸面压暗成「灯下纸」，避免整块发光 */
+  --setting-ink: #b6ab9c;
+  --book-paper: #2a2521;
+  --book-edge: #3b342c;
+  --book-paper-ink: #ddd3c3;
+  --book-paper-muted: #9a9081;
+  --book-paper-unknown: #7d7466;
+  --book-more-bg: #262220;
+  --book-more-line: #453f37;
+  --book-more-num: #b2a086;
+  --book-more-lb: #8b8375;
 
   /* v8.9.2：首页头图渐隐色（= --bg-page #1a1a2e 的 rgb 三元组） */
   --hero-tint: 26,26,46;
@@ -176,6 +200,9 @@ html, body {
 .icon-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .icon-btn.active { background: var(--accent); color: #fff; }
 .icon-btn.active:hover { background: var(--accent-deep); color: #fff; }
+/* v8.9.6：顶栏搜索改成线框图标，压在头图/米白底上用暖墨色 */
+.icon-btn .ico { width: 20px; height: 20px; display: block; }
+.hero-topbar .icon-btn, .sidebar-header .icon-btn { color: var(--setting-ink); }
 
 /* ========== Note List ========== */
 .note-list { flex: 1; overflow-y: auto; padding: 8px 12px; -webkit-overflow-scrolling: touch; }
@@ -380,6 +407,19 @@ html, body {
 .profile-setting-item:hover { background: var(--accent-soft); }
 .profile-setting-item .setting-label { font-size: 15px; color: var(--text-primary); display: flex; align-items: center; gap: 12px; }
 .profile-setting-item .setting-label .setting-icon { font-size: 20px; }
+/* v8.9.6：「我的」页列表图标改成 24×24 线框，暖墨色，不与朱砂按钮抢视线 */
+.profile-setting-item .setting-label .setting-ico { width: 24px; height: 24px; flex-shrink: 0; color: var(--setting-ink); }
+.profile-body-inner { position: relative; }
+.profile-search-btn {
+  position: absolute; top: -4px; right: 0; z-index: 2;
+  width: 36px; height: 36px; padding: 0; border: none; background: none;
+  border-radius: 50%; color: var(--setting-ink); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all var(--transition);
+}
+.profile-search-btn .ico { width: 21px; height: 21px; display: block; }
+.profile-search-btn:hover { background: var(--accent-soft); color: var(--accent); }
+@media (max-width: 767px) { .profile-search-btn { top: -10px; right: -4px; } }
 .profile-setting-item .setting-value { font-size: 13px; color: var(--text-muted); }
 
 /* Make non-setting-items (like the category section title) also styled */
@@ -880,7 +920,7 @@ html, body {
 /* v8.7：分类区块改为独立卡片，强化类别之间的视觉分隔 */
 .shelf-section {
   margin: 0 14px 14px;
-  padding: 14px 14px 8px;
+  padding: 12px 14px 10px;
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: 16px;
@@ -892,20 +932,20 @@ html, body {
 .shelf-section:last-child { margin-bottom: 20px; }
 .shelf-section-header {
   display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 12px; padding-bottom: 10px;
-  border-bottom: 1px dashed var(--border);
+  margin-bottom: 10px; padding-bottom: 0;
 }
 .shelf-label {
   display: flex; align-items: center; gap: 8px;
-  font-size: 15px; font-weight: 600; color: var(--text-primary);
-  letter-spacing: -0.2px; transition: color var(--transition);
+  font-size: 14.5px; font-weight: 600; color: var(--text-primary);
+  letter-spacing: .2px; transition: color var(--transition);
 }
-.shelf-label .dot { width: 5px; height: 15px; border-radius: 3px; flex-shrink: 0; }
+.shelf-label .dot { width: 3px; height: 14px; border-radius: 2px; flex-shrink: 0; }
 .shelf-count {
-  font-size: 12px; color: var(--text-secondary); font-weight: 400;
-  display: flex; align-items: center; gap: 2px;
+  font-size: 10.5px; color: var(--text-secondary); font-weight: 400;
+  display: inline-flex; align-items: center; gap: 2px;
+  height: 23px; padding: 0 8px 0 10px;
   background: var(--bg-page); border: 1px solid var(--border);
-  padding: 3px 6px 3px 10px; border-radius: 999px;
+  border-radius: 12px;
   transition: all var(--transition);
 }
 .shelf-arrow {
@@ -925,102 +965,144 @@ html, body {
 .shelf-section-header:hover .shelf-count { border-color: var(--accent); color: var(--accent); }
 .shelf-section-header:active { opacity: 0.7; }
 
-/* v8.6.2：横向书排在 360px 侧栏内溢出 1400px 且无法滚动，改为纵向自适应网格 */
+/* v8.6.2：横向书排在 360px 侧栏内溢出 1400px 且无法滚动，改为纵向自适应网格。
+   v8.9.6：卡片改为固定 8:15 比例（由 .book-card 的 aspect-ratio 决定高度），
+   所以原来那组「压 min-height / 改字号」的覆盖规则全部删除 —— 高度不再需要手调。 */
 .book-row {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
   gap: 12px 8px;
-  padding: 6px 0 10px;
+  padding: 4px 0 10px;
 }
-/* 网格下压缩卡片高度，保证侧栏首屏能看到更多书。
-   v8.8：分类详情网格复用同一组规则（原来详情页自己写了一份近似值，
-   导致封面色块 80 vs 76、字号 12 vs 12 等细节对不上）。现在只有这一处定义。*/
-.book-row .book-cover,   .category-detail-grid .book-cover   { min-height: 76px; padding: 12px 8px; }
-.book-row .book-info,    .category-detail-grid .book-info    { padding: 8px 8px; }
-.book-row .book-title,   .category-detail-grid .book-title   { font-size: 12px; line-height: 1.4; -webkit-line-clamp: 3; }
-.book-row .book-date,    .category-detail-grid .book-date    { font-size: 10px; margin-bottom: 4px; }
-.book-row .book-author-text, .category-detail-grid .book-author-text { font-size: 9px; padding: 1px 6px; }
 
-/* v8.7：每类最多两行；超出时第二行末位变「查看更多」，点击进入该分类详情 */
+/* v8.7：每类最多两行；超出时第二行末位变「查看更多」，点击进入该分类详情。
+   v8.9.6：改成设计稿的虚线「+N 查看更多」瓦片，与书卡同比例。 */
 .book-more-card {
   min-width: 0; cursor: pointer;
-  border-radius: var(--radius-md);
-  background: var(--accent-soft);
-  border: 1px dashed var(--accent);
+  aspect-ratio: 80 / 150;
+  border-radius: 8px;
+  background: var(--book-more-bg);
+  border: 1px dashed var(--book-more-line);
   display: flex; flex-direction: column; align-items: center; justify-content: center;
-  gap: 3px; padding: 10px 6px; color: var(--accent);
+  gap: 4px; color: var(--book-more-num);
   transition: all var(--transition);
 }
 .book-more-card:hover {
-  background: var(--accent); color: #fff; border-style: solid;
-  transform: translateY(-6px); box-shadow: 0 12px 32px rgba(26,26,46,0.14);
+  background: var(--accent-soft); border-color: var(--accent); color: var(--accent);
+  transform: translateY(-4px);
 }
 .book-more-card:active { transform: translateY(-2px); }
 .book-more-card:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--accent-soft); }
-.book-more-num { font-size: 16px; font-weight: 700; line-height: 1; }
-.book-more-text { font-size: 11px; font-weight: 500; letter-spacing: -0.2px; }
+.book-more-card .stack { display: flex; flex-direction: column; gap: 2px; align-items: center; margin-bottom: 3px; }
+.book-more-card .stack i { display: block; height: 1.5px; border-radius: 1px; background: currentColor; opacity: .45; }
+.book-more-card .stack i:nth-child(1) { width: 15px; }
+.book-more-card .stack i:nth-child(2) { width: 21px; opacity: .8; }
+.book-more-card .stack i:nth-child(3) { width: 11px; }
+.book-more-num { font-size: 15px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: .3px; }
+.book-more-text { font-size: 8px; font-weight: 400; letter-spacing: .5px; color: var(--book-more-lb); }
 
-/* ========== Book Card (New Vertical Cover Design) ========== */
+/* ========== Book Card v8.9.6：80×150 精装书脊 ==========
+   宽度交给网格（70~85px 浮动），高度由 8:15 比例锁定 —— 任何视口都不必再手调高度，
+   也不会出现「同一套书卡在首页和分类详情页长得不一样」。
+   分类色做成三级「封面 / 深调 / 书脊」，白字对比度 5.6~8.4:1。 */
 .book-card {
   position: relative;
   width: auto; min-width: 0;
-  border-radius: var(--radius-md); overflow: hidden;
-  background: var(--bg-card);
-  box-shadow: var(--shadow-book);
-  cursor: pointer; transition: all var(--transition);
-  border: 1px solid transparent;
+  aspect-ratio: 80 / 150;
+  display: flex; flex-direction: column;
+  border-radius: 8px; overflow: hidden;
+  background: var(--book-paper);
+  border: 1px solid var(--book-edge);
+  box-shadow: 0 1.5px 4px rgba(96,78,52,.09);
+  cursor: pointer;
+  transition: transform .22s cubic-bezier(.22,.61,.36,1), box-shadow .22s ease;
   user-select: none; -webkit-user-select: none;
+  --c1:#4A4A44; --c2:#33332E; --c3:#24241F;
 }
 /* v8.6.2：桌面端 hover 浮出的操作入口（移动端走长按，隐藏） */
 .book-card-menu {
-  position: absolute; top: 6px; right: 6px; z-index: 2;
-  width: 26px; height: 26px; padding: 0;
+  position: absolute; top: 4px; right: 4px; z-index: 4;
+  width: 22px; height: 22px; padding: 0;
   display: flex; align-items: center; justify-content: center;
   border: none; border-radius: 50%;
   background: rgba(0,0,0,0.30); color: #fff;
-  font-size: 15px; line-height: 1; cursor: pointer;
+  font-size: 13px; line-height: 1; cursor: pointer;
   opacity: 0; transition: opacity var(--transition);
 }
 .book-card:hover .book-card-menu, .book-card-menu:focus-visible { opacity: 1; }
 .book-card-menu:hover { background: rgba(0,0,0,0.48); }
 /* 触屏设备走长按，不显示 hover 按钮（any-pointer 与 checkMobile 的触屏判定保持一致） */
 @media (hover: none), (any-pointer: coarse), (max-width: 767px) { .book-card-menu { display: none; } }
-.book-card:hover { transform: translateY(-6px); box-shadow: 0 12px 32px rgba(26,26,46,0.12), 2px 0 0 rgba(0,0,0,0.06) inset; }
-.book-card:active { transform: translateY(-2px); }
-.book-card.active { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft), var(--shadow-book); }
+.book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(96,78,52,.20); }
+.book-card:active { transform: translateY(-1px); }
+.book-card.active { outline: none; box-shadow: 0 0 0 2px var(--accent), 0 10px 22px rgba(96,78,52,.20); }
 
-.book-cover {
-  padding: 18px 14px; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  min-height: 100px; position: relative; color: #FFFFFF;
+/* 封面：压印细边 + 7px 烫金书脊 */
+.book-card .book-cover {
+  position: relative; flex: 1 1 auto; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  padding: 9px 4px 9px 12px;
+  background:
+    radial-gradient(130% 85% at 30% 0%, rgba(255,255,255,.18), rgba(255,255,255,0) 58%),
+    linear-gradient(158deg, var(--c1) 0%, var(--c2) 100%);
+  color: #FBF7EC;
 }
-.book-cover::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-  width: 5px; background: rgba(0,0,0,0.15); border-radius: 0 2px 2px 0;
+.book-card .book-cover::after {
+  content: ''; position: absolute; left: 11px; right: 4.5px; top: 4.5px; bottom: 4.5px;
+  border: 1px solid rgba(251,247,236,.20); border-radius: 2.5px; pointer-events: none;
 }
-.book-title {
-  font-size: 14px; font-weight: 600; text-align: center; line-height: 1.5;
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;
-  overflow: hidden; text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+.book-card .book-spine {
+  position: absolute; left: 0; top: 0; bottom: 0; width: 7px; z-index: 3;
+  background: var(--c3);
+  box-shadow: inset 0 0 10px rgba(0,0,0,.22), inset -1px 0 0 rgba(255,255,255,.20), 2px 0 4px rgba(0,0,0,.13);
+}
+.book-card .book-spine::before,
+.book-card .book-spine::after {
+  content: ''; position: absolute; left: 0; right: 0; height: 1.5px;
+  background: rgba(226,190,110,.62);
+}
+.book-card .book-spine::before { top: 11px; }
+.book-card .book-spine::after { bottom: 11px; }
+
+/* 书名主副两级：主 10px / 副 7.5px，小卡也能读到 6 字一行 */
+.book-t { position: relative; z-index: 2; width: 100%; text-align: center; display: flex; flex-direction: column; gap: 3px; }
+.book-t .m {
+  font-size: 10px; line-height: 1.42; font-weight: 600; color: #FBF7EC;
+  text-wrap: balance; word-break: break-word;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.book-t .s {
+  font-size: 7.5px; line-height: 1.42; color: rgba(251,247,236,.76);
+  text-wrap: balance;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-.book-info { padding: 10px 14px; background: var(--bg-card); }
-.book-date { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; }
-.book-author { display: flex; gap: 4px; }
+/* 纸签：作者 + 日期（单行，日期用目录式 2026.07.03） */
+.book-card .book-meta {
+  flex: 0 0 31.4%;
+  padding: 5px 5px 5px 7px;
+  background: var(--book-paper);
+  border-top: 1px solid var(--book-edge);
+  display: flex; flex-direction: column; gap: 3px; justify-content: center;
+  overflow: hidden;
+}
 .book-author-text {
-  font-size: 10px; padding: 2px 8px; border-radius: 10px;
-  color: var(--text-secondary); font-weight: 500;
+  font-size: 9.5px; line-height: 1.25; letter-spacing: .1px; font-weight: 400;
+  color: var(--book-paper-ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
+.book-author-text.unk { color: var(--book-paper-unknown); }
+.book-date { font-size: 8px; line-height: 1; letter-spacing: .4px; color: var(--book-paper-muted); font-variant-numeric: tabular-nums; }
 
-/* Category cover colors */
-.ai-tech .book-cover, .book-ai-tech .book-cover               { background: var(--cat-ai-tech); }
-.math .book-cover, .book-math .book-cover                     { background: var(--cat-math); }
-.politics-economy .book-cover, .book-politics-economy .book-cover { background: var(--cat-politics-economy); }
-.society-culture .book-cover, .book-society-culture .book-cover   { background: var(--cat-society-culture); }
-.org-management .book-cover, .book-org-management .book-cover     { background: var(--cat-org-management); }
-.general-science .book-cover, .book-general-science .book-cover   { background: var(--cat-general-science); }
-.finance .book-cover, .book-finance .book-cover               { background: var(--cat-finance); }
-.other .book-cover, .book-other .book-cover                   { background: var(--cat-other); }
+/* 分类色板：三级「封面 / 深调 / 书脊」 */
+.book-card.ai-tech          { --c1:#2E7561; --c2:#235C4C; --c3:#17453A; }
+.book-card.math             { --c1:#6E4491; --c2:#573370; --c3:#40255A; }
+.book-card.politics-economy { --c1:#3A5F87; --c2:#2C4A6B; --c3:#1F3650; }
+.book-card.society-culture  { --c1:#9A5540; --c2:#7A3F2E; --c3:#5C2D21; }
+.book-card.org-management   { --c1:#55684B; --c2:#414F39; --c3:#2F3A2A; }
+.book-card.general-science  { --c1:#8A7250; --c2:#6D5A3F; --c3:#54452F; }
+.book-card.finance          { --c1:#96702F; --c2:#77561F; --c3:#5C4114; }
+.book-card.other            { --c1:#4A4A44; --c2:#33332E; --c3:#24241F; }
 
 /* ========== Loading & Error ========== */
 .loading-spinner { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; }
@@ -1081,6 +1163,32 @@ html, body {
     <circle cx="12" cy="8.4" r="3.7" stroke="currentColor" stroke-width="1.7"/>
     <path d="M4.9 20.6c.3-3.6 3.4-5.7 7.1-5.7s6.8 2.1 7.1 5.7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
   </symbol>
+  <!-- v8.9.6「我的」页六枚：主题 / 存储 / 备份 / 分类 / 关于 / 搜索 -->
+  <symbol id="ico-theme" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor"/>
+  </symbol>
+  <symbol id="ico-storage" viewBox="0 0 24 24" fill="none">
+    <rect x="4.4" y="4.8" width="15.2" height="14.4" rx="2.6" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8.4 15.4v-2.6M12 15.4v-4.8M15.6 15.4v-6.8" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="ico-backup" viewBox="0 0 24 24" fill="none">
+    <ellipse cx="12" cy="6.9" rx="6.4" ry="2.4" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M5.6 6.9v9.5c0 1.35 2.87 2.4 6.4 2.4s6.4-1.05 6.4-2.4V6.9" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+    <path d="M5.6 11.7c0 1.33 2.87 2.4 6.4 2.4s6.4-1.07 6.4-2.4" stroke="currentColor" stroke-linecap="round" stroke-width="1.4"/>
+  </symbol>
+  <symbol id="ico-folder" viewBox="0 0 24 24" fill="none">
+    <path d="M3.7 18.3V5.9a1.6 1.6 0 0 1 1.6-1.6h3.2a1.6 1.6 0 0 1 1.3.7l1 1.4a1.6 1.6 0 0 0 1.3.7h7.2a1.6 1.6 0 0 1 1.6 1.6v9.6a1.6 1.6 0 0 1-1.6 1.6H5.3a1.6 1.6 0 0 1-1.6-1.6z" stroke="currentColor" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="ico-about" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M12 11.2v5.1" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+    <circle cx="12" cy="8.2" r="1.05" fill="currentColor"/>
+  </symbol>
+  <symbol id="ico-search" viewBox="0 0 24 24" fill="none">
+    <circle cx="10.7" cy="10.7" r="6.3" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M15.4 15.4 19.6 19.6" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+  </symbol>
 </svg>
 
 <!-- Hidden file input for upload -->
@@ -1099,9 +1207,9 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.9.5</span>
+        <span class="hero-version">v8.9.6</span>
       </h1>
-      <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
+      <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
 
     <!-- Desktop Tab Bar -->
@@ -1125,9 +1233,9 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.5</span>
+              <span class="hero-version">v8.9.6</span>
             </div>
-            <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
+            <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
         </div>
         <div class="review-inner">
@@ -1218,6 +1326,7 @@ html, body {
       <div class="tab-panel" id="tabProfile">
         <div class="profile-body">
           <div class="profile-body-inner">
+            <button class="profile-search-btn" id="profileSearchBtn" type="button" aria-label="搜索笔记" title="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
             <div class="profile-avatar-section">
               <div class="profile-avatar" id="profileAvatar" role="button" tabindex="0" title="点击更换头像">📖</div>
               <input type="text" class="profile-nickname" id="profileNickname" maxlength="20" placeholder="设置昵称" value="">
@@ -1226,16 +1335,16 @@ html, body {
             </div>
             <ul class="profile-settings">
               <li class="profile-setting-item">
-                <span class="setting-label"><span class="setting-icon">🌓</span>主题切换</span>
+                <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-theme"/></svg>主题切换</span>
                 <label class="toggle-switch"><input type="checkbox" id="profileThemeToggle"><span class="slider"></span></label>
               </li>
               <li class="profile-setting-item">
-                <span class="setting-label"><span class="setting-icon">📊</span>存储管理</span>
+                <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-storage"/></svg>存储管理</span>
                 <span class="setting-value" id="storageSize">计算中…</span>
               </li>
               <!-- v8.6.2 数据备份：导出/导入（v8.9.3 起改为 zip 打包，含分类与书籍笔记文件） -->
               <li class="profile-setting-item">
-                <span class="setting-label"><span class="setting-icon">💾</span>数据备份</span>
+                <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-backup"/></svg>数据备份</span>
                 <span class="setting-value setting-btn-group">
                   <button class="btn-setting" id="exportDataBtn">导出全部数据</button>
                   <button class="btn-setting" id="importDataBtn">导入备份</button>
@@ -1243,17 +1352,17 @@ html, body {
               </li>
               <!-- Category Management -->
               <li class="profile-setting-item category-manager-item">
-                <span class="setting-label"><span class="setting-icon">📂</span>分类管理</span>
+                <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-folder"/></svg>分类管理</span>
                 <div class="category-manager-list" id="categoryManagerList"></div>
                 <button class="btn-setting btn-add-category" id="addCategoryBtn">+ 新增分类</button>
               </li>
               <li class="profile-setting-item">
-                <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.9.5</span>
+                <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
+                <span class="setting-value">v8.9.6</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.5</div>
+              <div class="about-version">📚 书阁 v8.9.6</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1432,6 +1541,7 @@ html, body {
   const brandAvatar   = $('#brandAvatar');
   const brandName     = $('#brandName');
   const heroSearchBtn = $('#heroSearchBtn');
+  const profileSearchBtn = $('#profileSearchBtn');   // v8.9.6：「我的」页右上搜索
 
   // Home — notes
   const categoryChips = $('#categoryChips');
@@ -2098,7 +2208,21 @@ html, body {
    * =================================================================== */
   const CAT_COLOR_MAP = { 'AI与科技': 'ai-tech', '数学': 'math', '政治与经济': 'politics-economy', '社会与文化': 'society-culture', '组织与管理': 'org-management', '通识与科普': 'general-science', '金融与财务': 'finance', '其他': 'other' };
   const CAT_ORDER = ['AI与科技', '数学', '政治与经济', '社会与文化', '组织与管理', '通识与科普', '金融与财务', '其他'];
-  const CAT_COLORS = { 'AI与科技': '#5B9EA3', '数学': '#8e44ad', '政治与经济': '#6B8FA3', '社会与文化': '#D4858A', '组织与管理': '#5E81AC', '通识与科普': '#C0976C', '金融与财务': '#D4953B', '其他': '#8C8C94' };
+  /* v8.9.6：书卡三级色板（封面 / 深调 / 书脊）。前 6 组与设计稿一致，
+     通识与科普、金融与财务两色按同一套「低饱和 · 深调 · 白字过 AA」的规则补齐。 */
+  const CAT_PALETTES = {
+    'AI与科技':  { c1:'#2E7561', c2:'#235C4C', c3:'#17453A' },
+    '数学':      { c1:'#6E4491', c2:'#573370', c3:'#40255A' },
+    '政治与经济': { c1:'#3A5F87', c2:'#2C4A6B', c3:'#1F3650' },
+    '社会与文化': { c1:'#9A5540', c2:'#7A3F2E', c3:'#5C2D21' },
+    '组织与管理': { c1:'#55684B', c2:'#414F39', c3:'#2F3A2A' },
+    '通识与科普': { c1:'#8A7250', c2:'#6D5A3F', c3:'#54452F' },
+    '金融与财务': { c1:'#96702F', c2:'#77561F', c3:'#5C4114' },
+    '其他':      { c1:'#4A4A44', c2:'#33332E', c3:'#24241F' }
+  };
+  function catTickColor(cat) { return (CAT_PALETTES[cat] || CAT_PALETTES['其他']).c2; }
+  // 单色版（分类圆点、详情页标题点等）：取三级色里的封面色，保证与书卡同色系
+  const CAT_COLORS = Object.fromEntries(Object.keys(CAT_PALETTES).map(k => [k, CAT_PALETTES[k].c1]));
 
   function getBookColorClass(cat) { return CAT_COLOR_MAP[cat] || 'other'; }
 
@@ -2131,7 +2255,8 @@ html, body {
       more.setAttribute('role', 'button');
       more.setAttribute('tabindex', '0');
       more.setAttribute('aria-label', '查看更多 ' + cat + ' 的笔记');
-      more.innerHTML = '<span class="book-more-num">+' + hiddenCount + '</span>'
+      more.innerHTML = '<span class="stack"><i></i><i></i><i></i></span>'
+                     + '<span class="book-more-num">+' + hiddenCount + '</span>'
                      + '<span class="book-more-text">查看更多</span>';
       function go(ev) {
         if (ev) { ev.preventDefault(); ev.stopPropagation(); }
@@ -2166,28 +2291,15 @@ html, body {
       grouped[cat].push(n);
     }
     let html = '';
-    for (const cat of CAT_ORDER) {
+    // 先按 CAT_ORDER 排，再接上用户自己新增的分类（同名不重复）
+    const orderedCats = CAT_ORDER.concat(Object.keys(grouped).filter(c => !CAT_ORDER.includes(c)));
+    for (const cat of orderedCats) {
       const notes = grouped[cat];
       if (!notes || !notes.length) continue;
       const cc = getBookColorClass(cat);
-      const color = CAT_COLORS[cat] || '#8C8C94';
       html += `<div class="shelf-section">
         <div class="shelf-section-header">
-          <span class="shelf-label"><span class="dot" style="background:${color}"></span>${escapeHtml(cat)}</span>
-          <span class="shelf-count">${notes.length} 本书<span class="shelf-arrow">›</span></span>
-        </div>
-        <div class="book-row" data-cat="${escapeHtml(cat)}">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
-      </div>`;
-    }
-    for (const cat of Object.keys(grouped)) {
-      if (CAT_ORDER.includes(cat)) continue;
-      const notes = grouped[cat];
-      if (!notes || !notes.length) continue;
-      const cc = getBookColorClass(cat);
-      const color = CAT_COLORS[cat] || '#8C8C94';
-      html += `<div class="shelf-section">
-        <div class="shelf-section-header">
-          <span class="shelf-label"><span class="dot" style="background:${color}"></span>${escapeHtml(cat)}</span>
+          <span class="shelf-label"><span class="dot" style="background:${catTickColor(cat)}"></span>${escapeHtml(cat)}</span>
           <span class="shelf-count">${notes.length} 本书<span class="shelf-arrow">›</span></span>
         </div>
         <div class="book-row" data-cat="${escapeHtml(cat)}">${notes.map(n => renderBookCard(n, cc)).join('')}</div>
@@ -2201,17 +2313,40 @@ html, body {
     updateCount(src.length);   // v8.6.2：「共 N 篇」跟随当前筛选实时更新
   }
 
+  /* v8.9.6：书名拆成「主 / 副」两级。
+     1) 去掉书名号与尾部的导入时间戳（2026-06-16 1618 这类）；
+     2) 按 —— / — / · / - / ： 切成若干段，只取前两段当主副标题，其余丢弃
+        （像「从算力到模型到应用 — AI7层架构 — xuezhiyong — 0515」只留前两段）；
+     3) 只有一段时整段当主标题，不做猜测。 */
+  function splitBookTitle(raw) {
+    let t = String(raw == null ? '' : raw)
+      .replace(/[《》]/g, '')
+      .replace(/\s*·?\s*\d{4}\s*[-/.]\s*\d{1,2}\s*[-/.]\s*\d{1,2}(\s+\d{3,4})?\s*$/, '')
+      .trim();
+    const parts = t.split(/\s*(?:——|—|·|-|：|:)\s*/).map(s => s.trim()).filter(Boolean);
+    if (parts.length >= 2) return { main: parts[0], sub: parts[1] };
+    return { main: parts[0] || t, sub: '' };
+  }
+  function fmtBookDate(d) { return String(formatDate(d) || '').replace(/-/g, '.'); }
+
   function renderBookCard(n, colorClass) {
     const active = n.id === STATE.selectedId;
-    const author = n.author || '';
+    const rawAuthor = (n.author || '').trim();
+    const unknown = !rawAuthor || rawAuthor === '未知作者' || rawAuthor === '佚名';
+    const author = unknown ? '佚名' : rawAuthor;
+    const t = splitBookTitle(n.title);
     return `<div class="book-card ${colorClass}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}">
       <button class="book-card-menu" type="button" data-book-menu="1" aria-label="更多操作" title="更多操作">⋯</button>
       <div class="book-cover">
-        <span class="book-title">${escapeHtml(n.title)}</span>
+        <span class="book-spine"></span>
+        <div class="book-t">
+          <span class="m">${escapeHtml(t.main)}</span>
+          ${t.sub ? `<span class="s">${escapeHtml(t.sub)}</span>` : ''}
+        </div>
       </div>
-      <div class="book-info">
-        ${n.date ? `<div class="book-date">📅 ${formatDate(n.date)}</div>` : ''}
-        ${author ? `<div class="book-author"><span class="book-author-text">✍️ ${escapeHtml(author)}</span></div>` : ''}
+      <div class="book-meta">
+        <span class="book-author-text${unknown ? ' unk' : ''}">${escapeHtml(author)}</span>
+        ${n.date ? `<span class="book-date">${fmtBookDate(n.date)}</span>` : ''}
       </div>
     </div>`;
   }
@@ -2988,7 +3123,8 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
   let catEditOldName = '';
   let catDeleteTarget = '';
 
-  const CAT_COLORS_JS = { 'AI与科技': '#5B9EA3', '数学': '#8e44ad', '政治与经济': '#6B8FA3', '社会与文化': '#D4858A', '组织与管理': '#5E81AC', '通识与科普': '#C0976C', '金融与财务': '#D4953B', '其他': '#8C8C94' };
+  // v8.9.6：与书卡三级色板的「封面色」保持一致
+  const CAT_COLORS_JS = { 'AI与科技': '#2E7561', '数学': '#6E4491', '政治与经济': '#3A5F87', '社会与文化': '#9A5540', '组织与管理': '#55684B', '通识与科普': '#8A7250', '金融与财务': '#96702F', '其他': '#4A4A44' };
   function catColorJS(name) { return CAT_COLORS_JS[name] || '#8C8C94'; }
 
   function countNotesByCategory() {
@@ -3509,6 +3645,7 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
 
   searchBtn.addEventListener('click',()=>openSearchPage());
   heroSearchBtn.addEventListener('click',()=>openSearchPage());   // v8.9.2：hero 品牌行复用同一搜索逻辑
+  if (profileSearchBtn) profileSearchBtn.addEventListener('click',()=>openSearchPage());   // v8.9.6：「我的」页右上搜索
   backSearchBtn.addEventListener('click',()=>closeSearchPage());
   let sd=null; searchPageInput.addEventListener('input',function(){clearTimeout(sd);sd=setTimeout(()=>renderSearchResults(this.value),150);});
   searchResults.addEventListener('click',e=>{
