@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.4</title>
+<title>📚 书阁 v8.9.5</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -21,6 +21,10 @@
   --accent: #C97064;
   --accent-soft: #FDF0ED;
   --accent-deep: #A8584E;
+
+  /* v8.9.5：底部 tab 图标墨色（常态暖灰 / 选中朱砂），与头图、书卡同一套暖色语言 */
+  --tab-ink: #A79E92;
+  --tab-ink-active: #B4563C;
 
   /* v8.9.2：首页头图渐隐色（= --bg-page 的 rgb 三元组，随主题适配，勿写成十六进制） */
   --hero-tint: 255,251,245;
@@ -56,6 +60,10 @@
   --accent: #e88070;
   --accent-soft: #3d2025;
   --accent-deep: #c97064;
+
+  /* v8.9.5：深色下 tab 图标改用偏冷的灰，避免暖灰在靛蓝底上发脏 */
+  --tab-ink: #8b94a3;
+  --tab-ink-active: #e88070;
 
   /* v8.9.2：首页头图渐隐色（= --bg-page #1a1a2e 的 rgb 三元组） */
   --hero-tint: 26,26,46;
@@ -127,6 +135,10 @@ html, body {
 }
 .tab-btn:hover { background: var(--accent-soft); color: var(--accent); }
 .tab-btn.active { background: var(--text-primary); border-color: var(--text-primary); color: #fff; }
+/* 深色下 --text-primary 本身是浅色，选中 pill 变浅底，文字/图标要反过来用深墨色 */
+[data-theme="dark"] .tab-btn.active { color: #1a1a2e; }
+/* v8.9.5：桌面 tab 也用同一套线框图标，与底部 tab 保持一致 */
+.tab-btn .tab-ico { width: 16px; height: 16px; flex-shrink: 0; }
 
 /* ========== Sidebar Content Area ========== */
 .sidebar-content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
@@ -473,12 +485,14 @@ html, body {
   border-top: 1px solid var(--border); flex-shrink: 0;
 }
 .bottom-nav .nav-item {
-  display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 4px 14px; border: none; background: none; color: var(--text-muted);
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 3px 14px; border: none; background: none; color: var(--tab-ink);
   font-size: 10.5px; line-height: 1.25; cursor: pointer; border-radius: var(--radius-sm); transition: all var(--transition);
 }
-.bottom-nav .nav-item .nav-icon { font-size: 20px; line-height: 1; }
-.bottom-nav .nav-item.active { color: var(--accent); font-weight: 600; }
+/* v8.9.5：改用 24×24 线框图标（currentColor 上色，切页只切 class 颜色） */
+.bottom-nav .nav-item .nav-icon { width: 24px; height: 24px; display: block; }
+.bottom-nav .nav-item.active { color: var(--tab-ink-active); font-weight: 600; }
+.icon-sprite { position: absolute; width: 0; height: 0; overflow: hidden; }
 
 /* ========== Preview Overlay (Mobile) ========== */
 .preview-overlay {
@@ -1046,6 +1060,29 @@ html, body {
 </head>
 <body>
 
+<!-- v8.9.5 图标精灵：底部 tab 四枚线框图标（24×24 / 1.7 描边 / currentColor 跟随主题） -->
+<svg class="icon-sprite" aria-hidden="true" focusable="false" width="0" height="0">
+  <symbol id="ico-home" viewBox="0 0 24 24" fill="none">
+    <path d="M3.6 10.8 12 4.2l8.4 6.6" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M5.6 9.9v8.7a1.4 1.4 0 0 0 1.4 1.4h10a1.4 1.4 0 0 0 1.4-1.4V9.9" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M10.3 20v-3a1.7 1.7 0 0 1 3.4 0v3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6"/>
+  </symbol>
+  <symbol id="ico-notes" viewBox="0 0 24 24" fill="none">
+    <rect x="5.3" y="3.4" width="13.4" height="17.2" rx="2.1" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M8.5 3.6v16.8" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M11.4 8.1h4.6M11.4 11.6h4.6M11.4 15.1h3.1" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/>
+  </symbol>
+  <symbol id="ico-upload" viewBox="0 0 24 24" fill="none">
+    <path d="M12 15.9V4.7" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
+    <path d="M7.6 9.1 12 4.7l4.4 4.4" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+    <path d="M4.9 14.3v3.2a2.1 2.1 0 0 0 2.1 2.1h10a2.1 2.1 0 0 0 2.1-2.1v-3.2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+  <symbol id="ico-profile" viewBox="0 0 24 24" fill="none">
+    <circle cx="12" cy="8.4" r="3.7" stroke="currentColor" stroke-width="1.7"/>
+    <path d="M4.9 20.6c.3-3.6 3.4-5.7 7.1-5.7s6.8 2.1 7.1 5.7" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.7"/>
+  </symbol>
+</svg>
+
 <!-- Hidden file input for upload -->
 <input type="file" id="uploadFileInput" accept=".html" style="display:none">
 <!-- Hidden file input for backup import (v8.6.2) -->
@@ -1062,17 +1099,17 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.9.4</span>
+        <span class="hero-version">v8.9.5</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
 
     <!-- Desktop Tab Bar -->
     <div class="tab-bar" id="tabBar">
-      <button class="tab-btn active" data-tab="home">🏠 首页</button>
-      <button class="tab-btn" data-tab="notes">📒 笔记</button>
-      <button class="tab-btn" data-tab="upload">📤 上传</button>
-      <button class="tab-btn" data-tab="profile">👤 我的</button>
+      <button class="tab-btn active" data-tab="home"><svg class="tab-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-home"/></svg>首页</button>
+      <button class="tab-btn" data-tab="notes"><svg class="tab-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-notes"/></svg>笔记</button>
+      <button class="tab-btn" data-tab="upload"><svg class="tab-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-upload"/></svg>上传</button>
+      <button class="tab-btn" data-tab="profile"><svg class="tab-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-profile"/></svg>我的</button>
     </div>
 
     <!-- Sidebar Content Area -->
@@ -1088,7 +1125,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.4</span>
+              <span class="hero-version">v8.9.5</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
           </div>
@@ -1212,11 +1249,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.9.4</span>
+                <span class="setting-value">v8.9.5</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.4</div>
+              <div class="about-version">📚 书阁 v8.9.5</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1240,10 +1277,10 @@ html, body {
 
   <!-- Mobile Bottom Nav -->
   <nav class="bottom-nav" id="bottomNav">
-    <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span>首页</span></button>
-    <button class="nav-item" data-tab="notes"><span class="nav-icon">📒</span><span>笔记</span></button>
-    <button class="nav-item" data-tab="upload"><span class="nav-icon">📤</span><span>上传</span></button>
-    <button class="nav-item" data-tab="profile"><span class="nav-icon">👤</span><span>我的</span></button>
+    <button class="nav-item active" data-tab="home"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-home"/></svg><span>首页</span></button>
+    <button class="nav-item" data-tab="notes"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-notes"/></svg><span>笔记</span></button>
+    <button class="nav-item" data-tab="upload"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-upload"/></svg><span>上传</span></button>
+    <button class="nav-item" data-tab="profile"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-profile"/></svg><span>我的</span></button>
   </nav>
 </div>
 
