@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.3</title>
+<title>📚 书阁 v8.9.4</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -410,6 +410,8 @@ html, body {
 .toggle-switch input:checked + .slider::before { transform: translateX(20px); }
 .btn-setting { padding: 6px 14px; border: 1.5px solid var(--accent); border-radius: var(--radius-sm); background: transparent; color: var(--accent); font-size: 0.78rem; cursor: pointer; transition: all var(--transition); }
 .btn-setting:hover { background: var(--accent-soft); }
+/* v8.9.4：导出中的禁用态 */
+.btn-setting:disabled { opacity: .55; cursor: progress; background: var(--accent-soft); }
 /* v8.6.2 数据备份按钮组 */
 .setting-btn-group { display: flex; gap: 8px; flex-shrink: 0; }
 .profile-about { margin-top: 24px; padding: 14px 0; text-align: center; }
@@ -1060,7 +1062,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.9.3</span>
+        <span class="hero-version">v8.9.4</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
     </div>
@@ -1086,7 +1088,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.3</span>
+              <span class="hero-version">v8.9.4</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记">🔍</button>
           </div>
@@ -1210,11 +1212,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><span class="setting-icon">ℹ️</span>关于</span>
-                <span class="setting-value">v8.9.3</span>
+                <span class="setting-value">v8.9.4</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.3</div>
+              <div class="about-version">📚 书阁 v8.9.4</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2739,9 +2741,24 @@ html, body {
     return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}-${String(d.getHours()).padStart(2,'0')}${String(d.getMinutes()).padStart(2,'0')}`;
   }
 
+  // 文件名净化：去掉路径分隔符与 Windows 非法字符，压空白，限长
+  function safeName(s, max) {
+    let t = String(s == null ? '' : s).replace(/[\\/:*?"<>|\r\n\t]/g, ' ').replace(/\s+/g, ' ').trim();
+    t = t.replace(/^\.+/, '');
+    if (max && t.length > max) t = t.slice(0, max).trim();
+    return t || '未命名';
+  }
+
+  let isExporting = false;
   async function exportAllData() {
+    if (isExporting) { showToast('⏳ 正在导出，请稍候…'); return; }   // 连点保护
+    isExporting = true;
+    const oldLabel = exportDataBtn.textContent;
+    exportDataBtn.disabled = true;
+    exportDataBtn.textContent = '导出中…';
+    importDataBtn.disabled = true;
+    showToast('⏳ 正在导出，请稍候…');
     try {
-      showToast('正在打包数据…');
       const userNotes = await DB.getAll();   // 批量读取，一次 getAll
       const ls = {};
       for (const k of BACKUP_LS_KEYS) { const v = localStorage.getItem(k); if (v !== null) ls[k] = v; }
@@ -2752,13 +2769,27 @@ html, body {
       const files = [];
       let bundledNotes = 0;
       let bundledBooks = 0;
+      const index = [];                      // [{cat, title, fname}] 用于写 README 清单
       if (notesJsonText) {
         files.push({ name: 'notes.json', data: notesJsonText });
         let list = [];
         try { list = JSON.parse(notesJsonText); } catch (_) { list = []; }
+        // 优先用「当前视图」里的标题/分类（用户在「分类管理」里改过的话以改后的为准）
+        const effMap = {};
+        (STATE.notes || []).forEach(n => { if (n && n.id != null) effMap[String(n.id)] = n; });
         const bodies = await Promise.all(list.map(n => fetchTextOrNull(n.file)));
+        const seqByCat = {};
         list.forEach((n, i) => {
-          if (bodies[i] != null) { files.push({ name: n.file, data: bodies[i] }); bundledNotes++; }
+          if (bodies[i] == null) return;
+          const eff = effMap[String(n.id)] || n;
+          const cat = safeName(eff.category || n.category || '未分类', 24);
+          const title = safeName(eff.title || n.title || ('笔记' + n.id), 60);
+          seqByCat[cat] = (seqByCat[cat] || 0) + 1;
+          const seq = String(seqByCat[cat]).padStart(2, '0');
+          const fname = `notes/${cat}/${seq}-${title}.html`;   // 分类作目录、序号+名称作文件名
+          files.push({ name: fname, data: bodies[i] });
+          index.push({ cat, title, fname });
+          bundledNotes++;
         });
         bundledBooks = list.length;
       }
@@ -2777,35 +2808,59 @@ html, body {
       };
       files.unshift({ name: 'data.json', data: JSON.stringify(meta, null, 2) });
 
-      // 用户上传笔记的正文另存一份，解压后可直接用浏览器打开
-      // 文件名只用 ASCII（id），避免 macOS 自带 unzip 不认 UTF-8 标记导致中文名乱码；
-      // 标题对应关系写进 README。
-      const userMap = [];
+      // 用户上传的笔记：同样按「分类/名称」归档，解压后可直接用浏览器打开
+      const userIndex = [];
+      const usedNames = new Set();
       for (const n of userNotes) {
         if (!n || !n.content) continue;
-        const fname = `user-notes/${n.id}.html`;
+        const cat = safeName(n.category || '未分类', 24);
+        const title = safeName(n.title || ('笔记' + n.id), 60);
+        let fname = `user-notes/${cat}/${title}.html`;
+        let dup = 2;
+        while (usedNames.has(fname)) { fname = `user-notes/${cat}/${title}(${dup++}).html`; }
+        usedNames.add(fname);
         files.push({ name: fname, data: String(n.content) });
-        userMap.push(`${fname}  ←  ${n.title || '(无标题)'}`);
+        userIndex.push({ cat, title, fname });
       }
 
+      // README：按分类列出全部文件，方便不打开 data.json 也能看懂包内容
+      const byCat = (arr) => {
+        const g = {};
+        arr.forEach(x => { (g[x.cat] = g[x.cat] || []).push(x); });
+        return Object.keys(g).map(c =>
+          `  ${c}（${g[c].length}）\n` + g[c].map(x => `    ${x.fname.split('/').pop()}`).join('\n')
+        ).join('\n');
+      };
       files.push({ name: 'README.txt', data:
 `书阁备份包  ${new Date().toLocaleString('zh-CN')}
 
-data.json         设置与数据索引 —— 导入备份时读的就是这个文件
-                  （分类、昵称、头像、内置笔记的改/删、阅读字号、搜索历史、用户上传笔记原文）
-notes.json        内置书籍清单
-notes/*.html      内置书籍正文（${bundledNotes}/${bundledBooks} 篇，仅归档留存）
-highlights.json   每日回顾的论点库
-user-notes/*.html 你上传的笔记正文（${userNotes.length} 篇）
+data.json          设置与数据索引 —— 导入备份时读的就是这个文件
+                   （分类、昵称、头像、内置笔记的改/删、阅读字号、搜索历史、用户笔记原文）
+notes.json         内置书籍清单
+notes/<分类>/<序号>-<名称>.html
+                   内置书籍正文（${bundledNotes}/${bundledBooks} 篇，仅归档留存）
+highlights.json    每日回顾的论点库
+user-notes/<分类>/<名称>.html
+                   你上传的笔记正文（${userIndex.length} 篇）
 
 说明：双击 .html 即可用浏览器打开阅读。导入时只会恢复 data.json 里的设置与用户笔记，
 内置书籍正文跟随站点版本走，包内副本仅作存档。
-${userMap.length ? '\n用户笔记对照：\n' + userMap.join('\n') + '\n' : ''}` });
+
+内置书籍清单：
+${index.length ? byCat(index) : '  （本篇未抓到正文）'}
+${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}` });
 
       downloadBlob(makeZip(files), `书阁备份-${backupStamp()}.zip`);
-      if (bundledNotes) showToast(`✅ 已打包 ${bundledNotes} 篇书正文 + ${userNotes.length} 篇用户笔记`);
-      else showToast(`✅ 已打包设置与 ${userNotes.length} 篇笔记（正文需在网页版下才能抓取）`);
-    } catch(err) { console.error(err); showToast('导出失败：'+err.message); }
+      if (bundledNotes) showToast(`✅ 已导出 ${bundledNotes} 篇书正文 + ${userIndex.length} 篇你的笔记`);
+      else showToast(`✅ 已导出设置与 ${userIndex.length} 篇笔记（正文需在网页版下才能抓取）`);
+    } catch(err) {
+      console.error(err); showToast('导出失败：'+err.message);
+    } finally {
+      isExporting = false;
+      exportDataBtn.disabled = false;
+      exportDataBtn.textContent = oldLabel;
+      importDataBtn.disabled = false;
+    }
   }
 
   // v8.6.2：导入前逐键校验。备份里存的是「字符串化的 JSON」，
