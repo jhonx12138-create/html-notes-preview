@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.6</title>
+<title>📚 书阁 v8.9.7</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -40,6 +40,23 @@
 
   /* v8.9.2：首页头图渐隐色（= --bg-page 的 rgb 三元组，随主题适配，勿写成十六进制） */
   --hero-tint: 255,251,245;
+
+  /* v8.9.7：首页回顾卡（home-card 设计稿 A 案）—— 纸感卡面 / 宋体引文 / 朱砂短线 */
+  --rv-card: #FEFCF6;
+  --rv-edge: #E9DFCB;
+  --rv-inside: #EFE5D3;
+  --rv-ink: #2A2620;
+  --rv-ink-quote: #403A32;
+  --rv-ink-src: #8C8275;
+  --rv-ink-meta: #A79D8D;
+  --rv-rule: #B4563C;
+  --rv-ghost: #FAF4E6;
+  --rv-ghost-edge: #E6DAC2;
+  --rv-dot: #DCD1BE;
+  --rv-btn-bg: #FDFAF2;
+  --rv-btn-edge: #E4D6BE;
+  --rv-shadow: 0 0 15px rgba(120,95,60,.10), 0 6px 18px rgba(120,95,60,.105);
+  --rv-serif: "Songti SC", "STSong", "SimSun", Georgia, serif;
 
   /* Category color palette */
   --cat-ai-tech: #5B9EA3;
@@ -91,6 +108,22 @@
 
   /* v8.9.2：首页头图渐隐色（= --bg-page #1a1a2e 的 rgb 三元组） */
   --hero-tint: 26,26,46;
+
+  /* v8.9.7：深色下回顾卡沿用书卡那套「灯下纸」，不跟着页面发蓝光 */
+  --rv-card: #262320;
+  --rv-edge: #3b342c;
+  --rv-inside: #38322b;
+  --rv-ink: #efe8dc;
+  --rv-ink-quote: #d8cfc1;
+  --rv-ink-src: #9c9286;
+  --rv-ink-meta: #7d7466;
+  --rv-rule: #e88070;
+  --rv-ghost: #211e1b;
+  --rv-ghost-edge: #332e28;
+  --rv-dot: #4a423a;
+  --rv-btn-bg: #2a2521;
+  --rv-btn-edge: #453f37;
+  --rv-shadow: 0 0 15px rgba(0,0,0,.28), 0 6px 18px rgba(0,0,0,.32);
 
   --cat-ai-tech: #6db3b8;
   --cat-math: #a87dc4;
@@ -795,31 +828,40 @@ html, body {
 /* 桌面端侧栏较窄（<=360px），压低 hero，避免占满一屏 */
 @media (min-width: 768px) and (any-pointer: fine) { .hero { height: 168px; } }
 
-/* ========== v8.9 每日回顾（首页）· v8.9.1 改为堆叠卡组 ========== */
+/* ========== v8.9 每日回顾（首页）· v8.9.1 左右堆叠 · v8.9.7 按 home-card 设计稿重排 ========== */
 #tabReview { overflow-y: auto; overflow-x: hidden; }   /* 视口偏矮时整页可滚；横向溢出裁掉（拖动时卡片会越界） */
 .review-inner { flex: 1 0 auto; display: flex; flex-direction: column; min-height: 0; }
-.review-head { padding: 16px 20px 6px; flex-shrink: 0; }
-.review-date { font-size: 1.05rem; font-weight: 600; color: var(--text-primary); letter-spacing: -0.2px; }
-.review-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 4px; }
+.review-head { padding: 14px 20px 4px; flex-shrink: 0; }
+.review-date { font-size: 1.25rem; font-weight: 600; color: var(--text-primary); letter-spacing: .2px; }
+.review-sub { font-size: 11.5px; line-height: 1.6; color: var(--text-muted); margin-top: 7px; letter-spacing: .1px; }
 
-/* 卡组容器：左右堆叠——最上层居中，后面两张分别往右、往左错开露出边 */
+/* 卡组容器：左右堆叠——最上层居中，后面两张分别往右、往左错开露出 20px 的边 */
 .review-stage { position: relative; flex: 1 1 auto; min-height: 300px; max-height: 452px; padding: 14px 24px 16px; }
 /* deck 用绝对定位铺满 stage 的内边距盒，避免依赖百分比高度；宽屏下限定宽度并居中，别让观点卡拉成一条 */
 .review-deck { position: absolute; inset: 14px 24px 16px; max-width: 560px; margin-left: auto; margin-right: auto; }
 .review-card {
   position: absolute; inset: 0;
   display: flex; flex-direction: column;
-  background: var(--bg-card); border-radius: 20px; padding: 17px 18px 14px;
-  box-shadow: 0 2px 12px rgba(26,26,46,0.08), 0 1px 2px rgba(26,26,46,0.04);
+  background: var(--rv-card); border: 1px solid var(--rv-edge);
+  border-radius: 14px; padding: 16px 17px 0;
+  box-shadow: var(--rv-shadow);
   cursor: grab; touch-action: pan-y;
   -webkit-user-select: none; user-select: none;
-  transition: transform .36s cubic-bezier(.22,.61,.36,1), opacity .36s ease, box-shadow .36s ease;
+  transition: transform .36s cubic-bezier(.22,.61,.36,1), opacity .36s ease,
+              box-shadow .36s ease, background-color .36s ease, border-color .36s ease,
+              top .36s cubic-bezier(.22,.61,.36,1), bottom .36s cubic-bezier(.22,.61,.36,1);
   will-change: transform;
 }
 .review-card:active { cursor: grabbing; }
 .review-card[data-depth="0"] { transform: none; opacity: 1; z-index: 3; }
-.review-card[data-depth="1"] { transform: translateX(30px) scale(.945); opacity: .92; z-index: 2; box-shadow: 0 2px 8px rgba(26,26,46,0.06); }
-.review-card[data-depth="2"] { transform: translateX(-30px) scale(.945); opacity: .78; z-index: 1; box-shadow: 0 2px 8px rgba(26,26,46,0.06); }
+/* 邻卡：左右各露出 20px，上下各收 11px，纸色更浅、无投影 —— 「在后面」靠这两个差撑起来 */
+.review-card[data-depth="1"],
+.review-card[data-depth="2"] {
+  top: 11px; bottom: 11px; opacity: 1; border-color: var(--rv-ghost-edge);
+  background: var(--rv-ghost); box-shadow: none;
+}
+.review-card[data-depth="1"] { transform: translateX(20px); z-index: 2; }
+.review-card[data-depth="2"] { transform: translateX(-20px); z-index: 1; }
 .review-card:not([data-depth="0"]) { pointer-events: none; }   /* 只有最上层可交互 */
 /* 侧边卡只露出 20 来像素的边，内部文字一律不画——否则会从边上漏出半截笔画，很脏 */
 .review-card:not([data-depth="0"]) > * { visibility: hidden; }
@@ -828,50 +870,69 @@ html, body {
 @keyframes reviewIn { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
 .review-card.is-front { animation: reviewIn .34s cubic-bezier(.22,.61,.36,1); }
 
-/* 卡片内容 */
-.review-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-shrink: 0; }
+/* 卡片内容：观点标题升为主标题、书名降为出处（设计稿的层级翻转） */
+.review-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-shrink: 0; }
 .review-badge {
-  font-size: 0.66rem; font-weight: 600; letter-spacing: .02em;
-  padding: 3px 9px; border-radius: 999px; white-space: nowrap;
+  font-size: 10.5px; font-weight: 600; letter-spacing: .5px;
+  padding: 3px 7px; border-radius: 3px; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; max-width: 62%;
 }
-.review-idx { font-size: 0.66rem; color: var(--text-muted); flex-shrink: 0; font-variant-numeric: tabular-nums; }
-.review-book {
-  font-size: 0.95rem; font-weight: 600; color: var(--text-primary);
-  margin-bottom: 12px; line-height: 1.35; flex-shrink: 0;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
-}
-/* 观点区：小节标题（论点）+ 整段论述，内容少时垂直居中，读起来更稳 */
-.review-point { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding: 2px 0; overflow: hidden; }
+.review-idx { font-size: 10.5px; color: var(--rv-ink-meta); letter-spacing: 1.2px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
+/* 分类标签的墨色来自 JS 内联（跟书卡同一套分类色），深色底上原色太闷，整体提亮一档 */
+[data-theme="dark"] .review-badge { filter: brightness(1.6) saturate(1.05); }
+/* 观点区：内容少时垂直居中（上下留白对半分），内容超长时从顶部开始、只裁尾部 */
+.review-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 2px 0; }
 .review-point-title {
-  font-size: 0.78rem; font-weight: 600; color: var(--accent); line-height: 1.55; flex-shrink: 0;
+  margin-top: 8px; font-size: 17px; line-height: 1.45; font-weight: 600;
+  color: var(--rv-ink); letter-spacing: .3px; flex-shrink: 0;
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
-.review-point-text {
+.review-rule { display: block; width: 22px; height: 2px; border-radius: 1px; background: var(--rv-rule); margin-top: 11px; flex-shrink: 0; }
+.review-quote {
+  margin-top: 12px; font-family: var(--rv-serif); font-size: 14.5px; line-height: 1.95;
+  color: var(--rv-ink-quote); text-align: justify; letter-spacing: .2px;
   display: -webkit-box; -webkit-line-clamp: 9; -webkit-box-orient: vertical; overflow: hidden;
-  font-size: 0.92rem; line-height: 1.78; color: var(--text-primary); letter-spacing: .01em;
+  flex: 0 0 auto;   /* 不许被压扁：一旦被压扁就会切出半行字，宁可少一行也不能断半句 */
+}
+.review-source {
+  margin-top: 10px; font-size: 11px; color: var(--rv-ink-src); letter-spacing: .1px; flex-shrink: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .review-card-foot {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
-  margin-top: auto; padding-top: 11px; flex-shrink: 0;
-  border-top: 1px solid var(--border);
+  margin-top: 15px; height: 43px; flex-shrink: 0;
+  border-top: 1px solid var(--rv-inside);
 }
-.review-section { font-size: 0.68rem; color: var(--text-muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.review-open { font-size: 0.72rem; color: var(--accent); font-weight: 500; flex-shrink: 0; }
-
-.review-dots { display: flex; align-items: center; justify-content: center; gap: 7px; padding: 2px 0 10px; flex-shrink: 0; }
+.review-foot-date { font-size: 10.5px; color: var(--rv-ink-meta); letter-spacing: .6px; font-variant-numeric: tabular-nums; }
+.review-open { font-size: 12px; font-weight: 600; color: var(--rv-rule); display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
+.review-open svg { width: 11px; height: 11px; flex-shrink: 0; }
+/* 矮屏（如 320×568、横屏 844×390）：整卡缩一档，别让引文被裁掉 */
+@media (max-height: 720px) {
+  .review-point-title { font-size: 15.5px; }
+  .review-quote { font-size: 13.5px; line-height: 1.8; -webkit-line-clamp: 6; margin-top: 9px; }
+  .review-card { padding: 12px 14px 0; }
+  .review-card-foot { height: 36px; margin-top: 10px; }
+  .review-source { margin-top: 7px; }
+  .review-rule { margin-top: 8px; }
+}
+/* 页码：三条短线，当前那条 20px 朱砂（跟书名卡的书脊语言统一） */
+.review-dots { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 14px 0 12px; flex-shrink: 0; }
 .review-dot {
-  width: 7px; height: 7px; padding: 0; border: none; border-radius: 999px;
-  background: var(--border); cursor: pointer; transition: all var(--transition);
+  width: 7px; height: 3px; padding: 0; border: none; border-radius: 2px;
+  background: var(--rv-dot); cursor: pointer; transition: all var(--transition);
 }
-.review-dot.active { width: 20px; background: var(--accent); }
-.review-foot { display: flex; align-items: center; justify-content: center; gap: 10px; padding-bottom: 14px; flex-shrink: 0; }
+.review-dot.active { width: 20px; background: var(--rv-rule); }
+.review-foot { display: flex; align-items: center; justify-content: center; gap: 10px; padding-bottom: 16px; flex-shrink: 0; }
+/* 换一批：描边胶囊 + 手绘刷新图标（不再用 🔄 emoji） */
 .review-refresh {
-  font-size: 0.75rem; padding: 7px 18px; border-radius: 999px;
-  border: 1px solid var(--border); background: var(--bg-card); color: var(--text-secondary);
-  cursor: pointer; transition: all var(--transition);
+  height: 34px; padding: 0 12px; border-radius: 17px;
+  border: 1px solid var(--rv-btn-edge); background: var(--rv-btn-bg); color: var(--rv-rule);
+  font-size: 12.5px; font-weight: 600; letter-spacing: .3px;
+  display: inline-flex; align-items: center; gap: 6px;
+  cursor: pointer; transition: all var(--transition); white-space: nowrap; flex: 0 0 auto;
 }
-.review-refresh:hover { border-color: var(--accent); color: var(--accent); }
+.review-refresh svg { width: 13px; height: 13px; flex-shrink: 0; }
+.review-refresh:hover { background: var(--accent-soft); }
 .review-refresh:disabled { opacity: .5; cursor: default; }
 /* 桌面/鼠标设备显示左右箭头（触屏靠拖动）。放在底部工具条里，避免压住两侧露出的卡边 */
 .review-nav {
@@ -882,6 +943,21 @@ html, body {
 }
 .review-nav:hover { border-color: var(--accent); color: var(--accent); }
 @media (min-width: 768px) and (any-pointer: fine) { .review-nav { display: flex; } }
+
+/* 矮屏（横屏手机、小窗）：头图带头压缩，保证首屏就能看到卡片主体而不是一张头图 */
+@media (max-height: 700px) {
+  .hero { height: 150px; }
+  .hero-topbar { top: 22px; }
+  .review-head { padding-top: 10px; }
+  .review-date { font-size: 1.15rem; }
+  .review-dots { padding: 10px 0 8px; }
+  .review-foot { padding-bottom: 10px; }
+}
+@media (max-height: 560px) {
+  .hero { height: 104px; }
+  .hero-topbar { top: 10px; }
+  .review-sub { margin-top: 4px; }
+}
 
 /* ========== Category Detail View ========== */
 .category-detail-view { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
@@ -1207,7 +1283,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.9.6</span>
+        <span class="hero-version">v8.9.7</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1233,7 +1309,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.6</span>
+              <span class="hero-version">v8.9.7</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1248,9 +1324,16 @@ html, body {
           </div>
           <div class="review-dots" id="reviewDots"></div>
           <div class="review-foot">
-            <button class="review-nav prev" id="reviewPrev" aria-label="上一个观点">‹</button>
-            <button class="review-refresh" id="reviewRefresh">🔄 换一批</button>
-            <button class="review-nav next" id="reviewNext" aria-label="下一个观点">›</button>
+            <button class="review-nav prev" id="reviewPrev" aria-label="上一个观点">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="M14.5 5.5 8 12l6.5 6.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <button class="review-refresh" id="reviewRefresh">
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 12a8.2 8.2 0 1 1-2.4-5.8" stroke="currentColor" stroke-linecap="round" stroke-width="1.9"/><path d="M20.5 4.4v4.8h-4.8" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.9"/></svg>
+              <span>换一批</span>
+            </button>
+            <button class="review-nav next" id="reviewNext" aria-label="下一个观点">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" aria-hidden="true"><path d="M9.5 5.5 16 12l-6.5 6.5" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -1358,11 +1441,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.9.6</span>
+                <span class="setting-value">v8.9.7</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.6</div>
+              <div class="about-version">📚 书阁 v8.9.7</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2451,6 +2534,10 @@ html, body {
   let reviewOrder = [];       // 卡片节点数组，index 0 = 最上层（视觉层级即数组顺序）
   let reviewPos = 0;          // 圆点指示用的当前位置 0..2
   let reviewBusy = false;     // 动画进行中，忽略重复指令
+  /* v8.9.7：卡片尺寸一变（转屏 / 改窗口 / 切 tab）就重新分配引文行数，
+     比在 resize 回调里抢时序稳 —— 布局一落定就回调。 */
+  const reviewRO = (typeof ResizeObserver !== 'undefined')
+    ? new ResizeObserver(() => reviewOrder.forEach(fitReviewCard)) : null;
 
   function daySeedNum(d) { return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
   function mulberry32(a) {
@@ -2482,38 +2569,108 @@ html, body {
     });
   }
 
+  /* v8.9.7：去掉观点标题前面的装饰 emoji（🚀🔮💬…），设计稿要求标题只承担「论点」这一件事 */
+  function stripLeadingEmoji(s) {
+    return String(s == null ? '' : s)
+      .replace(/^[\s\u200d\ufe0f\p{Extended_Pictographic}]+/u, '')
+      .trim();
+  }
+
+  /* v8.9.7：有些观点原文尾巴上带着「——作者《书名》」的署名，
+     卡面下方已经有出处行了，别让同一句话出现两遍。
+     只删真正像署名的尾巴（提到这本书或这位作者、或带括号补注），
+     正文里「——终点比起点重要一万倍。」这类转折不动。 */
+  function stripTrailingCredit(text, n) {
+    const m = /\s*——[^—]{0,60}$/.exec(text);
+    if (!m) return text;
+    const body = m[0].replace(/^[\s—]+/, '').replace(/[。？！.\s]+$/, '');
+    const bookCore = String(n.title || '').replace(/[《》]/g, '').split(/[·（(：:]/)[0].trim();
+    const author = String(n.author || '').trim();
+    const hitBook = bookCore.length >= 2 && body.includes(bookCore);
+    const hitAuthor = author.length >= 2 && author !== '未知作者' && author !== '佚名' && body.includes(author);
+    const hasNote = /（[^）]{0,30}）$/.test(body);
+    if (!(hitBook || hitAuthor || hasNote)) return text;
+    const rest = text.slice(0, m.index).trim();
+    return rest.length >= 20 ? rest : text;
+  }
+
   function reviewCardHtml(it, idx, total) {
     const n = it.note, p = it.point;
     const cat = n.category || '其他';
     const color = CAT_COLORS[cat] || '#8C8C94';
-    const title = (p.title || '').trim();
-    const meta = [n.author, cat].filter(Boolean).join(' · ');
+    const quote = stripTrailingCredit((p.text || '').trim(), n);
+    const book = (n.title || '').trim();
+    const rawAuthor = (n.author || '').trim();
+    const hasAuthor = rawAuthor && rawAuthor !== '未知作者' && rawAuthor !== '佚名';
+    // 观点标题升为主标题（层级翻转）；没有小节标题时退回「核心观点」，把书名让到出处位
+    let heading = stripLeadingEmoji(p.title || '');
+    let source;
+    if (!heading) {
+      heading = '核心观点';
+      source = book;
+    } else {
+      source = '—— ' + (hasAuthor ? rawAuthor + (book.startsWith('《') ? '' : ' · ') : '') + book;
+    }
     return `<article class="review-card" data-depth="${idx}" data-id="${n.id}"
-        role="button" aria-label="《${escapeHtml(n.title)}》观点：${escapeHtml(title || (p.text || '').slice(0, 18))}">
+        role="button" aria-label="《${escapeHtml(book)}》观点：${escapeHtml(heading)}">
       <div class="review-card-top">
         <span class="review-badge" style="background:${color}1f;color:${color}">${escapeHtml(cat)}</span>
         <span class="review-idx">${idx + 1} / ${total}</span>
       </div>
-      <h3 class="review-book">${escapeHtml(n.title)}</h3>
-      <div class="review-point">
-        ${title ? `<div class="review-point-title">${escapeHtml(title)}</div>` : ''}
-        <div class="review-point-text">${escapeHtml(p.text || '')}</div>
+      <div class="review-body">
+        <h3 class="review-point-title">${escapeHtml(heading)}</h3>
+        <span class="review-rule"></span>
+        <p class="review-quote">${escapeHtml(quote)}</p>
+        <div class="review-source">${escapeHtml(source)}</div>
       </div>
       <div class="review-card-foot">
-        <span class="review-section">${escapeHtml(meta)}</span>
-        <span class="review-open">查看笔记 →</span>
+        <span class="review-foot-date">${fmtBookDate(n.date) || ''}</span>
+        <span class="review-open">查看笔记
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h14.5m0 0-5.2-5.2M18.5 12l-5.2 5.2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+        </span>
       </div>
     </article>`;
   }
 
   /* 数组顺序 = 视觉层级：index 0 在最上层 */
   /* 数组顺序 = 视觉位置：0 居中、1 在右、2 在左（左右堆叠） */
+  /* v8.9.7：按卡片实际可用高度决定引文行数 —— 短屏/长引文都收在「…」里，不会被硬裁半行。
+     直接把高度锁成「整数行 × 行高」：这样无论 flex 怎么压，都不会出现半行字。
+     用量高度的方式（而不是 scrollHeight）判断，是因为 body 是居中布局，上下会各溢出一半。 */
+  function fitReviewCard(card) {
+    const body = card.querySelector('.review-body');
+    const q = card.querySelector('.review-quote');
+    if (!body || !q) return;
+    if (body.clientHeight < 80) return;   // 父级还藏着（display:none）时量不到高度，等 ResizeObserver 再来一次
+    const bcs = getComputedStyle(body);
+    const pad = (parseFloat(bcs.paddingTop) || 0) + (parseFloat(bcs.paddingBottom) || 0);
+    const lh = parseFloat(getComputedStyle(q).lineHeight) || 24;
+    let others = 0;
+    Array.from(body.children).forEach(el => {
+      if (el === q) return;
+      const cs = getComputedStyle(el);
+      // 用 offsetHeight（布局尺寸）而不是 getBoundingClientRect：后者会把入场动画的 scale(.94) 算进去
+      others += el.offsetHeight
+        + (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0);
+    });
+    const qcs = getComputedStyle(q);
+    others += qcs.marginTop ? (parseFloat(qcs.marginTop) || 0) : 0;
+    const avail = body.clientHeight - pad - others;
+    const lines = Math.max(1, Math.floor((avail + 0.5) / lh));
+    q.style.maxHeight = (lines * lh).toFixed(2) + 'px';
+    q.style.webkitLineClamp = String(lines);   // 超出就收在「…」里
+  }
+  function fitReviewCards() { reviewOrder.forEach(fitReviewCard); }
+
   function reviewApplyDepths() {
     reviewOrder.forEach((el, i) => {
       el.setAttribute('data-depth', String(i));
       if (i !== 0) el.classList.remove('is-front');
       el.tabIndex = i === 0 ? 0 : -1;
       el.setAttribute('aria-hidden', i === 0 ? 'false' : 'true');
+      // 页码跟着「位置」走，不跟着卡片身份走（轮播换位后 1/3 仍指当前这张）
+      const idxEl = el.querySelector('.review-idx');
+      if (idxEl) idxEl.textContent = (i + 1) + ' / ' + reviewOrder.length;
     });
   }
 
@@ -2546,6 +2703,11 @@ html, body {
     reviewDeck.innerHTML = reviewPicks.map((it, i) => reviewCardHtml(it, i, reviewPicks.length)).join('');
     reviewOrder = Array.from(reviewDeck.querySelectorAll('.review-card'));
     reviewApplyDepths();
+    if (reviewRO) {
+      reviewRO.disconnect();
+      reviewOrder.forEach(el => { const b = el.querySelector('.review-body'); if (b) reviewRO.observe(b); });
+    }
+    fitReviewCards();
     if (reviewOrder[0]) reviewOrder[0].classList.add('is-front');
     reviewDots.innerHTML = reviewPicks.map((_, i) =>
       `<button class="review-dot${i === 0 ? ' active' : ''}" data-i="${i}" aria-label="第 ${i + 1} 个观点"></button>`).join('');
@@ -2573,8 +2735,7 @@ html, body {
   }
 
   /* ---- 拖动 / 点击（在 reviewDeck 上做事件委托，换一批重建卡片也不用重绑） ---- */
-  const R_OFFSET = 30;            // 侧边卡左右错开的距离（与 CSS 保持一致）
-  const R_SCALE  = 0.945;
+  const R_OFFSET = 20;            // 侧边卡左右错开的距离（与 CSS 的 translateX 保持一致）
   let reviewDrag = null;          // { card, x, y, dx, lock, pid }
 
   function onDeckDown(e) {
@@ -2611,13 +2772,11 @@ html, body {
     const right = reviewOrder[1], left = reviewOrder[2];
     if (right) {
       const t = Math.min(1, Math.max(0, -dxv / (w * 0.62)));
-      right.style.transform = `translateX(${(R_OFFSET * (1 - t)).toFixed(1)}px) scale(${(R_SCALE + (1 - R_SCALE) * t).toFixed(3)})`;
-      right.style.opacity = String(0.92 + 0.08 * t);
+      right.style.transform = `translateX(${(R_OFFSET * (1 - t)).toFixed(1)}px)`;
     }
     if (left) {
       const t = Math.min(1, Math.max(0, dxv / (w * 0.62)));
-      left.style.transform = `translateX(${(-R_OFFSET * (1 - t)).toFixed(1)}px) scale(${(R_SCALE + (1 - R_SCALE) * t).toFixed(3)})`;
-      left.style.opacity = String(0.78 + 0.22 * t);
+      left.style.transform = `translateX(${(-R_OFFSET * (1 - t)).toFixed(1)}px)`;
     }
   }
 
@@ -2696,7 +2855,7 @@ html, body {
           reviewDeck.style.transform = '';
           reviewDeck.style.opacity = '';
         }, 320);
-        showToast('🔄 换了一批');
+        showToast('已换一批');
       }, 230);
     });
   }
@@ -3821,6 +3980,7 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     }
     checkLandscape();
     syncHeaderHeight();   // v8.5.0：顶栏高度随视口变化重新测量
+    fitReviewCards();     // v8.9.7：视口变了，回顾卡重新分配引文行数
   },200);});
 
   window.addEventListener('popstate',e=>{if(STATE.isMobile&&!previewOverlay.classList.contains('hidden')){closePreviewOverlay();history.pushState({view:'home'},'');}});
