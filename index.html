@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.7</title>
+<title>📚 书阁 v8.9.8</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -836,7 +836,9 @@ html, body {
 .review-sub { font-size: 11.5px; line-height: 1.6; color: var(--text-muted); margin-top: 7px; letter-spacing: .1px; }
 
 /* 卡组容器：左右堆叠——最上层居中，后面两张分别往右、往左错开露出 20px 的边 */
-.review-stage { position: relative; flex: 1 1 auto; min-height: 300px; max-height: 452px; padding: 14px 24px 16px; }
+/* v8.9.8：不再写死 max-height。空间富余时照旧填满（观感和之前一样），
+   内容比可视高度还长时由 JS 抬高 min-height 把整页顶长 —— 观点一律完整展示，不裁行。 */
+.review-stage { position: relative; flex: 1 1 auto; min-height: 300px; padding: 14px 24px 16px; }
 /* deck 用绝对定位铺满 stage 的内边距盒，避免依赖百分比高度；宽屏下限定宽度并居中，别让观点卡拉成一条 */
 .review-deck { position: absolute; inset: 14px 24px 16px; max-width: 560px; margin-left: auto; margin-right: auto; }
 .review-card {
@@ -853,15 +855,23 @@ html, body {
   will-change: transform;
 }
 .review-card:active { cursor: grabbing; }
-.review-card[data-depth="0"] { transform: none; opacity: 1; z-index: 3; }
+.review-card[data-depth="0"] { transform: none; opacity: 1; z-index: 5; }
 /* 邻卡：左右各露出 20px，上下各收 11px，纸色更浅、无投影 —— 「在后面」靠这两个差撑起来 */
 .review-card[data-depth="1"],
 .review-card[data-depth="2"] {
   top: 11px; bottom: 11px; opacity: 1; border-color: var(--rv-ghost-edge);
   background: var(--rv-ghost); box-shadow: none;
 }
-.review-card[data-depth="1"] { transform: translateX(20px); z-index: 2; }
-.review-card[data-depth="2"] { transform: translateX(-20px); z-index: 1; }
+.review-card[data-depth="1"] { transform: translateX(20px); z-index: 4; }
+.review-card[data-depth="2"] { transform: translateX(-20px); z-index: 3; }
+/* v8.9.8：一组 5 张，后两张藏在邻卡背后（同位置、更矮、透明），轮到它们时淡入升上来 */
+.review-card[data-depth="3"],
+.review-card[data-depth="4"] {
+  top: 22px; bottom: 22px; opacity: 0; border-color: var(--rv-ghost-edge);
+  background: var(--rv-ghost); box-shadow: none; pointer-events: none;
+}
+.review-card[data-depth="3"] { transform: translateX(20px); z-index: 2; }
+.review-card[data-depth="4"] { transform: translateX(-20px); z-index: 1; }
 .review-card:not([data-depth="0"]) { pointer-events: none; }   /* 只有最上层可交互 */
 /* 侧边卡只露出 20 来像素的边，内部文字一律不画——否则会从边上漏出半截笔画，很脏 */
 .review-card:not([data-depth="0"]) > * { visibility: hidden; }
@@ -880,19 +890,17 @@ html, body {
 .review-idx { font-size: 10.5px; color: var(--rv-ink-meta); letter-spacing: 1.2px; flex-shrink: 0; font-variant-numeric: tabular-nums; }
 /* 分类标签的墨色来自 JS 内联（跟书卡同一套分类色），深色底上原色太闷，整体提亮一档 */
 [data-theme="dark"] .review-badge { filter: brightness(1.6) saturate(1.05); }
-/* 观点区：内容少时垂直居中（上下留白对半分），内容超长时从顶部开始、只裁尾部 */
-.review-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding: 2px 0; }
+/* 观点区：内容少时垂直居中（上下留白对半分）；高度由整组最长的那张决定，一张都不裁 */
+.review-body { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; justify-content: center; overflow: visible; padding: 2px 0; }
 .review-point-title {
   margin-top: 8px; font-size: 17px; line-height: 1.45; font-weight: 600;
   color: var(--rv-ink); letter-spacing: .3px; flex-shrink: 0;
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 .review-rule { display: block; width: 22px; height: 2px; border-radius: 1px; background: var(--rv-rule); margin-top: 11px; flex-shrink: 0; }
 .review-quote {
   margin-top: 12px; font-family: var(--rv-serif); font-size: 14.5px; line-height: 1.95;
   color: var(--rv-ink-quote); text-align: justify; letter-spacing: .2px;
-  display: -webkit-box; -webkit-line-clamp: 9; -webkit-box-orient: vertical; overflow: hidden;
-  flex: 0 0 auto;   /* 不许被压扁：一旦被压扁就会切出半行字，宁可少一行也不能断半句 */
+  flex: 0 0 auto;   /* 不许被压扁：一旦被压扁就会切出半行字 */
 }
 .review-source {
   margin-top: 10px; font-size: 11px; color: var(--rv-ink-src); letter-spacing: .1px; flex-shrink: 0;
@@ -909,7 +917,7 @@ html, body {
 /* 矮屏（如 320×568、横屏 844×390）：整卡缩一档，别让引文被裁掉 */
 @media (max-height: 720px) {
   .review-point-title { font-size: 15.5px; }
-  .review-quote { font-size: 13.5px; line-height: 1.8; -webkit-line-clamp: 6; margin-top: 9px; }
+  .review-quote { font-size: 13.5px; line-height: 1.8; margin-top: 9px; }
   .review-card { padding: 12px 14px 0; }
   .review-card-foot { height: 36px; margin-top: 10px; }
   .review-source { margin-top: 7px; }
@@ -1283,7 +1291,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.9.7</span>
+        <span class="hero-version">v8.9.8</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1309,7 +1317,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.7</span>
+              <span class="hero-version">v8.9.8</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1317,7 +1325,7 @@ html, body {
         <div class="review-inner">
           <div class="review-head">
             <div class="review-date" id="reviewDate"></div>
-            <div class="review-sub">每天 3 个完整观点 · 左右滑动切换 · 点击卡片直达笔记</div>
+            <div class="review-sub">每天 5 个完整观点 · 左右滑动切换 · 点击卡片直达笔记</div>
           </div>
           <div class="review-stage">
             <div class="review-deck" id="reviewDeck"></div>
@@ -1441,11 +1449,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.9.7</span>
+                <span class="setting-value">v8.9.8</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.7</div>
+              <div class="about-version">📚 书阁 v8.9.8</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2523,21 +2531,21 @@ html, body {
    *
    *  数据：highlights.json 里每本书 3 条【完整观点】——每条 = 小节标题（论点）
    *        + 该小节的整段论述（在句末收口，不是随意切的半句话）。
-   *  卡组：3 张卡取自 3 本不同的书，绝对定位叠放，data-depth 决定层级/位移。
+   *  卡组：5 张卡取自 5 本不同的书，绝对定位叠放，data-depth 决定层级/位移。
    *  交互：
    *    · 左右拖动最上层卡片 → 切换（松手超过 24% 宽度即飞出去换下一张）
    *    · 点最上层卡片 → 打开对应读书笔记详情
    *    · 桌面端左右箭头 / 圆点 → 切换；「换一批」→ 换一组书（保证与当前不同）
    * =================================================================== */
   let reviewBatch = 0;        // 「换一批」的批次偏移（做确定性洗牌的种子）
-  let reviewPicks = [];       // 本轮 3 个观点，与 reviewOrder 里的 3 个卡片节点一一对应
+  let reviewPicks = [];       // 本轮 5 个观点，与 reviewOrder 里的 5 个卡片节点一一对应
   let reviewOrder = [];       // 卡片节点数组，index 0 = 最上层（视觉层级即数组顺序）
-  let reviewPos = 0;          // 圆点指示用的当前位置 0..2
+  let reviewPos = 0;          // 圆点指示用的当前位置 0..4
   let reviewBusy = false;     // 动画进行中，忽略重复指令
-  /* v8.9.7：卡片尺寸一变（转屏 / 改窗口 / 切 tab）就重新分配引文行数，
+  /* v8.9.8：卡片尺寸一变（转屏 / 改窗口 / 切 tab）就重新量一遍内容高度，
      比在 resize 回调里抢时序稳 —— 布局一落定就回调。 */
   const reviewRO = (typeof ResizeObserver !== 'undefined')
-    ? new ResizeObserver(() => reviewOrder.forEach(fitReviewCard)) : null;
+    ? new ResizeObserver(() => fitReviewCards()) : null;
 
   function daySeedNum(d) { return d.getFullYear() * 10000 + (d.getMonth() + 1) * 100 + d.getDate(); }
   function mulberry32(a) {
@@ -2549,8 +2557,9 @@ html, body {
     };
   }
 
-  /* 挑 3 本不同的书，每本选 1 条观点。exclude 里的 id 本轮一定跳过（「换一批」用）。 */
+  /* 挑 5 本不同的书，每本选 1 条观点。exclude 里的 id 本轮一定跳过（「换一批」用）。 */
   function pickReviewItems(exclude) {
+    const WANT = 5;
     const pool = STATE.notes.filter(n => (STATE.highlights[n.id] || []).length);
     if (!pool.length) return [];
     // 用「日期 + 批次」做种子：同一天刷新结果不变，跨天自动换一批
@@ -2562,7 +2571,7 @@ html, body {
     }
     const skip = new Set(exclude || []);
     const fresh = arr.filter(n => !skip.has(n.id));
-    const chosen = (fresh.length >= 3 ? fresh : arr).slice(0, 3);
+    const chosen = (fresh.length >= WANT ? fresh : arr).slice(0, WANT);
     return chosen.map(note => {
       const pts = STATE.highlights[note.id];
       return { note: note, point: pts[Math.floor(rnd() * pts.length)] };
@@ -2612,6 +2621,7 @@ html, body {
       source = '—— ' + (hasAuthor ? rawAuthor + (book.startsWith('《') ? '' : ' · ') : '') + book;
     }
     return `<article class="review-card" data-depth="${idx}" data-id="${n.id}"
+        data-no="${idx + 1}" data-pick="${idx}"
         role="button" aria-label="《${escapeHtml(book)}》观点：${escapeHtml(heading)}">
       <div class="review-card-top">
         <span class="review-badge" style="background:${color}1f;color:${color}">${escapeHtml(cat)}</span>
@@ -2634,33 +2644,60 @@ html, body {
 
   /* 数组顺序 = 视觉层级：index 0 在最上层 */
   /* 数组顺序 = 视觉位置：0 居中、1 在右、2 在左（左右堆叠） */
-  /* v8.9.7：按卡片实际可用高度决定引文行数 —— 短屏/长引文都收在「…」里，不会被硬裁半行。
-     直接把高度锁成「整数行 × 行高」：这样无论 flex 怎么压，都不会出现半行字。
-     用量高度的方式（而不是 scrollHeight）判断，是因为 body 是居中布局，上下会各溢出一半。 */
-  function fitReviewCard(card) {
-    const body = card.querySelector('.review-body');
-    const q = card.querySelector('.review-quote');
-    if (!body || !q) return;
-    if (body.clientHeight < 80) return;   // 父级还藏着（display:none）时量不到高度，等 ResizeObserver 再来一次
-    const bcs = getComputedStyle(body);
-    const pad = (parseFloat(bcs.paddingTop) || 0) + (parseFloat(bcs.paddingBottom) || 0);
-    const lh = parseFloat(getComputedStyle(q).lineHeight) || 24;
-    let others = 0;
-    Array.from(body.children).forEach(el => {
-      if (el === q) return;
-      const cs = getComputedStyle(el);
-      // 用 offsetHeight（布局尺寸）而不是 getBoundingClientRect：后者会把入场动画的 scale(.94) 算进去
-      others += el.offsetHeight
-        + (parseFloat(cs.marginTop) || 0) + (parseFloat(cs.marginBottom) || 0);
-    });
-    const qcs = getComputedStyle(q);
-    others += qcs.marginTop ? (parseFloat(qcs.marginTop) || 0) : 0;
-    const avail = body.clientHeight - pad - others;
-    const lines = Math.max(1, Math.floor((avail + 0.5) / lh));
-    q.style.maxHeight = (lines * lh).toFixed(2) + 'px';
-    q.style.webkitLineClamp = String(lines);   // 超出就收在「…」里
+  /* v8.9.8：高度逻辑反过来 —— 不再是「先定死高度、再把字砍到装得下」，
+     而是「先量内容要多少高、让容器让位」。
+     做法：把卡片克隆一份丢进屏幕外的量具盒，解除所有高度约束量自然高度，
+     整组取最大值去抬 .review-stage 的 min-height。
+     空间富余时 flex 照旧填满（观感和之前一致），内容超长时整页跟着变长
+     —— #tabReview 本来就是 overflow-y:auto，滚动看完整观点，一个字都不裁。 */
+  let reviewMeasureBox = null;
+  let reviewFitting = false;
+
+  function reviewMeasureHost() {
+    if (reviewMeasureBox && reviewMeasureBox.isConnected) return reviewMeasureBox;
+    const box = document.createElement('div');
+    box.setAttribute('aria-hidden', 'true');
+    box.style.cssText = 'position:fixed;left:-99999px;top:0;visibility:hidden;pointer-events:none;z-index:-1;';
+    document.body.appendChild(box);
+    reviewMeasureBox = box;
+    return box;
   }
-  function fitReviewCards() { reviewOrder.forEach(fitReviewCard); }
+
+  function measureReviewCard(card) {
+    const box = reviewMeasureHost();
+    // 量具宽度对齐真实卡宽，换行位置一致，量出来的高度才可信
+    box.style.width = reviewDeck.clientWidth + 'px';
+    const clone = card.cloneNode(true);
+    clone.removeAttribute('style');
+    clone.removeAttribute('data-depth');
+    clone.classList.remove('is-front', 'is-drag');
+    clone.style.cssText = 'position:relative;inset:auto;height:auto;transform:none;animation:none;will-change:auto;';
+    const body = clone.querySelector('.review-body');
+    if (body) body.style.cssText = 'flex:0 0 auto;justify-content:flex-start;overflow:visible;';
+    Array.from(clone.querySelectorAll('.review-point-title, .review-quote')).forEach(el => {
+      el.style.cssText = 'max-height:none;overflow:visible;-webkit-line-clamp:unset;display:block;';
+    });
+    box.appendChild(clone);
+    const h = Math.ceil(clone.getBoundingClientRect().height);
+    box.removeChild(clone);
+    return h;
+  }
+
+  function fitReviewCards() {
+    if (reviewFitting || !reviewOrder.length) return;
+    if (!reviewDeck.clientWidth) return;   // 整个面板还藏着，等 ResizeObserver 复位后再量
+    reviewFitting = true;
+    try {
+      let need = 0;
+      reviewOrder.forEach(c => { need = Math.max(need, measureReviewCard(c)); });
+      const stage = reviewDeck.parentElement;
+      if (need && stage) {
+        const cs = getComputedStyle(stage);
+        const pad = (parseFloat(cs.paddingTop) || 0) + (parseFloat(cs.paddingBottom) || 0);
+        stage.style.minHeight = Math.ceil(need + pad) + 'px';
+      }
+    } finally { reviewFitting = false; }
+  }
 
   function reviewApplyDepths() {
     reviewOrder.forEach((el, i) => {
@@ -2668,9 +2705,10 @@ html, body {
       if (i !== 0) el.classList.remove('is-front');
       el.tabIndex = i === 0 ? 0 : -1;
       el.setAttribute('aria-hidden', i === 0 ? 'false' : 'true');
-      // 页码跟着「位置」走，不跟着卡片身份走（轮播换位后 1/3 仍指当前这张）
+      // 页码跟着「卡片身份」走（data-no 是这张卡在本组里的固定编号）——
+      // v8.9.7 误用了数组下标，轮播换位后每张都被写成「1 / n」，看起来永远不动。
       const idxEl = el.querySelector('.review-idx');
-      if (idxEl) idxEl.textContent = (i + 1) + ' / ' + reviewOrder.length;
+      if (idxEl) idxEl.textContent = (el.getAttribute('data-no') || (i + 1)) + ' / ' + reviewOrder.length;
     });
   }
 
@@ -2717,21 +2755,49 @@ html, body {
      dir>0 向左（右邻进中间）、dir<0 向右（左邻进中间）。
      三张卡的内联位移一起交回 CSS，所以从手指位置接着动，不会有跳变。 */
   function reviewStep(dir) {
-    if (reviewOrder.length < 2 || reviewBusy) return;
+    const n = reviewOrder.length;
+    if (n < 2 || reviewBusy) return;
     reviewBusy = true;
     if (dir > 0) reviewOrder.push(reviewOrder.shift());
     else reviewOrder.unshift(reviewOrder.pop());
     reviewApplyDepths();
     reviewClearInline();
-    reviewPos = (reviewPos + dir + 3) % 3;
+    reviewPos = (reviewPos + dir + n) % n;
+    reviewSyncDots();
+    setTimeout(() => { reviewBusy = false; }, 380);
+  }
+
+  /* v8.9.8：点圆点直接跳到第 target 个（5 张时一次可能挪 2 格，按最短路径走） */
+  function reviewJump(target) {
+    const n = reviewOrder.length;
+    if (n < 2 || reviewBusy || target === reviewPos) return;
+    let delta = target - reviewPos;
+    if (delta > n / 2) delta -= n; else if (delta < -n / 2) delta += n;
+    if (!delta) return;
+    reviewBusy = true;
+    for (let i = 0; i < Math.abs(delta); i++) {
+      if (delta > 0) reviewOrder.push(reviewOrder.shift());
+      else reviewOrder.unshift(reviewOrder.pop());
+    }
+    reviewApplyDepths();
+    reviewClearInline();
+    reviewPos = target;
     reviewSyncDots();
     setTimeout(() => { reviewBusy = false; }, 380);
   }
 
   function openReviewNote(card) {
     if (!card) return;
-    const note = STATE.notes.find(n => n.id === card.getAttribute('data-id'));
-    if (note) showPreview(note);     // 点卡片 → 打开对应读书笔记详情
+    const pickIdx = parseInt(card.getAttribute('data-pick'), 10);
+    const it = (!isNaN(pickIdx) && reviewPicks[pickIdx]) ? reviewPicks[pickIdx] : null;
+    const note = (it && it.note) || STATE.notes.find(n => n.id === card.getAttribute('data-id'));
+    if (!note) return;
+    // v8.9.8：把「这张卡讲的是哪一段」带进笔记详情，进去后自动滚到那一段并高亮
+    const anchor = it ? {
+      text: stripTrailingCredit((it.point.text || '').trim(), note),
+      title: stripLeadingEmoji(it.point.title || '')
+    } : null;
+    showPreview(note, anchor);
   }
 
   /* ---- 拖动 / 点击（在 reviewDeck 上做事件委托，换一批重建卡片也不用重绑） ---- */
@@ -2828,11 +2894,7 @@ html, body {
     reviewDots.addEventListener('click', function (e) {
       const b = e.target.closest('.review-dot');
       if (!b) return;
-      const target = parseInt(b.getAttribute('data-i'), 10) || 0;
-      let delta = target - reviewPos;
-      if (delta === 0) return;
-      if (delta === 2) delta = -1; else if (delta === -2) delta = 1;   // 走最短路径
-      reviewStep(delta);
+      reviewJump(parseInt(b.getAttribute('data-i'), 10) || 0);
     });
     reviewRefresh.addEventListener('click', function () {
       if (reviewBusy) return;
@@ -3446,9 +3508,143 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     }
   }
 
-  function showPreview(note) {
+  /* ===================================================================
+     v8.9.8：点回顾卡 → 笔记里自动定位到这段观点
+     笔记正文在 iframe 里（同源 blob / 相对路径，contentDocument 可读）。
+     观点文本 78% 与正文逐字一致，其余是编辑过的，所以不做精确串匹配，
+     改用「字符二元组覆盖率」找最像的那一块，阈值 0.55；
+     引文匹配不上就退回用观点标题匹配（标题通常就是正文的小节标题）。
+     =================================================================== */
+  let reviewAnchor = null;      // 待定位的锚点；普通方式进笔记时为 null
+  let reviewAnchorTimer = 0;
+
+  function normText(s) { return String(s || '').replace(/[\s\u00a0]+/g, ''); }
+
+  function toBigrams(s) {
+    const m = new Map();
+    if (s.length < 2) { if (s) m.set(s, 1); return m; }
+    for (let i = 0; i < s.length - 1; i++) {
+      const g = s.slice(i, i + 2);
+      m.set(g, (m.get(g) || 0) + 1);
+    }
+    return m;
+  }
+
+  function bigramHit(text, grams, total) {
+    if (!text || !total) return 0;
+    let hit = 0;
+    grams.forEach((c, g) => { if (text.includes(g)) hit += c; });
+    return hit / total;
+  }
+
+  /* 只取「叶子块」——里面还套着段落/标题/表格的容器不算，避免整节撞车 */
+  function collectLeafBlocks(doc) {
+    if (!doc || !doc.body) return [];
+    const all = doc.body.querySelectorAll('p,li,h1,h2,h3,h4,h5,h6,blockquote,td,th,figcaption,dd,dt,div');
+    const out = [];
+    Array.from(all).forEach(el => {
+      if (el.querySelector('p,li,h1,h2,h3,h4,h5,h6,blockquote,table,div')) return;
+      const t = normText(el.textContent);
+      if (t.length >= 8) out.push({ el: el, t: t });
+    });
+    return out;
+  }
+
+  function locateAnchorBlock(doc, anchor) {
+    const blocks = collectLeafBlocks(doc);
+    if (!blocks.length) return null;
+    const tries = [];
+    const q = normText(anchor.text);
+    if (q.length >= 8) tries.push({ t: q, min: 0.55 });
+    const tt = normText(anchor.title);
+    if (tt.length >= 4 && tt !== q) tries.push({ t: tt, min: 0.5 });
+    for (let k = 0; k < tries.length; k++) {
+      const c = tries[k];
+      const grams = toBigrams(c.t);
+      const total = Math.max(1, c.t.length - 1);
+      let best = null, bestScore = 0;
+      blocks.forEach(b => {
+        const s = bigramHit(b.t, grams, total);
+        if (s > bestScore) { bestScore = s; best = b; }
+      });
+      if (best && bestScore >= c.min) return best.el;
+    }
+    return null;
+  }
+
+  function focusAnchorInDoc(doc, anchor) {
+    const el = locateAnchorBlock(doc, anchor);
+    if (!el) return false;
+    try {
+      const SID = '__rv_hit_style';
+      if (!doc.getElementById(SID)) {
+        const st = doc.createElement('style');
+        st.id = SID;
+        st.textContent = '.__rv-hit{background-color:rgba(180,86,60,.13)!important;'
+          + 'box-shadow:0 0 0 5px rgba(180,86,60,.13);border-radius:5px;'
+          + 'transition:background-color .45s ease,box-shadow .45s ease}';
+        (doc.head || doc.documentElement).appendChild(st);
+      }
+    } catch (_) { /* 样式注入失败不影响定位 */ }
+    const win = doc.defaultView;
+    /* 不少笔记自己写了 html{scroll-behavior:smooth}，任何 scrollTo 都会变成动画，
+       在长文档上要么滑很久、要么（无渲染帧的环境里）压根不推进。这里临时压成 auto
+       做瞬时跳转，跳完立刻还原，不影响笔记自己的「返回顶部」等交互。 */
+    let lastY = -1;
+    const applyScroll = (force) => {
+      try {
+        const cur = (win && win.scrollY) || doc.documentElement.scrollTop || 0;
+        if (!force && lastY >= 0 && Math.abs(cur - lastY) > 24) return;   // 用户自己滚了，别抢
+        const t = el.getBoundingClientRect().top + cur;
+        lastY = Math.max(0, t - ((win && win.innerHeight) || 600) * 0.28);
+        const de = doc.documentElement, bd = doc.body;
+        const prevH = de.style.scrollBehavior, prevB = bd ? bd.style.scrollBehavior : '';
+        de.style.scrollBehavior = 'auto';
+        if (bd) bd.style.scrollBehavior = 'auto';
+        win.scrollTo(0, lastY);
+        de.style.scrollBehavior = prevH;
+        if (bd) bd.style.scrollBehavior = prevB;
+      } catch (_) { /* 忽略 */ }
+    };
+    applyScroll(true);
+    setTimeout(() => applyScroll(false), 300);
+    el.classList.add('__rv-hit');
+    setTimeout(() => { try { el.classList.remove('__rv-hit'); } catch (_) { /* 忽略 */ } }, 2600);
+    return true;
+  }
+
+  /* iframe 是异步渲染的（用户笔记还要先读 IndexedDB），轮询到正文可用为止 */
+  function focusReviewAnchor() {
+    if (!reviewAnchor) return;
+    clearTimeout(reviewAnchorTimer);
+    const want = reviewAnchor;
+    let tries = 0;
+    const tick = () => {
+      const host = STATE.isMobile ? overlayBodyContent : previewBody;
+      const ifr = host ? host.querySelector('iframe') : null;
+      let doc = null;
+      try { doc = ifr && ifr.contentDocument; } catch (_) { doc = null; }
+      const ready = doc && doc.body && doc.readyState === 'complete'
+        && normText(doc.body.textContent).length > 20;
+      if (ready) {
+        // 再等一帧，让 iframe 里的字号/字体应用完，避免按旧布局算出的滚动位置
+        reviewAnchorTimer = setTimeout(() => {
+          if (reviewAnchor !== want) return;
+          reviewAnchor = null;
+          focusAnchorInDoc(doc, want);
+        }, 90);
+        return;
+      }
+      if (++tries > 40) return;          // ~2.4s 还没就绪就放弃，不打断正常阅读
+      reviewAnchorTimer = setTimeout(tick, 60);
+    };
+    tick();
+  }
+
+  function showPreview(note, anchor) {
     if(!note) return;
     closeActionSheet();   // v8.6.2：切换笔记时先关掉操作面板，避免面板残留在预览之上
+    reviewAnchor = anchor || null;
     STATE.selectedId=note.id;
     if(STATE.isMobile) {
       overlayTitle.textContent=note.title;
@@ -3460,11 +3656,13 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
       previewTitle.textContent=note.title; previewDate.textContent=note.date?formatDate(note.date):'';
       buildIframeHTML(note, previewBody, 'blobUrl');
     }
+    if (reviewAnchor) focusReviewAnchor();
     renderShelf();
   }
 
   function showWelcome() {
     STATE.selectedId=null;
+    reviewAnchor=null;
     previewTitle.textContent='选择一篇笔记'; previewDate.textContent='';
     previewBody.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从左侧列表中选择一篇读书笔记，内容将在此显示</p></div>';
     overlayBodyContent.innerHTML='<div class="welcome"><div class="welcome-icon">📖</div><h3>选择一篇笔记开始阅读</h3><p>从列表中选择一篇读书笔记，内容将在此显示</p></div>';
@@ -3980,7 +4178,7 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     }
     checkLandscape();
     syncHeaderHeight();   // v8.5.0：顶栏高度随视口变化重新测量
-    fitReviewCards();     // v8.9.7：视口变了，回顾卡重新分配引文行数
+    fitReviewCards();     // v8.9.8：视口变了，回顾卡重新量内容高度
   },200);});
 
   window.addEventListener('popstate',e=>{if(STATE.isMobile&&!previewOverlay.classList.contains('hidden')){closePreviewOverlay();history.pushState({view:'home'},'');}});
