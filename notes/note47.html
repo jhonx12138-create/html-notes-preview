@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>营销管理 · 知识图谱</title>
+<style>
+/* ===== CSS 变量主题 ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 蓝色系（科技/通识/默认） */
+[data-theme="tech"] {
+  --primary: #1a5276; --primary-light: #eaf2f8; --primary-dark: #0d2b40;
+  --accent: #2e86c1; --accent-deep: #1b4f72;
+  --bg: #f7f9fc; --bg-card: #ffffff; --bg-soft: #f0f4f8; --bg-softer: #e8eef5;
+  --bg-tag: #d4e6f1;
+  --text: #2c3e50; --text-heading: #1a3a50; --text-muted: #7f8c8d; --text-light: #95a5a6;
+  --border: #d5dbdb; --border-soft: #e5e7eb;
+  --highlight: #eaf2f8; --highlight-strong: #d4e6f1;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6c3483; --color-tool: #2471a3; --color-case: #1e8449;
+  --color-history: #b9770e; --color-insight: #117864; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #2e86c1;
+  --color-effect: #8e44ad; --color-core: #1a5276;
+  --warn-bg: #fef9e7; --warn-border: #f9e79f; --example-bg: #fffef9;
+  --reflect-bg: #f8f4f0; --quote-border: #2e86c1;
+}
+
+/* ===== Reset & Base ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  line-height: 1.6;
+}
+
+/* ===== 页面区块 ===== */
+.section {
+  margin-bottom: 28px;
+}
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+  overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+/* 左侧彩色条 */
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.7;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 {
+  font-size: 14px; color: var(--primary-dark); margin-bottom: 6px;
+}
+.law-card p {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+
+/* ===== 规律网格（模式卡片） ===== */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px;
+}
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+/* ===== 两栏布局 ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 14px 0;
+}
+
+/* ===== 延伸比较表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 代码/树形区 ===== */
+.tree-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+.tree-box pre {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre;
+}
+
+/* ===== 术语弹窗系统 ===== */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 2px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 {
+  font-size: 16px; color: var(--text-heading); margin-bottom: 10px;
+}
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+/* ===== 水平分割线 ===== */
+hr.divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 32px 0;
+}
+
+/* ===== 页脚 ===== */
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 打印样式 ===== */
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+}
+</style>
+</head>
+<body data-theme="tech">
+
+<!-- 侧边栏 -->
+<nav class="sidebar" id="sidebar">
+  <h3>📖 本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#map">全书地图</a></li>
+    <li><a href="#part1">一 · 基本原理</a></li>
+    <li><a href="#part2">二 · 认识市场</a></li>
+    <li><a href="#part3">三 · 战略规划 STP</a></li>
+    <li><a href="#part4">四 · 设计价值</a></li>
+    <li class="toc-l2"><a href="#product">产品与生命周期</a></li>
+    <li class="toc-l2"><a href="#brand">品牌资产</a></li>
+    <li class="toc-l2"><a href="#price">定价 3C</a></li>
+    <li><a href="#part5">五 · 传递价值</a></li>
+    <li class="toc-l2"><a href="#channel">渠道与零售</a></li>
+    <li><a href="#part6">六 · 管理增长</a></li>
+    <li><a href="#insights">认知升级主线</a></li>
+    <li><a href="#patterns">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与比较</a></li>
+    <li><a href="#reflection">延伸思辨</a></li>
+  </ul>
+</nav>
+
+<!-- 主内容 -->
+<div class="main">
+
+  <!-- 页头 -->
+  <div class="header" id="header">
+    <h1>营销管理（第16版）</h1>
+    <div class="subtitle">Marketing Management · 15th/16th Edition</div>
+    <div class="meta">
+      <span><strong>作者</strong> 菲利普·科特勒 / 凯文·莱恩·凯勒 / 亚历山大·切尔内夫</span>
+      <span><strong>原版</strong> 2022（Pearson）</span>
+      <span><strong>中译</strong> 格致出版社 · 全彩版</span>
+      <span><strong>结构</strong> 7 部分 · 21 章</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">教材通识型 · 知识树</span>
+      <span class="badge">营销圣经</span>
+      <span class="badge">STP 枢纽</span>
+      <span class="badge">价值链条</span>
+      <span class="badge">数字营销</span>
+    </div>
+    <div class="core-narrative">
+      <strong>一句话灵魂：</strong>营销不是把已经做出来的东西卖出去，而是先决定什么东西值得做出来——然后用一整套价值链条把它交付到对的人手上。
+    </div>
+  </div>
+
+  <!-- 全书地图 -->
+  <div class="section" id="map">
+    <h2>🗺️ 全书地图</h2>
+    <p style="font-size:14px;color:var(--text-muted);">第16版最大的变化不是加了内容，而是<strong>换了骨架</strong>：不再是"概念—环境—4P"的平铺，而是按一条价值流组织——先选战场，再依次设计、沟通、送达、留存价值。21 章归并为 6 大分支：</p>
+    <div class="tree-box">
+<pre>《营销管理》第16版（7 部分 · 21 章）
+
+├─ 一  营销管理的基本原理            Ch1-2
+│   ├─ 为新现实定义营销
+│   └─ 营销计划与管理
+│
+├─ 二  认识市场                      Ch3-5
+│   ├─ 消费者市场
+│   ├─ 企业市场
+│   └─ 营销调研
+│
+├─ 三  营销战略规划  ◀ 全书枢纽      Ch6-7
+│   ├─ 市场细分与目标客户
+│   └─ 价值主张与定位
+│
+├─ 四  设计价值                      Ch8-11
+│   ├─ 产品 / 服务 / 品牌 / 价格
+│
+├─ 五  传递价值                      Ch12-16
+│   ├─ 营销传播 / 数字整合 / 人员销售
+│   └─ 分销渠道 / 零售
+│
+└─ 六  管理增长                      Ch17-21
+    ├─ 竞争性增长 / 新产品 / 客户忠诚
+    └─ 全球市场 / 社会责任</pre>
+    </div>
+
+    <h3>领域主干：营销管理到底管什么</h3>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">主干定义：需求—价值—交换</div>
+        <div class="content">营销管理是"选择目标市场，并通过创造、传递和沟通卓越的顾客价值来获得、保持和增长顾客"的艺术与科学。它管的不是销售动作，而是<strong>需求、价值、交换</strong>这三件事的匹配效率。</div>
+        <div class="example">💡 <strong>对比</strong>：销售管"把库存清掉"，营销管"当初该不该生产这批库存"。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">价值流：全书真正的骨架 <button class="glossary-trigger" onclick="openModal('valuechain')">?</button></div>
+        <div class="content">第16版把 4P 拆成了一条链：<strong>设计价值</strong>（产品/服务/品牌/价格）→ <strong>沟通价值</strong>（传播/数字/人员）→ <strong>渠道价值</strong>（分销/零售）→ <strong>管理增长</strong>（忠诚/新市场）。链条思维比抽屉思维重要——任何一环掉链子，前面全部作废。</div>
+        <div class="example">💡 <strong>类比</strong>：4P 是四个抽屉，价值流是一张图，告诉你哪个抽屉该放什么、什么时候拉开。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分支一 -->
+  <div class="section" id="part1">
+    <h2>⚙️ 分支一 · 营销管理的基本原理（Ch1-2）</h2>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心：营销近视症 <button class="glossary-trigger" onclick="openModal('myopia')">?</button></div>
+        <div class="content">西奥多·莱维特提出的经典警告：企业把自己定义成"做什么"而不是"满足什么需求"，就会在替代品出现时被淘汰。铁路公司以为自己在做铁路生意，其实做的是运输生意——所以汽车和飞机会要了它的命。</div>
+        <div class="example">💡 <strong>当代版</strong>：出租车公司以为自己在做"招手打车"，其实做的是"把人送到"；定义错了，网约车就是降维打击。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">概念群：需要 / 想要 / 需求</div>
+        <div class="content"><strong>需要</strong>是人类的基本匮乏状态（饿了要吃）；<strong>想要</strong>是被文化和个性塑造的具体形式（想吃和牛）；<strong>需求</strong>是有购买力支撑的想要（愿意并且能付 300 块）。营销只能影响"想要"，不能凭空制造"需要"，也不能违背"需求"的支付能力。</div>
+        <div class="example">💡 <strong>推论</strong>：把所有资源砸在"教育用户产生需要"上的项目，失败率极高——那是在跟生理和钱包较劲。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：整体营销四支柱 <button class="glossary-trigger" onclick="openModal('holistic')">?</button></div>
+        <div class="content">科特勒的整体营销（Holistic Marketing）主张四件事同时成立：<strong>关系营销</strong>（经营顾客、渠道、伙伴的长期关系）、<strong>整合营销</strong>（传播与渠道口径一致）、<strong>内部营销</strong>（员工也是客户，跨部门同频）、<strong>绩效营销</strong>（看财务与非财务结果，不只看曝光）。</div>
+        <div class="example">💡 <strong>反例</strong>：市场部承诺"次日达"，仓库根本没这能力——整合营销缺位，广告越响，退货越多。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：营销计划的战略层</div>
+        <div class="content">公司层定愿景与使命、划分战略业务单元（SBU），用<strong>增长份额矩阵</strong>（明星/金牛/问题/瘦狗）决定资源投给谁；业务层用 SWOT 转成目标与战略；产品层才落到具体的 4P 与预算。层级错位是常见病：在产品层谈公司战略，或在公司层纠结包装颜色。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">机制：营销控制的四道闸门</div>
+        <div class="content">年度计划控制（偏差在预算内吗）、盈利能力控制（哪个产品/渠道/区域真赚钱）、效率控制（销售队伍、广告、促销的投入产出）、战略控制（营销审计：战略还适配市场吗）。多数公司只做第一道，于是年年完成预算、三年后被市场淘汰。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：营销组合其实是"可控变量清单"</div>
+        <div class="content">4P 的本质不是四个动作，而是承认企业能完全控制的只有四类变量：提供什么、标多少钱、在哪里卖、怎么讲。其余全是不可控的（政策、技术、竞争、舆情）。营销的功夫在于用可控变量去适配不可控环境。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分支二 -->
+  <div class="section" id="part2">
+    <h2>🔍 分支二 · 认识市场（Ch3-5）</h2>
+    <h3>消费者市场：购买不是一次点击，是一串心理过程</h3>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">工具：影响消费行为的四层因素</div>
+        <div class="content">由外到内四层：<strong>文化</strong>（亚文化、社会阶层）→ <strong>社会</strong>（参照群体、家庭、角色与地位）→ <strong>个人</strong>（年龄、职业、经济状况、生活方式、人格）→ <strong>心理</strong>（动机、感知、学习、信念与态度）。越靠内层越难改变，越靠外层越容易被一次活动撬动。</div>
+        <div class="example">💡 <strong>应用</strong>：想让中年男性买高端护肤品，改"个人"层（把护肤重定义为"体面"）比改"文化"层（挑战"男人不该护肤"）成本低得多。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">概念：感知的三道滤镜</div>
+        <div class="content"><strong>选择性注意</strong>（大部分人直接过滤广告）→ <strong>选择性扭曲</strong>（把信息解读成自己愿意相信的样子）→ <strong>选择性保留</strong>（只记住支持自己观点的部分）。三层全部通过，广告才算"被看见"。这解释了为什么"曝光量"几乎是最不可靠的指标。</div>
+        <div class="example">💡 <strong>推论</strong>：与其提高曝光频次，不如提高"相关性"——内容对得上，三道滤镜才会开。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：购买决策五阶段</div>
+        <div class="content">问题识别 → 信息搜寻 → 方案评估 → 购买决策 → 购后行为。关键在最后一段：<strong>购后失调</strong>（买完怀疑自己买错了）决定了复购与口碑。所以售后不是成本，是营销的第二现场。</div>
+        <div class="example">💡 <strong>例子</strong>：买车后销售发来一条"您的选择很对，因为这个配置……"，本质是在帮客户消除失调。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">案例式框架：五种购买角色</div>
+        <div class="content">发起者、影响者、决策者、购买者、使用者可能完全不是同一个人。儿童市场最典型：孩子是发起者与使用者，父母是决策者与购买者，祖辈是影响者。搞错角色，等于对着错误的人讲卖点。</div>
+      </div>
+    </div>
+
+    <h3>企业市场：买的人少，但每一单都重</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">概念：B2B 与 B2C 的五个差异</div>
+        <div class="content"><strong>派生需求</strong>（你买钢材是因为有人买车）、<strong>需求弹性小</strong>（涨价也得买）、<strong>专业采购</strong>（懂技术的买手）、<strong>客户少而大</strong>（几十个客户撑起营收）、<strong>直接采购与互惠</strong>。所以 B2B 的营销资源要压在"关系和专业"而不是"广告覆盖"上。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：采购中心七角色</div>
+        <div class="content">发起者、使用者、影响者、决策者、批准者、购买者、把关者（如采购部、法务、IT 安全）。大额采购里，任何一个人说"不行"都能卡死流程。To B 销售的真相：<strong>不是说服一个人，是让七个人都不反对</strong>。</div>
+        <div class="example">💡 <strong>例子</strong>：SaaS 进大企业，IT 关心安全、财务关心预算、业务关心好不好用——三套话术缺一套就丢单。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：三类采购情境</div>
+        <div class="content"><strong>直接重购</strong>（照旧下单，供应商要守住质量与响应）、<strong>修正重购</strong>（参数或价格要变，机会窗口）、<strong>新任务</strong>（第一次买，最需要方案与信任背书）。把三个情境混为一谈，是最常见的销售资源错配。</div>
+      </div>
+    </div>
+
+    <h3>营销调研：别问用户想要什么，去看他们在做什么</h3>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">工具：调研流程与两大类数据</div>
+        <div class="content">六步：界定问题与目标 → 制定计划 → 收集信息 → 分析 → 呈现 → 决策。<strong>二手数据</strong>先行的原则：能用公开数据答的问题不要花钱做问卷。<strong>定性</strong>（深访、观察、民族志）找"为什么"，<strong>定量</strong>（问卷、实验）验证"有多普遍"。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">困境：问卷测不出未来</div>
+        <div class="content">用户能准确告诉你"哪里不爽"，但很难告诉你"他们没见过的东西好不好"。福特的经典说法是"你去问顾客要什么，他们只会说要更快的马"。所以调研的正确定位是<strong>验证假设与排除错误</strong>，不是发现新大陆——新大陆得靠观察行为和未被满足的任务。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：需求预测的六种方法</div>
+        <div class="content">购买者意图调查、销售人员意见合成、专家意见（德尔菲）、市场测试、时间序列分析、统计需求分析。越往前越主观、越往后越依赖历史数据；<strong>新产品没有历史</strong>，只能靠前三种加小范围市场测试。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分支三 -->
+  <div class="section" id="part3">
+    <h2>🎯 分支三 · 营销战略规划：STP（Ch6-7）</h2>
+    <p style="font-size:14px;color:var(--text-muted);">这是全书最不能跳过的一段。<strong>STP 决定了后面所有 4P 的坐标</strong>——选错战场，战术越精妙，亏损越彻底。</p>
+
+    <div class="insight-card">
+      <div class="insight-title">枢纽：STP = 细分 → 目标 → 定位</div>
+      <div class="insight-body">Segmentation 把异质市场切成同质小块；Targeting 决定进哪几块；Positioning 决定在顾客心里占哪个位置。它的前提是一个反直觉的判断：<strong>你不能服务所有人</strong>。承认这一点，资源才开始有效。</div>
+      <div class="insight-evidence">对应章节：Ch6 识别市场细分与目标客户 / Ch7 打造顾客价值主张和定位</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">工具：四种细分变量</div>
+        <div class="content"><strong>地理</strong>（区域、城市等级、气候）、<strong>人口统计</strong>（年龄、性别、收入、生命周期）、<strong>心理</strong>（生活方式、价值观、人格）、<strong>行为</strong>（使用场合、使用率、忠诚度、追求的利益）。最有用的是行为细分——因为它离"购买"最近。</div>
+        <div class="example">💡 <strong>经典</strong>：买钻头的人可以按"价格敏感"和"专业施工"分，也可以按"偶尔维修"和"天天开工"分——后者往往更有效。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">概念：有效细分的五条标准</div>
+        <div class="content">可衡量、足够大（能赚钱）、可接近（有渠道触达）、可区分（对营销刺激反应不同）、可行动（企业有能力服务）。市面上的"细分报告"大多只满足第一条，于是做出漂亮的用户画像却挣不到钱——因为画像背后根本不是一个能触达的人群。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：目标市场选择的五种模式</div>
+        <div class="content">单一细分（集中火力）、选择性专业化（多块分散风险）、产品专业化（一个产品卖多个人群）、市场专业化（一群人卖多种产品）、全面覆盖（只有巨头玩得起）。资源越少越要往前靠。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：定位的三个坐标 <button class="glossary-trigger" onclick="openModal('valueprop')">?</button></div>
+        <div class="content"><strong>差异点（POD）</strong>：顾客能感知、竞争者做不到、你持续做得到的那一点。<strong>共同点（POP）</strong>：进入品类必须具备的基础门槛（做手机必须有信号）。<strong>品类参照</strong>：顾客拿你跟谁比。定位陈述的实用句式：<em>对于[目标顾客]，[品牌]是[品类]中唯一[差异点]，因为[支撑理由]。</em></div>
+        <div class="example">💡 <strong>例子</strong>：沃尔沃＝安全，宝马＝驾驶乐趣，海底捞＝服务。三个都是"一个词"，而不是一段话。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：真正的对手是品类，不是品牌</div>
+        <div class="content">顾客先选品类再选品牌。如果品类本身在萎缩（比如数码相机），品牌内卷毫无意义。所以定位的第一问不是"我比别人好在哪"，而是"这个品类还会长大吗，我在其中的角色是什么"。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分支四 -->
+  <div class="section" id="part4">
+    <h2>🎨 分支四 · 设计价值（Ch8-11）</h2>
+
+    <h3 id="product">产品：五个层次里，差异化藏在后面三层</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">核心：产品五层次 <button class="glossary-trigger" onclick="openModal('fivelevels')">?</button></div>
+        <div class="content">核心利益（顾客真正要的）→ 基础产品（能用的形态）→ 期望产品（默认该有的属性）→ 附加产品（超出预期的服务与保证）→ 潜在产品（未来的全部延伸）。<strong>前三层决定你有没有资格进场，后两层决定你能收多少溢价。</strong></div>
+        <div class="example">💡 <strong>例子</strong>：酒店的核心利益是"睡一觉"，但卖 800 元和卖 200 元的差别几乎全在附加层（枕头菜单、延迟退房、早餐）。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：产品组合四维度</div>
+        <div class="content"><strong>宽度</strong>（几条产品线）、<strong>长度</strong>（总数）、<strong>深度</strong>（每条线几个规格）、<strong>一致性</strong>（关联度）。加宽度是找新增长，加深度是抢细分，两者资源模型完全不同，混着做通常两头不靠。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：生命周期四阶段策略</div>
+        <div class="content"><strong>导入期</strong>：先做认知、容忍低利润、快速试错；<strong>成长期</strong>：抢渠道与产能，价格开始分层；<strong>成熟期</strong>：拼份额与效率，靠品牌与细分维持毛利；<strong>衰退期</strong>：收割或退出，别用情感挽留一条死线。</div>
+        <div class="example">💡 <strong>误判代价</strong>：把成熟期产品当成长线做（继续砸广告拉新），是最常见的烧钱方式。</div>
+      </div>
+    </div>
+
+    <h3>服务：四个特性决定四套管理动作</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">概念：服务四特性 <button class="glossary-trigger" onclick="openModal('servqual')">?</button></div>
+        <div class="content"><strong>无形性</strong>（买前看不见 → 靠有形线索与口碑）、<strong>不可分离性</strong>（生产与消费同时发生 → 员工就是产品）、<strong>可变性</strong>（质量随人波动 → 靠标准与培训）、<strong>易逝性</strong>（当天没卖出的房晚消失 → 靠收益管理与预订）。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：服务质量五维度（SERVQUAL）</div>
+        <div class="content">可靠性（说到做到，权重最高）、响应性（多久回应）、保证性（专业与安全感）、移情性（被当成个体对待）、有形性（环境与物料）。服务质量差距的本质是<strong>顾客期望与感知之间的差</strong>，不是绝对水平——所以"降低预期"和"提升体验"是两条同等有效的路。</div>
+        <div class="example">💡 <strong>例子</strong>：经济型酒店主动说明"无早餐、无泳池"，反而提高了满意度评分。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">机制：服务利润链</div>
+        <div class="content">内部服务质量 → 员工满意 → 员工忠诚与效率 → 顾客满意 → 顾客忠诚 → 收入与利润。这条链子把"员工"正式接进了营销系统：<strong>没有员工满意，顾客满意是偶然事件</strong>。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">困境：服务补救的悖论</div>
+        <div class="content">处理得当的投诉，有时能带来比"从未出问题"更高的忠诚——因为它证明了"出问题时你会负责"。但这是<strong>不能当策略用</strong>的悖论：补救有效的前提是问题不重复，一旦变成常态，补偿只会加速流失。</div>
+      </div>
+    </div>
+
+    <h3 id="brand">品牌：品牌资产是"溢价能力 + 替代成本"</h3>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心：CBBE 金字塔 <button class="glossary-trigger" onclick="openModal('cbbe')">?</button></div>
+        <div class="content">凯勒的顾客基础品牌资产模型，自下而上四层：<strong>显著性</strong>（想到这个品类会不会想到你）→ <strong>绩效与形象</strong>（功能满足 + 情感联想）→ <strong>评价与感受</strong>（品质判断与情绪反应）→ <strong>共鸣</strong>（行为忠诚、态度依附、社群感、主动拥护）。越往上越难，且不能跳层。</div>
+        <div class="example">💡 <strong>跳层失败的典型</strong>：还没做到"被想起"，就砸钱做"品牌故事"——地基没打，讲得越好越像广告。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：品牌要素六标准</div>
+        <div class="content">可记忆（好记好认）、有意义（暗示品类或利益）、可喜爱（视觉与语言的美感）、可转换（能跨品类与地域）、可适应（能随时间更新）、可保护（法律上守得住）。六个条件常常互相冲突，取舍顺序取决于你的阶段：早期优先"可记忆"，成熟期优先"可保护"。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">机制：品牌架构与延伸的双刃剑</div>
+        <div class="content">多品牌（宝洁式，隔离风险与定位）、背书品牌（母品牌给信任）、子品牌（主品牌 + 差异化标签）、品牌延伸（把已有资产挪到新品类）。延伸能省下巨额认知成本，但一旦新品类出问题，会<strong>反向稀释</strong>原品牌——延伸的边界是"顾客是否认为你有能力做这件事"。</div>
+        <div class="example">💡 <strong>经典教训</strong>：高端品牌向下延伸做低价线，短期冲量，长期把"高端"这个位置让了出去，且很难收回来。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：品牌不是 logo，是一张联想网络</div>
+        <div class="content">品牌的物理载体只有名字和符号，真正被交易的是顾客脑中的联想结构：想到它时会自动带出哪些词、哪些场景、哪些人。所以品牌工作本质是<strong>管理联想</strong>——每做一次传播，都在往这张网络里加节点或删节点。</div>
+      </div>
+    </div>
+
+    <h3 id="price">价格：唯一直接受钱的 P，也是最快的错</h3>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心：定价 3C <button class="glossary-trigger" onclick="openModal('pricing3c')">?</button></div>
+        <div class="content"><strong>成本</strong>是下限（再低就亏）、<strong>竞争</strong>是参照（顾客会横向比）、<strong>顾客感知价值</strong>是上限（超过就没人买）。三者围出的区间才是可行价格带。绝大多数定价失误都源于只看成本——成本定价法保证了你不亏，但保证不了你赚到该赚的。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：六种定价方法</div>
+        <div class="content">成本加成、目标收益、认知价值定价（按顾客认为值多少定）、价值定价（高品质低价格，如优衣库）、随行就市、拍卖（英式/荷式/密封投标）。新品类常用<strong>撇脂</strong>（先高后降，收割尝鲜者）或<strong>渗透</strong>（先低后升，抢规模），选择取决于网络效应强弱。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">机制：心理定价的四个机关</div>
+        <div class="content"><strong>锚定</strong>（先摆一个贵的，后面就不显贵）、<strong>左位数效应</strong>（99 和 100 的感知差距远大于 1 元）、<strong>诱饵选项</strong>（放一个明显不划算的中间档，把选择推向目标档）、<strong>价格—质量推断</strong>（没别的线索时，贵就是好）。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">争议：价格战为什么不解决问题</div>
+        <div class="content">降价能换来短期销量，但改变不了竞争结构——对手同样能降，最终回到原点，只是全行业毛利更薄，且顾客的价格预期被永久拉低。所以价格战只在一种情况下有效：<strong>你有对手结构性做不到的成本优势</strong>，否则它只是把亏损换成了市场份额。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分支五 -->
+  <div class="section" id="part5">
+    <h2>📣 分支五 · 传递价值（Ch12-16）</h2>
+
+    <h3>营销传播：不是告知，是降低理解成本</h3>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">工具：传播模型与八种工具</div>
+        <div class="content">发送者 → 编码 → 媒介 → 解码 → 接收者，中间夹着噪音与反馈。八种工具：广告、销售促进、事件与体验、公共关系、直接营销、互动营销、口碑、人员推销。工具没有优劣，只有<strong>与决策类型匹配与否</strong>：高单价复杂决策靠人员推销，低单价冲动决策靠促销与内容。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">概念：整合营销传播（IMC）</div>
+        <div class="content">所有触点传递同一种信息、同一种调性、同一个承诺。它的对立面是"各渠道各自为战"——官网说高端、直播间喊 9 块 9、包装写着匠心，顾客收到的是一堆互相矛盾的信号，最后只记住最便宜的那个。</div>
+        <div class="example">💡 <strong>检验标准</strong>：把所有触点的物料并排放，能不能一眼看出是同一个品牌？</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：传播要解决的是两件事</div>
+        <div class="content">一是<strong>降低理解成本</strong>（一句话说清你是什么、为谁解决什么），二是<strong>提供行动理由</strong>（为什么现在、为什么是你）。做不到第一件，广告只是噪音；做不到第二件，记住了也不会买。</div>
+      </div>
+    </div>
+
+    <h3>数字时代的整合营销：渠道变了，STP 没变</h3>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">工具：POE 媒体结构</div>
+        <div class="content"><strong>Paid</strong>（付费投放：可放大、可停，但停了就没了）、<strong>Owned</strong>（自有阵地：官网、私域、门店，慢但复利）、<strong>Earned</strong>（赢得的口碑：评测、UGC、媒体报道，信任最高但不可控）。健康的组合是三者互相供血，只有 Paid 的结构等于租流量。</div>
+        <div class="example">💡 <strong>常见病</strong>：投放占比 90%，一旦停投营收归零——本质是在给平台打工。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：内容、搜索与社群</div>
+        <div class="content">内容营销解决"凭什么听你说"，搜索与推荐解决"找得到"，社群与 KOL 解决"凭什么信"。三者的共同前提是<strong>可被检索的结构化表达</strong>——如果你的卖点无法被用户用一句话复述，它就传播不出去。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">争议：归因难题与品效之争</div>
+        <div class="content">"最后一次点击归因"系统性高估效果广告、低估品牌广告——因为品牌的作用发生在点击之前（决定了用户在候选集里有没有你）。于是预算不断向短期可测量的渠道倾斜，长期资产被慢慢抽干。这是数字营销最结构性的测量偏差。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：销售流程七步</div>
+        <div class="content">寻找潜在客户 → 预接触（调研与开场）→ 推介（按需求而非按功能清单讲）→ 克服异议 → 成交 → 跟进交付 → 维护与复购。多数人只练中间三步，忽略首尾——而首步决定管道质量，末步决定终身价值。</div>
+      </div>
+    </div>
+
+    <h3 id="channel">渠道与零售：价值最后一百米的守卫</h3>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">工具：渠道设计四步</div>
+        <div class="content">分析顾客需要的服务产出（批量、等待时间、空间便利、品种、服务支持）→ 确立渠道目标 → 识别主要备选方案（层级数、密度：独家/选择/密集）→ 按<strong>经济性、可控性、适应性</strong>评估。顺序不能颠倒：先定顾客要什么，再定渠道长什么样。</div>
+        <div class="example">💡 <strong>例子</strong>：高端化妆品要"体验 + 稀缺"，所以选选择性分销进百货；日化要"随手可得"，所以铺到便利店。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">概念：推式与拉式</div>
+        <div class="content"><strong>推</strong>：把货压进渠道，靠经销商推力（返点、账期、陈列）；<strong>拉</strong>：把需求拉到终端，靠消费者指名购买倒逼渠道进货。推式起量快但易价格失控，拉式稳但费时长。强势品牌最终都是拉式为主、推式为辅。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">困境：渠道冲突与价格体系崩塌 <button class="glossary-trigger" onclick="openModal('channelconflict')">?</button></div>
+        <div class="content">水平冲突（同层级经销商窜货、打价格战）、垂直冲突（厂商与经销商争利）、多渠道冲突（线上低价冲击线下门店）。根源是<strong>同一件商品在不同渠道被赋予了不同的价格权限</strong>。价格一旦失控，渠道信心崩塌比销量下滑更难修复。</div>
+        <div class="example">💡 <strong>解法方向</strong>：产品区隔（线上线下不同型号）、权限区隔（专供/首发）、利益补偿（线下引流线上分佣）。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：零售业态光谱</div>
+        <div class="content">专业店 → 百货 → 超市 → 便利店 → 折扣店 → 仓储会员店 → 电商。业态的分野由三个变量决定：<strong>品类宽度、价格水平、服务深度</strong>。任何业态只要在这三项上找准组合，就能活；试图"什么都要"的业态通常最先死。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：零售轮转理论</div>
+        <div class="content">新业态通常以"低价格、低毛利、低服务"切入，站稳后为了争夺更多客群不断加服务、加装修、加成本，价格优势消失，于是被下一轮低价业态颠覆。这个循环解释了为什么百货被超市打、超市被折扣店与电商打。</div>
+        <div class="example">💡 <strong>当代样本</strong>：会员制仓储（Costco/山姆）用"会员费替代毛利"，把价格优势做成了结构性护城河。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 分支六 -->
+  <div class="section" id="part6">
+    <h2>📈 分支六 · 管理增长（Ch17-21）</h2>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">工具：波特五力 <button class="glossary-trigger" onclick="openModal('fiveforces')">?</button></div>
+        <div class="content">现有竞争者的对抗强度、潜在进入者的威胁、替代品的威胁、供应商议价能力、买方议价能力。五力合起来决定一个行业的<strong>结构性利润池</strong>——比"我的产品好不好"更根本。选行业就是选这五股力量的组合。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：四种竞争地位打法</div>
+        <div class="content"><strong>领导者</strong>：扩大总需求、守住份额、再扩份额（但要避免"打得太狠伤品类"）；<strong>挑战者</strong>：正面进攻（需资源优势）、侧翼（尚未覆盖的细分）、游击（小市场高毛利）；<strong>追随者</strong>：模仿 + 局部改良，靠成本或渠道效率；<strong>补缺者</strong>：做小而深的利基，靠专业度活着。</div>
+        <div class="example">💡 <strong>错位典型</strong>：小公司用领导者的打法（全线覆盖 + 大规模广告），通常撑不过一个周期。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：新产品开发八阶段</div>
+        <div class="content">创意产生 → 筛选 → 概念开发与测试 → 营销战略制定 → 商业分析 → 产品开发 → 市场测试 → 商业化。每一个阶段都是<strong>杀项目的闸门</strong>，越往后越贵。多数公司的病是"创意太多、闸门太少"，于是资源被摊在一堆半成品上。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：创新扩散五类人 <button class="glossary-trigger" onclick="openModal('diffusion')">?</button></div>
+        <div class="content">创新者（2.5%）、早期采用者（13.5%）、早期多数（34%）、后期多数（34%）、滞后者（16%）。跨越"早期采用者 → 早期多数"之间的鸿沟是生死线。加速扩散的五个产品属性：相对优势、兼容性、复杂性（越低越好）、可试用性、可观察性。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">困境：新产品的失败率与自嗨</div>
+        <div class="content">越投入的团队越听不进坏消息，于是"内部觉得很好"和"市场觉得没用"之间的缝越拉越大。成熟的做法是把<strong>否决权交给数据</strong>：每个闸门预设明确的通过标准，而不是靠会议室里的声音大小决定。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">核心：顾客感知价值与 CLV <button class="glossary-trigger" onclick="openModal('cpv')">?</button></div>
+        <div class="content">CPV = 总顾客价值（产品、服务、人员、形象）− 总顾客成本（货币、时间、精力、心理）。满意度 = 感知 − 期望。<strong>CLV</strong> 是把一个顾客未来所有贡献折现的总和——它把营销的语言从"这次卖了多少"换成"这个关系值多少"。<button class="glossary-trigger" onclick="openModal('clv')">?</button></div>
+        <div class="example">💡 <strong>推论</strong>：获客成本的上限，应该由 CLV 决定，而不是由"行业平均"决定。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">洞察：忠诚计划的三件套</div>
+        <div class="content">真正让人留下来的不是卡片本身，而是三样东西：<strong>分层权益</strong>（有可感知的等级差）、<strong>沉没成本</strong>（攒了一半的里程不舍得走）、<strong>情感认同</strong>（身份感与社群归属）。只有积分没有分层与身份，本质上只是打折。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">工具：全球化的四个决策</div>
+        <div class="content">评估全球市场环境 → 决定进入哪些市场 → 决定怎么进（出口、许可、合资、独资，控制力与风险依次递增）→ 决定营销方案（标准化 vs 本土适应）。原则是<strong>全球思考，本地行动</strong>：战略与定位统一，产品与传播本地化。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">争议：社会责任营销是真心还是包装</div>
+        <div class="content">可持续营销要同时满足三重底线：人（People）、地球（Planet）、利润（Profit）。问题在于"目的营销"极易滑向<strong>漂绿</strong>——承诺宏大、行动稀少、审计缺失。而一旦被验证为表演，反噬会比从没做过更严重，因为顾客感到的是欺骗而不是无作为。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 认知升级主线 -->
+  <div class="section" id="insights">
+    <h2>💡 认知升级主线</h2>
+    <div class="insight-card">
+      <div class="insight-title">一、营销不是推销：推销是把已有的推出去，营销是先决定该做什么</div>
+      <div class="insight-body">这是全书最基础也最容易被忽略的一句。推销的前提是产品已经存在且不太对路，所以需要话术去弥补；营销的前提是产品本身就对路，于是"卖"变简单了。把营销干成推销，等于承认自己在做补救工作。</div>
+      <div class="insight-evidence">证据：书中反复引用德鲁克"营销的目的就是让销售变得多余"；莱维特的钻头与洞的比喻；第16版把"理解市场"放在 4P 之前</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">二、全书是一条价值链，不是四个抽屉的并列</div>
+      <div class="insight-body">第16版的骨架本身就是主张：设计价值 → 沟通价值 → 渠道价值 → 管理增长。它要求你把 4P 看成有先后、有依赖的流水线，而不是四个可以单独优化的模块。传播做得再好，也救不了设计得错的价值。</div>
+      <div class="insight-evidence">证据：第16版七部分结构（设计价值 Ch8-11 / 沟通价值 Ch12-14 / 渠道价值 Ch15-16 / 管理增长 Ch17-21）</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">三、STP 是枢纽：先选战场，再谈打法</div>
+      <div class="insight-body">所有 4P 的取值都依赖两个前提——你服务谁、你要在他们心里占什么位置。前提没定，价格高低、渠道宽窄、传播调性全都是无意义的争论。</div>
+      <div class="insight-evidence">证据：Ch6-7 被独立成"制定成功的营销战略"整部分；后续每章的决策都以细分为起点</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">四、品牌是心智资产，度量单位是溢价与替代成本</div>
+      <div class="insight-body">品牌的价值不在视觉系统里，而在顾客的联想网络里：同样的东西，因为你叫什么而愿意多付多少；换掉你要付出多少心理成本。这两个数字才是品牌资产，其余都是过程指标。</div>
+      <div class="insight-evidence">证据：凯勒 CBBE 金字塔四层（显著性→绩效形象→评价感受→共鸣）；品牌审计与品牌资产追踪</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">五、忠诚来自交付的价值，不来自会员卡</div>
+      <div class="insight-body">满意度是"感知减去期望"，忠诚是"持续被兑现的承诺"。会员体系能放大已有的忠诚，但无法凭空制造忠诚——用权益换来的复购，一旦权益取消就会立刻消失。</div>
+      <div class="insight-evidence">证据：CPV 与 CLV 框架；满意度—忠诚关系中的"投诉处理"研究；Ch19 建立客户忠诚</div>
+    </div>
+  </div>
+
+  <!-- 贯穿规律 -->
+  <div class="section" id="patterns">
+    <h2>🔄 贯穿全书的规律</h2>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">交换律：一切营销都是价值不对等的交换</div>
+        <div class="pattern-desc">顾客用钱换你提供的东西，只有当他觉得"得到的大于付出的"时交换才发生。营销的所有努力，本质上都在改变这个不等式的一边——提高感知价值，或降低非货币成本。</div>
+        <div class="pattern-examples">产品升级↑感知价值；包邮与免安装↓货币与精力成本</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">注意力稀缺律：信息越多，定位越贵</div>
+        <div class="pattern-desc">供给过剩时代，稀缺的不是产品而是注意力。所以"一个词占住一个位置"的价值，随着信息量上升而上升——定位不是修辞技巧，是对注意力稀缺的经济学回应。</div>
+        <div class="pattern-examples">沃尔沃＝安全；从"多卖点罗列"转向"单词占位"</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">差异化溢价律：可替代性决定定价权</div>
+        <div class="pattern-desc">能随时被换掉的东西只能拼价格，换不掉的东西才能收溢价。所有品牌建设、技术壁垒、渠道独占，最终都指向同一个目的：降低可替代性。</div>
+        <div class="pattern-examples">同质化白牌打价格战；专利药与仿制药的价格差</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">漏斗衰减律：每一层都在漏</div>
+        <div class="pattern-desc">认知→兴趣→购买→复购→推荐，转化率逐层递减是常态。营销的效率提升来自"堵住最大的那个漏点"，而不是往漏斗口无限倒水——后者只是让预算更快流走。</div>
+        <div class="pattern-examples">曝光很高但复购极低 → 问题在交付与体验，不在流量</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">边际递减律：同一种刺激用久了就钝</div>
+        <div class="pattern-desc">折扣、促销、广告创意都会疲劳。持续加预算解决不了疲劳，只能换手段——这也是为什么"促销依赖"是一种慢性病：越用越需要，效果越差。</div>
+        <div class="pattern-examples">天天打折等于重新定价；广告素材必须周期性迭代</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2>🪤 记忆钩子</h2>
+    <div class="tree-box">
+<pre>营销 = 选战场(STP) × 造价值(产品·服务·品牌·定价) × 说清(传播) × 送到(渠道) × 留住(忠诚)
+
+　　　　　　↑ 乘号不是加号：任何一项为零，结果都是零</pre>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">一句话记住整本书</div>
+      <p>4P 是四个抽屉，STP 才是那张图纸——先决定往哪个抽屉里放什么，再决定怎么打开它。<br>如果只能记一句话：<strong>营销的功夫在"做出来"之前，不在"卖出去"之后。</strong></p>
+    </div>
+  </div>
+
+  <!-- 核心金句 -->
+  <div class="section" id="quotes">
+    <h2>💬 核心金句</h2>
+    <blockquote class="quote-block">
+      <p>"营销的目的，就是让销售变得多余。"</p>
+      <span class="cite">——彼得·德鲁克（科特勒在书中反复引用，作为营销的终极标准）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"顾客不需要四分之一英寸的钻头，他们需要的是四分之一英寸的洞。"</p>
+      <span class="cite">——西奥多·莱维特（营销近视症的经典表述）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>"营销管理是选择目标市场，并通过创造、传递和沟通卓越的顾客价值来获得、保持和增长顾客的艺术与科学。"</p>
+      <span class="cite">——科特勒对"营销管理"的经典定义（据原书表述整理）</span>
+    </blockquote>
+    <p style="font-size:12px;color:var(--text-light);">注：以上为书中核心观点与科特勒体系内广为流传的经典表述，非逐字原文摘录。</p>
+  </div>
+
+  <!-- 延伸与比较 -->
+  <div class="section" id="extension">
+    <h2>📊 延伸与比较</h2>
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>营销学的<strong>标准坐标系</strong>。不是某一种营销观点的宣言，而是把整个学科的概念、框架、工具整理成一张可查可用的地图。半个多世纪迭代至今，几乎所有营销教材与课程都在它的谱系上。</td>
+        </tr>
+        <tr>
+          <td>核心主张</td>
+          <td>营销是创造、传递、沟通顾客价值的完整系统；<strong>先做对的产品，再谈卖得出去</strong>。全书用 STP 做强约束，用价值流做主线，用 4P 做落地清单。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>① <strong>体量过重</strong>：21 章近千页，通读成本极高，多数人只适合按需查阅；② <strong>案例偏西方大品牌</strong>（可口可乐、宝洁、耐克），中国本土情境需要自己迁移；③ <strong>框架全面但取舍偏弱</strong>——它告诉你所有可做的事，很少告诉你资源有限时该砍掉哪些；④ 数字营销章节（Ch13）受出版周期限制，平台机制与算法环境更新速度远超教材；⑤ 对<strong>资源极少的初创团队</strong>适配度有限，很多打法默认你已有渠道与预算。</td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td><strong>《定位》特劳特 / 里斯</strong>：把"心智占位"这一件事讲到底，比科特勒更锋利也更偏执，可作 STP 的强化补丁。<br><strong>《战略品牌管理》凯勒</strong>：本书作者之一写的品牌专著，CBBE 模型的完整版，做品牌必读。<br><strong>《影响力》西奥迪尼</strong>：补上"人为什么会答应"的心理机制，是传播章的底层解释。<br><strong>《增长黑客》</strong>：把数字营销拆成可量化的实验流程，是 Ch13 的工程化版本。<br><strong>《流量池》</strong>：中国本土的私域与裂变打法，可视为本书第13章的本地实践版。</td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>与<strong>《信息与激励经济学》</strong>呼应：品牌溢价本质是<strong>信号</strong>——用昂贵的、难以伪造的投入向顾客证明质量（对应信号理论中的分离均衡）；广告支出之所以有用，部分正因为它"贵得不像在骗人"。<br>与<strong>《工作、消费主义和新穷人》</strong>形成张力：鲍曼批判消费社会把人的身份绑定在消费能力上，而科特勒教你怎么更好地满足消费欲望——一个问"这样好不好"，一个问"怎么做才对"，建议对读。</td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>① 新产品立项时用 STP + 五层次自检：服务谁、占什么位置、附加层差异在哪；② 定价先算 CLV 再定获客成本上限，避免用行业均值拍脑袋；③ 传播前做"触点并排检查"，确认口径一致；④ 渠道扩张前先算价格权限，防止多渠道互杀；⑤ 每年做一次营销审计（战略控制），而不只是完成年度预算。</td>
+        </tr>
+        <tr>
+          <td>阅读建议</td>
+          <td>非科班读者不必按章通读。推荐路径：<strong>Ch1（定义与近视症）→ Ch6-7（STP，最重要）→ Ch8-11（设计价值，按你的业务挑两章）→ Ch19（忠诚与 CLV）</strong>，其余当工具书按需查。全书价值不在读完，而在遇到具体问题时知道该翻哪一章。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection">
+    <h2>💭 延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">当"说清楚"变得廉价，"做出来"才是护城河</div>
+      <p>这本书成体系的年代，营销最贵的一环是<strong>把信息送达并说服</strong>——所以 4P 里"传播"占了极大篇幅，广告、媒介、销售人员都是重资产。而生成式 AI 正在把这一环的成本压到接近于零：文案秒出、素材批量、个性化触达成常态，"说清楚"不再稀缺，"被相信"反而更稀缺。</p>
+      <p>这意味着科特勒框架里的重心会往前移：价值设计（产品、服务、真实体验）与信任资产（品牌、口碑、履约能力）的相对权重上升，而纯执行层的传播与渠道技巧会被工具抹平。换句话说，<strong>当所有人都会讲故事时，故事的真假就变成了唯一的变量</strong>。</p>
+      <p>另一个值得警惕的点：这本书是一套"完备的地图"，而地图越完备，越容易让人误以为照着走就行。现实里的营销决策几乎总是在信息不全、资源不足、时间紧迫下做出的——真正稀缺的不是知道该做哪 21 件事，而是在第十件事之后，知道该放弃哪十件。</p>
+    </div>
+  </div>
+
+  <!-- 页脚 -->
+  <div class="footer-note">
+    《营销管理》知识图谱 · 基于原著第16版结构与科特勒体系整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<!-- 术语弹窗 -->
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- 返回顶部 -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// 术语弹窗
+const glossary = {
+  valuechain: {
+    title: '价值流（第16版的骨架）',
+    content: '<p>第16版不再把 4P 平铺，而是按一条流组织全书：</p><ul><li><strong>设计价值</strong>（Ch8-11）：产品、服务、品牌、价格</li><li><strong>沟通价值</strong>（Ch12-14）：营销传播、数字整合、人员销售</li><li><strong>渠道价值</strong>（Ch15-16）：分销渠道、零售</li><li><strong>管理增长</strong>（Ch17-21）：竞争、新品、忠诚、全球、社会责任</li></ul><p>链条思维的关键：前面的错，后面无法补救。</p>'
+  },
+  myopia: {
+    title: '营销近视症（Marketing Myopia）',
+    content: '<p>西奥多·莱维特 1960 年发表于《哈佛商业评论》的概念：企业把注意力放在"自己生产的产品"而不是"顾客要满足的需求"上，因而在替代品出现时失去市场。</p><ul><li>铁路公司：以为做铁路生意 → 实为运输生意 → 被汽车与航空取代</li><li>马车鞭厂商：以为做鞭子 → 实为"驱动力传递" → 被汽车淘汰</li></ul><p>诊疗方法：用"我们帮顾客完成什么任务"来定义业务，而不是用"我们生产什么"。</p>'
+  },
+  holistic: {
+    title: '整体营销（Holistic Marketing）',
+    content: '<p>科特勒提出的营销观：营销不能被当成一个部门的职能，必须四个维度同时成立。</p><ul><li><strong>关系营销</strong>：经营顾客、渠道、伙伴的长期关系</li><li><strong>整合营销</strong>：所有传播与渠道口径一致</li><li><strong>内部营销</strong>：员工是第一批客户，跨部门同频</li><li><strong>绩效营销</strong>：看财务与非财务结果，不只看曝光</li></ul>'
+  },
+  valueprop: {
+    title: '价值主张与定位坐标',
+    content: '<p>价值主张回答：为什么顾客该选你而不是别人。</p><ul><li><strong>POD 差异点</strong>：可感知、对手做不到、你能持续做到</li><li><strong>POP 共同点</strong>：进入品类必须具备的门槛</li><li><strong>品类参照</strong>：顾客拿你跟谁比</li></ul><p>实用句式：对于[目标顾客]，[品牌]是[品类]中唯一[差异点]，因为[支撑理由]。</p>'
+  },
+  fivelevels: {
+    title: '产品五层次',
+    content: '<p>科特勒的产品分析框架，由内到外五层：</p><ul><li><strong>核心利益</strong>：顾客真正要解决的问题</li><li><strong>基础产品</strong>：能用的物理形态</li><li><strong>期望产品</strong>：默认该有的一组属性</li><li><strong>附加产品</strong>：超出预期的服务与保证</li><li><strong>潜在产品</strong>：未来所有可能的延伸</li></ul><p>前三层是入场券，后两层才是差异化与溢价的来源。</p>'
+  },
+  servqual: {
+    title: 'SERVQUAL 服务质量五维度',
+    content: '<p>衡量服务质量的五个维度（ Parasuraman、Zeithaml、Berry 提出）：</p><ul><li><strong>可靠性</strong>：说到做到（权重最高）</li><li><strong>响应性</strong>：回应速度</li><li><strong>保证性</strong>：专业能力与安全感</li><li><strong>移情性</strong>：被当作个体对待</li><li><strong>有形性</strong>：环境、人员、物料的外观</li></ul><p>关键在于测量"期望"与"感知"之间的差距，而非绝对水平。</p>'
+  },
+  cbbe: {
+    title: 'CBBE 品牌资产金字塔',
+    content: '<p>凯文·莱恩·凯勒的"顾客基础品牌资产"模型，四层自下而上：</p><ul><li><strong>显著性</strong>：想到品类会不会想到你</li><li><strong>绩效与形象</strong>：功能满足 + 情感联想</li><li><strong>评价与感受</strong>：品质判断与情绪反应</li><li><strong>共鸣</strong>：行为忠诚、态度依附、社群感、主动拥护</li></ul><p>不能跳层——地基没打好，上层的"品牌故事"无效。</p>'
+  },
+  pricing3c: {
+    title: '定价 3C 模型',
+    content: '<p>可行价格区间由三股力量围成：</p><ul><li><strong>Cost 成本</strong>：下限，再低就亏</li><li><strong>Competition 竞争</strong>：参照，顾客会横向比价</li><li><strong>Customer perceived value 顾客感知价值</strong>：上限，超过就没人买</li></ul><p>只按成本定价能保证不亏，但保证不了赚到该赚的。</p>'
+  },
+  channelconflict: {
+    title: '渠道冲突',
+    content: '<p>三种类型：</p><ul><li><strong>水平冲突</strong>：同层级经销商之间（窜货、砸价）</li><li><strong>垂直冲突</strong>：厂商与经销商争利</li><li><strong>多渠道冲突</strong>：线上低价冲击线下门店</li></ul><p>根源是同一商品在不同渠道被赋予不同价格权限。常见解法：产品区隔、权限区隔、利益补偿。</p>'
+  },
+  fiveforces: {
+    title: '波特五力模型',
+    content: '<p>决定行业结构性利润池的五股力量：</p><ul><li>现有竞争者的对抗强度</li><li>潜在进入者的威胁</li><li>替代品的威胁</li><li>供应商议价能力</li><li>买方议价能力</li></ul><p>五力强，行业整体利润薄；五力弱，普通公司也能赚钱。选行业就是选这五股力量的组合。</p>'
+  },
+  diffusion: {
+    title: '创新扩散理论（Rogers）',
+    content: '<p>采用者五类：创新者 2.5%、早期采用者 13.5%、早期多数 34%、后期多数 34%、滞后者 16%。</p><p>加速扩散的五项产品属性：</p><ul><li>相对优势（比现有方案好多少）</li><li>兼容性（与现有习惯是否冲突）</li><li>复杂性（越低越好）</li><li>可试用性（能否小成本试）</li><li>可观察性（效果是否看得见）</li></ul>'
+  },
+  cpv: {
+    title: '顾客感知价值（CPV）',
+    content: '<p>CPV = 总顾客价值 − 总顾客成本。</p><ul><li><strong>总价值</strong>：产品、服务、人员、形象</li><li><strong>总成本</strong>：货币、时间、精力、心理</li></ul><p>满意度 = 感知 − 期望。所以提升满意度有两条路：抬高感知，或管理期望——后者常被忽略。</p>'
+  },
+  clv: {
+    title: '客户生命周期价值（CLV）',
+    content: '<p>把一个顾客未来所有贡献（购买、推荐、溢价支付）折现后的总和。</p><p>作用：<strong>获客成本上限应由 CLV 决定</strong>，而不是由"行业平均"决定。CLV 高的业务可以承受高获客成本打持久战，CLV 低的业务一旦提价就崩。</p>'
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// 侧边栏滚动高亮
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+// 返回顶部按钮显隐
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

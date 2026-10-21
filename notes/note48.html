@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心流 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 绿色系 · 本次做了偏青的调整，更接近「水」的质感 */
+[data-theme="natural"] {
+  --primary: #146b4a; --primary-light: #e8f6ef; --primary-dark: #0a3d29;
+  --accent: #1c8f63; --accent-deep: #0f5c3d;
+  --bg: #f6fbf8; --bg-card: #ffffff; --bg-soft: #eef8f2; --bg-softer: #dff1e7;
+  --bg-tag: #d3efe0;
+  --text: #1c3a2c; --text-heading: #0c2418; --text-muted: #6d8b7b; --text-light: #92ab9e;
+  --border: #c7dcd1; --border-soft: #e2ede7;
+  --highlight: #e8f6ef; --highlight-strong: #d3efe0;
+  --shadow-sm: 0 1px 3px rgba(20,107,74,0.07); --shadow: 0 4px 16px rgba(20,107,74,0.09);
+  --radius-sm: 5px; --radius: 10px; --radius-lg: 16px;
+  --color-concept: #146b4a; --color-tool: #1c8f63; --color-case: #2a9d8f;
+  --color-history: #b9770e; --color-insight: #0f7a6c; --color-debate: #c0392b;
+  --color-solution: #1c8f63; --color-crisis: #d9534f; --color-mechanism: #2a9d8f;
+  --color-effect: #7d5ba6; --color-core: #0a3d29;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #f4fbf7;
+  --reflect-bg: #eaf5ef; --quote-border: #1c8f63;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.78;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏：浅底 + 顶部渐变细线 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 218px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 22px 14px 40px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--primary), #37b98a 60%, #7fd4b4);
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  letter-spacing: 2px; margin-bottom: 14px; padding-left: 4px;
+}
+.sidebar .toc-list { list-style: none; }
+.sidebar .toc-list li { margin-bottom: 1px; }
+.sidebar .toc-list a {
+  display: block; padding: 5px 12px;
+  border-radius: 8px; font-size: 13px; color: var(--text);
+  transition: all .15s;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--highlight); color: var(--primary-dark);
+  font-weight: 700;
+}
+.sidebar .toc-l2 a { padding-left: 24px; font-size: 12px; color: var(--text-muted); }
+.sidebar .toc-l2 a::before { content: '· '; }
+
+/* ===== 主内容 ===== */
+.main { margin-left: 218px; max-width: 1080px; padding: 36px 40px 100px; }
+
+/* ===== 页头：渐变 + 大圆角 + 无边框 ===== */
+.header {
+  background: linear-gradient(135deg, #ffffff 0%, #f2fbf6 55%, #e6f7ee 100%);
+  border-radius: var(--radius-lg);
+  padding: 34px 38px;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.header::after {
+  content: '';
+  position: absolute; right: -40px; bottom: -60px;
+  width: 220px; height: 220px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(55,185,138,0.13), transparent 70%);
+}
+.header h1 {
+  font-size: 29px; color: var(--text-heading);
+  margin-bottom: 8px; letter-spacing: .5px;
+}
+.header .subtitle {
+  font-family: var(--font-serif);
+  color: var(--accent-deep); font-size: 15px;
+  margin-bottom: 18px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 22px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.7);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 7px; }
+.header .badge {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 3px 13px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 16px; font-size: 14px;
+  color: var(--primary-dark); line-height: 1.7;
+  padding-left: 14px; border-left: 3px solid var(--accent);
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 32px; }
+.section h2 {
+  font-size: 20px; color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-left: 13px;
+  border-left: 4px solid var(--accent);
+  line-height: 1.4;
+}
+.section h3 {
+  font-size: 16px; color: var(--primary-dark);
+  margin: 24px 0 10px;
+  display: flex; align-items: center; gap: 8px;
+}
+.section h3::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent);
+  flex: 0 0 auto;
+}
+.lead { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+
+/* ===== 卡片 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 13px; margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: none;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 1px 2px rgba(20,107,74,0.05);
+  transition: transform .18s, box-shadow .18s;
+}
+.info-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.info-card .label {
+  font-weight: 700; font-size: 14px;
+  margin-bottom: 8px; color: var(--text-heading);
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.info-card .content { font-size: 14px; line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px; padding: 9px 12px;
+  background: var(--example-bg);
+  border-radius: 8px;
+  font-size: 13px; color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+/* 卡片左侧色条（顶部小横条版） */
+.info-card.concept { box-shadow: inset 3px 0 0 var(--color-concept), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.tool { box-shadow: inset 3px 0 0 var(--color-tool), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.case { box-shadow: inset 3px 0 0 var(--color-case), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.history { box-shadow: inset 3px 0 0 var(--color-history), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.insight { box-shadow: inset 3px 0 0 var(--color-insight), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.debate { box-shadow: inset 3px 0 0 var(--color-debate), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.solution { box-shadow: inset 3px 0 0 var(--color-solution), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.crisis { box-shadow: inset 3px 0 0 var(--color-crisis), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.mechanism { box-shadow: inset 3px 0 0 var(--color-mechanism), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.effect { box-shadow: inset 3px 0 0 var(--color-effect), 0 1px 2px rgba(20,107,74,0.05); }
+.info-card.core { box-shadow: inset 3px 0 0 var(--color-core), 0 1px 2px rgba(20,107,74,0.05); }
+
+/* ===== 论证链 ===== */
+.flow-chain {
+  display: flex; flex-wrap: wrap; align-items: stretch;
+  gap: 0; margin: 16px 0 6px;
+}
+.flow-chain .fc-item {
+  flex: 1 1 140px;
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 14px 14px;
+  font-size: 13px; line-height: 1.55;
+  color: var(--text);
+  position: relative;
+  margin-right: 16px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 2px rgba(20,107,74,0.06);
+}
+.flow-chain .fc-item:last-child { margin-right: 0; }
+.flow-chain .fc-item::after {
+  content: '→';
+  position: absolute; right: -14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent); font-weight: 700; font-size: 14px;
+}
+.flow-chain .fc-item:last-child::after { content: ''; }
+.flow-chain .fc-item .fc-num {
+  display: block; font-size: 11px; font-weight: 700;
+  letter-spacing: 1px; color: var(--accent);
+  margin-bottom: 4px;
+}
+.flow-chain .fc-item strong { color: var(--primary-dark); }
+
+/* ===== 心流通道 3×3 图 ===== */
+.channel-wrap {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  grid-template-rows: 1fr 34px;
+  gap: 6px; margin: 18px 0 6px;
+}
+.channel-y {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--text-muted); letter-spacing: 2px;
+}
+.channel-x {
+  grid-column: 2; display: flex;
+  align-items: center; justify-content: center;
+  font-size: 12px; color: var(--text-muted); letter-spacing: 2px;
+}
+.channel-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 88px);
+  gap: 5px;
+}
+.channel-cell {
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px; line-height: 1.5;
+  display: flex; flex-direction: column; justify-content: center;
+  color: var(--text);
+}
+.channel-cell .cc-name {
+  font-weight: 700; font-size: 13.5px;
+  margin-bottom: 3px; display: block;
+}
+.channel-cell.anxiety { background: #fdecea; color: #8c2f26; }
+.channel-cell.arousal { background: #fff4e3; color: #8a5a12; }
+.channel-cell.control { background: #e8f2fb; color: #1b5378; }
+.channel-cell.worry { background: #f7f0e8; color: #7a5a3a; }
+.channel-cell.flow {
+  background: linear-gradient(135deg, #1c8f63, #37b98a);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(28,143,99,0.32);
+}
+.channel-cell.relax { background: #eef7f1; color: #2c6b4c; }
+.channel-cell.band { background: #d9f0e4; color: #146b4a; font-weight: 500; }
+.channel-cell.apaty { background: #f0f1f0; color: #5c6b62; }
+.channel-cell.boredom { background: #eff2f7; color: #4b5a6e; }
+.channel-legend {
+  font-size: 12px; color: var(--text-muted);
+  margin-top: 10px; line-height: 1.7;
+}
+
+/* ===== 洞察卡 ===== */
+.insight-card {
+  background: var(--highlight);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin-bottom: 11px;
+  border-left: 4px solid var(--accent);
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body { font-size: 14px; line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡：两列 ===== */
+.law-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 11px;
+}
+.law-card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 1px 2px rgba(20,107,74,0.05);
+}
+.law-card h4 {
+  font-size: 14px; color: var(--primary-dark);
+  margin-bottom: 6px; display: flex; gap: 8px; align-items: baseline;
+}
+.law-card h4 .law-no {
+  font-family: var(--font-serif);
+  font-size: 12px; color: var(--accent);
+  letter-spacing: 1px; font-weight: 400;
+}
+.law-card p { font-size: 13px; line-height: 1.68; }
+
+/* ===== 结构树 ===== */
+.tree-box {
+  background: var(--primary-dark);
+  color: #d6ede2;
+  border-radius: 12px;
+  padding: 22px 26px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  overflow-x: auto;
+  margin: 14px 0;
+}
+.tree-box .tb-hi { color: #8ee0b8; font-weight: 700; }
+.tree-box .tb-dim { color: #7ea394; }
+
+/* ===== 公式框 ===== */
+.formula-box {
+  background: linear-gradient(120deg, #0a3d29, #146b4a);
+  color: #e8f6ef;
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin: 14px 0;
+  font-size: 15px;
+  line-height: 1.9;
+}
+.formula-box .f-main {
+  font-family: var(--font-mono);
+  font-size: 16px; color: #9ce8c3;
+  display: block; margin-bottom: 10px;
+  letter-spacing: .5px;
+}
+.formula-box .f-note { font-size: 13px; color: #b8d6c8; }
+
+/* ===== 反思 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border-radius: 12px;
+  padding: 18px 22px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p { font-size: 13.5px; line-height: 1.75; margin-bottom: 8px; }
+.reflection-block p:last-child { margin-bottom: 0; }
+
+/* ===== 引用 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 4px solid var(--quote-border);
+  margin: 14px 0;
+  padding: 16px 22px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 12px 12px 0;
+  line-height: 1.8;
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 8px;
+  font-size: 12px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+}
+
+/* ===== 延伸表 ===== */
+table.extension {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 14px 0;
+  background: var(--bg-card);
+  border-radius: 12px;
+  overflow: hidden;
+}
+table.extension th {
+  background: var(--highlight);
+  color: var(--primary-dark);
+  padding: 11px 14px; text-align: left;
+  font-weight: 700; width: 17%;
+  border-bottom: 1px solid var(--border);
+}
+table.extension td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top; line-height: 1.68;
+}
+table.extension tr:last-child td { border-bottom: none; }
+table.extension tr:hover td { background: #fbfefc; }
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 10.5px; font-weight: 700;
+  cursor: pointer; vertical-align: middle;
+  margin-left: 3px; transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(12,36,24,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px; width: 90%; max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.22);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 26px; right: 26px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 17px; cursor: pointer;
+  box-shadow: 0 3px 12px rgba(20,107,74,0.3);
+  z-index: 200; opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+.footer-note {
+  text-align: center; margin-top: 44px; padding-top: 18px;
+  color: var(--text-light); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .back-to-top, .modal-overlay { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { break-inside: avoid; }
+}
+
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 18px 14px 80px; }
+  .info-grid, .law-grid { grid-template-columns: 1fr; }
+  .header { padding: 24px 20px; }
+  .header h1 { font-size: 22px; }
+  .flow-chain .fc-item { flex: 1 1 100%; margin-right: 0; }
+  .flow-chain .fc-item::after { content: '↓'; right: 50%; top: auto; bottom: -16px; transform: translateX(50%); }
+  .channel-grid { grid-template-rows: repeat(3, 104px); }
+  table.extension th { width: 26%; }
+}
+</style>
+</head>
+<body data-theme="natural">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">封面与定位</a></li>
+    <li><a href="#question">核心问题</a></li>
+    <li><a href="#chain">论证链总览</a></li>
+    <li><a href="#arg1">一 · 幸福是一种能力</a></li>
+    <li><a href="#arg2">二 · 意识与精神熵</a></li>
+    <li><a href="#arg3">三 · 心流八要素</a></li>
+    <li><a href="#arg4">四 · 挑战与技能通道</a></li>
+    <li><a href="#arg5">五 · 五个领域的应用</a></li>
+    <li><a href="#arg6">六 · 意义与人生主题</a></li>
+    <li><a href="#evidence">关键证据</a></li>
+    <li><a href="#insights">贯穿论点</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与比较</a></li>
+    <li><a href="#reflection">延伸思辨</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <h1>心流：最优体验心理学</h1>
+    <div class="subtitle">Flow: The Psychology of Optimal Experience</div>
+    <div class="meta">
+      <span><strong>作者</strong> 米哈里·契克森米哈赖（Mihaly Csikszentmihalyi）</span>
+      <span><strong>译者</strong> 张定绮</span>
+      <span><strong>出版</strong> 中信出版集团 2017（英文原版 1990）</span>
+      <span><strong>篇幅</strong> 十章 · 约 19.2 万字</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">积极心理学奠基之作</span>
+      <span class="badge">A 类 · 论点论证链</span>
+      <span class="badge">意识 · 注意力 · 最优体验</span>
+      <span class="badge">30 余年经验采样研究</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：<strong>幸福不是发生在我们身上的事，而是意识在有序状态下的一种副产品——它不能被直接追求，只能被间接地准备好。</strong>
+    </div>
+  </div>
+
+  <!-- 核心问题 -->
+  <div class="section" id="question">
+    <h2>核心问题：人什么时候最幸福？</h2>
+    <p class="lead">全书起点是一个反直觉的观察：人类花了几千年追求幸福，却几乎没有认真研究过"幸福发生的那个瞬间"。作者要回答的是——</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">主问题：最优体验在什么条件下出现？</div>
+        <div class="content">不是"什么样的人幸福"，而是"幸福在什么状态下发生"。契克森米哈赖把问题从人格拉到了<strong>意识的运作方式</strong>上：当注意力被完全组织起来、投入到一件有挑战且可完成的事上时，人会进入一种忘我而自足的状态，他把它命名为<strong>心流</strong>。</div>
+        <div class="example">💡 这个转向很关键：不问"我为什么不快乐"，而问"我的注意力此刻在做什么"。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">反驳的靶子：幸福是运气或外物吗</div>
+        <div class="content">常识把幸福归给两类东西：外部条件（钱、地位、健康）和偶然事件（好事发生）。作者的反驳是：外部条件对幸福感的贡献远小于想象，且存在明显的<strong>适应性衰减</strong>——中彩票和车祸截瘫的人在若干个月后，幸福基线会向原处回归。</div>
+        <div class="example">💡 书中的关键判断：<strong>愉悦（pleasure）是恢复平衡，乐趣（enjoyment）才能推动成长</strong>。前者靠外物给，后者只能自己造。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论证链总览 -->
+  <div class="section" id="chain">
+    <h2>论证链总览：一条从"意识"到"意义"的递进</h2>
+    <p class="lead">十章不是并列的知识模块，而是六步层层收紧的推论。前面为后面提供前提，任何一环抽掉，后面都立不住。</p>
+    <div class="flow-chain">
+      <div class="fc-item"><span class="fc-num">01 · Ch1</span><strong>幸福是能力</strong><br>外部条件无法持续供给幸福，只能靠训练意识</div>
+      <div class="fc-item"><span class="fc-num">02 · Ch2</span><strong>意识即注意力</strong><br>注意力投向哪里，人生就在哪里成形</div>
+      <div class="fc-item"><span class="fc-num">03 · Ch3</span><strong>八要素</strong><br>心流可被识别，因而可被复现</div>
+      <div class="fc-item"><span class="fc-num">04 · Ch3-4</span><strong>通道</strong><br>挑战与技能同升，才有持续的心流</div>
+      <div class="fc-item"><span class="fc-num">05 · Ch5-9</span><strong>五领域</strong><br>感官、思维、工作、人际、挫折皆可造心流</div>
+      <div class="fc-item"><span class="fc-num">06 · Ch10</span><strong>人生主题</strong><br>把无数心流整合成一个统一的意义</div>
+    </div>
+  </div>
+
+  <!-- 论点一 -->
+  <div class="section" id="arg1">
+    <h2>论点一：幸福不是运气，是一种需要练习的能力</h2>
+    <p class="lead">第一章先拆掉三个关于幸福的常见误解，才腾出位置放自己的答案。</p>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">幸福的假象：它总是被"之后"兑现</div>
+        <div class="content">人习惯把幸福放在某个条件达成的未来：升职之后、买房之后、孩子上大学之后。而意识的特点是——<strong>它只活在当下这一个瞬间</strong>。把所有幸福都预约给未来，等于让它永远无法兑付。</div>
+        <div class="example">💡 书中的比喻：这像是一个总在等"下一站"的旅客，而列车从不真的到站。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">人类不满的根源：欲望的增长快于满足</div>
+        <div class="content">作者引用了一个古老的观察：人一旦得到某物，很快把它归入"背景"，转而追逐下一件。这不是道德缺陷，而是<strong>意识的结构性特征</strong>——它天生对变化敏感、对恒定麻木。所以靠增加外物来提升幸福，是追一个不断后退的靶子。</div>
+        <div class="example">💡 这解释了为什么收入增长与幸福感增长并不同步：基线会随收入一起抬高。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">文化编织的神话：幸福的标准是借来的</div>
+        <div class="content">"应该有几套房""应该在几岁前结婚""应该过怎样的生活"——这些标准大多是文化提供的剧本。问题不在于剧本存在，而在于<strong>人常把借来的目标当成自己的目标</strong>，于是即便达成，体验也是空的。</div>
+        <div class="example">💡 判断标准很朴素：这件事达成后，你是感到"终于交差了"，还是"还想再来一次"？</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">作者的回答：善用自己的体验</div>
+        <div class="content">既然外部条件不可靠、文化剧本不能全信，那唯一能自主支配的资源就是<strong>如何组织自己的注意力</strong>。这不是心灵鸡汤式的"想开点"，而是一套可操作的能力：设定目标、集中注意、读取反馈、调整难度。</div>
+        <div class="example">💡 作者的原话大意：幸福不是偶然降临的，它需要准备、培养和守护——像一项需要长期练习的技艺。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点二 -->
+  <div class="section" id="arg2">
+    <h2>论点二：意识是一套有限的注意力系统</h2>
+    <p class="lead">这是全书的理论地基。不理解"意识如何运作"，后面八要素就只是清单，无法解释为什么有效。</p>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">意识的内涵：经过主观处理的信息</div>
+        <div class="content">意识不是世界的镜子，而是一套<strong>筛选与解释的装置</strong>。外界每秒涌入的信息量远超处理能力，意识必须先决定"哪些信息值得进入"，我们感知到的世界，其实是这套筛选之后的结果。</div>
+        <div class="example">💡 所以"同一件事，不同人看到不同的东西"不是修辞，而是意识机制的直接后果。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">注意力：唯一的硬通货<button class="glossary-trigger" onclick="openModal('psychicEnergy')">?</button></div>
+        <div class="content">作者把注意力称为<strong>精神能量</strong>——它是意识的 scarce resource（稀缺资源），也是人唯一真正拥有的东西。你把注意力投在哪里，你的现实就在哪里成形：投在抱怨上，你就活在一个值得抱怨的世界里。</div>
+        <div class="example">💡 这也解释了为什么"忙"本身不等于充实：注意力被切碎，意识就只剩碎片。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">内在失序：精神熵<button class="glossary-trigger" onclick="openModal('psychicEntropy')">?</button></div>
+        <div class="content">当出现与目标冲突的信息（威胁、坏消息、无法处理的焦虑），注意力会被强行征用去处理它，原本有序的意识结构被打散。作者称之为<strong>精神熵</strong>——一种内在的失序状态，表现为焦虑、嫉妒、烦躁、注意力溃散。</div>
+        <div class="example">💡 关键洞察：痛苦不只是"感觉不好"，更是<strong>精神能量被无效消耗</strong>。焦虑之所以累人，是因为它在后台持续占用算力。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">意识井然有序：心流<button class="glossary-trigger" onclick="openModal('flow')">?</button></div>
+        <div class="content">反过来，当注意力完全投入一个当下可处理的目标，没有任何精神能量被浪费在自我怀疑或防御上，意识就进入<strong>有序状态</strong>。这就是心流的本质——不是快乐，而是<strong>没有内耗</strong>。</div>
+        <div class="example">💡 作者的定义：心流是"意识中信息与目标高度协调"时的主观状态，所以它自带奖赏，不需要外部报酬。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">自我的成长：复杂度的提升<button class="glossary-trigger" onclick="openModal('complexity')">?</button></div>
+        <div class="content">每次心流结束后，自我会变得"更复杂"一点：既更独特（分化，differentiation），又更连接（整合，integration）。分化让你与他人不同，整合让你与世界相连，两者同时推进，人格才成长。</div>
+        <div class="example">💡 这个标准很好用：一件事做完，如果你既更清楚自己是谁、又更理解别人，它就是成长的；只有一个方向，多半是偏的。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">享乐与乐趣：两个词被混用得太久<button class="glossary-trigger" onclick="openModal('pleasureEnjoy')">?</button></div>
+        <div class="content">享乐（pleasure）是恢复均衡的体验：吃饱、休息、放松，它不带来新东西，只把状态调回基线。乐趣（enjoyment）则包含<strong>新奇、挑战与成就</strong>，做完之后你变成了一个不一样的人。前者让人恢复，后者让人前进。</div>
+        <div class="example">💡 看一场综艺是享乐，啃下一个难题是乐趣。两者都需要，但把一生交给前者，成长就停止了。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点三 -->
+  <div class="section" id="arg3">
+    <h2>论点三：心流的八个可识别特征</h2>
+    <p class="lead">八条不是"达成条件清单"，而是<strong>主观体验的描述性特征</strong>——它们是心流发生时的样子。这一点常被误读成操作步骤，作者特意强调过：这些特征同时出现，才说明你进去了。</p>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">① 可完成的工作：难度略高于当前能力</div>
+        <div class="content">任务是"跳一跳够得着"的：太难引发焦虑，太易引发无聊。这个"略高"不是模糊感觉，而是有可判断标准的——你大致知道该往哪个方向努力，但不确定能否一次做成。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">② 全神贯注：注意力没有分叉</div>
+        <div class="content">所有精神能量都指向同一处。此时无关信息被自动过滤——不是靠意志压制，而是根本没有余地留给它们。这也是心流能"止痛"的原因：注意力被占满，痛苦就进不来。</div>
+        <div class="example">💡 外科医生在手术中感觉不到牙疼、棋手听不见旁边吵架，都是同一机制。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">③ 明确的目标：每一步都知道要做什么</div>
+        <div class="content">目标可以是自己定的，也可以由活动本身给出（攀岩的下一步、棋局的下一手）。关键不在于目标"伟大"，而在于<strong>当下清晰</strong>。目标模糊是心流最常见的杀手。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">④ 即时的反馈：好坏当场知道</div>
+        <div class="content">反馈不必是夸奖，它可以只是"这一下对了"。音乐家听到音符，程序员看到测试通过，木工摸到接缝严丝合缝——都是即时反馈。反馈延迟越长，越难进入心流。</div>
+        <div class="example">💡 这解释了为什么很多人在工作里没有心流：不是不爱干，而是干了两周也不知道干得好不好。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">⑤ 深入而毫不勉强地投入</div>
+        <div class="content">注意"毫不勉强"四个字。靠意志力硬撑的专注不是心流，那只是自我对抗。真正的心流里，注意力是<strong>被活动本身吸住的</strong>，不需要持续做决定"我要不要继续"。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">⑥ 掌控感：觉得自己能左右局面</div>
+        <div class="content">注意，是"觉得能控制"，不是"真的万无一失"。心流中的人常报告一种从容：即便风险存在，也不担心失控。反过来，掌控感一旦崩掉，心流立刻中断。</div>
+        <div class="example">💡 攀岩者面对真实坠落风险仍有掌控感——因为他控制的是自己的动作与判断，不是山。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">⑦ 忘我，然后自我更强</div>
+        <div class="content">心流中"自我"这个念头会暂时消失——不是失去自我，而是不再有余力去监视自己。有趣的是，心流结束后自我感反而更清晰、更结实。这与"忘我即消失"的通俗理解正好相反。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">⑧ 时间感被扭曲</div>
+        <div class="content">几小时像几分钟，或某一瞬间被拉得极长。这不是错觉的副作用，而是注意力高度集中后，意识对时间线索的处理方式改变的结果。</div>
+        <div class="example">💡 可以用来做自检：结束时你看表，是不是被时间吓一跳？那多半是进去了。</div>
+      </div>
+    </div>
+
+    <div class="info-card insight" style="margin-top:14px;">
+      <div class="label">关于"目标不假外求"：整本书最容易被忽略的一句</div>
+      <div class="content">八要素背后有一个共同前提：这套体验的<strong>目的在活动内部</strong>（autotelic，自我目的性）。如果做这件事只是为了奖金、点赞或 KPI，那么一旦外部奖励撤走，心流立刻消失——因为它从一开始就不属于你。作者说得很清楚：外在奖励可以存在，但不能成为<strong>唯一的理由</strong>。</div>
+      <div class="example">💡 这也是"把爱好变成工作后就讨厌了"的机制解释：目的被从活动内部挪到了外部。</div>
+    </div>
+  </div>
+
+  <!-- 论点四 -->
+  <div class="section" id="arg4">
+    <h2>论点四：心流是一条通道，不是一次事件</h2>
+    <p class="lead">这是全书最著名的一张图。把"挑战的高度"和"技能的高度"放在两个坐标上，人会落在不同区域——而成长，就是沿着那条斜向的通道往上爬。</p>
+
+    <div class="channel-wrap">
+      <div class="channel-y">挑 战 高 → 低</div>
+      <div class="channel-grid">
+        <div class="channel-cell anxiety"><span class="cc-name">焦虑</span>挑战远高于技能，做不动又不敢停</div>
+        <div class="channel-cell arousal"><span class="cc-name">觉醒</span>挑战略高，紧张但愿意冲一把</div>
+        <div class="channel-cell flow"><span class="cc-name">心流</span>挑战与技能同时在最高处并匹配</div>
+        <div class="channel-cell worry"><span class="cc-name">担忧</span>能力不够，难度也没那么高</div>
+        <div class="channel-cell band"><span class="cc-name">通道带</span>难度与能力基本匹配，可上可下</div>
+        <div class="channel-cell control"><span class="cc-name">掌控</span>技能够用，挑战略低，稳而不兴奋</div>
+        <div class="channel-cell apaty"><span class="cc-name">冷漠</span>双低，无挑战无技能，最糟的一格</div>
+        <div class="channel-cell boredom"><span class="cc-name">无聊</span>技能过剩，事情没有难度</div>
+        <div class="channel-cell relax"><span class="cc-name">放松</span>技能远高于所需，做起来毫不费力</div>
+      </div>
+      <div class="channel-x">技 能 低 → 高</div>
+    </div>
+    <p class="channel-legend">读图要点：<strong>心流只在斜线上</strong>。同一个人在同一份工作里，既可能无聊（做熟了）也可能焦虑（被提拔了）——变的不是人，是两条曲线的相对位置。所谓"成长"，就是技能提升后主动把挑战抬高一档，让点重新落回通道内。</p>
+
+    <div class="info-grid" style="margin-top:16px;">
+      <div class="info-card mechanism">
+        <div class="label">为什么心流会"自我消失"</div>
+        <div class="content">一旦你习惯了当前难度，技能会悄悄上升，而挑战不变——点就滑向"无聊"或"放松"。所以心流天然是<strong>不稳定状态</strong>：它要么被抬高的挑战重新点燃，要么退化为舒适。</div>
+        <div class="example">💡 这正是"熟练工倦怠"的机制：不是人变懒了，是通道跑掉了。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">成长螺旋：为什么心流让人变强</div>
+        <div class="content">每完成一次心流，技能抬升一档，人必须去找更难的目标，于是又进入新的心流。这个循环叫<strong>成长螺旋</strong>。它解释了为什么长期处于心流的人，能力会以复利方式增长。</div>
+        <div class="example">💡 反过来说，长期停在"放松"区的人，技能其实在缓慢退化——因为难度不再要求他。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">陷阱：把"爽"误当心流</div>
+        <div class="content">游戏、短视频能造出高度集中的注意力和即时反馈，很容易让人误认成心流。区别在于：它们通常<strong>不带来自我复杂度的提升</strong>——结束后自我没有变大，只是被消耗了一晚。作者对此态度明确：可复用的标准是"事后你变复杂了吗"。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点五 -->
+  <div class="section" id="arg5">
+    <h2>论点五：五个领域，都能造出心流</h2>
+    <p class="lead">第五到第九章是全书最"实用"的部分，也是它区别于纯理论著作的地方：作者用同一套机制，逐一拆解了五种生活场景。</p>
+
+    <h3>5.1 感官之乐：身体是最低门槛的入口</h3>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">动起来：跑步、游泳、登山为何容易进心流</div>
+        <div class="content">身体活动天然具备心流的三个前提：目标清晰（跑到那个路口）、反馈即时（呼吸、心跳、配速）、难度可调（加速或减速）。这也是为什么很多人靠运动"重启"自己。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">看与听：从"消费"变成"技艺"</div>
+        <div class="content">同样是听音乐，被动放着当背景是享乐；主动去听结构、听配器、听演奏者的处理，就成了心流活动。视觉同理——看一幅画，从"我觉得好看"推进到"它为什么这样构图"，注意力才真正被组织起来。</div>
+        <div class="example">💡 通用方法：给任何被动消费加一层"需要辨认的结构"，它就变成可投入的活动。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">美食之乐与它的边界</div>
+        <div class="content">吃可以成为心流：讲究火候、搭配、顺序，是技艺。但作者也点出，把感官快感推到极致并不等于成长——<strong>感官提供入口，不提供方向</strong>。停在入口的人，得到的只是重复的享乐。</div>
+      </div>
+    </div>
+
+    <h3>5.2 思维之乐：用记忆与符号给自己造玩具</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">记忆是思维的原料库</div>
+        <div class="content">作者对"死记硬背"有不同看法：记忆不是负担，而是<strong>可供调用的内部资源</strong>。脑子里没有素材，思维就没有可组合的东西。真正的差别在于——记的时候有没有建立结构。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">思维游戏：把世界当成谜题</div>
+        <div class="content">猜字、解谜、推演、做心算，本质是给注意力一个自设的难题。它们不需要外部奖励，因为奖赏就是"解开了"这一瞬间。作者认为这是最纯粹的自得其乐。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">文字、历史、科学、哲学：四类可持续一生的领域</div>
+        <div class="content">这些领域的共同点是<strong>无限深</strong>——永远有更难的层次可爬。作者建议每个人都至少进入一个这样的领域：它不会像游戏一样通关后失效，而是随你的能力一起变深。</div>
+        <div class="example">💡 判断标准：这件事能不能让你十年后还在里面发现新东西？</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">业余与专业的分界被高估了</div>
+        <div class="content">作者认为，专业身份带来外部约束（报酬、评价、竞争），业余身份反而更容易保持"目的在内部"。一个人完全可以在业余状态达到极高水准，因为心流只要求投入，不要求头衔。</div>
+      </div>
+    </div>
+
+    <h3>5.3 工作之乐：全书最反直觉的一章<button class="glossary-trigger" onclick="openModal('workParadox')">?</button></h3>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">工作悖论：心流最多的地方，人最想逃离</div>
+        <div class="content">经验采样研究发现，人在<strong>工作时</strong>报告的心流频率高于闲暇，注意力更集中、挑战更匹配、反馈更清晰；但同一批人仍然说"更想休假"。作者的解释是：工作的结构天然接近心流，而人对工作的<strong>态度</strong>是被文化塑造的——我们被教会了"工作=牺牲"。</div>
+        <div class="example">💡 这是个可操作的提醒：你以为的"累"，可能只是"不喜欢自己在做的事"这个念头在耗能。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">里科的案例：把流水线变成手艺</div>
+        <div class="content">书中记录了一位流水线工人，把自己的岗位当成技艺来研究：每种装配动作的最快节奏、工具摆放的最优次序、几十道工序的完整流程。他最终做到能在几分钟内完成整台设备的组装，成为全厂最不可替代的人。同样的工位，别人觉得枯燥，他觉得每天都有新东西。</div>
+        <div class="example">💡 这个案例的价值不在励志，而在证明：<strong>心流的开关常在被认为最没有空间的地方</strong>。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">如何有效使用闲暇：心流最容易被浪费的时段</div>
+        <div class="content">闲暇是最自由的时间，却常常是心流最少的时间——因为闲暇<strong>没有给出目标、规则和反馈</strong>。作者的建议不是"多学习"这种空话，而是：主动为闲暇设计结构，把时间投入有难度阶梯的活动，而不是留给需要最少主动性的消遣。</div>
+        <div class="example">💡 一个可用的自检：过去一周的闲暇里，有几次结束后觉得"我还想再来"？</div>
+      </div>
+    </div>
+
+    <h3>5.4 人际之乐：把关系当作需要投入的活动</h3>
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">寂寞的本质：意识里没有可投入的对象</div>
+        <div class="content">作者对孤独的处理很特别：寂寞不是"身边没人"，而是<strong>注意力无处安放</strong>。所以有人独处时充实，有人身处人群仍空虚。解决路径不是"多社交"，而是先让自己成为一个能被投入的人。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">家庭成为心流场所的五个条件</div>
+        <div class="content">作者的家庭研究提出五条：<strong>目标清晰</strong>（家里知道什么算重要）、<strong>投入</strong>（成员彼此在意）、<strong>选择</strong>（有自己的空间）、<strong>挑战</strong>（有难度可爬）、<strong>反馈</strong>（做得好会被看见）。五条齐全的家庭，成员更容易在其中体验到心流。</div>
+        <div class="example">💡 反过来看，"什么都不缺但很空"的家庭，通常缺的是后两条——没有挑战，也没有反馈。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">朋友之乐：共同做一件事，比共同聊一件事更持久</div>
+        <div class="content">作者观察到，维持长久友谊的往往是<strong>共同活动</strong>而非单纯交谈。活动提供了目标与反馈，让关系有内容可承载。这与"多沟通"的常规建议正好相反：先把事做在一起，话自然就有。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">胸怀大我：把自我扩展出去</div>
+        <div class="content">当一个人把家庭、社区、事业乃至信念纳入"自我"的边界，他的注意力就有了更大的容器，日常琐事对意识的扰动也随之变小。这是心流在人际关系层面的延伸。</div>
+      </div>
+    </div>
+
+    <h3>5.5 挫折中自得其乐：把逆境转成可处理的目标</h3>
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">压力不是事件本身，是意识对事件的解释</div>
+        <div class="content">同一件事，有人视为威胁（精神熵激增），有人视为待解的题目（注意力有序）。作者的核心主张是：<strong>应对方式可以训练</strong>——先承认现实不可改，再把注意力转向"此刻还能控制什么"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">扭转悲剧：从受害者到解谜者</div>
+        <div class="content">书中记录了一批在重大打击后重建生活的人，共同点不是乐观，而是<strong>把注意力从"为什么是我"转到"接下来怎么办"</strong>。目标一旦具体，精神熵就下降，人重新有了可投入的东西。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">化腐朽为神奇：给痛苦重新命名</div>
+        <div class="content">作者称之为"自得其乐的性格"（autotelic self）<button class="glossary-trigger" onclick="openModal('autotelic')">?</button>：不是感受不到痛苦，而是能在痛苦中找到一个可推进的目标。这不是自我欺骗——痛苦仍在，但注意力不必全部被它占用。</div>
+        <div class="example">💡 可操作的版本：遇到无法改变的事，只问一句"这件事里，还有哪一小块能动？"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点六 -->
+  <div class="section" id="arg6">
+    <h2>论点六：意义是无数心流的总和</h2>
+    <p class="lead">最后一章把前面九章收束成一个问题：如果每一次心流都只是一个片段，那人生整体凭什么有方向？</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">何谓意义：把体验整合进一个主题<button class="glossary-trigger" onclick="openModal('lifeTheme')">?</button></div>
+        <div class="content">作者给出的定义很朴素：意义不是被发现的，而是被<strong>建构</strong>的——当一个人把散落的经历、目标与投入组织成一个<strong>统一的主题（unified theme）</strong>，人生就有了意义。意义感来自整合，不来自答案。</div>
+        <div class="example">💡 所以"找不到人生意义"这个问法本身有偏差：它不是一个待发现的对象，而是一件待完成的作品。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">培养方向感：先承诺，再清晰</div>
+        <div class="content">常见的顺序误解是先想清楚再投入。作者认为是反的：<strong>投入到某个方向，清晰才会随之出现</strong>。不下决心的人永远在等一个足够确定的理由，而理由只在你走进去之后才长出来。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">重获内心和谐：目标之间不打架</div>
+        <div class="content">精神熵很多时候不是来自外部打击，而是来自<strong>内部目标互相冲突</strong>：既想安稳又想闯、既想陪家人又怕被落下。整合的意义就在于让这些目标排出次序，注意力不再反复撕扯。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">一贯的人生主题：一生只做一件事的合理性</div>
+        <div class="content">作者并不主张每个人都该有宏大使命。他指的是：<strong>有一个贯穿性的兴趣或关切</strong>，能让你把大部分选择串成一条线。哪怕主题很小——把一门手艺做到极致、把一个地方照顾好——只要够一贯，它就能组织起一生。</div>
+        <div class="example">💡 他说得坦白：意义不是被赋予的，是<strong>被一个人自己放进世界里的</strong>。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关键证据 -->
+  <div class="section" id="evidence">
+    <h2>关键证据：这本书凭什么成立</h2>
+    <p class="lead">与一般励志书最大的区别在这里：它的核心结论来自三十余年、上万人的一手采样，而非个人感悟。</p>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">经验采样法（ESM）<button class="glossary-trigger" onclick="openModal('esm')">?</button></div>
+        <div class="content">给被试配一个呼叫器，一天随机响几次，响的时候立刻记录"此刻在做什么、和谁、感受如何"。这套方法绕开了回忆偏差——人回忆时会美化，而即时记录不会。作者与团队用它在全球采集了<strong>十万量级的瞬时体验样本</strong>，是全书结论的基础。</div>
+        <div class="example">💡 这也是它区别于"幸福学"泛论的关键：结论建立在"人当时真实的状态"上，不是事后叙述。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">跨群体的访谈：从攀岩者到流水线工人</div>
+        <div class="content">研究对象包括攀岩者、外科医生、棋手、作曲家、流水线工人、意大利山区农民、盲人棋手等。这群人做的具体事毫无共性，但描述心流时用的词高度相似——这是"心流是一种普遍结构"最有力的间接证据。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">工作与闲暇的对比数据</div>
+        <div class="content">ESM 数据反复显示：<strong>工作时段的心流频率高于闲暇时段</strong>，尽管受访者主观上更想休息。这个"数据与意愿相反"的结果，是全书最有解释力的发现之一，也直接支撑了"闲暇需要设计"的结论。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 贯穿论点 -->
+  <div class="section" id="insights">
+    <h2>贯穿论点：五条最值得带走的判断</h2>
+    <div class="insight-card">
+      <div class="insight-title">一、幸福是注意力的副产品，不是目标</div>
+      <div class="insight-body">你无法"直接追求幸福"——就像你无法直接让自己睡着。你能做的只是创造它出现的条件：一个清晰的目标、一个匹配难度的挑战、一条即时的反馈。条件齐了，幸福自己会来。</div>
+      <div class="insight-evidence">依据：第一章对"幸福假象"的拆解 + 第三章"目标不假外求"</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">二、痛苦的很大一部分，是精神能量的无效消耗</div>
+      <div class="insight-body">焦虑、嫉妒、烦躁之所以让人疲惫，不是因为情绪本身，而是因为它们持续占用注意力却推进不了任何事。心流的价值不只是"爽"，而是把被浪费的算力收回来。</div>
+      <div class="insight-evidence">依据：第二章"内在失序"与"精神熵"</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">三、成长发生在"略高于能力"的那一档</div>
+      <div class="insight-body">太易则无聊，太难则焦虑。真正推动人的，是那个"大概能做到、但不确定"的区间。这解释了一个常见困境：稳定到极致的工作，往往也是停止成长的工作。</div>
+      <div class="insight-evidence">依据：第三章心流通道 + 第四章成长螺旋</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">四、工作比闲暇更容易产生心流，这很反直觉但很重要</div>
+      <div class="insight-body">工作有目标、有反馈、有难度梯度；闲暇通常什么都没有。所以真正的问题不是"工作太累"，而是"闲暇没有结构"。把闲暇当空白填满，等于放弃了最自由的那段时间。</div>
+      <div class="insight-evidence">依据：第七至八章 ESM 对比数据 + 里科案例</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">五、意义不是找到的，是整合出来的</div>
+      <div class="insight-body">人生意义不是藏在某处等你发现的答案，而是你把无数段投入串成一条线之后，回头看时才出现的东西。所以它属于"做"的人，不属于"想"的人。</div>
+      <div class="insight-evidence">依据：第十章"一贯的人生主题"与"重获内心和谐"</div>
+    </div>
+  </div>
+
+  <!-- 规律 -->
+  <div class="section" id="laws">
+    <h2>贯穿规律：五条反复出现的机制</h2>
+    <div class="law-grid">
+      <div class="law-card">
+        <h4><span class="law-no">壹</span>注意力守恒律</h4>
+        <p>注意力总量有限，投给 A 就无法投给 B。因此"没时间"常是假问题，"注意力被切碎"才是真问题——碎片化的不是时间，是意识。</p>
+      </div>
+      <div class="law-card">
+        <h4><span class="law-no">贰</span>难度匹配律</h4>
+        <p>心流只出现在挑战与技能接近的窄带内。技能会自然增长，所以挑战必须主动上调——不调整，通道就会自己跑掉。</p>
+      </div>
+      <div class="law-card">
+        <h4><span class="law-no">叁</span>反馈即时律</h4>
+        <p>反馈越延迟，注意力越难维持。凡是"干很久都不知道好坏"的事，几乎不可能产生心流——这是很多现代工作的结构性缺陷。</p>
+      </div>
+      <div class="law-card">
+        <h4><span class="law-no">肆</span>目的内化律</h4>
+        <p>奖赏一旦变成唯一理由，活动就失去自足性。所以外部奖励能启动行为，却常常同时杀死心流——这就是"把爱好做成工作后不爱了"的机制。</p>
+      </div>
+      <div class="law-card">
+        <h4><span class="law-no">伍</span>复杂度增长律</h4>
+        <p>心流的长期效果是自我同时变得更独特、更连接。只分化不整合会孤立，只整合不分化会消融——两个方向都得走。</p>
+      </div>
+      <div class="law-card">
+        <h4><span class="law-no">陆</span>结构优先律</h4>
+        <p>同样一段时间，有结构则成心流，无结构则滑向消遣。自由时间之所以常被浪费，正因为"自由"本身不提供目标。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2>记忆钩子：三行公式装下全书</h2>
+    <div class="formula-box">
+      <span class="f-main">心流 = 清晰目标 × 即时反馈 × （挑战 ≈ 技能）</span>
+      <span class="f-note">三个乘数，任一为零结果都是零。缺目标则注意力无处安放，缺反馈则无法校正，难度错位则落入焦虑或无聊。</span>
+    </div>
+    <div class="formula-box">
+      <span class="f-main">成长 = 心流之后，把挑战再抬高一档</span>
+      <span class="f-note">心流不是终点，是台阶。停在原地的人不是不努力，而是没有上调难度。</span>
+    </div>
+    <div class="formula-box">
+      <span class="f-main">意义 = Σ（一生中可整合的心流片段）</span>
+      <span class="f-note">意义不是加法式累积，而是这些片段被一条主题串起来之后才成立的乘法。</span>
+    </div>
+
+    <div class="tree-box">
+<span class="tb-hi">心流的运行结构</span>
+
+  外部世界
+     │  信息洪流（远超处理能力）
+     ▼
+  <span class="tb-hi">注意力</span>（精神能量 · 有限）  ──筛选──▶  意识中呈现的现实
+     │
+     ├── 投向冲突信息 ──▶ <span class="tb-dim">精神熵</span>（焦虑 / 烦躁 / 内耗）
+     │
+     └── 投向可处理目标 ──▶ <span class="tb-hi">心流</span>（有序 / 忘我 / 自足）
+                              │
+                              ├─ 即时反馈 ──▶ 技能 +1
+                              │                 │
+                              └─ 挑战上调 ◀─────┘   （成长螺旋）
+</div>
+  </div>
+
+  <!-- 金句 -->
+  <div class="section" id="quotes">
+    <h2>核心金句</h2>
+    <blockquote class="quote-block">
+      最好的时刻，通常不是被动接受的放松时刻；它们多半发生在一个人为了完成某件困难而有价值的事，把身心主动拉伸到极限的时候。
+      <span class="cite">—— 综合提炼自第一章开篇论述（非逐字原文）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      享乐只是把意识恢复到均衡状态；乐趣则推动意识向前，让自我变得比之前更复杂。
+      <span class="cite">—— 综合提炼自第三章「享乐与乐趣」一节</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      幸福不是发生在我们身上的事，而是我们如何对待发生在我们身上的事；它需要准备、培养与守护，像一门需要长期练习的技艺。
+      <span class="cite">—— 综合提炼自第一章「人何时最幸福」</span>
+    </blockquote>
+  </div>
+
+  <!-- 延伸比较 -->
+  <div class="section" id="extension">
+    <h2>延伸与比较</h2>
+    <table class="extension">
+      <thead>
+        <tr><th>维度</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>积极心理学的奠基之作，也是"心流"这一概念的原典。它做的不只是提出一个词，而是把"幸福"从哲学思辨和励志格言里拽出来，变成一个<strong>可观察、可测量的意识状态</strong>。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>强烈的<strong>内在决定论</strong>：外部条件被系统性降权，解释权几乎全部交给个人如何组织注意力。好处是给人真实的能动性，代价是容易低估结构性约束。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+            ① <strong>对结构性不平等着墨很少</strong>——一个每天工作十二小时、通勤三小时的人，"自主设计挑战"的空间远比书中案例小；<br>
+            ② <strong>样本偏向可自主安排生活的人</strong>（学者、艺术家、专业人士），结论外推需谨慎；<br>
+            ③ "自得其乐的性格"作为解释项有循环风险：用心流解释性格，又用性格解释心流；<br>
+            ④ 对<strong>负面体验的价值</strong>讨论不足——无聊、停滞、痛苦也可能是必要阶段，书里更倾向把它们当作待解决的问题；<br>
+            ⑤ 成书于 1990 年，未能预见<strong>算法推荐对注意力的系统性争夺</strong>——今天最大的精神熵来源，已经不是内心，而是被设计好的外部捕获。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《被讨厌的勇气》</strong>：同样是"幸福取决于你如何解释"，但阿德勒把重心放在人际关系与勇气，契克森米哈赖放在注意力结构——两本合起来才完整。<br>
+            <strong>《思考，快与慢》</strong>：卡尼曼讲注意力的<strong>缺陷</strong>（偏差与懒惰），本书讲注意力的<strong>用法</strong>。同一资源的两面。<br>
+            <strong>《深度工作》</strong>：把心流理论直接搬进知识工作的操作手册，可视为本书的"实施篇"。<br>
+            <strong>《工作、消费主义和新穷人》</strong>：正好构成张力——鲍曼说消费社会把人的欲望结构化了，契克森米哈赖说你可以自己重建结构。一个讲约束，一个讲出路。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与<strong>《控制论与科学方法论》</strong>同构：负反馈 = 即时反馈，可能性空间的收缩 = 目标的明确化，<strong>稳态结构</strong> = 意识井然有序。金观涛讲系统的控制，契克森米哈赖讲意识的控制，底层是同一套反馈语言。<br>
+            与<strong>《信息与激励经济学》</strong>呼应：精神熵 ≈ 信息过载导致的处理成本上升；即时反馈 ≈ 降低信息不对称。<br>
+            与<strong>《技术的本质》</strong>形成有趣对照：阿瑟说技术是对现象的编程，本书说心流是对注意力的编程——都是"给混沌装上结构"。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>工作设计</strong>：给任务切出可完成的单元、把反馈周期缩短、难度按能力上调——这三件事比任何激励方案都直接。<br>
+            <strong>教育</strong>：把"难度分级 + 即时反馈 + 明确目标"做进练习设计，学习的枯燥感会大幅下降。<br>
+            <strong>个人</strong>：先别问"我为什么不快乐"，改问"我最近的注意力都投在哪了、有没有一件事让我忘了看表"。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection">
+    <h2>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">一、这本书最锋利的地方，也是最可疑的地方</div>
+      <p>把幸福完全交给"如何组织注意力"，等于给了人极大的自主权，也等于把结构性问题的责任转移给了个人。一个被算法喂养、被工时挤压、被住房焦虑围困的人，被告知"你可以自己设计心流"——这句话既是真实的出路，也是一种温和的责备。</p>
+      <p>更公允的读法也许是：<strong>在你能控制的范围内，这套方法极其有效；在范围之外，它不该被用来解释失败。</strong>分不清这两件事，心流理论就会退化成"你不够努力"的另一种说法。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">二、1990 年的心流，遇上 2026 年的注意力经济</div>
+      <p>作者写这本书时，最大的精神熵来源还是内心的冲突。今天最大的来源是<strong>外部被精心设计过的捕获</strong>：无限滚动、可变奖励、社交比较。这些机制恰恰利用了心流的几个要件（即时反馈、难度微调、目标清晰），却把它们用在<strong>不产生自我复杂度</strong>的地方。</p>
+      <p>所以这本书在今天读，最有价值的或许不是那八条特征，而是它的<strong>反向用法</strong>：既然心流的条件可以被设计，那就要问一句——这套设计是为我服务，还是在消耗我？</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">三、一个作者没有正面回答的问题</div>
+      <p>如果一个人终其一生都在心流中，做的是极其精细但毫无外部价值的事——比如把一副牌洗到出神入化——这算不算好的人生？按书里的标准，他自我复杂、意识有序、毫无内耗，几乎无可指摘。但作者显然更希望心流指向"有意义"的方向。</p>
+      <p>这个缝隙说明：<strong>心流解决的是"体验的质量"，回答不了"方向的对错"。</strong>第十章试图补上这一块，用的是"人生主题"——但主题本身的好坏，仍需要心流之外的尺度来评判。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">四、一个可以马上做的实验</div>
+      <p>挑一件你每天必做、且觉得枯燥的事（通勤、洗碗、整理数据都行），给它加上三个东西：一个可判断的小目标、一条能立刻感知的反馈、一个比昨天稍高的难度。</p>
+      <p>做一周。如果它真的变得不那么难熬——那这本书的核心主张就在你身上被验证了一次；如果没有，也值得记下来，因为那说明你的阻力不在方法层，而在别处。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《心流：最优体验心理学》知识图谱 · 基于原著整理 · 仅供个人学习回顾<br>
+    金句均为综合提炼并已标注，非逐字原文摘录
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  flow: {
+    title: '心流（Flow）',
+    content: '<p>指人完全投入某项活动时的整体体验：注意力高度集中、自我意识暂时消失、时间感扭曲，且活动本身即目的。</p><ul><li>不是"快乐"，而是<strong>没有内耗</strong>——意识中的信息与目标高度协调</li><li>自带奖赏，因此不依赖外部报酬（autotelic）</li><li>可发生在工作、运动、创作、交谈，甚至枯燥的流水线上</li></ul>'
+  },
+  psychicEntropy: {
+    title: '精神熵 / 内在失序（Psychic Entropy）',
+    content: '<p>当出现与目标冲突的信息（威胁、焦虑、坏消息），注意力被强行征用去处理它，原本有序的意识结构被打散，这种状态即精神熵。</p><ul><li>表现：焦虑、嫉妒、烦躁、注意力溃散、反复回想</li><li>本质：<strong>精神能量被无效消耗</strong>，推进不了任何事</li><li>与心流互为反面：一个是内耗，一个是全投入</li></ul>'
+  },
+  psychicEnergy: {
+    title: '精神能量（Psychic Energy）',
+    content: '<p>作者对"注意力"的另一种称呼。他认为注意力是人唯一真正拥有、且总量有限的资源。</p><ul><li>你注意什么，你的现实就在哪里成形</li><li>"没时间"常是假问题，"注意力被切碎"才是真问题</li><li>心流的本质，就是把这份能量集中投向一处</li></ul>'
+  },
+  pleasureEnjoy: {
+    title: '享乐 vs 乐趣（Pleasure vs Enjoyment）',
+    content: '<p>书中最重要的一对区分，常被中译读者混为一谈。</p><ul><li><strong>享乐</strong>：恢复均衡的体验，如吃饱、休息、放松。不带来新东西，只把状态调回基线</li><li><strong>乐趣</strong>：包含新奇、挑战与成就，完成后自我会变得不一样</li><li>两者都需要，但一生只交给前者，成长就停止</li></ul>'
+  },
+  autotelic: {
+    title: '自得其乐 / 自我目的性（Autotelic）',
+    content: '<p>源自希腊语 auto（自身）+ telos（目的）：目的在活动内部，而非外部奖赏。</p><ul><li>"自得其乐的性格"指能把困境转化为可控制目标的倾向</li><li>一旦外部奖励成为唯一理由，活动就失去自足性，心流随之消失</li><li>这也是"爱好变成工作后就不爱了"的机制解释</li></ul>'
+  },
+  complexity: {
+    title: '自我复杂度（Complexity）',
+    content: '<p>作者用来衡量成长的标准，由两个方向同时构成：</p><ul><li><strong>分化</strong>（differentiation）：变得更独特、更不像别人</li><li><strong>整合</strong>（integration）：与他人和世界连接得更深</li><li>只有分化会孤立，只有整合会消融。两者同进，人格才真正成长</li></ul>'
+  },
+  esm: {
+    title: '经验采样法（ESM）',
+    content: '<p>Experience Sampling Method。给被试配呼叫器，一天随机响数次，响时立即记录"此刻在做什么、和谁、感受如何"。</p><ul><li>绕开回忆偏差——人回忆时会美化，即时记录不会</li><li>作者团队用它采集了十万量级的瞬时体验样本</li><li>本书关于"工作中心流更多"的结论即建立在此方法上</li></ul>'
+  },
+  workParadox: {
+    title: '工作悖论',
+    content: '<p>ESM 数据反复显示：人在<strong>工作时</strong>报告的心流频率高于闲暇，尽管主观上更想休息。</p><ul><li>原因一：工作天然具备目标、反馈与难度梯度</li><li>原因二：闲暇通常没有结构，注意力无处安放</li><li>作者由此提出：真正需要设计的不是工作，而是闲暇</li></ul>'
+  },
+  lifeTheme: {
+    title: '人生主题（Life Theme）',
+    content: '<p>作者在第十章提出的概念：把散落的经历、目标与投入组织成一个<strong>统一的主题</strong>，人生因而具有方向与意义。</p><ul><li>意义不是被发现的，而是被建构的</li><li>不必宏大——把一门手艺做到极致也足以成为主题</li><li>关键在于"一贯"：能让大部分选择串成一条线</li></ul>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

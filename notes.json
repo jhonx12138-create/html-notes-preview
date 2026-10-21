@@ -19,7 +19,7 @@
     "id": "4",
     "title": "《具身智能》",
     "file": "notes/note4.html",
-    "date": "2026-06-01",
+    "date": "2026-10-17",
     "category": "AI与科技",
     "author": "刘云浩"
   },
@@ -43,7 +43,7 @@
     "id": "7",
     "title": "《芯片简史》",
     "file": "notes/note7.html",
-    "date": "2026-05-30",
+    "date": "2026-10-17",
     "category": "AI与科技",
     "author": "汪波"
   },
@@ -220,7 +220,7 @@
     "title": "《社会心理学》",
     "file": "notes/note29.html",
     "date": "2026-07-29",
-    "category": "组织与管理",
+    "category": "认知与心理",
     "author": "戴维·迈尔斯"
   },
   {
@@ -267,7 +267,7 @@
     "id": "35",
     "title": "《金融学》（人大版）",
     "file": "notes/note35.html",
-    "date": "2026-05-29",
+    "date": "2026-10-17",
     "category": "金融与财务",
     "author": "黄达"
   },
@@ -332,7 +332,7 @@
     "title": "《流量池》",
     "file": "notes/note43.html",
     "date": "2026-10-09",
-    "category": "组织与管理",
+    "category": "商业与市场",
     "author": "杨飞"
   },
   {
@@ -342,5 +342,69 @@
     "date": "2026-10-09",
     "category": "通识与科普",
     "author": "金观涛、华国凡"
+  },
+  {
+    "id": "45",
+    "title": "《抢占心智》",
+    "file": "notes/note45.html",
+    "date": "2026-10-20",
+    "category": "商业与市场",
+    "author": "江南春"
+  },
+  {
+    "id": "46",
+    "title": "《智能商业》",
+    "file": "notes/note46.html",
+    "date": "2026-10-21",
+    "category": "商业与市场",
+    "author": "曾鸣"
+  },
+  {
+    "id": "47",
+    "title": "《营销管理》",
+    "file": "notes/note47.html",
+    "date": "2026-10-19",
+    "category": "商业与市场",
+    "author": "菲利普·科特勒"
+  },
+  {
+    "id": "48",
+    "title": "《心流》",
+    "file": "notes/note48.html",
+    "date": "2026-10-21",
+    "category": "认知与心理",
+    "author": "米哈里·契克森米哈赖"
+  },
+  {
+    "id": "49",
+    "title": "《思考快与慢》",
+    "file": "notes/note49.html",
+    "date": "2026-10-21",
+    "category": "认知与心理",
+    "author": "丹尼尔·卡尼曼"
+  },
+  {
+    "id": "50",
+    "title": "《怪诞行为学》",
+    "file": "notes/note50.html",
+    "date": "2026-10-21",
+    "category": "认知与心理",
+    "author": "丹·艾瑞里"
+  },
+  {
+    "id": "51",
+    "title": "《怪诞行为学2》",
+    "file": "notes/note51.html",
+    "date": "2026-10-21",
+    "category": "认知与心理",
+    "author": "丹·艾瑞里"
+  },
+  {
+    "id": "52",
+    "title": "《贾宁财务讲义》",
+    "file": "notes/note52.html",
+    "date": "2026-10-21",
+    "category": "金融与财务",
+    "author": "贾宁"
   }
 ]

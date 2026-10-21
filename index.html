@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.9</title>
+<title>📚 书阁 v8.9.10</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -66,6 +66,8 @@
   --cat-org-management: #5E81AC;
   --cat-general-science: #C0976C;
   --cat-finance: #D4953B;
+  --cat-business-market: #8E4055;
+  --cat-cognition-psych: #37667A;
   --cat-other: #8C8C94;
 
   --radius-sm: 10px;
@@ -132,6 +134,8 @@
   --cat-org-management: #7b9dc4;
   --cat-general-science: #d4a87c;
   --cat-finance: #e4a85b;
+  --cat-business-market: #c96d85;
+  --cat-cognition-psych: #6ba3b8;
   --cat-other: #a0a0a8;
 
   --shadow-sm: 0 1px 4px rgba(0,0,0,0.2);
@@ -1190,6 +1194,8 @@ html, body {
 .book-card.org-management   { --c1:#55684B; --c2:#414F39; --c3:#2F3A2A; }
 .book-card.general-science  { --c1:#8A7250; --c2:#6D5A3F; --c3:#54452F; }
 .book-card.finance          { --c1:#96702F; --c2:#77561F; --c3:#5C4114; }
+.book-card.business-market  { --c1:#8E4055; --c2:#713042; --c3:#54222F; }
+.book-card.cognition-psych  { --c1:#37667A; --c2:#2A5060; --c3:#1E3B47; }
 .book-card.other            { --c1:#4A4A44; --c2:#33332E; --c3:#24241F; }
 
 /* ========== Loading & Error ========== */
@@ -1295,7 +1301,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.9.9</span>
+        <span class="hero-version">v8.9.10</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1321,7 +1327,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.9</span>
+              <span class="hero-version">v8.9.10</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1452,11 +1458,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.9.9</span>
+                <span class="setting-value">v8.9.10</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.9</div>
+              <div class="about-version">📚 书阁 v8.9.10</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1818,8 +1824,17 @@ html, body {
      二是导入白名单仍接受该键并静默忽略，保证旧备份文件依然能正常导入。 ---- */
 
   /* ---- Persistence: Categories ---- */
-  const PRESET_CATEGORIES = ['全部','AI与科技','数学','政治与经济','社会与文化','组织与管理','通识与科普','金融与财务','其他'];
-  function loadCategories() { try { const r=localStorage.getItem('notes-categories-v2'); if(r){ const p=JSON.parse(r); if(Array.isArray(p)&&p.length) return p; } } catch(_){} return [...PRESET_CATEGORIES]; }
+  const PRESET_CATEGORIES = ['全部','AI与科技','数学','政治与经济','社会与文化','组织与管理','商业与市场','认知与心理','通识与科普','金融与财务','其他'];
+  /* v8.9.10：书目新增了「商业与市场」「认知与心理」两个分类。
+     老设备的 notes-categories-v2 缓存里没有它们，这里补上（插在「其他」之前），
+     否则手动改笔记分类时选不到新分类。 */
+  const NEW_CATS = ['商业与市场', '认知与心理'];
+  function loadCategories() {
+    let cats = [...PRESET_CATEGORIES];
+    try { const r=localStorage.getItem('notes-categories-v2'); if(r){ const p=JSON.parse(r); if(Array.isArray(p)&&p.length) cats=p.slice(); } } catch(_){}
+    NEW_CATS.forEach(c => { if (!cats.includes(c)) cats.splice(Math.max(0, cats.length - 1), 0, c); });
+    return cats;
+  }
   function saveCategories(c) { try { localStorage.setItem('notes-categories-v2',JSON.stringify(c)); } catch(_){} }
   // v8.2 升级：清除旧版本分类缓存（避免旧7类显示）
   try { localStorage.removeItem('notes-categories'); } catch(_){}
@@ -2300,8 +2315,9 @@ html, body {
   /* ===================================================================
    *  SHELF VIEW (New Book Card Design)
    * =================================================================== */
-  const CAT_COLOR_MAP = { 'AI与科技': 'ai-tech', '数学': 'math', '政治与经济': 'politics-economy', '社会与文化': 'society-culture', '组织与管理': 'org-management', '通识与科普': 'general-science', '金融与财务': 'finance', '其他': 'other' };
-  const CAT_ORDER = ['AI与科技', '数学', '政治与经济', '社会与文化', '组织与管理', '通识与科普', '金融与财务', '其他'];
+  const CAT_COLOR_MAP = { 'AI与科技': 'ai-tech', '数学': 'math', '政治与经济': 'politics-economy', '社会与文化': 'society-culture', '组织与管理': 'org-management', '商业与市场': 'business-market', '认知与心理': 'cognition-psych',
+    '通识与科普': 'general-science', '金融与财务': 'finance', '其他': 'other' };
+  const CAT_ORDER = ['AI与科技', '数学', '政治与经济', '社会与文化', '组织与管理', '商业与市场', '认知与心理', '通识与科普', '金融与财务', '其他'];
   /* v8.9.6：书卡三级色板（封面 / 深调 / 书脊）。前 6 组与设计稿一致，
      通识与科普、金融与财务两色按同一套「低饱和 · 深调 · 白字过 AA」的规则补齐。 */
   const CAT_PALETTES = {
@@ -2312,6 +2328,8 @@ html, body {
     '组织与管理': { c1:'#55684B', c2:'#414F39', c3:'#2F3A2A' },
     '通识与科普': { c1:'#8A7250', c2:'#6D5A3F', c3:'#54452F' },
     '金融与财务': { c1:'#96702F', c2:'#77561F', c3:'#5C4114' },
+    '商业与市场': { c1:'#8E4055', c2:'#713042', c3:'#54222F' },
+    '认知与心理': { c1:'#37667A', c2:'#2A5060', c3:'#1E3B47' },
     '其他':      { c1:'#4A4A44', c2:'#33332E', c3:'#24241F' }
   };
   function catTickColor(cat) { return (CAT_PALETTES[cat] || CAT_PALETTES['其他']).c2; }

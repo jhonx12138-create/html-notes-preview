@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>怪诞行为学2：非理性的积极力量 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 苔绿系（行为科学 / 实验记录本） */
+[data-theme="sage"] {
+  --primary: #3f5a48; --primary-light: #eef2ec; --primary-dark: #24352a;
+  --accent: #6d8f74; --accent-deep: #4a6b52;
+  --bg: #fbfaf6; --bg-card: #ffffff; --bg-soft: #f3f2e9; --bg-softer: #e8e7d9;
+  --bg-tag: #dce7da;
+  --text: #2e3932; --text-heading: #1d2822; --text-muted: #7b8a80; --text-light: #97a49b;
+  --border: #d4dacf; --border-soft: #e5e8df;
+  --highlight: #eef2ec; --highlight-strong: #dce7da;
+  --shadow-sm: 0 1px 2px rgba(40,55,45,0.06); --shadow: 0 2px 6px rgba(40,55,45,0.07);
+  --radius-sm: 3px; --radius: 5px; --radius-lg: 7px;
+  --color-concept: #4a6b52; --color-tool: #3f6b7a; --color-case: #7a6a3a;
+  --color-history: #8a6a44; --color-insight: #35564a; --color-debate: #a04a3c;
+  --color-solution: #4a6b52; --color-crisis: #a8503c; --color-mechanism: #4a7285;
+  --color-effect: #6b5a86; --color-core: #24352a;
+  --warn-bg: #fbf6e6; --warn-border: #e8dca8; --example-bg: #faf8f0;
+  --reflect-bg: #f1f0e4; --quote-border: #6d8f74;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 230px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 26px 14px 26px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar::before {
+  content: ''; display: block; height: 3px; width: 42px;
+  background: var(--primary); margin-bottom: 18px;
+}
+.sidebar h3 {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  letter-spacing: 1.6px;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 1px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 10px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s, color .15s;
+  border-left: 2px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-soft); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+.sidebar .toc-l2 a.active { color: var(--primary-dark); }
+
+/* ===== 主内容 ===== */
+.main { margin-left: 230px; max-width: 1080px; padding: 40px 44px 120px 44px; }
+
+/* ===== 页头 ===== */
+.header {
+  position: relative;
+  background: linear-gradient(135deg, #ffffff 0%, #f7f8f1 100%);
+  border: 1px solid var(--border-soft);
+  border-left: 6px solid var(--primary);
+  border-radius: var(--radius-lg);
+  padding: 34px 38px 30px 38px;
+  margin-bottom: 30px;
+  overflow: hidden;
+}
+.header::after {
+  content: '';
+  position: absolute; right: -70px; top: -70px;
+  width: 210px; height: 210px;
+  border: 1px solid var(--bg-softer);
+  border-radius: 50%;
+}
+.header::before {
+  content: '';
+  position: absolute; right: -20px; top: -20px;
+  width: 110px; height: 110px;
+  border: 1px solid var(--bg-softer);
+  border-radius: 50%;
+}
+.header h1 {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+  letter-spacing: .5px;
+  position: relative; z-index: 1;
+}
+.header .subtitle {
+  font-family: var(--font-mono);
+  color: var(--accent-deep);
+  font-size: 12px;
+  letter-spacing: 1.2px;
+  margin-bottom: 16px;
+  position: relative; z-index: 1;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: rgba(255,255,255,.7);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+  position: relative; z-index: 1;
+}
+.header .meta strong { color: var(--text-heading); font-weight: 600; }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 7px; position: relative; z-index: 1; }
+.header .badge {
+  background: transparent;
+  color: var(--accent-deep);
+  border: 1px solid var(--bg-softer);
+  padding: 3px 12px;
+  border-radius: 2px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  letter-spacing: .6px;
+}
+.header .soul {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--primary-dark);
+  line-height: 1.75;
+  position: relative; z-index: 1;
+}
+.header .soul em { font-style: normal; border-bottom: 2px solid var(--bg-softer); padding-bottom: 1px; }
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 34px; }
+.section h2 {
+  font-family: var(--font-serif);
+  font-size: 21px;
+  font-weight: 600;
+  color: var(--text-heading);
+  margin-bottom: 16px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.section h2 .no {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin-right: 10px;
+  font-weight: 500;
+}
+.section h2::after {
+  content: '';
+  position: absolute; left: 0; bottom: -1px;
+  width: 52px; height: 2px;
+  background: var(--primary);
+}
+.section h3 {
+  font-size: 15.5px;
+  color: var(--text-heading);
+  margin: 24px 0 10px;
+  padding-left: 11px;
+  border-left: 3px solid var(--accent);
+  font-weight: 600;
+}
+.section h3 .mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  margin-right: 8px;
+  letter-spacing: .8px;
+}
+.lead { font-size: 14px; color: var(--text); line-height: 1.8; margin-bottom: 12px; }
+.lead strong { color: var(--primary-dark); }
+
+/* ===== 信息卡 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(288px, 1fr));
+  gap: 13px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 0 20px 18px 20px;
+  transition: border-color .2s, transform .2s;
+}
+.info-card:hover { border-color: var(--border); transform: translateY(-1px); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  margin: 0 -20px 12px -20px;
+  padding: 13px 20px 10px 20px;
+  color: var(--text-heading);
+  border-bottom: 1px solid var(--border-soft);
+  position: relative;
+}
+.info-card .label::before {
+  content: '';
+  position: absolute; left: 0; top: 12px;
+  width: 3px; height: 15px;
+  background: var(--accent);
+}
+.info-card.concept .label::before { background: var(--color-concept); }
+.info-card.tool .label::before { background: var(--color-tool); }
+.info-card.case .label::before { background: var(--color-case); }
+.info-card.history .label::before { background: var(--color-history); }
+.info-card.insight .label::before { background: var(--color-insight); }
+.info-card.debate .label::before { background: var(--color-debate); }
+.info-card.solution .label::before { background: var(--color-solution); }
+.info-card.crisis .label::before { background: var(--color-crisis); }
+.info-card.mechanism .label::before { background: var(--color-mechanism); }
+.info-card.effect .label::before { background: var(--color-effect); }
+.info-card.core .label::before { background: var(--color-core); }
+.info-card .content { font-size: 13.5px; line-height: 1.75; }
+.info-card .content strong { color: var(--primary-dark); }
+.info-card .example {
+  margin-top: 11px;
+  padding: 9px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  border-left: 2px solid var(--border);
+  line-height: 1.65;
+}
+.info-card .example strong { color: var(--accent-deep); }
+.exp-tag {
+  float: right;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent);
+  letter-spacing: .8px;
+  font-weight: 500;
+}
+
+/* ===== 结构树 ===== */
+.tree-box {
+  background: #26332b;
+  color: #d9e2d6;
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  overflow-x: auto;
+  margin: 14px 0;
+  white-space: pre;
+}
+.tree-box .hl { color: #b8d4a8; font-weight: 600; }
+.tree-box .dim { color: #7f9184; }
+
+/* ===== 倒U图 ===== */
+.figure-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 20px 22px 14px 22px;
+  margin: 16px 0;
+}
+.figure-box .fig-title {
+  font-size: 13px; font-weight: 700; color: var(--text-heading);
+  margin-bottom: 4px;
+}
+.figure-box .fig-sub {
+  font-size: 12px; color: var(--text-muted); margin-bottom: 10px;
+}
+.figure-box svg { display: block; width: 100%; height: auto; }
+
+/* ===== 对照双栏（实验组） ===== */
+.trial-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 16px 0;
+}
+.trial-col {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.trial-col.a { border-top: 3px solid var(--accent-deep); }
+.trial-col.b { border-top: 3px solid var(--color-crisis); }
+.trial-col .tc-head {
+  font-size: 13px; font-weight: 700; color: var(--text-heading);
+  margin-bottom: 3px;
+}
+.trial-col .tc-sub {
+  font-family: var(--font-mono); font-size: 10.5px; color: var(--text-muted);
+  letter-spacing: .6px; margin-bottom: 12px;
+}
+.bar-row { margin-bottom: 12px; }
+.bar-row .br-label {
+  display: flex; justify-content: space-between;
+  font-size: 12px; color: var(--text-muted); margin-bottom: 5px;
+}
+.bar-row .br-label b { color: var(--text-heading); font-family: var(--font-mono); }
+.bar-track { height: 9px; background: var(--bg-soft); border-radius: 6px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 6px; }
+.trial-col.a .bar-fill { background: var(--accent-deep); }
+.trial-col.b .bar-fill { background: #c07a64; }
+.trial-col .tc-note {
+  font-size: 12.5px; color: var(--text); line-height: 1.7;
+  margin-top: 10px; padding-top: 10px;
+  border-top: 1px dashed var(--border-soft);
+}
+
+/* ===== 适应时间结构 ===== */
+.adapt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.adapt-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.adapt-card .ac-tag {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--accent); letter-spacing: .8px; margin-bottom: 6px;
+}
+.adapt-card .ac-name {
+  font-size: 14px; font-weight: 700; color: var(--text-heading); margin-bottom: 7px;
+}
+.adapt-card .ac-body { font-size: 13px; line-height: 1.7; }
+.adapt-card.good { border-left: 3px solid var(--accent-deep); }
+.adapt-card.bad { border-left: 3px solid var(--color-crisis); }
+
+/* ===== 洞察卡 ===== */
+.insight-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px 18px 60px;
+  margin-bottom: 11px;
+  position: relative;
+}
+.insight-card::before {
+  content: attr(data-no);
+  position: absolute; left: 20px; top: 18px;
+  font-family: var(--font-serif);
+  font-size: 26px; line-height: 1;
+  color: var(--bg-softer);
+  font-weight: 700;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 14.5px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body { font-size: 13.5px; line-height: 1.75; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 9px;
+  padding-top: 9px; border-top: 1px dashed var(--border-soft);
+}
+
+/* ===== 规律卡 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 15px 20px;
+  margin-bottom: 9px;
+  display: flex; gap: 16px; align-items: baseline;
+}
+.law-card .lc-no {
+  font-family: var(--font-mono);
+  font-size: 11px; color: var(--accent);
+  flex: 0 0 26px; letter-spacing: .5px;
+}
+.law-card .lc-body h4 {
+  font-size: 13.5px; color: var(--primary-dark); margin-bottom: 4px; font-weight: 700;
+}
+.law-card .lc-body p { font-size: 13px; line-height: 1.68; }
+
+/* ===== 记忆钩子 ===== */
+.hook-box {
+  background: #26332b;
+  color: #dde6da;
+  border-radius: var(--radius);
+  padding: 26px 30px;
+  margin: 16px 0;
+}
+.hook-box .hk-tag {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: #8fae94; letter-spacing: 1.4px; margin-bottom: 12px;
+}
+.hook-box .hk-line {
+  font-family: var(--font-serif);
+  font-size: 16px; line-height: 2;
+  color: #eef4ec;
+}
+.hook-box .hk-line em { font-style: normal; color: #b9d4a9; }
+.hook-box .hk-sub {
+  margin-top: 14px; padding-top: 13px;
+  border-top: 1px solid #3a4a3f;
+  font-size: 13px; color: #9db2a2; line-height: 1.7;
+}
+
+/* ===== 引用 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 3px solid var(--quote-border);
+  margin: 16px 0;
+  padding: 16px 22px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  line-height: 1.8;
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 9px;
+  font-size: 11.5px; font-family: var(--font-mono);
+  color: var(--text-muted); text-align: right;
+}
+
+/* ===== 表格 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+  border: 1px solid var(--border-soft);
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 12.5px;
+  border-bottom: 1px solid var(--border);
+  width: 17%;
+  font-family: var(--font-mono);
+  letter-spacing: .4px;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.7;
+}
+table.extension tr:last-child td { border-bottom: none; }
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 反思 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 17px 21px;
+  margin: 12px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 13.5px;
+  color: var(--primary-dark); margin-bottom: 7px;
+}
+.reflection-block p { font-size: 13px; line-height: 1.75; }
+
+/* ===== 术语按钮 / 弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent);
+  color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 3px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(30,40,33,0.42);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px; width: 90%; max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 13.5px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.72; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 26px; right: 26px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 17px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+.footer-note {
+  text-align: center; margin-top: 44px; padding: 18px;
+  color: var(--text-muted); font-size: 11.5px;
+  font-family: var(--font-mono);
+  border-top: 1px solid var(--border-soft);
+  letter-spacing: .5px;
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar, .modal-overlay, .back-to-top { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  y { color: inherit; }
+}
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 18px 15px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .trial-wrap { grid-template-columns: 1fr; }
+  .header { padding: 24px 20px; }
+  .header h1 { font-size: 23px; }
+  .insight-card { padding-left: 22px; padding-top: 44px; }
+  .insight-card::before { top: 14px; }
+  .modal-card { padding: 22px; }
+}
+</style>
+</head>
+<body data-theme="sage">
+
+<nav class="sidebar" id="sidebar">
+  <h3>THE UPSIDE OF IRRATIONALITY</h3>
+  <ul class="toc-list">
+    <li><a href="#skeleton">全书骨架</a></li>
+    <li><a href="#thesis">核心命题：两面</a></li>
+    <li><a href="#work">职场：五个做反的地方</a></li>
+    <li class="toc-l2"><a href="#ch1">01 金钱的诱惑</a></li>
+    <li class="toc-l2"><a href="#ch2">02 工作的意义</a></li>
+    <li class="toc-l2"><a href="#ch3">03 宜家效应</a></li>
+    <li class="toc-l2"><a href="#ch4">04 我的点子</a></li>
+    <li class="toc-l2"><a href="#ch5">05 报复的本能</a></li>
+    <li><a href="#life">生活：五个看错的地方</a></li>
+    <li class="toc-l2"><a href="#ch6">06 适应的法则</a></li>
+    <li class="toc-l2"><a href="#ch7">07 好不好</a></li>
+    <li class="toc-l2"><a href="#ch8">08 市场失灵</a></li>
+    <li class="toc-l2"><a href="#ch9">09 感情的偏好</a></li>
+    <li class="toc-l2"><a href="#ch10">10 情绪的长尾</a></li>
+    <li class="toc-l2"><a href="#ch11">11 一切都要检验</a></li>
+    <li><a href="#insights">贯穿论点</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸比较</a></li>
+    <li><a href="#reflection">延伸思辨</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <h1>怪诞行为学2</h1>
+    <div class="subtitle">THE UPSIDE OF IRRATIONALITY · 非理性的积极力量</div>
+    <div class="meta">
+      <span><strong>作者</strong> 丹·艾瑞里（Dan Ariely）</span>
+      <span><strong>译者</strong> 赵德亮</span>
+      <span><strong>出版</strong> 中信出版集团 · 第 3 版 2024.8</span>
+      <span><strong>篇幅</strong> 250 页 · 两部分 11 章</span>
+      <span><strong>原版</strong> 2010</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">A 类 · 论点论证链</span>
+      <span class="badge">行为经济学</span>
+      <span class="badge">15 个术语</span>
+      <span class="badge">11 章归并为 10 问</span>
+    </div>
+    <div class="soul">
+      第一部证明非理性是<em>可预测的</em>；这一部反过来问：如果这些错误如此顽固，为什么进化没有把它们淘汰？答案是——它们曾是解决方案。<em>非理性不是故障，是旧环境的最优解，被新环境的参数放大了。</em>
+    </div>
+  </div>
+
+  <!-- 全书骨架 -->
+  <div class="section" id="skeleton">
+    <h2><span class="no">[0]</span>全书骨架</h2>
+    <p class="lead">这本书不在目录里讲理论，它是一本<strong>实验集</strong>：11 章 = 11 组实验，每组回答一个具体的「为什么会做反」。作者自己在导言里说得很清楚——他要做的不是建立体系，是把「人实际上怎么反应」一条条测出来。</p>
+    <div class="tree-box"><span class="dim">导言</span> 人们并非想象的那样理性
+│
+├─ <span class="hl">第一部分 · 职场</span>：为什么好的激励设计常常做反
+│   ├─ 01 金钱的诱惑 ······ 巨额奖金带不来高业绩
+│   ├─ 02 工作的意义 ······ 乐高实验：意义被拆掉之后
+│   ├─ 03 宜家效应 ········ 自己动手的东西为何更值钱
+│   ├─ 04 我的点子 ········ 不是这里发明的，就不算好
+│   └─ 05 报复的本能 ······ 明知没用，也要让你付出代价
+│
+├─ <span class="hl">第二部分 · 生活</span>：为什么我们对自己也看不准
+│   ├─ 06 适应的法则 ······ 好事会变淡，坏事也会变淡
+│   ├─ 07 好不好 ·········· 适应、伴侣与美丽市场
+│   ├─ 08 市场的失灵 ······ 在线约会为什么比不上媒妁之言
+│   ├─ 09 感情的偏好 ······ 救一个人容易，救一百万人难
+│   ├─ 10 情绪的长期效应 ·· 一时的火，烧掉几年的路
+│   └─ 11 非理性的教训 ···· 为什么一切决策都需要检验
+│
+└─ <span class="dim">贯穿全书的判断</span>：不是消灭非理性，是给它换一个环境</div>
+    <p class="lead" style="margin-top:14px;">和第一部最关键的差别在这儿：<strong>第一部是「偏差清单」，这一部是「偏差的功能解释」。</strong> 同样一个现象，第一部问「它让人错在哪」，这一部问「它原本帮人解决了什么」。</p>
+  </div>
+
+  <!-- 核心命题 -->
+  <div class="section" id="thesis">
+    <h2><span class="no">[1]</span>核心命题：非理性有两面</h2>
+    <p class="lead">作者的出发点不是「人很笨」，而是一个更难的追问：<strong>这些偏差在实验室里如此稳定，说明它们在演化上一定有作用<button class="glossary-trigger" onclick="openModal('upside')" aria-label="术语：非理性的积极力量">?</button>。</strong> 他给出的答案可以拆成三句话。</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">① 偏差是旧环境的适配器</div>
+        <div class="content">在小群体、面对面、重复博弈的环境里，这些「偏差」都是有效的：报复维持了公平的声誉，意义感换来了超额投入，对具体个体的同情保护了自己的孩子，适应能力让人在灾难后还能继续活。它们不是错误，是<strong>当时条件下的合理策略</strong>。</div>
+        <div class="example"><strong>关键：</strong>环境变了，策略没变。失灵不是因为人变笨了，是因为参数被放大了——一次博弈取代了重复博弈，陌生人取代了熟人，统计数字取代了眼前的人。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">② 积极力量是真实存在的</div>
+        <div class="content">非理性让人愿意做超出报酬的努力、信任陌生人、爱上自己做的粗糙东西、在失去之后继续生活。<strong>一个完全理性的存在不会写诗、不会养孩子、不会为一句道歉放弃索赔。</strong> 把它当纯缺陷清除，会把人也一起清掉。</div>
+        <div class="example"><strong>作者原话大意：</strong>非理性能让我们适应新环境、信任别人、乐于不断努力、爱自己的孩子。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">③ 所以目标是「设计环境」</div>
+        <div class="content">既然偏差改不掉，能改的是它被触发的条件。全书的建议都指向同一个方向：<strong>不去和人搏斗，去和场景搏斗</strong>——把意义补回去、把反馈做即时、把决定拆成小步、把诱惑挪远一点。</div>
+        <div class="example"><strong>反面：</strong>「你要更理性一点」是无效建议。作者自己承认，知道偏差也躲不过——他在书里反复写自己被商家、被情绪、被航空公司耍得团团转。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 职场 -->
+  <div class="section" id="work">
+    <h2><span class="no">[2]</span>职场：五个做反的地方</h2>
+    <p class="lead">第一部分五章，实际上是一份<strong>「激励设计失效清单」</strong>。每一章对应一个企业最常用的管理工具，然后证明它在特定条件下会反向工作。</p>
+
+    <h3 id="ch1"><span class="mono">CH 01</span>金钱的诱惑：为什么奖金越高，活越干不好</h3>
+    <p class="lead">这是全书最著名、也最容易被引用错的一章。作者跑到印度做实验，因为在那里<strong>一笔奖金可以是几个月的工资</strong>——在欧美给学生发 20 美元，根本测不出「压力」。</p>
+
+    <div class="figure-box">
+      <div class="fig-title">激励强度与表现：倒 U 形</div>
+      <div class="fig-sub">纵轴为任务表现，横轴为由奖金带来的唤醒／动机强度</div>
+      <svg viewBox="0 0 620 300" role="img" aria-label="激励与表现的倒U形曲线">
+        <line x1="62" y1="248" x2="576" y2="248" stroke="#d4dacf" stroke-width="1.5"/>
+        <line x1="62" y1="248" x2="62" y2="34" stroke="#d4dacf" stroke-width="1.5"/>
+        <text x="40" y="140" font-size="11" fill="#7b8a80" transform="rotate(-90 40,140)" text-anchor="middle">表现</text>
+        <text x="320" y="278" font-size="11" fill="#7b8a80" text-anchor="middle">激励强度 / 唤醒水平</text>
+
+        <!-- 峰区底色 -->
+        <rect x="238" y="52" width="118" height="196" fill="#eef2ec" opacity="0.85"/>
+        <text x="297" y="70" font-size="10.5" fill="#4a6b52" text-anchor="middle" font-family="monospace">最佳区间</text>
+
+        <!-- 曲线 -->
+        <path d="M 74,236 C 140,196 186,110 262,80 C 300,66 330,66 366,84 C 430,116 476,182 556,232"
+              fill="none" stroke="#3f5a48" stroke-width="2.6" stroke-linecap="round"/>
+        <!-- 峰值虚线 -->
+        <line x1="300" y1="74" x2="300" y2="248" stroke="#a9bba6" stroke-width="1" stroke-dasharray="4 4"/>
+        <circle cx="300" cy="70" r="4" fill="#3f5a48"/>
+
+        <!-- 三段标注 -->
+        <text x="132" y="196" font-size="11" fill="#7b8a80" text-anchor="middle">低唤醒</text>
+        <text x="132" y="212" font-size="10" fill="#97a49b" text-anchor="middle">没动力 / 无所谓</text>
+        <text x="470" y="196" font-size="11" fill="#a8503c" text-anchor="middle">过载</text>
+        <text x="470" y="212" font-size="10" fill="#b88274" text-anchor="middle">怕失去 → 认知被占满</text>
+
+        <!-- 结论条 -->
+        <text x="62" y="28" font-size="11" fill="#24352a" font-family="monospace">表现随激励上升，到某点后反转</text>
+      </svg>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">实验设计<span class="exp-tag">EXP 01</span></div>
+        <div class="content">参与者被随机分到三档奖金：约相当于<strong>两周、一个月、五个月工资</strong>。任务是拼图、西蒙（记忆序列）和一个需要手眼协调的掷骰子游戏——都是需要专注和认知资源的活。</div>
+        <div class="example"><strong>反直觉的结果：</strong>奖金最高的一组，表现最差；中等奖金那组表现最好。钱多到「输不起」的时候，人反而做不好。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">机制：带宽被占满<button class="glossary-trigger" onclick="openModal('bandwidth')" aria-label="术语：认知带宽被占用">?</button></div>
+        <div class="content">不是「太想赢」这么简单。高额奖金让人不断计算「拿不到会怎样」，这些念头占用了本该用于任务的工作记忆。<strong>压力不是燃料，是噪音。</strong></div>
+        <div class="example"><strong>作者的说法：</strong>注意力被「万一失败」的念头分散，就像一边做题一边有人在你耳边报账。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">两个例外：<button class="glossary-trigger" onclick="openModal('invertedU')" aria-label="术语：倒U形关系">?</button></div>
+        <div class="content">① <strong>纯机械、重复性的任务</strong>：奖金越高干得越快——计件工资在流水线上是有效的。② <strong>高度自动化的技能</strong>：NBA 球员在决胜时刻的投篮命中率反而更高，因为动作已经不需要意识参与。</div>
+        <div class="example"><strong>所以：</strong>不是「钱没用」，是<strong>钱的效力和任务类型绑定</strong>。给创意岗位发超额奖金，可能是在花钱降绩效。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">这一章的可靠性提醒</div>
+        <div class="content">2016 年有多个实验室联合重复这个「大额奖金」实验，<strong>没有稳定复现倒 U 效应</strong>。争议点集中在奖金是否被参与者相信、任务难度是否足够、以及跨文化差异。</div>
+        <div class="example"><strong>怎么读：</strong>「高压损害复杂任务表现」这个方向有大量独立证据（耶克斯-多德森定律、考试焦虑研究）；但「具体多大金额、在哪个拐点反转」不要当成精确公式。</div>
+      </div>
+    </div>
+
+    <h3 id="ch2"><span class="mono">CH 02</span>工作的意义：从乐高游戏里学到什么</h3>
+    <p class="lead">这一章是全书写得最疼的一章。它讲了一件所有管理者都知道、但都不肯承认的事：<strong>摧毁一份工作的意义，比给它加薪更省钱，但代价会从别的地方回来。</strong></p>
+
+    <div class="trial-wrap">
+      <div class="trial-col a">
+        <div class="tc-head">A 组 · 作品被保留</div>
+        <div class="tc-sub">MEANINGFUL CONDITION</div>
+        <div class="bar-row">
+          <div class="br-label"><span>平均完成数量</span><b>≈ 11 个</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:88%"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="br-label"><span>要求的最低报酬</span><b>较低</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:40%"></div></div>
+        </div>
+        <div class="tc-note">每完成一个生化战士，就摆在桌上，越堆越多。<strong>人看得见自己做过什么。</strong></div>
+      </div>
+      <div class="trial-col b">
+        <div class="tc-head">B 组 · 作品立刻被拆掉</div>
+        <div class="tc-sub">SISYPHEAN CONDITION</div>
+        <div class="bar-row">
+          <div class="br-label"><span>平均完成数量</span><b>≈ 7 个</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:56%"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="br-label"><span>要求的最低报酬</span><b>明显更高</b></div>
+          <div class="bar-track"><div class="bar-fill" style="width:72%"></div></div>
+        </div>
+        <div class="tc-note">每完成一个，实验者当场把它拆回零件、放回盒子。<strong>劳动成果被抹掉了。</strong></div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card insight">
+        <div class="label">结论：意义是生产要素，不是福利<button class="glossary-trigger" onclick="openModal('meaningMotivation')" aria-label="术语：意义动机">?</button></div>
+        <div class="content">两组报酬规则完全相同（都是递减计价），唯一变量是「做好的东西还在不在」。结果 B 组干得更少、要价更高。<strong>意义不是软性激励，它直接进了生产函数。</strong></div>
+        <div class="example"><strong>推论：</strong>给员工加 10% 工资不一定能补上「我的工作没人看」这件事。两种货币，不能直接兑换。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">现代公司的西西弗斯条件</div>
+        <div class="content">辛辛苦苦写的报告没人读；方案被否但不知道原因；刚做完的项目被砍掉、连复盘都没有；绩效表填完就进了系统黑洞。<strong>这些都不是钱的问题，是意义被抹掉的问题。</strong></div>
+        <div class="example"><strong>本章引用的历史案例：</strong>《摩登时代》式的分工——效率上去了，但每个工人只看得到自己那一个动作，看不到成品。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">可以做什么</div>
+        <div class="content">让成果可见（谁在用、怎么用）；让拆掉的东西有解释（为什么砍、砍了之后什么变了）；让分工的人看到整体。<strong>成本极低，但要求管理者承认自己是那个「拆乐高的人」。</strong></div>
+        <div class="example"><strong>反例：</strong>「感谢信 + 团建」不算。意义来自<strong>成果与人的连接</strong>，不来自仪式。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">作者的自我暴露</div>
+        <div class="content">他在这本书里多次写自己被骗、被激怒、做蠢事——包括为一件事和航空公司耗上几个小时，明知时间成本远超赔偿。<strong>这让全书不像布道，更像实验记录。</strong></div>
+        <div class="example"><strong>值得学的态度：</strong>他从不假设自己例外。</div>
+      </div>
+    </div>
+
+    <h3 id="ch3"><span class="mono">CH 03</span>宜家效应：为什么自己做的东西更值钱</h3>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">折纸实验<span class="exp-tag">EXP 03</span></div>
+        <div class="content">让参与者折纸（青蛙、纸鹤），然后用拍卖的方式给作品定价；同时也要给<strong>别人折的同类作品</strong>定价。结果：作者对自己作品的估价显著更高，而旁观者对同一批作品的估价则偏低。</div>
+        <div class="example"><strong>双向偏差：</strong>创作者高估，旁观者低估。所以「我觉得这个很好」和「市场觉得这个很好」经常不是一回事。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">蛋糕粉的故事</div>
+        <div class="content">1950 年代通用磨坊推出「只需加水」的预拌蛋糕粉，卖不动。调研发现：主妇觉得<strong>「这不是我做的」</strong>。配方改成需要自己加鸡蛋和牛奶之后，销量上升。</div>
+        <div class="example"><strong>这不是偷懒的技术问题，是归属感的问题。</strong> 后来所有「半成品 + 最后一步自己做」的产品，都在这条线上。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">机制：付出会改写估值<button class="glossary-trigger" onclick="openModal('ikeaEffect')" aria-label="术语：宜家效应">?</button></div>
+        <div class="content">通常我们以为「值钱所以愿意付出」，实际常常反过来：<strong>付出了，所以觉得值钱</strong>。投入的劳动变成了价值的一部分，放弃它等于否定自己的努力<button class="glossary-trigger" onclick="openModal('effortJustification')" aria-label="术语：努力合理化">?</button>。</div>
+        <div class="example"><strong>商业应用：</strong>宜家、定制球鞋、乐高、DIY 装修、用户共创。但也要警惕——「假参与」是把用户的劳动当免费产能。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">边界：只有成功才加分</div>
+        <div class="content">书中专门有一节讲<strong>「结果的重要性」</strong>：如果自己做出来的东西很糟糕，努力不会让它更值钱，反而会更让人失望。宜家效应有个前提——<strong>成品至少得能用</strong>。</div>
+        <div class="example"><strong>推论：</strong>让用户参与，必须保证他能做成。挫败感会抵消全部归属感。</div>
+      </div>
+    </div>
+
+    <h3 id="ch4"><span class="mono">CH 04</span>我的点子：为什么「我这里发明的」才叫好</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">NIH 偏见<button class="glossary-trigger" onclick="openModal('nihBias')" aria-label="术语：NIH偏见">?</button></div>
+        <div class="content">Not Invented Here：<strong>不是这里发明的，就天生低一等。</strong> 人对自己提出的方案评价更高，也更难接受别人提出的同类方案——即使方案内容一样。</div>
+        <div class="example"><strong>实验：</strong>让员工为公司真实问题提解决方案，再互相评估。几乎所有人都给自己的方案打了更高的可行性分。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">爱迪生手里的牙刷</div>
+        <div class="content">爱迪生死守自己设计的直流电系统，甚至在公开场合贬低交流电。作者用「牙刷」比喻：<strong>自己的东西用顺手了，就不肯换，哪怕别人更好。</strong></div>
+        <div class="example"><strong>注意：</strong>这不等于所有坚持都是错的。问题在于<strong>判断被所有权污染</strong>，而不是坚持本身。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">书里那句话说得很准</div>
+        <div class="content"><strong>「非理性既是天使，也是魔鬼。」</strong> 拥有感让人愿意为自己的方案拼命（天使），也让人看不见方案的致命缺陷（魔鬼）。同一个机制，两面同时成立。</div>
+        <div class="example"><strong>管理上的含义：</strong>你要的正是那份投入，所以不能消灭它；能做的是给判断加一道独立程序。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">解法的方向</div>
+        <div class="content">① 匿名评审，把方案和人分开；② 事前验尸（假设方案已失败，倒推原因）；③ 让提出者自己当「反方」一次；④ 引入外部视角。</div>
+        <div class="example"><strong>共同点：</strong>不是让人变客观，是<strong>让判断发生在拥有感被暂时搁置的时刻</strong>。</div>
+      </div>
+    </div>
+
+    <h3 id="ch5"><span class="mono">CH 05</span>报复的本能：为什么明知没用也要让你疼</h3>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">报复实验<button class="glossary-trigger" onclick="openModal('retaliation')" aria-label="术语：报复的本能">?</button><span class="exp-tag">EXP 05</span></div>
+        <div class="content">在信任与惩罚类实验中，被欺骗的一方常常愿意<strong>付出自己的钱</strong>去惩罚对方——即使惩罚不会带来任何补偿，甚至拿不回来。这说明报复的收益不是钱，是<strong>平衡感</strong>。</div>
+        <div class="example"><strong>进化解释：</strong>报复的威胁让「占便宜」变得不划算，从而维持了合作。它是声誉机制的牙齿。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">代理与主体：愤怒打错了人</div>
+        <div class="content">被公司坑了，人往往把火撒在<strong>无权决定的客服</strong>身上。因为主体太远、太抽象，代理是唯一能看见的脸。这既无效，也伤及无辜。</div>
+        <div class="example"><strong>作者的亲身案例：</strong>为一张机票和客服周旋数小时，最后把积分捐给慈善机构——他也知道这不划算。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">「对不起」三个字的作用</div>
+        <div class="content">实验发现：<strong>真诚的、承认具体错误的道歉，能显著降低报复意愿</strong>；而程式化的「给您带来不便，深表歉意」几乎无效。人需要的不是赔偿，是承认这件事不该发生。</div>
+        <div class="example"><strong>企业该学的：</strong>先承认，再解释，最后补偿。顺序颠倒就变成推责。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">有用的一面与代价</div>
+        <div class="content">报复维持了公平，也让报复者付出高昂代价：时间、情绪、关系，甚至健康。<strong>它是一件「对社会有益、对个人昂贵」的事</strong>——这也是为什么它需要被制度和法律接管。</div>
+        <div class="example"><strong>推论：</strong>当正式渠道失灵，报复就会回到私人手上。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 生活 -->
+  <div class="section" id="life">
+    <h2><span class="no">[3]</span>生活：五个看错的地方</h2>
+    <p class="lead">第二部分换了战场：职场里你被制度设计，生活里你被自己的<strong>时间感、比较对象和情绪</strong>设计。这五章的共同主题是——<strong>你以为你在评价事情本身，其实你在评价它的变化量。</strong></p>
+
+    <h3 id="ch6"><span class="mono">CH 06</span>适应的法则：好事会变淡，坏事也会变淡</h3>
+    <p class="lead">这是全书最实用的一章，也是作者写得最私人的一章。他自己经历过长期烧伤治疗，每天换药，于是亲自做了实验去比较<strong>「快速撕开、短痛强烈」和「慢慢揭、长痛温和」</strong>——结论和医院的常规做法相反：短痛总量更小，但病人和护士都倾向于选慢的。</p>
+
+    <div class="adapt-grid">
+      <div class="adapt-card good">
+        <div class="ac-tag">RULE 01</div>
+        <div class="ac-name">好事要拆开给</div>
+        <div class="ac-body">一次给完，快乐只发生一次，然后迅速回到基线；拆成几次，每次都有新的峰值。<strong>间隔本身就是收益。</strong> 奖金分批发、假期分几次休、好消息分开说，都在这条线上。</div>
+      </div>
+      <div class="adapt-card bad">
+        <div class="ac-tag">RULE 02</div>
+        <div class="ac-name">坏事要合并承受</div>
+        <div class="ac-body">反复经历同一件坏事，痛苦会累加，而适应不会按比例发生。所以坏消息一次说完、治疗集中做、账单一次结清，比零敲碎打更省。<strong>但要注意伦理边界：这不是让人隐瞒坏消息。</strong></div>
+      </div>
+      <div class="adapt-card good">
+        <div class="ac-tag">RULE 03</div>
+        <div class="ac-name">用中断重置适应</div>
+        <div class="ac-body">长期处在好环境里，人会把它当默认值。短暂离开（出差、断网、换个城市住几天）能让「好」重新变成「好」。<strong>适应不是意志问题，是比较基准的移动。</strong></div>
+      </div>
+      <div class="adapt-card bad">
+        <div class="ac-tag">RULE 04</div>
+        <div class="ac-name">有些事适应不了</div>
+        <div class="ac-body">慢性疼痛、持续噪音、某些丧失——不会完全回到基线，也不该假装会。「一切都会习惯」是最常见也最伤人的安慰。<strong>作者专门强调了适应的边界。</strong></div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">享乐适应与快乐水车<button class="glossary-trigger" onclick="openModal('hedonicAdaptation')" aria-label="术语：享乐适应">?</button></div>
+        <div class="content">收入涨了、房子大了、病好了，幸福感会先跳一下，然后回到接近原来的水平。<strong>像一台不停转的水车</strong>——你在跑，位置没变。</div>
+        <div class="example"><strong>但这不等于「什么都不用做」：</strong>适应的是<strong>水平</strong>，不是<strong>波动</strong>。人记得的是变化，不是状态。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">这一章真正的推论</div>
+        <div class="content">如果幸福取决于<strong>变化</strong>而不是<strong>水平</strong>，那么追求「更高」的边际收益极低，而设计「节奏」的收益极高。<strong>把好事安排得有起伏，比把好事堆得更多更有效。</strong></div>
+        <div class="example"><strong>对照：</strong>这也是为什么「一直很好」的关系会变平淡——不是爱消失了，是没有变化了。</div>
+      </div>
+    </div>
+
+    <h3 id="ch7"><span class="mono">CH 07</span>好不好：适应、伴侣与美丽市场</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">满意度 = 现实 − 期望</div>
+        <div class="content">这一章把「好不好」这个模糊问题拆成了可测的东西：<strong>主观评价取决于参照点，而不是绝对水平。</strong> 所以提升满意度有两条路——抬高现实，或者管理期望。后者便宜得多，也常被忽略。</div>
+        <div class="example"><strong>应用：</strong>产品宣传过度承诺，等于提前消耗了未来的满意度。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">匹配假说<button class="glossary-trigger" onclick="openModal('matching')" aria-label="术语：匹配假说">?</button></div>
+        <div class="content">长期伴侣在外貌、教育、社会资源上往往<strong>高度相似</strong>，而不是「互补」。人会在婚恋市场上反复试探自己的「定价」，最后落在一个和自己匹配的位置。</div>
+        <div class="example"><strong>但注意：</strong>匹配是统计规律，不是个人命运。它解释分布，不预测某一个人。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">适应的陷阱</div>
+        <div class="content">择偶时比较的是「当下有多好」，婚后适应会把「好」变成「正常」。<strong>所以长期关系的关键不是持续变好，而是持续制造变化。</strong></div>
+        <div class="example"><strong>这也是第 6 章的直接应用：</strong>共同的新经历，比重复的舒适更能维持满意度。</div>
+      </div>
+    </div>
+
+    <h3 id="ch8"><span class="mono">CH 08</span>市场的失灵：在线约会为什么比不上媒妁之言</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">搜索品 vs 体验品<button class="glossary-trigger" onclick="openModal('searchExperience')" aria-label="术语：搜索属性与体验属性">?</button></div>
+        <div class="content">有些东西看参数就能判断（相机、内存条），叫<strong>搜索品</strong>；有些东西必须亲身经历才知道好坏（一顿饭、一段关系），叫<strong>体验品</strong>。在线约会的根本错误，是把体验品当成搜索品来卖。</div>
+        <div class="example"><strong>表现：</strong>问卷越做越长、标签越填越细，匹配效率却没有提升。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">两个错误假设</div>
+        <div class="content">网站假设：① 人知道自己想要什么；② 描述能预测吸引力。两条都不成立。<strong>人对自己需求的自述，预测力极低</strong>；真正的「化学反应」无法从资料里读出来。</div>
+        <div class="example"><strong>作者的做法：</strong>设计轻量的「虚拟约会」体验，让人先互动再筛选，而不是先筛选再互动。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">更大的教训</div>
+        <div class="content">这不只是婚恋行业的问题。任何把人「做成目录」的产品，都在犯同一个错：<strong>把无法结构化的东西强行结构化，然后用结构化的完整度冒充匹配的准确度。</strong></div>
+        <div class="example"><strong>今天的对应物：</strong>招聘平台的简历筛选、内容平台的兴趣标签、AI 匹配的「人格测试」。</div>
+      </div>
+    </div>
+
+    <h3 id="ch9"><span class="mono">CH 09</span>感情的偏好：救一个人容易，救一百万人难</h3>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">Rokia 实验<span class="exp-tag">EXP 09</span></div>
+        <div class="content">同一场募捐，两组材料：一组讲一个有名有姓、有照片的小女孩 Rokia；另一组讲<strong>数百万</strong>饥饿儿童的统计数据。结果是：<strong>看故事的那组捐款显著更多</strong>，而看统计数字的那组反而更少。</div>
+        <div class="example"><strong>这就是可识别受害者效应：</strong>一个具体的人激活情感，一个数字激活算术，而算术不会让人掏钱。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">同情疲劳与「滴水不漏」<button class="glossary-trigger" onclick="openModal('identifiableVictim')" aria-label="术语：可识别受害者效应">?</button><button class="glossary-trigger" onclick="openModal('compassionFade')" aria-label="术语：同情疲劳">?</button></div>
+        <div class="content">两个机制叠在一起：① 数字太大，情感系统直接关机；② 当自己的贡献显得微不足道时（「我捐这点有什么用」），人反而不行动。所以<strong>规模越大，同情越少</strong>。</div>
+        <div class="example"><strong>作者的建议：</strong>把大问题切成「你这一笔能救的这一个人」，同时给出可感的进展反馈。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">阴暗面</div>
+        <div class="content">可识别性是<strong>可以被操纵的</strong>：挑选最上镜的受害者、最催泪的故事、最无辜的脸。这会系统性地扭曲资源分配——会讲故事的人拿到钱，问题更严重但不擅长讲故事的人拿不到。</div>
+        <div class="example"><strong>推论：</strong>公益传播的技巧越成熟，越需要独立的分配机制来纠偏。</div>
+      </div>
+    </div>
+
+    <h3 id="ch10"><span class="mono">CH 10</span>情绪的长尾：一时的火，烧掉几年的路</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">热冷共情差距<button class="glossary-trigger" onclick="openModal('hotCold')" aria-label="术语：热冷共情差距">?</button></div>
+        <div class="content">冷静状态下的人，<strong>无法准确预测</strong>自己激动、愤怒、恐惧、饥饿时会怎么选。反过来，处在热态的人也无法回忆冷静时的判断。两个自己互相不认识。</div>
+        <div class="example"><strong>实验：</strong>性唤起状态下，人对风险行为的意愿显著上升，且事先预测不到这个变化幅度。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">为什么影响是长期的</div>
+        <div class="content">情绪只持续很短，但情绪下做出的<strong>决定会留下来</strong>：发出去的消息、签下的合同、说出口的话。更麻烦的是，人会为了维护一致性，替那个冲动决定继续找理由（承诺升级）。</div>
+        <div class="example"><strong>所以：</strong>情绪的成本不在情绪本身，在它为未来设的路径。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">唯一的解法：预先承诺<button class="glossary-trigger" onclick="openModal('precommitment')" aria-label="术语：预先承诺">?</button></div>
+        <div class="content">不靠意志力，靠结构：把决定提前做、把诱惑挪远、把不可逆的动作加一道延迟。<strong>冷静时给热态的自己设路障。</strong></div>
+        <div class="example"><strong>具体做法：</strong>重大决定隔夜；卸载而不是靠自律；把「发送」改成「存草稿」；设定消费额度而不是「控制欲望」。</div>
+      </div>
+    </div>
+
+    <h3 id="ch11"><span class="mono">CH 11</span>非理性的教训：为什么一切决策都需要检验</h3>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">全书的收口</div>
+        <div class="content">直觉会错、专家会错、常识也会错。唯一可靠的办法是<strong>让现实来投票</strong>：能随机就随机，能对照就对照，能做小规模试验就不要一次押上全部。</div>
+        <div class="example"><strong>这也是全书的元方法：</strong>作者自己就是靠一组组实验推翻「显而易见」的常识。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">检验的三个层级<button class="glossary-trigger" onclick="openModal('testEverything')" aria-label="术语：检验原则">?</button></div>
+        <div class="content">① <strong>随机对照实验</strong>——最可靠，但成本高、有伦理边界；② <strong>自然实验</strong>——利用政策或事件造成的分组差异；③ <strong>小步试错</strong>——先在一个门店、一个城市、一个群里试。</div>
+        <div class="example"><strong>关键：</strong>先想清楚「什么结果会让我改变看法」，否则实验只会变成找证据。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">检验的边界</div>
+        <div class="content">不是所有事都能做实验：伦理不允许、样本太小、外推不成立、指标被优化（古德哈特定律）。<strong>「一切都要检验」本身也需要被检验。</strong></div>
+        <div class="example"><strong>作者的态度其实很克制：</strong>他给的是方法倾向，不是万能药。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">最后一句话</div>
+        <div class="content">目标不是变成理性人——那既不可能也不可爱。<strong>目标是承认自己这套配置的样子，然后给它修一个更合适的房子。</strong></div>
+        <div class="example"><strong>这也是「积极力量」的真正含义：</strong>不是美化缺陷，是承认它在，然后与它共处。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 贯穿论点 -->
+  <div class="section" id="insights">
+    <h2><span class="no">[4]</span>贯穿论点</h2>
+    <div class="insight-card" data-no="1">
+      <div class="insight-title">非理性不是故障，是旧环境里的解决方案</div>
+      <div class="insight-body">要理解一个偏差，先问它在什么环境下有用。<strong>报复</strong>在熟人社会维持公平，<strong>意义感</strong>在小团队里换来超额投入，<strong>可识别同情</strong>让母亲优先救自己的孩子。失灵不因为人退化，因为环境换了参数。</div>
+      <div class="insight-evidence">对应章节：Ch5 报复、Ch9 同情、Ch2 意义</div>
+    </div>
+    <div class="insight-card" data-no="2">
+      <div class="insight-title">意义和金钱是两种货币，不能互相兑换</div>
+      <div class="insight-body">乐高实验里，被拆掉作品的组要价更高、产出更低——但他们拿到的是同样的钱。<strong>加钱不能补回被抹掉的意义</strong>，就像加薪不能让一份羞辱人的工作变得体面。管理者最常犯的错，是把所有问题折算成钱。</div>
+      <div class="insight-evidence">对应章节：Ch2 工作的意义</div>
+    </div>
+    <div class="insight-card" data-no="3">
+      <div class="insight-title">不是估值决定付出，是付出决定估值</div>
+      <div class="insight-body">折纸、蛋糕粉、宜家、定制球鞋——同一个机制：<strong>投入劳动之后，人会重新给对象定价</strong>。这条规律推翻了「先有价值才有付出」的直觉，也解释了为什么「免费得来的」总是不被珍惜。</div>
+      <div class="insight-evidence">对应章节：Ch3 宜家效应、Ch4 我的点子</div>
+    </div>
+    <div class="insight-card" data-no="4">
+      <div class="insight-title">幸福的最大变量是变化，不是水平</div>
+      <div class="insight-body">享乐适应会把一切持续的好变成默认值。<strong>所以「更好」的边际收益很低，「有起伏」的收益很高。</strong> 好事拆开给、坏事合并承受、用中断重置基准——这三条比「努力赚更多」更有效。</div>
+      <div class="insight-evidence">对应章节：Ch6 适应的法则、Ch7 好不好</div>
+    </div>
+    <div class="insight-card" data-no="5">
+      <div class="insight-title">情绪的影响被系统性低估，自控被系统性高估</div>
+      <div class="insight-body">冷静时的人预测不了热态的自己，热态时的人想不起冷静时的判断。<strong>两个自己互相不认识，而制度默认他们是同一个人。</strong> 所以解法只能是结构：预先承诺、延迟、把诱惑搬走。</div>
+      <div class="insight-evidence">对应章节：Ch10 情绪的长期效应、Ch11 检验</div>
+    </div>
+  </div>
+
+  <!-- 规律 -->
+  <div class="section" id="laws">
+    <h2><span class="no">[5]</span>贯穿规律</h2>
+    <div class="law-card">
+      <div class="lc-no">L 01</div>
+      <div class="lc-body">
+        <h4>倒 U 律：唤醒与表现不是线性</h4>
+        <p>激励、压力、紧张度从低到高，表现先升后降。拐点取决于任务类型：越需要认知资源，拐点越靠左。</p>
+      </div>
+    </div>
+    <div class="law-card">
+      <div class="lc-no">L 02</div>
+      <div class="lc-body">
+        <h4>意义不可替代律：被剥夺的意义不会由报酬补足</h4>
+        <p>拆掉成果的可见性，产出会下降、要价会上升。补钱只能回到原点的一部分，补不回那份自愿的超额投入。</p>
+      </div>
+    </div>
+    <div class="law-card">
+      <div class="lc-no">L 03</div>
+      <div class="lc-body">
+        <h4>付出溢价律：投入越大，估值越高</h4>
+        <p>劳动会改变对结果的评价，且创作者高估、旁观者低估。<strong>市场价与 owner 价之间，隔着一段自己的汗水。</strong></p>
+      </div>
+    </div>
+    <div class="law-card">
+      <div class="lc-no">L 04</div>
+      <div class="lc-body">
+        <h4>适应回归律：持续的好与坏都会回到基线</h4>
+        <p>除非被阻断（慢性疼痛、持续噪音），一切状态都会被当成新常态。记忆留下的不是水平，是变化。</p>
+      </div>
+    </div>
+    <div class="law-card">
+      <div class="lc-no">L 05</div>
+      <div class="lc-body">
+        <h4>同情半径律：同情随受影响人数增加而稀释</h4>
+        <p>一个具体的人 > 一百万个抽象的人。数字激活算术，故事激活情感；而算术不会让人行动。</p>
+      </div>
+    </div>
+    <div class="law-card">
+      <div class="lc-no">L 06</div>
+      <div class="lc-body">
+        <h4>热冷落差律：冷静时预测不了激动时的自己</h4>
+        <p>两个状态互相不可见，且人会低估差距。所以自控几乎无效，结构（延迟、承诺、移除诱惑）才有效。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2><span class="no">[6]</span>记忆钩子</h2>
+    <div class="hook-box">
+      <div class="hk-tag">THREE LINES TO REMEMBER</div>
+      <div class="hk-line">
+        钱买不到意义，只能买到时间。<br>
+        你做的东西你会爱，你爱的东西你会看不见缺点。<br>
+        <em>好事要拆开，坏事要合并，情绪要延迟。</em>
+      </div>
+      <div class="hk-sub">如果只记一句：<strong style="color:#d7e6cf;">非理性 = 旧环境的最优解 × 新环境的参数放大。</strong> 所以别急着改自己，先看看是哪个参数被放大了。</div>
+    </div>
+  </div>
+
+  <!-- 金句 -->
+  <div class="section" id="quotes">
+    <h2><span class="no">[7]</span>核心金句</h2>
+    <blockquote class="quote-block">
+      人们并非想象的那样理性。
+      <span class="cite">—— 中文版前言标题</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      为什么巨额奖金带不来高业绩？
+      <span class="cite">—— 第一章标题（这个问题本身就是全书最好的钩子）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      非理性既是天使，也是魔鬼。
+      <span class="cite">—— 第四章小节标题</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      为什么一切决策都需要检验？
+      <span class="cite">—— 第十一章标题</span>
+    </blockquote>
+    <p class="lead" style="font-size:12.5px;color:var(--text-muted);margin-top:8px;">以上四条均取自前言与章节标题原文，未逐字摘录正文段落。</p>
+  </div>
+
+  <!-- 延伸比较 -->
+  <div class="section" id="extension">
+    <h2><span class="no">[8]</span>延伸比较</h2>
+    <table class="extension">
+      <tr>
+        <th>本书定位</th>
+        <td>《怪诞行为学》的姊妹篇，但方向相反：第一部收集「人会怎么错」，第二部解释「这些错为什么存在、什么时候有用」。它更接近一本<strong>应用心理学案例集</strong>，而不是理论著作。</td>
+      </tr>
+      <tr>
+        <th>核心贡献</th>
+        <td>把「非理性」从缺陷清单变成了<strong>功能分析</strong>。最有价值的三个判断：意义是生产要素；付出改写估值；适应决定幸福。</td>
+      </tr>
+      <tr>
+        <th>局限一 · 可重复性</th>
+        <td>作者的多项研究在 2010 年代的大规模复制中受到质疑（包括广为流传的「签名位置」论文于 2021 年撤稿，那属第一部内容）。本书第 1 章的印度大额奖金实验，2016 年多实验室复制<strong>未能稳定复现倒 U 效应</strong>。读时应把「方向性结论」与「具体效应量」分开对待。</td>
+      </tr>
+      <tr>
+        <th>局限二 · 样本与情境</th>
+        <td>大量实验使用大学生、小额金钱、单次博弈、实验室环境。真实世界的激励是长期的、关系的、有声誉后果的——这些条件恰恰会削弱实验室里的效应。</td>
+      </tr>
+      <tr>
+        <th>局限三 · 结构性问题</th>
+        <td>全书建议偏向<strong>个体与场景设计</strong>：预先承诺、拆开好事、补回意义。它对「工资水平、工时制度、权力不对等」几乎不置一词。把系统问题翻译成「你可以调整心态」，是这类写作最容易滑向的地方。</td>
+      </tr>
+      <tr>
+        <th>局限四 · 时效</th>
+        <td>2010 年成书。今天的参数已经全变了：算法管理取代了工头，远程办公拆掉了「成果可见性」的物理线索，社交媒体把比较基准从邻居换成了全世界。这些恰好是本书最核心的三个机制（意义、适应、比较），而书里完全没覆盖。</td>
+      </tr>
+      <tr>
+        <th>对照阅读</th>
+        <td>
+          <strong>《怪诞行为学1》</strong>——先读第一部的偏差清单，再读这本的功能解释，顺序反过来会看不懂它在反驳谁。<br>
+          <strong>《思考，快与慢》</strong>——卡尼曼给的是机制（系统 1／系统 2），艾瑞里给的是场景与实验。前者是理论，后者是田野。<br>
+          <strong>《心流》</strong>——两本书在「挑战与技能」上撞了个正着：心流说「挑战略高于技能最好」，本书说「唤醒过高就崩」。同一座山的两个坡。<br>
+          <strong>《贾宁财务讲义》</strong>——激励设计的财务版：短期奖金如何扭曲长期投入。<br>
+          <strong>《营销管理》</strong>——宜家效应、定制化、参与感，是这本书最直接商业化的地方。
+        </td>
+      </tr>
+      <tr>
+        <th>现实应用</th>
+        <td>① 设计激励时先问「这活需要脑子还是需要手」；② 检查团队里有多少「西西弗斯条件」；③ 把公益传播从数字改成一个具体的人 + 一个可感的小目标；④ 用「拆开好事、合并坏事」重排一年的节奏；⑤ 重大决定一律隔夜。</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 思辨 -->
+  <div class="section" id="reflection">
+    <h2><span class="no">[9]</span>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">① 如果一半实验复现不了，这本书还剩什么？</div>
+      <p>剩下的不是数字，是<strong>提问方式</strong>。作者最强的地方不是结论，是他坚持问「这个显而易见的管理常识，真的测过吗」。乐高实验的具体数值可以商榷，但「意义被抹掉会降低产出」这件事，任何一个上过班的人都能在自己的经验里找到对应。判断一本书值不值得读，有时不看它答对多少，看它让你开始怀疑什么。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">② 「积极力量」会不会变成给糟糕环境开脱的借口？</div>
+      <p>这是这本书最需要警惕的地方。如果报复是本能、偏爱自己的点子是本能、只同情眼前的人是本能，那么「我们天生如此」很容易被用来解释甚至合理化现状。<strong>但作者本人没有走到这一步</strong>——他每一章最后都在讲「怎么设计环境」。分歧点在于：承认人性有限，不等于接受由人性缺陷构成的组织。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">③ 2024 年的新参数，把哪一条放大得最厉害？</div>
+      <p>我认为是<strong>适应</strong>。书里讲的适应，基准来自身边人——邻居换了车、同事涨了薪。今天你的基准是算法推给你的全世界：最有钱的、最好看的、最成功的。快乐水车的转速被外部调高了几个数量级，而适应机制本身没有任何变化。<strong>这不是个人修养问题，是产品设计问题。</strong></p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">④ 和第一部合起来看，这套书真正的主题是什么？</div>
+      <p>不是「人很蠢」，而是<strong>「人的配置是为一个小而近的世界调的，而我们住在一个大而远的世界里」</strong>。第一部列症状，第二部讲病因。如果只读一本，会得到一堆技巧；两本一起读，才会得到那个更冷的判断——很多所谓的自我提升，其实是在要求一个人用意志力去对抗整个环境的参数。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《怪诞行为学2：非理性的积极力量》知识图谱 · 基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  invertedU: {
+    title: '倒 U 形关系（激励与表现）',
+    content: '<p>指激励强度（奖金、压力、唤醒水平）与任务表现之间不是线性关系：太低没动力，太高会崩，中间存在一个最佳区间。</p><p>心理学里对应的原型是耶克斯-多德森定律（1908）：唤醒水平与表现呈倒 U，且任务越复杂，最佳唤醒点越低。</p><p><strong>本书的贡献</strong>是把这条规律搬到了薪酬设计上：给认知型岗位发「输不起」的巨额奖金，可能反而降低绩效。</p><p><strong>注意边界：</strong>纯体力／重复性任务不适用（计件工资有效）；高度自动化的技能（职业运动员的动作）在高压下反而更稳。</p>'
+  },
+  ikeaEffect: {
+    title: '宜家效应（IKEA Effect）',
+    content: '<p>人对自己参与制作的东西，会给出显著高于市场水平的估值。名字来自宜家家具——你亲手装起来的书架，看起来就是比成品顺眼。</p><p><strong>机制：</strong>投入的劳动变成了价值的一部分。否定这个作品，等于否定自己的努力，所以人会主动抬高它的价格。</p><p><strong>前提条件：</strong>成品必须基本成功。做坏了的东西，努力不会加分，只会加深挫败。</p><p><strong>商业应用：</strong>半成品食材、定制球鞋、用户共创、DIY 装修。要警惕「假参与」——把用户的劳动当作免费产能。</p>'
+  },
+  nihBias: {
+    title: 'NIH 偏见（Not Invented Here）',
+    content: '<p>「不是这里发明的」——组织和个人对自己提出的方案评价更高，对外部或他人的同类方案评价更低，即使两者内容相当。</p><p><strong>本书的实验：</strong>让员工为公司真实问题提解决方案，再交叉评估。几乎所有人都给自己的方案打了更高的可行性分。</p><p><strong>两面性：</strong>所有权带来投入（愿意为自己的方案拼命），也带来盲区（看不见它的缺陷）。作者的说法是「非理性既是天使，也是魔鬼」。</p><p><strong>解法：</strong>匿名评审、事前验尸、让提出者扮演反方、引入外部视角。</p>'
+  },
+  hedonicAdaptation: {
+    title: '享乐适应（Hedonic Adaptation）',
+    content: '<p>人对持续存在的好事或坏事会逐渐回到基线情绪水平。升职、加薪、搬家、生病、失恋，都会经历「跳一下，然后回落」。</p><p><strong>快乐水车：</strong>比喻这个机制——你不停跑，位置没变。</p><p><strong>但它适应的是「水平」，不是「变化」。</strong> 人记得的是变化量，所以短暂离开、中断、制造新鲜感，能重新让「好」变成「好」。</p><p><strong>边界：</strong>慢性疼痛、持续噪音、某些丧失不会完全适应。作者专门强调过这一点，反对「一切都会习惯」的廉价安慰。</p>'
+  },
+  matching: {
+    title: '匹配假说（Matching Hypothesis）',
+    content: '<p>长期伴侣在外貌吸引力、教育水平、社会资源上往往高度相似，而不是互补。人会在婚恋市场上反复试探自己的「定价」，最终落在一个与自己匹配的位置。</p><p><strong>解释力：</strong>它解释的是<strong>分布</strong>——为什么整体上看是「同类相聚」。它不预测某一个个体的选择。</p><p><strong>本书的延伸：</strong>「好不好」是相对的，取决于参照点。所以适应会把「好」变成「正常」，长期关系的关键不是持续变好，而是持续制造变化。</p>'
+  },
+  searchExperience: {
+    title: '搜索属性与体验属性',
+    content: '<p><strong>搜索品：</strong>在购买前就能通过参数判断质量的东西（相机、内存条、机票时间）。<br><strong>体验品：</strong>必须亲身经历才能判断好坏的东西（一顿饭、一段关系、一次旅行）。</p><p><strong>在线约会的根本错误：</strong>把体验品当成搜索品来卖。问卷越做越长、标签越填越细，匹配效率却没有提升。</p><p><strong>为什么：</strong>两个假设不成立——① 人知道自己想要什么；② 描述能预测吸引力。真正的「化学反应」无法从资料里读出来。</p><p><strong>更广的教训：</strong>任何把人做成目录的产品（简历筛选、兴趣标签、人格测试）都在犯同一个错。</p>'
+  },
+  identifiableVictim: {
+    title: '可识别受害者效应',
+    content: '<p>面对一个有名有姓、有照片的具体受害者，人的同情与捐款意愿显著高于面对大规模统计数字。</p><p><strong>经典实验（本书引用）：</strong>为一个小女孩 Rokia 募捐，金额高于为「数百万饥饿儿童」募捐。</p><p><strong>两个叠加机制：</strong><br>① 数字太大，情感系统关机；<br>② 「滴水不漏」——当自己的贡献显得微不足道时，人反而不行动。</p><p><strong>阴暗面：</strong>可识别性可以被操纵。挑最上镜的受害者，会系统性扭曲资源分配——会讲故事的人拿到钱，问题更严重但不擅长讲故事的人拿不到。</p>'
+  },
+  hotCold: {
+    title: '热冷共情差距（Hot-Cold Empathy Gap）',
+    content: '<p>处在冷静状态的人，无法准确预测自己在饥饿、愤怒、恐惧、性唤起等「热态」下会怎么选择；反过来，热态中的人也想不起冷静时的判断。</p><p><strong>实验：</strong>性唤起状态下，人对风险行为的意愿显著上升，且事先完全预测不到这个变化幅度。</p><p><strong>为什么后果是长期的：</strong>情绪很短，但情绪下做出的决定会留下来——发出去的消息、签下的合同、说出口的话。之后人还会为了维护一致性替它找理由（承诺升级）。</p><p><strong>解法：</strong>预先承诺、延迟、移除诱惑。不靠意志力。</p>'
+  },
+  precommitment: {
+    title: '预先承诺（Precommitment）',
+    content: '<p>在冷静状态下，提前给自己的未来设限，使得「热态的自己」想反悔也做不到。</p><p><strong>三个操作层级：</strong><br>① 把决定提前做（不在饿的时候点菜）；<br>② 把诱惑的可得性降低（卸载而不是靠自律）；<br>③ 给不可逆动作加延迟（重大决定隔夜、邮件存草稿）。</p><p><strong>为什么必须靠结构：</strong>因为热冷共情差距让人在当下既预测不了、也抵抗不了。意志力是一个在关键时刻必然缺席的守卫。</p>'
+  },
+  meaningMotivation: {
+    title: '意义动机（Meaning as a Motivator）',
+    content: '<p>人不仅为报酬工作，也为「这件事有意义」工作。当成果被看见、被使用、被承认时，人愿意投入超出报酬的努力。</p><p><strong>乐高实验：</strong>作品被保留的组平均组装约 11 个，作品被当场拆掉的组约 7 个；后者还要求更高的最低报酬。报酬规则完全相同，唯一变量是意义。</p><p><strong>管理含义：</strong>意义是生产要素，不是福利。摧毁它比加薪更省钱，但代价会从产出和要价上回来。</p><p><strong>两种货币不可兑换：</strong>加钱补不回被抹掉的意义。</p>'
+  },
+  retaliation: {
+    title: '报复的本能',
+    content: '<p>被不公正对待后，人愿意付出自己的成本去惩罚对方，即使没有任何补偿可得。收益不是钱，是平衡感。</p><p><strong>进化解释：</strong>报复的威胁让「占便宜」变得不划算，从而维持合作。它是声誉机制的牙齿。</p><p><strong>常见错位：</strong>把火撒在无权决定的「代理」（客服、前台）身上，而真正的主体（公司）太远、太抽象。</p><p><strong>「对不起」的作用：</strong>真诚的、承认具体错误的道歉能显著降低报复意愿；程式化的致歉几乎无效。人需要的是承认这件事不该发生。</p>'
+  },
+  effortJustification: {
+    title: '努力合理化（Effort Justification）',
+    content: '<p>人会为自己付出的努力寻找价值理由：既然我已经投入了这么多，那这件事一定值得。</p><p>这是宜家效应、沉没成本、承诺升级共同的底层机制。</p><p><strong>两面：</strong>它让人珍惜自己的作品、坚持完成困难的事；也让人在明显错误的方向上继续加注。</p><p><strong>识别方法：</strong>问自己「如果今天从零开始，我还会选它吗」。如果答案是否，那大概率是努力在替你做判断。</p>'
+  },
+  compassionFade: {
+    title: '同情疲劳（Compassion Fade）',
+    content: '<p>随着受影响人数的增加，人的同情与捐助意愿不是线性上升，而是下降。也叫「规模麻木」。</p><p><strong>机制：</strong>情感系统对具体面孔敏感，对统计数字无反应；同时当个人贡献显得微不足道时，人倾向于不行动。</p><p><strong>应对：</strong>把大问题切成「你这一笔能救的这一个人」，给出明确的小目标和可感的进展反馈。</p><p><strong>副作用：</strong>这套技巧越有效，越容易让资源流向「最会讲故事」的议题，而不是最严重的议题。</p>'
+  },
+  testEverything: {
+    title: '检验原则（Test Everything）',
+    content: '<p>直觉会错、专家会错、常识也会错。唯一可靠的办法是让现实投票。</p><p><strong>三个层级：</strong><br>① 随机对照实验——最可靠，但成本高、有伦理边界；<br>② 自然实验——利用政策或事件造成的分组差异；<br>③ 小步试错——先在一个门店、一个城市、一个群里试。</p><p><strong>前提：</strong>先想清楚「什么结果会让我改变看法」。否则实验只会变成找证据。</p><p><strong>边界：</strong>不是所有事都能做实验；指标一旦被当成目标就会被优化（古德哈特定律）。「一切都要检验」本身也需要被检验。</p>'
+  },
+  upside: {
+    title: '「非理性的积极力量」到底指什么',
+    content: '<p>不是说偏差有好处就该保留，而是说：这些机制在<strong>原本的环境</strong>里是有功能的。</p><ul><li>报复 → 维持公平的声誉机制</li><li>意义感 → 换来超出报酬的投入</li><li>宜家效应 → 让人珍惜自己的劳动成果</li><li>适应能力 → 让人在灾难后还能继续生活</li><li>可识别同情 → 让小圈子里的弱者优先得到保护</li></ul><p><strong>失灵的原因不是人退化了，是环境换了参数</strong>：一次博弈取代了重复博弈，陌生人取代了熟人，统计数字取代了眼前的人。</p><p>所以解法不是「变理性」，而是「给这套配置换一个合适的房子」。</p>'
+  },
+  bandwidth: {
+    title: '认知带宽被占用',
+    content: '<p>本书解释高额奖金为何损害表现时用的核心机制：人不断计算「万一拿不到会怎样」，这些念头占用了本该用于任务的工作记忆与注意力。</p><p>和塞德希尔·穆来纳森《稀缺》里的「带宽税」是同一个东西：稀缺（无论是钱、时间还是机会）会直接削减可用的认知资源。</p><p><strong>推论：</strong>高压环境下的绩效下降，往往不是态度问题，是<strong>算力被挪用了</strong>。</p>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

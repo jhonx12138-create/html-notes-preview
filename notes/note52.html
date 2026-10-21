@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>贾宁财务讲义 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 石墨 · 琥珀金（财务/审计气质） */
+[data-theme="graphite"] {
+  --primary: #3a4250; --primary-light: #eff0f2; --primary-dark: #232932;
+  --accent: #a67c2e; --accent-deep: #8a6522;
+  --bg: #faf9f7; --bg-card: #ffffff; --bg-soft: #f4f3f0; --bg-softer: #eae8e3;
+  --bg-tag: #e9e5dd;
+  --text: #33383f; --text-heading: #1e232a; --text-muted: #7a7f87; --text-light: #9aa0a8;
+  --border: #d8d5cf; --border-soft: #e6e3dd;
+  --highlight: #f5f2ec; --highlight-strong: #e9e5dd;
+  --shadow-sm: 0 1px 3px rgba(35,41,50,0.06); --shadow: 0 2px 10px rgba(35,41,50,0.07);
+  --radius-sm: 3px; --radius: 6px; --radius-lg: 10px;
+  --color-concept: #5b4a7a; --color-tool: #2f5d7c; --color-case: #3f6b4a;
+  --color-history: #9a6a2a; --color-insight: #2d6b63; --color-debate: #a8443a;
+  --color-solution: #3f6b4a; --color-crisis: #b4462f; --color-mechanism: #2f5d7c;
+  --color-effect: #6d4a80; --color-core: #a67c2e;
+  --warn-bg: #fdf8ec; --warn-border: #ecdfb8; --example-bg: #f8f7f4;
+  --reflect-bg: #f3f0ea; --quote-border: #a67c2e;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--text); line-height: 1.75; min-height: 100vh; }
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏：深石墨 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0; width: 236px; height: 100vh;
+  background: #2b323b; padding: 28px 14px; overflow-y: auto; z-index: 100;
+}
+.sidebar h3 {
+  font-size: 11px; color: #a89e8c; letter-spacing: 2px;
+  text-transform: uppercase; margin: 0 0 18px 12px; font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 1px; }
+.sidebar .toc-list a {
+  display: block; padding: 7px 12px; border-radius: var(--radius-sm);
+  font-size: 12.5px; color: #cdd1d6; border-left: 2px solid transparent;
+  transition: all .18s;
+}
+.sidebar .toc-list a:hover { background: rgba(255,255,255,0.06); color: #fff; text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: rgba(166,124,46,0.20); color: #e6c88e;
+  border-left-color: var(--accent); font-weight: 600;
+}
+.sidebar .toc-l2 a { padding-left: 26px; font-size: 11.5px; color: #9aa0a8; }
+.sidebar .toc-l2 a.active { color: #e6c88e; }
+
+/* ===== 主内容 ===== */
+.main { margin-left: 236px; max-width: 1060px; padding: 40px 44px 120px 44px; }
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 40px 42px 34px; margin-bottom: 30px;
+  box-shadow: var(--shadow); border-top: 3px solid var(--accent);
+}
+.header h1 {
+  font-family: var(--font-serif); font-size: 32px; font-weight: 700;
+  color: var(--text-heading); margin-bottom: 8px; letter-spacing: 1px;
+}
+.header .subtitle { color: var(--accent-deep); font-size: 13.5px; letter-spacing: 2px; margin-bottom: 20px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 6px 24px;
+  font-size: 12.5px; color: var(--text-muted);
+  padding: 14px 0; border-top: 1px solid var(--border-soft); border-bottom: 1px solid var(--border-soft);
+  margin-bottom: 18px;
+}
+.header .meta strong { color: var(--text-heading); font-weight: 600; }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 7px; }
+.header .badge {
+  background: transparent; color: var(--primary); border: 1px solid var(--border);
+  padding: 3px 12px; border-radius: 2px; font-size: 11.5px; letter-spacing: .5px;
+}
+.header .core-narrative { margin-top: 16px; font-size: 14px; color: var(--text); line-height: 1.7; }
+
+.soul {
+  margin-top: 20px; padding: 16px 22px; background: var(--highlight);
+  font-family: var(--font-serif); font-size: 15px; color: var(--primary-dark);
+  line-height: 1.8; border-left: 3px solid var(--accent);
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 34px; }
+.section h2 {
+  font-size: 17px; color: var(--text-heading); font-weight: 700;
+  margin-bottom: 16px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft); letter-spacing: .5px;
+  display: flex; align-items: center; gap: 10px;
+}
+.section h2 .h2-num {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  color: var(--accent); border: 1px solid var(--accent);
+  padding: 2px 7px; border-radius: 2px; letter-spacing: 1px;
+  flex: 0 0 auto;
+}
+.section h3 {
+  font-size: 14.5px; color: var(--primary-dark); margin: 24px 0 4px;
+  font-weight: 700; letter-spacing: .5px;
+}
+
+.lead { font-size: 13.5px; color: var(--text-muted); margin: 6px 0 14px; line-height: 1.75; }
+
+/* ===== 卡片：无边框 + 左强调条 ===== */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 12px; margin: 14px 0; }
+.info-card {
+  background: var(--bg-soft); border-left: 3px solid var(--border);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 20px 22px; transition: all .2s;
+}
+.info-card:hover { background: var(--bg-card); box-shadow: 0 4px 18px rgba(35,41,50,0.09); transform: translateY(-1px); }
+.info-card .label {
+  font-weight: 700; font-size: 13.5px; margin-bottom: 9px;
+  color: var(--text-heading); line-height: 1.5;
+}
+.info-card .content { font-size: 13.5px; color: var(--text); line-height: 1.78; }
+.info-card .example {
+  margin-top: 11px; padding: 9px 13px; background: var(--bg-card);
+  border-radius: var(--radius-sm); font-size: 12.5px;
+  color: var(--text-muted); border-left: 2px solid var(--accent);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+.info-card.concept { border-left-color: var(--color-concept); }
+.info-card.tool { border-left-color: var(--color-tool); }
+.info-card.case { border-left-color: var(--color-case); }
+.info-card.history { border-left-color: var(--color-history); }
+.info-card.insight { border-left-color: var(--color-insight); }
+.info-card.debate { border-left-color: var(--color-debate); }
+.info-card.solution { border-left-color: var(--color-solution); }
+.info-card.crisis { border-left-color: var(--color-crisis); }
+.info-card.mechanism { border-left-color: var(--color-mechanism); }
+.info-card.effect { border-left-color: var(--color-effect); }
+.info-card.core { border-left-color: var(--color-core); background: var(--highlight); }
+
+/* ===== 洞察卡 ===== */
+.insight-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 20px 24px; margin-bottom: 10px;
+  position: relative; overflow: hidden;
+}
+.insight-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--accent);
+}
+.insight-card .insight-title { font-weight: 700; font-size: 14.5px; color: var(--text-heading); margin-bottom: 7px; }
+.insight-card .insight-body { font-size: 13.5px; color: var(--text); line-height: 1.78; }
+.insight-card .insight-evidence {
+  font-size: 11.5px; color: var(--text-light); margin-top: 10px;
+  padding-top: 9px; border-top: 1px solid var(--border-soft); letter-spacing: .3px;
+}
+
+/* ===== 规律卡 ===== */
+.law-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 18px 22px; margin-bottom: 9px;
+  display: grid; grid-template-columns: 26px 1fr; gap: 14px;
+}
+.law-card .law-idx {
+  font-family: var(--font-serif); font-size: 20px; color: var(--accent);
+  line-height: 1.3; font-weight: 700;
+}
+.law-card h4 { font-size: 13.5px; color: var(--text-heading); margin-bottom: 5px; font-weight: 700; }
+.law-card p { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg); border-radius: var(--radius);
+  padding: 18px 22px; margin: 14px 0; border-left: 3px solid var(--primary);
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 13.5px; color: var(--primary-dark);
+  margin-bottom: 9px; letter-spacing: .5px;
+}
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.78; }
+.reflection-block p + p { margin-top: 9px; }
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--accent); margin: 14px 0; padding: 18px 24px;
+  font-family: var(--font-serif); font-size: 15px; color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0; line-height: 1.85;
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px; font-size: 11.5px;
+  color: var(--text-light); text-align: right; font-family: var(--font-sans);
+}
+
+/* ===== 延伸表 ===== */
+table.extension { width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0; }
+table.extension th {
+  background: var(--primary); color: #fff; padding: 11px 16px; text-align: left;
+  font-weight: 600; font-size: 12.5px; letter-spacing: .5px; width: 16%;
+}
+table.extension td {
+  padding: 12px 16px; border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.7;
+}
+table.extension tr:nth-child(even) td { background: var(--bg-soft); }
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); border-radius: 50%;
+  font-size: 10.5px; font-weight: 700; cursor: pointer;
+  vertical-align: middle; margin-left: 3px; transition: all .15s;
+}
+.glossary-trigger:hover { background: var(--accent); color: #fff; }
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(30,35,42,0.45);
+  display: flex; align-items: center; justify-content: center; z-index: 999;
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 30px 34px; max-width: 580px; width: 90%; max-height: 80vh;
+  overflow-y: auto; box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  position: relative; border-top: 3px solid var(--accent);
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px; background: none;
+  border: none; font-size: 19px; cursor: pointer; color: var(--text-light);
+}
+.modal-card h4 { font-size: 15.5px; color: var(--text-heading); margin-bottom: 12px; }
+.modal-card p { font-size: 13.5px; line-height: 1.85; margin-bottom: 9px; }
+.modal-card ul { padding-left: 20px; margin: 9px 0; }
+.modal-card li { font-size: 13px; line-height: 1.75; margin-bottom: 3px; }
+.modal-card strong { color: var(--accent-deep); }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 30px; right: 30px; background: var(--primary-dark);
+  color: #fff; border: none; border-radius: 2px; width: 40px; height: 40px;
+  font-size: 16px; cursor: pointer; box-shadow: var(--shadow);
+  z-index: 200; opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+.footer-note {
+  text-align: center; margin-top: 44px; padding: 20px;
+  color: var(--text-light); font-size: 11.5px;
+  border-top: 1px solid var(--border-soft); line-height: 1.9;
+}
+
+/* ===== 专属组件 ===== */
+.tree-box {
+  background: #2b323b; border-radius: var(--radius); padding: 22px 24px;
+  font-family: var(--font-mono); font-size: 12px; line-height: 1.85;
+  color: #d4d8dd; overflow-x: auto; white-space: pre; margin: 16px 0;
+}
+.tree-box .t-hi { color: #e6c88e; }
+
+.formula-box {
+  background: var(--primary-dark); border-radius: var(--radius);
+  padding: 20px 24px; font-family: var(--font-mono); font-size: 13px;
+  color: #e6e3dd; margin: 16px 0; line-height: 2.1; overflow-x: auto;
+}
+.formula-box .fx-hi { color: #e6c88e; font-weight: 700; }
+.formula-box .fx-note { font-family: var(--font-sans); font-size: 11.5px; color: #9aa0a8; }
+
+.cycle-map { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 18px 0 8px; }
+.cycle-node {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--accent); border-radius: 0 0 var(--radius) var(--radius);
+  padding: 16px 16px 14px;
+}
+.cycle-node .cn-idx { font-family: var(--font-mono); font-size: 10px; color: var(--accent); letter-spacing: 1.5px; font-weight: 700; }
+.cycle-node .cn-name { font-family: var(--font-serif); font-size: 17px; font-weight: 700; color: var(--text-heading); margin: 4px 0 7px; }
+.cycle-node .cn-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+.cycle-node .cn-ch { font-size: 10.5px; color: var(--text-light); margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--border-soft); }
+.cycle-return {
+  text-align: center; font-size: 12px; color: var(--text-muted);
+  margin: 0 0 6px; padding: 9px 16px; border: 1px dashed var(--border);
+  border-radius: 2px; background: var(--bg-soft); line-height: 1.7;
+}
+
+.step-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 9px; margin: 16px 0; }
+.step-item {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 16px 15px;
+}
+.step-item .st-num {
+  display: inline-block; background: transparent; color: var(--accent);
+  border: 1px solid var(--accent); width: 20px; height: 20px; line-height: 18px;
+  text-align: center; border-radius: 50%; font-size: 11px; font-weight: 700; margin-bottom: 9px;
+}
+.step-item .st-name { font-size: 13.5px; font-weight: 700; color: var(--text-heading); margin-bottom: 5px; }
+.step-item .st-desc { font-size: 12px; color: var(--text-muted); line-height: 1.65; }
+
+.matrix-wrap { overflow-x: auto; margin: 16px 0; }
+table.matrix { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+table.matrix th {
+  background: var(--primary-light); color: var(--primary-dark);
+  padding: 10px 13px; text-align: left; font-weight: 700;
+  border-bottom: 2px solid var(--primary); white-space: nowrap; font-size: 12px;
+}
+table.matrix td {
+  padding: 10px 13px; border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.68;
+}
+table.matrix td.rowhead { background: var(--bg-soft); font-weight: 700; color: var(--primary-dark); white-space: nowrap; }
+table.matrix tr:hover td { background: var(--highlight); }
+
+.era-head {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+  margin: 26px 0 4px; padding-bottom: 8px; border-bottom: 1px dashed var(--border);
+}
+.era-tag {
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+  color: var(--accent); letter-spacing: 1px;
+}
+.era-title { font-size: 14.5px; font-weight: 700; color: var(--text-heading); }
+.era-sub { font-size: 11px; color: var(--text-light); letter-spacing: .5px; }
+
+.hook-box {
+  background: var(--primary-dark); border-radius: var(--radius);
+  padding: 26px 30px; margin: 12px 0; text-align: center;
+}
+.hook-box .hb-main {
+  font-family: var(--font-serif); font-size: 19px; color: #f0ece4;
+  line-height: 1.8; letter-spacing: 1px;
+}
+.hook-box .hb-sub { font-size: 12px; color: #9aa0a8; margin-top: 11px; line-height: 1.7; }
+
+.divider-dot { text-align: center; color: var(--border); letter-spacing: 6px; margin: 26px 0; font-size: 10px; }
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .back-to-top, .modal-overlay { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block, .cycle-node { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 18px 15px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .cycle-map { grid-template-columns: 1fr 1fr; }
+  .step-flow { grid-template-columns: 1fr 1fr; }
+  .header { padding: 26px 22px; }
+  .header h1 { font-size: 24px; }
+  .law-card { grid-template-columns: 1fr; gap: 4px; }
+  .modal-card { padding: 22px; }
+}
+</style>
+</head>
+<body data-theme="graphite">
+
+<nav class="sidebar" id="sidebar">
+  <h3>Table of Contents</h3>
+  <ul class="toc-list">
+    <li><a href="#tree">全书结构</a></li>
+    <li><a href="#ch1">一　表征：看懂报表</a></li>
+    <li class="toc-l2"><a href="#ch1-a">报表的边界</a></li>
+    <li class="toc-l2"><a href="#ch1-b">资产·负债·利润·现金</a></li>
+    <li class="toc-l2"><a href="#ch1-c">报表附注</a></li>
+    <li><a href="#ch2">二　找钱：融资与管理</a></li>
+    <li class="toc-l2"><a href="#ch2-a">融资的三重配比</a></li>
+    <li class="toc-l2"><a href="#ch2-b">杜邦三拆</a></li>
+    <li class="toc-l2"><a href="#ch2-c">成本与责任</a></li>
+    <li><a href="#ch3">三　花钱：投资与分配</a></li>
+    <li class="toc-l2"><a href="#ch3-a">决策的秩序</a></li>
+    <li class="toc-l2"><a href="#ch3-b">并购与商誉</a></li>
+    <li class="toc-l2"><a href="#ch3-c">分红政策</a></li>
+    <li><a href="#ch4">四　精进：把脉一家公司</a></li>
+    <li><a href="#appendix">附录：三张报表</a></li>
+    <li><a href="#upgrade">认知升级主线</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与比较</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <!-- 页头 -->
+  <div class="header" id="header">
+    <h1>贾宁财务讲义</h1>
+    <div class="subtitle">人人都需要的财务思维</div>
+    <div class="meta">
+      <span><strong>作者</strong>　贾宁</span>
+      <span><strong>出版</strong>　中信出版集团 · 2020 年 9 月</span>
+      <span><strong>篇幅</strong>　370 页 · 4 章 34 讲 + 附录</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">财务思维</span>
+      <span class="badge">报表分析</span>
+      <span class="badge">融资决策</span>
+      <span class="badge">投资并购</span>
+      <span class="badge">哈佛分析框架</span>
+    </div>
+    <div class="soul">财务不是记账的学问，是从数字倒推别人做过什么决定的学问。<br>报表是证据，不是判决。</div>
+  </div>
+
+  <!-- 全书结构 -->
+  <div class="section" id="tree">
+    <h2><span class="h2-num">00</span>全书结构</h2>
+    <p class="lead"><strong>领域主干：</strong>财务研究的是——一笔钱进入企业之后，如何被记录、被筹集、被投放、被分配，以及如何从这些记录里还原出当事人当时做过的判断。</p>
+
+    <div class="tree-box">贾宁财务讲义
+│
+├─ <span class="t-hi">第一章　表征</span>　呈现公司经营活动　01–10
+│   ├─ 报表的边界 ── 01 报表能不能装下公司 / 02 资产边界 / 10 报表附注
+│   ├─ 资产与负债 ── 03 资产配置 / 04 负债经营 / 05 表外负债
+│   ├─ 利润 ──────── 06 利润革命 / 07 利润质量
+│   └─ 现金 ──────── 08 现金水平 / 09 现金结构
+│
+├─ <span class="t-hi">第二章　找钱</span>　融资与管理　11–20
+│   ├─ 从外部找钱 ── 11 融资关系 / 12 融资原则 / 13 股权结构
+│   │                14 一股独大 / 15 融资生态
+│   ├─ 从效率找钱 ── 16 杜邦三拆 / 17 决策相关性
+│   └─ 从管理找钱 ── 18 成本识别 / 19 资源管理 / 20 组织变革
+│
+├─ <span class="t-hi">第三章　花钱</span>　投资与分配　21–30
+│   ├─ 投资决策 ──── 21 买租借 / 22 价值投资 / 23 资本预算
+│   │                24 风险量化 / 25 实物期权 / 26 风险转移
+│   ├─ 并购 ──────── 27 并购策略 / 28 商誉 / 29 减值时机
+│   └─ 分配 ──────── 30 分红政策
+│
+├─ <span class="t-hi">第四章　精进</span>　快速把脉上市公司　31–34
+│   └─ 哈佛分析框架：战略 → 会计 → 财务 → 前景
+│
+└─ <span class="t-hi">附　　录</span>　财务报表基础
+    └─ 资产负债表 / 利润表 / 现金流量表</div>
+
+    <div class="cycle-map">
+      <div class="cycle-node">
+        <div class="cn-idx">CH.01</div>
+        <div class="cn-name">表征</div>
+        <div class="cn-desc">经营活动的数字投影。企业做的一切，最后都要落进三张表。</div>
+        <div class="cn-ch">01–10 讲</div>
+      </div>
+      <div class="cycle-node">
+        <div class="cn-idx">CH.02</div>
+        <div class="cn-name">找钱</div>
+        <div class="cn-desc">外部融资（股权/债权）＋内部找钱（降本增效）。</div>
+        <div class="cn-ch">11–20 讲</div>
+      </div>
+      <div class="cycle-node">
+        <div class="cn-idx">CH.03</div>
+        <div class="cn-name">花钱</div>
+        <div class="cn-desc">买资产、做并购、分红。花钱的方式决定未来的报表。</div>
+        <div class="cn-ch">21–30 讲</div>
+      </div>
+      <div class="cycle-node">
+        <div class="cn-idx">CH.04</div>
+        <div class="cn-name">精进</div>
+        <div class="cn-desc">哈佛框架，四步把脉一家陌生公司。</div>
+        <div class="cn-ch">31–34 讲</div>
+      </div>
+    </div>
+    <div class="cycle-return">↻ 花钱形成的资产产生利润 → 利润回到报表 → 报表支撑下一轮融资。这个回路，就是「增长」在财务上的定义。</div>
+  </div>
+
+  <!-- 第一章 -->
+  <div class="section" id="ch1">
+    <h2><span class="h2-num">01</span>表征：报表能不能装下一家公司</h2>
+
+    <div class="era-head" id="ch1-a">
+      <span class="era-tag">1.1</span>
+      <span class="era-title">报表的边界</span>
+      <span class="era-sub">01 · 02 · 03</span>
+    </div>
+    <p class="lead">这三讲回答同一个问题：报表是公司的完整投影，还是一个被规则裁剪过的版本。答案偏后者，而裁剪的方式本身就是最有信息量的地方。</p>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">01　报表是过滤器，不是复印机</div>
+        <div class="content">一家公司能被完整装进报表吗？不能，而且永远不能。报表只记录「能用货币计量、且符合会计确认条件」的东西，它建立在四个假设上：会计主体、持续经营、会计分期、货币计量。凡是不符合的——品牌、团队、客户关系、组织能力——全部留在表外。</div>
+        <div class="example">💡 <strong>后果</strong>：一家公司账面净资产 10 亿、市值 300 亿，差额 290 亿不是「泡沫」，是<strong>报表装不下的东西的市场定价</strong>。看市净率高的公司，先问它最值钱的东西在表上吗。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">02　资产的边界，就是利润的空间<span class="glossary-trigger" onclick="openModal('assetBoundary')">?</span></div>
+        <div class="content">资产要同时满足三条：企业拥有或控制、由过去的交易或事项形成、预期会带来经济利益。实操里最有弹性的是第一条和第三条。研发支出就是典型：研究阶段的支出必须费用化（当期扣利润），开发阶段符合条件的才能资本化（变成资产慢慢摊）。同一笔钱，放左边还是放右边，当期利润能差一倍。</div>
+        <div class="example">💡 <strong>看什么</strong>：把一家公司连续几年的研发投入资本化率拉出来。从 30% 跳到 70%、而收入没怎么增长——这不是技术进步，是利润需要。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">03　资产结构暴露战略<span class="glossary-trigger" onclick="openModal('assetLight')">?</span></div>
+        <div class="content">重资产还是轻资产，不是风格偏好，是用钱换来的两种不同的赚钱方式。重资产：先砸钱建产能，靠规模和成本领先，一旦建成别人很难追；轻资产：把钱花在品牌、渠道、技术上，扩张快，但护城河要靠别的东西维持。</div>
+        <div class="example">💡 <strong>对照</strong>：京东自建物流仓储，固定资产与在建工程长期沉重，换来时效与体验；拼多多几乎不碰仓配，资产极轻、扩张极快，但履约依赖外部。两者的报表一眼就能分开。</div>
+      </div>
+    </div>
+
+    <div class="era-head" id="ch1-b">
+      <span class="era-tag">1.2</span>
+      <span class="era-title">四个真假问题</span>
+      <span class="era-sub">04–09　先给常识，再把常识拆掉</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card debate">
+        <div class="label">04　高负债 ≠ 高风险：先看是谁的钱<span class="glossary-trigger" onclick="openModal('interestDebt')">?</span></div>
+        <div class="content">资产负债率 70% 的公司可能很安全，30% 的可能快死了。区别在负债的性质：经营性负债（应付账款、合同负债、预收款）是占用上下游的钱，不但不要利息，还说明你在产业链里有话语权；金融性负债（银行借款、债券）才是要还本付息的硬约束。真正该看的是<strong>有息负债率</strong>和<strong>利息保障倍数</strong>。</div>
+        <div class="example">💡 <strong>两个极端</strong>：茅台常年有大量合同负债（经销商先打款），这是好负债；高杠杆房企账上主要是信托与开发贷，一旦销售停摆，利息立刻变成绞索。同一个「负债」科目，含义可以完全相反。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">05　最危险的负债不在表上<span class="glossary-trigger" onclick="openModal('offBalance')">?</span></div>
+        <div class="content">表外负债的常见形态：对外担保、明股实债、永续债、应收账款保理与 ABS、供应链金融、对赌协议。它们在报表主体里看不见，或者被记成「权益」而不是「负债」。所以看一家公司必须翻到附注里的「或有事项」与「担保情况」，再看少数股东权益是否异常膨胀。</div>
+        <div class="example">💡 <strong>三个信号</strong>：① 少数股东权益占比高但少数股东损益占比极低；② 长期股权投资里塞了大量合资公司；③ 对外担保额接近或超过净资产。任何一条出现，都该把杠杆率往上重算一遍。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">06　利润是估计出来的，不是数出来的<span class="glossary-trigger" onclick="openModal('accrual')">?</span></div>
+        <div class="content">这是全书最锋利的一讲。权责发生制意味着：收入在「赚到」时确认（不一定收到钱），成本在「受益期」分摊（不一定付了钱）。于是至少有四个可以被调节的口子：折旧摊销年限、坏账与存货跌价准备、收入确认时点、费用资本化。每一个都是合法估计，合起来就是一条可以伸缩的利润橡皮筋。</div>
+        <div class="example">💡 <strong>一句话判断</strong>：如果一家公司的利润年年精准踩在某个整数（刚好达标、刚好扭亏、刚好不下滑），那不是经营稳定，是有人在用估计凑数。真实的经营结果很少这么圆。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">07　利润质量：能持续的那部分才算数</div>
+        <div class="content">看利润要分两层：核心利润（主营收入减主营成本费用）和非经常性损益（政府补助、资产处置、公允价值变动、投资收益）。后者今年有明年不一定有，所以有个更硬的指标：<strong>扣非净利润</strong>。一家公司连续三年靠卖房、卖股权、拿补贴保壳，扣非后连亏三年——它的「盈利」只是会计动作。</div>
+        <div class="example">💡 <strong>追问法</strong>：这个利润明年还能重复做一遍吗？如果能，靠什么？答不出来，就按非经常性损益处理。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">08　现金不是越多越好，太多反而是信号</div>
+        <div class="content">现金有机会成本——躺在账上不产生回报。所以账上现金长期远超经营需要，通常只有三种解释：① 找不到值得投的项目（增长见顶）；② 有大额支出或危机预案（偿债高峰将至）；③ <strong>这笔钱可能根本不存在</strong>。第三种最凶险，典型特征就是「存贷双高」：账上趴着几百亿现金，同时还在大量借高息债。</div>
+        <div class="example">💡 <strong>逻辑</strong>：如果真有钱，为什么要一边存低息、一边借高息？除非存款是假的，或被大股东占用了。这个矛盾不需要任何内部消息就能看出来。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">09　现金流的正负组合，比单个数字会说话</div>
+        <div class="content">为什么现金流为负的公司能上市？因为现金流要看三类活动的组合，而不是看净额。经营、投资、筹资三项的正负，构成一种「生命阶段指纹」。</div>
+      </div>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr><th>经营</th><th>投资</th><th>筹资</th><th>怎么读</th><th>典型状态</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>－</td><td>－</td><td>＋</td>
+            <td>自己在失血，还在大举投入，全靠融资输血</td>
+            <td>早期或高速扩张。可能是好公司，但命系于融资窗口，窗口一关就断粮</td></tr>
+          <tr><td>＋</td><td>－</td><td>－</td>
+            <td>经营自己造血，同时扩张，还能还债分红</td>
+            <td>成熟期的现金奶牛，最健康的组合</td></tr>
+          <tr><td>＋</td><td>－</td><td>＋</td>
+            <td>经营能赚钱，还要加杠杆加速扩张</td>
+            <td>成长期。要盯的是投入产出比，不是规模</td></tr>
+          <tr><td>－</td><td>＋</td><td>－</td>
+            <td>经营失血，靠卖资产还债</td>
+            <td>最危险。这是收缩求生，不是经营</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-card insight" style="margin-top:14px;">
+      <div class="label">现金流真正的分水岭：自由现金流</div>
+      <div class="content">把三类现金流看完，还要算一个数：<strong>经营现金流 − 资本开支 = 自由现金流</strong><span class="glossary-trigger" onclick="openModal('fcf')">?</span>。它回答的是「维持现有生意之外，还剩多少真钱可以自由支配」。这个数长期为负的公司，无论利润表多好看，本质上都在靠外部资金活着。</div>
+      <div class="example">💡 <strong>一层递进</strong>：利润是「应该赚到的」，经营现金流是「真的收到了的」，自由现金流是「能拿走的」。</div>
+    </div>
+
+    <div class="era-head" id="ch1-c">
+      <span class="era-tag">1.3</span>
+      <span class="era-title">小字里的真相</span>
+      <span class="era-sub">10</span>
+    </div>
+
+    <div class="info-card concept">
+      <div class="label">10　报表附注：字越小越重要</div>
+      <div class="content">主表是结论，附注是结论的推导过程和前提条件。真正该看的有五块：会计政策与估计变更（利润的调节记录）、关联交易（利益输送的通道）、或有事项与承诺（未来的雷）、受限资产（能抵押的是不是都抵押了）、分部信息（哪块业务在赚钱）。页码越靠后、字号越小，通常越少人看，也越少人愿意让你看。</div>
+      <div class="example">💡 <strong>实用顺序</strong>：先看「重要会计政策」有没有变更，再翻「关联方及关联交易」，最后看「或有事项」。三处看完，比通读三张表更能发现异常。</div>
+    </div>
+  </div>
+
+  <!-- 第二章 -->
+  <div class="section" id="ch2">
+    <h2><span class="h2-num">02</span>找钱：融资与管理</h2>
+    <p class="lead">这一章比字面宽。外部融资是向别人找钱，内部管理是向效率找钱——两件事被放在同一章，因为它们在同一个约束下：<strong>资本是有成本的</strong>。</p>
+
+    <div class="era-head" id="ch2-a">
+      <span class="era-tag">2.1</span>
+      <span class="era-title">融资的三重配比</span>
+      <span class="era-sub">11–15</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">11　债权人和股东，不是同一类出钱人</div>
+        <div class="content">股东要的是剩余收益（扣掉所有成本后剩下的，可以很多也可以归零），债权人要的是固定偿付（利息加本金，多一分不要，少一分不行）。这个差异带来天然冲突：股东有动力去冒更大的险，赚了归自己、亏了归债权人。所以债务合同里必然出现担保、抵押、限制性条款——这不是不信任，是结构决定的行为。</div>
+        <div class="example">💡 <strong>推论</strong>：一家公司要发债，先看它有没有把最好的资产抵押掉。抵押完了还能发信用债，说明市场真信它。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">12　期限错配，是企业死亡的第一大原因<span class="glossary-trigger" onclick="openModal('maturity')">?</span></div>
+        <div class="content">融资的第一原则不是成本最低，是期限配比加风险配比：短期资金不能投长期资产（回款还没到，债就到期了）；高风险项目不能用债务资金（波动一起来，利息照付）。违反这一条的公司，往往不是不赚钱，而是在赚钱的路上被现金流掐死。</div>
+        <div class="example">💡 <strong>典型死法</strong>：用一年期流动资金贷款去建三年期厂房。厂房还没投产，贷款到期、银行抽贷，只能高息过桥，越滚越紧。很多爆雷不是亏损爆的，是错配爆的。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">13　控制权可以脱离股权<span class="glossary-trigger" onclick="openModal('abShare')">?</span></div>
+        <div class="content">同股同权是默认设置，不是物理定律。AB 股（特别表决权）让创始人用少量股权掌握多数投票权，代价是外部股东让渡了部分治理权。它的合理性在于：创始人往往押上了全部身家与长期判断，而二级市场股东可以随时卖出。它的问题也在于同一处：一旦判断错了，纠正机制被削弱。</div>
+        <div class="example">💡 <strong>判断标准</strong>：这家公司是靠创始人的长期判断赢，还是靠资本、渠道、牌照赢？前者适合 AB 股，后者不适合。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">14　一股独大的代价：关联交易<span class="glossary-trigger" onclick="openModal('relatedParty')">?</span></div>
+        <div class="content">大股东与小股东的利益并不天然一致。控制权高度集中时，最常见的三种掏空方式是：高价向关联方采购、低价把资产卖给关联方、让上市公司为大股东担保或拆借资金。这些交易在报表上都有痕迹：毛利率异常、其他应收款畸高、关联销售占比高但价格不透明。</div>
+        <div class="example">💡 <strong>最容易漏的一处</strong>：其他应收款。这个科目本来该很小，一旦占到总资产的 5% 以上且对方是关联方，就要追到底——它常常是资金占用的伪装。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">15　局部最优 ≠ 整体最优<span class="glossary-trigger" onclick="openModal('wacc')">?</span></div>
+        <div class="content">每一笔融资都想挑最便宜的那个，加总起来却可能让整体资本成本变高——因为风险结构变了。企业真正要优化的只有一个数：WACC。而且融资有顺序偏好（啄食顺序理论）：先用内部留存（最便宜、无信息成本），再借债，最后才发股票，因为发股票常被市场读成管理层觉得股价高了。</div>
+        <div class="example">💡 <strong>反常识结论</strong>：一家公司宣布大额定增，股价往往先跌。不是因为缺钱本身坏，而是这个动作在传递信号。</div>
+      </div>
+    </div>
+
+    <div class="era-head" id="ch2-b">
+      <span class="era-tag">2.2</span>
+      <span class="era-title">杜邦三拆：钱到底是怎么赚出来的</span>
+      <span class="era-sub">16　全书最好用的一张图</span>
+    </div>
+
+    <div class="formula-box">
+ROE <span class="fx-note">=</span> 净利润 / 净资产
+    <span class="fx-note">=</span> <span class="fx-hi">(净利润 / 营业收入)</span> <span class="fx-note">×</span> <span class="fx-hi">(营业收入 / 总资产)</span> <span class="fx-note">×</span> <span class="fx-hi">(总资产 / 净资产)</span>
+    <span class="fx-note">=</span> <span class="fx-hi">净利率 × 总资产周转率 × 权益乘数</span>
+    <span class="fx-note">　　　赚得多　　　　　转得快　　　　　借得多</span>
+    </div>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr><th>赚钱模式</th><th>靠哪个因子</th><th>特征</th><th>代表</th><th>真正的风险</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="rowhead">产品领先型</td><td>净利率</td>
+            <td>毛利厚，定价权强，周转慢也无所谓</td>
+            <td>高端白酒、奢侈品、创新药</td>
+            <td>需求一旦收缩，高毛利跌得最快，且很难降价保量</td></tr>
+          <tr><td class="rowhead">效率领先型</td><td>周转率</td>
+            <td>毛利极薄，靠规模与速度赚钱</td>
+            <td>商超、快消、代工</td>
+            <td>毛利太薄，一点管理失误就转负；对库存与账期极度敏感</td></tr>
+          <tr><td class="rowhead">杠杆驱动型</td><td>权益乘数</td>
+            <td>用别人的钱放大收益</td>
+            <td>银行、保险、房企</td>
+            <td>现金流一断，杠杆反向放大亏损，且往往没有第二次机会</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这一讲最该带走的方法</div>
+      <p>看到一家公司的 ROE 很高，不要直接当成「好公司」，先问：这个高是哪一个因子撑起来的？<br>
+      如果是净利率——它的定价权从哪来，能维持几年？<br>
+      如果是周转率——它的管理壁垒是什么，能不能被复制？<br>
+      如果是权益乘数——<strong>这是最脆弱的一种高</strong>，因为它把外部条件的稳定当成了自己的能力。<br>
+      同一个 20% 的 ROE，三种成分意味着三种完全不同的风险。</p>
+    </div>
+
+    <div class="era-head" id="ch2-c">
+      <span class="era-tag">2.3</span>
+      <span class="era-title">成本、资源与责任</span>
+      <span class="era-sub">17–20</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">17　决策只看相关成本，不看账上成本</div>
+        <div class="content">财务决策的核心工具是差量分析：只比较「做」与「不做」之间会变化的那些数。沉没成本（已经花掉、收不回的）与决策无关；机会成本（因为选了这个而放弃的那个）必须算进去，哪怕它从没出现在账上。</div>
+        <div class="example">💡 <strong>经典题</strong>：产能闲置时，客户给一个低于完全成本的报价，接不接？答案看<strong>变动成本</strong>——只要售价高于增量成本且不挤占其他订单，接了就是贡献利润。用完全成本去拒单，是把固定成本的摊销当成了决策依据。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">18　成本结构决定利润弹性<span class="glossary-trigger" onclick="openModal('opLev')">?</span></div>
+        <div class="content">把成本切成固定与变动，会得到一个残酷的结论：固定成本占比越高，利润对收入变化越敏感。收入涨 10%，利润可能涨 40%；收入跌 10%，利润可能跌 40%。所以重资产企业在行业上行时利润爆发，在下行时崩塌——同一套产能，两种命运。</div>
+        <div class="example">💡 <strong>盈亏平衡点</strong> = 固定成本 / 单位边际贡献。它告诉你产能利用率低于多少就开始亏，比看毛利率更能预警。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">19　外包的反噬：省下的成本会从别处回来</div>
+        <div class="content">把环节外包出去，报表上立刻变轻、回报率立刻变高。但如果外包的正好是核心竞争力，代价会在几年后出现：技术能力流失、供应商议价权上升、质量事故无法追溯、响应速度变慢。能外包的是「别人也能做得一样好」的环节，不能外包的是「做得好坏决定生死」的环节。</div>
+        <div class="example">💡 <strong>一条判断线</strong>：这个环节出问题，客户会立刻感知到吗？会，就不能外包；不会，就可以。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">20　人人都是一张利润表</div>
+        <div class="content">大企业最典型的病是只有老板关心利润。解决办法是责任会计：把组织切成可核算的小单元（利润中心/成本中心/投资中心），用内部转移定价让单元之间的交易有价格。这样每个单元都有自己的收入、成本、利润，市场压力被翻译成每个人的数字。</div>
+        <div class="example">💡 <strong>它的代价</strong>：单元之间会开始内部博弈——压价、藏资源、拒绝协作。所以内部转移定价的设计比划分单元更难：定得太松，压力传不下去；定得太紧，组织碎成一地。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第三章 -->
+  <div class="section" id="ch3">
+    <h2><span class="h2-num">03</span>花钱：投资与分配</h2>
+    <p class="lead">找钱决定资本成本，花钱决定资产回报。这一章的核心不是「该不该花」，而是<strong>用什么标准花</strong>。</p>
+
+    <div class="era-head" id="ch3-a">
+      <span class="era-tag">3.1</span>
+      <span class="era-title">决策的秩序</span>
+      <span class="era-sub">21–26</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">21　买、租、还是借：三种花法的现金流不同</div>
+        <div class="content">同一个资产，三种拿法在报表上完全不同：买（一次性大额现金流出，资产上表，每年折旧）；融资租赁（资产与负债同时上表，等于借钱买）；经营租赁（只体现为每期租金费用，最轻）。新租赁准则已把大部分经营租赁纳入表内，但判断逻辑没变：看资产的专用性和使用弹性。</div>
+        <div class="example">💡 <strong>判断法</strong>：确定要用十年、且只为我服务（专用设备）→ 买；只用三年、随时可能换（办公场地、车辆）→ 租。核心是<strong>谁承担残值风险</strong>。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">22　价值投资：用别人的错误赚钱<span class="glossary-trigger" onclick="openModal('marginSafety')">?</span></div>
+        <div class="content">市场不是永远正确的定价机器，它由人组成，会恐慌、会狂热。价值投资的逻辑不是预测未来，而是在别人明显犯错时出手：估算出内在价值，等价格显著低于它（安全边际）时买入。安全边际的作用不是提高收益，是容纳你自己也会算错。</div>
+        <div class="example">💡 <strong>一句话</strong>：你不需要每次都判断对，只需要在判断对的时候赚得比判断错的时候亏得多。安全边际就是为「我可能错」预留的空间。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">23　项目 PK：为什么优先用 NPV 而不是 IRR<span class="glossary-trigger" onclick="openModal('npv')">?</span></div>
+        <div class="content">NPV 把未来现金流按资本成本折现，回答「这个项目值多少钱」；IRR 算出项目自身的回报率，回答「这个项目的收益率多高」。听上去 IRR 更直观，但它有两个陷阱：规模不同的项目不可比（小项目 IRR 高但赚得少）；现金流正负交替时会出现多个 IRR，根本没法判断。</div>
+        <div class="example">💡 <strong>实用原则</strong>：互斥项目（只能选一个）一律看 NPV；独立项目（钱够可以都做）可以用 IRR 排序。NPV 为正意味着扣掉资本成本后还有剩余——这是唯一无歧义的标准。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">24　风险要量化成概率和幅度，不是感觉</div>
+        <div class="content">三种递进的方法：敏感性分析（哪个假设变动对结果影响最大）、情景分析（乐观/中性/悲观三套假设一起动）、决策树与蒙特卡洛（把不确定性写成概率分布，跑出结果的分布）。关键不是算得多精，而是知道哪个变量最要命。</div>
+        <div class="example">💡 <strong>最有用的产出</strong>往往不是「这个项目 NPV 是 3000 万」，而是「售价假设每跌 5%，NPV 就归零」。后一句话才是决策依据。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">25　不确定性本身有价值：实物期权<span class="glossary-trigger" onclick="openModal('realOption')">?</span></div>
+        <div class="content">传统 NPV 把不确定性当坏事（所以要加折现率惩罚），但真实世界里，能等、能改、能退，本身就是值钱的。这就是实物期权：延迟期权（等信息更清楚再投）、扩张期权（先小投，验证后再加）、放弃期权（不行就停，损失封顶）、转换期权（随时换用途）。</div>
+        <div class="example">💡 <strong>典型应用</strong>：药企研发的分里程碑付款、矿权的分期勘探、互联网公司的「小规模试点再放量」。共同点是把一次大赌拆成几次小赌，每次都有退出权。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">26　只转移你承担不起的风险</div>
+        <div class="content">保险、担保、对赌、责任共担，本质都是风险转移。但转移有成本（保费、对价、条款约束），所以判断标准不是「能不能转移」，而是「这个风险发生时，我会不会死」。会死，花多少钱都转；不会死，自己扛，把转移成本省下来。</div>
+        <div class="example">💡 <strong>常见错误</strong>：给可承受的小损失买保险（不划算），却对能一击致命的风险不设防（火灾、关键人、合规）。</div>
+      </div>
+    </div>
+
+    <div class="era-head" id="ch3-b">
+      <span class="era-tag">3.2</span>
+      <span class="era-title">并购与商誉：花得最贵的一笔钱</span>
+      <span class="era-sub">27–29</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">27　以小博大：并购的钱从哪来</div>
+        <div class="content">并购的三种支付方式，风险完全不同：现金收购（前提是有钱或能借到，买完压力全在自己）；换股收购（不用掏现金，但稀释老股东，且等于用我的股票买你的公司，估值高时占便宜）；杠杆收购（用目标公司自己的现金流还债，赚的是资本结构变化的钱）。</div>
+        <div class="example">💡 <strong>协同效应的真相</strong>：几乎所有并购都宣称有协同，但协同要能在具体的成本科目或收入来源上说清楚才对。说不清省在哪一行，基本就是买贵了。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">28　商誉：把对未来的乐观记在账上<span class="glossary-trigger" onclick="openModal('goodwill')">?</span></div>
+        <div class="content">商誉 = 支付对价 − 被收购方可辨认净资产的公允价值。它就是你多付的那部分钱，本质是对未来协同的预付款。它不摊销，只每年做减值测试——这意味着只要不承认买贵了，它就一直挂在资产上。一旦减值，直接砸当期利润，且不可逆。</div>
+        <div class="example">💡 <strong>看什么</strong>：商誉占净资产比例。超过 30% 就要警惕；再看被收购标的是否连续完成业绩承诺。承诺期一过业绩变脸，就是减值的前奏。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">29　洗大澡：把坏消息一次用完<span class="glossary-trigger" onclick="openModal('bigBath')">?</span></div>
+        <div class="content">当一家公司已经确定今年要亏，理性选择往往是亏得更多一点：把未来几年的减值、坏账、关店损失全部集中在今年计提。这样明年的基数被压到极低，任何一点改善都变成增长。这就是洗大澡——合法但不诚实，属于盈余管理的极端形态。</div>
+        <div class="example">💡 <strong>识别信号</strong>：某一年出现巨额资产减值损失 + 管理层更换 + 次年利润大幅反弹。三件事同时出现，基本可判定这是一次洗澡。</div>
+      </div>
+    </div>
+
+    <div class="era-head" id="ch3-c">
+      <span class="era-tag">3.3</span>
+      <span class="era-title">分钱：分多少，比赚多少更难</span>
+      <span class="era-sub">30</span>
+    </div>
+
+    <div class="info-card debate">
+      <div class="label">30　分红多就是好公司吗</div>
+      <div class="content">不一定。分红有两层含义：信号（管理层用真金白银承诺未来现金流稳得住）和约束（把钱交出去，减少管理层乱投的空间）。但如果一家公司一边借钱一边分红，或者分红率长期超过自由现金流，那不是慷慨，是在透支未来——甚至是给大股东输血。</div>
+      <div class="example">💡 <strong>三个该问的问题</strong>：① 分红的钱是自由现金流里出的吗？② 分红后还有钱投核心业务吗？③ 分红率是稳定的，还是某年突然拔高（可能为了配合减持或再融资）？</div>
+    </div>
+  </div>
+
+  <!-- 第四章 -->
+  <div class="section" id="ch4">
+    <h2><span class="h2-num">04</span>精进：四步把脉一家陌生公司</h2>
+    <p class="lead">前三章是零件，这一章是装配。作者用的是哈佛分析框架——它的价值不在四个步骤本身，而在于<strong>顺序不能颠倒</strong>。</p>
+
+    <div class="step-flow">
+      <div class="step-item">
+        <div class="st-num">1</div>
+        <div class="st-name">战略分析</div>
+        <div class="st-desc">这家公司靠什么赚钱？行业结构、竞争位置、商业模式。不懂生意就先看数，必错。</div>
+      </div>
+      <div class="step-item">
+        <div class="st-num">2</div>
+        <div class="st-name">会计分析</div>
+        <div class="st-desc">它的报表可信吗？会计政策是否激进，估计是否保守，有没有粉饰的痕迹。</div>
+      </div>
+      <div class="step-item">
+        <div class="st-num">3</div>
+        <div class="st-name">财务分析</div>
+        <div class="st-desc">用比率和趋势看盈利、效率、流动性、偿债四个维度，横比同业、竖比历史。</div>
+      </div>
+      <div class="step-item">
+        <div class="st-num">4</div>
+        <div class="st-name">前景分析</div>
+        <div class="st-desc">往前走：业绩能不能持续，值多少钱，风险在哪。这才是决策的落点。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">为什么顺序不能颠倒</div>
+      <p><strong>跳过战略分析直接看比率</strong>，就会把「商业模式不同」误判成「经营效率差」。比如重资产企业的周转率天然低于轻资产企业，硬比毫无意义。</p>
+      <p><strong>跳过会计分析直接做财务分析</strong>，就是在沙地上盖楼——如果利润本身是被调过的，所有比率分析都是在分析一个假的数。</p>
+      <p>这也是大部分人看财报失败的原因：<strong>从第三步开始，跳过了前两步。</strong></p>
+    </div>
+
+    <h3>四个维度与两个方向</h3>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">四维度：盈利 · 效率 · 流动 · 偿债</div>
+        <div class="content">盈利性（毛利率、净利率、ROE、ROIC）看赚不赚钱；效率性（总资产周转率、存货与应收账款周转天数）看资产用得快不快；流动性（流动比率、速动比率、现金转换周期）看短期会不会断粮；偿债性（资产负债率、有息负债率、利息保障倍数）看长期扛不扛得住。四个维度要一起看，任何单一指标都能被做出来。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">竖着比与横着比</div>
+        <div class="content">竖着比是结构百分比（利润表每项除以营业收入，资产负债表每项除以总资产），看的是「这家公司的钱是怎么构成的」；横着比是趋势与同业（连续五年、对比三家竞对），看的是「它在变好还是变坏、比别人强在哪」。前者去掉规模差异，后者去掉时点偶然。</div>
+        <div class="example">💡 <strong>最有效的组合</strong>：先竖着比看出结构异常（比如销售费用率比别人高一倍），再横着比看这个异常是新出现的还是一直如此。两个方向一起用，问题自己会浮出来。</div>
+      </div>
+    </div>
+
+    <div class="info-card core" style="margin-top:14px;">
+      <div class="label">一份可操作的排雷清单</div>
+      <div class="content">
+      <strong>① 利润端</strong>　扣非净利润是否连续为负？非经常性损益占比是否超过 30%？<br>
+      <strong>② 现金端</strong>　经营现金流是否长期低于净利润（利润没收到钱）？是否存贷双高？<br>
+      <strong>③ 资产端</strong>　商誉占净资产是否超过 30%？其他应收款是否异常膨胀？开发支出与无形资产是否增长过快？<br>
+      <strong>④ 负债端</strong>　有息负债率多少？短期借款是否超过货币资金（短债长投）？对外担保是否接近净资产？<br>
+      <strong>⑤ 治理端</strong>　关联交易占比多少？大股东是否频繁质押？大额减持与高分红是否同时出现？<br>
+      <strong>⑥ 附注端</strong>　会计政策近年是否变更？审计意见是否标准无保留？
+      </div>
+      <div class="example">💡 <strong>用法</strong>：六项不用全查。先查 ②③⑤——这三处出问题的概率最高，也最容易在十分钟内查完。</div>
+    </div>
+  </div>
+
+  <!-- 附录 -->
+  <div class="section" id="appendix">
+    <h2><span class="h2-num">05</span>附录：三张表到底在说什么</h2>
+    <p class="lead">三张表不是三份独立文件，是同一个企业的三个视角。</p>
+
+    <div class="tree-box">        ┌───────────────────────────┐
+        │       资产负债表          │  时点 · 存量 · <span class="t-hi">家底</span>
+        │   资产 = 负债 + 所有者权益  │  "这一天，你有什么"
+        └────────────┬──────────────┘
+                     │ 未分配利润 = 上年 + 本年净利润 − 分红
+        ┌────────────┴──────────────┐
+        │         利润表            │  期间 · 流量 · <span class="t-hi">本事</span>
+        │  收入 − 成本费用 = 利润    │  "这一年，你赚了多少"
+        └────────────┬──────────────┘
+                     │ 净利润 ± 调整项 = 经营活动现金流
+        ┌────────────┴──────────────┐
+        │       现金流量表          │  期间 · 真金 · <span class="t-hi">活水</span>
+        │ 经营 + 投资 + 筹资 = 净增加 │  "这一年，钱真的动了多少"
+        └────────────┬──────────────┘
+                     ↓
+        期末货币资金 ←→ 资产负债表「货币资金」</div>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">钩稽一：利润表 → 资产负债表</div>
+        <div class="content">本期净利润扣掉分红后，进入资产负债表的未分配利润。这是两张表最硬的一根钉子：如果一家公司连续多年高利润、但未分配利润几乎不增长，要么在大量分红，要么钱去了别处（应收账款、其他应收款、关联方占用）。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">钩稽二：现金流量表 → 资产负债表</div>
+        <div class="content">现金净增加额必须等于货币资金的期末减期初，这条对不上，报表就是错的。实践中更值得看的是：经营现金流与净利润的差额（间接法调整项）落在哪些科目上——存货、应收、应付的变化，就是「利润」与「现金」之间那道沟。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">钩稽三：三张表的三种「真相」</div>
+        <div class="content">同一件事，三张表给出三种说法：资产负债表说你现在有什么，利润表说你这一年赚了多少，现金流量表说你手上多了多少真钱。三者一致时报表可信；出现矛盾时，矛盾本身才是信息。</div>
+        <div class="example">💡 <strong>最经典的矛盾</strong>：利润表连年盈利，经营现金流连年为负，应收账款与存货同步膨胀。三张表各说各话，合起来只指向一个结论——<strong>利润是记出来的，不是收进来的</strong>。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider-dot">· · ·</div>
+
+  <!-- 认知升级 -->
+  <div class="section" id="upgrade">
+    <h2><span class="h2-num">06</span>认知升级主线</h2>
+
+    <div class="insight-card">
+      <div class="insight-title">① 报表不是真相，是被规则过滤后的真相</div>
+      <div class="insight-body">会计不是测量，是建模。它先定义什么算资产、什么算收入、什么时候确认，然后才记录。所以读报表的第一反应不该是「这家公司怎么样」，而该是「这套规则在这里把什么排除掉了」。</div>
+      <div class="insight-evidence">对应 01 报表能不能装下公司　·　02 资产边界　·　06 利润革命</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">② 利润是观点，现金是事实</div>
+      <div class="insight-body">利润可以被估计、被时点、被分类调节，现金不行——钱有没有到账是一个物理事实。所以当利润与现金流打架时，优先相信现金流。这不是说利润没用，而是说利润需要现金流来背书。</div>
+      <div class="insight-evidence">对应 06 利润革命　·　07 利润质量　·　08 现金水平　·　09 现金结构</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">③ 高负债不是风险，期限错配才是</div>
+      <div class="insight-body">负债本身中性，甚至可以是竞争优势（占用上下游资金）。真正致命的是用短期资金支撑长期资产——这会让一家盈利的公司死在某个到期日。判断一家公司，先看期限结构，再看负债规模。</div>
+      <div class="insight-evidence">对应 04 负债经营　·　05 负债隐藏　·　12 融资原则</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">④ 财务不是算过去，是赌未来</div>
+      <div class="insight-body">折旧年限、坏账比例、减值时点、商誉是否减值、项目折现率——每一个数字背后都是对未来的判断。财务报表是披着数学外衣的预判集合。理解了这一点，就不会再把报表当成客观事实来崇拜。</div>
+      <div class="insight-evidence">对应 06 利润革命　·　24 风险量化　·　25 实物期权　·　28 商誉</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">⑤ 财务思维可以迁移到人生决策</div>
+      <div class="insight-body">期限配比（别用短期资源去撑长期承诺）、安全边际（给自己留出判断错误的余量）、沉没成本（已经付出且收不回的不该影响下一步）、机会成本（选了这条路，放弃的那条也是成本）。这些不是比喻，是同一套逻辑。</div>
+      <div class="insight-evidence">对应 12 融资原则　·　17 决策相关性　·　22 价值投资</div>
+    </div>
+  </div>
+
+  <!-- 规律 -->
+  <div class="section" id="laws">
+    <h2><span class="h2-num">07</span>贯穿全书的五条规律</h2>
+
+    <div class="law-card">
+      <div class="law-idx">壹</div>
+      <div>
+        <h4>估计律　凡是要估计的地方，都能被调节</h4>
+        <p>会计离不开估计（折旧几年、坏账多少、减值何时），而估计就带主观。所以利润的调节空间不是一个漏洞，是制度的内置属性。看报表不是找「有没有调节」，而是判断调节的方向是保守还是激进——保守的估计压低当期利润、留出未来空间，激进的估计正好相反。</p>
+      </div>
+    </div>
+
+    <div class="law-card">
+      <div class="law-idx">贰</div>
+      <div>
+        <h4>配比律　期限配期限，风险配风险</h4>
+        <p>这条规律贯穿融资（短债不能长投）、投资（高风险项目要用股权资金）、保险（只转移承担不起的风险）。底层逻辑是同一个：不要把两件时间或风险特征不匹配的东西强行绑在一起。绝大多数财务崩盘，都是配比被破坏的结果。</p>
+      </div>
+    </div>
+
+    <div class="law-card">
+      <div class="law-idx">叁</div>
+      <div>
+        <h4>相关律　决策只看差量，不看绝对值</h4>
+        <p>决策相关的只有「做与不做之间的差额」，沉没成本与决策无关，机会成本必须计入。这条规律解释了为什么「完全成本加成定价」经常导致错误决策——它把固定成本的分摊当成了决策依据，而固定成本在短期是不随决策变化的。</p>
+      </div>
+    </div>
+
+    <div class="law-card">
+      <div class="law-idx">肆</div>
+      <div>
+        <h4>现金律　利润可以等，工资不能等</h4>
+        <p>企业破产的直接原因几乎从来不是亏损，而是付不出到期的钱。所以现金流是硬约束，利润是软约束。一家长期亏损但现金流为正的公司能活很久，一家账面盈利但现金流断裂的公司几周就倒——这个不对称性，是财务思维最实用的一条。</p>
+      </div>
+    </div>
+
+    <div class="law-card">
+      <div class="law-idx">伍</div>
+      <div>
+        <h4>披露律　越小的字越值钱</h4>
+        <p>主表是结论，附注是前提；正文是叙事，小字是例外。信息价值与阅读难度成正比，因为披露的充分程度取决于披露者的意愿，而意愿往往与内容的好坏成反比。愿意把坏消息写清楚的报告，反而更可信。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2><span class="h2-num">08</span>记忆钩子</h2>
+
+    <div class="hook-box">
+      <div class="hb-main">三张表 = 家底 · 本事 · 活水</div>
+      <div class="hb-sub">资产负债表告诉你「有什么」，利润表告诉你「多能干」，现金流量表告诉你「还剩多少真钱」</div>
+    </div>
+
+    <div class="hook-box">
+      <div class="hb-main">一看战略 · 二看会计 · 三看比率 · 四看未来</div>
+      <div class="hb-sub">哈佛框架的四步，顺序不能颠倒——颠倒了，后面的分析都是在错误的地基上做精装修</div>
+    </div>
+
+    <div class="formula-box">
+看懂一家公司 <span class="fx-note">=</span> 报表可信度 <span class="fx-note">×</span> 赚钱模式（净利率/周转率/杠杆） <span class="fx-note">×</span> 现金流真实性 <span class="fx-note">×</span> 与同业的差距
+<span class="fx-note">　　四项是乘号不是加号：任何一项接近零，结论就接近零。所以先排雷，再算估值。</span>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">如果只记一句话</div>
+      <p><strong>报表是证据，不是判决。</strong><br>
+      它记录的是「发生过什么」和「当时怎么判断的」，不告诉你「这家公司好不好」。判断永远是你自己的事——这本书给的是怎么把证据读全，而不是替你下结论。</p>
+    </div>
+  </div>
+
+  <!-- 金句 -->
+  <div class="section" id="quotes">
+    <h2><span class="h2-num">09</span>核心金句</h2>
+
+    <blockquote class="quote-block">
+      <p>「近似的正确，好过精确的错误。」</p>
+      <span class="cite">—— 第 06 讲标题</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      <p>「报表附注：字越小越重要。」</p>
+      <span class="cite">—— 第 10 讲标题</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      <p>「价值投资：用别人的错误赚钱。」</p>
+      <span class="cite">—— 第 22 讲标题</span>
+    </blockquote>
+
+    <p class="lead" style="font-size:12px;">以上三条均为书中章节标题原文，非正文逐字摘录。其余各处观点为本图谱基于全书框架的综合提炼。</p>
+  </div>
+
+  <!-- 延伸 -->
+  <div class="section" id="extension">
+    <h2><span class="h2-num">10</span>延伸与比较</h2>
+
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>给非财务人员的「财务思维」通识课。它不是会计教材（不教分录、不教准则条文、不教税务），而是把财务当作一套看商业的镜头。适合管理者、投资人、求职者、创业者，以及想看懂自己公司的人。</td>
+        </tr>
+        <tr>
+          <td>核心方法</td>
+          <td>四层递进：报表怎么读 → 钱从哪来 → 钱往哪去 → 怎么分析别人。工具箱里最实用的三件是杜邦三拆（判断赚钱模式）、三类现金流组合（判断生命阶段）、哈佛四步框架（判断顺序）。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>强烈的决策导向：每个概念都要落到「这对我做决定有什么用」。因此它偏爱反常识结论（高负债不等于高风险、现金不是越多越好、分红多不等于好公司），也偏爱拆常识的写法。站的是管理者与投资人视角，不是监管或审计视角。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+          ① <strong>34 讲独立性较强</strong>，每讲自成一篇，缺少一条贯穿全书的强论证主线，读者需自己拼框架。<br>
+          ② <strong>案例偏美国公司</strong>，中国案例虽有但比例不高；对 A 股特有的现象（高送转、市值管理、壳资源）着墨有限。<br>
+          ③ <strong>造假识别只到「逻辑矛盾」层</strong>，对业务造假（虚构交易、体外循环）几乎没有覆盖。<br>
+          ④ <strong>2020 年成书</strong>，新收入准则、新租赁准则之后有细则更新，涉及准则细节处需以最新规定为准。<br>
+          ⑤ <strong>不教做账</strong>。想看分录、准则、税务的，这本书帮不上。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+          <strong>《肖星的财务思维课》</strong>　同样面向非财务人员，但更贴中国 A 股实操，两本互为正反面。<br>
+          <strong>《手把手教你读财报》（唐朝）</strong>　更偏散户视角，教到逐行读一张真实报表的程度，可作为本书的实操补充。<br>
+          <strong>《巴菲特致股东的信》</strong>　第 22 讲「价值投资」的原始出处，同一件事的另一个语气。<br>
+          <strong>《聪明的投资者》</strong>　安全边际概念的源头，比本书严谨也枯燥得多。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+          <strong>《信息与激励经济学》</strong>　财报本质是一份信号，而管理层有动机美化它。盈余管理是道德风险，投资者看不懂是逆向选择。那本给理论，这本给识别方法。<br>
+          <strong>《营销管理》</strong>　品牌投入在会计上大多费用化，直接扣当期利润。这解释了为什么营销预算在企业里天然处于弱势——产出是资产，记法是费用。<br>
+          <strong>《智能商业》</strong>　数据与算法的投入面临同一困境，报表装不下「数据资产」，高市净率因此成为这类公司的常态。<br>
+          <strong>《激荡三十年》</strong>　中国企业早期的融资困境（价格双轨、信贷歧视、红帽子），在财务语言里就是融资生态与资本成本的问题。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+          <strong>求职</strong>　拿 offer 前看三年报表，重点看经营现金流和商誉，判断这家公司明年还在不在。<br>
+          <strong>投资</strong>　用六项排雷清单过一遍，比看研报更快筛掉明显有问题的公司。<br>
+          <strong>管理</strong>　把杜邦三拆用在自己部门：我这个单元是靠毛利、靠效率、还是靠占用资源在贡献回报？<br>
+          <strong>个人</strong>　期限配比（别用短钱撑长事）、安全边际（留出错判空间）、沉没成本（该止损就止损）。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="reflection-block">
+      <div class="reflection-title">延伸思辨</div>
+      <p><strong>一 · 报表正在越来越装不下公司。</strong>　本书开篇就问「公司能被完整装进报表里吗」，答案是不能。但在 2020 年之后，这个缺口在急速扩大——研发、数据、算法、组织能力、用户关系，这些决定现代公司价值的东西，绝大部分不在资产负债表上。后果是净资产的解释力在系统性下降，市净率高的公司越来越难用传统框架判断。这本书提出了问题，但没有给出替代方案（说实话，目前也没有）。</p>
+
+      <p><strong>二 · 财务思维有一个内在的反噬。</strong>　它教你把一切翻译成数字，于是能计量的东西获得优先权，不能计量的东西被系统性忽略。企业里最常见的版本是——为了把 ROE 做上去，砍掉研发和培训（因为它们当期扣利润），三年后报表很漂亮，公司已经没有下一代产品。这本书教的是怎么看数，但没说什么时候不该看数。</p>
+
+      <p><strong>三 · 造假识别的真正边界。</strong>　本书的识别技巧有一个共同前提：造假者只改了数字，没改业务。高水平的造假是造业务——注册空壳公司做上下游、资金体外循环、单据真实但交易虚构。这种造假能让三张表完美自洽，因为业务本身被造出来了。所以任何报表分析都有天花板：数字层面的自洽，只能证明内部没有矛盾，不能证明外部真实发生。真要验证，得去看客户、看仓库、看电表。</p>
+
+      <p><strong>四 · 为什么「人人都需要」可能比作者说的更彻底。</strong>　书里的「人人」主要指职场人士。但财务思维的三条底层逻辑——期限配比、安全边际、机会成本——其实是一切的资源分配通用语法。人生也是一张资产负债表：时间是货币资金（有限且不可再生），能力是固定资产（需要持续投入折旧），人际关系是无形资产（不上表但最值钱），健康是持续经营的假设（一旦破了，所有估值都失效）。这个类比不能推得太远，但它能解释一件事：为什么很多人在利润表上很漂亮，在现金流量表上却很穷。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《贾宁财务讲义》知识图谱 · 基于原著框架整理 · 仅供个人学习回顾<br>
+    金句取自章节标题原文，其余内容为综合提炼，非逐字摘录
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  assetBoundary: {
+    title: '资产边界（研发资本化）',
+    content: '<p>资产必须同时满足：① 企业拥有或控制；② 由过去交易或事项形成；③ 预期带来经济利益。</p><p>研发支出的处理是边界上最大的争议点：</p><ul><li><strong>研究阶段</strong>：探索性、结果不确定 → 全部费用化，当期扣利润</li><li><strong>开发阶段</strong>：技术可行、有意图和能力完成、能带来经济利益 → 可资本化，形成无形资产后逐年摊销</li></ul><p>关键：资本化会把当期利润「抬高」，因为你把一笔当期支出变成了未来的摊销。所以<strong>资本化率的异常上升，是利润调节的常见手法</strong>。</p>'
+  },
+  assetLight: {
+    title: '轻资产 / 重资产',
+    content: '<p>按固定资产与在建工程占总资产的比例区分。</p><ul><li><strong>重资产</strong>：先投入大额资本形成产能，靠规模与成本领先。壁垒高（别人要跟就得砸同样的钱），但退出难、折旧压力大、下行时利润跌得凶。</li><li><strong>轻资产</strong>：把钱花在品牌、渠道、技术、组织上，扩张快、调整灵活。但护城河要靠非资产因素维持（品牌、网络效应、转换成本），一旦失去，没有实物可兜底。</li></ul><p>没有优劣，只有是否匹配：重资产要匹配稳定的需求，轻资产要匹配可复制的组织能力。</p>'
+  },
+  interestDebt: {
+    title: '经营性负债 vs 金融性负债',
+    content: '<p>同样是负债，性质完全相反：</p><ul><li><strong>经营性负债</strong>：应付账款、应付票据、合同负债、预收款、应付职工薪酬。来源于占用上下游的资金，通常无息，甚至代表产业链话语权。</li><li><strong>金融性负债</strong>：短期借款、长期借款、应付债券、租赁负债。要付利息、有到期日、有契约约束。</li></ul><p>所以看杠杆要看<strong>有息负债率</strong> = 有息负债 / 总资产，以及<strong>利息保障倍数</strong> = 息税前利润 / 利息费用。前者衡量压力，后者衡量承受能力。</p>'
+  },
+  offBalance: {
+    title: '表外负债',
+    content: '<p>不在（或未充分在）资产负债表主体中体现的债务与义务，常见形态：</p><ul><li><strong>对外担保</strong>：为子公司或关联方担保，对方违约时由你承担</li><li><strong>明股实债</strong>：名义上是股权，约定固定回报与回购义务，实质是债</li><li><strong>永续债</strong>：会计上计入权益（降低杠杆率），但有利率跳升条款，实际要还</li><li><strong>应收账款保理 / ABS</strong>：把应收变现，但可能带有追索权</li><li><strong>供应链金融</strong>：由核心企业信用支撑的上下游融资</li><li><strong>对赌协议</strong>：未达标需补偿或回购，是或有负债</li></ul><p>查法：附注的「或有事项」「担保情况」，以及少数股东权益与少数股东损益的匹配度。</p>'
+  },
+  accrual: {
+    title: '权责发生制与四个调节口子',
+    content: '<p>权责发生制：收入在「赚到」时确认而非收到钱时，成本在「受益期」分摊而非付款时。这让利润反映「应该赚的」，但也留出了估计空间。</p><p>四个主要调节口子：</p><ul><li><strong>折旧 / 摊销年限</strong>：延长年限 → 当期费用变少 → 利润变高</li><li><strong>减值准备</strong>：坏账比例、存货跌价、资产减值，计提多少靠估计</li><li><strong>收入确认时点</strong>：跨期项目可以在「完成百分比」上做选择</li><li><strong>费用资本化</strong>：研发、借款费用、长期待摊费用</li></ul><p>判断原则：这些估计<strong>是变严格了还是变宽松了</strong>。连续变宽松，就是在借未来的利润。</p>'
+  },
+  fcf: {
+    title: '自由现金流（FCF）',
+    content: '<p>自由现金流 = 经营活动现金流 − 资本性支出（购建固定资产、无形资产等支付的现金）。</p><p>它回答：<strong>维持现有生意之外，还剩多少真钱可以自由支配</strong>——用来分红、还债、回购、并购，或投资新业务。</p><ul><li>FCF 长期为负：无论利润表多好看，本质上靠外部资金活着，命系融资窗口</li><li>FCF 稳定为正：真正的现金奶牛，分红和回购才有真实基础</li></ul><p>它比净利润可靠，因为不受会计估计影响；也比经营现金流准确，因为扣掉了维持性投入。</p>'
+  },
+  maturity: {
+    title: '期限配比（短债长投）',
+    content: '<p>融资第一原则：<strong>资金的期限要与资产的回收周期匹配</strong>。</p><p>短债长投：用一年期贷款建三年期厂房，或投回收期很长的项目。后果是——资产还在建设或回款中，债务已经到期，只能借新还旧或高息过桥。一旦银行抽贷或融资环境收紧，立刻断裂。</p><p>检测指标：</p><ul><li><strong>短期借款 &gt; 货币资金</strong>（手头的钱不够还短债）</li><li><strong>流动比率 &lt; 1</strong> 且在建工程、固定资产占比高</li><li>经营现金流长期无法覆盖利息支出</li></ul><p>很多爆雷不是亏死，是<strong>在盈利的路上被到期日掐死</strong>。</p>'
+  },
+  abShare: {
+    title: 'AB 股（特别表决权）',
+    content: '<p>同股不同权结构：A 类股每股一票，B 类股每股多票（常见 10 票），通常由创始人团队持有。</p><p>目的：让创始人在持股比例被多轮融资稀释后仍能保持控制权，从而坚持长期战略而不被短期股价绑架。</p><ul><li><strong>优点</strong>：抵御短期主义，保护长期投入（研发、组织建设）</li><li><strong>代价</strong>：外部股东的治理权被削弱，纠错机制变弱</li></ul><p>判断是否合理的一条线：这家公司的竞争力来自<strong>创始人的长期判断</strong>，还是来自资本、牌照、渠道？前者适合，后者不适合。</p>'
+  },
+  relatedParty: {
+    title: '关联交易与「掏空」',
+    content: '<p>关联交易指公司与控股股东、董监高及其控制的其他企业之间的交易。本身中性（集团内部协同需要），但容易成为利益输送通道。</p><p>三种典型掏空方式：</p><ul><li><strong>高价采购</strong>：上市公司向关联方买东西，价格虚高</li><li><strong>低价出售</strong>：把优质资产便宜卖给关联方</li><li><strong>资金占用</strong>：以「其他应收款」「预付款」形式把钱借出去</li></ul><p>识别信号：其他应收款畸高、关联销售占比高、毛利率显著高于或低于同业、大额预付款给新设公司。</p>'
+  },
+  wacc: {
+    title: 'WACC 与啄食顺序',
+    content: '<p><strong>WACC（加权平均资本成本）</strong> = 债务成本 ×(1−税率)× 债务占比 + 股权成本 × 股权占比。它是企业所有投资的及格线：项目回报必须高于 WACC，才真正创造价值。</p><p><strong>啄食顺序理论</strong>：企业融资有偏好顺序——</p><ul><li>① 内部留存收益（最便宜，无发行成本，不传递坏信号）</li><li>② 债务融资（成本较低，有税盾，但增加财务风险）</li><li>③ 股权融资（成本最高，且常被市场解读为「管理层认为股价偏高」）</li></ul><p>所以大额定增公告后股价常先跌——不是因为缺钱坏，是信号坏。</p>'
+  },
+  opLev: {
+    title: '经营杠杆与盈亏平衡点',
+    content: '<p><strong>经营杠杆</strong>：固定成本占比越高，利润对收入变化越敏感。</p><p>经营杠杆系数 = 边际贡献 / 息税前利润。系数为 3，意味着收入变动 1%，利润变动 3%。</p><p><strong>盈亏平衡点</strong> = 固定成本 / 单位边际贡献（或：固定成本 / 边际贡献率）</p><ul><li>它告诉你「产能利用率低于多少就开始亏」</li><li>比毛利率更能预警，因为它把固定成本的包袱算进去了</li></ul><p>后果：重资产企业在行业上行时利润爆发，下行时崩塌——同一套产能，两种命运。</p>'
+  },
+  marginSafety: {
+    title: '安全边际',
+    content: '<p>安全边际 = 内在价值 − 买入价格（通常以折价比例表示）。</p><p>它的作用容易被误解：<strong>不是为了赚更多，是为了容纳你自己算错</strong>。内在价值的估算必然有误差，折价买入等于给自己留出犯错空间。</p><ul><li>估值越不确定的公司，需要的安全边际越大</li><li>业务越稳定、可预测性越强的公司，可以接受较小的边际</li></ul><p>它与「低估值」不是一回事：低估值可能只是因为公司要完了。安全边际的前提是<strong>你对内在价值的判断本身站得住</strong>。</p>'
+  },
+  npv: {
+    title: 'NPV vs IRR',
+    content: '<p><strong>NPV（净现值）</strong>：把项目未来各期现金流按资本成本折现，减去初始投入。NPV &gt; 0 表示扣掉资本成本后还有剩余，即创造价值。</p><p><strong>IRR（内部收益率）</strong>：使 NPV = 0 的折现率，即项目自身的回报率。</p><p>IRR 的两个陷阱：</p><ul><li><strong>规模问题</strong>：小项目 IRR 50% 但只赚 100 万，大项目 IRR 15% 但赚 1 亿。互斥时按 IRR 选会选错</li><li><strong>多重解</strong>：现金流正负交替多次时，IRR 方程可能有多个解，无法判断</li></ul><p>原则：<strong>互斥项目一律看 NPV；独立项目可用 IRR 排序</strong>。</p>'
+  },
+  realOption: {
+    title: '实物期权',
+    content: '<p>传统 NPV 把不确定性当风险（提高折现率惩罚它），但真实世界里「<strong>能等、能改、能退</strong>」本身有价值。四种常见形态：</p><ul><li><strong>延迟期权</strong>：等信息更明朗再投，价值在于「等待」</li><li><strong>扩张期权</strong>：先小规模投入验证，成功后再追加</li><li><strong>放弃期权</strong>：不行就停，把损失封顶</li><li><strong>转换期权</strong>：资产可切换用途（如柔性产线）</li></ul><p>共同点：<strong>把一次大赌拆成几次小赌，每次都有退出权</strong>。药企的分里程碑付款、互联网的小规模试点，都是这个逻辑。</p>'
+  },
+  goodwill: {
+    title: '商誉',
+    content: '<p>商誉 = 收购支付对价 − 被收购方可辨认净资产的公允价值。</p><p>它就是<strong>你多付的那部分钱</strong>，本质是对未来协同效应的预付款。</p><p>关键规则：商誉<strong>不摊销，只做年度减值测试</strong>。含义是——只要管理层不承认买贵了，它就一直挂在资产上；一旦减值，直接冲减当期利润，且不可转回。</p><p>看什么：</p><ul><li>商誉 / 净资产 &gt; 30% 需警惕</li><li>被收购标的是否连续完成业绩承诺（承诺期一过变脸，是减值前奏）</li><li>是否集中在某一年大额计提（可能是「洗大澡」）</li></ul>'
+  },
+  bigBath: {
+    title: '「洗大澡」（大额计提）',
+    content: '<p>当一家公司已经确定当年要亏损，理性（但不诚实）的选择是<strong>把未来几年的坏消息集中在今年一次性计提</strong>：资产减值、坏账核销、关店损失、商誉减值全部堆在一起。</p><p>效果：当年亏得更惨，但<strong>明年基数被压到极低</strong>，任何一点改善都变成漂亮的增长。</p><p>识别信号（三者同时出现基本可判定）：</p><ul><li>某一年出现巨额资产减值损失</li><li>同期发生管理层更换或大股东变更</li><li>次年利润大幅反弹，且伴随「扭亏为盈」的叙事</li></ul><p>这是盈余管理的极端形态——合法，但严重损害报表的可比性。</p>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 130;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

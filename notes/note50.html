@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>怪诞行为学 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 赤陶主题（实验 / 行为科学） */
+[data-theme="clay"] {
+  --primary: #8a3f2f; --primary-light: #f7ebe6; --primary-dark: #5c2519;
+  --accent: #b4583f; --accent-deep: #7d3123;
+  --bg: #fbf7f2; --bg-card: #ffffff; --bg-soft: #f6efe8; --bg-softer: #efe4d9;
+  --bg-tag: #f2ddd3;
+  --text: #3a2c26; --text-heading: #241712; --text-muted: #8a7264; --text-light: #a99183;
+  --border: #e0d2c6; --border-soft: #ece0d4;
+  --highlight: #f9efe9; --highlight-strong: #f2ddd3;
+  --shadow-sm: 0 1px 3px rgba(92,37,25,0.06); --shadow: 0 2px 10px rgba(92,37,25,0.07);
+  --radius-sm: 3px; --radius: 7px; --radius-lg: 10px;
+  --color-concept: #8a3f2f; --color-tool: #a05a2c; --color-case: #6b7a3a;
+  --color-history: #b9770e; --color-insight: #46685a; --color-debate: #a83a3a;
+  --color-solution: #55703c; --color-crisis: #b03a2e; --color-mechanism: #a05a2c;
+  --color-effect: #7a4a6b; --color-core: #5c2519;
+  --warn-bg: #fdf6e3; --warn-border: #e8d08c; --example-bg: #fbf7f2;
+  --reflect-bg: #f4ece3; --quote-border: #8a3f2f;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 218px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 14px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 11px; color: var(--text-muted);
+  letter-spacing: 1.6px; text-transform: uppercase;
+  margin-bottom: 14px; padding-left: 10px;
+  font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 1px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text);
+  transition: background .15s, color .15s;
+  border-left: 2px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-soft); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--accent);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+.sidebar .toc-sep {
+  height: 1px; background: var(--border-soft);
+  margin: 10px 10px; list-style: none;
+}
+
+/* ===== 主内容 ===== */
+.main { margin-left: 218px; max-width: 1080px; padding: 34px 40px 120px 40px; }
+
+/* ===== 页头 ===== */
+.header {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 34px 36px 30px;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 5px;
+  background: linear-gradient(90deg, var(--primary-dark), var(--accent) 45%, #c98a4b);
+}
+.header::after {
+  content: '';
+  position: absolute; top: 5px; right: 0; width: 180px; height: 96px;
+  background: repeating-linear-gradient(115deg, rgba(138,63,47,0.05) 0 1px, transparent 1px 9px);
+  pointer-events: none;
+}
+.header h1 {
+  font-size: 27px; color: var(--text-heading);
+  margin-bottom: 6px; letter-spacing: -0.2px;
+  line-height: 1.3;
+}
+.header h1 .h1-sub {
+  display: block; font-size: 15px; font-weight: 400;
+  color: var(--text-muted); margin-top: 6px; letter-spacing: 0;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  font-size: 12.5px; color: var(--text-muted);
+  padding: 11px 15px;
+  background: var(--bg-soft);
+  border-radius: var(--radius-sm);
+  margin: 16px 0 14px;
+  border-left: 3px solid var(--border);
+}
+.header .meta strong { color: var(--text-heading); font-weight: 600; }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 7px; }
+.header .badge {
+  background: transparent;
+  color: var(--primary-dark);
+  border: 1px solid var(--bg-tag);
+  background: var(--bg-tag);
+  padding: 3px 12px;
+  border-radius: 3px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.header .soul {
+  margin-top: 18px;
+  padding: 14px 18px;
+  background: var(--highlight);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: var(--primary-dark);
+  line-height: 1.65;
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 30px; }
+.section h2 {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 19px; color: var(--text-heading);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.section h2 .hn {
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 700;
+  color: var(--accent);
+  background: var(--primary-light);
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  letter-spacing: 0.5px;
+}
+.section h2::after {
+  content: ''; flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--border), transparent);
+}
+.section h3 {
+  font-size: 15.5px; color: var(--text-heading);
+  margin: 22px 0 10px;
+  padding-left: 10px;
+  border-left: 2px solid var(--border);
+}
+.lead { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+
+/* ===== 卡片 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(272px, 1fr));
+  gap: 13px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px 17px;
+  transition: border-color .18s, transform .18s;
+}
+.info-card:hover { border-color: var(--border); transform: translateY(-1px); }
+.info-card .label {
+  display: flex; align-items: baseline; gap: 7px;
+  font-weight: 700; font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+}
+.info-card .label::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  flex: 0 0 6px;
+  transform: translateY(-2px);
+  background: var(--primary);
+}
+.info-card.concept .label::before { background: var(--color-concept); }
+.info-card.tool .label::before { background: var(--color-tool); }
+.info-card.case .label::before { background: var(--color-case); }
+.info-card.history .label::before { background: var(--color-history); }
+.info-card.insight .label::before { background: var(--color-insight); }
+.info-card.debate .label::before { background: var(--color-debate); }
+.info-card.solution .label::before { background: var(--color-solution); }
+.info-card.crisis .label::before { background: var(--color-crisis); }
+.info-card.mechanism .label::before { background: var(--color-mechanism); }
+.info-card.effect .label::before { background: var(--color-effect); }
+.info-card.core .label::before { background: var(--color-core); }
+
+.info-card .content { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 11px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.65;
+  border-left: 2px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.exp-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 0.6px;
+  color: #5c6b33;
+  background: #eef1e2;
+  border-radius: 2px;
+  padding: 1px 5px;
+  margin-left: 6px;
+  vertical-align: 1px;
+  font-weight: 600;
+}
+
+/* ===== 论证链横条 ===== */
+.chain-bar {
+  display: flex; flex-wrap: wrap; align-items: stretch;
+  gap: 6px; margin: 16px 0 6px;
+}
+.chain-step {
+  display: flex; align-items: baseline; gap: 7px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 9px 13px;
+  font-size: 12.5px;
+  color: var(--text);
+  transition: border-color .18s;
+}
+.chain-step:hover { border-color: var(--accent); }
+.chain-step .cs-no {
+  font-family: var(--font-mono);
+  font-size: 10.5px; font-weight: 700;
+  color: var(--accent);
+}
+.chain-arrow { align-self: center; color: var(--border); font-size: 12px; }
+
+/* ===== 规范刻度尺（本书专属） ===== */
+.norm-scale {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 20px 20px 16px;
+  margin: 16px 0;
+}
+.ns-track {
+  display: grid; grid-template-columns: 1fr 1fr;
+  position: relative;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  min-height: 88px;
+}
+.ns-zone { padding: 15px 18px; }
+.ns-social {
+  background: linear-gradient(100deg, #e6efe2, #d7e6d2);
+  color: #3b5735;
+}
+.ns-market {
+  background: linear-gradient(100deg, #f4dcd2, #eac4b4);
+  color: #742f20;
+}
+.ns-zone span { display: block; font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.ns-zone small { font-size: 12px; opacity: .82; line-height: 1.5; display: block; }
+.ns-pin {
+  position: absolute; top: 0; bottom: 0; left: 50%;
+  width: 2px; background: var(--primary-dark);
+  transform: translateX(-1px);
+}
+.ns-pin::after {
+  content: '定价这一刻';
+  position: absolute; bottom: -1px; left: 8px;
+  font-size: 11px; font-weight: 700; color: var(--primary-dark);
+  white-space: nowrap;
+  background: rgba(255,255,255,.78);
+  padding: 1px 5px; border-radius: 2px;
+}
+.ns-note {
+  font-size: 12.5px; color: var(--text-muted);
+  margin-top: 12px; padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  line-height: 1.7;
+}
+.ns-note strong { color: var(--primary-dark); }
+
+/* ===== 洞察卡 ===== */
+.insight-card {
+  position: relative;
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 17px 20px 17px 24px;
+  margin-bottom: 11px;
+}
+.insight-card::before {
+  content: '';
+  position: absolute; left: 0; top: 12px; bottom: 12px; width: 3px;
+  background: linear-gradient(180deg, var(--accent), var(--primary-dark));
+  border-radius: 2px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 14.5px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 9px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡 ===== */
+.law-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 11px; margin: 14px 0; }
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  padding: 15px 18px;
+  display: flex; gap: 12px;
+}
+.law-card .law-no {
+  font-family: var(--font-serif);
+  font-size: 19px; font-weight: 700;
+  color: var(--accent);
+  line-height: 1.2;
+  flex: 0 0 auto;
+  opacity: .75;
+}
+.law-card h4 { font-size: 13.5px; color: var(--primary-dark); margin-bottom: 4px; }
+.law-card p { font-size: 12.5px; color: var(--text); line-height: 1.65; }
+
+/* ===== 结构树 / 公式 / 钩子 ===== */
+.tree-box {
+  background: #2b211c;
+  color: #e8dcd0;
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.75;
+  overflow-x: auto;
+  margin: 14px 0;
+}
+.tree-box .tk { color: #d99b7c; }
+.tree-box .tv { color: #c9d6a8; }
+.tree-box .tc { color: #8b7a6d; }
+
+.formula-box {
+  background: var(--primary-dark);
+  color: #f6ece5;
+  border-radius: var(--radius);
+  padding: 22px 24px;
+  margin: 16px 0;
+  text-align: center;
+}
+.formula-box .fb-main {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  line-height: 1.9;
+}
+.formula-box .fb-main em { color: #f0b48f; font-style: normal; }
+.formula-box .fb-note {
+  font-size: 12px; color: #c4ab9c; margin-top: 10px; line-height: 1.7;
+  font-family: var(--font-sans);
+}
+
+.hook-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 18px 22px;
+  margin: 14px 0;
+}
+.hook-box .hk-line {
+  font-family: var(--font-serif);
+  font-size: 16px; color: var(--primary-dark);
+  line-height: 1.7;
+}
+.hook-box .hk-sub {
+  font-size: 12.5px; color: var(--text-muted);
+  margin-top: 8px; line-height: 1.7;
+}
+
+/* ===== 反思 / 引用 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 13.5px; color: var(--primary-dark);
+  margin-bottom: 8px; letter-spacing: 0.3px;
+}
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.75; margin-bottom: 8px; }
+.reflection-block p:last-child { margin-bottom: 0; }
+
+blockquote.quote-block {
+  position: relative;
+  background: var(--bg-soft);
+  border-left: 4px solid var(--quote-border);
+  margin: 16px 0;
+  padding: 18px 22px 16px 26px;
+  font-family: var(--font-serif);
+  font-size: 14.5px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+blockquote.quote-block::before {
+  content: '\201C';
+  position: absolute; left: 8px; top: 2px;
+  font-family: Georgia, serif;
+  font-size: 30px; color: var(--border);
+  line-height: 1;
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px;
+  font-size: 11.5px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+  font-family: var(--font-sans);
+}
+
+/* ===== 表格 ===== */
+table.extension {
+  width: 100%; border-collapse: collapse;
+  font-size: 12.8px; margin: 14px 0;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px; text-align: left;
+  font-weight: 700; font-size: 12.5px;
+  border-bottom: 1px solid var(--border);
+  width: 15%;
+  vertical-align: top;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.68;
+}
+table.extension tr:last-child td { border-bottom: none; }
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 10.5px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle; margin-left: 3px;
+  transition: transform .15s;
+  flex: 0 0 auto;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(36,23,18,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 26px 30px;
+  max-width: 580px; width: 90%; max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(36,23,18,0.25);
+  position: relative;
+  border-top: 4px solid var(--accent);
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none;
+  font-size: 18px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 15.5px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 13.5px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 / 页脚 ===== */
+.back-to-top {
+  position: fixed; bottom: 26px; right: 26px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 17px; cursor: pointer;
+  box-shadow: 0 2px 10px rgba(36,23,18,0.22);
+  z-index: 200; opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 18px 10px;
+  color: var(--text-muted); font-size: 11.5px;
+  border-top: 1px solid var(--border-soft);
+  line-height: 1.8;
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 820px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .header { padding: 26px 20px 22px; }
+  .header h1 { font-size: 22px; }
+  .info-grid, .law-grid { grid-template-columns: 1fr; }
+  .ns-track { grid-template-columns: 1fr; }
+  .ns-pin { display: none; }
+  table.extension { font-size: 12px; }
+  table.extension th { width: 22%; display: block; border-bottom: none; padding-bottom: 2px; }
+  table.extension td { display: block; padding-top: 4px; }
+}
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .back-to-top, .modal-overlay { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  h2, h3 { page-break-after: avoid; }
+}
+</style>
+</head>
+<body data-theme="clay">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">书名与版本</a></li>
+    <li><a href="#question">核心问题</a></li>
+    <li><a href="#chain">六环论证链</a></li>
+    <li><a href="#arg1">一 · 缺一把绝对尺</a></li>
+    <li><a href="#arg2">二 · 价格是暗示</a></li>
+    <li><a href="#arg3">三 · 两套规范</a></li>
+    <li><a href="#arg4">四 · 另一个我</a></li>
+    <li><a href="#arg5">五 · 拥有与选择</a></li>
+    <li><a href="#arg6">六 · 诚实的弹性</a></li>
+    <li><a href="#evidence">关键实验速览</a></li>
+    <li><a href="#insights">贯穿论点</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸比较表</a></li>
+    <li><a href="#reflect">延伸思辨</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <h1>怪诞行为学<span class="h1-sub">可预测的非理性 · Predictably Irrational</span></h1>
+    <div class="meta">
+      <span><strong>作者</strong> 丹·艾瑞里（Dan Ariely）</span>
+      <span><strong>译者</strong> 赵德亮 / 夏蓓洁</span>
+      <span><strong>出版</strong> 中信出版集团 · 第 3 版（2024）</span>
+      <span><strong>原版</strong> 2008，修订版 2009</span>
+      <span><strong>结构</strong> 引言 + 13 章 + 2 附录</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">行为经济学</span>
+      <span class="badge">实验驱动</span>
+      <span class="badge">A 类 · 论点论证链</span>
+      <span class="badge">13 章归并为 6 个扳机</span>
+    </div>
+    <div class="soul">我们不是偶尔犯错，而是在同一批地方反复犯错——正因为犯得规律，所以可以被预测、被设计，也可以被防御。</div>
+  </div>
+
+  <div class="section" id="question">
+    <h2><span class="hn">01</span>核心问题</h2>
+    <p class="lead">全书要回答的不是"人会不会不理性"，而是更难的一问。</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心提问</div>
+        <div class="content">如果非理性只是随机的噪声，那它无法研究，也无法利用；但现实里我们犯的错高度雷同——同一类商品、同一种场景、同一个人群，错的方式几乎一样。<strong>那么这些错误背后，是不是有固定的触发条件？</strong></div>
+        <div class="example">💡 <strong>书名就是答案</strong>："可预测的"（predictably）不是修辞，是方法论声明——能被预测，就能被建模；能被建模，就能被反过来设计。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">对话对象：标准经济学</div>
+        <div class="content">教科书里的"经济人"拥有稳定偏好、无限算力、按绝对价值决策。艾瑞里要否掉的不是"人会算错"，而是<strong>"算错只是偶然"</strong>这一前提。</div>
+        <div class="example">💡 差别不在结论，在态度：传统经济学把偏差当噪声抹掉，行为经济学把偏差当信号研究。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">方法：用实验替代演绎</div>
+        <div class="content">全书基本结构是"一个反常识假设 → 一个可控实验 → 一个可复现的效应"。实验多为学生样本、小额金钱、真实选择，靠<strong>改变一个变量</strong>来看人怎么变。</div>
+        <div class="example">💡 <strong>例子</strong>：把同一颗止痛药标成 5 美分和 50 美分，疗效报告就不一样——改的不是药，是价格标签。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="chain">
+    <h2><span class="hn">02</span>六环论证链：非理性有六个扳机</h2>
+    <p class="lead">13 章不是 13 个孤立故事，而是六组"环境条件 → 心理机制 → 可观察结果"的重复结构。按扳机归并，全书骨架就露出来了。</p>
+
+    <div class="chain-bar">
+      <div class="chain-step"><span class="cs-no">01</span>缺绝对尺 · 参照系</div>
+      <span class="chain-arrow">›</span>
+      <div class="chain-step"><span class="cs-no">02</span>价格与预期</div>
+      <span class="chain-arrow">›</span>
+      <div class="chain-step"><span class="cs-no">03</span>两套规范</div>
+      <span class="chain-arrow">›</span>
+      <div class="chain-step"><span class="cs-no">04</span>两个自我</div>
+      <span class="chain-arrow">›</span>
+      <div class="chain-step"><span class="cs-no">05</span>拥有与选择</div>
+      <span class="chain-arrow">›</span>
+      <div class="chain-step"><span class="cs-no">06</span>诚实的弹性</div>
+    </div>
+
+    <div class="tree-box">
+<span class="tc">// 全书骨架：一个命题，六个扳机</span>
+<span class="tk">核心命题</span> ── <span class="tv">非理性是系统性的，所以可预测</span>
+   │
+   ├─ <span class="tk">扳机①</span> <span class="tv">没有内在价值计量器</span>  <span class="tc">Ch1-2  相对论 / 诱饵 / 锚定 / 任意的一致</span>
+   ├─ <span class="tk">扳机②</span> <span class="tv">价格同时是信息</span>      <span class="tc">Ch3 + Ch9-10  免费 / 预期 / 安慰剂</span>
+   ├─ <span class="tk">扳机③</span> <span class="tv">关系可以被定价</span>      <span class="tc">Ch4  社会规范 ⇄ 市场规范</span>
+   ├─ <span class="tk">扳机④</span> <span class="tv">决定者与承受者不是同一人</span> <span class="tc">Ch5-6  热态 / 冷态 / 拖延</span>
+   ├─ <span class="tk">扳机⑤</span> <span class="tv">拥有即刻改变估值</span>    <span class="tc">Ch7-8  禀赋 / 宜家 / 虚拟所有权 / 关门</span>
+   └─ <span class="tk">扳机⑥</span> <span class="tv">自我形象是最后一道闸</span> <span class="tc">Ch11-12  一点点作弊 / 非现金</span>
+        │
+        └─ <span class="tk">收口</span> <span class="tv">Ch13「免费午餐」：理解偏差，就能重新设计规则</span>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">为什么归并成六个扳机，而不是照抄十三章</div>
+      <div class="insight-body">因为六组各对应一个<strong>可被外部操纵的变量</strong>：参照物、价格标签、关系类型、当下状态、所有权归属、支付形式。这六个变量恰好都是商家、平台、政策制定者手里的旋钮——也正因如此，这本书才既能当防身手册，也能当设计手册。</div>
+      <div class="insight-evidence">对照：原书按机制分章（相对论、锚定、免费、规范、情绪、拖延、所有权、选择、预期、价格、诚实、非现金），本图谱按"谁在拧哪个旋钮"重排。</div>
+    </div>
+  </div>
+
+  <div class="section" id="arg1">
+    <h2><span class="hn">03</span>论点一 · 我们缺一把绝对尺</h2>
+    <p class="lead">Ch1 相对论的真相 · Ch2 供求关系的失衡</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心判断</div>
+        <div class="content">人对物品没有内在的"值多少"刻度，只有"比什么贵、比什么便宜"。既然只能比较，<strong>那么给什么参照物，就决定了你觉得什么合理</strong>。参照物不是背景，是定价权的一部分。</div>
+        <div class="example">💡 房子、工资、手机套餐，你从来说不出"它值多少"，只能说"它比隔壁那个划算"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">诱饵选项<span class="exp-tag">EXP 01</span><button class="glossary-trigger" onclick="openModal('decoy')" aria-label="术语：诱饵效应">?</button></div>
+        <div class="content">《经济学人》订阅页三档：网络版 59 美元、纸质版 125 美元、纸质+网络 125 美元。中间那个几乎没人选，但它不是废选项——<strong>它的唯一职能是让第三档显得极其划算</strong>。</div>
+        <div class="example">💡 <strong>同构</strong>：三个条件相近的约会对象里，放一个"稍差版"作为同伴，会让旁边那位显得更有吸引力。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">锚定：无关数字也能定价<span class="exp-tag">EXP 02</span><button class="glossary-trigger" onclick="openModal('anchoring')" aria-label="术语：锚定效应">?</button></div>
+        <div class="content">让学生先写下自己社会保障号的后两位，再给键盘、红酒、巧克力出价。后两位数字大的人，出价系统性更高。<strong>一个与商品毫无关系的数字，只要先出现，就会成为锚。</strong></div>
+        <div class="example">💡 这就是"原价划线"和"建议零售价"的心理机制——划线价的作用常常不是比较，而是把锚放进去。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">任意的一致<button class="glossary-trigger" onclick="openModal('arbitraryCoherence')" aria-label="术语：任意的一致">?</button></div>
+        <div class="content">锚不是只锚一个价格，而是锚出一整套"价格—品质"信念。第一次遇到的价位会一路延续，形成一条前后自洽的消费习惯线。<strong>起点是任意的，后续却要求一致。</strong></div>
+        <div class="example">💡 第一次买咖啡在 18 元，之后 25 元会觉得贵；第一次就在 35 元，25 元会变成"便宜"。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">黑珍珠：改的不是珍珠，是参照系</div>
+        <div class="content">黑珍珠原本无人问津。商人把它摆进第五大道橱窗，与钻石、宝石并列，标上天价，再投广告——同一颗珍珠，因为<strong>换了并排的邻居</strong>，从滞销品变成稀世珍宝。</div>
+        <div class="example">💡 商品的"档次"往往由货架位置决定，而不是由材质决定。这也是为什么新品牌一定要挤进高端场景。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">代价：比较圈决定幸福感</div>
+        <div class="content">决定满意度的不是绝对收入，而是和谁比。比较圈每扩大一层，同等收入的幸福感就下降一档。<strong>问题在于：参照系从来不是你自己选的。</strong></div>
+        <div class="example">💡 社交媒体把参照系从"邻居和同事"扩大到"全网最会生活的人"，这是二十一世纪最大规模的一次参照系通胀。</div>
+      </div>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">读这一节该拿走的</div>
+      <p>遇到"值不值"的判断，先问一句：<strong>我正在拿它跟什么比？这个"什么"是谁放进来的？</strong>很多消费后悔，不是买贵了，是参照物被替换过。</p>
+    </div>
+  </div>
+
+  <div class="section" id="arg2">
+    <h2><span class="hn">04</span>论点二 · 价格不是标签，是暗示</h2>
+    <p class="lead">Ch3 免费的代价 · Ch9 预期的效应 · Ch10 价格的魔力</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心判断</div>
+        <div class="content">标准模型里，价格是成本；实际上价格还是<strong>信息</strong>。零价格会触发"没有损失"的兴奋，高价格会触发"应该更好"的预期，而预期不是滤镜——它真的改变体验本身。</div>
+        <div class="example">💡 所以"便宜"和"白送"是两种完全不同的心理事件，不是程度差异。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">零价格效应<span class="exp-tag">EXP 03</span><button class="glossary-trigger" onclick="openModal('zeroPrice')" aria-label="术语：零价格效应">?</button></div>
+        <div class="content">1 美分的瑞士莲松露 vs 免费的好时之吻。理性上松露仍然划算得多，但当价格降到零，大多数人转向了免费的那一个。<strong>零消除了"损失"的可能，而对损失的厌恶远强于对收益的渴望。</strong></div>
+        <div class="example">💡 这就是"免费"能让人排队两小时、抢回一堆不需要的东西的原因。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">免费的真实代价</div>
+        <div class="content">免运费让你为了凑单买不需要的书；免费换机油让你接受一堆本不必要的保养项目。<strong>免费的吸引力太大，以至于人会主动绕过更好的选项。</strong></div>
+        <div class="example">💡 免费试用、首月 0 元、免押金，本质都是把"要不要"变成"先拿了再说"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">预期效应：同一杯酒，两种味道<button class="glossary-trigger" onclick="openModal('expectation')" aria-label="术语：预期效应">?</button></div>
+        <div class="content">在啤酒里加几滴醋，事先告知与事后告知，评价截然相反。信息不是对体验的注释，它<strong>参与构建体验</strong>。</div>
+        <div class="example">💡 同一道菜，说是"祖传秘方"和说是"剩菜再加工"，味觉记忆会不一样。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">价格即疗效<span class="exp-tag">EXP 04</span><button class="glossary-trigger" onclick="openModal('placebo')" aria-label="术语：安慰剂效应">?</button></div>
+        <div class="content">同样的止痛药，标价高的一组报告更有效。价格不只是购买成本，它被当成了<strong>品质与效力的证据</strong>，直接影响身体感受。</div>
+        <div class="example">💡 安慰剂的强度还取决于形式：针剂 &gt; 胶囊 &gt; 药片，越像"正式治疗"，效果越强。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">这个机制的两面</div>
+        <div class="content">对商家：提价有时真的"提升"体验，但也在积累预期负债，一旦降价就同时降了感知品质。对个人：<strong>贵不等于好，但你的身体会替你相信它好。</strong></div>
+        <div class="example">💡 破局办法只有一个：把价格遮住再判断（盲测），但生活中很难做到。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="arg3">
+    <h2><span class="hn">05</span>论点三 · 换一套规范，人就换一个人</h2>
+    <p class="lead">Ch4 社会规范的成本</p>
+
+    <div class="norm-scale">
+      <div class="ns-track">
+        <div class="ns-zone ns-social">
+          <span>社会规范</span>
+          <small>人情 · 信任 · 互助 · 自愿多做一点<br>特点是：不计量、不结算、不逐次对等</small>
+        </div>
+        <div class="ns-zone ns-market">
+          <span>市场规范</span>
+          <small>对价 · 交易 · 按时计费 · 按件结算<br>特点是：清晰、可算、可比较、可退出</small>
+        </div>
+        <div class="ns-pin"></div>
+      </div>
+      <div class="ns-note"><strong>箭头是单向的。</strong>海法托儿所对迟到家长罚款后，迟到率反而上升；取消罚款之后，迟到率仍高于从未罚款时——市场规范把人从"不好意思"变成了"我付过钱了"，而且<strong>这笔账一旦算过，就回不去了</strong>。</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心判断：两套操作系统<button class="glossary-trigger" onclick="openModal('socialNorm')" aria-label="术语：社会规范与市场规范">?</button></div>
+        <div class="content">人有两套并行的行为系统，切换开关是"这件事有没有被定价"。同一个请求，说"帮我个忙"和"给你 50 块"，激活的是两个完全不同的人。</div>
+        <div class="example">💡 岳母做了一桌饭，你掏钱结账，饭就没了——不是钱太少，是规范错了。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">迟到罚款实验<span class="exp-tag">EXP 05</span></div>
+        <div class="content">托儿所对迟到家长开罚单。结果迟到人数不降反升，因为内疚被价格买断了。<strong>更麻烦的是取消罚款后，迟到率没有回落。</strong></div>
+        <div class="example">💡 结论很锋利：市场规范不是"更强的激励"，它是"另一种关系"，不能随便开关。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">为什么加薪买不到敬业</div>
+        <div class="content">一旦把雇佣关系彻底定价，人就按价格计较：这份钱对应这份活，多一点都不做。慷慨的工资能换来满意，但换不来"自愿多做一点"——后者只存在于社会规范里。</div>
+        <div class="example">💡 这也是为什么有些团队薪酬不低，却没人愿意多走一步：不是钱不够，是规范已经全换成市场那套了。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">反例：火人节</div>
+        <div class="content">在一个临时城市里彻底禁用金钱，只靠赠与与互助，几十万人居然运转得下去。<strong>它证明社会规范不是脆弱装饰，而是能独立支撑大规模协作的系统。</strong></div>
+        <div class="example">💡 开源社区、维基百科、邻里互助群，都是同一类结构的缩小版。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">管理上的真实陷阱</div>
+        <div class="content">用 KPI 覆盖一切时，那些"没被计入指标的事"会系统性消失。被量化的部分效率上升，未被量化的部分悄悄归零，而后者往往才是组织真正的黏合剂。</div>
+        <div class="example">💡 客服按通话时长考核，结果是问题没解决就挂电话——指标达标，关系破产。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="arg4">
+    <h2><span class="hn">06</span>论点四 · 另一个我</h2>
+    <p class="lead">Ch5 性兴奋的影响 · Ch6 拖沓的恶习与自我控制</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心判断</div>
+        <div class="content">做决定的人和承受结果的人，常常不是同一个自己。冷静时的我替激动时的我承诺，现在的我替未来的我安排。<strong>而这两个"我"之间的信息通道，几乎是单向的。</strong></div>
+        <div class="example">💡 所以"我下次一定不会"这句话，本质上是一个从未到过现场的人做出的判断。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">热态高估不了一切<span class="exp-tag">EXP 06</span><button class="glossary-trigger" onclick="openModal('hotCold')" aria-label="术语：热态与冷态">?</button></div>
+        <div class="content">在性兴奋状态下回答同一份问卷，受试者对各种行为的意愿显著高于冷静时的预测值。<strong>人不是"低估诱惑"，而是根本无法模拟那个状态下的自己。</strong></div>
+        <div class="example">💡 这解释了为什么"你只要说不"式的教育基本无效——那句话是说给冷静态听的。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">杰基尔与海德</div>
+        <div class="content">不是道德堕落，是<strong>状态切换</strong>。同一个人的两套系统在不同情境下接管身体，事后复盘时，冷静的那个自己会真诚地感到陌生。</div>
+        <div class="example">💡 熬夜刷手机、暴食、冲动下单，事后那句"那不像我"是真的。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">截止日实验：自由不如约束<span class="exp-tag">EXP 07</span></div>
+        <div class="content">论文作业分三组：只有最终截止日、自己定若干中间截止日、被强制定期交稿。结果：<strong>强制定期最好，自定次之，只交最终稿最差</strong>，而且自定的人普遍把截止日设得过于宽松。</div>
+        <div class="example">💡 关键不在"有没有自觉"，在于人知道自己不自觉，所以要把约束外包出去。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">解法：预先承诺，而不是加强意志<button class="glossary-trigger" onclick="openModal('precommitment')" aria-label="术语：预先承诺">?</button></div>
+        <div class="content">把选择权提前交给一个不会心软的机制：自动储蓄、限额、把零食从家里清空、把手机放到另一个房间。<strong>不是提高自控力，是减少需要自控的次数。</strong></div>
+        <div class="example">💡 智能信用卡、定时断网、预付费额度，都是同一个思路的产品化。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">另一条路：降低启动成本</div>
+        <div class="content">想让一件事发生，与其说服自己"更努力"，不如把它拆成"像买份套餐一样简单"。<strong>阻力每增加一步，完成率就掉一截。</strong></div>
+        <div class="example">💡 健身卡不如把运动服放在床边；好内容不如先把 App 放在首屏第一格。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="arg5">
+    <h2><span class="hn">07</span>论点五 · 拥有与选择</h2>
+    <p class="lead">Ch7 所有权的个性 · Ch8 多种选择的困境</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心判断</div>
+        <div class="content">"我的"这三个字会立刻改写估值。而一旦某个选项可能消失，人会付出过高代价去保住它，哪怕这个选项本来并不值钱。</div>
+        <div class="example">💡 前者让你卖得太贵，后者让你留得太多。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">杜克球票：同一张票，14 倍差距<span class="exp-tag">EXP 08</span></div>
+        <div class="content">抽中球票的人平均要价约 2400 美元，没抽中的人平均愿付约 170 美元。差别不是需求强度，而是<strong>已经拥有</strong>。</div>
+        <div class="example">💡 买卖谈不成，常常不是价格没谈拢，是双方站在"损失"和"收益"两个不同的心理账户里。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">所有权的三大怪癖<button class="glossary-trigger" onclick="openModal('ownership')" aria-label="术语：禀赋效应">?</button></div>
+        <div class="content">① 对自己拥有的东西迷恋到不能自拔；② 注意力全放在"会失去什么"，而不是"能换到什么"；③ 假定别人与自己眼光一致，所以觉得"这么好你怎么不要"。</div>
+        <div class="example">💡 二手交易里最常出现的僵局，三条全中。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">宜家效应<button class="glossary-trigger" onclick="openModal('ikea')" aria-label="术语：宜家效应">?</button></div>
+        <div class="content">自己动手组装、参与设计、投入劳动之后，人会显著高估成果的价值，哪怕它歪歪扭扭。<strong>投入产生依恋，依恋改写估值。</strong></div>
+        <div class="example">💡 这也是"参与感"营销的底层：让用户自己拼、自己配、自己命名，他就舍不得走。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">虚拟所有权</div>
+        <div class="content">不需要真的拥有，只要"想象中已经拥有"，估值就会上升。试用、拍卖竞价、30 天无理由退货，都是先让你住进去，再让你搬不出来。</div>
+        <div class="example">💡 试驾、试住、免费试用期，本质是把"评估"提前变成"丧失"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">为"保留所有门"付的代价<span class="exp-tag">EXP 09</span><button class="glossary-trigger" onclick="openModal('choiceOverload')" aria-label="术语：关门效应">?</button></div>
+        <div class="content">实验里，受试者宁肯牺牲实际收益，也要去点一下那扇即将消失的门，只为让选项继续存在。<strong>保留选择权本身被当成了收益，哪怕它一文不值。</strong></div>
+        <div class="example">💡 现实版：什么都想留一手，同时开五条业务线，结果一条也做不深。</div>
+      </div>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">这一节最实用的一句话</div>
+      <p>判断一件东西值多少，先假装<strong>你从来没有拥有过它</strong>；判断一个选项要不要留，先问<strong>"如果它明天自动消失，我会花钱把它买回来吗"</strong>。两个问题都能把禀赋效应挤出去一部分。</p>
+    </div>
+  </div>
+
+  <div class="section" id="arg6">
+    <h2><span class="hn">08</span>论点六 · 诚实的弹性</h2>
+    <p class="lead">Ch11 人性的弱点 · Ch12 企业的特权</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">核心判断</div>
+        <div class="content">作弊不是"收益减风险"的计算题。绝大多数人只作弊一点点，而且上限不由被抓概率决定，而由<strong>"我还算个好人"这条自我叙事</strong>决定。</div>
+        <div class="example">💡 所以威慑的效果有限，而"提醒"的效果出人意料地强。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">一点点作弊<span class="exp-tag">EXP 10</span><button class="glossary-trigger" onclick="openModal('selfConcept')" aria-label="术语：自我形象维持">?</button></div>
+        <div class="content">矩阵任务里，能多报成绩就多拿钱。结果是大量人虚报了一点，但几乎没人报到满。<strong>人会在"多拿好处"和"保持自我形象"之间找那个刚好不难受的位置。</strong></div>
+        <div class="example">💡 这就是为什么"合理报销""稍微夸大"比明目张胆的侵占更常见。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">离现金越远，越容易作弊<button class="glossary-trigger" onclick="openModal('tokenCash')" aria-label="术语：非现金效应">?</button></div>
+        <div class="content">同样的价值，直接给现金时作弊最少；换成代币时明显增加；换成小商品时最多。<strong>形式越不像"钱"，心理距离越远，自我合理化越容易。</strong></div>
+        <div class="example">💡 企业里的股票期权、积分、福利、报销额度，都处在这个"不太像钱"的灰区。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">企业特权：形式洗白了行为</div>
+        <div class="content">重大财务丑闻里，当事人拿的往往不是现金，而是期权、账目调整、关联交易。非现金形式把"拿钱"翻译成了"操作"，<strong>而人对自己用的动词非常敏感</strong>。</div>
+        <div class="example">💡 同一笔利益，叫"奖金"和叫"套现"，做决定时的心理阻力完全不同。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">解法：把提醒放在行为之前</div>
+        <div class="content">让受试者在填表<strong>之前</strong>签"我保证信息真实"，比在末尾签更能降低虚报；十诫、荣誉守则也能短期显著压低作弊率。关键不是惩罚，是让"我在做一件不诚实的事"变得无法回避。</div>
+        <div class="example">💡 这一条后来成为合规设计的常见做法（事前承诺、显著提示），但请注意下方局限栏的说明。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="evidence">
+    <h2><span class="hn">09</span>关键实验速览</h2>
+    <p class="lead">全书靠实验说话，六个最常被引用的如下——注意每一个都是"改一个变量"，而不是问卷调查。</p>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">① 杂志订阅三档</div>
+        <div class="content">加一个没人会选的中间档，第三档销量跃升。</div>
+        <div class="example">结论：<strong>诱饵不是给人选的，是给人比的。</strong></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">② 社会保障号锚定</div>
+        <div class="content">无关数字影响出价，且效应稳定。</div>
+        <div class="example">结论：<strong>锚不需要相关性，只需要先出现。</strong></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">③ 免费巧克力</div>
+        <div class="content">价格从 1 美分降到 0，理性选择被彻底逆转。</div>
+        <div class="example">结论：<strong>零是心理奇点，不是价格的一个取值。</strong></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">④ 托儿所罚款</div>
+        <div class="content">罚款后迟到增加，取消后仍不回落。</div>
+        <div class="example">结论：<strong>市场规范会驱逐社会规范，且不可逆。</strong></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">⑤ 杜克球票</div>
+        <div class="content">要价与愿付相差约十四倍。</div>
+        <div class="example">结论：<strong>拥有本身就是一种溢价理由。</strong></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">⑥ 代币作弊</div>
+        <div class="content">支付形式越远离现金，虚报越多。</div>
+        <div class="example">结论：<strong>不诚实的门槛，由心理距离决定。</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="insights">
+    <h2><span class="hn">10</span>贯穿论点 · 五条</h2>
+    <div class="insight-card">
+      <div class="insight-title">论点一：非理性有结构，不是噪声</div>
+      <div class="insight-body">偏差有明确的触发条件——参照物、零价格、关系定价、当下状态、所有权、支付形式。条件出现，偏差就出现；条件不出现，人其实相当理性。所以"人是不理性的"这个说法不准确，准确的说法是<strong>"人是对环境敏感的"</strong>。</div>
+      <div class="insight-evidence">证据链：六个扳机各自都能被单独操纵，且结果方向稳定（Ch1-12）。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点二：所有有效解法都是改环境，不是改意志</div>
+      <div class="insight-body">全书给的方案有个共同点：没有一个要求你"更努力"。强制截止日、预先承诺、把零食清空、让体检变成套餐、把签名挪到前面——<strong>全是改流程、改结构、改默认值。</strong>这不是偷懒，是因为作者已经证明：明知偏差也躲不过。</div>
+      <div class="insight-evidence">对照：《思考，快与慢》给出同一结论（"知道偏差不等于免疫"），两书在此完全一致。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点三：同一批偏差，既可以卖东西，也可以救人</div>
+      <div class="insight-body">诱饵、锚定、免费、社会规范，在商家手里是销售工具，在政策设计里是助推工具。<strong>工具本身中立，方向由使用者决定。</strong>这也意味着：读这本书的人，迟早要面对"我该拿它做什么"的伦理问题。</div>
+      <div class="insight-evidence">同一机制的两面：免费试用 vs 自动加入养老金；诱饵定价 vs 医保方案简化。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点四：市场规范会驱逐社会规范，而且很难回退</div>
+      <div class="insight-body">把关系定价，短期看是"更清晰"，长期看是"只剩交易"。更麻烦的是它不可逆——钱一旦收过，人就再也回不到"不好意思"的状态。<strong>所以定价之前，先想清楚你想保留哪种关系。</strong></div>
+      <div class="insight-evidence">海法托儿所实验：罚款期迟到上升，取消罚款后仍高于基线。</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点五：自我形象是最后一道闸</div>
+      <div class="insight-body">人不是在被抓的概率面前收手，而是在"我还能不能把自己看成好人"面前收手。所以防作弊的有效手段不是加大惩罚，而是<strong>缩短心理距离、恢复行为的真实名称、把提醒放在动作之前</strong>。</div>
+      <div class="insight-evidence">一点点作弊 + 非现金效应 + 事前签名（该条研究的可靠性见局限栏）。</div>
+    </div>
+  </div>
+
+  <div class="section" id="laws">
+    <h2><span class="hn">11</span>贯穿规律 · 六条</h2>
+    <div class="law-grid">
+      <div class="law-card">
+        <div class="law-no">壹</div>
+        <div>
+          <h4>参照先行律</h4>
+          <p>先出现的数字定义"合理区间"，后出现的一切都被它校准。顺序比数值更重要。</p>
+        </div>
+      </div>
+      <div class="law-card">
+        <div class="law-no">贰</div>
+        <div>
+          <h4>零的奇点律</h4>
+          <p>从 2 到 1 是打折，从 1 到 0 是换了一个宇宙。零不是"更便宜"，是"不会亏"。</p>
+        </div>
+      </div>
+      <div class="law-card">
+        <div class="law-no">叁</div>
+        <div>
+          <h4>规范排斥律</h4>
+          <p>市场规范一旦启动，社会规范退出且不自动恢复。定价是不可逆操作。</p>
+        </div>
+      </div>
+      <div class="law-card">
+        <div class="law-no">肆</div>
+        <div>
+          <h4>状态错配律</h4>
+          <p>冷静的人替激动的自己做决定，必然低估。凡是"下次一定"，都该打折听。</p>
+        </div>
+      </div>
+      <div class="law-card">
+        <div class="law-no">伍</div>
+        <div>
+          <h4>拥有即增值律</h4>
+          <p>所有权（包括想象中的）立刻抬高估值。买卖谈不拢，多半卡在这一条。</p>
+        </div>
+      </div>
+      <div class="law-card">
+        <div class="law-no">陆</div>
+        <div>
+          <h4>距离纵容律</h4>
+          <p>离现金越远，自我约束越松。代币比现金松，商品比代币松，账目比商品更松。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="hook">
+    <h2><span class="hn">12</span>记忆钩子</h2>
+    <div class="hook-box">
+      <div class="hk-line">人不是不理性，是<strong>「按环境理性」</strong>——环境给什么参照，人就按什么算。</div>
+      <div class="hk-sub">所以改人很难，改环境很快。这也是全书所有建议的共同方向——第 13 章把它称作<strong>「免费午餐」</strong>：不是有白拿的好处，而是理解偏差之后能设计出更优的规则<button class="glossary-trigger" onclick="openModal('freeLunch')" aria-label="术语：免费午餐">?</button>。</div>
+    </div>
+    <div class="formula-box">
+      <div class="fb-main">
+        可预测的非理性 = <em>缺尺子</em> × <em>环境递尺子</em><br>
+        ＋ <em>零价奇点</em> ＋ <em>规范切换</em><br>
+        ＋ <em>状态错位</em> ＋ <em>拥有溢价</em> ＋ <em>距离松绑</em>
+      </div>
+      <div class="fb-note">五个加号里的每一项，都是可以被外部拧动的旋钮；也正因如此，它既能被用来卖东西，也能被用来做更好的默认设置。</div>
+    </div>
+    <div class="tree-box">
+<span class="tc">// 六个扳机 · 一句话版</span>
+<span class="tk">参照</span>  <span class="tv">没有绝对尺 → 跟什么比，就值多少</span>
+<span class="tk">零价</span>  <span class="tv">免费不是便宜，是"不会亏"的兴奋</span>
+<span class="tk">规范</span>  <span class="tv">定价那一刻，关系就换了系统</span>
+<span class="tk">状态</span>  <span class="tv">冷静的我，猜不准激动的我</span>
+<span class="tk">拥有</span>  <span class="tv">"我的"三个字，立刻涨价</span>
+<span class="tk">距离</span>  <span class="tv">越不像钱，越容易伸手</span>
+    </div>
+  </div>
+
+  <div class="section" id="quotes">
+    <h2><span class="hn">13</span>核心金句</h2>
+    <blockquote class="quote-block">
+      <p>相对论的真相：为什么我们喜欢比较和攀比？</p>
+      <span class="cite">—— 第一章标题（原表述，非正文摘录）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>免费的代价：为什么赠品反而让我们花费更多？</p>
+      <span class="cite">—— 第三章标题（原表述，非正文摘录）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>社会规范的成本：为什么我们乐于做义工，干活儿赚钱时反而不高兴？</p>
+      <span class="cite">—— 第四章标题（原表述，非正文摘录）</span>
+    </blockquote>
+    <div class="reflection-block">
+      <div class="reflection-title">说明</div>
+      <p>三条均取自中译本章节标题，属确定无误的原文表述；正文其余观点为<strong>综合提炼</strong>，非逐字摘录，转引请以原著为准。</p>
+    </div>
+  </div>
+
+  <div class="section" id="extension">
+    <h2><span class="hn">14</span>延伸比较表</h2>
+    <table class="extension">
+      <thead>
+        <tr><th>维度</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>行为经济学的"实验叙事"入门书。用十几个可控实验，把"人系统性偏离理性"这件事讲成人人能懂的故事。它的价值不在理论体系，而在<strong>把抽象偏差变成可感知的场景</strong>。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>偏向"环境决定论"：人本身没有稳定的价值尺度，一切判断依赖情境提供的参照。因此它天然亲近<strong>设计、助推、默认值</strong>这类思路，而不是道德劝说。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+            ① <strong>样本与情境</strong>：实验多为欧美大学生、小额金钱、实验室场景，生态效度有限，跨文化复制结果并不总是一致。<br>
+            ② <strong>可重复性</strong>：近年大规模重复实验显示，部分经典效应（如某些启动效应、暗示效应）的效应量明显缩小甚至消失，行为经济学整体正经历可重复性审查。<br>
+            ③ <strong>第 11 章的签名位置研究</strong>：该论文 2021 年因数据问题被撤稿，后续大规模复制也未能稳定复现——本图谱已在相应位置标注，读者不宜把它当作可靠结论使用。<br>
+            ④ <strong>时代局限</strong>：原书 2008 年，未覆盖移动支付、算法推荐、订阅制与信息流——而这些恰恰是把上述偏差<strong>工业化、自动化放大</strong>的环境。<br>
+            ⑤ <strong>处方偏个人化</strong>：解法多为"个人如何自保"，对"谁有权设计环境""设计者与被设计者的权力不对称"讨论不足。<br>
+            ⑥ <strong>伦理空档</strong>：同一套工具可用于助推，也可用于收割，书中对后者的边界着墨偏少。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《思考，快与慢》</strong>：同一批偏差的理论骨架（系统 1 / 系统 2），更系统也更沉重；本书则是它的"实验故事版"。<br>
+            <strong>《影响力》</strong>：西奥迪尼讲六条说服原则，偏"别人怎么影响你"；本书偏"你的判断在哪个环节失准"。<br>
+            <strong>《助推》</strong>：把偏差从"个人困扰"变成"政策工具"，正好补上本书缺失的公共维度。<br>
+            <strong>《错误的行为》</strong>：塞勒的学科史，能看清这些实验在经济学内部引发的真正冲突。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与《思考，快与慢》：<strong>锚定、禀赋、框架</strong>三处完全重叠，可互为注脚。<br>
+            与《营销管理》：诱饵定价、价格—质量信念、免费试用，是 STP 与定价章节的心理学底层。<br>
+            与《抢占心智》：都在讲"认知大于事实"，但江南春讲如何占领，艾瑞里讲为什么能被占领。<br>
+            与《贾宁财务讲义》：非现金支付抬高不诚实，正好解释报销与账目操纵为何高发。<br>
+            与《心流》：一个讲注意力如何被组织，一个讲注意力如何被劫持。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>定价页</strong>：三档结构中，中间档的真正作用是当诱饵。<br>
+            <strong>订阅产品</strong>：免费试用卖的不是功能，是"失去"的痛感。<br>
+            <strong>组织管理</strong>：别用 KPI 覆盖一切，否则社会规范会被挤出且不回来。<br>
+            <strong>个人自保</strong>：自动储蓄、限额、清空零食、把提醒放在决定之前。<br>
+            <strong>合规设计</strong>：事前承诺优于事后惩罚（但需注意相关研究的可靠性争议）。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="section" id="reflect">
+    <h2><span class="hn">15</span>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">一、这本书最容易被误读成"操纵手册"</div>
+      <p>诱饵、锚定、免费，读完之后立刻能用在转化率上。但作者真正想说的方向是反的：<strong>因为偏差可预测，所以它可以被提前写进规则里，保护那些不知道它存在的人。</strong>同一把刀，切菜还是伤人，取决于谁握着。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">二、真正的变化不是人变了，是旋钮变多了</div>
+      <p>书里的实验还在用纸质优惠券和现金。今天你面对的是实时调价的电商、按秒优化的推荐流、无限下滑的信息流——<strong>同样的六个扳机，被自动化、个性化、全天候地拧着</strong>。人的偏差没变，被触发的频率变了几个数量级。这是读 2008 年的书必须自己补上的一段。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">三、"知道偏差"几乎是无效的解法，这一点作者自己承认</div>
+      <p>他坦率说过：研究了半辈子，照样会掉进去。所以别把这本书当"免疫力注射"，把它当<strong>结构改造清单</strong>——看完之后应该多出几条新规矩，而不是多出几个新名词。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">四、社会责任的那一半，书里是空的</div>
+      <p>如果偏差可以被设计，那么"谁有资格设计"就成了一个政治问题。默认选项、免密支付、自动续费、游戏化奖励，全都在替用户做决定。<strong>艾瑞里证明了人会被环境左右，但没有回答环境该由谁来定。</strong>这个问题，得靠《助推》的伦理讨论和监管实践来补。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">五、读法建议</div>
+      <p>不必按章读。想解决自己的问题，直接看第 6 章（拖延与自我控制）和第 7、8 章（拥有与选择）；想理解商业设计，看第 1-4 章；想知道人为什么守不住底线，看第 11-12 章。<strong>第 13 章和附录 2（次贷危机）建议最后读</strong>，它们是全书唯一把个人偏差放大到系统层面的地方。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《怪诞行为学：可预测的非理性》知识图谱 · 基于原著整理 · 仅供个人学习回顾<br>
+    金句取自中译本章节标题；其余为综合提炼，非逐字摘录
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  decoy: {
+    title: '诱饵效应（Decoy Effect）',
+    content: '<p>在两组选项之外加入第三个"明显更差但不至于荒谬"的选项，使其中一个原有选项显得更优。</p><ul><li>诱饵不需要有人选，它只负责提供比较基准</li><li>它改变的不是选项本身，是选项之间的关系</li><li>杂志订阅三档是教科书级案例</li></ul><p>识别方法：如果你发现自己在一组选项里迅速锁定了一个"明显划算"的，先找找有没有一个专门用来垫底的。</p>'
+  },
+  anchoring: {
+    title: '锚定效应（Anchoring）',
+    content: '<p>最先出现的数字会成为后续判断的基准，即使这个数字与当前决策毫无关系。</p><ul><li>锚不需要相关性，只需要先出现</li><li>效应在无关数字（如身份证后两位）上依然成立</li><li>锚定一旦发生，很难通过"我知道它在锚我"来消除</li></ul><p>商业上的常见形态：划线原价、建议零售价、第一档套餐价。</p>'
+  },
+  arbitraryCoherence: {
+    title: '任意的一致（Arbitrary Coherence）',
+    content: '<p>锚本身是任意的，但一旦落下，后续一系列价格判断会围绕它保持内在一致。</p><p>这意味着：起点决定了你此后很长一段时间的"合理价格区间"，而这个起点往往跟你自己的判断力无关，只跟你第一次遇到它时的环境有关。</p><p>推论：新用户的第一单价格，比后续所有促销都重要。</p>'
+  },
+  zeroPrice: {
+    title: '零价格效应（Zero Price Effect）',
+    content: '<p>价格从正数降到零，带来的心理变化远大于同等幅度的降价。因为零消除了"可能损失"这一项。</p><ul><li>人对损失的厌恶强于对收益的渴望</li><li>免费因此制造出一种"不可能亏"的错觉</li><li>结果是：人会为了免费而放弃明显更优的付费选项</li></ul><p>对应策略：把"免费"当独立品类看待，而不是"打 1 折"。</p>'
+  },
+  socialNorm: {
+    title: '社会规范 vs 市场规范',
+    content: '<p>两套并行的行为系统：</p><ul><li><strong>社会规范</strong>：人情、互助、信任，不计量、不逐次结算</li><li><strong>市场规范</strong>：对价、按时计费、按件结算，清晰可算</li></ul><p>关键特性：市场规范会驱逐社会规范，并且<strong>不可逆</strong>——海法托儿所罚款实验是经典证据：罚款后迟到增加，取消罚款后仍高于基线。</p><p>推论：定价是一个不可回退的操作，动手前先想清楚要保留哪种关系。</p>'
+  },
+  hotCold: {
+    title: '热态与冷态（Hot-Cold States）',
+    content: '<p>人在情绪激活状态（愤怒、恐惧、性兴奋、饥饿）下的偏好，与冷静时的预测存在系统性偏差。</p><ul><li>不是"低估诱惑"，而是根本无法模拟那个状态下的自己</li><li>因此冷静时做出的承诺，在热态下几乎没有约束力</li><li>有效解法是结构性的：切断路径、预设限制、把决定提前</li></ul><p>这也是"你只要说不"式教育效果有限的原因。</p>'
+  },
+  precommitment: {
+    title: '预先承诺（Precommitment）',
+    content: '<p>在冷静状态下，主动剥夺自己未来的一部分选择权，以对抗可预测的失控。</p><ul><li>自动储蓄、消费限额、定时断网、清空零食</li><li>共同点：把"每次都要抵抗"变成"只需要设置一次"</li><li>它假设你会失败，并提前为失败做好了安排</li></ul><p>关键不是提高意志力，而是减少需要动用意志力的次数。</p>'
+  },
+  ikea: {
+    title: '宜家效应（IKEA Effect）',
+    content: '<p>当人参与了产品的创造或组装，会显著高估其价值，哪怕成果并不完美。</p><ul><li>投入劳动 → 产生依恋 → 改写估值</li><li>参与感越强，退出成本（心理上的）越高</li><li>常见应用：自助配置、DIY 组装、用户共创、自定义命名</li></ul><p>反面：过度参与也会让人对瑕疵更敏感，因为那是"我的作品"。</p>'
+  },
+  ownership: {
+    title: '禀赋效应（Endowment Effect）',
+    content: '<p>仅仅因为"拥有"，人就会抬高对该物的估值。</p><ul><li>杜克球票实验：持票者要价约为未持票者愿付价的十四倍</li><li>三大怪癖：迷恋已有、聚焦将失去的、假定他人眼光一致</li><li>虚拟所有权（试用、竞价）也能触发同样效应</li></ul><p>破局问法：如果我从未拥有它，我愿意花多少钱买？</p>'
+  },
+  choiceOverload: {
+    title: '关门效应 / 选择过载',
+    content: '<p>人会为"保留仍在开放的选项"付出非理性代价，哪怕这个选项实际没有价值。</p><ul><li>实验里，受试者宁肯牺牲收益，也要阻止一扇门消失</li><li>本质是把"选择权"本身误当成了收益</li><li>现实中表现为：什么都想留一手，结果每条线都做不深</li></ul><p>自检问题：如果它明天自动消失，我会花钱把它买回来吗？</p>'
+  },
+  expectation: {
+    title: '预期效应（Expectation Effect）',
+    content: '<p>事先获得的信息会改变实际体验，而不只是改变对体验的描述。</p><ul><li>啤酒加醋实验：先告知与后告知，评价截然相反</li><li>预期不是滤镜，它参与构建感受本身</li><li>品牌、产地、价格、包装，都是预期的载体</li></ul><p>推论：体验设计的一半工作，发生在体验开始之前。</p>'
+  },
+  placebo: {
+    title: '安慰剂效应与价格',
+    content: '<p>无效的东西在特定条件下能产生真实效果，而"价格"是其中最强的 enhancer 之一。</p><ul><li>同样的止痛药，标价高的一组报告更有效</li><li>形式也重要：针剂强于胶囊，胶囊强于药片</li><li>越像"正式治疗"，安慰剂效应越强</li></ul><p>这既是医学问题，也是定价问题：价格被当成了效力证据。</p>'
+  },
+  tokenCash: {
+    title: '非现金效应（Token vs Cash）',
+    content: '<p>同样的价值，支付形式离现金越远，人越容易做出不诚实行为。</p><ul><li>现金：作弊最少</li><li>代币：明显增加</li><li>实物小商品：最多</li></ul><p>机制：形式把"拿钱"翻译成了"操作"，而人对自己使用的动词非常敏感。企业里的期权、积分、报销额度、福利，都处在这条灰带上。</p>'
+  },
+  selfConcept: {
+    title: '自我形象维持（Self-Concept Maintenance）',
+    content: '<p>人作弊的上限不由被抓概率决定，而由"我还能不能把自己看成好人"决定。</p><ul><li>多数人只作弊一点点，且不会报到满</li><li>这个"一点点"就是刚好还能自圆其说的量</li><li>因此道德提醒、事前承诺，效果常优于加重惩罚</li></ul><p>注意：本书第 11 章涉及的事前签名研究，2021 年因数据问题被撤稿，后续大规模复制未能稳定复现——机制解释仍成立，但具体干预效果需谨慎看待。</p>'
+  },
+  freeLunch: {
+    title: '免费午餐（Free Lunch）',
+    content: '<p>经济学常说"没有免费午餐"，本书第 13 章给出另一种理解：</p><ul><li>不是"有白拿的好处"</li><li>而是"理解非理性之后，可以设计出比现状更优的机制"</li><li>好的设计让正确的事变容易，让错误的事变麻烦</li></ul><p>点啤酒实验是收尾案例：公开点单时，人会为了不显得贪而点次优选择——设计改变行为，行为改变结果。</p>'
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 130;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

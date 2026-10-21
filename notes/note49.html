@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>思考，快与慢 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 深紫色系 · 本次调深、加一点靛青，认知科学的冷峻感 */
+[data-theme="quantum"] {
+  --primary: #3d1c50; --primary-light: #f3ecf8; --primary-dark: #240f2e;
+  --accent: #6f3a8f; --accent-deep: #4a1f63;
+  --bg: #fbf9fd; --bg-card: #ffffff; --bg-soft: #f5effa; --bg-softer: #ece1f5;
+  --bg-tag: #e6d8f2;
+  --text: #2b1638; --text-heading: #180a22; --text-muted: #7a6a88; --text-light: #9c8fa9;
+  --border: #d6c8e2; --border-soft: #eae0f3;
+  --highlight: #f3ecf8; --highlight-strong: #e6d8f2;
+  --shadow-sm: 0 1px 3px rgba(61,28,80,0.07); --shadow: 0 4px 14px rgba(61,28,80,0.10);
+  --radius-sm: 4px; --radius: 9px; --radius-lg: 14px;
+  --color-concept: #6f3a8f; --color-tool: #4a6fa5; --color-case: #2e8b6f;
+  --color-history: #b9770e; --color-insight: #4a1f63; --color-debate: #b03a48;
+  --color-solution: #2e8b6f; --color-crisis: #c0392b; --color-mechanism: #5b4b8a;
+  --color-effect: #8e44ad; --color-core: #3d1c50;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #faf7fd;
+  --reflect-bg: #f2ebf8; --quote-border: #6f3a8f;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg); color: var(--text);
+  line-height: 1.78; min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 222px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 14px 40px;
+  overflow-y: auto; z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  letter-spacing: 2px; margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-soft);
+}
+.sidebar .toc-list { list-style: none; }
+.sidebar .toc-list li { margin-bottom: 1px; }
+.sidebar .toc-list a {
+  display: block; padding: 5px 11px;
+  border-radius: 6px; font-size: 13px; color: var(--text);
+  transition: all .15s; border-left: 2px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--highlight); color: var(--primary-dark);
+  font-weight: 700; border-left-color: var(--accent);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+/* ===== 主内容 ===== */
+.main { margin-left: 222px; max-width: 1080px; padding: 34px 40px 100px; }
+
+/* ===== 页头 ===== */
+.header {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 0 0 30px 0;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.header .head-band {
+  height: 7px;
+  background: linear-gradient(90deg, var(--primary-dark), var(--accent) 55%, #b07fc9);
+}
+.header .head-inner { padding: 30px 36px 0; }
+.header h1 {
+  font-size: 29px; color: var(--text-heading);
+  margin-bottom: 6px; letter-spacing: .5px;
+}
+.header .subtitle {
+  font-family: var(--font-serif); font-style: italic;
+  color: var(--accent-deep); font-size: 15px;
+  margin-bottom: 16px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 22px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 11px 15px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 13px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 7px; }
+.header .badge {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 3px 13px; border-radius: 4px;
+  font-size: 12px; font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 16px; font-size: 14px;
+  color: var(--primary-dark); line-height: 1.75;
+  padding: 13px 16px;
+  background: var(--highlight);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--accent);
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 32px; }
+.section h2 {
+  font-size: 20px; color: var(--text-heading);
+  margin-bottom: 6px; padding-bottom: 10px;
+  border-bottom: 3px solid var(--primary-dark);
+  position: relative;
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section h2::after {
+  content: ''; position: absolute; left: 0; bottom: -3px;
+  width: 56px; height: 3px; background: var(--accent);
+}
+.section h2 .h2-no {
+  font-family: var(--font-mono);
+  font-size: 13px; color: var(--accent);
+  font-weight: 400; letter-spacing: 1px;
+}
+.section h3 {
+  font-size: 15.5px; color: var(--primary-dark);
+  margin: 24px 0 10px;
+  padding-left: 11px;
+  border-left: 3px solid var(--border);
+}
+.lead { font-size: 14px; color: var(--text-muted); margin: 12px 0 10px; }
+
+/* ===== 卡片：顶部色条 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(282px, 1fr));
+  gap: 13px; margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--border);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 16px 19px 18px;
+  transition: box-shadow .18s, border-color .18s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700; font-size: 14px;
+  margin-bottom: 7px; color: var(--text-heading);
+}
+.info-card .content { font-size: 14px; line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+.info-card.concept { border-top-color: var(--color-concept); }
+.info-card.tool { border-top-color: var(--color-tool); }
+.info-card.case { border-top-color: var(--color-case); }
+.info-card.history { border-top-color: var(--color-history); }
+.info-card.insight { border-top-color: var(--color-insight); }
+.info-card.debate { border-top-color: var(--color-debate); }
+.info-card.solution { border-top-color: var(--color-solution); }
+.info-card.crisis { border-top-color: var(--color-crisis); }
+.info-card.mechanism { border-top-color: var(--color-mechanism); }
+.info-card.effect { border-top-color: var(--color-effect); }
+.info-card.core { border-top-color: var(--color-core); }
+
+/* ===== 双系统对照 ===== */
+.dual-system {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 12px; margin: 16px 0;
+}
+.ds-col {
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  font-size: 13.5px; line-height: 1.7;
+}
+.ds-col.one {
+  background: linear-gradient(150deg, #fdf6ec, #fff8f0);
+  border: 1px solid #f0dfc4;
+  color: #6b4412;
+}
+.ds-col.two {
+  background: linear-gradient(150deg, #eef2fa, #f5f7fc);
+  border: 1px solid #d3ddef;
+  color: #23406b;
+}
+.ds-col .ds-title {
+  font-size: 15px; font-weight: 700;
+  margin-bottom: 4px;
+  display: flex; align-items: center; gap: 8px;
+}
+.ds-col .ds-sub {
+  font-size: 11.5px; letter-spacing: 1px;
+  opacity: .75; margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.ds-col ul { list-style: none; }
+.ds-col li {
+  position: relative; padding-left: 14px; margin-bottom: 6px;
+}
+.ds-col li::before {
+  content: '▸'; position: absolute; left: 0;
+  opacity: .55; font-size: 11px;
+}
+.ds-col.one li::before { content: '⚡'; font-size: 9px; }
+.ds-col.two li::before { content: '▸'; }
+.ds-note {
+  grid-column: 1 / -1;
+  font-size: 12.5px; color: var(--text-muted);
+  background: var(--bg-soft); border-radius: var(--radius-sm);
+  padding: 9px 14px;
+}
+
+/* ===== 价值函数 SVG 区 ===== */
+.curve-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 14px 16px 8px;
+  margin: 16px 0 10px;
+}
+.curve-box svg { width: 100%; height: auto; display: block; }
+.curve-cap {
+  font-size: 12.5px; color: var(--text-muted);
+  padding: 6px 4px 8px; line-height: 1.7;
+}
+.curve-cap strong { color: var(--accent-deep); }
+
+/* ===== 论证链 ===== */
+.chain-list { margin: 14px 0; }
+.chain-item {
+  display: grid; grid-template-columns: 40px 1fr;
+  gap: 14px; padding: 12px 0;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.chain-item:last-child { border-bottom: none; }
+.chain-item .ci-no {
+  font-family: var(--font-serif);
+  font-size: 20px; color: var(--accent);
+  line-height: 1.3; text-align: right;
+}
+.chain-item .ci-body strong {
+  display: block; color: var(--text-heading);
+  font-size: 14.5px; margin-bottom: 3px;
+}
+.chain-item .ci-body span { font-size: 13.5px; color: var(--text-muted); }
+.chain-item .ci-body em {
+  font-style: normal; font-family: var(--font-mono);
+  font-size: 11.5px; color: var(--accent);
+  background: var(--highlight); padding: 1px 6px;
+  border-radius: 3px; margin-left: 6px;
+}
+
+/* ===== 洞察卡 ===== */
+.insight-card {
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  padding: 17px 21px;
+  margin-bottom: 11px;
+  position: relative;
+  padding-left: 46px;
+}
+.insight-card::before {
+  content: attr(data-no);
+  position: absolute; left: 16px; top: 17px;
+  font-family: var(--font-serif);
+  font-size: 17px; color: var(--accent);
+  opacity: .55;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 5px;
+}
+.insight-card .insight-body { font-size: 14px; line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted);
+  margin-top: 8px; padding-top: 7px;
+  border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡：单列 + 描边大序号 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 15px 20px 15px 62px;
+  margin-bottom: 9px;
+  position: relative;
+}
+.law-card::before {
+  content: attr(data-no);
+  position: absolute; left: 18px; top: 13px;
+  font-family: var(--font-serif);
+  font-size: 26px; line-height: 1;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--accent);
+  opacity: .55;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 5px; }
+.law-card p { font-size: 13px; line-height: 1.68; }
+
+/* ===== 结构树 ===== */
+.tree-box {
+  background: var(--primary-dark);
+  color: #dfd2ea;
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  overflow-x: auto; margin: 14px 0;
+}
+.tree-box .tb-hi { color: #d3a6ec; font-weight: 700; }
+.tree-box .tb-dim { color: #9c82ae; }
+
+/* ===== 公式框 ===== */
+.formula-box {
+  background: linear-gradient(120deg, #240f2e, #4a1f63);
+  color: #f0e6f7;
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 13px 0;
+  line-height: 1.9;
+}
+.formula-box .f-main {
+  font-family: var(--font-mono);
+  font-size: 15.5px; color: #d9b3f0;
+  display: block; margin-bottom: 8px;
+  letter-spacing: .3px;
+}
+.formula-box .f-note { font-size: 13px; color: #c4b0d2; }
+
+/* ===== 反思 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border-radius: var(--radius);
+  padding: 17px 21px; margin: 13px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 7px;
+}
+.reflection-block p { font-size: 13.5px; line-height: 1.75; margin-bottom: 7px; }
+.reflection-block p:last-child { margin-bottom: 0; }
+
+/* ===== 引用 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 4px solid var(--quote-border);
+  margin: 13px 0;
+  padding: 15px 22px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  line-height: 1.8;
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 8px;
+  font-size: 12px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+}
+
+/* ===== 延伸表 ===== */
+table.extension {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 14px 0;
+  background: var(--bg-card);
+}
+table.extension th {
+  background: var(--primary-dark);
+  color: #f0e6f7;
+  padding: 11px 14px; text-align: left;
+  font-weight: 700; width: 17%;
+}
+table.extension td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top; line-height: 1.68;
+}
+table.extension tr:hover td { background: #fcf9fe; }
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 10.5px; font-weight: 700;
+  cursor: pointer; vertical-align: middle;
+  margin-left: 3px; transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(24,10,34,0.48);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px; width: 90%; max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 26px; right: 26px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 17px; cursor: pointer;
+  box-shadow: 0 3px 12px rgba(61,28,80,0.3);
+  z-index: 200; opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+.footer-note {
+  text-align: center; margin-top: 44px; padding-top: 18px;
+  color: var(--text-light); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .back-to-top, .modal-overlay { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { break-inside: avoid; }
+}
+
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid, .dual-system { grid-template-columns: 1fr; }
+  .header .head-inner { padding: 22px 20px 0; }
+  .header h1 { font-size: 22px; }
+  .law-card { padding-left: 54px; }
+  table.extension th { width: 26%; }
+}
+</style>
+</head>
+<body data-theme="quantum">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">封面与定位</a></li>
+    <li><a href="#question">核心问题</a></li>
+    <li><a href="#chain">论证链总览</a></li>
+    <li><a href="#arg1">一 · 两个系统</a></li>
+    <li><a href="#arg2">二 · 启发法与偏见</a></li>
+    <li><a href="#arg3">三 · 过度自信</a></li>
+    <li><a href="#arg4">四 · 前景理论</a></li>
+    <li><a href="#arg5">五 · 框架与心理账户</a></li>
+    <li><a href="#arg6">六 · 两个自我</a></li>
+    <li><a href="#evidence">关键实验</a></li>
+    <li><a href="#insights">贯穿论点</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与比较</a></li>
+    <li><a href="#reflection">延伸思辨</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="head-band"></div>
+    <div class="head-inner">
+      <h1>思考，快与慢</h1>
+      <div class="subtitle">Thinking, Fast and Slow</div>
+      <div class="meta">
+        <span><strong>作者</strong> 丹尼尔·卡尼曼（Daniel Kahneman）</span>
+        <span><strong>译者</strong> 胡晓姣 · 李爱民 · 何梦莹</span>
+        <span><strong>出版</strong> 中信出版社 2012 年 7 月（英文原版 2011）</span>
+        <span><strong>篇幅</strong> 五部分 38 章 · 448 页</span>
+      </div>
+      <div class="framework-badges">
+        <span class="badge">2002 诺贝尔经济学奖</span>
+        <span class="badge">A 类 · 论点论证链</span>
+        <span class="badge">行为经济学奠基</span>
+        <span class="badge">与特沃斯基合作 30 年</span>
+      </div>
+      <div class="core-narrative">
+        一句话灵魂：<strong>我们并不是理性的生物偶尔犯错，而是一台高效的直觉机器，被一个懒惰的校对员监护——而那个校对员经常直接盖章。</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心问题 -->
+  <div class="section" id="question">
+    <h2>核心问题：人为什么在明显不理性的时候，仍然感觉自己很理性？</h2>
+    <p class="lead">这个问题比"人有哪些认知偏差"更狠。偏差清单只是清单，而卡尼曼要解释的是——偏差为什么能<b>不被察觉地</b>发生。</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">真正的靶子：经济学里的"理性人"</div>
+        <div class="content">20 世纪主流经济学把人的决策建模成一个前后一致、按概率与效用最大化的理性主体。卡尼曼与特沃斯基做的不是"补充说明"，而是<strong>用实验直接推翻这个假设</strong>：人系统性地、可预测地偏离理性，而且偏离的方向每次都一样。</div>
+        <div class="example">💡 关键在"系统性"。如果是随机犯错，经济学模型可以当作噪声忽略；但错误有固定方向，就必须写进理论。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">作者的答案：双系统 + 认知放松</div>
+        <div class="content">大脑有两套运作方式：一套自动、快速、不费力（系统 1），一套受控、缓慢、需要注意力（系统 2）。系统 1 负责生成印象与直觉，系统 2 负责审核——但它<strong>极懒</strong>，通常直接把系统 1 的结论盖章放行。偏差就发生在盖章的那一刻。</div>
+        <div class="example">💡 这不是"人笨"，而是一套成本极低的默认设置：绝大多数时候它是对的，代价是少数关键场合错得很贵。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论证链 -->
+  <div class="section" id="chain">
+    <h2>论证链总览：从一个比喻到一个经济学分支</h2>
+    <p class="lead">五部分不是并列的主题，而是一条越走越深的推论：先立机制，再看机制在判断上的后果，再看在自信上的后果，再看在金钱决策上的后果，最后追问"这些体验到底算不算好"。</p>
+    <div class="chain-list">
+      <div class="chain-item">
+        <div class="ci-no">01</div>
+        <div class="ci-body"><strong>双系统机制 <em>Ch1-9</em></strong><span>系统 1 自动生成印象，系统 2 负责审核但经常偷懒。偏差的结构性来源在此确立。</span></div>
+      </div>
+      <div class="chain-item">
+        <div class="ci-no">02</div>
+        <div class="ci-body"><strong>启发法与偏见 <em>Ch10-18</em></strong><span>遇到难题，系统 1 会偷换成一个容易的问题来回答——锚定、可得性、代表性都是这个"替换"的产物。</span></div>
+      </div>
+      <div class="chain-item">
+        <div class="ci-no">03</div>
+        <div class="ci-body"><strong>过度自信 <em>Ch19-24</em></strong><span>因为我们只看到"故事"看不到"概率"，于是对判断的确信远超其可靠性。解法：外部视角与事前验尸。</span></div>
+      </div>
+      <div class="chain-item">
+        <div class="ci-no">04</div>
+        <div class="ci-body"><strong>前景理论 <em>Ch25-30</em></strong><span>人评价的不是财富的绝对水平，而是相对于参照点的得失；损失的心理重量远大于同等收益。</span></div>
+      </div>
+      <div class="chain-item">
+        <div class="ci-no">05</div>
+        <div class="ci-body"><strong>框架与心理账户 <em>Ch31-34</em></strong><span>同一次得失，换个说法、换个账本，选择就变。理性主体的偏好应当稳定，而人的偏好不稳定。</span></div>
+      </div>
+      <div class="chain-item">
+        <div class="ci-no">06</div>
+        <div class="ci-body"><strong>两个自我 <em>Ch35-38</em></strong><span>经验自我活在当下，记忆自我负责讲故事并做决定——而做决定的那个，恰恰不是经历体验的那个。</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点一 -->
+  <div class="section" id="arg1">
+    <h2><span class="h2-no">论点一</span>两个系统：主角与配角</h2>
+    <p class="lead">卡尼曼反复强调这两个"系统"不是大脑里的两个实体，而是<strong>两种加工方式的拟人化说法</strong>。这个提醒很重要，否则容易把它读成神经科学结论。</p>
+
+    <div class="dual-system">
+      <div class="ds-col one">
+        <div class="ds-title">⚡ 系统 1</div>
+        <div class="ds-sub">快 · 自动 · 不费力 · 无法关闭</div>
+        <ul>
+          <li>看到一张愤怒的脸，立刻识别情绪</li>
+          <li>2 + 2 = ? 答案自己冒出来</li>
+          <li>开车在空旷路段时的走神</li>
+          <li>听到"面包"这个词，脑子里已经出现画面</li>
+          <li>察觉对方语气不对，却说不出哪里不对</li>
+        </ul>
+      </div>
+      <div class="ds-col two">
+        <div class="ds-title">▸ 系统 2</div>
+        <div class="ds-sub">慢 · 受控 · 费力 · 可中断</div>
+        <ul>
+          <li>17 × 24 = ? 要拿出纸笔或屏息心算</li>
+          <li>在嘈杂环境里听清一个人的话</li>
+          <li>数一段文字里出现了几个"的"</li>
+          <li>克制住不说某句话</li>
+          <li>停车场里倒车入库</li>
+        </ul>
+      </div>
+      <div class="ds-note">
+        关键不是分工，而是<strong>关系</strong>：系统 1 不间断地提供印象、直觉、意图和感觉；系统 2 通常照单全收，只在察觉异常时才启动审查。所以"我在思考"这件事，大部分时间其实是"我在接受系统 1 的结论"。
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">瞳孔：思维的仪表盘<button class="glossary-trigger" onclick="openModal('system12')">?</button></div>
+        <div class="content">书里最有说服力的实验之一：让人做心算，同时测量瞳孔。难度上升，瞳孔随之放大；一旦超出能力，瞳孔先放大后急剧收缩——那是放弃的生理信号。这说明<strong>认知努力是真实消耗资源的</strong>，不是比喻。</div>
+        <div class="example">💡 推论：自我控制与认知负荷共用同一份"能量"。所以人累的时候格外容易做出糟糕决定。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">看不见的大猩猩：注意力是有代价的</div>
+        <div class="content">让人专心数传球次数，一个穿猩猩服的人走过画面中央，约一半人完全没看见。不是眼睛没接收到，而是<strong>注意力已经分配完毕</strong>。我们对"自己看到了什么"的确信，远超实际。</div>
+        <div class="example">💡 这不是实验室奇观：开车时打电话的人"看"了路，但常常没"看见"危险。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">系统 2 的致命弱点：懒</div>
+        <div class="content">系统 2 有能力，但不愿意用。它只在遇到冲突、意外或需要精确计算时才被唤醒，其余时间处在"最低能耗"状态。这不是性格缺陷，而是<strong>代谢上的节能策略</strong>——大脑占体重 2%，却消耗约 20% 的能量。</div>
+        <div class="example">💡 书里的说法大意：系统 2 是"懒惰的掌控者"，它更愿意当一个校对员，而不是一个思考者。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">认知放松：熟悉感伪装成真相<button class="glossary-trigger" onclick="openModal('cognitiveEase')">?</button></div>
+        <div class="content">信息处理得越顺畅，人越容易相信它。字体清晰、句子押韵、重复听过、心情好、字迹易读——这些无关内容的形式因素，都会提高"感觉是真的"的程度。真相的判断被<strong>处理流畅度</strong>劫持了。</div>
+        <div class="example">💡 一个刻薄的推论：很多"听起来很有道理"的话，只是"读起来很顺"而已。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点二 -->
+  <div class="section" id="arg2">
+    <h2><span class="h2-no">论点二</span>启发法：把难题偷换成容易的题</h2>
+    <p class="lead">这是全书最有解释力的一章。系统 1 面对"这件事的概率是多少"这类难题时，会自动替换成"我想得起类似的例子吗""它像不像典型的那一类"——然后用后者的答案，冒充前者的答案。</p>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">核心机制：问题替换</div>
+        <div class="content">你被问 A，却回答了 B，而且完全没意识到自己换了题。这不是推理错误，而是<strong>流程上的偷梁换柱</strong>。所以事后问"你为什么这么判断"，人会给出一个听起来合理的理由——那个理由是编的，不是实际过程。</div>
+        <div class="example">💡 这解释了一件尴尬事：人对自己"如何做决定"的叙述，可靠度远低于对自己"做了什么"的叙述。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">锚定效应：数字会粘住你<button class="glossary-trigger" onclick="openModal('anchoring')">?</button></div>
+        <div class="content">让人先看一个随机数字（比如转盘转出的 10 或 65），再估计"非洲国家占联合国的比例"，答案会明显向那个随机数靠。锚定不需要锚是合理的，甚至<strong>明知是随机的也照样生效</strong>。</div>
+        <div class="example">💡 现实版本：先报高价再降价、谈判先出价、菜单上放一道极贵的菜当参照。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">可得性启发：容易想起 = 经常发生<button class="glossary-trigger" onclick="openModal('availability')">?</button></div>
+        <div class="content">判断某类事件频率时，人实际用的是"想起它的难易程度"。所以媒体报道多的风险（空难、凶杀）被高估，报道少的（哮喘、跌倒）被低估。<strong>记忆的检索难度被误当成世界的统计频率。</strong></div>
+        <div class="example">💡 这也是"身边人都这么做"这种判断的结构性错误：你的圈子不等于世界。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">代表性启发：像不像，代替了多不多<button class="glossary-trigger" onclick="openModal('representativeness')">?</button></div>
+        <div class="content">判断某人属于哪一类，人依据"他像不像那一类的典型形象"，而忽略基础比率。于是"安静、爱读书、内向"的人被判断为图书管理员而不是农民——完全不管农民的数量多出几十倍。</div>
+        <div class="example">💡 书里反复强调：<strong>像不像</strong>是一个问题，<strong>有多少</strong>是另一个问题。前者系统 1 擅长，后者它做不了。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">琳达问题：越具体，越可信<button class="glossary-trigger" onclick="openModal('conjunction')">?</button></div>
+        <div class="content">描述一个关注社会议题、学生时代参加过示威的聪慧女性，然后问哪种情况更可能：①她是银行出纳；②她是银行出纳且积极参与女权运动。多数人选②。但从概率上说，两个条件同时成立<strong>不可能比其中一个更可能</strong>。</div>
+        <div class="example">💡 这个故事的力量在细节：连受过统计训练的人也会掉进去，因为"②更像她"这个感觉太强。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">回归均值：最被低估的统计常识<button class="glossary-trigger" onclick="openModal('regression')">?</button></div>
+        <div class="content">极端表现之后往往跟着更接近平均的表现——这不需要因果解释。但人天生要为波动找原因：飞行员被表扬后表现变差，被批评后变好，于是教官坚信"批评有用"。真相是<strong>回归</strong>在起作用。</div>
+        <div class="example">💡 作者说这个发现的地位不亚于万有引力：它同样反直觉，同样普遍，同样被忽视。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">小数定律：把随机当规律</div>
+        <div class="content">大样本才接近真实比例，小样本天然波动大。但人的直觉会把小样本的结果当成稳定规律——所以"这个村连续生了五个男孩""这家基金连续三年跑赢"都被讲成了故事。系统 1 无法处理<strong>样本量</strong>这个维度。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">因果比统计更有说服力</div>
+        <div class="content">同样的信息，用因果故事讲出来，比用统计比例讲出来更有说服力。所以"帮助别人的人更长寿"这类因果叙述会覆盖掉基础比率的提醒。作者认为这是<strong>叙事本能在压过统计思维</strong>。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点三 -->
+  <div class="section" id="arg3">
+    <h2><span class="h2-no">论点三</span>过度自信：我们对自己的无知没有感觉</h2>
+    <p class="lead">第三部分转向一个更难堪的问题：不是判断错了，而是<b>错了却毫不怀疑</b>。作者说这部分受塔勒布《黑天鹅》影响很深。</p>
+
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">叙事谬误：故事越完整，越不可信<button class="glossary-trigger" onclick="openModal('narrative')">?</button></div>
+        <div class="content">人脑无法忍受无意义的碎片，会自动编成有因果、有主角、有转折的故事。问题在于：<strong>好故事的标准是连贯，不是真实</strong>。而连贯的故事必然省略了大量随机因素，所以越顺的故事，越可能是事后加工。</div>
+        <div class="example">💡 作者对商业成功学的批评就在这里：它们给的是叙事，不是解释。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">后见之明：'我早就知道'的幻觉</div>
+        <div class="content">结果一旦发生，人会立刻重构记忆，让自己"当时就觉得会这样"。这不仅是记忆错误，还会<strong>破坏学习</strong>：如果你认为早就预见到了，就不会去检验判断过程，于是下一次照错不误。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">专家预测 vs 简单公式<button class="glossary-trigger" onclick="openModal('outsideView')">?</button></div>
+        <div class="content">书中引用的研究结论相当难看：在多个领域，<strong>简单的统计规则预测得比专家更准</strong>，而专家在获得更多信息后并不会更准，只会更自信。作者的态度是：不是专家无用，而是人的综合判断容易被无关信息干扰。</div>
+        <div class="example">💡 实用推论：把判断拆成几个明确维度、各自打分再加总，往往比"整体感觉"可靠。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">外部视角：唯一有效的解药</div>
+        <div class="content">内部视角是"我这个项目有何特殊"，外部视角是"这类项目通常怎样"。作者建议：先找出<strong>同类参照集</strong>，看它们的实际分布，再回来看自己的计划。这一个动作，能消掉大部分乐观。</div>
+        <div class="example">💡 他的亲身体验：编写一本教科书，团队预计两年，同类书的实际平均值是七到十年——最后真的用了八年。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">规划谬误与事前验尸<button class="glossary-trigger" onclick="openModal('planning')">?</button></div>
+        <div class="content">规划谬误指系统性地低估时间、成本与风险。对抗方法是"事前验尸"：假设项目已经彻底失败，让每个人写下失败的原因。这个动作把<strong>怀疑从社交禁忌变成任务</strong>，因此能捞出平时没人敢说的话。</div>
+        <div class="example">💡 它的妙处在于绕过了乐观偏差：你不是被问"会不会失败"，而是被要求"解释它为什么失败了"。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">什么时候可以信任直觉</div>
+        <div class="content">作者给了两个明确条件：①环境有<strong>足够的规律性</strong>；②你通过长期练习有机会<strong>学会这些规律</strong>。两条都满足，直觉可信（消防员、棋手、麻醉师）；缺一条，直觉就是自信的猜测（选股、政治预测）。</div>
+        <div class="example">💡 这个标准极其好用：判断任何"老师傅的直觉"靠不靠谱，先问这两条。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点四 -->
+  <div class="section" id="arg4">
+    <h2><span class="h2-no">论点四</span>前景理论：人算的是得失，不是财富</h2>
+    <p class="lead">这是让卡尼曼拿到诺奖的部分（1979 年与特沃斯基合作）。它替换了统治经济学两百多年的"财富效用"模型，改成一个更符合观察的版本。</p>
+
+    <div class="curve-box">
+      <svg viewBox="0 0 620 300" role="img" aria-label="前景理论价值函数曲线：损失区间比收益区间更陡">
+        <!-- 坐标轴 -->
+        <line x1="45" y1="165" x2="585" y2="165" stroke="#c9b8d6" stroke-width="1.4"/>
+        <line x1="310" y1="28" x2="310" y2="278" stroke="#c9b8d6" stroke-width="1.4"/>
+        <!-- 理性预期直线（虚线） -->
+        <line x1="70" y1="222" x2="550" y2="108" stroke="#b9aec4" stroke-width="1.2" stroke-dasharray="5 5"/>
+        <!-- 价值函数：收益段（凹） -->
+        <path d="M 310 165 Q 400 133 550 128" fill="none" stroke="#6f3a8f" stroke-width="2.8" stroke-linecap="round"/>
+        <!-- 价值函数：损失段（凸、更陡） -->
+        <path d="M 310 165 Q 220 208 70 244" fill="none" stroke="#b03a48" stroke-width="2.8" stroke-linecap="round"/>
+        <!-- 原点 -->
+        <circle cx="310" cy="165" r="4.5" fill="#3d1c50"/>
+        <!-- 标注 -->
+        <text x="310" y="188" font-size="11.5" fill="#6b5b78" text-anchor="middle">参照点</text>
+        <text x="556" y="122" font-size="12.5" fill="#4a1f63" font-weight="700" text-anchor="end">收益</text>
+        <text x="72" y="238" font-size="12.5" fill="#b03a48" font-weight="700">损失</text>
+        <text x="300" y="22" font-size="11.5" fill="#7a6a88" text-anchor="middle">主观价值</text>
+        <text x="576" y="182" font-size="11.5" fill="#7a6a88" text-anchor="end">客观得失</text>
+        <!-- 虚线说明 -->
+        <text x="470" y="98" font-size="11" fill="#9c8fa9" text-anchor="middle">理性预期（线性）</text>
+        <!-- 两侧斜率对比标注 -->
+        <text x="392" y="152" font-size="11" fill="#8b6fa3">同样 100 元，赚的坡度缓</text>
+        <text x="150" y="212" font-size="11" fill="#a8596a">亏的坡度陡得多</text>
+      </svg>
+      <div class="curve-cap">
+        读图三件事：<strong>①曲线穿过参照点</strong>——人评价的是相对变化，不是绝对水平；<strong>②收益区间凹</strong>——同样的增量，越往后带来的满足越小；<strong>③损失区间更陡</strong>——损失的心理冲击大于同等收益，这就是损失厌恶。经验研究中损失厌恶系数大致在 1.5–2.5 之间，常被概括为"损失大约需要两倍收益才能抵消"。
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">损失厌恶：不是怕亏，是亏更疼<button class="glossary-trigger" onclick="openModal('lossAversion')">?</button></div>
+        <div class="content">丢掉 100 元的痛苦，远大于捡到 100 元的快乐。这不是"贪心"，而是一个<strong>不对称的权重函数</strong>。它直接推翻了伯努利以来的"财富效用"模型，因为那个模型假设人是按最终财富水平来评价的。</div>
+        <div class="example">💡 现实后果：人会为了回避一次确定的损失，去冒一个期望值更差的险。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">禀赋效应：你的东西自动涨价<button class="glossary-trigger" onclick="openModal('endowment')">?</button></div>
+        <div class="content">同一个杯子，让人买时出价约 3 美元，卖时要价约 6 美元。因为"拥有"改变了参照点——放弃它被编码为损失。<strong>损失厌恶 + 参照点 = 禀赋效应。</strong></div>
+        <div class="example">💡 这解释了"先试用再购买"的威力，也解释了为什么人很难卖掉持有很久的东西。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">确定性效应与罕见事件</div>
+        <div class="content">从 99% 提到 100%，人的感受远强于从 30% 提到 31%——<strong>确定的东西有额外权重</strong>。反过来，极小概率的事件会被过度关注（买保险、买彩票），因为它画面感太强。同一个权重函数，在两个方向上造成两种反常。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">四重模式：面对得失的四种态度<button class="glossary-trigger" onclick="openModal('prospect')">?</button></div>
+        <div class="content">把"收益/损失"与"高概率/低概率"交叉，得到四种典型倾向：高概率收益时<strong>风险厌恶</strong>（宁可拿稳的）；高概率损失时<strong>风险寻求</strong>（宁可赌一把）；低概率收益时<strong>风险寻求</strong>（买彩票）；低概率损失时<strong>风险厌恶</strong>（买保险）。</div>
+        <div class="example">💡 这张表的解释力很强：它同时说明了买彩票和买保险这两种看似矛盾的行为。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">宽框架：把多次决策当一个整体</div>
+        <div class="content">既然损失让人疼，那就<strong>减少看结果的次数</strong>。作者的建议很具体：长期投资者不该每天看盘，因为每天看等于每天给自己制造一次小损失。把一年当一次评估，同样的波动，痛苦少得多。</div>
+        <div class="example">💡 书里那句话大意：频繁查看结果的成本，是让理性被反复消耗。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点五 -->
+  <div class="section" id="arg5">
+    <h2><span class="h2-no">论点五</span>框架与心理账户：换个说法，换个人</h2>
+    <p class="lead">这一部分是对经济学的正面挑战：理性选择理论的硬要求是"偏好稳定"，即表述方式不应改变选择。而实验显示，仅仅换一种说法，人的选择就会反转。</p>
+
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">框架效应：同一件事，两种命运</div>
+        <div class="content">面对一场将导致 600 人死亡的疫情：方案 A"能救 200 人"，方案 B"有 1/3 概率全救、2/3 概率全死"。多数人选 A。但把同样的方案换成"400 人会死"的说法，多数人改选赌一把。</div>
+        <div class="example">💡 两个描述在数学上完全等价。改变的只是参照点：从"活下来的人"换成"死掉的人"，<strong>收益框架变成损失框架</strong>。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">心理账户：钱不是同一种钱</div>
+        <div class="content">人会按来源和用途给钱分账：工资、奖金、中奖的钱、退回来的钱，花钱的态度完全不同。所以丢了 500 元电影票往往就不看了，但丢了 500 元现金照样买票——因为前者从"娱乐账户"扣，后者从"总账户"扣。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">处置效应与沉没成本</div>
+        <div class="content">卖掉赚钱的股票带来快感，卖掉亏钱的股票要承认损失——于是人倾向于<strong>卖出赢家、留住输家</strong>，这与理性策略正好相反。沉没成本同理：已经投入的越多，越难停手，因为停止等于把损失"入账"。</div>
+        <div class="example">💡 作者的建议不是"要理性"，而是更聪明的说法：<strong>问自己"如果今天没有这笔投入，我还会这么选吗"</strong>。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">公平感：参照点也在道德里</div>
+        <div class="content">书中记录了商人的定价实验：在需求高涨时提价、或在萧条时降薪，都被多数人判为"不公平"，即便完全符合市场逻辑。说明人对交易的评价依赖<strong>一个被认为合理的参照点</strong>，而这会影响真实的市场行为。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">助推：利用偏差做好事</div>
+        <div class="content">既然框架效应无法消除，那就可以利用它。默认选项、器官捐献的"选择退出"设计、储蓄计划的自动加入——都是把<strong>懒惰</strong>引导到有利方向。作者的态度带着自觉：这类工具既可用于善，也可用于操纵。</div>
+        <div class="example">💡 关键区别只有一条：设计者是否把使用者的利益放在自己利益之前。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 论点六 -->
+  <div class="section" id="arg6">
+    <h2><span class="h2-no">论点六</span>两个自我：经历的人不算账，算账的人不经历</h2>
+    <p class="lead">第五部分是全书最出人意料的一章，也是作者自称最看重的部分。它把前面所有关于"判断"的讨论，落到了一个更根本的问题上：<b>什么才算好的体验？</b></p>
+
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">经验自我与记忆自我<button class="glossary-trigger" onclick="openModal('experiencingSelf')">?</button></div>
+        <div class="content"><strong>经验自我</strong>活在当下，一秒一秒地体验；<strong>记忆自我</strong>负责事后讲故事，并做出几乎所有决定。要命的是这两者的评价标准不一样，而做决定的那个，不是经历的那个。</div>
+        <div class="example">💡 作者的原话大意：我们不是在选择未来，而是在选择未来记忆中将要留下的那些故事。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">峰终定律与时长忽视<button class="glossary-trigger" onclick="openModal('peakEnd')">?</button></div>
+        <div class="content">让人把手浸入冰水：一次 60 秒，一次 60 秒后再多浸 30 秒（水温略高）。从体验上说第二次更糟——多受了 30 秒的罪。但多数人愿意<strong>再选第二次</strong>，因为它的结尾更温和。记忆只记住<strong>峰值和结尾</strong>，对总时长几乎不敏感。</div>
+        <div class="example">💡 这就是"时长忽视"：一段体验的漫长与否，对回忆几乎没有影响。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">决策效用 vs 体验效用</div>
+        <div class="content">经济学的"效用"通常指决策效用——你愿意为它付多少。但真正被经历的是体验效用。两者常常背离：一场旅行你拍了很好的照片（记忆满意），过程却一路焦虑（体验糟糕）。这种背离本身值得警惕。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">幸福该测哪一个</div>
+        <div class="content">问"你对生活满意吗"，测的是记忆自我；用经验采样记录每刻情绪，测的是经验自我。两者给出不同答案，也能推出不同政策。作者没有强行给出唯一答案，但他明显更看重<strong>经验自我</strong>——因为那是真实被活过的时间。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">一个不太好接受的推论</div>
+        <div class="content">如果记忆只保留峰值和结尾，那么延长一段美好时光的<strong>边际价值很低</strong>——真正值得投资的是"高峰"和"收尾"。这听起来很功利，但它是实验结论，而不是作者的建议。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 关键实验 -->
+  <div class="section" id="evidence">
+    <h2>关键实验：支撑全书的六块基石</h2>
+    <p class="lead">这本书的说服力几乎全部来自实验，而不是思辨。以下六个是流传最广、也最常被引用的。</p>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">① 球拍与球（约 1 美元）</div>
+        <div class="content">球拍加球共 1.1 美元，球拍比球贵 1 美元，球多少钱？脱口而出的"0.1 美元"是错的（正确答案 0.05）。这个题专门用来<strong>暴露系统 2 的懒惰</strong>：答案几乎自己冒出来，而多数人不去验算。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">② 愤怒的脸与 17 × 24</div>
+        <div class="content">书的第一章用两个任务对比：识别愤怒的脸不费吹灰之力，做两位数乘法却要屏息、瞳孔放大、心跳加快。同一个大脑，两种代价。<strong>这是全书结构的缩影。</strong></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">③ 看不见的大猩猩</div>
+        <div class="content">选择性注意实验。约半数被试完全没看到画面中的猩猩。它证明了"看见"是主动筛选的结果，而不是被动接收的事实。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">④ 琳达问题</div>
+        <div class="content">合取谬误的经典演示。连受过统计训练的人也会犯错，说明这不是知识欠缺，而是<strong>判断机制的固有倾向</strong>。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">⑤ 转盘锚定</div>
+        <div class="content">用随机转盘得到的数字（10 或 65）去问同一个问题，答案差异极大。锚定在<strong>明知无关</strong>的情况下依然生效，这是它最令人不安的地方。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">⑥ 冰水实验</div>
+        <div class="content">用可控的疼痛体验直接测量"记忆如何评价体验"，是全书方法上最漂亮的设计之一：让受试者自己"选择"再受一次更长的罪，从而证明记忆自我的评价标准与经验自我不同。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 贯穿论点 -->
+  <div class="section" id="insights">
+    <h2>贯穿论点：五条最值得带走的判断</h2>
+    <div class="insight-card" data-no="一">
+      <div class="insight-title">偏差不是知识的缺口，是机制的副产品</div>
+      <div class="insight-body">知道锚定效应存在，依然会被锚定；知道合取谬误，依然会觉得琳达更像女权主义者。这不是意志力问题——因为这些机制正是让日常判断变得高效的那套机制。<strong>你不可能关掉它，只能给它加一道检查。</strong></div>
+      <div class="insight-evidence">依据：第一篇对系统 1 自动性的论证 + 作者本人多次承认自己也会中招</div>
+    </div>
+    <div class="insight-card" data-no="二">
+      <div class="insight-title">对自己"如何思考"的叙述，基本不可信</div>
+      <div class="insight-body">人能给出一套听起来完整的原因链，但实验显示真实过程往往不是那样。系统 2 事后会为系统 1 的结论编一个解释，而且编得很有说服力。<strong>这让内省成为一种不可靠的取证方式。</strong></div>
+      <div class="insight-evidence">依据：问题替换机制 + 第 9 章"目标问题与启发性问题形影不离"</div>
+    </div>
+    <div class="insight-card" data-no="三">
+      <div class="insight-title">唯一可靠的纠偏动作，是换视角而不是更用力</div>
+      <div class="insight-body">"再仔细想想"没有用，因为懒惰的不是态度而是机制。真正有效的是换框架：外部视角（看同类项目的真实分布）、事前验尸（假设已经失败）、宽框架（把多次决策合起来看）。<strong>这些动作都绕过了"努力"，改动了输入。</strong></div>
+      <div class="insight-evidence">依据：第三部分对规划谬误与外部视角的论述</div>
+    </div>
+    <div class="insight-card" data-no="四">
+      <div class="insight-title">损失厌恶解释了大量"不理性"的行为</div>
+      <div class="insight-body">不肯止损、不肯卖旧物、不肯改变现状、谈判中的僵持、改革推不动——这些看似不同的问题，共享同一个结构：<strong>放弃被编码为损失，而损失格外疼。</strong>所以推动改变的关键，往往是把"失去"重新表述为"换得"。</div>
+      <div class="insight-evidence">依据：第四部分前景理论、禀赋效应、现状偏好</div>
+    </div>
+    <div class="insight-card" data-no="五">
+      <div class="insight-title">决定人生的是记忆自我，但被活过的是经验自我</div>
+      <div class="insight-body">这不是一个可以调和的矛盾，而是一个必须选择立场的问题：你更愿意要一段"回想起来很好"的人生，还是"过起来很好"的人生？作者没有给出标准答案，但把它摆在了全书的最后，说明他认为这才是真问题。</div>
+      <div class="insight-evidence">依据：第五部分峰终定律、时长忽视、两种效用的背离</div>
+    </div>
+  </div>
+
+  <!-- 规律 -->
+  <div class="section" id="laws">
+    <h2>贯穿规律：六条反复出现的机制</h2>
+    <div class="law-card" data-no="1">
+      <h4>省力律</h4>
+      <p>大脑默认走能耗最低的路径。系统 2 只在必要时启动，而"必要"的门槛比我们以为的高得多。所有偏差的共同前提，都是这条律在起作用。</p>
+    </div>
+    <div class="law-card" data-no="2">
+      <h4>替换律</h4>
+      <p>遇到难的判断，系统 1 会找一个容易的近似问题来回答，并用它的答案冒充原答案。锚定、可得性、代表性、情感启发式，都是这条律的不同表现。</p>
+    </div>
+    <div class="law-card" data-no="3">
+      <h4>连贯律</h4>
+      <p>意识无法忍受不连贯，会自动补上因果与情节。代价是：故事越顺畅，越可能偏离事实；而越偏离事实，越容易让人确信。</p>
+    </div>
+    <div class="law-card" data-no="4">
+      <h4>参照点律</h4>
+      <p>人评价的是相对于参照点的变化，而不是绝对水平。参照点一变，同一个客观结果就从收益变成损失，选择随之反转。</p>
+    </div>
+    <div class="law-card" data-no="5">
+      <h4>不对称律</h4>
+      <p>损失重于收益，确定重于可能，极端值重于平均值。人对"坏"的敏感度系统性地高于对"好"的敏感度——这是进化给的默认设置，改不掉，只能补偿。</p>
+    </div>
+    <div class="law-card" data-no="6">
+      <h4>峰终律</h4>
+      <p>记忆按峰值与结尾编码，几乎不计时长。这决定了人会重复选择"当时并不舒服但结局体面"的经历，也决定了我们对人生的评价方式。</p>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2>记忆钩子：三行公式装下全书</h2>
+    <div class="formula-box">
+      <span class="f-main">偏差 = 系统1 的快答 × 系统2 的放行</span>
+      <span class="f-note">两个乘数。要么让快答慢下来（难），要么让放行变得有条件（可行）——后者才是这本书真正能教的东西。</span>
+    </div>
+    <div class="formula-box">
+      <span class="f-main">判断 = 难题 → 替换成容易的题 → 用一个"感觉"作答</span>
+      <span class="f-note">这条链是第二部分的全部内容。识别偏差的方法不是背清单，而是问：我实际回答的，是不是被问的那个问题？</span>
+    </div>
+    <div class="formula-box">
+      <span class="f-main">选择 = f（得失相对于参照点，损失权重 &gt; 收益权重）</span>
+      <span class="f-note">前景理论的一句话版本。注意"参照点"三个字：改变选择最省力的方式，不是改变事实，是改变参照点。</span>
+    </div>
+
+    <div class="tree-box">
+<span class="tb-hi">全书的骨架</span>
+
+  <span class="tb-hi">系统 1</span>（快 / 自动 / 不费力）        <span class="tb-dim">系统 2</span>（慢 / 受控 / 懒）
+      │  生成印象、直觉、感觉                  │  通常只盖章，不审查
+      ▼                                        ▼
+   ┌─────────────── 判断 ───────────────┐
+   │  难题 ──替换──▶ 容易的题 ──▶ 感觉即答案 │
+   │  锚定 · 可得性 · 代表性 · 因果叙事      │
+   └──────────────────┬──────────────────┘
+                      │ 只看到故事，看不到概率
+                      ▼
+              <span class="tb-hi">过度自信</span>（叙事谬误 / 规划谬误 / 后见之明）
+                      │
+                      ▼
+   ┌─────────────── 选择 ───────────────┐
+   │  参照点 ──▶ 得失编码 ──▶ 损失更疼      │
+   │  禀赋效应 · 心理账户 · 框架效应        │
+   └──────────────────┬──────────────────┘
+                      ▼
+              <span class="tb-dim">经验自我</span>（被活过的时间）
+              <span class="tb-hi">记忆自我</span>（做决定的那一个）──▶ 峰终定律
+</div>
+  </div>
+
+  <!-- 金句 -->
+  <div class="section" id="quotes">
+    <h2>核心金句</h2>
+    <blockquote class="quote-block">
+      我们对自己的判断充满信心，而这种信心往往与判断的可靠性毫无关系——它更多来自故事的连贯程度，而不是证据的充分程度。
+      <span class="cite">—— 综合提炼自第三部分论述（非逐字原文）</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      损失带来的痛苦，远大于同等收益带来的快乐；这个不对称如此稳定，以至于它重新定义了整个决策理论。
+      <span class="cite">—— 综合提炼自第四部分「前景理论」</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      我们不是在选择未来，而是在选择未来将要留下的记忆。
+      <span class="cite">—— 综合提炼自第五部分「两个自我」</span>
+    </blockquote>
+  </div>
+
+  <!-- 延伸比较 -->
+  <div class="section" id="extension">
+    <h2>延伸与比较</h2>
+    <table class="extension">
+      <thead>
+        <tr><th>维度</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>行为经济学的奠基之作，也是"双系统"这一说法最广为人知的出处。它的真正贡献不是列举偏差，而是<strong>提供了一个统一的生成机制</strong>：所有偏差都是同一套加工方式的副产品。2002 年诺奖表彰的正是这条研究路线。</td>
+        </tr>
+        <tr>
+          <td>论点倾向</td>
+          <td>温和的<strong>悲观主义 + 实用主义</strong>。作者不相信人能变得理性——他自己也承认会中招；但他相信可以设计"检查点"，让错误发生的概率下降。全书没有一处要求你"更努力地思考"。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+            ① <strong>可重复性危机的直接影响</strong>——书中关于启动效应（尤其社会启动，如"铅笔微笑"实验）的部分，在 2010 年代的大规模重复实验中可重复率很低。卡尼曼本人在 2017 年公开表示，该领域"信誉受损"，他对相关章节的信心已明显下降。读第 4 章时应保留怀疑。<br>
+            ② 部分经典实验（如疲劳法官的保释决策）后来在方法上受到质疑；<br>
+            ③ <strong>实验多为实验室情境</strong>，生态效度有限——现实中的决策有更多时间、更复杂的激励；<br>
+            ④ 双系统是一个<strong>方便的隐喻</strong>，不是神经科学结论。作者本人多次提醒，但流传中几乎总被当成大脑分区；<br>
+            ⑤ 缺少文化差异的系统讨论——多数被试来自西方工业化社会；<br>
+            ⑥ 成书于 2011 年，未覆盖智能手机与算法推荐如何放大这些偏差（今天的锚定和可得性，已经被产品化）。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《助推》</strong>（塞勒 / 桑斯坦）：把本书的偏差直接转成政策工具，是"应用篇"。<br>
+            <strong>《黑天鹅》</strong>（塔勒布）：卡尼曼自己说第三部分受它影响；塔勒布更激进，认为整个预测行业都该作废。<br>
+            <strong>《影响力》</strong>（西奥迪尼）：讲如何<strong>利用</strong>这些偏差说服别人，视角正相反——一本是防身，一本是武器。<br>
+            <strong>《穷查理宝典》</strong>（芒格）：同样讲误判心理学，但从投资实践出发，清单更长、理论更薄。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与<strong>《信息与激励经济学》</strong>关系最深：那本讲信息不对称导致的逆向选择与道德风险，这本讲<strong>认知不对称</strong>——人连自己的信息处理过程都不了解。两者合起来，才构成完整的"不完全信息"图景。<br>
+            与<strong>《营销管理》</strong>：锚定、禀赋效应、框架效应正是定价与促销的底层工具；科特勒讲怎么做，卡尼曼讲为什么有效。<br>
+            与<strong>《心流》</strong>恰好接得上：那本讲注意力如何被组织，这本讲注意力如何被偷走。第五部分讨论"幸福怎么测量"，与心流的体验采样法同源。<br>
+            与<strong>《控制论与科学方法论》</strong>：外部视角和事前验尸，本质是给判断加一条<strong>负反馈回路</strong>——只不过纠正的不是动作，是前提。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>投资</strong>：减少查看频率、预设止损规则、把成本与收益放在同一张账上。<br>
+            <strong>管理</strong>：项目评估强制走外部视角、重大决策前做一次事前验尸。<br>
+            <strong>产品与政策</strong>：用默认选项代替劝导，但必须通过"是否有利于使用者"这一关。<br>
+            <strong>个人</strong>：遇到"我很有把握"的时刻，先问一句——我知道的是这个结论，还是我听过一个很顺的故事？
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection">
+    <h2>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">一、这本书最诚实的部分，是它自己的部分失效</div>
+      <p>《思考，快与慢》有一个罕见的品质：它讲述的偏差，最终也落到了自己身上。2010 年代的可重复性危机中，书中引用的若干启动效应实验没能被复制出来。卡尼曼没有回避——他公开承认了对相关章节的信心下降，甚至说这个领域"信誉受损"。</p>
+      <p>这件事本身值得单独记一笔：<strong>一本讲"人如何对自己的判断过度自信"的书，示范了如何面对自己的判断被推翻。</strong>这比书里任何一条偏差清单都更有说服力。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">二、知道偏差，为什么还是躲不过</div>
+      <p>最常见的误读是把它当成一本"免疫力手册"。但作者的立场很清楚：系统 1 无法关闭，系统 2 天生懒，所以<strong>知道不等于免疫</strong>。他在书里多次承认自己在写作时也会掉进锚定和框架的陷阱。</p>
+      <p>因此这本书的正确用法不是"提高自觉"，而是<strong>改流程</strong>：把判断拆成清单、把评估周期拉长、把决策交给规则而不是当下的感觉。真正的改进发生在制度层，不在意志层。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">三、一个 2011 年没写到的变化：偏差已经被产品化</div>
+      <p>书里的偏差是自然发生的，像天气。但今天它们被大规模工程化了：限时折扣制造稀缺感，划线价提供锚点，无限滚动消解"停下来评估"的机会，个性化推荐把可得性启发喂到极致。这些设计都精准地落在系统 1 的输入端。</p>
+      <p>于是出现一个不对称：<strong>一边是一个没受过训练的人，另一边是一整个团队在用 A/B 测试优化你的偏差。</strong>书里的个体策略（外部视角、事前验尸）在这种量级面前，作用有限——这也是为什么后半部分关于"助推"的讨论，今天读来更像一个治理问题，而不是个人修养问题。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">四、两个自我的问题，作者没有替我们解决</div>
+      <p>如果记忆自我决定一切，而经验自我承受一切，那么"更好的生活"到底该由谁投票？作者倾向于经验自我，但他没有给出制度化的答案——因为很难想象一个由经验自我主导的社会。</p>
+      <p>这个问题至今没有解决，反而被技术放大了：社交媒体把生活变成了为记忆自我生产的素材。当你为一次旅行选角度、挑滤镜、等那个"值得发"的瞬间，<strong>经验自我正在为记忆自我打工。</strong>这大概是这本书今天最值得重读的一章。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《思考，快与慢》知识图谱 · 基于原著整理 · 仅供个人学习回顾<br>
+    金句均为综合提炼并已标注，非逐字原文摘录
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  system12: {
+    title: '系统 1 与系统 2',
+    content: '<p>卡尼曼对两种认知加工方式的拟人化称呼，<strong>不是大脑中的两个实体</strong>（作者反复提醒过）。</p><ul><li><strong>系统 1</strong>：自动、快速、并行、不费力、无法关闭。负责生成印象、直觉与感觉</li><li><strong>系统 2</strong>：受控、缓慢、串行、费力、可中断。负责审核、计算与自我控制</li><li>关系是不对称的：系统 1 持续输出，系统 2 通常直接采纳</li></ul>'
+  },
+  cognitiveEase: {
+    title: '认知放松（Cognitive Ease）',
+    content: '<p>信息处理顺畅时的一种主观状态，表现为感觉轻松、熟悉、不需要费力。</p><ul><li>触发因素：字体清晰、重复出现、押韵、心情好、字迹工整</li><li>后果：<strong>处理流畅会被误读为"真实"</strong>，于是更容易相信、更少怀疑</li><li>反过来，费力的阅读会提高警觉，让人更谨慎（哪怕内容一样）</li></ul>'
+  },
+  anchoring: {
+    title: '锚定效应（Anchoring）',
+    content: '<p>先接触到的数字会不成比例地影响后续估计，即使那个数字明显无关。</p><ul><li>经典实验：先转盘得到 10 或 65，再估非洲国家占联合国比例，答案显著不同</li><li>即使<strong>明知锚是随机的</strong>，效应依然存在</li><li>现实版本：划线价、先出价的一方占优、菜单上的高价参照菜</li></ul>'
+  },
+  availability: {
+    title: '可得性启发（Availability Heuristic）',
+    content: '<p>判断某类事件的频率或概率时，人实际使用的是"想起它的难易程度"。</p><ul><li>结果：媒体曝光多的风险被高估（空难、凶杀），曝光少的被低估（哮喘、跌倒）</li><li>本质：把<strong>记忆的检索难度</strong>当成了<strong>世界的统计频率</strong></li><li>这也是"我身边人都这样"这类判断的结构性错误</li></ul>'
+  },
+  representativeness: {
+    title: '代表性启发（Representativeness）',
+    content: '<p>判断某对象属于哪一类时，依据"它像不像那一类的典型形象"，而忽略基础比率。</p><ul><li>例子：安静爱读书的人被猜成图书馆员，而非数量多得多的农民</li><li>核心区分：<strong>像不像</strong>由系统 1 判断，<strong>有多少</strong>需要统计思维，系统 1 做不到</li><li>它同时催生了合取谬误与对小数样本的过度信任</li></ul>'
+  },
+  conjunction: {
+    title: '合取谬误（琳达问题）',
+    content: '<p>认为两个条件同时成立比其中一个更可能——这在概率上不可能。</p><ul><li>经典版本：描述一位关注社会议题的女性，多数人认为"银行出纳且参与女权运动"比"银行出纳"更可能</li><li>原因：故事越具体越连贯，感觉越"像"</li><li>要点：<strong>加一个条件只能降低概率，不可能提高</strong>，但直觉恰好相反</li></ul>'
+  },
+  regression: {
+    title: '回归均值（Regression to the Mean）',
+    content: '<p>极端表现之后往往跟着更接近平均的表现，不需要任何因果解释。</p><ul><li>例子：飞行员被表扬后表现变差、被批评后变好，教官因此坚信批评有效——其实只是回归</li><li>难点：人天生要为波动找原因，而回归本身<strong>没有原因</strong></li><li>卡尼曼认为这个发现的地位不亚于万有引力：同样反直觉、普遍、被忽视</li></ul>'
+  },
+  narrative: {
+    title: '叙事谬误（Narrative Fallacy）',
+    content: '<p>人脑无法忍受碎片，会自动把经历编成有因果、有主角的连贯故事。</p><ul><li>问题：好故事的标准是<strong>连贯</strong>，不是真实；连贯必然省略随机因素</li><li>后果：故事越顺，越可能偏离事实，也越让人确信</li><li>商业成功学是典型样本：给的是叙事，不是解释</li></ul>'
+  },
+  planning: {
+    title: '规划谬误与事前验尸',
+    content: '<p><strong>规划谬误</strong>：系统性低估任务的时间、成本与风险，同时高估收益。</p><p><strong>事前验尸（premortem）</strong>：假设项目已经彻底失败，让每个成员写下失败原因。</p><ul><li>妙处：不是问"会不会失败"，而是要求"解释它为什么失败了"——绕过了乐观偏差</li><li>同时把怀疑从社交禁忌变成分配到的任务</li></ul>'
+  },
+  outsideView: {
+    title: '外部视角（Outside View）',
+    content: '<p>与"内部视角"相对。内部视角关注本项目的特殊性与细节；外部视角关注<strong>同类情况的统计分布</strong>。</p><ul><li>做法：先找到同类参照集，看它们的实际结果分布，再评估自己</li><li>卡尼曼亲历：教科书编写团队预计两年，同类书平均七到十年，最终用了八年</li><li>它是全书<strong>唯一被反复推荐、且被证明有效</strong>的纠偏方法</li></ul>'
+  },
+  prospect: {
+    title: '前景理论（Prospect Theory）',
+    content: '<p>1979 年卡尼曼与特沃斯基提出的决策模型，替换了伯努利的"财富效用"理论。</p><ul><li>人评价的是<strong>相对于参照点的得失</strong>，不是财富的绝对水平</li><li>收益区间凹、损失区间凸且更陡（损失厌恶）</li><li>概率权重非线性：确定性被高估，极小概率被过度关注</li><li><strong>四重模式</strong>：高概率收益→风险厌恶；高概率损失→风险寻求；低概率收益→风险寻求（彩票）；低概率损失→风险厌恶（保险）</li></ul>'
+  },
+  lossAversion: {
+    title: '损失厌恶（Loss Aversion）',
+    content: '<p>同等金额的损失带来的痛苦，显著大于收益带来的快乐。</p><ul><li>经验研究中系数大致在 1.5–2.5 之间，常被概括为"损失约需两倍收益才能抵消"</li><li>它推翻了"按最终财富评价"的模型，因为评价依赖参照点</li><li>衍生现象：禀赋效应、现状偏好、沉没成本、处置效应</li></ul>'
+  },
+  endowment: {
+    title: '禀赋效应（Endowment Effect）',
+    content: '<p>同一件东西，拥有之后人对它的估值会显著上升。</p><ul><li>经典实验：杯子买价约 3 美元，卖价约 6 美元</li><li>机制：拥有改变了参照点，放弃被编码为<strong>损失</strong></li><li>应用：先试用再购买、免费退货政策、旧物难舍</li></ul>'
+  },
+  peakEnd: {
+    title: '峰终定律与时长忽视',
+    content: '<p><strong>峰终定律</strong>：对一段体验的回忆，主要由最强烈的瞬间（峰值）和结束时的感受决定。</p><p><strong>时长忽视</strong>：体验持续多久，对回忆几乎没有影响。</p><ul><li>冰水实验：第二次多浸 30 秒（水温略高）体验更糟，但多数人愿意再选它，因为结尾更温和</li><li>推论：延长美好时光的边际价值很低，值得投资的是高峰与收尾</li></ul>'
+  },
+  experiencingSelf: {
+    title: '经验自我与记忆自我',
+    content: '<p>卡尼曼在第五部分提出的核心区分。</p><ul><li><strong>经验自我</strong>：活在当下，逐秒体验，不擅长记忆和总结</li><li><strong>记忆自我</strong>：事后讲故事、做总结，并<strong>做出几乎所有决定</strong></li><li>矛盾：做决定的不是经历的那个。问"生活满意吗"测的是记忆自我，经验采样测的是经验自我</li></ul>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>
