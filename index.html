@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.10.1</title>
+<title>📚 书阁 v8.10.2</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -1217,14 +1217,15 @@ html, body {
    做成半透明小圆点嵌在封面右上角，不靠近书名区，不干扰阅读。 */
 .book-share-btn {
   position: absolute; top: 3px; right: 3px; z-index: 5;
-  width: 17px; height: 17px; padding: 0;
+  width: 18px; height: 18px; padding: 0;
   display: flex; align-items: center; justify-content: center;
-  border: none; border-radius: 50%;
-  background: rgba(0,0,0,0.22); color: #fff;
-  cursor: pointer; opacity: 0.5;
+  border: 1px solid rgba(255,255,255,0.30); border-radius: 50%;
+  background: rgba(0,0,0,0.34); color: #fff;
+  cursor: pointer; opacity: 1;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.22);
   transition: opacity var(--transition), background var(--transition), transform 0.15s ease;
 }
-.book-share-btn svg { width: 9px; height: 9px; display: block; }
+.book-share-btn svg { width: 10px; height: 10px; display: block; }
 /* 视觉 17px 但把可点区撑到 29px：卡片本身只有 70~85px 宽，
    纯按 17px 当点击区手指够不准（点歪就会误开笔记）。 */
 .book-share-btn::before {
@@ -1232,11 +1233,12 @@ html, body {
 }
 .book-card:hover .book-share-btn { opacity: 1; background: rgba(0,0,0,0.46); }
 .book-share-btn:active { transform: scale(0.88); opacity: 1; }
-/* 真桌面（有 hover 且视口够宽）平时收起，跟 ⋯ 一样按需出现，避免整屏小圆点发噪；
-   窄窗口和触屏设备都不进这条规则，分享键保持常显。
+/* 真桌面（有 hover 且视口够宽）压暗一档但仍然可见 —— 之前是 opacity:0，
+   不把鼠标挪上去就以为「没有分享功能」（用户实测反馈）。现在常驻 0.55，
+   悬停升到 1 并加深底色。
    断点 768px 与项目里 .book-card-menu 的隐藏规则保持同一套。 */
 @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
-  .book-share-btn { opacity: 0; }
+  .book-share-btn { opacity: 0.55; }
   .book-card:hover .book-share-btn,
   .book-share-btn:focus-visible { opacity: 1; }
 }
@@ -1466,7 +1468,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.10.1</span>
+        <span class="hero-version">v8.10.2</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1492,7 +1494,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.10.1</span>
+              <span class="hero-version">v8.10.2</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1626,11 +1628,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.10.1</span>
+                <span class="setting-value">v8.10.2</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.10.1</div>
+              <div class="about-version">📚 书阁 v8.10.2</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
