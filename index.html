@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.9.10</title>
+<title>📚 书阁 v8.10.1</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -208,26 +208,112 @@ html, body {
 .tab-panel { display: none; flex-direction: column; flex: 1; overflow: hidden; }
 .tab-panel.active { display: flex; }
 
-/* ========== Category Chips ========== */
-.category-chips {
-  display: flex; gap: 8px; padding: 8px 24px 16px; overflow-x: auto; flex-shrink: 0;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none;
+/* ========== Category Filter Bar (v8.10) ==========
+   分类从 7 类涨到 10 类后，横向滑动条一次只露出 3 个，
+   想找靠后的分类要盲滑好几次，而且完全看不出「还有几个分类」。
+   改成：这一行只放一个「当前分类」按钮，点开底部面板看全部分类网格。
+   好处是分类再多也不会溢出，当前选中状态永远可见。 */
+.cat-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 24px 12px; flex-shrink: 0;
 }
-.category-chips::-webkit-scrollbar { display: none; }
-.category-chip {
-  display: inline-flex; align-items: center; gap: 4px;
-  flex-shrink: 0; padding: 8px 18px; border: 1.5px solid var(--border);
-  border-radius: 20px; background: var(--bg-card); color: var(--text-secondary);
-  font-size: 13px; font-weight: 500; cursor: pointer;
-  white-space: nowrap; letter-spacing: 0.3px; transition: all var(--transition);
+/* 按钮单独一层：renderCategoryChips 只重写这一层，不会把右侧的「共 N 篇」冲掉 */
+.cat-bar-chips { display: flex; align-items: center; min-width: 0; }
+/* v8.10.1：「共 N 篇」从独立一行并进来，和筛选按钮同一基线 */
+.cat-bar-total {
+  margin-left: auto; flex-shrink: 0;
+  font-size: 13px; color: var(--text-muted);
+  white-space: nowrap; font-variant-numeric: tabular-nums;
 }
-.category-chip:hover { background: var(--accent-soft); color: var(--accent); border-color: var(--accent-soft); }
-.category-chip.active { background: var(--text-primary); border-color: var(--text-primary); color: #FFFFFF; font-weight: 600; }
-.category-chip .chip-count { font-size: 11px; opacity: 0.6; margin-left: 2px; }
+.cat-filter-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  max-width: 100%; padding: 8px 13px 8px 15px;
+  border: 1.5px solid var(--border); border-radius: 20px;
+  background: var(--bg-card); color: var(--text-primary);
+  font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+  letter-spacing: 0.2px; transition: all var(--transition);
+}
+.cat-filter-btn:active { transform: scale(0.97); }
+.cat-filter-btn .cfb-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); flex-shrink: 0; transition: background var(--transition);
+}
+.cat-filter-btn .cfb-name {
+  max-width: 132px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cat-filter-btn .cfb-count {
+  font-size: 11px; font-weight: 500; color: var(--text-muted);
+  font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+.cat-filter-btn .cfb-chev {
+  width: 12px; height: 12px; flex-shrink: 0; opacity: 0.45;
+  transition: transform var(--transition);
+}
+/* 已筛选态：整颗按钮切成朱砂色，和「全部」明显区分 */
+.cat-filter-btn.has-filter {
+  border-color: var(--accent); background: var(--accent-soft); color: var(--accent-deep);
+}
+.cat-filter-btn.has-filter .cfb-count { color: var(--accent); opacity: 0.8; }
+.cat-filter-btn[aria-expanded="true"] .cfb-chev { transform: rotate(180deg); }
 
-/* Toolbar */
-.toolbar { display: flex; align-items: center; gap: 8px; padding: 8px 24px; flex-shrink: 0; border-bottom: 1px solid var(--border); }
-.toolbar .count { font-size: 13px; color: var(--text-muted); flex: 1; }
+/* 底部筛选面板 */
+.cat-sheet-backdrop {
+  position: fixed; inset: 0; z-index: 560;
+  background: rgba(26,26,46,0.34);
+  opacity: 0; pointer-events: none; transition: opacity 0.22s ease;
+}
+.cat-sheet-backdrop.show { opacity: 1; pointer-events: auto; }
+.cat-sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 561;
+  display: flex; flex-direction: column; max-height: 78vh;
+  background: var(--bg-page);
+  border-radius: 22px 22px 0 0;
+  padding: 0 16px calc(14px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -8px 34px rgba(26,26,46,0.15);
+  transform: translateY(101%);
+  transition: transform 0.28s cubic-bezier(0.32,0.72,0.3,1);
+}
+.cat-sheet.show { transform: translateY(0); }
+.cat-sheet-handle {
+  width: 36px; height: 4px; border-radius: 2px;
+  background: var(--border); margin: 8px auto 0; flex-shrink: 0;
+}
+.cat-sheet-head {
+  display: flex; align-items: baseline; gap: 8px;
+  padding: 14px 4px 12px; flex-shrink: 0;
+}
+.cat-sheet-title { font-size: 16px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.5px; }
+.cat-sheet-sub { font-size: 12px; color: var(--text-muted); }
+.cat-sheet-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+  overflow-y: auto; padding: 2px 0 6px;
+  -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+}
+.cat-sheet-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px; border: 1.5px solid var(--border); border-radius: 12px;
+  background: var(--bg-card); color: var(--text-secondary);
+  font-size: 13px; font-weight: 500; font-family: inherit;
+  cursor: pointer; text-align: left; transition: all var(--transition);
+}
+.cat-sheet-item:active { transform: scale(0.975); }
+.cat-sheet-item .csi-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.cat-sheet-item .csi-name {
+  flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cat-sheet-item .csi-count {
+  font-size: 11px; color: var(--text-muted);
+  font-variant-numeric: tabular-nums; flex-shrink: 0;
+}
+.cat-sheet-item.active {
+  background: var(--text-primary); border-color: var(--text-primary);
+  /* v8.10.1：暗色下 --text-primary 是浅色，原来写死 #FFFFFF 会变成「浅底白字」看不清，
+     改用页面底色做反差，亮/暗两种主题都成立 */
+  color: var(--bg-page); font-weight: 600;
+}
+.cat-sheet-item.active .csi-count { color: var(--bg-page); opacity: 0.66; }
+
+/* Toolbar 已废弃（v8.10.1：篇数并入 .cat-bar 同一行） */
 
 .icon-btn {
   width: 40px; height: 40px; border: none; border-radius: var(--radius-sm);
@@ -250,7 +336,6 @@ html, body {
 #notesViewArea { flex: 0 0 auto; display: flex; flex-direction: column; overflow: visible; }
 /* 笔记长列表与书架重复，主视图是书架，保持隐藏 */
 #notesViewArea .note-list { display: none; }
-#notesViewArea .toolbar { padding: 4px 24px 8px; border-bottom: none; }
 
 /* Swipe wrapper */
 .note-item-wrapper {
@@ -1111,9 +1196,10 @@ html, body {
   user-select: none; -webkit-user-select: none;
   --c1:#4A4A44; --c2:#33332E; --c3:#24241F;
 }
-/* v8.6.2：桌面端 hover 浮出的操作入口（移动端走长按，隐藏） */
+/* v8.6.2：桌面端 hover 浮出的操作入口（移动端走长按，隐藏）
+   v8.10：下移到分享按钮下方，右上角两个角标不再叠在一起 */
 .book-card-menu {
-  position: absolute; top: 4px; right: 4px; z-index: 4;
+  position: absolute; top: 27px; right: 4px; z-index: 4;
   width: 22px; height: 22px; padding: 0;
   display: flex; align-items: center; justify-content: center;
   border: none; border-radius: 50%;
@@ -1125,6 +1211,35 @@ html, body {
 .book-card-menu:hover { background: rgba(0,0,0,0.48); }
 /* 触屏设备走长按，不显示 hover 按钮（any-pointer 与 checkMobile 的触屏判定保持一致） */
 @media (hover: none), (any-pointer: coarse), (max-width: 767px) { .book-card-menu { display: none; } }
+
+/* v8.10：书卡分享入口。
+   触屏没有 hover、也没有常驻的 ⋯ 菜单，所以分享按钮必须一直可见；
+   做成半透明小圆点嵌在封面右上角，不靠近书名区，不干扰阅读。 */
+.book-share-btn {
+  position: absolute; top: 3px; right: 3px; z-index: 5;
+  width: 17px; height: 17px; padding: 0;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%;
+  background: rgba(0,0,0,0.22); color: #fff;
+  cursor: pointer; opacity: 0.5;
+  transition: opacity var(--transition), background var(--transition), transform 0.15s ease;
+}
+.book-share-btn svg { width: 9px; height: 9px; display: block; }
+/* 视觉 17px 但把可点区撑到 29px：卡片本身只有 70~85px 宽，
+   纯按 17px 当点击区手指够不准（点歪就会误开笔记）。 */
+.book-share-btn::before {
+  content: ''; position: absolute; top: -6px; right: -6px; bottom: -6px; left: -6px;
+}
+.book-card:hover .book-share-btn { opacity: 1; background: rgba(0,0,0,0.46); }
+.book-share-btn:active { transform: scale(0.88); opacity: 1; }
+/* 真桌面（有 hover 且视口够宽）平时收起，跟 ⋯ 一样按需出现，避免整屏小圆点发噪；
+   窄窗口和触屏设备都不进这条规则，分享键保持常显。
+   断点 768px 与项目里 .book-card-menu 的隐藏规则保持同一套。 */
+@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
+  .book-share-btn { opacity: 0; }
+  .book-card:hover .book-share-btn,
+  .book-share-btn:focus-visible { opacity: 1; }
+}
 .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(96,78,52,.20); }
 .book-card:active { transform: translateY(-1px); }
 .book-card.active { outline: none; box-shadow: 0 0 0 2px var(--accent), 0 10px 22px rgba(96,78,52,.20); }
@@ -1198,6 +1313,56 @@ html, body {
 .book-card.cognition-psych  { --c1:#37667A; --c2:#2A5060; --c3:#1E3B47; }
 .book-card.other            { --c1:#4A4A44; --c2:#33332E; --c3:#24241F; }
 
+/* ========== Share Card Modal (v8.10) ========== */
+.share-modal-backdrop {
+  position: fixed; inset: 0; z-index: 600;
+  display: flex; align-items: center; justify-content: center;
+  padding: 22px 20px calc(22px + env(safe-area-inset-bottom, 0px));
+  background: rgba(20,18,14,0.64);
+  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
+  opacity: 0; pointer-events: none; transition: opacity 0.2s ease;
+}
+.share-modal-backdrop.show { opacity: 1; pointer-events: auto; }
+.share-modal {
+  width: 100%; max-width: 330px; max-height: 100%;
+  display: flex; flex-direction: column; gap: 11px;
+  transform: scale(0.955); transition: transform 0.26s cubic-bezier(0.32,0.72,0.3,1);
+}
+.share-modal-backdrop.show .share-modal { transform: scale(1); }
+.share-modal-frame {
+  flex: 1; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 15px; overflow: hidden;
+  background: #FFFBF5;
+  box-shadow: 0 18px 48px rgba(0,0,0,0.38);
+}
+.share-modal-img {
+  width: 100%; height: auto; max-height: 66vh;
+  object-fit: contain; display: block;
+}
+.share-modal-hint {
+  text-align: center; font-size: 12px; line-height: 1.5;
+  color: rgba(255,255,255,0.74);
+}
+.share-modal-actions { display: flex; gap: 10px; flex-shrink: 0; }
+.share-modal-btn {
+  flex: 1; height: 46px; border: none; border-radius: 13px;
+  font-size: 15px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all var(--transition);
+}
+.share-modal-btn.primary { background: var(--accent); color: #fff; box-shadow: 0 6px 18px rgba(180,86,60,0.36); }
+.share-modal-btn.ghost { background: rgba(255,255,255,0.15); color: #fff; }
+.share-modal-btn:active { transform: scale(0.97); }
+.share-modal-loading {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding: 60px 0; color: rgba(255,255,255,0.8); font-size: 13px;
+}
+.share-modal-loading .spinner {
+  width: 26px; height: 26px; margin: 0;
+  border: 2.5px solid rgba(255,255,255,0.22); border-top-color: #fff;
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+
 /* ========== Loading & Error ========== */
 .loading-spinner { display: flex; align-items: center; justify-content: center; padding: 40px; color: var(--text-muted); font-size: 0.9rem; }
 .loading-spinner .spinner { width: 24px; height: 24px; border: 2.5px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 10px; }
@@ -1224,7 +1389,7 @@ html, body {
   /* v8.7：分类已改为独立卡片，原来的 padding-top:0 是给旧扁平设计的，
      会让标题贴着卡片上边框（实测仅 2.6px）。这里改为卡片内边距 + 收紧外边距。 */
   .shelf-section { padding: 12px 12px 6px; margin: 0 12px 12px; }
-  .category-chips { padding: 8px 16px 12px; }
+  .cat-bar { padding: 8px 16px 12px; }
   .sidebar-header { padding: 16px 20px 10px; }
   .sidebar-header h1 { font-size: 24px; }
 }
@@ -1301,7 +1466,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.9.10</span>
+        <span class="hero-version">v8.10.1</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1327,7 +1492,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.9.10</span>
+              <span class="hero-version">v8.10.1</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1357,10 +1522,13 @@ html, body {
 
       <!-- v8.9 笔记 Tab（原首页全部内容迁到这里） -->
       <div class="tab-panel" id="tabNotes">
-        <!-- 分类筛选条（v8.6.2 恢复显示；笔记长列表 #noteList 由 CSS 隐藏，主视图是书架） -->
+        <!-- 分类筛选条（v8.10：横滑 chip → 单个筛选按钮 + 底部面板；
+             v8.10.1：「共 N 篇」并入同一行，省掉一整行垂直空间） -->
         <div id="notesViewArea">
-          <div class="category-chips" id="categoryChips"></div>
-          <div class="toolbar"><span class="count" id="noteCount">共 0 篇</span></div>
+          <div class="cat-bar">
+            <div class="cat-bar-chips" id="categoryChips"></div>
+            <span class="cat-bar-total" id="noteCount">共 0 篇</span>
+          </div>
           <div class="note-list" id="noteList">
             <div class="loading-spinner"><div class="spinner"></div>加载笔记中…</div>
           </div>
@@ -1458,11 +1626,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.9.10</span>
+                <span class="setting-value">v8.10.1</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.9.10</div>
+              <div class="about-version">📚 书阁 v8.10.1</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1570,9 +1738,38 @@ html, body {
 <div class="action-sheet-backdrop hidden" id="actionSheetBackdrop">
   <div class="action-sheet" id="actionSheet">
     <div class="action-sheet-title" id="actionSheetTitle">笔记操作</div>
+    <button class="action-sheet-btn" data-as-action="share"><span class="as-icon">🖼️</span>生成分享图</button>
     <button class="action-sheet-btn" data-as-action="edit"><span class="as-icon">📝</span>修改信息</button>
     <button class="action-sheet-btn" data-as-action="delete" id="asDeleteBtn"><span class="as-icon">🗑️</span>删除笔记</button>
     <button class="action-sheet-btn as-cancel" data-as-action="cancel">取消</button>
+  </div>
+</div>
+
+<!-- Category Filter Sheet (v8.10) -->
+<div class="cat-sheet-backdrop" id="catSheetBackdrop"></div>
+<div class="cat-sheet" id="catSheet" role="dialog" aria-modal="true" aria-label="按分类筛选">
+  <div class="cat-sheet-handle"></div>
+  <div class="cat-sheet-head">
+    <span class="cat-sheet-title">按分类筛选</span>
+    <span class="cat-sheet-sub" id="catSheetSub"></span>
+  </div>
+  <div class="cat-sheet-grid" id="catSheetGrid"></div>
+</div>
+
+<!-- Share Card Modal (v8.10) -->
+<div class="share-modal-backdrop" id="shareModalBackdrop">
+  <div class="share-modal">
+    <div class="share-modal-frame" id="shareModalFrame">
+      <div class="share-modal-loading" id="shareModalLoading">
+        <div class="spinner"></div><span>正在生成分享图…</span>
+      </div>
+      <img class="share-modal-img" id="shareModalImg" alt="读书笔记分享图" style="display:none">
+    </div>
+    <div class="share-modal-hint" id="shareModalHint">长按图片可保存到相册</div>
+    <div class="share-modal-actions">
+      <button class="share-modal-btn ghost" id="shareModalClose">关闭</button>
+      <button class="share-modal-btn primary" id="shareModalSave">保存图片</button>
+    </div>
   </div>
 </div>
 
@@ -1645,6 +1842,18 @@ html, body {
 
   // Home — notes
   const categoryChips = $('#categoryChips');
+  // v8.10：分类筛选面板 + 分享图弹层
+  const catSheet         = $('#catSheet');
+  const catSheetBackdrop = $('#catSheetBackdrop');
+  const catSheetGrid     = $('#catSheetGrid');
+  const catSheetSub      = $('#catSheetSub');
+  const shareModalBackdrop = $('#shareModalBackdrop');
+  const shareModalFrame    = $('#shareModalFrame');
+  const shareModalLoading  = $('#shareModalLoading');
+  const shareModalImg      = $('#shareModalImg');
+  const shareModalHint     = $('#shareModalHint');
+  const shareModalSave     = $('#shareModalSave');
+  const shareModalClose    = $('#shareModalClose');
   const noteList    = $('#noteList');
   const noteCount   = $('#noteCount');
   const searchBtn   = $('#searchBtn');
@@ -2150,7 +2359,8 @@ html, body {
     if (action === 'cancel') { closeActionSheet(); return; }
     if (!noteId) { closeActionSheet(); return; }
     closeActionSheet();
-    if (action === 'edit') { openEditModal(noteId); }
+    if (action === 'share') { openShareCard(noteId); }
+    else if (action === 'edit') { openEditModal(noteId); }
     else if (action === 'delete') { deleteNoteById(noteId); }
   });
 
@@ -2195,6 +2405,8 @@ html, body {
     if (!card) return;
     // v8.6.2：hover 浮出的操作按钮 → 打开操作面板（不再触发打开笔记）
     if (e.target.closest('[data-book-menu]')) { openActionSheet(card.getAttribute('data-id')); return; }
+    // v8.10：分享按钮 → 直接生成分享图
+    if (e.target.closest('[data-book-share]')) { openShareCard(card.getAttribute('data-id')); return; }
     const noteId = card.getAttribute('data-id');
     const note = STATE.notes.find(n => n.id === noteId);
     if (note) showPreview(note);
@@ -2301,15 +2513,64 @@ html, body {
     populateUploadCategories();
   }
 
-  /* ---- Category Chips ---- */
+  /* ---- Category Filter (v8.10) ----
+     原来是一排横滑 chip：分类到 10 个之后，一次只露 3 个，
+     用户既不知道总共有几类，找靠后的分类还得盲滑。
+     现在改成「一个当前分类按钮 + 底部两列网格」，分类再多也不溢出。 */
   function getCatCount(cat) { if(cat==='全部') return STATE.notes.length; return STATE.notes.filter(n=>(n.category||'其他')===cat).length; }
+
+  function catDotColor(cat) {
+    return cat === '全部' ? 'var(--accent)' : catTickColor(cat);
+  }
+
   function renderCategoryChips() {
-    const cats=loadCategories();
-    categoryChips.innerHTML = cats.map(cat=>{
-      const cnt=getCatCount(cat);
-      const active=STATE.selectedCategory===cat;
-      return `<button class="category-chip${active?' active':''}" data-cat="${escapeHtml(cat)}">${escapeHtml(cat)}<span class="chip-count">${cnt}</span></button>`;
-    }).join('');
+    const cats = loadCategories();
+    const cur = STATE.selectedCategory || '全部';
+    const curCount = getCatCount(cur);
+    const isAll = cur === '全部';
+
+    // 1) 顶部的单选按钮
+    categoryChips.innerHTML = `
+      <button class="cat-filter-btn${isAll ? '' : ' has-filter'}" id="catFilterBtn"
+              aria-expanded="false" aria-haspopup="dialog">
+        <span class="cfb-dot" style="background:${catDotColor(cur)}"></span>
+        <span class="cfb-name">${escapeHtml(isAll ? '全部分类' : cur)}</span>
+        <span class="cfb-count">${curCount}</span>
+        <svg class="cfb-chev" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6.5 9.5 12 15 17.5 9.5" stroke="currentColor" stroke-width="2.2"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>`;
+
+    // 2) 面板里的两列网格
+    if (catSheetGrid) {
+      catSheetGrid.innerHTML = cats.map(cat => {
+        const cnt = getCatCount(cat);
+        const active = cur === cat;
+        return `<button class="cat-sheet-item${active ? ' active' : ''}" data-cat="${escapeHtml(cat)}">
+          <span class="csi-dot" style="background:${catDotColor(cat)}"></span>
+          <span class="csi-name">${escapeHtml(cat)}</span>
+          <span class="csi-count">${cnt}</span>
+        </button>`;
+      }).join('');
+    }
+    if (catSheetSub) catSheetSub.textContent = `共 ${cats.length} 个分类`;
+  }
+
+  function openCatSheet() {
+    if (!catSheet || !catSheetBackdrop) return;
+    catSheetBackdrop.classList.add('show');
+    // 下一帧再加 show，保证 transform 过渡从 translateY(101%) 开始，而不是直接跳到位
+    requestAnimationFrame(() => catSheet.classList.add('show'));
+    const btn = document.getElementById('catFilterBtn');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
+  }
+  function closeCatSheet() {
+    if (!catSheet || !catSheetBackdrop) return;
+    catSheet.classList.remove('show');
+    catSheetBackdrop.classList.remove('show');
+    const btn = document.getElementById('catFilterBtn');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
   }
 
   /* ===================================================================
@@ -2449,6 +2710,12 @@ html, body {
     const t = splitBookTitle(n.title);
     return `<div class="book-card ${colorClass}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}">
       <button class="book-card-menu" type="button" data-book-menu="1" aria-label="更多操作" title="更多操作">⋯</button>
+      <button class="book-share-btn" type="button" data-book-share="1" aria-label="生成分享图" title="生成分享图">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 15.5V3.6M12 3.6 8.1 7.5M12 3.6l3.9 3.9" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4.6 13.4v4.6a2 2 0 0 0 2 2h10.8a2 2 0 0 0 2-2v-4.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
+        </svg>
+      </button>
       <div class="book-cover">
         <span class="book-spine"></span>
         <div class="book-t">
@@ -2471,6 +2738,437 @@ html, body {
       renderShelf();
     }
   }
+
+  /* ===================================================================
+   *  SHARE CARD v8.10 —— 把一本读书笔记画成竖版分享图
+   *  ------------------------------------------------------------------
+   *  为什么用 Canvas 手绘而不是 html2canvas：
+   *    1) 项目零第三方依赖（离线可用、单一 index.html 部署），不能被 200KB 的库绑住；
+   *    2) 分享图是"另一套版式"，不是把网页截图搬过去 —— 屏幕上 80px 的书卡
+   *       放大 13 倍只会糊，手绘能保证 1080 宽下的字都在最佳字号。
+   *  内容来源：优先人工标注的「核心观点」（highlights.json），
+   *           没有就回退到正文首段摘录。
+   * =================================================================== */
+  const SHARE_W = 1080;
+  const SC = {
+    paper: '#FFFBF5',
+    paperDeep: '#FAF4E6',
+    ink: '#2A2620',
+    inkSoft: '#403A32',
+    sub: '#5C6370',
+    muted: '#A79D8D',
+    accent: '#B4563C',
+    accentSoft: '#FDF0ED',
+    edge: '#E9DFCB'
+  };
+  const SC_SERIF = '"Songti SC","STSong","SimSun","Noto Serif CJK SC",Georgia,serif';
+  const SC_SANS  = '-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+
+  function scFont(weight, size, serif) { return `${weight} ${size}px ${serif ? SC_SERIF : SC_SANS}`; }
+
+  /* 按字符折行（中文为主；遇到连续英文/数字整段不切，避免把 AI 拆成 A / I） */
+  function scWrap(ctx, text, maxW) {
+    const s = String(text == null ? '' : text).replace(/\s+/g, ' ').trim();
+    if (!s) return [];
+    const tokens = s.match(/[A-Za-z0-9@._%+\-/]+|[\s\S]/g) || [];
+    const lines = [];
+    let line = '';
+    for (const tk of tokens) {
+      const test = line + tk;
+      if (ctx.measureText(test).width > maxW && line) {
+        lines.push(line.trimEnd());
+        line = (tk === ' ' ? '' : tk);
+      } else {
+        line = test;
+      }
+    }
+    if (line.trim()) lines.push(line.trimEnd());
+    return lines;
+  }
+
+  function scRoundRect(ctx, x, y, w, h, r) {
+    const rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.lineTo(x + w - rr, y);
+    ctx.arcTo(x + w, y, x + w, y + rr, rr);
+    ctx.lineTo(x + w, y + h - rr);
+    ctx.arcTo(x + w, y + h, x + w - rr, y + h, rr);
+    ctx.lineTo(x + rr, y + h);
+    ctx.arcTo(x, y + h, x, y + h - rr, rr);
+    ctx.lineTo(x, y + rr);
+    ctx.arcTo(x, y, x + rr, y, rr);
+    ctx.closePath();
+  }
+
+  /* 截到完整句子：不硬切半个句子，宁可略短 */
+  function scTrimSentence(s, max) {
+    const t = String(s || '').replace(/\s+/g, ' ').trim();
+    if (t.length <= max) return t;
+    const cut = t.slice(0, max);
+    const m = cut.match(/^[\s\S]*[。！？!?]/);
+    if (m && m[0].length >= max * 0.55) return m[0];
+    return cut.replace(/[，、,；;：:\s]+$/, '') + '…';
+  }
+
+  /* 摘录回退：优先找真正的正文段落，跳过「作者 / 出版 / 页数 / 目录」这类版权信息。
+     实测直接抓 body.textContent 会拿到「产品与品牌快速崛起的引爆打法 作者 江南春（分众传媒
+     创始人、董事长）出版 中信出版集团 · 2018年8月 页数304页 …」这种目录串，读起来像乱码。 */
+  async function extractNoteExcerpt(note) {
+    if (!note || !note.file) return '';
+    const html = await fetchTextOrNull(note.file);
+    if (!html) return '';
+    let cand = [];
+    try {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      doc.querySelectorAll('script,style,nav,header,footer,aside,.toc,.sidebar').forEach(el => el.remove());
+      cand = [...doc.querySelectorAll('p, li, blockquote')]
+        .map(el => (el.textContent || '').replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+      if (!cand.length && doc.body) {
+        cand = [(doc.body.textContent || '').replace(/\s+/g, ' ').trim()];
+      }
+    } catch (_) { return ''; }
+
+    const META = /(作者|出版|页数|字数|开本|ISBN|版权|译者|定价|目录|第[一二三四五六七八九十\d]+章)/;
+    const pick = cand
+      .filter(s => s.length >= 40)
+      // 只看开头 40 字：正文里偶尔提到「作者」不算元数据，但整段以它开头基本就是目录
+      .find(s => !META.test(s.slice(0, 40))) || '';
+    return pick ? scTrimSentence(pick, 190) : '';
+  }
+
+  /* 收集海报数据：书名主副、作者、日期、分类、要点或摘录 */
+  async function collectShareData(note) {
+    const t = splitBookTitle(note.title);
+    const rawAuthor = (note.author || '').trim();
+    const unknown = !rawAuthor || rawAuthor === '未知作者' || rawAuthor === '佚名';
+
+    let pts = ((STATE.highlights && STATE.highlights[note.id]) || [])
+      .filter(p => p && String(p.text || '').trim())
+      .slice(0, 3)
+      .map(p => ({ title: String(p.title || '').trim(), text: String(p.text || '').trim() }));
+
+    let excerpt = '';
+    if (!pts.length) excerpt = await extractNoteExcerpt(note);
+
+    const cat = note.category || '其他';
+    const total = STATE.notes.length;
+    let seq = 0;
+    for (let i = 0; i < STATE.notes.length; i++) {
+      if (STATE.notes[i].id === note.id) { seq = i + 1; break; }
+    }
+    const pal = CAT_PALETTES[cat] || CAT_PALETTES['其他'];
+    return {
+      main: t.main, sub: t.sub,
+      author: unknown ? '' : rawAuthor,
+      date: fmtBookDate(note.date),
+      cat, catColor: pal.c1,
+      c1: pal.c1, c2: pal.c2, c3: pal.c3,   // 书封色带三级色
+      points: pts, excerpt, seq, total
+    };
+  }
+
+  function drawSharePoster(ctx, d, draw) {
+    const PAD = 76;
+    const INNER = SHARE_W - PAD * 2;
+    const SPINE = 26;              // 书脊宽度
+    const T_L = SPINE + 70;        // 头部文字左边界（避开书脊）
+    const T_R = SHARE_W - PAD;     // 头部文字右边界
+    const T_W = T_R - T_L;
+    let y = 0;
+
+    // ---------- 纸底 ----------
+    if (draw) {
+      ctx.fillStyle = SC.paper;
+      ctx.fillRect(0, 0, SHARE_W, ctx.canvas.height);
+    }
+
+    /* ---------- 头图：把封面做成一张"书皮" ----------
+       v8.10.1：原来顶部只有一行品牌字 + 分隔线，整张图头重脚轻、上半部分大片留白。
+       现在顶部画一条通栏的深色书封色带（用该分类的三级色，和 App 里的书卡同一套），
+       书名直接印在色带上当封面主视觉，下面才是纸面内页。整张图读起来就是"一本书"。 */
+    ctx.font = scFont(700, 84, true);
+    const titleLines = scWrap(ctx, d.main, T_W).slice(0, 3);
+    ctx.font = scFont(400, 40, true);
+    const subLinesReal = d.sub ? scWrap(ctx, d.sub, T_W).slice(0, 2) : [];
+
+    const BRAND_Y = 136;           // 品牌行基线
+    const TITLE_TOP = BRAND_Y + 122;
+    const TITLE_STEP = 112;
+    const SUB_GAP = 68;
+    const SUB_STEP = 58;
+
+    // 先算出书封高度（两趟测量必须一致，所以只依赖上面量出来的行数）
+    let lastBase = TITLE_TOP + (titleLines.length - 1) * TITLE_STEP;
+    if (subLinesReal.length) lastBase += SUB_GAP + (subLinesReal.length - 1) * SUB_STEP;
+    const headH = lastBase + 112;
+
+    if (draw) {
+      // 整个书封都裁进 0..headH，否则右下角叠层块会漏到纸面上，色带下沿出现锯齿
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, 0, SHARE_W, headH);
+      ctx.clip();
+
+      // 1) 封面渐变（左上稍亮，右下压深，和书卡 .book-cover 同方向）
+      const g = ctx.createLinearGradient(0, 0, SHARE_W * 0.9, headH);
+      g.addColorStop(0, d.c1);
+      g.addColorStop(1, d.c2);
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, SHARE_W, headH);
+
+      // 2) 左上柔光
+      const rg = ctx.createRadialGradient(SHARE_W * 0.26, -60, 30, SHARE_W * 0.26, -60, 820);
+      rg.addColorStop(0, 'rgba(255,255,255,0.22)');
+      rg.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.fillStyle = rg;
+      ctx.fillRect(0, 0, SHARE_W, headH);
+
+      // 3) 右下角「书页叠层」：三层错位圆角块，越靠内越亮
+      for (let i = 0; i < 3; i++) {
+        const w = 320 - i * 36, h = 400 - i * 46;
+        const x = SHARE_W + 52 - w - i * 26;
+        const yy = headH + 34 - h - i * 22;
+        ctx.fillStyle = 'rgba(255,255,255,' + (0.04 + i * 0.028).toFixed(3) + ')';
+        scRoundRect(ctx, x, yy, w, h, 14);
+        ctx.fill();
+      }
+
+      // 4) 左侧书脊 + 高光 + 上下烫金线
+      ctx.fillStyle = d.c3;
+      ctx.fillRect(0, 0, SPINE, headH);
+      ctx.fillStyle = 'rgba(255,255,255,0.16)';
+      ctx.fillRect(SPINE - 1.5, 0, 1.5, headH);
+      ctx.fillStyle = 'rgba(226,190,110,0.62)';
+      ctx.fillRect(0, 40, SPINE, 2.5);
+      ctx.fillRect(0, headH - 42, SPINE, 2.5);
+
+      // 5) 压印细边框（呼应书卡封面内框）
+      ctx.strokeStyle = 'rgba(251,247,236,0.18)';
+      ctx.lineWidth = 1.5;
+      scRoundRect(ctx, SPINE + 20, 18, SHARE_W - SPINE - 38, headH - 36, 3);
+      ctx.stroke();
+
+      // 6) 品牌行
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'alphabetic';
+      ctx.fillStyle = '#FBF7EC';
+      ctx.font = scFont(700, 50, true);
+      ctx.fillText('书阁', T_L, BRAND_Y);
+      const wm = ctx.measureText('书阁').width;
+      ctx.fillStyle = 'rgba(251,247,236,0.58)';
+      ctx.font = scFont(500, 20, false);
+      ctx.fillText('SHUGE  ·  读书笔记', T_L + wm + 20, BRAND_Y - 6);
+
+      // 7) 右上角分类标签（半透明白胶囊，压在封面上）
+      const tag = d.cat;
+      ctx.font = scFont(600, 23, false);
+      const tw = ctx.measureText(tag).width;
+      const pw = tw + 46, ph = 44;
+      const px = T_R - pw, py = BRAND_Y - 32;
+      ctx.fillStyle = 'rgba(255,255,255,0.20)';
+      scRoundRect(ctx, px, py, pw, ph, 22);
+      ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.94)';
+      ctx.textAlign = 'center';
+      ctx.fillText(tag, px + pw / 2, py + ph / 2 + 8);
+      ctx.textAlign = 'left';
+
+      // 8) 书名 + 副标题（白字压在封面上）
+      ctx.fillStyle = '#FBF7EC';
+      ctx.font = scFont(700, 84, true);
+      titleLines.forEach((ln, i) => {
+        ctx.fillText(ln, T_L, TITLE_TOP + i * TITLE_STEP);
+      });
+      if (subLinesReal.length) {
+        ctx.fillStyle = 'rgba(251,247,236,0.70)';
+        ctx.font = scFont(400, 40, true);
+        subLinesReal.forEach((ln, i) => {
+          ctx.fillText(ln, T_L, lastBase - (subLinesReal.length - 1 - i) * SUB_STEP);
+        });
+      }
+
+      // 9) 色带下沿收边（压在裁切区内，保证是干净的一条直线）
+      ctx.fillStyle = d.c3;
+      ctx.fillRect(0, headH - 4, SHARE_W, 4);
+      ctx.restore();
+    }
+
+    y = headH + 96;
+
+    // ---------- 作者 / 日期 ----------
+    const metaBits = [];
+    if (d.author) metaBits.push(d.author);
+    if (d.date) metaBits.push(d.date);
+    if (metaBits.length) {
+
+      y += 52;
+      ctx.font = scFont(400, 27, false);
+      if (draw) { ctx.fillStyle = SC.muted; ctx.fillText(metaBits.join('   ·   '), SHARE_W / 2, y); }
+    }
+
+    // ---------- 朱砂短线 ----------
+    y += 58;
+    if (draw) {
+      ctx.fillStyle = SC.accent;
+      scRoundRect(ctx, SHARE_W / 2 - 32, y, 64, 5, 2.5); ctx.fill();
+    }
+    y += 76;
+
+    // ---------- 核心观点 / 摘录 ----------
+    const hasPts = d.points.length > 0;
+    const hasExcerpt = !hasPts && !!d.excerpt;
+    // 两种内容都没有时（既无标注要点、正文也抽不出干净段落）就不画这一块，
+    // 否则会留下一个孤零零的「摘 录」标题和一片空白。
+    if (hasPts || hasExcerpt) {
+      if (draw) {
+        ctx.textAlign = 'center';
+        ctx.fillStyle = SC.accent;
+        ctx.font = scFont(600, 24, false);
+        ctx.fillText(hasPts ? '核 心 观 点' : '摘 录', SHARE_W / 2, y);
+        ctx.textAlign = 'left';
+      }
+      y += 50;
+    }
+
+    if (hasPts) {
+      for (let i = 0; i < d.points.length; i++) {
+        const p = d.points[i];
+        // 编号
+        if (draw) {
+          ctx.fillStyle = SC.accent;
+          ctx.font = scFont(700, 28, false);
+          ctx.textAlign = 'left';
+          ctx.fillText(String(i + 1).padStart(2, '0'), PAD, y + 40);
+        }
+        const tx = PAD + 66;
+        const tw = SHARE_W - PAD - tx;
+
+        // 小标题（有的要点带分组标题）
+        if (p.title) {
+          ctx.font = scFont(600, 27, false);
+          const tl = scWrap(ctx, p.title, tw).slice(0, 1);
+          if (draw && tl.length) { ctx.fillStyle = SC.sub; ctx.fillText(tl[0], tx, y + 40); }
+          y += 52;
+        }
+
+        ctx.font = scFont(400, 35, true);
+        const lines = scWrap(ctx, p.text, tw).slice(0, 4);
+        for (const ln of lines) {
+          if (draw) { ctx.fillStyle = SC.inkSoft; ctx.fillText(ln, tx, y + 40); }
+          y += 62;
+        }
+        y += 34;
+      }
+    } else if (d.excerpt) {
+      ctx.font = scFont(400, 34, true);
+      const lines = scWrap(ctx, d.excerpt, INNER - 20).slice(0, 7);
+      for (const ln of lines) {
+        if (draw) { ctx.fillStyle = SC.inkSoft; ctx.textAlign = 'left'; ctx.fillText(ln, PAD + 10, y + 40); }
+        y += 60;
+      }
+      y += 10;
+    }
+
+    // ---------- 页脚 ----------
+    y += 34;
+    if (draw) {
+      ctx.strokeStyle = SC.edge;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(SHARE_W - PAD, y); ctx.stroke();
+    }
+    y += 48;
+    if (draw) {
+      ctx.textAlign = 'left';
+      ctx.fillStyle = SC.muted;
+      ctx.font = scFont(400, 24, false);
+      ctx.fillText('书阁  ·  我的读书笔记', PAD, y);
+      if (d.total) {
+        ctx.textAlign = 'right';
+        ctx.fillText(`第 ${d.seq} / ${d.total} 本`, SHARE_W - PAD, y);
+      }
+      ctx.textAlign = 'left';
+    }
+    y += 84;
+
+    return y;   // 总高度
+  }
+
+  async function buildSharePoster(note) {
+    const d = await collectShareData(note);
+
+    const probe = document.createElement('canvas');
+    probe.width = SHARE_W; probe.height = 10;
+    const pctx = probe.getContext('2d');
+    const totalH = Math.ceil(drawSharePoster(pctx, d, false));
+
+    const cv = document.createElement('canvas');
+    cv.width = SHARE_W; cv.height = totalH;
+    const ctx = cv.getContext('2d');
+    drawSharePoster(ctx, d, true);
+
+    return { dataUrl: cv.toDataURL('image/png'), canvas: cv, height: totalH };
+  }
+
+  /* ---- 分享弹层 ---- */
+  let _sharing = false;
+  let _shareBlob = null;
+  let _shareName = '书阁-读书笔记.png';
+
+  function openShareCard(noteId) {
+    const note = STATE.notes.find(n => n.id === noteId);
+    if (!note) return;
+    if (_sharing) return;
+    _sharing = true;
+
+    shareModalBackdrop.classList.add('show');
+    if (shareModalLoading) shareModalLoading.style.display = '';
+    if (shareModalImg) { shareModalImg.style.display = 'none'; shareModalImg.removeAttribute('src'); }
+    if (shareModalHint) shareModalHint.textContent = '长按图片可保存到相册';
+    if (shareModalSave) { shareModalSave.disabled = true; shareModalSave.style.opacity = '0.5'; }
+
+    buildSharePoster(note).then(res => {
+      _shareName = `书阁-${String(note.title || '读书笔记').slice(0, 24).replace(/[\\/:*?"<>|]/g, '')}.png`;
+      if (shareModalImg) {
+        shareModalImg.src = res.dataUrl;
+        shareModalImg.style.display = 'block';
+      }
+      if (shareModalLoading) shareModalLoading.style.display = 'none';
+      // 同时准备一份 Blob，点「保存图片」时直接下载
+      res.canvas.toBlob(b => {
+        _shareBlob = b;
+        if (shareModalSave) { shareModalSave.disabled = false; shareModalSave.style.opacity = ''; }
+      }, 'image/png');
+    }).catch(err => {
+      console.error('[share] 生成失败', err);
+      closeShareCard();
+      showToast('分享图生成失败，请重试');
+    }).finally(() => { _sharing = false; });
+  }
+
+  function closeShareCard() {
+    shareModalBackdrop.classList.remove('show');
+    _shareBlob = null;
+    if (shareModalImg) { shareModalImg.removeAttribute('src'); shareModalImg.style.display = 'none'; }
+  }
+
+  if (shareModalClose) shareModalClose.addEventListener('click', closeShareCard);
+  if (shareModalBackdrop) {
+    shareModalBackdrop.addEventListener('click', e => {
+      if (e.target === shareModalBackdrop) closeShareCard();
+    });
+  }
+  if (shareModalSave) {
+    shareModalSave.addEventListener('click', () => {
+      if (!_shareBlob) { showToast('图片还在生成中'); return; }
+      downloadBlob(_shareBlob, _shareName);
+      showToast('已保存到下载目录');
+    });
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && shareModalBackdrop.classList.contains('show')) closeShareCard();
+  });
 
   /* ===================================================================
    *  CATEGORY DETAIL VIEW
@@ -4021,11 +4719,26 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
   tabBar.addEventListener('click',e=>{const b=e.target.closest('.tab-btn'); if(b) switchTab(b.getAttribute('data-tab'));});
   bottomNav.addEventListener('click',e=>{const b=e.target.closest('.nav-item'); if(b){closePreviewOverlay();switchTab(b.getAttribute('data-tab'));}});
 
-  categoryChips.addEventListener('click',e=>{
-    const chip=e.target.closest('.category-chip'); if(!chip) return;
-    STATE.selectedCategory=chip.getAttribute('data-cat');
-    renderCategoryChips(); renderNoteList();
-    closeCategoryDetail();   // v8.6.2：分类筛选作用于书架；closeCategoryDetail 内部会 renderShelf()
+  // v8.10：筛选按钮 → 打开面板
+  categoryChips.addEventListener('click', e => {
+    if (e.target.closest('#catFilterBtn')) openCatSheet();
+  });
+  // v8.10：面板内选分类 → 应用筛选并收起
+  if (catSheet) {
+    catSheet.addEventListener('click', e => {
+      const item = e.target.closest('.cat-sheet-item');
+      if (!item) return;
+      STATE.selectedCategory = item.getAttribute('data-cat');
+      closeCatSheet();
+      renderCategoryChips(); renderNoteList();
+      closeCategoryDetail();   // 分类筛选作用于书架；closeCategoryDetail 内部会 renderShelf()
+    });
+  }
+  if (catSheetBackdrop) {
+    catSheetBackdrop.addEventListener('click', closeCatSheet);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && catSheet && catSheet.classList.contains('show')) closeCatSheet();
   });
 
   searchBtn.addEventListener('click',()=>openSearchPage());
@@ -4113,6 +4826,7 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     const card = e.target.closest('.book-card');
     if (!card) return;
     if (e.target.closest('[data-book-menu]')) { openActionSheet(card.getAttribute('data-id')); return; }
+    if (e.target.closest('[data-book-share]')) { openShareCard(card.getAttribute('data-id')); return; }
     const noteId = card.getAttribute('data-id');
     const note = STATE.notes.find(n => n.id === noteId);
     if (note) showPreview(note);
