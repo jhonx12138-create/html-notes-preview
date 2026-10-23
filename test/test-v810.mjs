@@ -101,21 +101,20 @@ await p.evaluate(() => document.querySelector('.cat-sheet-item[data-cat="全部"
 await sleep(520);
 ok('可切回「全部」', (await p.$eval('#catFilterBtn', el => el.innerText)).includes('全部分类'));
 
-console.log('\n=== ② 分享图 ===');
+console.log('\n=== ② 书卡海报（入口已收进操作面板）===');
 const shareN = (await p.$$('.book-share-btn')).length;
-ok('书卡上有分享按钮', shareN > 0, `${shareN} 个`);
+ok('书卡上不再常驻分享圆点', shareN === 0, `${shareN} 个`);
 
-const vis = await p.evaluate(() => {
-  const b = document.querySelector('.book-share-btn');
-  const s = getComputedStyle(b), r = b.getBoundingClientRect();
-  return { display: s.display, opacity: +s.opacity, w: +r.width.toFixed(1), h: +r.height.toFixed(1),
-           border: s.borderTopWidth + ' ' + s.borderTopColor };
+// v8.11：书卡分享入口从「封面右上角小圆点」收进长按/右键操作面板。
+// 移动端长按等价于桌面右键，测试里直接派发 contextmenu（同一条 openActionSheet 路径）。
+await p.evaluate(() => {
+  const card = document.querySelector('.book-card');
+  card.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
 });
-ok('触屏视口下分享键清晰可见', vis.display !== 'none' && vis.opacity >= 0.95 && vis.w >= 18,
-  `opacity=${vis.opacity} ${vis.w}×${vis.h} border=${vis.border}`);
-
-await p.evaluate(() => document.querySelector('.book-share-btn').click());
-await sleep(250);
+await sleep(450);
+ok('操作面板含「生成分享图」', !!(await p.$('[data-as-action="share"]')));
+await p.evaluate(() => document.querySelector('[data-as-action="share"]').click());
+await sleep(400);
 ok('分享弹层打开', !!(await p.$('#shareModalBackdrop.show')));
 
 await p.waitForFunction(() => {
@@ -163,34 +162,36 @@ writeFileSync(path.join(SHOTS, 'v810-poster.png'), Buffer.from(dataUrl.split(','
 await p.click('#shareModalClose'); await sleep(320);
 ok('弹层可关闭', !(await p.$('#shareModalBackdrop.show')));
 
-// 长按菜单里也有分享入口
-ok('长按操作面板含「生成分享图」', !!(await p.$('[data-as-action="share"]')));
-
 // ══════════ 桌面端 ══════════
-console.log('\n=== ③ 桌面端角标不重叠 ===');
+console.log('\n=== ③ 桌面端 ===');
 const d = await browser.newPage();
 await d.setViewport({ width: 1280, height: 900, deviceScaleFactor: 2 });
 await d.goto(BASE, { waitUntil: 'networkidle0' });
 await sleep(1300);
 await d.evaluate(() => document.querySelector('.tab-btn[data-tab="notes"]').click());
 await sleep(900);
-const ov = await d.evaluate(() => {
+
+const chips = await d.evaluate(() => {
   const card = document.querySelector('.book-card');
   if (!card) return { none: true };
-  const a = card.querySelector('.book-share-btn')?.getBoundingClientRect();
-  const b = card.querySelector('.book-card-menu')?.getBoundingClientRect();
-  if (!a || !b) return { none: true };
-  const hit = !(a.right <= b.left || b.right <= a.left || a.bottom <= b.top || b.bottom <= a.top);
-  return { hit };
+  return {
+    share: card.querySelectorAll('.book-share-btn').length,
+    menu: card.querySelectorAll('.book-card-menu').length,
+  };
 });
-const idle = await d.evaluate(() => {
-  const b = document.querySelector('.book-share-btn');
-  if (!b) return { none: true };
-  const s = getComputedStyle(b);
-  return { opacity: +s.opacity };
+ok('桌面书卡只剩一个 ⋯ 角标', !chips.none && chips.share === 0 && chips.menu === 1, JSON.stringify(chips));
+
+// 桌面右键 → 操作面板 → 生成分享图（和移动端长按同一条 openActionSheet 路径）
+await d.evaluate(() => {
+  const card = document.querySelector('.book-card');
+  card.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
 });
-ok('桌面端不悬停也能看到分享键', !idle.none && idle.opacity > 0.4, JSON.stringify(idle));
-ok('分享键与 ⋯ 不重叠', ov.hit === false, JSON.stringify(ov));
+await sleep(420);
+const sheetOpen = await d.evaluate(() => !document.getElementById('actionSheetBackdrop').classList.contains('hidden'));
+ok('桌面右键能开操作面板', sheetOpen);
+await d.evaluate(() => document.querySelector('[data-as-action="cancel"]').click());
+await sleep(320);
+
 await d.hover('.book-card');
 await sleep(400);
 await d.screenshot({ path: path.join(SHOTS, 'v810-desktop-card.png'), clip: { x: 0, y: 150, width: 520, height: 420 } });

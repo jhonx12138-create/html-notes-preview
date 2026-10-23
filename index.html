@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.10.2</title>
+<title>📚 书阁 v8.11.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -1007,6 +1007,20 @@ html, body {
 .review-foot-date { font-size: 10.5px; color: var(--rv-ink-meta); letter-spacing: .6px; font-variant-numeric: tabular-nums; }
 .review-open { font-size: 12px; font-weight: 600; color: var(--rv-rule); display: inline-flex; align-items: center; gap: 4px; flex-shrink: 0; }
 .review-open svg { width: 11px; height: 11px; flex-shrink: 0; }
+/* v8.11：回顾卡分享键。放在脚注右侧、和「查看笔记」同一组，
+   一是避开右上角的页码，二是脚注本来就是「这张卡能做什么」的入口区。 */
+.review-foot-right { display: inline-flex; align-items: center; gap: 9px; flex-shrink: 0; }
+.review-share {
+  width: 24px; height: 24px; padding: 0; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--rv-btn-edge); border-radius: 50%;
+  background: var(--rv-btn-bg); color: var(--rv-rule);
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
+  transition: transform .16s ease, background .2s ease;
+}
+.review-share:active { transform: scale(.9); }
+.review-share:hover { background: var(--rv-inside); }
+.review-share svg { width: 12px; height: 12px; display: block; }
 /* 矮屏（如 320×568、横屏 844×390）：整卡缩一档，别让引文被裁掉 */
 @media (max-height: 720px) {
   .review-point-title { font-size: 15.5px; }
@@ -1212,36 +1226,6 @@ html, body {
 /* 触屏设备走长按，不显示 hover 按钮（any-pointer 与 checkMobile 的触屏判定保持一致） */
 @media (hover: none), (any-pointer: coarse), (max-width: 767px) { .book-card-menu { display: none; } }
 
-/* v8.10：书卡分享入口。
-   触屏没有 hover、也没有常驻的 ⋯ 菜单，所以分享按钮必须一直可见；
-   做成半透明小圆点嵌在封面右上角，不靠近书名区，不干扰阅读。 */
-.book-share-btn {
-  position: absolute; top: 3px; right: 3px; z-index: 5;
-  width: 18px; height: 18px; padding: 0;
-  display: flex; align-items: center; justify-content: center;
-  border: 1px solid rgba(255,255,255,0.30); border-radius: 50%;
-  background: rgba(0,0,0,0.34); color: #fff;
-  cursor: pointer; opacity: 1;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.22);
-  transition: opacity var(--transition), background var(--transition), transform 0.15s ease;
-}
-.book-share-btn svg { width: 10px; height: 10px; display: block; }
-/* 视觉 17px 但把可点区撑到 29px：卡片本身只有 70~85px 宽，
-   纯按 17px 当点击区手指够不准（点歪就会误开笔记）。 */
-.book-share-btn::before {
-  content: ''; position: absolute; top: -6px; right: -6px; bottom: -6px; left: -6px;
-}
-.book-card:hover .book-share-btn { opacity: 1; background: rgba(0,0,0,0.46); }
-.book-share-btn:active { transform: scale(0.88); opacity: 1; }
-/* 真桌面（有 hover 且视口够宽）压暗一档但仍然可见 —— 之前是 opacity:0，
-   不把鼠标挪上去就以为「没有分享功能」（用户实测反馈）。现在常驻 0.55，
-   悬停升到 1 并加深底色。
-   断点 768px 与项目里 .book-card-menu 的隐藏规则保持同一套。 */
-@media (hover: hover) and (pointer: fine) and (min-width: 768px) {
-  .book-share-btn { opacity: 0.55; }
-  .book-card:hover .book-share-btn,
-  .book-share-btn:focus-visible { opacity: 1; }
-}
 .book-card:hover { transform: translateY(-4px); box-shadow: 0 10px 22px rgba(96,78,52,.20); }
 .book-card:active { transform: translateY(-1px); }
 .book-card.active { outline: none; box-shadow: 0 0 0 2px var(--accent), 0 10px 22px rgba(96,78,52,.20); }
@@ -1468,7 +1452,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.10.2</span>
+        <span class="hero-version">v8.11.0</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1494,7 +1478,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.10.2</span>
+              <span class="hero-version">v8.11.0</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1628,11 +1612,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.10.2</span>
+                <span class="setting-value">v8.11.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.10.2</div>
+              <div class="about-version">📚 书阁 v8.11.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2407,8 +2391,6 @@ html, body {
     if (!card) return;
     // v8.6.2：hover 浮出的操作按钮 → 打开操作面板（不再触发打开笔记）
     if (e.target.closest('[data-book-menu]')) { openActionSheet(card.getAttribute('data-id')); return; }
-    // v8.10：分享按钮 → 直接生成分享图
-    if (e.target.closest('[data-book-share]')) { openShareCard(card.getAttribute('data-id')); return; }
     const noteId = card.getAttribute('data-id');
     const note = STATE.notes.find(n => n.id === noteId);
     if (note) showPreview(note);
@@ -2712,12 +2694,6 @@ html, body {
     const t = splitBookTitle(n.title);
     return `<div class="book-card ${colorClass}${active ? ' active' : ''}" data-id="${n.id}" role="button" tabindex="0" title="${escapeHtml(n.title)}">
       <button class="book-card-menu" type="button" data-book-menu="1" aria-label="更多操作" title="更多操作">⋯</button>
-      <button class="book-share-btn" type="button" data-book-share="1" aria-label="生成分享图" title="生成分享图">
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 15.5V3.6M12 3.6 8.1 7.5M12 3.6l3.9 3.9" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>
-          <path d="M4.6 13.4v4.6a2 2 0 0 0 2 2h10.8a2 2 0 0 0 2-2v-4.6" stroke="currentColor" stroke-width="2.3" stroke-linecap="round"/>
-        </svg>
-      </button>
       <div class="book-cover">
         <span class="book-spine"></span>
         <div class="book-t">
@@ -3113,25 +3089,143 @@ html, body {
     return { dataUrl: cv.toDataURL('image/png'), canvas: cv, height: totalH };
   }
 
+  /* ===================================================================
+   *  REVIEW POSTER v8.11 —— 把首页「今日回顾」里那一条观点画成竖版分享图
+   *  ------------------------------------------------------------------
+   *  和书卡海报（drawSharePoster）是两套版式，共用 SC 调色板与 scWrap/scRoundRect：
+   *  书卡海报的主视觉是「一本书的封面」，靠色带和书脊撑；
+   *  观点海报的主视觉就是「一段话」，所以这里没有色带、没有书脊，改成一整张纸 + 一条朱砂线，
+   *  把所有视觉预算都给标题和引文。引文按全量折行、不截断（正文最长 165 字，约 8 行）。
+   * =================================================================== */
+  function drawReviewPoster(ctx, d, draw) {
+    const PAD = 84;
+    const INNER = SHARE_W - PAD * 2;
+    const R = SHARE_W - PAD;
+    let y = 140;
+
+    if (draw) {
+      ctx.fillStyle = SC.paper;
+      ctx.fillRect(0, 0, SHARE_W, ctx.canvas.height);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+    }
+
+    // ---------- 品牌行 ----------
+    if (draw) {
+      ctx.fillStyle = SC.ink;
+      ctx.font = scFont(700, 46, true);
+      ctx.fillText('书阁', PAD, y);
+      const wm = ctx.measureText('书阁').width;
+      ctx.fillStyle = SC.muted;
+      ctx.font = scFont(500, 21, false);
+      ctx.fillText('SHUGE  ·  每日回顾', PAD + wm + 20, y - 4);
+      ctx.textAlign = 'right';
+      ctx.font = scFont(400, 24, false);
+      ctx.fillText(d.date, R, y - 2);
+      ctx.textAlign = 'left';
+    }
+    y += 46;
+
+    // ---------- 分隔线 ----------
+    if (draw) {
+      ctx.strokeStyle = SC.edge; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(R, y); ctx.stroke();
+    }
+    y += 92;
+
+    // ---------- 分类 chip（方角 3px，和 App 里 review-badge 同一套语言）----------
+    {
+      ctx.font = scFont(600, 26, false);
+      const tw = ctx.measureText(d.cat).width;
+      const pw = tw + 44, ph = 52, py = y - 36;
+      if (draw) {
+        ctx.fillStyle = '#EDF1F7';
+        scRoundRect(ctx, PAD, py, pw, ph, 3); ctx.fill();
+        ctx.fillStyle = '#3A5F87';
+        ctx.fillText(d.cat, PAD + 22, py + 36);
+      }
+    }
+    y += 98;
+
+    // ---------- 观点标题（主视觉）----------
+    ctx.font = scFont(700, 66, false);
+    const heads = scWrap(ctx, d.heading, INNER).slice(0, 3);
+    for (const ln of heads) {
+      if (draw) { ctx.fillStyle = SC.ink; ctx.fillText(ln, PAD, y); }
+      y += 98;
+    }
+    y += 10;
+
+    // ---------- 朱砂短线 ----------
+    if (draw) { ctx.fillStyle = SC.accent; scRoundRect(ctx, PAD, y, 68, 5, 2.5); ctx.fill(); }
+    y += 82;
+
+    // ---------- 引文（宋体）----------
+    ctx.font = scFont(400, 41, true);
+    const qs = scWrap(ctx, d.quote, INNER);
+    for (const ln of qs) {
+      if (draw) { ctx.fillStyle = SC.inkSoft; ctx.fillText(ln, PAD, y); }
+      y += 78;
+    }
+    y += 40;
+
+    // ---------- 出处 ----------
+    ctx.font = scFont(400, 28, false);
+    const srcs = scWrap(ctx, d.source, INNER).slice(0, 2);
+    for (const ln of srcs) {
+      if (draw) { ctx.fillStyle = SC.muted; ctx.fillText(ln, PAD, y); }
+      y += 46;
+    }
+
+    // ---------- 页脚 ----------
+    y += 66;
+    if (draw) {
+      ctx.strokeStyle = SC.edge; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(R, y); ctx.stroke();
+    }
+    y += 54;
+    if (draw) {
+      // 日期只出现在右上角一次，页脚不再重复
+      ctx.fillStyle = SC.muted; ctx.font = scFont(400, 24, false);
+      ctx.fillText('书阁  ·  每天一条值得记住的观点', PAD, y);
+    }
+    y += 84;
+    return y;
+  }
+
+  function buildReviewPoster(it) {
+    const m = reviewCardModel(it);
+    const d = { cat: m.cat, heading: m.heading, quote: m.quote, source: m.source, date: m.date };
+
+    // 两趟：先量高度（不落笔），再按量出来的高度建画布正式画
+    const probe = document.createElement('canvas');
+    probe.width = SHARE_W; probe.height = 10;
+    const totalH = Math.ceil(drawReviewPoster(probe.getContext('2d'), d, false));
+
+    const cv = document.createElement('canvas');
+    cv.width = SHARE_W; cv.height = totalH;
+    drawReviewPoster(cv.getContext('2d'), d, true);
+    return { dataUrl: cv.toDataURL('image/png'), canvas: cv, height: totalH };
+  }
+
   /* ---- 分享弹层 ---- */
   let _sharing = false;
   let _shareBlob = null;
   let _shareName = '书阁-读书笔记.png';
 
-  function openShareCard(noteId) {
-    const note = STATE.notes.find(n => n.id === noteId);
-    if (!note) return;
-    if (_sharing) return;
+  /* 打开弹层 → 等图 → 备好 Blob。书卡海报和观点海报共用这一套弹层流程，
+     之前这段逻辑只在 openShareCard 里写死过一份。 */
+  function _presentShare(promise, name, hint) {
+    if (_sharing) return Promise.resolve();
     _sharing = true;
+    _shareName = name;
 
     shareModalBackdrop.classList.add('show');
     if (shareModalLoading) shareModalLoading.style.display = '';
     if (shareModalImg) { shareModalImg.style.display = 'none'; shareModalImg.removeAttribute('src'); }
-    if (shareModalHint) shareModalHint.textContent = '长按图片可保存到相册';
+    if (shareModalHint) shareModalHint.textContent = hint || '长按图片可保存到相册';
     if (shareModalSave) { shareModalSave.disabled = true; shareModalSave.style.opacity = '0.5'; }
 
-    buildSharePoster(note).then(res => {
-      _shareName = `书阁-${String(note.title || '读书笔记').slice(0, 24).replace(/[\\/:*?"<>|]/g, '')}.png`;
+    return promise.then(res => {
       if (shareModalImg) {
         shareModalImg.src = res.dataUrl;
         shareModalImg.style.display = 'block';
@@ -3147,6 +3241,26 @@ html, body {
       closeShareCard();
       showToast('分享图生成失败，请重试');
     }).finally(() => { _sharing = false; });
+  }
+
+  function openShareCard(noteId) {
+    const note = STATE.notes.find(n => n.id === noteId);
+    if (!note) return;
+    _presentShare(
+      buildSharePoster(note),
+      `书阁-${String(note.title || '读书笔记').slice(0, 24).replace(/[\\/:*?"<>|]/g, '')}.png`
+    );
+  }
+
+  /* v8.11：首页回顾卡 → 单条观点的分享图 */
+  function openShareReview(it) {
+    if (!it || !it.note || !it.point) { showToast('这条观点还没有内容'); return; }
+    const m = reviewCardModel(it);
+    _presentShare(
+      Promise.resolve(buildReviewPoster(it)),
+      `书阁-${String(m.heading || '观点').slice(0, 20).replace(/[\\/:*?"<>|]/g, '')}.png`,
+      '长按图片可保存到相册，也可以直接发给朋友'
+    );
   }
 
   function closeShareCard() {
@@ -3324,16 +3438,27 @@ html, body {
     return rest.length >= 20 ? rest : text;
   }
 
-  function reviewCardHtml(it, idx, total) {
+  /* 观点标题常常从笔记的小节标题直接搬过来，带着「三、」「1、」这类章节序号。
+     放在卡片上还能当目录看，搬到分享图上就成了「一张图从第三章开始讲」，很怪。
+     只剥开头的中文序号和两位以内数字序号，不碰「三步走」「2026 年」这种正常写法。 */
+  function stripHeadingNo(s) {
+    return String(s || '')
+      .replace(/^[\s　]*[（(]?[一二三四五六七八九十]+[）)]?[、.．]\s*/, '')
+      .replace(/^[\s　]*[（(]?\d{1,2}[）)]?[、．]\s*/, '')
+      .trim();
+  }
+
+  /* 卡片要展示的字段统一在这里算：屏幕上渲染和分享海报都吃这一份，
+     免得海报和卡片各算一套「出处/引文」，最后两处对不上。 */
+  function reviewCardModel(it) {
     const n = it.note, p = it.point;
     const cat = n.category || '其他';
-    const color = CAT_COLORS[cat] || '#8C8C94';
     const quote = stripTrailingCredit((p.text || '').trim(), n);
     const book = (n.title || '').trim();
     const rawAuthor = (n.author || '').trim();
     const hasAuthor = rawAuthor && rawAuthor !== '未知作者' && rawAuthor !== '佚名';
     // 观点标题升为主标题（层级翻转）；没有小节标题时退回「核心观点」，把书名让到出处位
-    let heading = stripLeadingEmoji(p.title || '');
+    let heading = stripHeadingNo(stripLeadingEmoji(p.title || ''));
     let source;
     if (!heading) {
       heading = '核心观点';
@@ -3347,6 +3472,18 @@ html, body {
       const showAuthor = hasAuthor && !bookHasAuthor;
       source = '—— ' + (showAuthor ? rawAuthor + (book.startsWith('《') ? '' : ' · ') : '') + book;
     }
+    return {
+      cat, color: CAT_COLORS[cat] || '#8C8C94',
+      quote, book, heading, source,
+      date: fmtBookDate(n.date) || '',
+      author: hasAuthor ? rawAuthor : '',
+    };
+  }
+
+  function reviewCardHtml(it, idx, total) {
+    const n = it.note;
+    const m = reviewCardModel(it);
+    const { cat, color, quote, book, heading, source } = m;
     return `<article class="review-card" data-depth="${idx}" data-id="${n.id}"
         data-no="${idx + 1}" data-pick="${idx}"
         role="button" aria-label="《${escapeHtml(book)}》观点：${escapeHtml(heading)}">
@@ -3361,9 +3498,18 @@ html, body {
         <div class="review-source">${escapeHtml(source)}</div>
       </div>
       <div class="review-card-foot">
-        <span class="review-foot-date">${fmtBookDate(n.date) || ''}</span>
-        <span class="review-open">查看笔记
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h14.5m0 0-5.2-5.2M18.5 12l-5.2 5.2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+        <span class="review-foot-date">${m.date}</span>
+        <span class="review-foot-right">
+          <button class="review-share" type="button" data-share-review="${idx}"
+                  aria-label="把这条观点生成分享图" title="生成分享图">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 15.5V4.2m0 0 4.4 4.4M12 4.2 7.6 8.6" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4.8 13.2v5.1c0 1 .8 1.7 1.7 1.7h11c1 0 1.7-.8 1.7-1.7v-5.1" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <span class="review-open">查看笔记
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 12h14.5m0 0-5.2-5.2M18.5 12l-5.2 5.2" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+          </span>
         </span>
       </div>
     </article>`;
@@ -3533,6 +3679,8 @@ html, body {
   let reviewDrag = null;          // { card, x, y, dx, lock, pid }
 
   function onDeckDown(e) {
+    // 分享键活在卡片内部：不拦这一下，松手时会被当成「点卡片 → 打开笔记」
+    if (e.target.closest('[data-share-review]')) return;
     const card = e.target.closest('.review-card');
     if (!card || card.getAttribute('data-depth') !== '0' || reviewBusy) return;
     reviewDrag = { card: card, x: e.clientX, y: e.clientY, dx: 0, lock: null, pid: e.pointerId };
@@ -3605,6 +3753,15 @@ html, body {
     reviewDeck.addEventListener('pointermove', onDeckMove);
     reviewDeck.addEventListener('pointerup', onDeckUp);
     reviewDeck.addEventListener('pointercancel', onDeckCancel);
+    // v8.11：回顾卡分享（pointerdown 已在 onDeckDown 里放行，这里只管出图）
+    reviewDeck.addEventListener('click', function (e) {
+      const btn = e.target.closest('[data-share-review]');
+      if (!btn) return;
+      e.preventDefault(); e.stopPropagation();
+      const card = btn.closest('.review-card');
+      const pick = parseInt(card && card.getAttribute('data-pick'), 10) || 0;
+      openShareReview(reviewPicks[pick]);
+    });
     reviewDeck.addEventListener('keydown', function (e) {
       const card = e.target.closest('.review-card');
       if (e.key === 'Enter' || e.key === ' ') {
@@ -4828,7 +4985,6 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     const card = e.target.closest('.book-card');
     if (!card) return;
     if (e.target.closest('[data-book-menu]')) { openActionSheet(card.getAttribute('data-id')); return; }
-    if (e.target.closest('[data-book-share]')) { openShareCard(card.getAttribute('data-id')); return; }
     const noteId = card.getAttribute('data-id');
     const note = STATE.notes.find(n => n.id === noteId);
     if (note) showPreview(note);
