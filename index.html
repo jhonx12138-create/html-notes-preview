@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.11.0</title>
+<title>📚 书阁 v8.12.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -1452,7 +1452,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.11.0</span>
+        <span class="hero-version">v8.12.0</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1478,7 +1478,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.11.0</span>
+              <span class="hero-version">v8.12.0</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1612,11 +1612,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.11.0</span>
+                <span class="setting-value">v8.12.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.11.0</div>
+              <div class="about-version">📚 书阁 v8.12.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2843,6 +2843,7 @@ html, body {
       date: fmtBookDate(note.date),
       cat, catColor: pal.c1,
       c1: pal.c1, c2: pal.c2, c3: pal.c3,   // 书封色带三级色
+      brand: getBrandName(),
       points: pts, excerpt, seq, total
     };
   }
@@ -2928,16 +2929,17 @@ html, body {
       scRoundRect(ctx, SPINE + 20, 18, SHARE_W - SPINE - 38, headH - 36, 3);
       ctx.stroke();
 
-      // 6) 品牌行
+      // 6) 品牌行（v8.12：用「我的」里设置的名字，不再写死「书阁」）
       ctx.textAlign = 'left';
       ctx.textBaseline = 'alphabetic';
       ctx.fillStyle = '#FBF7EC';
       ctx.font = scFont(700, 50, true);
-      ctx.fillText('书阁', T_L, BRAND_Y);
-      const wm = ctx.measureText('书阁').width;
+      const brand = d.brand || '书阁';
+      ctx.fillText(brand, T_L, BRAND_Y);
+      const wm = ctx.measureText(brand).width;
       ctx.fillStyle = 'rgba(251,247,236,0.58)';
       ctx.font = scFont(500, 20, false);
-      ctx.fillText('SHUGE  ·  读书笔记', T_L + wm + 20, BRAND_Y - 6);
+      ctx.fillText('读书笔记', T_L + wm + 20, BRAND_Y - 6);
 
       // 7) 右上角分类标签（半透明白胶囊，压在封面上）
       const tag = d.cat;
@@ -3061,7 +3063,7 @@ html, body {
       ctx.textAlign = 'left';
       ctx.fillStyle = SC.muted;
       ctx.font = scFont(400, 24, false);
-      ctx.fillText('书阁  ·  我的读书笔记', PAD, y);
+      ctx.fillText((d.brand || '书阁') + '  ·  我的读书笔记', PAD, y);
       if (d.total) {
         ctx.textAlign = 'right';
         ctx.fillText(`第 ${d.seq} / ${d.total} 本`, SHARE_W - PAD, y);
@@ -3097,11 +3099,36 @@ html, body {
    *  观点海报的主视觉就是「一段话」，所以这里没有色带、没有书脊，改成一整张纸 + 一条朱砂线，
    *  把所有视觉预算都给标题和引文。引文按全量折行、不截断（正文最长 165 字，约 8 行）。
    * =================================================================== */
+  /* v8.12：海报上的署名跟着「我的」里设置的名字走，不再写死「书阁」。
+     默认值仍是「书阁」，没设置过的人看到的和以前一样。 */
+  function getBrandName() {
+    try {
+      const s = localStorage.getItem('notes-nickname');
+      if (s && s.trim()) return s.trim();
+    } catch (_) { /* 隐私模式读不到就用默认 */ }
+    return '书阁';
+  }
+
+  /* 首页头图（assets/shuge-header-a.jpg）只加载一次，海报和书卡海报共用。
+     加载失败就 resolve(null)，版式回退到纯纸底 —— 分享功能不能因为一张图挂掉。 */
+  let _heroImgPromise = null;
+  function loadHeroImage() {
+    if (_heroImgPromise) return _heroImgPromise;
+    _heroImgPromise = new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => resolve(img);
+      img.onerror = () => resolve(null);
+      img.src = 'assets/shuge-header-a.jpg';
+    });
+    return _heroImgPromise;
+  }
+
   function drawReviewPoster(ctx, d, draw) {
     const PAD = 84;
     const INNER = SHARE_W - PAD * 2;
     const R = SHARE_W - PAD;
-    let y = 140;
+    const HEAD_H = 416;            // 头图通栏高度
+    let y;
 
     if (draw) {
       ctx.fillStyle = SC.paper;
@@ -3109,28 +3136,59 @@ html, body {
       ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
     }
 
-    // ---------- 品牌行 ----------
+    // ---------- 头图：和首页 .hero 同一张，cover 裁切、垂直取 40% ----------
+    if (draw && d.hero) {
+      const img = d.hero;
+      const ir = img.naturalWidth / img.naturalHeight;
+      const tr = SHARE_W / HEAD_H;
+      let dw, dh, dx, dy;
+      if (ir > tr) { dh = HEAD_H; dw = HEAD_H * ir; dx = (SHARE_W - dw) / 2; dy = 0; }
+      else { dw = SHARE_W; dh = SHARE_W / ir; dx = 0; dy = (HEAD_H - dh) * 0.40; }
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0, 0, SHARE_W, HEAD_H); ctx.clip();
+      ctx.drawImage(img, dx, dy, dw, dh);
+      /* 水彩图本身偏浅但有零碎色块，直接压深色字会脏。
+         顶部铺一层纸色提亮、把杂色压平；底部渐到纸色，让头图和正文是一张纸而不是两块拼的。 */
+      const vg = ctx.createLinearGradient(0, 0, 0, HEAD_H);
+      vg.addColorStop(0,    'rgba(255,251,245,0.68)');
+      vg.addColorStop(0.34, 'rgba(255,251,245,0.14)');
+      vg.addColorStop(0.62, 'rgba(255,251,245,0)');
+      vg.addColorStop(0.86, 'rgba(255,251,245,0.82)');
+      vg.addColorStop(1,    'rgba(255,251,245,1)');
+      ctx.fillStyle = vg;
+      ctx.fillRect(0, 0, SHARE_W, HEAD_H);
+      ctx.restore();
+    }
+
+    // ---------- 品牌行（压在头图上）----------
+    const brand = d.brand || '书阁';
+    y = 132;
     if (draw) {
       ctx.fillStyle = SC.ink;
-      ctx.font = scFont(700, 46, true);
-      ctx.fillText('书阁', PAD, y);
-      const wm = ctx.measureText('书阁').width;
-      ctx.fillStyle = SC.muted;
-      ctx.font = scFont(500, 21, false);
-      ctx.fillText('SHUGE  ·  每日回顾', PAD + wm + 20, y - 4);
+      ctx.font = scFont(700, 46, false);
+      ctx.fillText(brand, PAD, y);
+      const wm = ctx.measureText(brand).width;
+      ctx.fillStyle = '#6B6357';
+      ctx.font = scFont(500, 22, false);
+      ctx.fillText('每日回顾', PAD + wm + 18, y - 3);
       ctx.textAlign = 'right';
+      ctx.fillStyle = SC.muted;
       ctx.font = scFont(400, 24, false);
       ctx.fillText(d.date, R, y - 2);
       ctx.textAlign = 'left';
     }
-    y += 46;
 
-    // ---------- 分隔线 ----------
-    if (draw) {
-      ctx.strokeStyle = SC.edge; ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(R, y); ctx.stroke();
+    // ---------- 正文起点 ----------
+    if (d.hero) {
+      y = HEAD_H + 78;             // 头图底部已经渐变进纸色，不再需要分隔线
+    } else {
+      y = 176;
+      if (draw) {
+        ctx.strokeStyle = SC.edge; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(PAD, y); ctx.lineTo(R, y); ctx.stroke();
+      }
+      y = 268;
     }
-    y += 92;
 
     // ---------- 分类 chip（方角 3px，和 App 里 review-badge 同一套语言）----------
     {
@@ -3186,15 +3244,19 @@ html, body {
     if (draw) {
       // 日期只出现在右上角一次，页脚不再重复
       ctx.fillStyle = SC.muted; ctx.font = scFont(400, 24, false);
-      ctx.fillText('书阁  ·  每天一条值得记住的观点', PAD, y);
+      ctx.fillText(brand + '  ·  每天一条值得记住的观点', PAD, y);
     }
     y += 84;
     return y;
   }
 
-  function buildReviewPoster(it) {
+  async function buildReviewPoster(it) {
     const m = reviewCardModel(it);
-    const d = { cat: m.cat, heading: m.heading, quote: m.quote, source: m.source, date: m.date };
+    const hero = await loadHeroImage();
+    const d = {
+      cat: m.cat, heading: m.heading, quote: m.quote, source: m.source, date: m.date,
+      brand: getBrandName(), hero,
+    };
 
     // 两趟：先量高度（不落笔），再按量出来的高度建画布正式画
     const probe = document.createElement('canvas');
@@ -3248,7 +3310,7 @@ html, body {
     if (!note) return;
     _presentShare(
       buildSharePoster(note),
-      `书阁-${String(note.title || '读书笔记').slice(0, 24).replace(/[\\/:*?"<>|]/g, '')}.png`
+      `${getBrandName()}-${String(note.title || '读书笔记').slice(0, 24).replace(/[\\/:*?"<>|]/g, '')}.png`
     );
   }
 
@@ -3257,8 +3319,8 @@ html, body {
     if (!it || !it.note || !it.point) { showToast('这条观点还没有内容'); return; }
     const m = reviewCardModel(it);
     _presentShare(
-      Promise.resolve(buildReviewPoster(it)),
-      `书阁-${String(m.heading || '观点').slice(0, 20).replace(/[\\/:*?"<>|]/g, '')}.png`,
+      buildReviewPoster(it),
+      `${getBrandName()}-${String(m.heading || '观点').slice(0, 20).replace(/[\\/:*?"<>|]/g, '')}.png`,
       '长按图片可保存到相册，也可以直接发给朋友'
     );
   }
