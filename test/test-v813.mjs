@@ -84,8 +84,12 @@ const ui = await p.evaluate(() => ({
   thumbs: document.querySelectorAll('#heroPicks .hero-thumb').length,
   follow: document.querySelectorAll('#heroPicks [data-hero-val="follow"]').length,
   homeActive: document.querySelector('#heroPicks [data-hero-set="notes-hero-home"].active')?.getAttribute('data-hero-val'),
+  presetVals: [...new Set([...document.querySelectorAll('#heroPicks [data-hero-val]')].map(e => e.getAttribute('data-hero-val')))].sort().join(','),
+  scrollable: [...document.querySelectorAll('#heroPicks .hero-pick-track')].map(t => t.scrollWidth > t.clientWidth + 1),
 }));
 ok('两组头图选择器都在', ui.rows === 2 && ui.thumbs >= 6, JSON.stringify(ui));
+ok('内置 5 张齐全', ui.presetVals === 'a,b,c,d,e,follow', ui.presetVals);
+ok('缩略图区可横滑（放不下时）', ui.scrollable.length === 2 && ui.scrollable.every(Boolean), JSON.stringify(ui.scrollable));
 ok('分享图有「跟随首页」选项', ui.follow === 1, `follow=${ui.follow}`);
 ok('首页默认选中 A', ui.homeActive === 'a', `active=${ui.homeActive}`);
 
@@ -96,6 +100,11 @@ const afterB = await p.evaluate(() => ({
   saved: localStorage.getItem('notes-hero-home'),
 }));
 ok('切到 B 后首页头图跟着换', /shuge-header-b/.test(afterB.src) && afterB.saved === 'b', JSON.stringify(afterB));
+
+await p.evaluate(() => document.querySelector('#heroPicks [data-hero-set="notes-hero-home"][data-hero-val="e"]').click());
+await sleep(500);
+const afterE = await p.evaluate(() => ({ src: document.querySelector('.hero-img').src, saved: localStorage.getItem('notes-hero-home') }));
+ok('能选到 E（第 5 张内置）', /shuge-header-e/.test(afterE.src) && afterE.saved === 'e', JSON.stringify(afterE));
 
 await p.evaluate(() => document.querySelector('#heroPicks [data-hero-set="notes-hero-share"][data-hero-val="a"]').click());
 await sleep(400);

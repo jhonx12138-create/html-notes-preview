@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.13.0</title>
+<title>📚 书阁 v8.13.1</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -517,15 +517,25 @@ html, body {
 
 /* ========== Hero Picker (v8.13) ==========
    首页头图和分享图头图分开设。分享图那行多一个「同」= 跟随首页。
-   缩略图用 background-image，选中的加一圈 accent 描边。 */
+   缩略图用 background-image，选中的加一圈 accent 描边。
+   v8.13.1：内置头图扩到 5 张，一行塞不下 6~7 个（li 内容宽只有 ~302px），
+   所以标签固定、缩略图区横向滑动——和系统相册选图一样，右侧露出半个就是可滑的提示。 */
 .hero-picks { display: flex; flex-direction: column; gap: 9px; flex: 1 1 auto; min-width: 0; }
 /* 头图这一项：标签单独一行，两排缩略图在下面占满宽度（横着塞 label+选择器在小屏会挤）。
    双类名是为了压过后面的 .profile-setting-item { align-items: center } */
 .profile-setting-item.profile-setting-item--hero { flex-direction: column; align-items: stretch; gap: 10px; cursor: default; }
 .hero-pick-row { display: flex; align-items: center; gap: 7px; }
-.hero-pick-name { font-size: 12px; color: var(--text-muted); width: 40px; flex-shrink: 0; letter-spacing: .2px; }
+.hero-pick-name { font-size: 12px; color: var(--text-muted); width: 38px; flex-shrink: 0; letter-spacing: .2px; }
+.hero-pick-track {
+  display: flex; align-items: center; gap: 5px;
+  flex: 1 1 auto; min-width: 0; overflow-x: auto; overflow-y: hidden;
+  scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; padding: 2px 0;
+}
+.hero-pick-track::-webkit-scrollbar { display: none; }
 .hero-thumb {
-  width: 46px; height: 33px; padding: 0; flex-shrink: 0;
+  width: 44px; height: 31px; padding: 0; flex-shrink: 0;
+  scroll-snap-align: start;
   border: 1.5px solid var(--border); border-radius: 6px;
   background-color: var(--bg-card); background-size: cover; background-position: center;
   cursor: pointer; transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease;
@@ -1480,7 +1490,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.13.0</span>
+        <span class="hero-version">v8.13.1</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1506,7 +1516,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.13.0</span>
+              <span class="hero-version">v8.13.1</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1644,11 +1654,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.13.0</span>
+                <span class="setting-value">v8.13.1</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.13.0</div>
+              <div class="about-version">📚 书阁 v8.13.1</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -3143,7 +3153,15 @@ html, body {
    *  自定义图上传后先用 canvas 压到 1200 宽、jpeg 0.82 再存 localStorage，
    *  否则手机相册一张 5MB 原图会直接撞满配额。
    * =================================================================== */
-  const HERO_PRESETS = { a: 'assets/shuge-header-a.jpg', b: 'assets/shuge-header-b.jpg' };
+  const HERO_PRESETS = {
+    a: 'assets/shuge-header-a.jpg',   // 书堆 + 枝叶
+    b: 'assets/shuge-header-b.jpg',   // 窗台 + 晨光
+    c: 'assets/shuge-header-c.jpg',   // 书桌 + 眼镜 + 干花
+    d: 'assets/shuge-header-d.jpg',   // 书架 + 藤蔓
+    e: 'assets/shuge-header-e.jpg',   // 毛毯 + 热茶
+  };
+  const HERO_KEYS = ['a', 'b', 'c', 'd', 'e'];
+  const HERO_LABEL = { a: '书堆', b: '窗台', c: '书桌', d: '书架', e: '毯子' };
   const HERO_KEY_HOME = 'notes-hero-home';
   const HERO_KEY_SHARE = 'notes-hero-share';
 
@@ -3201,9 +3219,9 @@ html, body {
         h += `<button type="button" class="hero-thumb${(cur === 'follow' || !cur) ? ' active' : ''}"
                 data-hero-set="${key}" data-hero-val="follow" title="跟随首页头图">同</button>`;
       }
-      ['a', 'b'].forEach(k => {
+      HERO_KEYS.forEach(k => {
         h += `<button type="button" class="hero-thumb${cur === k ? ' active' : ''}"
-                data-hero-set="${key}" data-hero-val="${k}" title="内置头图 ${k.toUpperCase()}"
+                data-hero-set="${key}" data-hero-val="${k}" title="${k.toUpperCase()}｜${HERO_LABEL[k]}"
                 style="background-image:url('${HERO_PRESETS[k]}')"></button>`;
       });
       if (cur && cur !== 'follow' && !HERO_PRESETS[cur]) {
@@ -3214,8 +3232,10 @@ html, body {
       return h;
     }
     wrap.innerHTML =
-      `<div class="hero-pick-row"><span class="hero-pick-name">首页</span>${thumbs(home, HERO_KEY_HOME, false)}</div>` +
-      `<div class="hero-pick-row"><span class="hero-pick-name">分享图</span>${thumbs(share, HERO_KEY_SHARE, true)}</div>`;
+      `<div class="hero-pick-row"><span class="hero-pick-name">首页</span>` +
+      `<div class="hero-pick-track">${thumbs(home, HERO_KEY_HOME, false)}</div></div>` +
+      `<div class="hero-pick-row"><span class="hero-pick-name">分享图</span>` +
+      `<div class="hero-pick-track">${thumbs(share, HERO_KEY_SHARE, true)}</div></div>`;
   }
 
   function pickHeroUpload(key) {
