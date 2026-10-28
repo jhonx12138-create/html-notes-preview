@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上瘾 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 橄榄墨绿 + 亮金（行为机制 / 实验手稿感） */
+[data-theme="olive"] {
+  --primary: #2f4f3e; --primary-light: #eef3ee; --primary-dark: #1a2e23;
+  --accent: #b8912f; --accent-deep: #8a6a1c;
+  --bg: #f9f8f3; --bg-card: #ffffff; --bg-soft: #f2f0e6; --bg-softer: #e8e4d4;
+  --bg-tag: #e3ebdf;
+  --text: #2c332d; --text-heading: #17231b; --text-muted: #7b7a6a; --text-light: #9b9a88;
+  --border: #d6d2be; --border-soft: #e6e2d2;
+  --highlight: #f4f1e2; --highlight-strong: #e9e2c4;
+  --shadow-sm: 0 1px 3px rgba(47,79,62,0.07); --shadow: 0 2px 10px rgba(47,79,62,0.10);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #2f4f3e; --color-tool: #2c6b7a; --color-case: #4a7c46;
+  --color-history: #b8912f; --color-insight: #1f6d5f; --color-debate: #a83e2c;
+  --color-solution: #4a7c46; --color-crisis: #b03a2e; --color-mechanism: #2c6b7a;
+  --color-effect: #7a4a8c; --color-core: #1a2e23;
+  --warn-bg: #fdf8e6; --warn-border: #e8d89c; --example-bg: #fbfaf4;
+  --reflect-bg: #f2f0e6; --quote-border: #b8912f;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 侧边栏 */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 232px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 14px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.2px;
+  margin-bottom: 14px; padding-left: 10px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 11px;
+  border-radius: var(--radius);
+  font-size: 13px; color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--accent);
+}
+.sidebar .toc-l2 a { padding-left: 24px; font-size: 12px; color: var(--text-muted); }
+.sidebar .toc-l2 a.active { color: var(--primary-dark); }
+
+/* 主内容 */
+.main { margin-left: 232px; max-width: 1060px; padding: 36px 40px 120px 40px; }
+
+/* 页头 */
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.header::after {
+  content: 'HOOKED';
+  position: absolute;
+  top: 14px; right: 22px;
+  font-family: var(--font-mono);
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  color: var(--bg-soft);
+  pointer-events: none;
+  z-index: 0;
+}
+.header > * { position: relative; z-index: 1; }
+.header h1 {
+  font-size: 27px; color: var(--text-heading);
+  margin-bottom: 8px; padding-left: 14px;
+  border-left: 5px solid var(--accent);
+  letter-spacing: 1px;
+}
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; padding-left: 19px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); font-weight: 600; }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 13px;
+  border-radius: 3px;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.3px;
+  border-bottom: 2px solid var(--accent);
+}
+.header .core-narrative {
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  line-height: 1.76;
+  padding: 12px 16px;
+  border-left: 3px solid var(--highlight-strong);
+  background: var(--example-bg);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+/* 区块 */
+.section { margin-bottom: 34px; }
+.section h2 {
+  font-size: 20px; color: var(--text-heading);
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+  position: relative;
+}
+.section h2::before {
+  content: '';
+  position: absolute; left: 0; bottom: -2px;
+  width: 54px; height: 2px;
+  background: var(--accent);
+}
+.section h3 { font-size: 16px; color: var(--text-heading); margin: 22px 0 10px; }
+.section p.lead { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+
+/* 卡片系统 */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(285px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s, transform .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.info-card .label {
+  font-weight: 700; font-size: 14px;
+  margin-bottom: 8px; color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content { font-size: 14px; color: var(--text); line-height: 1.72; }
+.info-card .content ul { padding-left: 18px; margin-top: 6px; }
+.info-card .content li { margin-bottom: 4px; font-size: 13.5px; }
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px; color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* 洞察卡片 */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title { font-weight: 700; font-size: 15px; color: var(--primary-dark); margin-bottom: 6px; }
+.insight-card .insight-body { font-size: 14px; color: var(--text); line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 9px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* 规律卡片 */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 6px; }
+.law-card p { font-size: 13px; color: var(--text); line-height: 1.68; }
+
+/* 规律网格 */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(258px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc { font-size: 13px; color: var(--text); line-height: 1.66; }
+.pattern-card .pattern-examples { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+
+/* 反思块 */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title { font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px; }
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.72; }
+.reflection-block p + p { margin-top: 8px; }
+
+/* 引用块 */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px;
+  font-size: 12px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+  font-family: var(--font-sans);
+}
+
+/* 两栏 */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
+
+/* 表格 */
+table.extension, table.matrix {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+  background: var(--bg-card);
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.68;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+table.matrix th {
+  background: var(--primary);
+  color: #fff;
+  padding: 9px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: left;
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+table.matrix td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.62;
+}
+table.matrix tbody tr:nth-child(even) td { background: var(--bg-soft); }
+table.matrix td:first-child { font-weight: 600; color: var(--primary-dark); background: var(--primary-light); }
+
+/* 四步循环 */
+.loop-flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 16px 0 0;
+}
+.loop-node {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 4px solid var(--primary);
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 15px 16px;
+  position: relative;
+}
+.loop-node:nth-child(1) { border-top-color: #2f4f3e; }
+.loop-node:nth-child(2) { border-top-color: #2c6b7a; }
+.loop-node:nth-child(3) { border-top-color: #b8912f; }
+.loop-node:nth-child(4) { border-top-color: #7a4a8c; }
+.loop-node .ln-step {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #fff;
+  background: var(--primary);
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 2px;
+  margin-bottom: 8px;
+}
+.loop-node .ln-name { font-size: 15px; font-weight: 700; color: var(--text-heading); margin-bottom: 2px; }
+.loop-node .ln-en {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.8px;
+  color: var(--accent-deep);
+  margin-bottom: 7px;
+}
+.loop-node .ln-desc { font-size: 12.5px; color: var(--text); line-height: 1.65; }
+.loop-back {
+  margin-top: 10px;
+  background: var(--bg-softer);
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 11px 18px;
+  font-size: 13px;
+  color: var(--text);
+  text-align: center;
+}
+.loop-back strong { color: var(--primary-dark); }
+
+/* 习惯区间象限 */
+.zone-map {
+  display: grid;
+  grid-template-columns: 34px 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 6px;
+  margin: 16px 0;
+}
+.zone-axis-y {
+  grid-column: 1; grid-row: 1 / span 2;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--text-muted);
+  letter-spacing: 1px;
+  padding-right: 2px;
+}
+.zone-axis-x {
+  grid-column: 2 / span 2; grid-row: 3;
+  text-align: center;
+  font-size: 12px; color: var(--text-muted);
+  letter-spacing: 1px;
+  padding-top: 4px;
+}
+.zone-cell.z-tl { grid-column: 2; grid-row: 1; }
+.zone-cell.z-tr { grid-column: 3; grid-row: 1; }
+.zone-cell.z-bl { grid-column: 2; grid-row: 2; }
+.zone-cell.z-br { grid-column: 3; grid-row: 2; }
+.zone-cell {
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 13px;
+  line-height: 1.65;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-card);
+}
+.zone-cell .zc-tag {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 1px;
+  color: var(--text-light);
+  margin-bottom: 3px;
+}
+.zone-cell .zc-name { font-weight: 700; font-size: 13.5px; color: var(--text-heading); margin-bottom: 4px; }
+.zone-cell .zc-desc { font-size: 12.5px; color: var(--text); line-height: 1.62; }
+.zone-cell.hot {
+  background: var(--highlight-strong);
+  border: 1px solid var(--accent);
+  box-shadow: inset 0 0 0 1px rgba(184,145,47,0.25);
+}
+.zone-cell.hot .zc-name { color: var(--primary-dark); }
+
+/* 公式框 */
+.formula-box {
+  background: var(--primary-dark);
+  color: #eef3ee;
+  border-radius: var(--radius);
+  padding: 22px 26px;
+  margin: 16px 0;
+  text-align: center;
+  border-left: 4px solid var(--accent);
+}
+.formula-box .fb-main {
+  font-family: var(--font-mono);
+  font-size: 21px;
+  letter-spacing: 1px;
+  color: #f2e2b0;
+  margin-bottom: 8px;
+}
+.formula-box .fb-note { font-size: 12.5px; color: #b8c6bd; line-height: 1.7; }
+
+/* 操纵者矩阵 */
+.matrix2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin: 16px 0;
+}
+.matrix2-head {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+  text-align: center;
+  padding: 6px 0;
+}
+.matrix2-cell {
+  border-radius: var(--radius);
+  padding: 15px 17px;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-card);
+}
+.matrix2-cell .mc-name { font-size: 14px; font-weight: 700; color: var(--text-heading); margin-bottom: 3px; }
+.matrix2-cell .mc-en { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.8px; color: var(--text-light); margin-bottom: 6px; }
+.matrix2-cell .mc-desc { font-size: 12.5px; color: var(--text); line-height: 1.66; }
+.matrix2-cell.good { background: #eef3ee; border-color: #b6c9b8; }
+.matrix2-cell.warn { background: var(--warn-bg); border-color: var(--warn-border); }
+.matrix2-cell.bad { background: #fbeeec; border-color: #e5bdb6; }
+
+/* 三种赏酬 */
+.triad-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 14px 0;
+}
+.triad-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  border-top: 3px solid var(--accent);
+}
+.triad-card .tc-icon {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 1.2px;
+  color: var(--accent-deep);
+  margin-bottom: 4px;
+}
+.triad-card .tc-name { font-size: 14.5px; font-weight: 700; color: var(--text-heading); margin-bottom: 6px; }
+.triad-card .tc-desc { font-size: 13px; color: var(--text); line-height: 1.68; }
+.triad-card .tc-eg { font-size: 12px; color: var(--text-muted); margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--border-soft); }
+
+/* 检查清单 */
+.check-list { list-style: none; padding: 0; margin: 12px 0; }
+.check-list li {
+  position: relative;
+  padding: 9px 14px 9px 34px;
+  font-size: 13.5px;
+  line-height: 1.66;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  margin-bottom: 6px;
+}
+.check-list li::before {
+  content: '▸';
+  position: absolute; left: 14px; top: 9px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* 步骤链 */
+.step-flow { display: flex; align-items: stretch; gap: 0; margin: 16px 0; flex-wrap: wrap; }
+.flow-step {
+  flex: 1 1 0; min-width: 130px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 13px 14px;
+}
+.flow-step .fs-num {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 1px;
+  color: #fff; background: var(--primary);
+  padding: 1px 6px; border-radius: 2px;
+  margin-bottom: 6px;
+}
+.flow-step .fs-name { font-size: 13.5px; font-weight: 700; color: var(--text-heading); margin-bottom: 4px; }
+.flow-step .fs-desc { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+.flow-arrow {
+  flex: 0 0 26px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent); font-size: 16px;
+}
+
+/* 术语弹窗 */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 3px;
+  transition: transform .15s;
+  line-height: 1;
+  padding: 0;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(23,35,27,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(23,35,27,0.28);
+  position: relative;
+  border-top: 4px solid var(--accent);
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(23,35,27,0.3);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 32px 0; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  .header::after { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .loop-flow { grid-template-columns: 1fr 1fr; }
+  .triad-grid { grid-template-columns: 1fr; }
+  .matrix2 { grid-template-columns: 1fr; }
+  .header h1 { font-size: 21px; }
+  .header { padding: 22px 20px; }
+  .header::after { font-size: 32px; top: 10px; right: 12px; }
+  .modal-card { padding: 20px; }
+  .step-flow { flex-direction: column; }
+  .flow-arrow { flex: 0 0 22px; transform: rotate(90deg); }
+  table.matrix { font-size: 12px; }
+  .zone-map { grid-template-columns: 28px 1fr 1fr; }
+}
+</style>
+</head>
+<body data-theme="olive">
+
+<nav class="sidebar" id="sidebar">
+  <h3>导航</h3>
+  <ul class="toc-list">
+    <li><a href="#question">核心问题</a></li>
+    <li><a href="#zone">前置条件 · 习惯区间</a></li>
+    <li><a href="#loop">知识主干 · 四步钩子</a></li>
+    <li class="toc-l2"><a href="#step1">一 · 触发</a></li>
+    <li class="toc-l2"><a href="#step2">二 · 行动</a></li>
+    <li class="toc-l2"><a href="#step3">三 · 多变赏酬</a></li>
+    <li class="toc-l2"><a href="#step4">四 · 投入</a></li>
+    <li><a href="#evidence">关键证据</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#ethics">伦理拷问</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#extend">延伸与局限</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <h1>上瘾</h1>
+    <div class="subtitle">让用户养成使用习惯的四大产品逻辑</div>
+    <div class="meta">
+      <span><strong>作者</strong> 尼尔·埃亚尔（Nir Eyal）</span>
+      <span><strong>原版</strong> Hooked, 2014</span>
+      <span><strong>类型</strong> 产品方法论 / 行为设计</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">上瘾模型</span>
+      <span class="badge">触发</span>
+      <span class="badge">行动</span>
+      <span class="badge">多变赏酬</span>
+      <span class="badge">投入</span>
+      <span class="badge">操纵者矩阵</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：<strong>让人反复打开一个产品的，不是功能多，是一套循环机制</strong>——先用情绪点着火，再把门槛压到几乎为零，接着给一个猜不到但一定有的奖励，最后让用户留下一点带不走的东西。四步缺一环，习惯就养不成。
+    </div>
+  </div>
+
+  <!-- 核心问题 -->
+  <div class="section" id="question">
+    <h2>核心问题</h2>
+    <p class="lead">这本书只回答一个问题，这个问题价值千亿。</p>
+
+    <div class="insight-card">
+      <div class="insight-title">为什么有些产品好用到爆却留不住人，有些产品平平无奇却被反复打开？</div>
+      <div class="insight-body">埃亚尔的答案不是"体验更好"或"营销更强"，而是<strong>有没有进入用户的习惯回路</strong>。习惯一旦形成，用户不再需要提醒、不再比较、不再思考——打开你的产品变成一个下意识动作。这种状态下，获客成本趋近于零，竞争对手要撬动用户的成本却极高。所以真正的护城河不是功能，是习惯。</div>
+      <div class="insight-evidence">全书论证起点，对应第 1 章"习惯养成的基本原理"</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">习惯的经济学价值</div>
+        <div class="content">习惯的价值可以从三个方向算：<ul><li><strong>降低获客成本</strong>：习惯用户会自发回流，不再需要持续买流量</li><li><strong>提高生命周期价值</strong>：使用频率上升，变现机会变多</li><li><strong>形成竞争壁垒</strong>：用户迁移要付出行为改造成本，不只是数据迁移成本</li></ul>三者叠加，习惯就成了复利。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">习惯的神经学机制（简化版）</div>
+        <div class="content">大脑为了节省能量，会把重复出现的行为打包成自动程序，交由基底核执行，减少前额叶的参与。这就是为什么熟练之后开车可以不记得路怎么走的。产品设计的野心就在这儿——<strong>把自己的产品写进用户的自动程序里</strong>。</div>
+        <div class="example">💡 <strong>推论</strong>：竞争发生在"思考之前"。用户一旦开始思考比较，你就已经输了。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">维生素，还是止痛药<button class="glossary-trigger" onclick="openModal('vitamin')">?</button></div>
+        <div class="content">书中一个核心区分：<strong>止痛药</strong>解决已经存在的强烈痛点，用户会主动找；<strong>维生素</strong>满足的是模糊的、非紧急的需求，用户不觉得非要不可。多数习惯型产品最初都是维生素，靠钩子模型把"可要可不要"改造成"每天都想要"。</div>
+        <div class="example">💡 <strong>转折点</strong>：当用户感到无聊、孤独、焦虑时第一个想到你，你就从维生素变成了止痛药。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 习惯区间 -->
+  <div class="section" id="zone">
+    <h2>前置条件 · 习惯区间<button class="glossary-trigger" onclick="openModal('zone')">?</button></h2>
+    <p class="lead">不是所有产品都该追求习惯。判断标准是两条轴：使用频率、可感知效用。</p>
+
+    <div class="zone-map">
+      <div class="zone-axis-y">可感知效用 · 上高下低</div>
+      <div class="zone-cell z-tl">
+        <div class="zc-tag">低频 · 高效用</div>
+        <div class="zc-name">决策型产品</div>
+        <div class="zc-desc">一辈子用几次但价值极高——买房、买保险、选大学。这类产品不该套钩子模型，该做的是信任建立与决策支持。</div>
+      </div>
+      <div class="zone-cell z-tr hot">
+        <div class="zc-tag">高频 · 高效用</div>
+        <div class="zc-name">习惯区间 HABIT ZONE</div>
+        <div class="zc-desc">用户离不开，且能明确说出为什么离不开。这是钩子模型真正适用的区域——社交、通讯、搜索、效率工具、游戏。</div>
+      </div>
+      <div class="zone-cell z-bl">
+        <div class="zc-tag">低频 · 低效用</div>
+        <div class="zc-name">失败区</div>
+        <div class="zc-desc">既不需要，也不想要。低频且无感，没有讨论价值，任何留存手段都救不回来。</div>
+      </div>
+      <div class="zone-cell z-br">
+        <div class="zc-tag">高频 · 低效用</div>
+        <div class="zc-name">边缘地带</div>
+        <div class="zc-desc">用户会反复用，但说不清价值在哪。容易短期起量、长期被抛弃，典型是无聊消遣类小游戏。</div>
+      </div>
+      <div class="zone-axis-x">使用频率 →</div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这一节常被跳过的原因</div>
+      <p>很多人翻开这本书直接看四步循环，把前置判断跳过了。结果是给低频高价值的业务硬套钩子模型，做出"每天提醒你买房的 App"这种荒唐设计。习惯区间这一节的价值不在教你怎么做，而在告诉你<strong>什么时候不该做</strong>。</p>
+    </div>
+  </div>
+
+  <!-- 四步钩子 -->
+  <div class="section" id="loop">
+    <h2>知识主干 · 四步钩子循环</h2>
+    <p class="lead">四个阶段不是流水线，是一个越转越紧的螺旋。每一轮转完，用户的触发更内在、行动更省力、赏酬更精准、投入更深。</p>
+
+    <div class="loop-flow">
+      <div class="loop-node">
+        <div class="ln-step">01</div>
+        <div class="ln-name">触发<button class="glossary-trigger" onclick="openModal('trigger')">?</button></div>
+        <div class="ln-en">TRIGGER</div>
+        <div class="ln-desc">让用户想起你。从外部提醒开始，终点是内在情绪。</div>
+      </div>
+      <div class="loop-node">
+        <div class="ln-step">02</div>
+        <div class="ln-name">行动<button class="glossary-trigger" onclick="openModal('action')">?</button></div>
+        <div class="ln-en">ACTION</div>
+        <div class="ln-desc">把动作变简单。不是加动机，是减阻力。</div>
+      </div>
+      <div class="loop-node">
+        <div class="ln-step">03</div>
+        <div class="ln-name">多变赏酬<button class="glossary-trigger" onclick="openModal('reward')">?</button></div>
+        <div class="ln-en">VARIABLE REWARD</div>
+        <div class="ln-desc">给一点，但别让用户猜到是什么、有多少。</div>
+      </div>
+      <div class="loop-node">
+        <div class="ln-step">04</div>
+        <div class="ln-name">投入<button class="glossary-trigger" onclick="openModal('investment')">?</button></div>
+        <div class="ln-en">INVESTMENT</div>
+        <div class="ln-desc">让用户留下东西，下一轮他会自己回来。</div>
+      </div>
+    </div>
+    <div class="loop-back">
+      <strong>回到第一步。</strong>投入产生的内容与关系，会成为下一轮更强的触发（有人回复你）与更贴合的赏酬（系统更懂你）。循环不是重复，是加码。
+    </div>
+
+    <hr class="divider">
+
+    <!-- 触发 -->
+    <h3 id="step1">第一步 · 触发：让用户想起你</h3>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">外部触发的四种来源</div>
+        <div class="content"><ul><li><strong>付费触发</strong>（Paid）：广告、搜索竞价。启动期用，成本高，不可持续</li><li><strong>口碑触发</strong>（Earned）：媒体报道、社交传播。可信但不可控</li><li><strong>关系触发</strong>（Relationship）：朋友邀请、内容分享。信任度最高</li><li><strong>自有触发</strong>（Owned）：推送、邮件、桌面图标、书签。用户已存在，最省钱也最容易滥用</li></ul></div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">终极目标：让外部触发消失</div>
+        <div class="content">所有外部触发都只是过渡手段。真正养成的标志是<strong>用户不需要任何提醒就会打开</strong>——因为某个情绪出现时，你自动成了他的解法。这就是内部触发。</div>
+        <div class="example">💡 <strong>案例</strong>：某款经文应用早期靠每日推送（自有触发），后来把定位改成"感到孤独、焦虑、迷茫时打开"（内部触发），用户不再依赖提醒，打开频率反而上升。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">内部触发 = 情绪<button class="glossary-trigger" onclick="openModal('emotion')">?</button></div>
+        <div class="content">最强的内部触发几乎都是负面情绪：无聊、孤独、焦虑、拖延、不确定、怕错过。产品要做的不是消除这些情绪，而是成为这些情绪的默认出口。</div>
+        <div class="example">💡 <strong>对照表</strong>：无聊 → 短视频；孤独 → 社交 feed；不确定 → 搜索；焦虑 → 刷信息；想逃避 → 游戏。每一项背后都是同一个结构。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">怎么做：写一张情绪地图</div>
+        <div class="content">不要问"用户什么时候想用我们的产品"，要问"用户什么时候会难受"。具体做法：列出目标用户一天中反复出现的情绪低谷，找出其中与你产品能力相交的那三五个场景，然后围绕它们重写文案、推送时机与首屏内容。</div>
+      </div>
+    </div>
+
+    <div class="law-card">
+      <h4>一个反直觉的推论</h4>
+      <p>推送做得越勤，内部触发越难形成。因为用户习惯了被提醒，就不会建立"我自己想起来"的神经路径。过度推送是在用短期打开率，换掉长期的习惯养成。</p>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 行动 -->
+    <h3 id="step2">第二步 · 行动：把门槛压到几乎为零</h3>
+
+    <p class="lead">触发让用户想动，行动决定他动不动得成。这一步的理论工具是福格行为模型。</p>
+
+    <div class="formula-box">
+      <div class="fb-main">B = M × A × T</div>
+      <div class="fb-note">行为（Behavior）= 动机（Motivation）× 能力（Ability）× 触发（Trigger）<br>三者必须同时在线，缺一个，行为就不发生。乘法关系意味着任何一项为零，结果为零。</div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card insight">
+        <div class="label">优先降阻力，而不是提动机</div>
+        <div class="content">这是全书最实用的一条操作原则。动机飘忽不定、受情绪影响、很难被产品改变；阻力是产品自己完全可控的。所以当转化不动时，正确的第一反应是问"这一步卡在哪"，而不是"文案怎么更有煽动力"。</div>
+        <div class="example">💡 <strong>换算关系</strong>：把一个动作从 5 分钟压到 30 秒，效果通常好过把奖励翻倍。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">阻力的六个来源<button class="glossary-trigger" onclick="openModal('fogg')">?</button></div>
+        <div class="content">判断一个动作难不难，从这六项逐一排查：<ul><li><strong>时间</strong>：要花多久</li><li><strong>金钱</strong>：要付出多少成本</li><li><strong>体力</strong>：要做多少动作（打字、点击、拍照）</li><li><strong>脑力</strong>：要想多少（理解、比较、决策）</li><li><strong>社会偏差</strong>：会不会显得奇怪、会不会被看见</li><li><strong>非常规性</strong>：是否打破用户已有的习惯</li></ul></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">经典手法：把动作拆到最小</div>
+        <div class="content">当用户卡住时，不要加激励，要缩小动作。不能"注册"，那就"先浏览"；不能"发内容"，那就"点个喜欢"；不能"填完表单"，那就"选一个选项"。<strong>先让用户完成一次，再要求他完成更多。</strong></div>
+        <div class="example">💡 <strong>案例</strong>：某图片社区允许未注册用户直接浏览，把"注册"推迟到用户已经产生收藏冲动之后——这就是把大动作拆成小动作，并把最难的一步放在动机最高的时刻。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">为什么"简单"比"好玩"重要</div>
+        <div class="content">从行为发生的概率看，能力项是乘数，成本的量级远大于体验的边际改善。一个需要 8 步完成的核心动作，无论界面做得多漂亮，转化都上不去；一个 2 步就能完成的动作，即使朴素，也会被反复使用。</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 多变赏酬 -->
+    <h3 id="step3">第三步 · 多变赏酬：给一点，但别让他猜到</h3>
+
+    <p class="lead">行动让人完成一次，赏酬决定他还要不要再来。关键在于"多变"——这是全书机制色彩最浓的一节。</p>
+
+    <div class="triad-grid">
+      <div class="triad-card">
+        <div class="tc-icon">TRIBE</div>
+        <div class="tc-name">部落赏酬</div>
+        <div class="tc-desc">来自他人的认可：被看见、被回应、被接纳。人天生在意社会位置，这类赏酬的驱动力最强也最难满足。</div>
+        <div class="tc-eg">点赞、评论、关注数、排行榜、社群身份</div>
+      </div>
+      <div class="triad-card">
+        <div class="tc-icon">HUNT</div>
+        <div class="tc-name">狩猎赏酬</div>
+        <div class="tc-desc">来自资源与信息的获取。大脑对"下一条会不会更有用"的期待，比已经拿到的东西更兴奋。</div>
+        <div class="tc-eg">信息流刷新、搜索结果、优惠券、抽卡、限时折扣</div>
+      </div>
+      <div class="triad-card">
+        <div class="tc-icon">SELF</div>
+        <div class="tc-name">自我赏酬</div>
+        <div class="tc-desc">来自掌控感与完成感。不需要外部认可，自己知道"我搞定了""我变强了"。</div>
+        <div class="tc-eg">进度条、通关、技能提升、连续打卡记录</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">为什么"多变"有效<button class="glossary-trigger" onclick="openModal('skinner')">?</button></div>
+        <div class="content">斯金纳的操作性条件反射实验发现：固定比率奖励下，一旦停止奖励，行为会迅速消退；而<strong>变动比率奖励</strong>下的行为最顽固，停止奖励后仍会持续很久。这正是老虎机与信息流的共同机制。</div>
+        <div class="example">💡 <strong>边界</strong>：多变不等于纯随机。用户必须知道"有可能得到"，只是不知道"什么时候得到、得到多少"。完全随机且与投入无关，就退化成赌博。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">奖励发生在"预期"里，不在"得到"时</div>
+        <div class="content">神经科学上，多巴胺的显著释放往往出现在<strong>预期奖励</strong>的阶段，而不是奖励到手那一刻。这解释了为什么"刷到下一条"的动作比看完上一条更让人上头——悬念本身就是奖励。</div>
+        <div class="example">💡 <strong>设计含义</strong>：与其优化结果页，不如优化"加载与呈现"的那一秒。期待感是产品资产。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">最容易越界的一步</div>
+        <div class="content">把多变赏酬做成纯赌场机制——奖励随机、与用户投入毫无关系、且强度不断加码。短期数据会非常好看，长期结果是信任崩塌与用户耗竭。区别在于：<strong>赏酬是否与用户真实需求相关</strong>。</div>
+        <div class="example">💡 <strong>判断标准</strong>：如果用户清醒过来会觉得被耍了，那就是赌场机制；如果他会觉得"这次没抽到但我确实需要这个"，那是产品机制。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">三种赏酬要配着用</div>
+        <div class="content">只用狩猎赏酬的产品，用户会疲于刷新；只用自我赏酬的产品，缺少社会牵引；只用部落赏酬的产品，一旦社交关系流失就崩盘。成熟的产品通常三种叠加，但有一个主导项——主导项由产品解决的问题性质决定。</div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- 投入 -->
+    <h3 id="step4">第四步 · 投入：让用户留下带不走的东西</h3>
+    <p class="lead">这是四步里最容易被做错的一步。投入不是收费，是让用户在你的产品里累积资产。</p>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">投入的六种形式</div>
+        <div class="content"><ul><li><strong>数据</strong>：偏好、历史、使用记录</li><li><strong>内容</strong>：照片、笔记、文档、代码</li><li><strong>关注关系</strong>：好友、订阅、粉丝</li><li><strong>声誉</strong>：评分、等级、历史成绩</li><li><strong>技能</strong>：学会了这套操作方式</li><li><strong>金钱</strong>：已付费的订阅与服务</li></ul>六种形式共同指向一件事：迁移成本。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">存储价值<button class="glossary-trigger" onclick="openModal('stored')">?</button></div>
+        <div class="content">用户每次使用都在产品里存下一点东西，下一次使用因此变得更有价值。存得越多，产品越"只能用这个"。这是习惯之外的第二重壁垒——<strong>习惯管"想不想来"，存储价值管"能不能走"</strong>。</div>
+        <div class="example">💡 <strong>案例</strong>：相册应用里存了三年的照片，即使出现更好的竞品，用户也不会迁移。不是因为习惯，是因为资产。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">更隐蔽的一层：投入改变自我认知</div>
+        <div class="content">人会为自己的行为找理由。投入得越多，越倾向于认为"我本来就重视这件事"，从而更加投入。这是承诺与一致性的心理机制在起作用——产品让用户先做一个小动作，用户自己会补上后面的理由。</div>
+        <div class="example">💡 <strong>操作含义</strong>：让新用户尽早做一次微小但主动的动作（写下目标、选偏好、加第一个好友），比让他看十页介绍有效。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">投入是下一轮的燃料</div>
+        <div class="content">四步循环能闭合，靠的就是投入的产出会回流到第一步和第三步：你关注的人发内容 → 触发你去打开；你的收藏被用来推荐 → 赏酬更贴合你的口味；你的使用数据让产品更懂你 → 行动阻力进一步降低。</div>
+      </div>
+    </div>
+
+    <div class="law-card">
+      <h4>顺序上的讲究</h4>
+      <p>投入必须放在赏酬<strong>之后</strong>，不能提前。用户还没拿到任何价值就被要求填写资料、绑定账号、邀请好友，那不叫投入设计，叫索取。先给，再要，这个顺序颠倒了整条循环就断了。</p>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">投入的伦理边界</div>
+      <p>存储价值本质上是一种锁定。锁定本身中性——它保护了用户的累积成果，也让产品获得合理回报。但当锁定是靠"迁移太麻烦"而非"这里确实更好"实现时，它就从留存手段变成了围栏。判断标准很简单：如果一键导出所有数据，用户还会留下吗？答案是"会"，说明你赢在产品；答案是"不会"，你赢在懒惰。</p>
+    </div>
+  </div>
+
+  <!-- 关键证据 -->
+  <div class="section" id="evidence">
+    <h2>关键证据：书中反复出现的四类样本</h2>
+    <p class="lead">埃亚尔没有做实证研究，他的论证方式是"概念 + 案例对照"。理解这一点，才能正确评估这本书的效力。</p>
+
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">社交类：Twitter 与 Instagram</div>
+        <div class="content">典型的部落赏酬主导型产品。触发来自关系（朋友在讨论）、行动被压到极低（一次点击关注）、赏酬不可预测（不知道会看到什么）、投入随即发生（发第一条内容后，账号就有了价值）。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">浏览类：Pinterest 式图片流</div>
+        <div class="content">狩猎赏酬的教科书。无限滚动制造"下一条可能更好"的期待，而"收藏"这个动作本身就是微投入——用户的每一次收藏都在训练系统更懂他，也在增加自己的迁移成本。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">游戏类：变动比率强化的极致应用</div>
+        <div class="content">游戏是四步循环最完整的产业实践：任务与剧情推进（触发）、操作门槛极低（行动）、掉落与开箱不可预测（赏酬）、等级与装备（投入）。这也是为什么游戏行业最先被质疑成瘾设计。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">工具类：把维生素做成止痛药</div>
+        <div class="content">效率、记账、健身这类产品最初都是维生素——用户知道有用，但不觉得现在必须用。成功的那批做的是同一件事：绑定一个具体的情绪场景（月底焦虑、加班疲惫、体重反弹），让"想起来用"变成"难受时用"。</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card mechanism">
+        <div class="label">实验基础一：斯金纳箱</div>
+        <div class="content">变动的、不可预测的奖励比固定奖励更能维持行为。这是第三步"多变赏酬"的直接理论来源，也是整本书中唯一有严格实验支撑的机制。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">实验基础二：福格行为模型</div>
+        <div class="content">斯坦福行为设计学者 B.J. Fogg 提出，行为发生需要动机、能力、触发三者同时具备。第二步"行动"整节建立在这个模型上，其核心洞见是"降低难度比提高意愿更有效"。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">证据强度需要打个折</div>
+      <p>书中的实验支撑集中在两处：动物行为学（斯金纳）与行为设计（福格）。而把"变动强化"从老鼠按压杠杆推到"人类每天刷两小时信息流"，中间跨越了社会性、意义感、自我叙事等大量变量。<strong>机制方向可信，具体强度不可直接外推</strong>。这本书的力量在于提供一个好用的思考框架，不在于证明因果。</p>
+    </div>
+  </div>
+
+  <!-- 贯穿规律 -->
+  <div class="section" id="laws">
+    <h2>贯穿规律</h2>
+    <p class="lead">五条能迁移到其他领域的规律。</p>
+
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">规律一 · 习惯是唯一搬不走的护城河</div>
+        <div class="pattern-desc">功能可以在一周内被复制，界面可以在一月内被超越，习惯需要以年为单位培养。所以产品竞争的终局不在功能清单上，在用户的自动程序里。</div>
+        <div class="pattern-examples">对照：功能领先通常守住 6—12 个月；习惯领先可以守住数年</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">规律二 · 最强的触发是情绪，不是通知</div>
+        <div class="pattern-desc">通知只能换来点击，情绪能换来主动。所有成为习惯的产品，最终都绑定在某个具体的情绪低谷上，而不是绑定在一个推送时段上。</div>
+        <div class="pattern-examples">无聊、孤独、焦虑、怕错过、想逃避——五种最常见的入口</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">规律三 · 降阻力优于提动机</div>
+        <div class="pattern-desc">动机是波动的、外生的、难以控制的；阻力是稳定的、内生的、产品完全可控的。转化率的提升，多数时候来自删掉一步，而不是加一句文案。</div>
+        <div class="pattern-examples">8 步压到 2 步，胜过奖励翻倍</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">规律四 · 不确定的奖励比确定的更持久</div>
+        <div class="pattern-desc">确定的好东西会让人适应（边际效用递减），不确定的好东西会让人持续期待。这是信息流、开箱、抽奖共同的底层机制，也是它们共同的伦理风险。</div>
+        <div class="pattern-examples">固定奖励 → 行为快速消退；变动奖励 → 行为长期顽固</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">规律五 · 投入不是终点，是下一轮的起点</div>
+        <div class="pattern-desc">把投入理解为"变现"或"收费"，是这本书最常见的误读。投入的功能是生产燃料：产出内容、关系、数据，反过来喂养触发与赏酬。</div>
+        <div class="pattern-examples">关注关系 → 更好的触发；收藏行为 → 更准的赏酬</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">规律六 · 循环不能停在一半</div>
+        <div class="pattern-desc">只做触发和行动的产品，用户来一次就走；加上赏酬但不做投入，用户来得频繁但随时可换。四步里任何一步缺失，都会在最赚钱的那个环节漏掉用户。</div>
+        <div class="pattern-examples">有推送无赏酬 → 用户屏蔽；有赏酬无投入 → 用户迁移</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 伦理 -->
+  <div class="section" id="ethics">
+    <h2>伦理拷问：这套东西该不该用</h2>
+    <p class="lead">最后一章是全书最有分量的一章。作者没有回避，他给了一个自省工具，但也仅止于自省。</p>
+
+    <blockquote class="quote-block">
+      <p>操纵者矩阵：问两个问题——我自己会用这个产品吗？它真的让用户的生活变好了吗？</p>
+      <span class="cite">—— 本章对书中"操纵者矩阵"（Manipulation Matrix）的转述，非逐字原文</span>
+    </blockquote>
+
+    <div class="matrix2">
+      <div class="matrix2-head"> </div>
+      <div class="matrix2-head">实质改善用户生活</div>
+      <div class="matrix2-head">不改善用户生活</div>
+      <div class="matrix2-head" style="text-align:right;">创造者<br>自己会用</div>
+      <div class="matrix2-cell good">
+        <div class="mc-name">促进者</div>
+        <div class="mc-en">FACILITATOR</div>
+        <div class="mc-desc">自己会用，也确实帮到用户。这是产品该站的位置——设计者与使用者的利益一致。</div>
+      </div>
+      <div class="matrix2-cell warn">
+        <div class="mc-name">娱乐者</div>
+        <div class="mc-en">ENTERTAINER</div>
+        <div class="mc-desc">自己也会用，但价值主要是消遣。不必自责，但要清楚自己在做的是娱乐生意，别自我包装成效率工具。</div>
+      </div>
+      <div class="matrix2-head" style="text-align:right;">创造者<br>自己不用</div>
+      <div class="matrix2-cell warn">
+        <div class="mc-name">兜售者</div>
+        <div class="mc-en">PEDDLER</div>
+        <div class="mc-desc">自己不用，但产品确实有用。风险在于设计者缺乏使用者视角，容易把机制做成套路。</div>
+      </div>
+      <div class="matrix2-cell bad">
+        <div class="mc-name">经销商</div>
+        <div class="mc-en">DEALER</div>
+        <div class="mc-desc">自己不用，也不改善用户生活——只是利用心理弱点变现。这个格子里的一切设计，都该被质疑。</div>
+      </div>
+    </div>
+
+    <div class="check-list">
+      <li><strong>成瘾设计的自我检查</strong>：如果用户清楚知道我们用了什么机制，他还会愿意用吗？</li>
+      <li><strong>易戒断测试</strong>：如果一个用户想戒掉这个产品，我们能提供什么帮助？（使用时长提醒、免打扰、退出机制）</li>
+      <li><strong>反向测试</strong>：我们优化的是"用户完成了他想做的事"，还是"用户在我们的页面多待了十分钟"？</li>
+      <li><strong>脆弱人群</strong>：这套机制对未成年人与情绪脆弱者的影响是什么？我们做了什么防线？</li>
+      <li><strong>不可逆性</strong>：我们是否在利用不可逆的心理效应（沉没成本、损失厌恶、社交绑定）来阻止用户离开？</li>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">这本书最诚实的部分，也是最薄弱的环节</div>
+      <div class="insight-body">埃亚尔没有把成瘾设计说成无害的，他明确承认这套工具可以被滥用，并给出操纵者矩阵作为自省工具。但工具的落点是"设计者的良心"——没有外部约束、没有可审计的标准、没有对商业激励的讨论。<strong>当滥用比克制更赚钱时，一份自我声明挡不住任何东西。</strong>这也正是这本书后来被注意力经济批判者反复质疑的地方。</div>
+      <div class="insight-evidence">对应最后一章对道德边界的讨论，以及 2014 年以来监管与公众舆论的变化</div>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2>记忆钩子</h2>
+    <p class="lead">回到书名。"Hooked" 是被钩住的意思，鱼钩的结构刚好对上四步。</p>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">钩尖 · 触发</div>
+        <div class="content">藏在水里的东西。用户不知道自己被什么吸引，只知道"突然想看一眼"。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">容易咬 · 行动</div>
+        <div class="content">饵要放在嘴边，不用挣扎就能入口。任何需要用户"努力一下"的设计，都是把饵挂到了钩柄上。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">不知道什么饵 · 多变赏酬</div>
+        <div class="content">每次咬到的东西不一样，才值得一直咬。固定的饵，鱼吃两次就不来了。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">越挣越紧 · 投入</div>
+        <div class="content">留下的东西越多，越舍不得走。这一环是钩子的倒刺——也是伦理争议的所在。</div>
+      </div>
+    </div>
+
+    <div class="law-card">
+      <h4>四句口诀</h4>
+      <p>情绪点火（触发）→ 门槛压低（行动）→ 惊喜兑现（赏酬）→ 留下资产（投入）。四句缺一句，循环就转不起来。</p>
+    </div>
+
+    <div class="law-card">
+      <h4>一句话自检</h4>
+      <p>想知道一个产品有没有跑通钩子模型，只问一句：<strong>用户不用的时候，是什么情绪让他想起来？</strong>答得出具体情绪，模型成立；只能答"因为我们发推送"，说明还在第一步的外部触发阶段。</p>
+    </div>
+  </div>
+
+  <!-- 延伸与局限 -->
+  <div class="section" id="extend">
+    <h2>延伸与局限</h2>
+
+    <table class="extension">
+      <tbody>
+        <tr>
+          <th>本书定位</th>
+          <td>把"习惯养成"从经验直觉变成可操作框架的第一本通俗著作。它的贡献不是发现新机制（斯金纳、福格都比它早几十年），而是<strong>把散落的行为科学拼成一条产品经理能照着走的四步流程</strong>，并给出了通用的语言（触发、行动、赏酬、投入）。</td>
+        </tr>
+        <tr>
+          <th>方法倾向</th>
+          <td>概念框架 + 案例归纳。作者是产品与创业背景，不是研究者。全书论证靠"这个框架能解释这些成功产品"，而非"这个框架被数据验证过"。这决定了它作为思考工具很有效，作为因果解释很薄弱。</td>
+        </tr>
+        <tr>
+          <th>局限</th>
+          <td>
+            <strong>1. 幸存者偏差</strong>：书中案例全部是成功产品。同样用了四步循环却失败的产品不会被讨论，因此无法排除"这些产品成功另有原因（网络效应、资本、时机）"。<br>
+            <strong>2. 循环论证风险</strong>：任何被用户反复使用的产品，事后都能被拆成四步。这意味着框架的解释力可能来自它的包容性，而非预测力。<br>
+            <strong>3. 实验基础的外推距离</strong>：斯金纳箱是动物实验，福格模型是行为意图研究。推到"人类日常产品使用"要跨过意义、社会身份、自我叙事等大量变量，书中对这段距离没有严肃讨论。<br>
+            <strong>4. 把习惯当成留存的唯一解</strong>：网络效应、分发渠道、转换成本、品牌信任都能带来留存，书中几乎把所有留存都归因于习惯，对其他因素着墨极少。<br>
+            <strong>5. 伦理工具的效力有限</strong>：操纵者矩阵是一份自我声明，没有外部审计、没有量化标准，也没有讨论"商业激励让滥用更赚钱"这个真问题。<br>
+            <strong>6. 案例已过时</strong>：2014 年的样本（Twitter、Facebook、Pinterest 式信息流）在短视频与算法推荐时代已被改写，青少年保护、注意力经济的监管环境也与当年完全不同。<br>
+            <strong>7. 缺席的对立视角</strong>：书中未回应"注意力经济批判"这一脉的质疑（如成瘾性设计与心理健康的关系），把选择权完全交给设计者的良知。
+          </td>
+        </tr>
+        <tr>
+          <th>对照阅读</th>
+          <td>
+            <strong>《掌控习惯》詹姆斯·克利尔</strong>：同一套机制用在个人身上。产品设计是"让别人养成习惯"，这本书是"让自己养成习惯"，对照读能看清机制的双面性。<br>
+            <strong>《思考，快与慢》卡尼曼</strong>：系统 1 的自动反应是习惯的心理学地基，也是多变赏酬与损失厌恶的理论来源。<br>
+            <strong>《影响力》西奥迪尼</strong>：承诺与一致性、社会认同——分别对应本书的"投入"与"部落赏酬"。<br>
+            <strong>《怪诞行为学》艾瑞里</strong>：相对性、沉没成本、预期效应，为第三步提供更多实验细节。<br>
+            <strong>《被算法困住》一类的注意力批判著作</strong>：本书缺失的对立面，补上才算完整。
+          </td>
+        </tr>
+        <tr>
+          <th>跨书链接</th>
+          <td>与<strong>《智能商业》</strong>的"数据智能"呼应：投入沉淀的数据反过来优化触发与赏酬，本质上是产品内部的反馈闭环。与<strong>《抢占心智》</strong>形成对照——一个争夺认知位置（广告逻辑），一个争夺行为习惯（产品逻辑）；前者靠重复曝光，后者靠四步循环，路径不同但目标同为"降低被想起的成本"。与<strong>《控制论与科学方法论》</strong>的反馈概念同构：四步循环就是一个带正反馈的行为控制系统。</td>
+        </tr>
+        <tr>
+          <th>现实应用</th>
+          <td>先做判断，再谈设计：<ul><li><strong>先判区间</strong>：产品是否在"高频 × 高效用"的习惯区间？不在，别套这套模型</li><li><strong>再找情绪</strong>：写情绪地图，找出 3 个与你产品能力相交的情绪低谷，重写触发</li><li><strong>然后减阻力</strong>：把核心动作的步数逐条数出来，删到不能再删</li><li><strong>接着验赏酬</strong>：先测"用户完成动作后有没有马上得到点什么"，再谈多变性</li><li><strong>最后设计投入</strong>：让用户在第一次获得价值之后，做一个小而主动的动作</li><li><strong>全程过矩阵</strong>：站进"促进者"格，不然做出来的东西会反噬品牌</li></ul></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="reflection-block">
+      <div class="reflection-title">读完该带走的一句话</div>
+      <p>用户的注意力不是被抢走的，是被一套循环留住的。理解这套循环，你可以用它做产品，也可以用它识别自己正在被谁设计——<strong>这两件事，其实是同一种能力</strong>。</p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《上瘾》知识图谱 · 基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  trigger: {
+    title: '触发 · Trigger',
+    content: '<p>钩子模型的第一步，让用户想起你的产品。分两类：</p><ul><li><strong>外部触发</strong>：付费广告、媒体报道、朋友推荐、推送通知——从外部提醒用户</li><li><strong>内部触发</strong>：某种情绪出现时自动想到你——不需要任何提醒</li></ul><p><strong>关键判断</strong>：产品是否养成习惯，看的是内部触发有没有建立。只依赖外部触发的产品，一旦停止投放就停止增长。</p>'
+  },
+  action: {
+    title: '行动 · Action',
+    content: '<p>钩子模型的第二步，用户在期待赏酬时做出的最简行为。</p><p>理论工具是福格行为模型：<strong>B = M × A × T</strong>（动机 × 能力 × 触发）。三者是乘法关系，任何一项为零，行为就不发生。</p><p><strong>核心操作原则</strong>：优先降低阻力（提高能力），而不是提高动机。因为动机波动大、外部性强、难被产品改变；阻力是产品完全可控的。</p>'
+  },
+  reward: {
+    title: '多变赏酬 · Variable Reward',
+    content: '<p>钩子模型的第三步。用户完成动作后获得奖励，但奖励的内容或强度<strong>不可预测</strong>。</p><p>三种类型：部落赏酬（社交认可）、狩猎赏酬（资源与信息）、自我赏酬（掌控与完成感）。</p><p><strong>为什么会有效</strong>：变动比率强化下的行为最顽固，停止奖励后仍能持续很久。而变化来自期待，不来自获得——多巴胺在预期阶段释放更明显。</p><p><strong>边界</strong>：多变不等于纯随机。用户必须知道"有可能得到"，只是不知道"何时、多少"。完全随机且与投入无关，就退化成赌博机制。</p>'
+  },
+  investment: {
+    title: '投入 · Investment',
+    content: '<p>钩子模型的第四步。用户在產品中留下时间、数据、内容、关系、声誉、技能或金钱。</p><p>三重作用：</p><ul><li><strong>存储价值</strong>：下次使用更有价值，迁移成本上升</li><li><strong>改变自我认知</strong>：投入越多，越认为"我本来就重视这个"，从而更加投入</li><li><strong>喂养下一轮</strong>：留下的内容与关系成为更好的触发与更精准的赏酬</li></ul><p><strong>顺序要求</strong>：必须在用户获得赏酬之后，否则就变成了索取而非投入。</p>'
+  },
+  zone: {
+    title: '习惯区间 · Habit Zone',
+    content: '<p>判断一个产品值不值得追求"习惯"的二维坐标：</p><ul><li><strong>使用频率</strong>：用户多久用一次</li><li><strong>可感知效用</strong>：用户能不能明确说出它有什么用</li></ul><p>只有"高频 + 高效用"的右上象限才真正需要钩子模型。低频高价值的产品（买房、保险）应做信任与决策支持，不该套用成瘾设计；高频低效用的产品容易短期起量、长期流失。</p>'
+  },
+  fogg: {
+    title: '福格行为模型（B=MAT）',
+    content: '<p>由斯坦福行为设计学者 B.J. Fogg 提出。行为发生需要三个条件同时具备：</p><ul><li><strong>动机 Motivation</strong>：用户有多想要</li><li><strong>能力 Ability</strong>：用户做到有多容易（六项成本：时间、金钱、体力、脑力、社会偏差、非常规性）</li><li><strong>触发 Trigger</strong>：有没有一个提示让行为在此刻发生</li></ul><p>因为是乘法关系，任何一项接近零，行为就不会发生。实践含义：当行为链断了，先查哪一项最接近零，通常答案是"能力"。</p>'
+  },
+  skinner: {
+    title: '变动比率强化（斯金纳箱）',
+    content: '<p>B.F. 斯金纳的操作性条件反射实验结论：奖励的<strong>发放方式</strong>比奖励本身更影响行为的持续性。</p><ul><li><strong>固定比率</strong>：每 N 次给一次，停止奖励后行为迅速消退</li><li><strong>变动比率</strong>：平均每 N 次给一次但不固定，行为最顽固，停止后仍持续很久</li></ul><p>这是老虎机、开箱抽卡、信息流推荐的共同机制。书中以此作为第三步的理论支撑。</p><p><strong>注意</strong>：这是动物实验结论，外推到人类复杂产品行为需要谨慎。</p>'
+  },
+  stored: {
+    title: '存储价值 · Stored Value',
+    content: '<p>用户在产品中累积的、无法轻易带走的东西：历史记录、内容、关系、声誉、技能、已付费用。</p><p>它的作用是让"下次使用"比"上次使用"更有价值，同时提高迁移成本。</p><p><strong>与习惯的区别</strong>：习惯解决"想不想来"（心理层面），存储价值解决"能不能走"（成本层面）。成熟产品通常两者同时具备。</p><p><strong>伦理提醒</strong>：靠"迁移太麻烦"实现的锁定是围栏，靠"这里确实更好"实现的锁定才是竞争力。</p>'
+  },
+  vitamin: {
+    title: '维生素 vs 止痛药',
+    content: '<p>书中用于区分需求强度的一个比喻：</p><ul><li><strong>止痛药</strong>：解决已经存在的强烈痛点。用户会主动寻找，不需要教育</li><li><strong>维生素</strong>：满足模糊的、非紧急的需求。用户知道有用，但"现在不用也没关系"</li></ul><p>多数习惯型产品起步时都是维生素——钩子模型的作用，就是通过反复的情绪绑定，把"可要可不要"改造成"每天都要"。</p><p><strong>成功标志</strong>：用户在某类情绪出现时第一个想到你，你就从维生素转型成了止痛药。</p>'
+  },
+  emotion: {
+    title: '内部触发与情绪',
+    content: '<p>内部触发是用户心中自动浮现的念头，通常由情绪启动。</p><p>最强的内部触发几乎都是负面情绪：无聊、孤独、焦虑、拖延、不确定、怕错过、想逃避。</p><p><strong>设计含义</strong>：产品不该只问"用户什么时候需要用"，更要问"用户什么时候会难受"。找到情绪低谷与产品能力的交集，就是内部触发的入口。</p><p><strong>副作用提醒</strong>：过度推送会让用户依赖外部提醒，反而阻碍内部触发的建立。</p>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

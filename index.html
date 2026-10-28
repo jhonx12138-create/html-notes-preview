@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.12.0</title>
+<title>📚 书阁 v8.13.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -515,6 +515,28 @@ html, body {
 .profile-avatar-reset { margin-top: 6px; border: none; background: none; color: var(--accent); font-size: 13px; cursor: pointer; padding: 2px 6px; border-radius: var(--radius-sm); transition: all var(--transition); }
 .profile-avatar-reset:hover { background: var(--accent-soft); }
 
+/* ========== Hero Picker (v8.13) ==========
+   首页头图和分享图头图分开设。分享图那行多一个「同」= 跟随首页。
+   缩略图用 background-image，选中的加一圈 accent 描边。 */
+.hero-picks { display: flex; flex-direction: column; gap: 9px; flex: 1 1 auto; min-width: 0; }
+/* 头图这一项：标签单独一行，两排缩略图在下面占满宽度（横着塞 label+选择器在小屏会挤）。
+   双类名是为了压过后面的 .profile-setting-item { align-items: center } */
+.profile-setting-item.profile-setting-item--hero { flex-direction: column; align-items: stretch; gap: 10px; cursor: default; }
+.hero-pick-row { display: flex; align-items: center; gap: 7px; }
+.hero-pick-name { font-size: 12px; color: var(--text-muted); width: 40px; flex-shrink: 0; letter-spacing: .2px; }
+.hero-thumb {
+  width: 46px; height: 33px; padding: 0; flex-shrink: 0;
+  border: 1.5px solid var(--border); border-radius: 6px;
+  background-color: var(--bg-card); background-size: cover; background-position: center;
+  cursor: pointer; transition: border-color .18s ease, box-shadow .18s ease, transform .12s ease;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: var(--text-muted); font-family: inherit;
+}
+.hero-thumb:active { transform: scale(.94); }
+.hero-thumb.active { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft); }
+.hero-thumb.add { font-size: 17px; line-height: 1; color: var(--text-muted); background-image: none; }
+.hero-thumb.add:hover { border-color: var(--accent); color: var(--accent); }
+
 /* iOS-style setting groups */
 .profile-settings { list-style: none; }
 .profile-setting-item {
@@ -527,7 +549,7 @@ html, body {
 .profile-setting-item:last-of-type { border-radius: 0 0 var(--radius-lg) var(--radius-lg); border-bottom: none; }
 .profile-setting-item:only-of-type { border-radius: var(--radius-lg); }
 .profile-setting-item:hover { background: var(--accent-soft); }
-.profile-setting-item .setting-label { font-size: 15px; color: var(--text-primary); display: flex; align-items: center; gap: 12px; }
+.profile-setting-item .setting-label { font-size: 15px; color: var(--text-primary); display: flex; align-items: center; gap: 12px; flex-shrink: 0; white-space: nowrap; }
 .profile-setting-item .setting-label .setting-icon { font-size: 20px; }
 /* v8.9.6：「我的」页列表图标改成 24×24 线框，暖墨色，不与朱砂按钮抢视线 */
 .profile-setting-item .setting-label .setting-ico { width: 24px; height: 24px; flex-shrink: 0; color: var(--setting-ink); }
@@ -1413,6 +1435,12 @@ html, body {
     <circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.7"/>
     <path d="M12 3.8a8.2 8.2 0 0 1 0 16.4z" fill="currentColor"/>
   </symbol>
+  <!-- v8.13：头图设置用图片图标，别再借用存储管理的图标 -->
+  <symbol id="ico-image" viewBox="0 0 24 24" fill="none">
+    <rect x="3.6" y="5.2" width="16.8" height="13.6" rx="2.6" stroke="currentColor" stroke-width="1.7"/>
+    <circle cx="8.6" cy="10" r="1.5" fill="currentColor"/>
+    <path d="M4.4 16.6l4.3-4.1a1.5 1.5 0 0 1 2.1 0l2.4 2.3 2.2-2.1a1.5 1.5 0 0 1 2.1 0l2.1 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
   <symbol id="ico-storage" viewBox="0 0 24 24" fill="none">
     <rect x="4.4" y="4.8" width="15.2" height="14.4" rx="2.6" stroke="currentColor" stroke-width="1.7"/>
     <path d="M8.4 15.4v-2.6M12 15.4v-4.8M15.6 15.4v-6.8" stroke="currentColor" stroke-linecap="round" stroke-width="1.7"/>
@@ -1452,7 +1480,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.12.0</span>
+        <span class="hero-version">v8.13.0</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1478,7 +1506,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.12.0</span>
+              <span class="hero-version">v8.13.0</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1592,6 +1620,10 @@ html, body {
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-theme"/></svg>主题切换</span>
                 <label class="toggle-switch"><input type="checkbox" id="profileThemeToggle"><span class="slider"></span></label>
               </li>
+              <li class="profile-setting-item profile-setting-item--hero">
+                <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-image"/></svg>头图</span>
+                <div class="hero-picks" id="heroPicks"></div>
+              </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-storage"/></svg>存储管理</span>
                 <span class="setting-value" id="storageSize">计算中…</span>
@@ -1612,11 +1644,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.12.0</span>
+                <span class="setting-value">v8.13.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.12.0</div>
+              <div class="about-version">📚 书阁 v8.13.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1982,9 +2014,12 @@ html, body {
   };
 
   /* ---- 阅读增强常量 (v8.5.0) ---- */
-  const FONT_LEVELS = [0.85, 1.0, 1.15, 1.3, 1.5];   // P0-1 字号档位
-  const FONT_DEFAULT_INDEX = 1;
+  /* v8.13：原来最小只到 85%，小屏读长文还是偏大。前面垫一档 70%，向下多给两级。 */
+  const FONT_LEVELS = [0.7, 0.85, 1.0, 1.15, 1.3, 1.5];   // P0-1 字号档位
+  const FONT_DEFAULT_INDEX = 2;                            // = 1.0
   const FONT_STORAGE_KEY = 'notes-reader-font';
+  const FONT_LEVELS_VER_KEY = 'notes-reader-font-ver';     // 档位表版本，用于迁移老索引
+  const FONT_LEVELS_VER = '2';
   const READER_SCROLL_THRESHOLD = 8;   // P1-4 滚动方向阈值（px），避免快速抖动
   const EDGE_SWIPE_MIN_DX = 60;        // P1-6 侧滑触发的最小水平位移
   const EDGE_SWIPE_MAX_DY = 50;        // P1-6 侧滑允许的最大垂直偏移
@@ -3099,6 +3134,123 @@ html, body {
    *  观点海报的主视觉就是「一段话」，所以这里没有色带、没有书脊，改成一整张纸 + 一条朱砂线，
    *  把所有视觉预算都给标题和引文。引文按全量折行、不截断（正文最长 165 字，约 8 行）。
    * =================================================================== */
+  /* ===================================================================
+   *  HERO PICKER v8.13 —— 首页头图 / 分享图头图分开设置
+   *  ------------------------------------------------------------------
+   *  存的是「a」「b」「follow」或自定义图的 dataURL：
+   *    首页   ：a | b | dataURL
+   *    分享图 ：follow（跟首页）| a | b | dataURL
+   *  自定义图上传后先用 canvas 压到 1200 宽、jpeg 0.82 再存 localStorage，
+   *  否则手机相册一张 5MB 原图会直接撞满配额。
+   * =================================================================== */
+  const HERO_PRESETS = { a: 'assets/shuge-header-a.jpg', b: 'assets/shuge-header-b.jpg' };
+  const HERO_KEY_HOME = 'notes-hero-home';
+  const HERO_KEY_SHARE = 'notes-hero-share';
+
+  function getHeroRaw(key) { try { return localStorage.getItem(key) || ''; } catch (_) { return ''; } }
+  function setHeroRaw(key, val) {
+    try {
+      if (!val) localStorage.removeItem(key); else localStorage.setItem(key, val);
+      return true;
+    } catch (_) { return false; }          // 配额满 / 隐私模式
+  }
+  function heroSrc(val) { return (!val || HERO_PRESETS[val]) ? (HERO_PRESETS[val] || HERO_PRESETS.a) : val; }
+  function getHeroHome() { return heroSrc(getHeroRaw(HERO_KEY_HOME)); }
+  function getHeroShare() {
+    const s = getHeroRaw(HERO_KEY_SHARE);
+    return (s === 'follow' || !s) ? getHeroHome() : heroSrc(s);
+  }
+
+  /* 写到首页那张 <img>，同时把海报的图片缓存作废（否则分享图还用着旧头图） */
+  function applyHeroImage() {
+    const img = document.querySelector('.hero-img');
+    if (img) img.src = getHeroHome();
+    _heroImgPromise = null;
+  }
+
+  function compressHeroImage(file, maxW, quality) {
+    return new Promise((resolve, reject) => {
+      const fr = new FileReader();
+      fr.onload = function () {
+        const im = new Image();
+        im.onload = function () {
+          const scale = Math.min(1, maxW / im.naturalWidth);
+          const c = document.createElement('canvas');
+          c.width = Math.round(im.naturalWidth * scale);
+          c.height = Math.round(im.naturalHeight * scale);
+          c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+          resolve(c.toDataURL('image/jpeg', quality));
+        };
+        im.onerror = reject;
+        im.src = fr.result;
+      };
+      fr.onerror = reject;
+      fr.readAsDataURL(file);
+    });
+  }
+
+  function renderHeroPickers() {
+    const wrap = document.getElementById('heroPicks');
+    if (!wrap) return;
+    const home = getHeroRaw(HERO_KEY_HOME) || 'a';   // 没设过就高亮 A（和实际渲染一致）
+    const share = getHeroRaw(HERO_KEY_SHARE);
+
+    function thumbs(cur, key, withFollow) {
+      let h = '';
+      if (withFollow) {
+        h += `<button type="button" class="hero-thumb${(cur === 'follow' || !cur) ? ' active' : ''}"
+                data-hero-set="${key}" data-hero-val="follow" title="跟随首页头图">同</button>`;
+      }
+      ['a', 'b'].forEach(k => {
+        h += `<button type="button" class="hero-thumb${cur === k ? ' active' : ''}"
+                data-hero-set="${key}" data-hero-val="${k}" title="内置头图 ${k.toUpperCase()}"
+                style="background-image:url('${HERO_PRESETS[k]}')"></button>`;
+      });
+      if (cur && cur !== 'follow' && !HERO_PRESETS[cur]) {
+        h += `<button type="button" class="hero-thumb active" data-hero-set="${key}" data-hero-val="custom"
+                title="自定义头图" style="background-image:url('${cur}')"></button>`;
+      }
+      h += `<button type="button" class="hero-thumb add" data-hero-upload="${key}" title="上传自定义头图">＋</button>`;
+      return h;
+    }
+    wrap.innerHTML =
+      `<div class="hero-pick-row"><span class="hero-pick-name">首页</span>${thumbs(home, HERO_KEY_HOME, false)}</div>` +
+      `<div class="hero-pick-row"><span class="hero-pick-name">分享图</span>${thumbs(share, HERO_KEY_SHARE, true)}</div>`;
+  }
+
+  function pickHeroUpload(key) {
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'image/*';
+    input.addEventListener('change', function () {
+      const f = input.files && input.files[0];
+      if (!f) return;
+      compressHeroImage(f, 1200, 0.82).then(dataUrl => {
+        if (!setHeroRaw(key, dataUrl)) { showToast('图片太大存不进去，换张小一点的'); return; }
+        applyHeroImage(); renderHeroPickers();
+        showToast('头图已更新');
+      }).catch(() => showToast('图片读取失败'));
+    });
+    input.click();
+  }
+
+  function bindHeroPickers() {
+    const wrap = document.getElementById('heroPicks');
+    if (!wrap) return;
+    wrap.addEventListener('click', function (e) {
+      const up = e.target.closest('[data-hero-upload]');
+      if (up) { pickHeroUpload(up.getAttribute('data-hero-upload')); return; }
+      const btn = e.target.closest('[data-hero-set]');
+      if (!btn) return;
+      const key = btn.getAttribute('data-hero-set');
+      const val = btn.getAttribute('data-hero-val');
+      if (val === 'custom') return;          // 只是标记当前是自定义图
+      if (!setHeroRaw(key, val)) { showToast('存储空间不足'); return; }
+      applyHeroImage();
+      renderHeroPickers();
+      showToast(val === 'follow' ? '分享图跟随首页' : '已切换头图');
+    });
+  }
+
   /* v8.12：海报上的署名跟着「我的」里设置的名字走，不再写死「书阁」。
      默认值仍是「书阁」，没设置过的人看到的和以前一样。 */
   function getBrandName() {
@@ -3118,7 +3270,7 @@ html, body {
       const img = new Image();
       img.onload = () => resolve(img);
       img.onerror = () => resolve(null);
-      img.src = 'assets/shuge-header-a.jpg';
+      img.src = getHeroShare();
     });
     return _heroImgPromise;
   }
@@ -4701,7 +4853,19 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
   function loadFontIndex() {
     let idx = FONT_DEFAULT_INDEX;
     try {
-      const raw = localStorage.getItem(FONT_STORAGE_KEY);
+      let raw = localStorage.getItem(FONT_STORAGE_KEY);
+      /* v8.13：档位从 5 档变成 6 档（前面垫了 0.7），老的索引整体后移一位。
+         只迁移一次：靠 FONT_LEVELS_VER_KEY 打标记，否则用户在新版选的 0.7 下次进来会被当成老数据再 +1。 */
+      let ver = null;
+      try { ver = localStorage.getItem(FONT_LEVELS_VER_KEY); } catch (_) {}
+      if (ver !== FONT_LEVELS_VER) {
+        const n0 = parseInt(raw, 10);
+        if (raw !== null && raw !== '' && !isNaN(n0) && n0 >= 0) {
+          raw = String(n0 + 1);
+          try { localStorage.setItem(FONT_STORAGE_KEY, raw); } catch (_) {}
+        }
+        try { localStorage.setItem(FONT_LEVELS_VER_KEY, FONT_LEVELS_VER); } catch (_) {}
+      }
       if (raw !== null && raw !== '') {
         const n = parseInt(raw, 10);
         if (!isNaN(n) && n >= 0 && n < FONT_LEVELS.length) idx = n;
@@ -4731,9 +4895,20 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     }
   }
 
+  /* v8.13：转屏后字号「突然变大」的兜底。
+     zoom 写在 iframe 内部的 body.style 上，而真机转屏时浏览器会重排甚至重载 iframe，
+     这行内样式就没了 —— 表现为竖屏回来字比横屏大一截。
+     盯住 iframe 元素的尺寸：一变化就补写一次 zoom。写 zoom 不会改变 iframe 自身尺寸，不会自激。 */
+  let _readerRO = null;
+  function watchReaderResize(ifr) {
+    if (typeof ResizeObserver === 'undefined' || !ifr) return;
+    if (_readerRO) { _readerRO.disconnect(); _readerRO = null; }
+    _readerRO = new ResizeObserver(function () { applyFontLevel(); });
+    _readerRO.observe(ifr);
+  }
+
   /** 刷新字号面板文案与按钮可用态 */
-  function updateFontPanel() {
-    if (fontLevelText) fontLevelText.textContent = Math.round(FONT_LEVELS[STATE.fontLevelIndex] * 100) + '%';
+  function updateFontPanel() {    if (fontLevelText) fontLevelText.textContent = Math.round(FONT_LEVELS[STATE.fontLevelIndex] * 100) + '%';
     if (fontMinusBtn) fontMinusBtn.disabled = (STATE.fontLevelIndex <= 0);
     if (fontPlusBtn) fontPlusBtn.disabled = (STATE.fontLevelIndex >= FONT_LEVELS.length - 1);
     if (overlayFontBtn) overlayFontBtn.classList.toggle('active', STATE.fontLevelIndex !== FONT_DEFAULT_INDEX);
@@ -4788,6 +4963,7 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     ifr.addEventListener('load', function() {
       hideOverlayLoading();
       applyFontLevel();       // iframe 重渲染会丢失 body.style，需要重新应用
+      watchReaderResize(ifr); // v8.13：转屏后尺寸变化再补一次
       bindReaderScroll(ifr);
     });
     ifr.addEventListener('error', function() { hideOverlayLoading(); });
@@ -5139,6 +5315,7 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
       }
     }
     checkLandscape();
+    applyFontLevel();     // v8.13：转屏后补写字号，避免 iframe 重排丢掉 zoom
     syncHeaderHeight();   // v8.5.0：顶栏高度随视口变化重新测量
     fitReviewCards();     // v8.9.8：视口变了，回顾卡重新量内容高度
   },200);});
@@ -5154,6 +5331,7 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     loadFontIndex(); updateFontPanel(); syncHeaderHeight();
     loadTheme(); loadNickname(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
     renderAvatars(); applyHeroMode();   // v8.9.2：初始渲染头像，并按当前 tab 决定是否隐藏品牌栏
+    renderHeroPickers(); bindHeroPickers(); applyHeroImage();   // v8.13：头图设置
     bindReviewEvents();   // v8.9 每日回顾交互
     profileThemeToggle.checked=(STATE.theme==='dark');
     if(!STATE.isMobile){sidebar.classList.remove('hidden');mainContent.classList.remove('hidden');bottomNav.style.display='none';}

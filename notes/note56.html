@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《管理百年》 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 铸铁 + 砖红 + 米黄：二十世纪工厂档案气质 */
+[data-theme="factory"] {
+  --primary: #33383d; --primary-light: #ece7dd; --primary-dark: #1b1f22;
+  --accent: #a84b32; --accent-deep: #7d3520;
+  --bg: #f7f4ee; --bg-card: #fffefb; --bg-soft: #f1ece2; --bg-softer: #e7e0d3;
+  --bg-tag: #e2d8c4;
+  --text: #2e2b26; --text-heading: #1c1a16; --text-muted: #7d766a; --text-light: #9b9488;
+  --border: #d6cec0; --border-soft: #e6dfd2;
+  --highlight: #f3ede1; --highlight-strong: #e7dcc8;
+  --shadow-sm: 0 1px 3px rgba(40,35,28,0.07); --shadow: 0 2px 8px rgba(40,35,28,0.09);
+  --radius-sm: 2px; --radius: 4px; --radius-lg: 6px;
+  --color-concept: #6b4f8a; --color-tool: #2f6b8f; --color-case: #3f7150;
+  --color-history: #a8791f; --color-insight: #1f6b62; --color-debate: #b03a2e;
+  --color-solution: #3f7150; --color-crisis: #b03a2e; --color-mechanism: #2f6b8f;
+  --color-effect: #7d4a8a; --color-core: #a84b32;
+  --warn-bg: #fbf3dd; --warn-border: #e6d3a3; --example-bg: #f9f6f0;
+  --reflect-bg: #efe9dd; --quote-border: #a84b32;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 224px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border);
+  padding: 20px 14px 28px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar::before {
+  content: ''; display: block; height: 4px;
+  background: linear-gradient(to right, var(--accent) 0 46px, var(--primary) 46px 100%);
+  margin: -20px -14px 18px;
+}
+.sidebar h3 {
+  font-size: 11px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.6px;
+  margin-bottom: 12px; font-family: var(--font-mono);
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 1px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 10px;
+  font-size: 13px; color: var(--text);
+  border-left: 2px solid transparent;
+  transition: background .15s;
+}
+.sidebar .toc-list a:hover { background: var(--bg-soft); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--bg-soft);
+  color: var(--primary-dark);
+  font-weight: 700;
+  border-left-color: var(--accent);
+}
+
+/* ===== 主内容区 ===== */
+.main {
+  margin-left: 224px;
+  max-width: 1080px;
+  padding: 34px 40px 120px 40px;
+}
+
+/* ===== 页头 ===== */
+.header {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-left: 6px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 30px 34px;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.header .stamp {
+  position: absolute; top: 10px; right: 18px;
+  font-family: var(--font-mono); font-size: 48px; font-weight: 700;
+  color: var(--bg-softer); letter-spacing: -2px;
+  line-height: 1; user-select: none; pointer-events: none;
+}
+.header h1 {
+  font-family: var(--font-serif);
+  font-size: 30px; font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 6px; letter-spacing: 2px;
+  position: relative;
+}
+.header .subtitle {
+  color: var(--text-muted); font-size: 13px;
+  font-family: var(--font-mono);
+  margin-bottom: 16px; position: relative;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  font-size: 12.5px; color: var(--text-muted);
+  padding: 11px 14px;
+  background: var(--bg-soft);
+  border-left: 2px solid var(--border);
+  margin-bottom: 14px; position: relative;
+}
+.header .meta strong { color: var(--text-heading); font-weight: 700; }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 6px; position: relative; }
+.header .badge {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--primary);
+  padding: 3px 11px;
+  font-size: 11.5px; font-weight: 600;
+  font-family: var(--font-mono);
+  letter-spacing: .4px;
+}
+.header .core-narrative {
+  margin-top: 14px; font-size: 14px;
+  color: var(--text); line-height: 1.7;
+  padding-left: 14px; border-left: 3px solid var(--highlight-strong);
+  position: relative;
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 28px; }
+.section h2 {
+  font-family: var(--font-serif);
+  font-size: 19px; color: var(--text-heading);
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section h2 .idx {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700;
+  color: #fff; background: var(--accent);
+  padding: 1px 6px; letter-spacing: .5px;
+  flex: 0 0 auto;
+}
+.section h3 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 20px 0 10px;
+  font-family: var(--font-sans);
+  padding-left: 10px;
+  border-left: 3px solid var(--border);
+}
+.lead { font-size: 13.5px; color: var(--text-muted); margin-bottom: 12px; }
+
+/* ===== info-grid 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(276px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  transition: box-shadow .2s, border-top-color .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700; font-size: 13.5px;
+  margin-bottom: 8px; color: var(--text-heading);
+  padding-left: 12px; position: relative;
+}
+.info-card .label::before {
+  content: ''; position: absolute; left: 0; top: 5px;
+  width: 6px; height: 6px; background: var(--primary);
+}
+.info-card .content { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px; padding: 7px 11px;
+  background: var(--example-bg);
+  border-left: 2px solid var(--border);
+  font-size: 12.5px; color: var(--text-muted);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+.info-card.concept { border-top-color: var(--color-concept); }
+.info-card.concept .label::before { background: var(--color-concept); }
+.info-card.tool { border-top-color: var(--color-tool); }
+.info-card.tool .label::before { background: var(--color-tool); }
+.info-card.case { border-top-color: var(--color-case); }
+.info-card.case .label::before { background: var(--color-case); }
+.info-card.history { border-top-color: var(--color-history); }
+.info-card.history .label::before { background: var(--color-history); }
+.info-card.insight { border-top-color: var(--color-insight); }
+.info-card.insight .label::before { background: var(--color-insight); }
+.info-card.debate { border-top-color: var(--color-debate); }
+.info-card.debate .label::before { background: var(--color-debate); }
+.info-card.solution { border-top-color: var(--color-solution); }
+.info-card.solution .label::before { background: var(--color-solution); }
+.info-card.crisis { border-top-color: var(--color-crisis); }
+.info-card.crisis .label::before { background: var(--color-crisis); }
+.info-card.mechanism { border-top-color: var(--color-mechanism); }
+.info-card.mechanism .label::before { background: var(--color-mechanism); }
+.info-card.effect { border-top-color: var(--color-effect); }
+.info-card.effect .label::before { background: var(--color-effect); }
+.info-card.core { border-top-color: var(--color-core); }
+.info-card.core .label::before { background: var(--color-core); }
+
+/* ===== 洞察卡片 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 14.5px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* ===== 规律卡片 ===== */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 3px double var(--primary);
+  padding: 14px 18px;
+  margin-bottom: 8px;
+}
+.law-card h4 {
+  font-size: 13.5px; color: var(--primary-dark);
+  margin-bottom: 5px; font-family: var(--font-mono);
+  letter-spacing: .3px;
+}
+.law-card p { font-size: 13px; color: var(--text); line-height: 1.66; }
+
+/* ===== 反思块 ===== */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 13.5px;
+  color: var(--primary-dark); margin-bottom: 8px;
+  font-family: var(--font-mono); letter-spacing: .5px;
+}
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.72; }
+.reflection-block p + p { margin-top: 8px; }
+
+/* ===== 引用块 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 16px 0;
+  padding: 15px 20px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--text-heading);
+  line-height: 1.8;
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 9px;
+  font-size: 11.5px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+  font-family: var(--font-sans);
+}
+
+/* ===== 两栏 ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0; }
+
+/* ===== 表格 ===== */
+table.matrix, table.extension {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 14px 0;
+  border: 1px solid var(--border);
+}
+table.matrix th, table.extension th {
+  background: var(--primary);
+  color: #f4f0e8;
+  padding: 9px 12px; text-align: left;
+  font-weight: 700; font-size: 12px;
+  letter-spacing: .5px;
+}
+table.matrix td, table.extension td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.65;
+}
+table.matrix tr:nth-child(even) td { background: var(--bg-soft); }
+table.matrix td.rowhead {
+  font-family: var(--font-mono); font-weight: 700;
+  color: var(--accent-deep); white-space: nowrap;
+  background: var(--bg-soft); font-size: 12px;
+}
+table.matrix tr:hover td, table.extension tr:hover td { background: var(--highlight-strong); }
+table.extension th { width: 17%; }
+
+/* ===== 时间轴 ===== */
+.timeline-track {
+  display: flex; gap: 0; overflow-x: auto;
+  padding: 16px 0 8px; margin: 12px 0;
+  position: relative;
+}
+.timeline-track::before {
+  content: ''; position: absolute;
+  top: 39px; left: 0; right: 0;
+  height: 2px; background: var(--border);
+}
+.timeline-node-tl {
+  flex: 0 0 auto; text-align: center;
+  padding: 0 11px; position: relative; z-index: 1;
+  min-width: 84px;
+}
+.timeline-node-tl .era {
+  font-size: 11px; font-weight: 700;
+  color: var(--accent-deep); margin-bottom: 5px;
+  font-family: var(--font-mono);
+}
+.timeline-node-tl .dot {
+  width: 11px; height: 11px;
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  outline: 1px solid var(--border);
+  margin: 0 auto 7px;
+}
+.timeline-node-tl .name {
+  font-size: 12px; font-weight: 700;
+  color: var(--text-heading); margin-bottom: 1px;
+}
+.timeline-node-tl .tl-sub { font-size: 10.5px; color: var(--text-muted); line-height: 1.4; }
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 16px; height: 16px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer; vertical-align: middle;
+  margin-left: 3px; transition: transform .15s;
+  font-family: var(--font-mono);
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(28,26,22,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-top: 4px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 26px 30px;
+  max-width: 560px; width: 90%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(28,26,22,0.25);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none;
+  font-size: 18px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 15px; color: var(--text-heading); margin-bottom: 10px; font-family: var(--font-mono); }
+.modal-card p { font-size: 13.5px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 26px; right: 26px;
+  background: var(--primary); color: #f4f0e8;
+  border: none; width: 42px; height: 42px;
+  font-size: 16px; cursor: pointer;
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(28,26,22,0.25);
+  z-index: 200; opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 11.5px;
+  border-top: 1px solid var(--border-soft);
+  font-family: var(--font-mono);
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar, .back-to-top, .modal-overlay { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 23px; }
+  .header .stamp { font-size: 32px; }
+  .timeline-track::before { top: 35px; }
+  .timeline-node-tl { padding: 0 8px; min-width: 74px; }
+  .modal-card { padding: 20px; }
+}
+</style>
+</head>
+<body data-theme="factory">
+
+<nav class="sidebar" id="sidebar">
+  <h3>Navigation</h3>
+  <ul class="toc-list">
+    <li><a href="#timeline">百年时间轴</a></li>
+    <li><a href="#scarcity">主线：稀缺要素迁移</a></li>
+    <li><a href="#era1">01 效率的诞生 1900-1920</a></li>
+    <li><a href="#era2">02 组织的发现 1921-1940</a></li>
+    <li><a href="#era3">03 战争与营销 1941-1960</a></li>
+    <li><a href="#era4">04 战略的黄金期 1961-1970</a></li>
+    <li><a href="#era5">05 泡沫被戳穿 1971-1980</a></li>
+    <li><a href="#era6">06 卓越与质量 1981-1990</a></li>
+    <li><a href="#era7">07 再造与网络 1991-2000</a></li>
+    <li><a href="#era8">08 新的管理世纪</a></li>
+    <li><a href="#theses">贯穿论点</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸比较</a></li>
+    <li><a href="#reflect">延伸思辨</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="stamp">1900—2000</div>
+    <h1>管理百年</h1>
+    <div class="subtitle">The Management Century · 20 世纪管理思想与实践的批判性回顾</div>
+    <div class="meta">
+      <span><strong>作者</strong> 斯图尔特·克雷纳（Stuart Crainer）</span>
+      <span><strong>译者</strong> 闾佳</span>
+      <span><strong>出版</strong> 中国人民大学出版社 · 湛庐文化 2013</span>
+      <span><strong>结构</strong> 引言 + 11 章（每章十年）</span>
+      <span><strong>页数</strong> 320</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">管理思想史</span>
+      <span class="badge">编年体</span>
+      <span class="badge">63 位人物</span>
+      <span class="badge">批判性回顾</span>
+      <span class="badge">C 类 · 因果时序</span>
+    </div>
+    <div class="core-narrative">
+      <strong>一句话灵魂：</strong>管理不是一门逐渐逼近真理的科学，而是一场持续一百年的试错——每一个十年，都有人为当时的瓶颈开出一副药方，而那副药方又变成了下一个十年的瓶颈。
+    </div>
+  </div>
+
+  <!-- 时间轴 -->
+  <div class="section" id="timeline">
+    <h2><span class="idx">00</span>百年时间轴：十一个十年，十一次换药</h2>
+    <p class="lead">书的结构本身就是它的论点：一年一章太碎，十年一章刚好够一次完整的管理范式起落。下面只标每个十年被记住的那件事。</p>
+    <div class="timeline-track">
+      <div class="timeline-node-tl">
+        <div class="era">1900—1910</div>
+        <div class="dot"></div>
+        <div class="name">时间</div>
+        <div class="tl-sub">泰勒的秒表</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1911—1920</div>
+        <div class="dot"></div>
+        <div class="name">技术</div>
+        <div class="tl-sub">福特流水线</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1921—1930</div>
+        <div class="dot"></div>
+        <div class="name">组织</div>
+        <div class="tl-sub">斯隆事业部</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1931—1940</div>
+        <div class="dot"></div>
+        <div class="name">人</div>
+        <div class="tl-sub">霍桑实验</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1941—1950</div>
+        <div class="dot"></div>
+        <div class="name">战争</div>
+        <div class="tl-sub">运筹学</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1951—1960</div>
+        <div class="dot"></div>
+        <div class="name">营销</div>
+        <div class="tl-sub">营销近视症</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1961—1970</div>
+        <div class="dot"></div>
+        <div class="name">战略</div>
+        <div class="tl-sub">结构追随战略</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1971—1980</div>
+        <div class="dot"></div>
+        <div class="name">泡沫</div>
+        <div class="tl-sub">集团化失灵</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1981—1990</div>
+        <div class="dot"></div>
+        <div class="name">卓越</div>
+        <div class="tl-sub">质量与日本</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1991—2000</div>
+        <div class="dot"></div>
+        <div class="name">再造</div>
+        <div class="tl-sub">流程推倒重来</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">2000—</div>
+        <div class="dot"></div>
+        <div class="name">混沌</div>
+        <div class="tl-sub">没有标准答案</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 稀缺要素迁移 -->
+  <div class="section" id="scarcity">
+    <h2><span class="idx">01</span>一条主线：每个十年，最缺的是什么</h2>
+    <p class="lead">克雷纳按时间写，但真正在变的是一个东西——企业当时最缺的资源。缺什么，就长出什么理论。这张表是全书最高密度的一页。</p>
+    <table class="matrix">
+      <thead>
+        <tr><th style="width:13%">十年</th><th style="width:16%">最缺什么</th><th style="width:30%">主处方</th><th>下一个十年暴露出的副作用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="rowhead">1900s</td><td>效率</td><td>秒表、动作标准化、差别计件工资</td><td>把工人当零件，逼出人际关系学派</td></tr>
+        <tr><td class="rowhead">1910s</td><td>规模</td><td>流水线、零部件标准化、高工资换高产出</td><td>产品单一化，被斯隆的多品牌打散</td></tr>
+        <tr><td class="rowhead">1920s</td><td>协调</td><td>事业部制：集中政策、分散经营</td><td>总部与事业部争权，1970 年代僵化</td></tr>
+        <tr><td class="rowhead">1930s</td><td>人心</td><td>霍桑实验、人事管理、权威接受论</td><td>把人当"社会动物"也成了新的简化</td></tr>
+        <tr><td class="rowhead">1940s</td><td>系统与人才</td><td>运筹学、项目管理、目标管理</td><td>数字管理过度，1960 年代转向市场</td></tr>
+        <tr><td class="rowhead">1950s</td><td>市场</td><td>营销观念、品牌管理、消费研究</td><td>营销膨胀成话术，战略问题被忽略</td></tr>
+        <tr><td class="rowhead">1960s</td><td>方向</td><td>战略规划、组合矩阵、经验曲线</td><td>规划变成填表，1970 年代环境一变全失效</td></tr>
+        <tr><td class="rowhead">1970s</td><td>效率（回来了）</td><td>重组、削减、工作再设计</td><td>只剩财务技巧，丢了产品与质量</td></tr>
+        <tr><td class="rowhead">1980s</td><td>质量</td><td>全面质量管理、企业文化、卓越八特征</td><td>口号化，卓越公司后来多半没保住</td></tr>
+        <tr><td class="rowhead">1990s</td><td>速度与资本</td><td>流程再造、精益、外包、股东价值</td><td>结构被拆了，管理方式没变</td></tr>
+        <tr><td class="rowhead">2000s</td><td>知识</td><td>学习型组织、知识管理、复杂性思维</td><td>无标准答案，只剩持续追问</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 01 效率的诞生 -->
+  <div class="section" id="era1">
+    <h2><span class="idx">02</span>效率的诞生（1900—1920 · 第 1—2 章）</h2>
+    <p class="lead">这二十年只做了一件事：把"管理"从个人经验变成可测量的技术。代价是，人被一起测量了。</p>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">大棒与鸡毛掸子</div>
+        <div class="content">1900 年前后的工厂谈不上管理：工人按件计酬，工头靠吼和罚。老板手上两根棒子——一根是解雇（大棒），一根是福利、宿舍、子弟学校（鸡毛掸子）。前者制造敌意，后者制造依附。真正的空白是：<strong>没人知道一天合理的工作量是多少</strong>。</div>
+        <div class="example"><strong>书里的典型人物</strong>：伊莱休·鲁特（Elihu Root）在陆军部做的组织改革，是管理思想从军队流向企业的早期样本。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">泰勒的四个字：心理革命<button class="glossary-trigger" onclick="openModal('scientificMgmt')" aria-label="术语：科学管理">?</button></div>
+        <div class="content">泰勒（Frederick W. Taylor）1911 年出《科学管理原理》。他真正的赌注不在秒表，而在一场双方的心理转变——劳资不再争"怎么分这块蛋糕"，而是一起把蛋糕做大。他相信一旦效率提高，双方都能多拿。<strong>这句话说对了一半，也正是后来一切争议的起点。</strong></div>
+        <div class="example"><strong>核心逻辑</strong>：不是让工人更累，而是让动作更少。同样的活，去掉多余动作，理论上可以少用力气还多产出。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">拿着秒表的人：吉尔布雷斯夫妇<button class="glossary-trigger" onclick="openModal('therblig')" aria-label="术语：动作基本元素">?</button></div>
+        <div class="content">弗兰克·吉尔布雷斯（Frank Gilbreth）与莉莲·吉尔布雷斯（Lillian Gilbreth）把动作拆到极致：砌砖从 18 个动作减到 5 个，效率翻倍。他们发明了 18 种基本动作元素（therbligs，姓氏倒写），把体力活变成可分析的语言。莉莲后来把心理学带进来，是这一支里少见的"既看动作也看人"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">施密特搬生铁：12.5 吨到 47.5 吨</div>
+        <div class="content">泰勒最著名的实验：一名叫施密特的工人搬运生铁，原来每人每天约 12.5 吨。通过选人、规定动作、强制休息节奏，他把日产量推到 47.5 吨——接近四倍。泰勒的结论是"科学选人 + 科学方法"；工人看到的却是"以后要干四倍的活，工资只涨六成"。</div>
+        <div class="example"><strong>副作用</strong>：这类实验让"效率"变成了一件由上面单方面定义的事，工人只有执行权。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">克雷纳的那句批评：效率排在了伦理之前</div>
+        <div class="content">作者没有把泰勒写成英雄。他指出泰勒思想的第一个缺点，是把效率放在了伦理道德之前。同一句话，几十年后又被用来评价流程再造——<strong>更倾向于裁掉人，而不是改善工作生活与企业绩效</strong>。这个平行对照是全书最锋利的一笔。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">法约尔：管理第一次成为独立职能</div>
+        <div class="content">亨利·法约尔（Henri Fayol）1916 年出《工业管理与一般管理》，提出计划、组织、指挥、协调、控制五项职能，和 14 条一般原则（分工、权责对等、统一指挥、统一领导、纪律、报酬公平、集权、等级链、秩序、公平、人员稳定、首创精神、团队精神）。<strong>泰勒从工人往上看，法约尔从总经理往下看</strong>——这是两条完全不同的管理血统。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">福特：把技术灌进组织<button class="glossary-trigger" onclick="openModal('fordism')" aria-label="术语：福特主义">?</button></div>
+        <div class="content">T 型车 1908 年上市，1913 年高地公园工厂装上移动装配线，1914 年 1 月把日薪提到 5 美元（同时工时从 9 小时降到 8 小时）。这不是慈善： turnover 太高、培训成本太大，高工资是把人固定住的算法。<strong>它同时也是"把人当零件"的极端化</strong>——每个工人只做一个动作。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">价格曲线：850 美元到 260 美元</div>
+        <div class="content">T 型车 1908 年约 850 美元，到 1920 年代中期降到 260 美元上下。一条价格曲线，把"效率红利"讲得比任何理论都清楚：产量越大，单件成本越低。<strong>这就是后来的经验曲线的原始样本。</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 组织的发现 -->
+  <div class="section" id="era2">
+    <h2><span class="idx">03</span>组织的发现（1921—1940 · 第 3—4 章）</h2>
+    <p class="lead">前二十年解决"一个人怎么干得快"，这二十年解决"一万个人怎么不打架"。而答案的一半，意外地落在了人身上。</p>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">从比利到斯隆：建公司的人管不住公司</div>
+        <div class="content">威廉·杜兰特（William Durant，绰号比利）靠并购拼出了通用汽车，却完全不懂怎么管——他靠个人魅力和电话指挥一个庞然大物，1920 年公司濒临破产，他自己被赶下台。接手的阿尔弗雷德·斯隆（Alfred Sloan）做了相反的事：<strong>把权力分出去，把规则留下来。</strong></div>
+        <div class="example"><strong>一句对照</strong>：杜兰特的问题是"公司太大"，斯隆的答案是"让每一块都能独立算账"。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">事业部制：集中政策，分散经营<button class="glossary-trigger" onclick="openModal('mForm')" aria-label="术语：事业部制">?</button></div>
+        <div class="content">斯隆把通用按品牌和产品线切成一个个事业部，每个事业部有自己的损益表和经营自主权，总部只管战略、资金、人事政策和跨部门协调。这套 M 型组织后来被杜邦、通用电气、几乎所有大集团采用，<strong>成为二十世纪最重要的组织结构发明</strong>。</div>
+        <div class="example"><strong>为什么有效</strong>：它同时解决了两件事——总部不至于累死，部门不至于失控。代价是总部和事业部永远在争权。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">韦伯的官僚制：不是骂人，是技术<button class="glossary-trigger" onclick="openModal('bureaucracy')" aria-label="术语：官僚制">?</button></div>
+        <div class="content">马克斯·韦伯（Max Weber）说的官僚制不是低效代名词，而是当时最先进的组织技术：按职位而非血缘分配权力、书面档案、层级授权、非人格化规则。它的优点是可预测、可复制、可问责；<strong>缺点是规则会自我繁殖，目的会退化成程序</strong>。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">霍桑实验：一场失败实验发现的真相<button class="glossary-trigger" onclick="openModal('hawthorne')" aria-label="术语：霍桑效应">?</button></div>
+        <div class="content">1924 年起，西部电气在霍桑工厂做照明实验，想证明"光线越好产量越高"。结果无论调亮还是调暗，产量都在升。真正的变量是：<strong>有人认真在观察他们、询问他们</strong>。梅奥（Elton Mayo）由此得出结论——人是社会动物，不是只对钱反应的机器。</div>
+        <div class="example"><strong>双重遗产</strong>：它开创了行为科学，也留下了一个方法学隐患——被观察本身就会改变行为，这个效应后来以它命名。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">巴纳德：权威在被接受时才成立</div>
+        <div class="content">切斯特·巴纳德（Chester Barnard）1938 年《经理人员的职能》提出：组织是人的协作系统；权威不来自任命，而来自下属是否接受。他给出四条接受条件——能理解、认为与组织目标一致、相信与个人利益不冲突、身心上能执行。<strong>一句话：任命给你权力，同意才给你权威。</strong></div>
+      </div>
+      <div class="info-card history">
+        <div class="label">大萧条与人事新政：人被写进制度</div>
+        <div class="content">1930 年代的大萧条让"福利"从恩赐变成制度。罗斯福新政、瓦格纳法案（1935）承认工会集体谈判权，人事部门由此变成企业必备。管理第一次必须面对一个事实：<strong>员工不是可替换的手，是有组织能力的利益方。</strong></div>
+      </div>
+      <div class="info-card core">
+        <div class="label">玛丽·福莱特：管理是通过人把事做成的艺术</div>
+        <div class="content">玛丽·帕克·福莱特（Mary Parker Follett）在 1920 年代就讲出了后来半个世纪才被接受的东西：冲突不只有压服和妥协，还有"整合"——找到双方都未想到的第三种方案；命令应该来自"情境的规律"而不是职位。她被自己的时代忽略，几十年后被重新发现。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 03 战争与营销 -->
+  <div class="section" id="era3">
+    <h2><span class="idx">04</span>战争与营销（1941—1960 · 第 5—6 章）</h2>
+    <p class="lead">战争把最聪明的人集中到同一个问题上，顺便发明了一整套后来企业用的工具；战后，注意力从"怎么生产"转到"卖给谁"。</p>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">战争的产业契机</div>
+        <div class="content">二战给管理留下的不是武器，是方法：护航反潜、雷达调度、轰炸机编队催生了运筹学（Operations Research）；大型军工项目催生了项目管理、系统分析、甘特图与关键路径。这些"战时的临时办法"在 1950 年代被整批搬进企业，<strong>成为管理科学化的第二次浪潮</strong>。</div>
+        <div class="example"><strong>典型的搬运</strong>：运筹学原本是"怎么用有限飞机找到潜艇"，战后变成"怎么用有限卡车送货"。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">可口可乐随军：品牌成为身份</div>
+        <div class="content">二战期间可口可乐获准在海外设装瓶厂，作为军需品供应，艾森豪威尔甚至要求把它列入优先物资。结果是：一代美国士兵在全球建立了口味记忆，战后顺势铺开国际市场。<strong>这是"跟着用户走"这个营销原则最成功的一次执行</strong>。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">德鲁克：把大企业当社会机构来研究</div>
+        <div class="content">1946 年彼得·德鲁克（Peter Drucker）出《公司的概念》，直接钻进通用汽车做田野研究——这在当时是异类，学者该研究"管理原理"，不该研究一家公司。他提出的问题是全新的：<strong>大企业不只是经济装置，它还是一个社会组织，必须回答"它对员工和社会意味着什么"。</strong></div>
+        <div class="example"><strong>后续</strong>：斯隆本人不喜欢这本书（后来自己写了《我在通用汽车的岁月》来纠正），但这本书开创了管理学作为独立学科。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">目标管理：让每个人自己定指标<button class="glossary-trigger" onclick="openModal('mbo')" aria-label="术语：目标管理">?</button></div>
+        <div class="content">德鲁克 1954 年《管理的实践》提出目标管理（MBO）：先定目标，再按目标组织工作，用自我控制代替上级控制。它把泰勒的"外部标准"换成了"内部承诺"，<strong>是效率逻辑与人性逻辑第一次正经的合流</strong>。后来它被简化成绩效考核表格，也是它名声变坏的原因。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">戴明 1950 年赴日：种子在别处发芽</div>
+        <div class="content">1950 年戴明（W. Edwards Deming）应日本科学技术联盟邀请赴日讲质量管理。美国当时没人在意，日本把他讲的统计质量控制当成国家战略执行，并设立了戴明奖。<strong>三十年后，这颗种子以"日本制造"的形式回来敲美国的门。</strong></div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">营销近视症：铁路以为自己在做铁路生意<button class="glossary-trigger" onclick="openModal('marketingMyopia')" aria-label="术语：营销近视症">?</button></div>
+        <div class="content">西奥多·莱维特（Theodore Levitt）1960 年在《哈佛商业评论》发文：企业定义自己的业务时，用的是产品（铁路、电影、石油）而不是顾客需求（运输、娱乐、能源）。<strong>定义错了，就会在替代品出现时毫无防备</strong>——铁路输给汽车和飞机，不是因为铁轨不好，是因为它以为自己在做铁路。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">组织人：公司人的黄金年代</div>
+        <div class="content">威廉·怀特（William Whyte）1956 年《组织人》描述了一代人的处境：被公司塑造、以忠诚换安全、在郊区过着整齐划一的生活。这既是管理的成功（稳定、可预期、有归属），也是它最容易被批评的形态（个性被抹平）。<strong>"公司人"这个词，本身就是那个十年的自画像。</strong></div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">X 理论与 Y 理论：关于人的两套假设</div>
+        <div class="content">麦格雷戈（Douglas McGregor）1960 年《企业的人性面》指出：管理方式不是技术选择，而是人性假设的后果。X 理论假设人天生懒惰、必须被管；Y 理论假设人愿意承担责任、只需创造条件。<strong>你怎么看人，就会造出什么样的组织</strong>——而多数管理者嘴上说 Y，制度上做 X。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 战略黄金期 -->
+  <div class="section" id="era4">
+    <h2><span class="idx">05</span>战略的黄金期（1961—1970 · 第 7 章）</h2>
+    <p class="lead">市场扩张、环境稳定、大公司有钱有闲——于是"往哪里走"第一次成了独立问题。这十年生产了整整一代战略工具，也生产了它们的教条。</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">结构追随战略<button class="glossary-trigger" onclick="openModal('structureFollows')" aria-label="术语：结构追随战略">?</button></div>
+        <div class="content">阿尔弗雷德·钱德勒（Alfred Chandler）1962 年《战略与结构》研究杜邦、通用、标准石油、西尔斯四家公司，得出结论：先有战略变化（市场、产品线扩张），再有结构调整（事业部制）。<strong>顺序不能倒——照着别人的组织结构抄，而不改自己的战略，是最常见的失败方式。</strong></div>
+        <div class="example"><strong>推论</strong>：组织结构不是设计偏好，是战略的产物。这也解释了为什么"照搬优秀公司架构"几乎从不成功。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">安索夫矩阵：四种增长选择</div>
+        <div class="content">伊戈尔·安索夫（Igor Ansoff）1965 年《公司战略》把增长拆成四格：老产品老市场（渗透）、老产品新市场（开发）、新产品老市场（延伸）、新产品新市场（多元化）。<strong>风险从左下往右上递增</strong>，而他提醒：多元化是最后一格，不是第一格。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">BCG 矩阵与经验曲线<button class="glossary-trigger" onclick="openModal('experienceCurve')" aria-label="术语：经验曲线">?</button></div>
+        <div class="content">波士顿咨询（BCG）的布鲁斯·亨德森（Bruce Henderson）把业务画在"市场增长率 × 相对份额"的坐标上：明星、现金牛、问题、瘦狗。背后的经济学是经验曲线——累计产量每翻一倍，单位成本下降一个固定比例。<strong>于是"抢份额"从面子问题变成成本问题</strong>。</div>
+        <div class="example"><strong>代价</strong>：这套逻辑很适合规模化制造，也很容易导致"为份额而份额"，牺牲利润和差异化。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">SBU：让大公司像小公司一样算账</div>
+        <div class="content">通用电气把庞杂业务切成战略业务单元（SBU），每个单元有自己的市场、对手、目标和资源。它是事业部制的升级版：<strong>事业部按组织切，SBU 按竞争战场切</strong>。这个区分后来成为集团管理的基本语法。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">分析师扛起大旗：咨询业登场</div>
+        <div class="content">麦肯锡、BCG、贝恩在这一时期崛起，把管理从"经验传授"变成"方法论销售"。好处是工具迅速普及、决策有了共同语言；坏处是<strong>工具一旦变成商品，就会被套用在它不适用的地方</strong>。这是 1970 年代大批失败的伏笔。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">争议：战略规划到底能不能规划出战略</div>
+        <div class="content">1970 年代的战略规划部门越做越大，产出的是厚厚的文件而不是更好的判断。亨利·明茨伯格（Henry Mintzberg）后来系统批评：战略往往是事后总结的模式，不是事前设计的意图。<strong>规划能改善执行，未必能产生洞察。</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 泡沫被戳穿 -->
+  <div class="section" id="era5">
+    <h2><span class="idx">06</span>泡沫被戳穿（1971—1980 · 第 8 章）</h2>
+    <p class="lead">十年之内，战后那套"增长永远持续"的假设全部失效。管理工具空前繁荣，生产率却在下降——这本书对这段的处理相当不客气。</p>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">两次石油危机：外部变量改写了内部逻辑</div>
+        <div class="content">1973 年与 1979 年两次石油危机把西方推进滞胀：通胀与失业同时上升，凯恩斯式的需求管理失灵，战后二十年的稳定增长期结束。<strong>战略规划的前提（可预测的环境）当场失效</strong>，而大部分规划部门还在按老办法做五年计划。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">臃肿的企业怪物<button class="glossary-trigger" onclick="openModal('conglomerate')" aria-label="术语：混合兼并">?</button></div>
+        <div class="content">1960 年代盛行混合兼并：只要财务数字好看，就把互不相关的业务买进来。到了 1970 年代，这些集团普遍陷入"总部不懂业务、业务不听总部"的困境，估值折价，随后被逐一拆卖。<strong>多元化从"增长策略"变成"折价原因"，只用了十年。</strong></div>
+        <div class="example"><strong>教训</strong>：可以买来资产，买不来管理能力。协同效应在 PPT 上成立，在车间里不成立。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">沃尔沃之道：把流水线拆掉</div>
+        <div class="content">沃尔沃在卡尔玛（Kalmar，1974）建了一座没有传统流水线的工厂：以自治工作小组为单位，每组完成一整段装配，有工位移动、有任务自主权。这是对福特主义最直接的一次反问——<strong>如果效率的代价是缺勤、流失和质量问题，那它还算效率吗？</strong></div>
+        <div class="example"><strong>结果的双面性</strong>：工作满意度与质量改善明显，但成本与节拍难以和精益流水线竞争。它在理念上赢了，在财报上输了。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">日本开始敲门</div>
+        <div class="content">本田、索尼、丰田在这个十年拿下一个个市场，靠的不是更低的价格，而是更好的质量与更快的迭代。西方当时的解释五花八门（低工资、汇率、政府补贴），<strong>几乎没人愿意承认：是管理方式本身不一样</strong>。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">这个十年的真相：工具越多，效果越差</div>
+        <div class="content">组合规划、零基预算、质量管理圈、Z 理论前身、工作丰富化……七十年代的管理工具数量超过之前任何时期，而西方制造业生产率增速却在下降。<strong>克雷纳的判断是：这些工具治的是症状，真正的病在战略与组织方式上。</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 卓越与质量 -->
+  <div class="section" id="era6">
+    <h2><span class="idx">07</span>卓越与质量（1981—1990 · 第 9 章）</h2>
+    <p class="lead">这是全书最热闹的十年，也是最需要打折阅读的十年——因为这一代"管理圣经"的后续验证，恰好发生在书出版之后。</p>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">西方觉醒：1980 年的那道分水岭</div>
+        <div class="content">1980 年，日本汽车产量超过美国，成为世界第一。同一时期日本半导体、消费电子、钢铁全面压进。这不是一次产品胜利，而是一次<strong>管理体系的公开考试</strong>。美国的反应先是贸易手段，后才是学习。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">Z 理论与 7S：把日本拆成可学的零件</div>
+        <div class="content">威廉·大内（William Ouchi）1981 年《Z 理论》指出日本企业的特点不是终身雇佣这一条，而是长期取向、集体决策、信任与微妙的人际关系。帕斯卡尔与阿索斯同年的《日本企业管理艺术》提出 7S——战略、结构、系统三个"硬 S"，人员、技能、风格、共同价值观四个"软 S"。<strong>结论是：软的那四个抄不走，也最难抄。</strong></div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">质量福音书：戴明的回归<button class="glossary-trigger" onclick="openModal('tqm')" aria-label="术语：全面质量管理">?</button></div>
+        <div class="content">戴明 1982 年出《走出危机》，把质量管理从检验环节推到全流程：质量不是检出来的，是设计和制造出来的；85% 的质量问题是管理系统造成的，不是工人。全面质量管理（TQM）随后成为标准动作，美国 1987 年设立马尔科姆·鲍德里奇国家质量奖。<strong>这是"外来思想回流"最完整的一次。</strong></div>
+      </div>
+      <div class="info-card case">
+        <div class="label">《追求卓越》：八个特征与它的后续</div>
+        <div class="content">彼得斯与沃特曼 1982 年访谈数十家优秀企业，总结出八条（行动优先、贴近客户、自主与创业、依靠人提高生产率、亲身实践价值驱动、做内行的事、结构简化、松紧结合）。书卖出数百万册，成为一代经理人的启蒙。<strong>但被选中的"卓越公司"后来多数未能持续跑赢市场，彼得斯本人也承认研究方法有局限</strong>——这是管理畅销书最经典的一次事后检验。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">企业文化：把"软"的东西当成"硬"的资产</div>
+        <div class="content">迪尔与肯尼迪 1982 年《企业文化》、沙因 1985 年《组织文化与领导》把文化拆成可见的仪式、符号、英雄故事，和不可见的基本假设。核心主张是：<strong>文化不是装饰，是协调成本最低的控制方式</strong>——当没人监督时，人按共享假设行事。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">波特的五力与价值链</div>
+        <div class="content">迈克尔·波特 1980 年《竞争战略》用五种力量（现有对手、新进入者、替代品、供应商、买方）解释行业盈利差异；1985 年《竞争优势》用价值链拆解企业内部的成本与差异化来源。<strong>他把战略从"定目标"改造成"做取舍"</strong>——战略的本质是选择不做什么。</div>
+        <div class="example"><strong>争议</strong>：五力擅长解释行业平均利润，不擅长解释同一行业内企业的巨大差异；后来被批评为"静态框架"。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 07 再造与网络 -->
+  <div class="section" id="era7">
+    <h2><span class="idx">08</span>再造与网络（1991—2000 · 第 10 章）</h2>
+    <p class="lead">这是全书的批判火力最集中的一章。结构的壳被拆掉了，但里面的人没变——克雷纳认为这才是问题。</p>
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">功能性死亡：职能墙塌了，然后呢</div>
+        <div class="content">九十年代的企业发现，按职能切分的组织（生产、销售、财务各自为政）在速度竞争里全面失灵——一个订单要走完所有部门，比对手慢十倍。于是职能边界被拆：流程小组、跨部门团队、矩阵重组纷纷上马。<strong>拆掉旧结构很容易，长出新的协调机制很难。</strong></div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">流程再造：不是改良，是推倒重来<button class="glossary-trigger" onclick="openModal('reengineering')" aria-label="术语：流程再造">?</button></div>
+        <div class="content">哈默与钱皮 1993 年《企业再造》主张：不要自动化现有流程，要问"如果从零开始，这件事该怎么组织"。典型案例是福特应付账款、IBM 信贷流程，把串行改成并行、把审批改成事后核对，周期从周降到天。<strong>它是对的，但它几乎总是以裁员的方式落地。</strong></div>
+        <div class="example"><strong>与泰勒的呼应</strong>：克雷纳在这里下了狠话——再造和泰勒思想一样，更认同裁员，而不是改善工作生活与企业绩效。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">精益生产：把日本方法写成通用语言<button class="glossary-trigger" onclick="openModal('lean')" aria-label="术语：精益生产">?</button></div>
+        <div class="content">沃麦克、琼斯、鲁斯 1990 年《改变世界的机器》用五年研究（IMVP）把丰田方式总结成"精益"：以消除浪费为核心，拉动式生产、小批量、快速换模、持续改善、与供应商长期协同。<strong>它第一次说明日本优势不是文化神秘，而是可复制的方法。</strong></div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">股东价值：资本市场成了最终裁判<button class="glossary-trigger" onclick="openModal('shareholderValue')" aria-label="术语：股东价值">?</button></div>
+        <div class="content">九十年代，公司治理的逻辑被重写：管理层的目标是股东回报最大化，报酬与股价挂钩，不赚钱的业务卖掉，现金回购股票。它提高了资本效率，也把管理的时间尺度压缩到季度。<strong>长期投入（研发、培训、员工关系）在这一套语言里天然吃亏。</strong></div>
+      </div>
+      <div class="info-card history">
+        <div class="label">外包与网络：企业的边界被重画</div>
+        <div class="content">IT 与供应链技术让企业可以把环节拆给外部，自己只留最有优势的部分。纵向一体化的大公司因此瘦身，网络型组织、虚拟企业、战略联盟成为新形态。<strong>但边界画得太细，能力也会一起被卖掉</strong>——这是九十年代过度外包留下的长期问题。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">学习型组织：把"改变"变成常态<button class="glossary-trigger" onclick="openModal('learningOrg')" aria-label="术语：学习型组织">?</button></div>
+        <div class="content">彼得·圣吉 1990 年《第五项修炼》提出系统思考、自我超越、改善心智模式、共同愿景、团队学习。核心不是读书学习，而是<strong>让组织能够察觉自己的行为模式并修改它</strong>。它回应了一个真问题：环境变化速度超过组织学习速度时，组织必然失败。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">克雷纳最锋利的一句：结构拆了，管理没变</div>
+        <div class="content">他写道：高管热情地投入流程再造、拆毁不再合适的结构，可管理实践本身基本毫发无损。如果管理者的工作和风格保持原样，他们最终会破坏重建后的企业结构。<strong>这句话其实适用于每一个十年——工具可以换，权力的用法很难换。</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08 新的管理世纪 -->
+  <div class="section" id="era8">
+    <h2><span class="idx">09</span>新的管理世纪（第 11 章）</h2>
+    <p class="lead">全书没有给出答案，只给出了三个更清楚的问题。</p>
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">观念决定生死</div>
+        <div class="content">克雷纳的判断是：企业之间的差距，越来越不来自资源、设备、甚至人才数量，而来自<strong>看待世界的方式</strong>。同一批事实，不同的心智模式会得出完全不同的行动。管理的第一限制条件不是能力，是想象力。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">企业的消亡：组织比人短命</div>
+        <div class="content">一个现代人的职业生涯通常跨越三到五家公司。这意味着"忠诚换安全"的那份隐含契约已经不存在了——员工必须自己管理能力，企业必须假定人会走。<strong>组织寿命短于职业寿命，是二十世纪管理留给二十一世纪最大的结构变化。</strong></div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">从确定走向混沌</div>
+        <div class="content">复杂性科学给了管理学一个新的世界观：系统是非线性的，小扰动可能放大，长期不可预测，秩序可以自下而上涌现。这直接挑战了从泰勒到战略规划的一整套信念——<strong>相信存在一个唯一最优解</strong>。</div>
+        <div class="example"><strong>后果</strong>：管理从"寻找正确答案"变成"设计能快速试错和调整的系统"。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">至关重要的价值观：唯一抄不走的东西</div>
+        <div class="content">技术会扩散、方法会普及、资本会流动，最后剩下的差异只有两样：<strong>组织里的人，以及他们共同相信什么</strong>。这不是道德说教——如果所有硬要素都能被对手买到，价值观就是最后一道竞争壁垒。</div>
+      </div>
+    </div>
+    <blockquote class="quote-block">
+      <p>未来真正出类拔萃的组织，将会是那些探索出如何让各层级员工自觉学习、发挥出最大潜能的组织。</p>
+      <span class="cite">—— 第 11 章章首引文</span>
+    </blockquote>
+  </div>
+
+  <!-- 贯穿论点 -->
+  <div class="section" id="theses">
+    <h2><span class="idx">10</span>贯穿论点：五条压过一百年</h2>
+    <div class="insight-card">
+      <div class="insight-title">论点一：每一种管理理论，都是对"当时最缺的东西"的响应</div>
+      <div class="insight-body">缺效率就出科学管理，缺协调就出事业部制，缺市场就出营销，缺方向就出战略，缺质量就出 TQM。理论不是真理的逐级逼近，而是<strong>特定约束条件下的最优解</strong>。所以照搬任何一套方法之前，第一个问题永远是：我现在最缺的是不是这个？</div>
+      <div class="insight-evidence">证据：1900s 效率 → 1920s 协调 → 1960s 方向 → 1980s 质量，四次转向都精确对应当时的企业瓶颈</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点二：效率与人性的钟摆，一百年没停过</div>
+      <div class="insight-body">泰勒把人当零件，霍桑把人当社会动物；福特把人钉在工位，沃尔沃把人组成小组；再造把人当流程节点，学习型组织把人当学习者。<strong>每一次摆到极端，都会逼出反弹</strong>，而反弹过头，又会有人重新捡起效率。这本书的价值不在于告诉你哪边对，而在于让你认出自己正站在钟摆的哪一侧。</div>
+      <div class="insight-evidence">证据：科学管理 → 人际关系 → 组织人 → 工作丰富化 → 再造裁员 → 员工体验，摆幅一次比一次小，但方向反复</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点三：每个十年的药方，都会变成下一个十年的病因</div>
+      <div class="insight-body">这是全书最狠的一条。流水线带来规模，也带来僵化；事业部制带来灵活，也带来山头；战略规划带来秩序，也带来官僚；质量体系带来稳定，也带来形式主义；流程再造带来速度，也带来失忆（能力随人一起被裁走）。<strong>成功经验一旦固化成教条，就变成了负债。</strong></div>
+      <div class="insight-evidence">证据：T 型车二十年不改款被通用击败；集团化在七十年代集体折价；卓越公司在书出版后大半失去优势</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点四：突破几乎都来自圈外人</div>
+      <div class="insight-body">泰勒是工厂技工不是学者；梅奥是心理学家不是管理者；戴明是统计学家，而且先在没人重视的日本落地；运筹学来自军方；精益的发现者是一群 MIT 的工程研究者；波特把产业经济学搬进商学院。<strong>管理学最有力的输入，一直来自管理之外。</strong></div>
+      <div class="insight-evidence">证据：军队（运筹学）、心理学（霍桑）、统计学（质量）、生物学与复杂性科学（混沌与自组织）、经济学（五力与交易成本）</div>
+    </div>
+    <div class="insight-card">
+      <div class="insight-title">论点五：管理没有终点，只有更好的问题</div>
+      <div class="insight-body">克雷纳写这本书的姿态不是总结定论，而是<strong>做一次批判性的盘点</strong>——书名里的"批判性回顾"是认真的。他不相信有终极答案，因为每次环境变了，问题就变了。所以这本书的正确用法不是查方法论，而是<strong>认识今天这套做法是从哪来的、当初想解决什么、那个条件还在不在</strong>。</div>
+      <div class="insight-evidence">证据：全书每章都以"管理百年年表"收尾而非"结论"；第 11 章只提出问题不给答案</div>
+    </div>
+  </div>
+
+  <!-- 贯穿规律 -->
+  <div class="section" id="laws">
+    <h2><span class="idx">11</span>贯穿规律：六条反复出现的机制</h2>
+    <div class="law-card">
+      <h4>规律一 · 钟摆律</h4>
+      <p>集权与分权、控制与释放、标准化与个性化，在管理史上以约二十年为周期来回摆动。摆动的不是理论水平，是上一轮做过头之后的修正需求。</p>
+    </div>
+    <div class="law-card">
+      <h4>规律二 · 滞后律（实践先于理论）</h4>
+      <p>方法总是先在现场被摸出来，二十年后才被写成书。泰勒的秒表早于他的著作，丰田的生产方式在《改变世界的机器》出版前已运行三十年，戴明的质量观在日本的实践早于他在美国的声望。</p>
+    </div>
+    <div class="law-card">
+      <h4>规律三 · 消化律（从革命到标配约二十年）</h4>
+      <p>一个管理工具的生命周期大致是：异端 → 流行 → 制度化 → 变成表格 → 被遗忘。但它的内核往往被吸收进下一套方法里，所以"过时"不等于"无效"。</p>
+    </div>
+    <div class="law-card">
+      <h4>规律四 · 反噬律</h4>
+      <p>任何带来成功的做法，在被当成普遍原则复制之后，都会产生它自己的对立面。成功的规模效应 → 僵化；成功的规划 → 官僚；成功的质量体系 → 形式主义。</p>
+    </div>
+    <div class="law-card">
+      <h4>规律五 · 跨界律（答案在行业外）</h4>
+      <p>管理学的重大突破几乎都来自外部输入：军队、心理学、统计学、经济学、生物学。原因很简单——行业内的共识已经被现有做法占满，只有外部视角能提出不同的问题。</p>
+    </div>
+    <div class="law-card">
+      <h4>规律六 · 尺度错配律</h4>
+      <p>同一年、同一个方法，在不同规模的企业里结局相反。事业部制适合大集团、精益适合稳定需求、再造适合流程冗长的老企业。方法没有对错，只有尺度与场景的匹配问题。</p>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2><span class="idx">12</span>记忆钩子</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">一行公式 + 一句提问</div>
+      <p style="font-family:var(--font-mono);font-size:14px;color:var(--accent-deep);">管理史 = 稀缺要素 × 主导工具 × 上一轮的副作用</p>
+      <p>要记住任何一个管理理论，只要回答三个问题：<strong>它出现时企业最缺什么？它给的工具是什么？它在解决旧问题的同时制造了什么新问题？</strong> 三个都答得出，这个理论才算真懂了。</p>
+      <p style="margin-top:10px;padding-top:10px;border-top:1px dashed var(--border);">骨架口诀：<strong>时间 → 技术 → 组织 → 人 → 战争 → 营销 → 战略 → 泡沫 → 卓越 → 再造 → 混沌</strong>。十一个词，正好一百年。</p>
+    </div>
+  </div>
+
+  <!-- 金句 -->
+  <div class="section" id="quotes">
+    <h2><span class="idx">13</span>核心金句</h2>
+    <blockquote class="quote-block">
+      <p>若非工人们从思想上彻底革新了对自身及对雇主之义务的认识，又若非雇主们从思想上彻底革新了对自身及对工人之义务的认识，科学管理无法存在，也不可能存在。</p>
+      <span class="cite">—— 第 1 章章首引文 · 泰勒</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>高级管理人员充满热情地投入再造业务流程的工作，拆毁不再适合组织的公司结构。可管理实践基本上毫发无损。如果管理者的工作和风格保持原样，那么，他们最终会破坏重建后的企业结构。</p>
+      <span class="cite">—— 第 10 章章首引文 · 克雷纳</span>
+    </blockquote>
+    <blockquote class="quote-block">
+      <p>管理上没有最终的答案，只有永恒的追问。</p>
+      <span class="cite">—— 中文版对全书主旨的概括（出版方推荐语，非正文句子）</span>
+    </blockquote>
+  </div>
+
+  <!-- 延伸比较 -->
+  <div class="section" id="extension">
+    <h2><span class="idx">14</span>延伸与比较</h2>
+    <table class="extension">
+      <tbody>
+        <tr>
+          <th>本书定位</th>
+          <td>一部以十年为单位的<b>西方管理思想编年史</b>，同时是一部商业进化史。它不教你方法，它告诉你每个方法是怎么被逼出来的、又是怎么被时代抛弃的。同类书中它最像"管理学的野史"，因为作者是记者而非教授。</td>
+        </tr>
+        <tr>
+          <th>叙述倾向</th>
+          <td>批判性回顾，不是致敬式梳理。克雷纳对泰勒、对再造、对卓越畅销书都保留怀疑；他相信人物比理论更有解释力，所以花大量篇幅写人（杜兰特、斯隆、福特、韦尔奇）的性格与失误。</td>
+        </tr>
+        <tr>
+          <th>局限</th>
+          <td><b>① 几乎全是西方（尤其美国）视角</b>，日本只以"挑战者"身份出现，中国企业一百年基本缺席。<br><b>② 编年体必然切断跨代因果</b>，很多线索散在不同章节，需要读者自己接。<br><b>③ 每章十年，导致人物与事件只能点状呈现</b>，想深入了解某一位还得另找传记。<br><b>④ 对管理理论本身的学术争论着墨不多</b>，更偏"发生了什么"而不是"哪个论证更成立"。<br><b>⑤ 成书于 20 世纪末</b>，平台经济、算法管理、远程办公、AI 对管理层的替代，都没覆盖。</td>
+        </tr>
+        <tr>
+          <th>对照阅读</th>
+          <td><b>《科学管理原理》（泰勒）</b>：读原典才能看出后来对泰勒的批评有多少是误读。<br><b>《管理的实践》（德鲁克）</b>：把这本书里散落的思想整理成体系的那一本。<br><b>《追求卓越》（彼得斯、沃特曼）</b>：第 9 章的主角，值得亲自验证它的说服力和它的问题。<br><b>《我在通用汽车的岁月》（斯隆）</b>：与德鲁克的《公司的概念》对读，能看见同一家公司两种完全不同的叙述。<br><b>《战略与结构》（钱德勒）</b>：本书第 7 章结论的完整论证版。</td>
+        </tr>
+        <tr>
+          <th>跨书链接</th>
+          <td>与<b>《营销管理》</b>：科特勒的体系是这本书第 6 章"营销十年"的延长线，读科特勒时能看出哪些是 1960 年代问题的延续。<br>与<b>《智能商业》</b>：曾鸣讲网络协同与数据智能，本质是"第 11 章之后"——当环境从确定走向混沌，管理靠什么协调。<br>与<b>《信息与激励经济学》</b>：事业部制、目标管理、股东价值，都是激励机制设计的具体形态；用激励相容去重读，很多失败会立刻变得可解释。<br>与<b>《贾宁财务讲义》</b>：股东价值最大化在财务语言里怎么落地、又怎么扭曲长期投入，两本对读很有意思。<br>与<b>《工作、消费主义和新穷人》</b>：鲍曼批评的"工作伦理制造服从"，正是第 1—2 章那段历史的社会学版本。</td>
+        </tr>
+        <tr>
+          <th>现实应用</th>
+          <td>三个用法：<b>① 新工具上线前先做历史体检</b>——它诞生于什么稀缺条件，我们有没有那个条件；<b>② 组织变革前先看副作用栏</b>——同样的做法上一次流行时留下了什么后遗症；<b>③ 个人职业选择</b>——今天追捧的能力，可能是上一个十年的药方，看清楚它服务的是哪种组织形态。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflect">
+    <h2><span class="idx">15</span>延伸思辨</h2>
+    <div class="reflection-block">
+      <div class="reflection-title">一、这本书的写法本身就是一种立场</div>
+      <p>用十年切分历史，等于先假定"每个十年有它自己的主题"。这个假定很有解释力，但也可能把连续的变化讲成了一次次断裂——事实上，泰勒的思想在 1920 年代仍占主流，霍桑的结论要到 1950 年代才真正进入管理实践。<b>章节的边界是叙事的方便，不是历史的断层。</b></p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">二、一百年里，被反复证明的一件事</div>
+      <p>效率与人性的争论从来没有结果，因为<b>它其实不是理论问题，是权力问题</b>——谁有权定义"什么是合理的"。泰勒定义它，工会争它，斯隆分散它，韦尔奇收回它。所以每一次"管理革命"，本质上都是重新分配"谁来定标准"的权力。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">三、这本书停在了最需要它的时候</div>
+      <p>克雷纳写于 20 世纪末，第 11 章已经嗅到了不确定性，但他没看到接下来的二十年：平台垄断、算法派单、零工经济、远程协作、以及 AI 开始接手排班、考核、招聘这些原本属于"管理者"的动作。<b>如果这一百年是"人管理人"，下一个百年可能是"系统管理人"</b>——而这本书提供的所有争论（效率 vs 人性），在那个场景里会重新上演一遍。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">四、一个读取建议</div>
+      <p>不要把它当方法论书读，也不要顺着章节从头读到尾——那样只会记住十一个故事。更好的方式是<b>带着当下一个具体困惑去查对应章节</b>：组织太僵化查 1920s、激励失效查 1930s 与 1950s、战略空转查 1960s、质量形式化查 1980s、变革伤口查 1990s。<b>它是工具书，不是小说。</b></p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《管理百年》知识图谱 · 基于克雷纳原著（闾佳译，中国人民大学出版社 2013）整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  scientificMgmt: {
+    title: '科学管理（Scientific Management）',
+    content: '<p>泰勒 1911 年在《科学管理原理》中提出的管理体系。核心不是"让人更累"，而是用观测与实验确定合理工作量。</p><ul><li><b>四项原则</b>：提炼科学的工作方法；科学选拔与培训工人；与工人真诚合作；劳资分工，管理方承担计划职能</li><li><b>核心赌注</b>：效率提高后劳资双方都能多拿，即所谓"心理革命"</li><li><b>最大争议</b>：效率被放在伦理之前，工人只有执行权没有定义权</li></ul>'
+  },
+  therblig: {
+    title: '动作基本元素（Therbligs）',
+    content: '<p>吉尔布雷斯夫妇发明的 18 种基本动作单元，把体力劳动拆解成可分析、可优化的最小单位。名称来自 Gilbreth 的倒序拼写。</p><ul><li>例如：抓取、搬运、定位、装配、检查、等待、持住</li><li>砌砖实验：从 18 个动作减到 5 个，产出接近翻倍</li><li>意义：让"手艺"第一次变成可以描述和传授的流程</li></ul>'
+  },
+  fordism: {
+    title: '福特主义（Fordism）',
+    content: '<p>以移动装配线、零部件标准化、高工资换高稳定为核心的批量生产模式。</p><ul><li>1913 年高地公园工厂装配线；1914 年日薪 5 美元（工时降到 8 小时）</li><li>逻辑：高工资降低流失与培训成本，同时让工人买得起自己的产品</li><li>代价：产品单一化、工作极度单调、把人的动作压到最小粒度</li></ul>'
+  },
+  mForm: {
+    title: '事业部制 / M 型组织（Multidivisional Form）',
+    content: '<p>斯隆在通用汽车推行的结构：按产品线或地区切成半自主的事业部，总部保留战略、资金与人事政策。</p><ul><li>口诀：<b>集中政策、分散经营</b></li><li>解决的问题：总部管不过来、部门又各自失控</li><li>副作用：总部与事业部长期争权，容易形成山头与内部博弈</li></ul>'
+  },
+  bureaucracy: {
+    title: '官僚制（Bureaucracy）',
+    content: '<p>韦伯描述的理想型组织形式，在当时是最先进的管理技术，不是低效的代名词。</p><ul><li>特征：按职位分配权力、书面档案、层级授权、非人格化规则</li><li>优点：可预测、可复制、可问责</li><li>缺点：规则自我繁殖，目的退化为程序</li></ul>'
+  },
+  hawthorne: {
+    title: '霍桑实验与霍桑效应',
+    content: '<p>1924—1932 年在西部电气霍桑工厂进行的一系列实验。</p><ul><li>照明实验：无论调亮调暗产量都上升，说明真正变量不是光线</li><li>结论：人是社会动物，被关注、被倾听本身就会改变行为</li><li>遗产：开创行为科学，也留下"被观察即改变"的方法学隐患</li></ul>'
+  },
+  marketingMyopia: {
+    title: '营销近视症（Marketing Myopia）',
+    content: '<p>莱维特 1960 年在《哈佛商业评论》提出的概念：企业用产品而不是顾客需求来定义自己的业务。</p><ul><li>铁路业以为自己做铁路生意，实际做的是运输</li><li>后果：替代品出现时毫无防备，因为没有把自己放进更宽的竞争场</li><li>解法：先问"我们替顾客解决什么问题"，再问"我们卖什么"</li></ul>'
+  },
+  mbo: {
+    title: '目标管理（MBO）',
+    content: '<p>德鲁克 1954 年《管理的实践》提出：先定目标，再按目标组织工作，用自我控制替代上级控制。</p><ul><li>把泰勒的外部标准换成内部承诺</li><li>后续演化成绩效考核表格，因此常被诟病为形式主义</li><li>失败主因：目标由上面单方下达，只剩考核没有自我控制</li></ul>'
+  },
+  structureFollows: {
+    title: '结构追随战略（Structure Follows Strategy）',
+    content: '<p>钱德勒 1962 年《战略与结构》的核心结论：战略变化在先，组织结构调整在后。</p><ul><li>研究样本：杜邦、通用汽车、标准石油、西尔斯</li><li>推论：照搬别人的架构而不改自己的战略，几乎必然失败</li><li>延伸：组织不是设计偏好，是战略的产物</li></ul>'
+  },
+  experienceCurve: {
+    title: '经验曲线（Experience Curve）',
+    content: '<p>BCG 在 1960 年代提出的成本规律：累计产量每翻一倍，单位成本下降一个固定比例（不同行业比例不同）。</p><ul><li>战略含义：市场份额不只是面子，是成本结构</li><li>风险：容易演变为"为份额而份额"，牺牲利润与差异化</li><li>适用边界：规模化制造效果明显，知识型与定制型业务弱得多</li></ul>'
+  },
+  tqm: {
+    title: '全面质量管理（TQM）',
+    content: '<p>以戴明、朱兰为代表的质量管理体系的统称，核心是把质量从事后检验推到全流程设计。</p><ul><li>判断：绝大多数质量问题源于管理系统，而非工人不努力</li><li>方法工具：统计过程控制、PDCA 循环、持续改善</li><li>异化风险：变成文件与评审，指标漂亮但客户体验没变</li></ul>'
+  },
+  reengineering: {
+    title: '流程再造（Reengineering）',
+    content: '<p>哈默与钱皮 1993 年《企业再造》主张：不要自动化现有流程，要从零设想这件事该怎么做。</p><ul><li>典型手法：串行改并行、审批改事后核对、按产出而非工序组织团队</li><li>成效：周期从周降到天（如福特应付账款）</li><li>最大问题：几乎总以裁员方式落地，能力随人流失</li></ul>'
+  },
+  lean: {
+    title: '精益生产（Lean Production）',
+    content: '<p>《改变世界的机器》（1990）对丰田生产方式的总结，核心是消除浪费。</p><ul><li>要素：拉动式生产、小批量、快速换模、持续改善、与供应商长期协同</li><li>意义：证明日本优势不是文化神秘，而是可复制的方法</li><li>适用前提：需求相对稳定、供应链可控；波动极大时反而脆弱</li></ul>'
+  },
+  shareholderValue: {
+    title: '股东价值（Shareholder Value）',
+    content: '<p>1990 年代成为主导的公司治理逻辑：管理层目标为股东回报最大化，报酬与股价挂钩。</p><ul><li>正面：提高资本效率，淘汰低效业务</li><li>负面：把管理时间尺度压缩到季度，研发、培训、员工关系天然吃亏</li><li>长期后果：短期主义与能力空心化</li></ul>'
+  },
+  conglomerate: {
+    title: '混合兼并 / 企业集团（Conglomerate）',
+    content: '<p>1960 年代盛行、1970 年代集体失灵的多元化集团模式。</p><ul><li>逻辑：只要财务数字好看就买入互不相关的业务</li><li>失败原因：总部不懂业务、业务不听总部，协同只存在于 PPT</li><li>结局：估值折价，随后被逐一拆卖</li></ul>'
+  },
+  learningOrg: {
+    title: '学习型组织（Learning Organization）',
+    content: '<p>圣吉 1990 年《第五项修炼》提出的组织形态，核心不是培训，而是组织能察觉并修改自己的行为模式。</p><ul><li>五项修炼：系统思考、自我超越、改善心智模式、共同愿景、团队学习</li><li>回应的问题：环境变化速度快于组织学习速度时，组织必然失败</li><li>实操难点：很难量化，容易退化成一堆工作坊</li></ul>'
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

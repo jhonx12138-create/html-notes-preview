@@ -406,5 +406,37 @@
     "date": "2026-10-21",
     "category": "金融与财务",
     "author": "贾宁"
+  },
+  {
+    "id": "53",
+    "title": "《上瘾》",
+    "file": "notes/note53.html",
+    "date": "2026-10-28",
+    "category": "商业与市场",
+    "author": "尼尔·埃亚尔"
+  },
+  {
+    "id": "54",
+    "title": "《从0到1》",
+    "file": "notes/note54.html",
+    "date": "2026-10-26",
+    "category": "商业与市场",
+    "author": "彼得·蒂尔"
+  },
+  {
+    "id": "55",
+    "title": "《HR三支柱》",
+    "file": "notes/note55.html",
+    "date": "2026-10-28",
+    "category": "组织与管理",
+    "author": "戴维·尤里奇"
+  },
+  {
+    "id": "56",
+    "title": "《管理百年》",
+    "file": "notes/note56.html",
+    "date": "2026-10-26",
+    "category": "组织与管理",
+    "author": "斯图尔特·克雷纳"
   }
 ]
