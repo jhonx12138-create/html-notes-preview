@@ -141,11 +141,30 @@ const shelf = await p.evaluate(() => {
 });
 const data = await fetch(BASE.replace('index.html', 'notes.json')).then(r => r.json());
 const titles = data.map(n => n.title);
-ok('notes.json 有 55 条', data.length === 55, `${data.length}`);
-ok('新增 4 本都在', ['《上瘾》', '《从0到1》', '《HR三支柱》', '《管理百年》'].every(t => titles.includes(t)),
-  `商业与市场=${data.filter(n => n.category === '商业与市场').length} 组织与管理=${data.filter(n => n.category === '组织与管理').length}`);
+ok('notes.json 条数够（≥60）', data.length >= 60, `${data.length}`);
+ok('本次新增 5 本都在', ['《智能》', '《激荡三十年》', '《跌荡一百年》', '《变革中国》', '《第四消费时代》'].every(t => titles.includes(t)),
+  `商业与市场=${data.filter(n => n.category === '商业与市场').length} 政治与经济=${data.filter(n => n.category === '政治与经济').length} 社会与文化=${data.filter(n => n.category === '社会与文化').length}`);
+ok('没有重复书名', new Set(titles).size === titles.length, `unique=${new Set(titles).size}/${titles.length}`);
 ok('旧版备份文件没有混进来', !titles.some(t => t.includes('旧版备份')), '');
 ok('书架有渲染卡片', shelf.cards > 0, `${shelf.cards} 张`);
+
+// 新书要真的出现在书架 DOM 里（不能只是写进了 notes.json）。卡片标题不带书名号，所以按 data-id 查
+await p.evaluate(() => document.querySelector('.nav-item[data-tab="notes"]').click());
+await sleep(900);
+const newIds = await p.evaluate(() => ['57', '58', '59', '60', '61'].map(i => !!document.querySelector(`.book-card[data-id="${i}"]`)));
+ok('5 本新书都上了书架', newIds.every(Boolean), JSON.stringify(newIds));
+
+// 新书的正文文件要能取到、标题对得上（headless 里模拟移动端点按不稳，所以直接校验文件本身）
+const fileChecks = [];
+for (const [id, want] of [['57', '智能'], ['58', '激荡三十年'], ['59', '跌荡一百年'], ['60', '变革中国'], ['61', '第四消费时代']]) {
+  const r = await fetch(BASE.replace('index.html', `notes/note${id}.html`));
+  const t = r.ok ? await r.text() : '';
+  const title = (t.match(/<title>([^<]*)<\/title>/) || [])[1] || '';
+  fileChecks.push({ id, code: r.status, okTitle: title.includes(want), title });
+}
+ok('5 个正文文件都能取到且标题正确',
+  fileChecks.every(c => c.code === 200 && c.okTitle),
+  JSON.stringify(fileChecks.map(c => `${c.id}:${c.code}${c.okTitle ? '✓' : '✗'}`)));
 
 console.log('\n=== ⑤ 控制台 ===');
 ok('无页面报错', errors.length === 0, errors.slice(0, 2).join(' | '));

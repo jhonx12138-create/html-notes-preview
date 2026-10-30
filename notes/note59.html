@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>跌荡一百年 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 深青 + 铜 + 旧纸：档案卷宗质感 */
+[data-theme="archive"] {
+  --primary: #1f4646; --primary-light: #e6eeea; --primary-dark: #122f2e;
+  --accent: #a86b2d; --accent-deep: #7a4a17;
+  --bg: #f4efe4; --bg-card: #fdfbf5; --bg-soft: #efe8d9; --bg-softer: #e6dcc7;
+  --bg-tag: #ded1b4;
+  --text: #33302a; --text-heading: #1d1a15; --text-muted: #7d7466; --text-light: #9a9184;
+  --border: #d8cdb6; --border-soft: #e7dfcc;
+  --highlight: #f0ece0; --highlight-strong: #e3dcc6;
+  --shadow-sm: 0 1px 3px rgba(60,45,20,0.07); --shadow: 0 2px 10px rgba(60,45,20,0.10);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #1f4646; --color-tool: #a86b2d; --color-case: #4a6b3a;
+  --color-history: #8a5a1e; --color-insight: #1f4646; --color-debate: #9c3b26;
+  --color-solution: #4a6b3a; --color-crisis: #9c3b26; --color-mechanism: #a86b2d;
+  --color-effect: #6b4a7a; --color-core: #122f2e;
+  --warn-bg: #faf3e2; --warn-border: #e3cf9e; --example-bg: #f7f2e6;
+  --reflect-bg: #eee7d8; --quote-border: #a86b2d;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 14px; padding-left: 12px;
+}
+.sidebar .toc-list { list-style: none; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px; color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+
+/* ===== 主内容 ===== */
+.main { margin-left: 220px; max-width: 1100px; padding: 36px 40px 120px 40px; }
+
+/* ===== 页头 ===== */
+.header {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 4px solid var(--primary);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-serif);
+  font-size: 30px;
+  letter-spacing: 3px;
+  color: var(--text-heading);
+  margin-bottom: 8px;
+}
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; letter-spacing: .5px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 22px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: linear-gradient(90deg, var(--primary-light), transparent);
+  border-left: 3px solid var(--primary);
+  font-size: 14.5px;
+  color: var(--primary-dark);
+  line-height: 1.7;
+  font-family: var(--font-serif);
+}
+.header .stamp {
+  position: absolute; top: 26px; right: 30px;
+  font-family: var(--font-serif);
+  font-size: 11px; letter-spacing: 4px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 5px 8px 5px 12px;
+  opacity: .55;
+  transform: rotate(2deg);
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 30px; }
+.section h2 {
+  font-size: 19px; color: var(--text-heading);
+  margin-bottom: 6px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section h2 .sec-num {
+  font-family: var(--font-mono);
+  font-size: 13px; color: var(--accent);
+  letter-spacing: 1px;
+}
+.section .lead {
+  font-size: 13px; color: var(--text-muted);
+  margin: 10px 0 14px; line-height: 1.7;
+}
+.section h3 { font-size: 15.5px; color: var(--text-heading); margin: 22px 0 10px; }
+
+/* ===== 提问框 ===== */
+.hook-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 14px 0;
+  position: relative;
+}
+.hook-box .hook-q {
+  font-family: var(--font-serif);
+  font-size: 17px; color: var(--primary-dark);
+  line-height: 1.7; margin-bottom: 10px;
+}
+.hook-box .hook-a { font-size: 14px; color: var(--text); line-height: 1.75; }
+.hook-box .hook-a strong { color: var(--accent-deep); }
+
+/* ===== 卡片系统 ===== */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s, transform .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.info-card .label {
+  font-weight: 700; font-size: 14px;
+  margin-bottom: 8px; padding-left: 10px;
+  color: var(--text-heading);
+}
+.info-card .content { font-size: 13.8px; color: var(--text); line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px; color: var(--text-muted);
+  border-left: 3px solid var(--border);
+  line-height: 1.6;
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察 / 规律 / 反思 ===== */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title { font-weight: 700; font-size: 15px; color: var(--primary-dark); margin-bottom: 6px; }
+.insight-card .insight-body { font-size: 13.8px; line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 15px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 5px; }
+.law-card p { font-size: 13.2px; line-height: 1.68; }
+
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title { font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px; }
+.reflection-block p { font-size: 13.2px; line-height: 1.72; }
+
+/* ===== 引用 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 22px;
+  font-family: var(--font-serif);
+  font-size: 15.5px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+  letter-spacing: .3px;
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px;
+  font-size: 12px; font-family: var(--font-sans);
+  color: var(--text-muted); text-align: right;
+}
+
+/* ===== 时间轴 ===== */
+.timeline-track {
+  display: flex;
+  overflow-x: auto;
+  padding: 18px 0 22px;
+  margin: 10px 0 4px;
+  position: relative;
+}
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 34px; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--bg-tag), var(--primary), var(--accent));
+  border-radius: 2px;
+}
+.timeline-node-tl {
+  flex: 1 0 150px;
+  text-align: center;
+  padding: 0 8px;
+  position: relative;
+  z-index: 1;
+}
+.timeline-node-tl .era {
+  font-family: var(--font-mono);
+  font-size: 12px; font-weight: 700;
+  color: var(--primary); margin-bottom: 8px;
+  letter-spacing: -.3px;
+}
+.timeline-node-tl .dot {
+  width: 15px; height: 15px;
+  background: var(--primary);
+  border: 3px solid var(--bg-card);
+  box-shadow: 0 0 0 1px var(--primary);
+  border-radius: 50%;
+  margin: 0 auto 10px;
+  transition: transform .2s;
+}
+.timeline-node-tl:nth-child(n+4) .dot { background: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.timeline-node-tl:hover .dot { transform: scale(1.3); }
+.timeline-node-tl .name { font-size: 13px; font-weight: 700; color: var(--text-heading); margin-bottom: 3px; }
+.timeline-node-tl .tl-sub { font-size: 11px; color: var(--text-muted); line-height: 1.45; }
+
+.tl-note {
+  display: flex; justify-content: space-between;
+  font-size: 11px; color: var(--text-light);
+  font-family: var(--font-mono);
+  border-top: 1px dashed var(--border);
+  padding-top: 6px;
+}
+
+/* ===== 时代标识带 ===== */
+.era-head {
+  display: flex; align-items: stretch; gap: 0;
+  margin: 26px 0 4px;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.era-head .era-year {
+  flex: 0 0 128px;
+  background: var(--primary);
+  color: #f4efe4;
+  font-family: var(--font-mono);
+  font-size: 15px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  letter-spacing: .5px;
+  padding: 14px 6px;
+}
+.era-head.alt .era-year { background: var(--accent); }
+.era-head .era-body {
+  flex: 1;
+  background: var(--bg-soft);
+  border: 1px solid var(--border-soft);
+  border-left: none;
+  padding: 12px 20px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.era-head .era-title { font-size: 15px; font-weight: 700; color: var(--primary-dark); letter-spacing: .5px; }
+.era-head .era-sub { font-size: 12.5px; color: var(--text-muted); margin-top: 2px; line-height: 1.5; }
+
+/* ===== 年份链 ===== */
+.year-chain {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin: 10px 0 4px;
+}
+.year-chip {
+  font-size: 11.5px;
+  background: var(--bg-softer);
+  color: var(--text-heading);
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+  padding: 3px 9px;
+  font-family: var(--font-mono);
+}
+.year-chip b { color: var(--accent-deep); font-weight: 700; }
+
+/* ===== 对照矩阵 ===== */
+.matrix-wrap { overflow-x: auto; margin: 16px 0; }
+table.matrix {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  background: var(--bg-card);
+}
+table.matrix th {
+  background: var(--primary);
+  color: #f4efe4;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12.5px;
+}
+table.matrix th:first-child { background: var(--primary-dark); width: 96px; }
+table.matrix td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  border-right: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+}
+table.matrix tr:nth-child(even) td { background: #faf6ec; }
+table.matrix td.rh {
+  font-weight: 700;
+  color: var(--primary-dark);
+  background: var(--bg-soft) !important;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+table.matrix .up { color: #14655a; font-weight: 700; }
+table.matrix .down { color: #9c3b26; font-weight: 700; }
+table.matrix .flat { color: var(--text-muted); font-weight: 700; }
+
+/* ===== 命运阶梯 ===== */
+.fate-flow { margin: 16px 0; }
+.fate-row {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 0;
+  margin-bottom: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.fate-row .fate-stage {
+  background: var(--primary);
+  color: #f4efe4;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 20px;
+  letter-spacing: 1px;
+}
+.fate-row:nth-child(2) .fate-stage { background: #2c5c58; }
+.fate-row:nth-child(3) .fate-stage { background: #7a4a17; }
+.fate-row:nth-child(4) .fate-stage { background: #9c3b26; }
+.fate-row .fate-body { padding: 13px 18px; }
+.fate-row .fate-name {
+  font-size: 14px; font-weight: 700; color: var(--text-heading);
+  margin-bottom: 3px;
+}
+.fate-row .fate-name span {
+  font-family: var(--font-mono);
+  font-size: 11.5px; color: var(--accent-deep);
+  font-weight: 600; margin-left: 8px;
+}
+.fate-row .fate-desc { font-size: 13px; line-height: 1.65; color: var(--text); }
+
+/* ===== 结局网格 ===== */
+.end-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin: 14px 0;
+}
+.end-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 15px 18px;
+}
+.end-cell .end-tag {
+  font-size: 11px; font-weight: 700;
+  color: var(--accent-deep);
+  letter-spacing: 1px;
+  margin-bottom: 5px;
+}
+.end-cell .end-name { font-size: 14px; font-weight: 700; color: var(--text-heading); margin-bottom: 6px; }
+.end-cell .end-who { font-size: 12.8px; color: var(--text); line-height: 1.65; }
+.end-cell .end-who b { color: var(--primary-dark); }
+
+/* ===== 清单 ===== */
+.check-list { list-style: none; margin: 12px 0; }
+.check-list li {
+  position: relative;
+  padding: 9px 14px 9px 38px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm);
+  margin-bottom: 7px;
+  font-size: 13.2px;
+  line-height: 1.68;
+}
+.check-list li::before {
+  content: '▪';
+  position: absolute; left: 16px; top: 8px;
+  color: var(--accent);
+  font-size: 14px;
+}
+.check-list li b { color: var(--primary-dark); }
+
+/* ===== 两栏 ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
+
+/* ===== 延伸表 ===== */
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+  background: var(--bg-card);
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 17%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.65;
+}
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 3px;
+  transition: transform .15s;
+  line-height: 1;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(30,22,10,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 26px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  position: relative;
+  border-top: 4px solid var(--primary);
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none;
+  font-size: 19px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 13.8px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 30px 0; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .modal-overlay, .back-to-top { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid, .two-col, .end-grid { grid-template-columns: 1fr; }
+  .header h1 { font-size: 23px; letter-spacing: 1px; }
+  .header { padding: 24px 20px; }
+  .header .stamp { display: none; }
+  .timeline-node-tl { flex: 0 0 118px; }
+  .era-head { flex-direction: column; }
+  .era-head .era-year { flex: none; padding: 8px; font-size: 13px; }
+  .fate-row { grid-template-columns: 46px 1fr; }
+  .fate-row .fate-stage { font-size: 16px; }
+}
+</style>
+</head>
+<body data-theme="archive">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#question">00 · 这本书在问什么</a></li>
+    <li><a href="#timeline">01 · 六部时间轴</a></li>
+    <li><a href="#part1">02 · 第一部 辫子洋务</a></li>
+    <li><a href="#part2">03 · 第二部 黄金年代</a></li>
+    <li><a href="#part3">04 · 第三部 国家主义</a></li>
+    <li><a href="#part4">05 · 第四部 抗战挣扎</a></li>
+    <li><a href="#part5">06 · 第五部 沸腾开局</a></li>
+    <li><a href="#part6">07 · 第六部 革命名义</a></li>
+    <li><a href="#lines">08 · 三条资本线消长</a></li>
+    <li><a href="#fate">09 · 阶层四段命运</a></li>
+    <li><a href="#laws">10 · 七条贯穿规律</a></li>
+    <li><a href="#misread">11 · 三个常见误读</a></li>
+    <li><a href="#extend">12 · 延伸与局限</a></li>
+    <li><a href="#hook">13 · 记忆钩子</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="stamp">企业史 · 卷上</div>
+    <h1>跌荡一百年</h1>
+    <div class="subtitle">中国企业 1870—1977 ｜ 吴晓波 ｜ 中信出版社（初版 2009，现行第 3 版 / 十年典藏版，上下两册）</div>
+    <div class="meta">
+      <span><strong>体例</strong> 编年体 · 六部 · 26 个年份</span>
+      <span><strong>跨度</strong> 107 年</span>
+      <span><strong>主角</strong> 一个从未被正式命名的阶层</span>
+      <span><strong>写法</strong> 年份叙事 + 企业史人物侧写</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">C 类 · 历史叙事</span>
+      <span class="badge">编年骨架</span>
+      <span class="badge">阶层命运主线</span>
+      <span class="badge">前传性质</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：这不是一部“企业怎么长大”的成功学史，而是一部“企业家这个身份怎么被允许存在、又怎么被取消”的制度史——107 年里，他们四次被请上台，三次被赶下台，最后一次连名字都没留下。
+    </div>
+  </div>
+
+  <!-- 00 提问 -->
+  <div class="section" id="question">
+    <h2><span class="sec-num">00</span>这本书在问什么</h2>
+    <p class="lead">全书前言只有四节，标题却已经决定了整本书的写法。它不是在写企业，是在找一个失踪的人口。</p>
+
+    <div class="hook-box">
+      <div class="hook-q">为什么在两千年的中国史书里，商人始终是一个“下落不明”的阶层？</div>
+      <div class="hook-a">
+        吴晓波的回答不是道德层面的（重农抑商），而是<strong>叙事层面的</strong>：正史由官僚书写，而商人既不掌握书写权，也不被视为“历史的行动者”。所以当 1870 年中国被迫开始工业化时，第一代企业家不是从商人里长出来的，而是从官僚体系里被“派”出来的——李鸿章派盛宣怀，张之洞派后续的一批人。这个出身，决定了此后一百年的全部命运：
+        <br><br>
+        他们每一次崛起，都不是因为制度承认了他们，而是因为<strong>国家当时需要他们</strong>；每一次坠落，也不是因为做错了什么，而是因为<strong>国家不再需要他们</strong>。
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      寻找一个“下落不明”的阶层
+      <span class="cite">—— 本书前言标题（原文）</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      历史没有什么可以反对的。
+      <span class="cite">—— 本书总序标题（原文）</span>
+    </blockquote>
+
+    <div class="insight-card">
+      <div class="insight-title">为什么用编年体而不是主题式</div>
+      <div class="insight-body">
+        因为这本书要证明的恰恰是“年份决定命运”。同一批人、同一套本事，放在 1915 年能成，放在 1956 年就是罪状。只有当叙事严格按时间推进，读者才能看清：<b>变量不是企业家本人，是那一年国家对他们是什么态度。</b>主题式写法会把这个因果抹平。
+      </div>
+      <div class="insight-evidence">这也是它和《激荡三十年》最大的方法差异：后者写“制度缝隙里的生存技巧”，前者写“制度本身怎么反复改写生存前提”。</div>
+    </div>
+  </div>
+
+  <!-- 01 时间轴 -->
+  <div class="section" id="timeline">
+    <h2><span class="sec-num">01</span>六部时间轴：一条被反复截断的线</h2>
+    <p class="lead">六个部不是六个阶段，是六次“国家与商人重新签约”。每换一次约，上一代人的资产、身份、正当性全部作废。</p>
+
+    <div class="timeline-track">
+      <div class="timeline-node-tl">
+        <div class="era">1870—1910</div>
+        <div class="dot"></div>
+        <div class="name">留着辫子的洋务</div>
+        <div class="tl-sub">官僚办企业<br>商人当配角</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1911—1927</div>
+        <div class="dot"></div>
+        <div class="name">唯一的黄金年代</div>
+        <div class="tl-sub">民间资本<br>第一次自主</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1928—1937</div>
+        <div class="dot"></div>
+        <div class="name">国家主义回归</div>
+        <div class="tl-sub">统制经济<br>金融收编</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1938—1948</div>
+        <div class="dot"></div>
+        <div class="name">抗战与挣扎</div>
+        <div class="tl-sub">内迁求生<br>官僚资本膨胀</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1949—1958</div>
+        <div class="dot"></div>
+        <div class="name">沸腾的开局</div>
+        <div class="tl-sub">公私合营<br>阶层退场</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1959—1977</div>
+        <div class="dot"></div>
+        <div class="name">以革命的名义</div>
+        <div class="tl-sub">企业变车间<br>身份归零</div>
+      </div>
+    </div>
+    <div class="tl-note">
+      <span>上卷：前三部（1870—1937，共 67 年）</span>
+      <span>下卷：后三部（1938—1977，共 40 年）</span>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这条线的形状不对称，是有意的</div>
+      <p>上卷用 67 年写“怎么长出来”，下卷只用 40 年写“怎么被拿回去”。篇幅上看着失衡，实际是作者的态度：<b>长出来极慢、极难、极依赖偶然；拿回去极快，只需要一纸文件。</b>读这本书时，把两卷的年份密度对比一下，就能感到那种速度差。</p>
+    </div>
+  </div>
+
+  <!-- 02 第一部 -->
+  <div class="section" id="part1">
+    <h2><span class="sec-num">02</span>第一部 1870—1910：留着“辫子”的洋务运动</h2>
+    <div class="era-head">
+      <div class="era-year">1870—1910</div>
+      <div class="era-body">
+        <div class="era-title">企业是官府的派出机构</div>
+        <div class="era-sub">没有企业家，只有“办洋务的官员”。商业能力第一次被国家需要，但被需要的是手艺，不是身份。</div>
+      </div>
+    </div>
+
+    <div class="year-chain">
+      <span class="year-chip"><b>1870</b> 未死将生的时刻</span>
+      <span class="year-chip"><b>1875</b> 买办与商战</span>
+      <span class="year-chip"><b>1884</b> 盛宣怀夺权</span>
+      <span class="year-chip"><b>1894</b> 状元办厂</span>
+      <span class="year-chip"><b>1900</b> 国变中的商人</span>
+      <span class="year-chip"><b>1905</b> 立宪急先锋</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">1870 · 起点：为什么从这一年算</div>
+        <div class="content">
+          不是因为某件大事，而是因为三件事在同一个窗口合流：太平天国结束、洋务派掌权、海关有了稳定税收。中国第一次出现“有钱、有权、又有意愿”同时具备的时刻。
+          <div class="example"><strong>关键制度</strong>：海关总税务司由英国人赫德长期执掌，成了晚清最有效率、也最不腐败的一个部门——这本身就是个反讽：<strong>最现代的部分由外国人管，最赚钱的部分归官府。</strong></div>
+        </div>
+      </div>
+
+      <div class="info-card tool">
+        <div class="label">官督商办：一个刻意模糊的所有权设计<button class="glossary-trigger" onclick="openModal('gdsb')">?</button></div>
+        <div class="content">
+          官府出名义和保护，商人出钱和经营。表面是“合力”，实质是把风险留给商人、把控制权留给官府。赚钱时官府要分红，亏钱时商人自负，出事时官员不担责。
+          <div class="example"><strong>轮船招商局</strong>是原型：1872 年创办，最初靠买办唐廷枢、徐润的钱和本事运转，但章程里从未真正承认过他们的产权。</div>
+        </div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">1884 · 盛宣怀夺权：一次产权清洗</div>
+        <div class="content">
+          1883—1884 年上海金融风潮，徐润因挪用局款炒地产被查，唐廷枢去职。盛宣怀顺势接掌招商局，把“商办”彻底改成“官督”。这不是偶然事故，是<strong>结构必然</strong>：产权从未在法律上明确，一旦出现财务缺口，官府收回控制权在程序上毫无障碍。
+          <div class="example"><strong>读法</strong>：把这一节当成全书的方法论样板——此后每一次“收编”，走的都是同一套流程：先是金融或战争的外部冲击，然后是财务问题被追责，最后是控制权转移，事后补一份合法性说明。</div>
+        </div>
+      </div>
+
+      <div class="info-card history">
+        <div class="label">1894 · 状元办厂：身份的一次跃迁<button class="glossary-trigger" onclick="openModal('zhangjian')">?</button></div>
+        <div class="content">
+          张謇以状元身份回南通办大生纱厂，意义不在于赚了多少钱，而在于<strong>士大夫第一次公开承认“办实业”是正途</strong>。他把官场声望直接兑换成商业信用，这是那一代人唯一可用的资本。
+          <div class="example"><strong>代价</strong>：这种“以身份换信用”的模式无法复制、也无法继承。张謇晚年企业崩盘，恰恰因为他的信用是个人的，不是制度的。</div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">1900 · 国变中的商人：第一次政治下注</div>
+        <div class="content">
+          庚子事变时，东南督抚与商人合谋“东南互保”，公开不执行朝廷的宣战令。这是商人阶层第一次意识到：<strong>自己的利益可以和中央的命令不一致</strong>，而且可以不服从。
+          <div class="example">这一步的心理后果比经济后果大得多。此后二十年，商人反复在这个判断上加码——直到 1927 年发现加错了。</div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">1905 · 立宪急先锋：把希望押在制度上</div>
+        <div class="content">
+          张謇、汤寿潜等人推动立宪、参与抵制美货，用的是同一套逻辑：既然经济地位已经具备，就该换政治地位。他们相信制度变革是可以“谈”出来的。
+          <div class="example"><strong>结果</strong>：1911 年他们转身支持革命——不是因为信仰共和，而是因为清廷连“谈”的机会都不给了。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">这一部真正建立的东西：一个心理模板</div>
+      <div class="insight-body">
+        1870—1910 年没有留下多少能持续经营的企业，但留下了一个此后反复启用的模板：<b>商人赚钱可以，但不能拥有；需要你时给名义，不需要时收回去。</b>这个模板后来被完整继承——北洋政府用过，国民政府用过，1956 年用得最彻底。
+      </div>
+      <div class="insight-evidence">所以第一部看似“失败的一代”，其实是全书的地基：后面五部都在验证这个模板的稳定性。</div>
+    </div>
+  </div>
+
+  <!-- 03 第二部 -->
+  <div class="section" id="part2">
+    <h2><span class="sec-num">03</span>第二部 1911—1927：唯一的“黄金年代”</h2>
+    <div class="era-head alt">
+      <div class="era-year">1911—1927</div>
+      <div class="era-body">
+        <div class="era-title">中央权力真空，民间资本第一次自主</div>
+        <div class="era-sub">军阀割据造成的“弱政府”，反而成了企业的保护层。这是 107 年里唯一一段国家无力干预的时期。</div>
+      </div>
+    </div>
+
+    <div class="year-chain">
+      <span class="year-chip"><b>1911</b> 在革命的炮火中</span>
+      <span class="year-chip"><b>1915</b> 作为抵抗的商业</span>
+      <span class="year-chip"><b>1919</b> 广场背后的人</span>
+      <span class="year-chip"><b>1924</b> 工商决裂</span>
+      <span class="year-chip"><b>1927</b> 悲剧之月</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">1915 · 黄金年代的真实成因</div>
+        <div class="content">
+          通常归因于“一战期间欧洲无暇东顾”。这个解释只对了一半。更关键的是三点叠加：<strong>外部竞争骤减、国内关税自主呼声上升、北洋政府收税能力弱</strong>。第三条最被低估——不是政府扶持了企业，是政府没能力骚扰企业。
+          <div class="example"><strong>反证</strong>：一战结束、外资回流后，荣家、郭家等企业依然增长。说明真正的红利不是“外资走了”，而是“没人管”。</div>
+        </div>
+      </div>
+
+      <div class="info-card tool">
+        <div class="label">1915 · 作为抵抗的商业：抵货运动的双面性<button class="glossary-trigger" onclick="openModal('shangzhan')">?</button></div>
+        <div class="content">
+          抵制日货、提倡国货，让民族工业获得了市场空间，但同时也把商业放进了民族主义框架。一旦商业被定义为“救国手段”，它就不再是自主的经济活动，而是随时可以被征用的工具。
+          <div class="example"><strong>长期后果</strong>：这条逻辑到了 1930 年代变成“救亡的经济”，到了 1950 年代变成“改造的浪潮”。商业的正当性始终来自外部目的，从未来自它自身。</div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">1919 · 广场背后的人：商人的第一次群众政治</div>
+        <div class="content">
+          五四期间，商人以罢市响应学生运动。这是企业家阶层唯一一次与城市公共舆论站在一起，并且赢了。
+          <div class="example"><strong>但也是误判的开始</strong>：他们把“能动员群众”当成了自己的政治资本，忽略了真正能动员军队的力量在别处。</div>
+        </div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">1924 · 工商决裂：政治分野的开端</div>
+        <div class="content">
+          国民党改组后，与部分商团发生武装冲突。商人阶层内部第一次分裂：一部分押注国民党，一部分押注北洋，还有一部分试图保持中立。
+          <div class="example">保持中立的那些，在 1927 年之后发现：<strong>在革命政治里，中立不是一种立场，是一种待处理的资产。</strong></div>
+        </div>
+      </div>
+
+      <div class="info-card history">
+        <div class="label">1927 · 悲剧之月：黄金年代的终结方式</div>
+        <div class="content">
+          上海商会与银行界为蒋介石提供了关键财政支持，换来的不是保护，而是随后的摊派、勒索与行业管制。这是全书最锋利的一节：<strong>他们花钱买的不是安全，是延后清算。</strong>
+          <div class="example"><strong>结构原因</strong>：一旦出现一个既有军队又有税收意志的中央政权，“弱政府红利”就自动结束。商人手里没有军队，谈判筹码只有钱，而钱恰恰是可以被直接拿走的。</div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">十六年为什么短</div>
+        <div class="content">
+          黄金年代的成立条件本身就是它的死因：它需要中央虚弱。而任何一个有能力的政权，都不会允许这种虚弱长期存在。所以它不是被商人搞坏的，是<strong>它的前提条件必然被消灭</strong>。
+          <div class="example">这也是全书最悲观的判断：这个阶层的“好日子”从来不是常态，是事故。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 第三部 -->
+  <div class="section" id="part3">
+    <h2><span class="sec-num">04</span>第三部 1928—1937：国家主义的回归</h2>
+    <div class="era-head">
+      <div class="era-year">1928—1937</div>
+      <div class="era-body">
+        <div class="era-title">从“保护私有”转向“国家主导”</div>
+        <div class="era-sub">十年建设期，也是民营资本被系统性地重新安排位置的十年。收编不是一次完成的，是分三步走完的。</div>
+      </div>
+    </div>
+
+    <div class="year-chain">
+      <span class="year-chip"><b>1929</b> 商人的抗争</span>
+      <span class="year-chip"><b>1932</b> 救亡的经济</span>
+      <span class="year-chip"><b>1935</b> 大收编</span>
+      <span class="year-chip"><b>1937</b> 沉船与拯救</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">第一步 · 税：1929 裁厘加税<button class="glossary-trigger" onclick="openModal('guojin')">?</button></div>
+        <div class="content">
+          废除厘金、改征统税与关税。名义上是税制现代化，实质是把征税权从地方军阀手里收归中央，同时把税负从“过路收费”改成“生产环节征收”——后者更容易监控，也更难逃避。
+          <div class="example"><strong>对企业的影响</strong>：大企业尚可承受，中小工厂成批倒闭。这是第一次用“合法税制”完成的结构性淘汰。</div>
+        </div>
+      </div>
+
+      <div class="info-card mechanism">
+        <div class="label">第二步 · 金融：1935 年法币改革</div>
+        <div class="content">
+          白银危机后，国民政府推行法币、禁止白银流通，同时改组中国银行、交通银行，注入官股取得控制权。这是全书最关键的一次制度动作：<strong>谁控制货币，谁就控制所有企业</strong>。
+          <div class="example"><strong>为什么叫“大收编”</strong>：银行本是民营资本最坚固的堡垒（“南三行”“北四行”），一旦被控制，实业企业就失去了独立的融资来源，只能依附于国家银行体系。</div>
+        </div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">第三步 · 产业：资源委员会的扩张</div>
+        <div class="content">
+          以“国防建设”为名，国家进入重工业、能源、交通等上游领域，并逐步向下游延伸。民营资本被挤压到轻工业与消费品，被固定在产业链的低附加值环节。
+          <div class="example"><strong>说法与做法</strong>：官方话语是“节制资本、发达国家资本”，实际效果是形成了一批以家族为核心、以国家权力为外壳的官僚资本。</div>
+        </div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">1932 · 救亡的经济：外部危机成了扩张理由<button class="glossary-trigger" onclick="openModal('tongzhi')">?</button></div>
+        <div class="content">
+          一·二八淞沪抗战后，战时动员逻辑被常态化。“救国”成为最高合法性，任何对民营资本的干预都可以挂在它名下。
+          <div class="example">这一套话术此后三十年被反复使用，一直到 1950 年代的“抗美援朝”与“增产节约”。</div>
+        </div>
+      </div>
+
+      <div class="info-card history">
+        <div class="label">1937 · 沉船与拯救：最后一次共同体的表现</div>
+        <div class="content">
+          战争爆发后，数百家工厂冒着轰炸沿长江内迁，宜昌码头上的抢运是全书最悲壮的一段。企业家在国家存亡时刻表现出的组织能力，远超平时。
+          <div class="example"><strong>代价</strong>：内迁企业的设备、资金、产权在迁移过程中大量流失，落地后多被纳入战时体制。<strong>他们救了国家，也交出了自己。</strong></div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">这十年的真正结论</div>
+        <div class="content">
+          国家主义的回归不是靠没收完成的，是靠<strong>三层合法化</strong>完成的：税制改革（合法）、货币统一（必要）、国防需要（崇高）。三步走完，民营资本发现自己仍然“拥有”企业，但已经失去了决定企业命运的三项权力：定价、融资、投资方向。
+          <div class="example">这是全书最重要的分析工具：<strong>所有权 ≠ 控制权</strong>。看一个企业是否属于你，不看股权证，看你能不能决定它明年做什么。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 第四部 -->
+  <div class="section" id="part4">
+    <h2><span class="sec-num">05</span>第四部 1938—1948：抗战与挣扎</h2>
+    <div class="era-head alt">
+      <div class="era-year">1938—1948</div>
+      <div class="era-body">
+        <div class="era-title">战争把一切加速，包括坠落</div>
+        <div class="era-sub">孤岛繁荣、大后方扩张、接收之乱、金圆券崩盘。十年内四次政令变更，每一次都重新分配一次财富。</div>
+      </div>
+    </div>
+
+    <div class="year-chain">
+      <span class="year-chip"><b>1938</b> 怪乱的“孤岛”</span>
+      <span class="year-chip"><b>1941</b> 大后方</span>
+      <span class="year-chip"><b>1944</b> 此消彼长的中国</span>
+      <span class="year-chip"><b>1945</b> 接收之乱</span>
+      <span class="year-chip"><b>1948</b> 最后的“打虎”</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">1938 · 孤岛：租界里的畸形繁荣</div>
+        <div class="content">
+          上海华界沦陷、租界未占，人口与资本涌入，形成短暂繁荣。这是全书唯一一次“战争带来生意”的段落，也是最不可持续的一种繁荣。
+          <div class="example"><strong>本质</strong>：靠的是地理豁免权，不是经营能力。1941 年日军进入租界，一切归零。</div>
+        </div>
+      </div>
+
+      <div class="info-card tool">
+        <div class="label">1941 · 大后方：战时统制的完整成型</div>
+        <div class="content">
+          重庆时期，物资管制、价格管制、专营制度全面铺开。企业从“被监管”变成“被配给”：原料靠配额、销路靠订单、价格靠核定。
+          <div class="example"><strong>后果</strong>：能活下来的不是效率最高的，是<strong>与管制体系关系最好的</strong>。这一条规则在 1950 年代的国营体系里被完整继承。</div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">1944 · 此消彼长：两种资本的对照实验</div>
+        <div class="content">
+          抗战后期，官僚资本急速膨胀，民营资本被通胀与管制双重挤压。这是全书少见的“同时期对照组”：同样的战争环境，不同的产权身份，结果完全不同。
+          <div class="example">吴晓波在这里没有做道德判断，只摆了数据——这也是这本书最好的部分：<strong>让结构自己说话。</strong></div>
+        </div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">1945 · 接收之乱：一次合法的大规模掠夺</div>
+        <div class="content">
+          抗战胜利后接收敌产，演变成对民营资产的顺手侵占。“接收”变成“劫收”，一批本不属于敌产的企业被划入官营。
+          <div class="example"><strong>致命之处</strong>：这一次不是战争造成的，是<strong>胜利造成的</strong>。它摧毁的不是资产，是信任——企业家阶层从这一刻起不再相信任何政权的承诺。</div>
+        </div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">1948 · 最后的“打虎”：货币信用的终局</div>
+        <div class="content">
+          金圆券改革，强制收兑黄金外汇，上海执行最强硬。结果物价失控更快，中产与小业主被彻底洗空。
+          <div class="example"><strong>结构性解读</strong>：金圆券的真正杀伤力不是通胀，是<strong>它证明了国家可以随时宣布你的资产无效</strong>。此后任何“保护产权”的承诺，在这个阶层听来都不再有分量。</div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">这十年教给企业家的三件事</div>
+        <div class="content">
+          一、政权更替时，产权不作数；二、战争时期，效率不作数；三、通货膨胀时，现金不作数。三件事合起来，等于把上一代人积累的全部经验作废。
+          <div class="example">所以 1949 年之后的选择，不是“信不信新政权”，而是<strong>已经没有别的选项</strong>。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 第五部 -->
+  <div class="section" id="part5">
+    <h2><span class="sec-num">06</span>第五部 1949—1958：沸腾的开局</h2>
+    <div class="era-head">
+      <div class="era-year">1949—1958</div>
+      <div class="era-body">
+        <div class="era-title">从“保护”到“改造”，只用了七年</div>
+        <div class="era-sub">这一部的节奏是全书最快的：1949 年还在争取资本家合作，1956 年这个阶层已经作为阶级被取消。</div>
+      </div>
+    </div>
+
+    <div class="year-chain">
+      <span class="year-chip"><b>1949</b> 两陈治沪</span>
+      <span class="year-chip"><b>1950</b> 改造的浪潮</span>
+      <span class="year-chip"><b>1953</b> “156 工程”</span>
+      <span class="year-chip"><b>1956</b> “绝种”</span>
+      <span class="year-chip"><b>1958</b> “超英赶美”</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">1949 · 两陈治沪：用市场手段打赢市场</div>
+        <div class="content">
+          陈云、陈毅整治上海：银元之战、米棉之战，靠的是集中物资、跨区调运、精准投放——纯粹的经济手段，效率极高。
+          <div class="example"><strong>这里有个容易被忽略的细节</strong>：这一仗之所以能打赢，恰恰因为新生政权掌握了全国范围的物资调度权。手段是市场的，前提是集权的。这个组合后来再没出现过。</div>
+        </div>
+      </div>
+
+      <div class="info-card mechanism">
+        <div class="label">1950 · 改造的浪潮：从“利用”到“限制”<button class="glossary-trigger" onclick="openModal('gongsi')">?</button></div>
+        <div class="content">
+          调整工商业、统购统销、加工订货。企业还在私人名下，但原料来源、产品销路、价格全部由国营体系决定。<b>这就是前面说的“所有权 ≠ 控制权”的极端版本</b>：股权证还在你抽屉里，企业已经不属于你了。
+          <div class="example"><strong>五反运动</strong>之后，多数资本家选择“主动”配合——不是因为觉悟，是因为账目、税务、劳动关系全部可以被随时审查。</div>
+        </div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">1953 · “156 工程”：另一套工业体系<button class="glossary-trigger" onclick="openModal('yiwu')">?</button></div>
+        <div class="content">
+          苏联援建的 156 项重点工程，第一次在中国建立起完整的重工业骨架。这套体系的组织形态不是企业，是<strong>车间</strong>：没有独立核算、没有市场销售、没有产品定义权。
+          <div class="example"><strong>历史后果</strong>：它解决了“从无到有”，也埋下了“无法自我更新”的种子。1978 年之后改革最难的，正是把这套车间重新变回企业。</div>
+        </div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">1956 · “绝种”：一个阶层的制度性消失</div>
+        <div class="content">
+          全行业公私合营，定息取代利润，企业主变成“拿利息的人”，不再参与经营。从这一年起，中国不再有法律意义上的私营企业。
+          <div class="example"><strong>为什么用“绝种”这个词</strong>：不是修辞。一个阶层的存续需要的不是个人，是<strong>制度位置</strong>——没有私营企业的法律形式，就没有企业家的社会身份。<b>人被留下了，位置被取消了。</b></div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">1958 · “超英赶美”：速度成为唯一指标</div>
+        <div class="content">
+          大跃进、人民公社、全民炼钢。经济决策彻底脱离成本核算，企业变成行政单位，指标由上而下拆解。
+          <div class="example">从管理学角度看，这是“以动员替代管理”的极端形态：<strong>它能在短期内动员巨大资源，也必然在短期内耗尽这些资源。</strong></div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">七年走完全程的原因</div>
+        <div class="content">
+          不是强制力特别强，而是<strong>三个前提在 1949 年之前就已经准备好</strong>：一、产权观念从未法律化（1884 年那次夺权就埋下了）；二、商业的正当性一直来自“救国”等外部目的；三、企业家阶层缺乏独立的政治代表。
+          <div class="example">所以 1956 年不是突变，是<strong>七十年前那个模板的最终执行</strong>。全书在这里完成闭环。</div>
+        </div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      他们曾经以为自己是国家请来的客人，直到发现自己是被请来交钥匙的。
+      <span class="cite">—— 综合提炼，非逐字原文</span>
+    </blockquote>
+  </div>
+
+  <!-- 07 第六部 -->
+  <div class="section" id="part6">
+    <h2><span class="sec-num">07</span>第六部 1959—1977：以“革命”的名义</h2>
+    <div class="era-head alt">
+      <div class="era-year">1959—1977</div>
+      <div class="era-body">
+        <div class="era-title">企业只剩物理形态</div>
+        <div class="era-sub">没有市场、没有核算、没有企业家。这十八年，全书的主角第一次完全缺席——而缺席本身就是结论。</div>
+      </div>
+    </div>
+
+    <div class="year-chain">
+      <span class="year-chip"><b>1959</b> 最苦难的三年</span>
+      <span class="year-chip"><b>1964</b> 秘密的三线</span>
+      <span class="year-chip"><b>1966</b> 造反与浩劫</span>
+      <span class="year-chip"><b>1972</b> 最后的冰期</span>
+      <span class="year-chip"><b>1976</b> 转折的前夜</span>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">1959 · 最苦难的三年：数字与制度的双重失效<button class="glossary-trigger" onclick="openModal('jiandao')">?</button></div>
+        <div class="content">
+          粮食统购、高征购、征购指标层层加码。除了自然因素，更关键的是<strong>信息机制失灵</strong>：产量数据由下往上美化，征购指标由上往下加码，中间没有任何纠错环节。
+          <div class="example"><strong>经济学读法</strong>：这是“取消市场价格后发现不了真实稀缺”的教科书案例。价格不只是分配工具，它首先是信息装置。</div>
+        </div>
+      </div>
+
+      <div class="info-card mechanism">
+        <div class="label">1964 · 秘密的三线：以战备逻辑布局工业<button class="glossary-trigger" onclick="openModal('sanxian')">?</button></div>
+        <div class="content">
+          在西南西北山区建设一批隐蔽的军工与重工企业。选址原则是“靠山、分散、隐蔽”，与经济地理完全无关。
+          <div class="example"><strong>长期成本</strong>：这些企业此后几十年持续亏损、无法搬迁、无法改制。它们的困境不是管理问题，是<strong>出生时就带着的错误坐标</strong>。</div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">1966 · 造反与浩劫：管理权威的彻底清除</div>
+        <div class="content">
+          规章制度被批判为“管卡压”，技术权威被当作阶级敌人。企业里最后一点专业判断的空间也消失了。
+          <div class="example"><strong>这一节的深意</strong>：前面五部里，企业家至少还有“本事”可以依靠；到了这里，<strong>连本事本身成了罪证</strong>。阶层消失的最后一层，是能力被否定。</div>
+        </div>
+      </div>
+
+      <div class="info-card history">
+        <div class="label">1972 · 最后的冰期：外部窗口短暂打开</div>
+        <div class="content">
+          中美关系解冻后，引进了一批成套设备（“四三方案”）。这是 1950 年代之后第一次大规模技术引进，为后来的改革开放留下了物质基础。
+          <div class="example">有意思的是：<strong>这批项目的执行者，正是当年三线建设的那批人</strong>。同一批技术官僚，在两个完全不同的方向上都表现出了执行力。</div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">1976 · 转折的前夜：这本书为什么在这里收尾</div>
+        <div class="content">
+          不是 1976 年发生了什么企业事件，而是因为这一年之后，“企业家”这个身份重新获得了制度位置。全书停在门槛上，接下来是《激荡三十年》的开头。
+          <div class="example"><strong>两本书的接缝</strong>：这本书写的是“一个阶层如何被制度取消”，那本书写的是“它如何被制度重新允许”。中间的 1977—1978 年，正好是那道门槛。</div>
+        </div>
+      </div>
+
+      <div class="info-card concept">
+        <div class="label">缺席为什么也是内容</div>
+        <div class="content">
+          第六部没有企业家，只有厂长、书记、军代表。吴晓波把这一部写得很薄，是一种克制：<strong>当一个阶层不存在时，他们的故事就无从叙述，只能用制度史的方式记录他们被替换的过程。</strong>
+          <div class="example">这也是判断这本书是否读懂的一个标志：如果你在第六部感到“没什么可看”，那你恰好读到了作者想让你感到的东西。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 08 三条线 -->
+  <div class="section" id="lines">
+    <h2><span class="sec-num">08</span>三条资本线的百年消长</h2>
+    <p class="lead">把六部横向切开，会看到三条线在争夺同一块空间：国家资本、民间资本、外国资本。它们不是平行发展，是此消彼长——总量有限，一方扩张必有一方让位。</p>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <tr>
+          <th>时期</th>
+          <th>国家资本</th>
+          <th>民间资本</th>
+          <th>外国资本</th>
+          <th>当年主导逻辑</th>
+        </tr>
+        <tr>
+          <td class="rh">1870—1910</td>
+          <td><span class="up">↑ 主导</span><br>官督商办、官办军工</td>
+          <td><span class="flat">→ 依附</span><br>买办与附股商人</td>
+          <td><span class="up">↑ 渗透</span><br>海关、航运、银行</td>
+          <td>官为体、商为用</td>
+        </tr>
+        <tr>
+          <td class="rh">1911—1927</td>
+          <td><span class="down">↓ 缺位</span><br>中央无力、军阀割据</td>
+          <td><span class="up">↑ 主导</span><br>纺织、面粉、银行</td>
+          <td><span class="down">↓ 收缩</span><br>一战期间退出</td>
+          <td>弱政府红利</td>
+        </tr>
+        <tr>
+          <td class="rh">1928—1937</td>
+          <td><span class="up">↑ 回归</span><br>税制、法币、资源委员会</td>
+          <td><span class="down">↓ 受压</span><br>被挤向轻工业</td>
+          <td><span class="flat">→ 局部</span><br>日资在东北扩张</td>
+          <td>节制资本、发达国家资本</td>
+        </tr>
+        <tr>
+          <td class="rh">1938—1948</td>
+          <td><span class="up">↑ 膨胀</span><br>战时统制、接收敌产</td>
+          <td><span class="down">↓ 崩溃</span><br>通胀与管制双杀</td>
+          <td><span class="down">↓ 被接收</span><br>日资产业转官营</td>
+          <td>战时动员常态化</td>
+        </tr>
+        <tr>
+          <td class="rh">1949—1958</td>
+          <td><span class="up">↑ 唯一</span><br>国营体系全面建立</td>
+          <td><span class="down">↓ 退出</span><br>公私合营、定息</td>
+          <td><span class="down">↓ 清零</span><br>外资退出</td>
+          <td>利用、限制、改造</td>
+        </tr>
+        <tr>
+          <td class="rh">1959—1977</td>
+          <td><span class="flat">＝ 全部</span><br>行政单位化</td>
+          <td><span class="down">＝ 无</span><br>法律形式取消</td>
+          <td><span class="down">＝ 无</span><br>封闭经济</td>
+          <td>计划即管理</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">这张表最要紧的一列：主导逻辑</div>
+      <div class="insight-body">
+        看资本消长，容易读成“谁抢了谁”。但真正的变量是最后一列——<b>每一个时期，商业都被安放在一个非商业的目的下面</b>：救国、战备、赶超、革命。当目的本身是政治性的，企业就永远是手段；手段可以被替换，也可以被取消。
+      </div>
+      <div class="insight-evidence">对照今天的语境：当“产业升级”“自主可控”成为商业的最高目的时，这张表的第六行并没有完全失效，只是换了一套说法。</div>
+    </div>
+  </div>
+
+  <!-- 09 阶层命运 -->
+  <div class="section" id="fate">
+    <h2><span class="sec-num">09</span>阶层四段命运：从“代办”到“绝种”</h2>
+    <p class="lead">这是全书真正的骨架。不是企业生命周期，是一个身份的四次变形——每次变形都伴随一次产权安排的改写。</p>
+
+    <div class="fate-flow">
+      <div class="fate-row">
+        <div class="fate-stage">壹</div>
+        <div class="fate-body">
+          <div class="fate-name">代办：官员兼商人<span>1870—1910</span></div>
+          <div class="fate-desc">身份来自官场，资本来自职权。企业是衙门的延伸，赚钱是附带结果。盛宣怀是标本：他的权力来自李鸿章，不是来自股东。</div>
+        </div>
+      </div>
+      <div class="fate-row">
+        <div class="fate-stage">贰</div>
+        <div class="fate-body">
+          <div class="fate-name">自立：民间企业家<span>1911—1927</span></div>
+          <div class="fate-desc">第一次以“实业家”自我命名。张謇、荣家、郭家、陈光甫——他们相信只要把企业做好，地位自然会被承认。这是唯一一段“身份与资产匹配”的时期。</div>
+        </div>
+      </div>
+      <div class="fate-row">
+        <div class="fate-stage">叁</div>
+        <div class="fate-body">
+          <div class="fate-name">依附：有产无权<span>1928—1949</span></div>
+          <div class="fate-desc">产权还在，决定权没了。税、币、原料、销路逐项被接管。企业家从“所有者”降格为“经营者”，再从“经营者”降格为“配合者”。</div>
+        </div>
+      </div>
+      <div class="fate-row">
+        <div class="fate-stage">肆</div>
+        <div class="fate-body">
+          <div class="fate-name">取消：人留位置无<span>1950—1977</span></div>
+          <div class="fate-desc">定息赎买之后，人还在，身份没了。此后二十年，“企业家”不是一种职业，是一个需要被批判的历史名词。直到 1978 年之后重新出现。</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>四种结局：同一代人的四条出路</h3>
+    <p class="lead">书里那二十多个“企业史人物”侧写，最后都落在四类结局里。分类比个案更有信息量。</p>
+
+    <div class="end-grid">
+      <div class="end-cell">
+        <div class="end-tag">结局 A · 被收编</div>
+        <div class="end-name">做大了，然后交出去</div>
+        <div class="end-who"><b>盛宣怀</b>式的路径：把企业做到国家离不开，然后国家直接接管。这类人往往活得最久、也最没有遗产。</div>
+      </div>
+      <div class="end-cell">
+        <div class="end-tag">结局 B · 被消耗</div>
+        <div class="end-name">做对了，但时候不对</div>
+        <div class="end-who"><b>张謇</b>式的路径：以个人信用撑起一个地方产业体系，最后被这个大体系拖垮。他失败的方式，正是他成功的方式。</div>
+      </div>
+      <div class="end-cell">
+        <div class="end-tag">结局 C · 被清洗</div>
+        <div class="end-name">站错队，或者没站队</div>
+        <div class="end-who">1927 年前后、1948 年前后各有一次。中立者往往比站错队者更早出局，因为没有人为他们说话。</div>
+      </div>
+      <div class="end-cell">
+        <div class="end-tag">结局 D · 被转换</div>
+        <div class="end-name">从企业家变成技术官僚</div>
+        <div class="end-who">一部分人在 1950 年代进入国营体系，成为厂长、总工、部委干部。<b>身份消失了，能力被留下了</b>——这也是 1978 年之后能迅速恢复的原因之一。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">为什么这四类结局值得记住</div>
+      <p>因为它们不依赖具体年代。把“国家”换成“平台”，把“收编”换成“收购”，把“定息”换成“期权”，这四类结局在今天依然能一一对应。<b>这本书真正的价值不在于史料，而在于它给出了一套“非市场力量如何重组企业命运”的分类法。</b></p>
+    </div>
+  </div>
+
+  <!-- 10 规律 -->
+  <div class="section" id="laws">
+    <h2><span class="sec-num">10</span>七条贯穿百年的规律</h2>
+
+    <div class="law-card">
+      <h4>一 · 产权从来没有法律化，只有政治默许</h4>
+      <p>从 1872 年招商局到 1956 年公私合营，八十四年间中国始终没有一部真正保护私人产权的法律被稳定执行。企业家的安全感来自“目前没人动我”，而不是“有人不能动我”。</p>
+    </div>
+    <div class="law-card">
+      <h4>二 · 每一次崛起都因为国家需要，而不是制度承认</h4>
+      <p>洋务需要技术、抗战需要物资、一五需要配套——企业家每次上桌都是被叫来的。被叫来的人，没有资格定菜单。</p>
+    </div>
+    <div class="law-card">
+      <h4>三 · 收编永远走三步：税、币、命脉产业</h4>
+      <p>1929 年改税、1935 年改币、1930 年代进军重工——三步走完，企业还在你名下，但你已经不能决定它做什么。这个顺序在两千年商业史上反复出现。</p>
+    </div>
+    <div class="law-card">
+      <h4>四 · 所有权与控制权可以长期分离，而且不需要违法</h4>
+      <p>公私合营期间，股东照拿定息、产权照在名下，但原料、销路、价格、人事全部由外部决定。这是全书对“什么叫拥有”最尖锐的一课。</p>
+    </div>
+    <div class="law-card">
+      <h4>五 · 危机会加速集中，而且通常是不可逆的</h4>
+      <p>1884 年金融风潮、1935 年白银危机、1948 年金圆券、1959 年粮食危机——每一次危机过后，资源都向权力一侧集中一步，且从未真正退回过。</p>
+    </div>
+    <div class="law-card">
+      <h4>六 · 商业的正当性一直来自外部目的</h4>
+      <p>“实业救国”“救亡的经济”“超英赶美”——商业从不因“满足需求”而被认可，只因为某个更大的目标服务而被允许。这决定了它随时可以被重新定义。</p>
+    </div>
+    <div class="law-card">
+      <h4>七 · 人可以被留下，阶层不能</h4>
+      <p>1956 年之后，企业家作为个人活得下去，甚至活得不错；但作为阶层，它失去了制度位置。这一点是全书最冷静也最沉重的判断：<b>消灭一个阶层，不需要消灭这些人。</b></p>
+    </div>
+  </div>
+
+  <!-- 11 误读 -->
+  <div class="section" id="misread">
+    <h2><span class="sec-num">11</span>三个常见误读</h2>
+
+    <div class="info-grid">
+      <div class="info-card debate">
+        <div class="label">误读一：这是一部“民族工业光荣史”</div>
+        <div class="content">
+          不是。书里成功案例极少，失败、被吞并、被清算才是主流。吴晓波自己在前言里就说，他要找的是一个“下落不明”的阶层——下落不明，本身就不是光荣叙事。
+          <div class="example">如果读完感到振奋，多半是只读了第二部（黄金年代），没读第四、五部。</div>
+        </div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读二：把一切归因于“外敌”或“某个人”</div>
+        <div class="content">
+          战争、革命、某个决策者，都是触发器；真正的结构性原因在于前面那七条规律。换一个决策者、换一场战争，走向大概率不变——因为模板在 1884 年就定好了。
+          <div class="example"><strong>检验方法</strong>：问自己“如果 1927 年那笔钱没给，会怎样？”如果答案是“还是会一样”，说明你抓住了结构。</div>
+        </div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读三：把它当《激荡三十年》的前传读</div>
+        <div class="content">
+          时间上是的，方法上不是。那本书的主角是“在缝隙里生长的企业”，这本书的主角是“决定缝隙宽度的制度”。一个写战术，一个写地形。
+          <div class="example">两本连读的正确顺序是：先读《激荡三十年》获得对“企业”的具体感，再读这本理解“为什么那些缝隙会出现，也为什么会被关上”。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 12 延伸 -->
+  <div class="section" id="extend">
+    <h2><span class="sec-num">12</span>延伸与局限</h2>
+
+    <table class="extension">
+      <tr>
+        <th>本书定位</th>
+        <td>中文世界第一部以“企业家阶层”为主角的百年通史，把 1870—1977 年当作一个完整的制度周期来写。它的贡献不在新史料，在于把散落在人物传记、地方志、企业档案里的材料编成了一条可读的因果线。</td>
+      </tr>
+      <tr>
+        <th>方法特点</th>
+        <td>编年体 + 人物侧写双轨。每年一个主题词（如“作为抵抗的商业”“大收编”），这些命名本身就是分析——它们把事件重新归类，而不是复述。全书最有价值的往往是这些标题。</td>
+      </tr>
+      <tr>
+        <th>主要局限</th>
+        <td>
+          一、<b>幸存者偏差</b>：能被写进书的企业和人物，本身就是史料保存下来的少数，大量中小企业的消失没有留下痕迹。<br>
+          二、<b>因果偏顺</b>：因为知道结局（1956 年绝种），叙述上容易把每一步都读成“通向绝种的准备”，实际当时的当事人有大量其他可能。<br>
+          三、<b>经济分析偏薄</b>：书中对制度与政治着墨极重，对技术、成本、市场结构、管理能力的分析相对轻，容易让人误以为企业的成败完全由政治决定。<br>
+          四、<b>史料来源不均衡</b>：上卷（尤其第二部）材料丰富、叙事从容；下卷受档案限制，部分年份只能依靠公开报刊与回忆录，密度明显下降。
+        </td>
+      </tr>
+      <tr>
+        <th>对照阅读</th>
+        <td>
+          <b>《激荡三十年》</b>（同一作者）——1978—2008，接续本书，看“缝隙如何重新打开”。<br>
+          <b>《浩荡两千年》</b>（同一作者）——把视野拉到公元前 7 世纪，看这套“国营—民营”循环的更长周期。<br>
+          <b>《大分流》</b>（彭慕兰）——回答本书没有回答的问题：为什么 18 世纪中西方走到分岔口，而不是 1870 年才分出高下。<br>
+          <b>《剑桥中国史·晚清卷 / 民国卷》</b>——补足本书相对简略的财政、货币与国际贸易层面。
+        </td>
+      </tr>
+      <tr>
+        <th>适合谁读</th>
+        <td>想知道“中国企业家为什么总有一种不安全感”的人；做长期商业判断、需要理解制度不确定性的人；以及任何觉得“只要产品好就能活下去”的创业者——这本书记录了一百年的反例。</td>
+      </tr>
+    </table>
+
+    <div class="info-card debate">
+      <div class="label">一个可以带走的判断</div>
+      <div class="content">
+        全书读完，最有用的不是任何一个年份，而是这个提问方式：<b>当外部力量决定你的生存条件时，你手里到底还剩下什么？</b>书里的答案是——只剩下两样：把事做成的能力，和与掌权者的关系。前者可以被利用，后者可以被切断。<b>两样都不是产权。</b>
+      </div>
+    </div>
+  </div>
+
+  <!-- 13 钩子 -->
+  <div class="section" id="hook">
+    <h2><span class="sec-num">13</span>记忆钩子</h2>
+    <p class="lead">一条口诀把这本书记住：六部、四命、三步、一绝种。</p>
+
+    <ul class="check-list">
+      <li><b>六部</b>：辫子洋务 → 黄金年代 → 国家主义 → 抗战挣扎 → 沸腾开局 → 革命名义。前三个部是“长出来”，后三个部是“拿回去”。</li>
+      <li><b>四命</b>：代办 → 自立 → 依附 → 取消。每换一次命，产权安排就改写一次。</li>
+      <li><b>三步</b>：收编顺序永远是先税、再币、最后命脉产业。记住这个顺序，就能判断任何一个“国家与商人重新签约”的时刻走到哪一步。</li>
+      <li><b>一绝种</b>：1956 年。不是没收，是赎买——人留下，位置取消。这是全书最需要想清楚的一件事。</li>
+    </ul>
+
+    <div class="insight-card">
+      <div class="insight-title">如果只记一句话</div>
+      <div class="insight-body">
+        这一百年里，中国企业家的全部历史，就是在回答一个问题：<b>你能不能在不属于你的土地上，种出属于你的东西？</b>书里的回答很长，但结论很短——能种，但收成不归你。
+      </div>
+      <div class="insight-evidence">综合提炼，非逐字原文。</div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《跌荡一百年》知识图谱 · 基于原著目录与内容整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  gdsb: {
+    title: "官督商办",
+    content: "<p>晚清洋务企业的基本组织形式：官府出面督办、给予政策保护，商人出资经营、自负盈亏。</p><p>关键在于它<b>故意不明确产权</b>——章程里通常不承认商人的股东地位，只承认“附股”。于是出现一种奇特结构：赚钱时官府分红，亏钱时商人承担，出事时官员不担责。</p><p>1872 年轮船招商局是原型。1884 年盛宣怀接掌后彻底改为官督，商办色彩被清除。这一组织形式后来被反复批评为“官商不分”的根源。</p>"
+  },
+  zhangjian: {
+    title: "张謇（1853—1926）",
+    content: "<p>清末状元，1895 年回南通创办大生纱厂，是“状元办厂”的代表人物。</p><p>他的意义不是赚了多少钱，而是<b>把士大夫的社会声望直接兑换成商业信用</b>。在没有公司法、没有银行体系的年代，个人声望是唯一可用的融资工具。</p><p>代价是这种信用无法制度化、无法继承。1920 年代大生系企业陷入债务危机，张謇晚年事业崩盘——他失败的方式，正是他成功的方式。</p>"
+  },
+  shangzhan: {
+    title: "商战",
+    content: "<p>晚清民初流行的一个概念，由郑观应等人提出：把中外商业竞争理解为一场“没有硝烟的战争”，主张以实业抵御经济侵略。</p><p>这个概念的影响远超经济层面：它第一次赋予商业一种<b>崇高的、爱国的正当性</b>，让商人摆脱了“唯利是图”的道德污名。</p><p>但同时也埋下隐患：商业的价值从此依附于“救国”这个外部目的，而不是它本身满足需求的功能。一旦目的改变，商业的正当性就可以被随时收回。</p>"
+  },
+  guojin: {
+    title: "国进民退（本书语境）",
+    content: "<p>指国家资本扩张、民间资本收缩的过程。在本书中，它不是某一次政策，而是 1928—1948 年间分三步完成的系统性重组：</p><ul><li><b>税</b>：1929 年裁厘加税，统一税制，中小企业成批淘汰；</li><li><b>币</b>：1935 年法币改革，控制中交两行，掌握融资渠道；</li><li><b>产业</b>：资源委员会进入重工、能源、交通等上游。</li></ul><p>三步走完，民营企业仍然存在，但已经失去了定价权、融资权和投资方向决定权。</p>"
+  },
+  tongzhi: {
+    title: "统制经济",
+    content: "<p>国家对社会生产、流通、价格进行全面管制的一种经济体制，在战时被广泛采用。</p><p>中国的统制经济在抗战时期成型：物资管制、价格核定、专营专卖、配额配给。企业从“被监管”变成“被配给”——原料靠配额、销路靠订单、价格靠核定。</p><p>它的一个长期后果是：<b>决定企业生死的不是效率，而是与管制体系的关系</b>。这套逻辑在 1950 年代的国营体系中得到完整继承。</p>"
+  },
+  gongsi: {
+    title: "公私合营",
+    content: "<p>1950 年代对私营工商业的社会主义改造形式。分两个阶段：</p><ul><li><b>个别合营</b>（1950—1955）：国家向单个企业注入公股，派出公方代表，私方仍参与管理；</li><li><b>全行业合营</b>（1956）：整个行业一次性合营，私方交出经营权，改为领取“定息”（一般为年息 5%）。</li></ul><p>1956 年之后，中国不再有法律意义上的私营企业。企业家作为个人仍然存在，但作为阶层失去了制度位置——这就是书中“绝种”一词的实际含义。</p>"
+  },
+  yiwu: {
+    title: "“一五”与 156 项工程",
+    content: "<p>1953—1957 年第一个五年计划期间，苏联援建的 156 项重点工程，是中国第一次建立起完整的重工业骨架。</p><p>比技术更重要的是<b>组织形态</b>：这些单位不是企业，是车间——没有独立核算、没有市场销售、没有产品定义权，指标由上而下拆解。</p><p>它解决了“从无到有”，也埋下了“无法自我更新”的种子。1978 年之后改革最艰难的部分，正是把这套车间重新变回企业。</p>"
+  },
+  sanxian: {
+    title: "三线建设",
+    content: "<p>1964 年起，在西南、西北内陆山区建设的一批国防与重工企业。选址原则是“靠山、分散、隐蔽”，与经济地理、运输成本、配套条件基本无关。</p><p>它是用战备逻辑而非经济逻辑布局工业的极端案例。这些企业此后几十年持续亏损、无法搬迁、难以改制。</p><p>它们的困境不是管理问题，而是<b>出生时就带着的错误坐标</b>——这一点对理解后来大量国企的处境很关键。</p>"
+  },
+  jiandao: {
+    title: "剪刀差",
+    content: "<p>指工业品与农产品价格之间长期存在的不等价交换关系：农产品价格被人为压低、工业品价格相对偏高，两者差距像张开的剪刀。</p><p>在计划经济时期，它实际上是一种<b>隐性的资本积累机制</b>：通过统购统销低价收购农产品，把农村的剩余转移到工业部门，为工业化提供资金。</p><p>代价由农村承担，且持续数十年。理解这一点，才能理解 1959—1961 年那段历史的经济机制，而不只是归因于自然因素。</p>"
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>变革中国 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 酒红 + 古金 + 暖白 */
+[data-theme="burgundy"] {
+  --primary: #6b2438; --primary-light: #f7ebee; --primary-dark: #47131f;
+  --accent: #b3862f; --accent-deep: #8a6320;
+  --bg: #faf6f2; --bg-card: #ffffff; --bg-soft: #f5eee9; --bg-softer: #ede1d9;
+  --bg-tag: #efdfc9;
+  --text: #33282a; --text-heading: #1f1416; --text-muted: #83706f; --text-light: #9c8b8a;
+  --border: #dccdc4; --border-soft: #ece0d8;
+  --highlight: #f9f1e9; --highlight-strong: #efe0d2;
+  --shadow-sm: 0 1px 3px rgba(70,30,30,0.07); --shadow: 0 2px 10px rgba(70,30,30,0.10);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6b2438; --color-tool: #b3862f; --color-case: #5c6b3a;
+  --color-history: #8a6320; --color-insight: #2f5d5a; --color-debate: #9c3b26;
+  --color-solution: #4a6b3a; --color-crisis: #9c3b26; --color-mechanism: #b3862f;
+  --color-effect: #6b4a7a; --color-core: #47131f;
+  --warn-bg: #fdf6e8; --warn-border: #e6cd96; --example-bg: #fbf6f1;
+  --reflect-bg: #f4ebe6; --quote-border: #6b2438;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body { font-family: var(--font-sans); background: var(--bg); color: var(--text); line-height: 1.75; min-height: 100vh; }
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧边栏 ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0; width: 220px; height: 100vh;
+  background: var(--bg-card); border-right: 1px solid var(--border-soft);
+  padding: 24px 16px; overflow-y: auto; z-index: 100;
+}
+.sidebar h3 { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px; padding-left: 12px; }
+.sidebar .toc-list { list-style: none; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 12px; border-radius: var(--radius);
+  font-size: 13px; color: var(--text); transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active { background: var(--primary-light); color: var(--primary-dark); font-weight: 600; border-left-color: var(--primary); }
+
+/* ===== 主内容 ===== */
+.main { margin-left: 220px; max-width: 1100px; padding: 36px 40px 120px 40px; }
+
+/* ===== 页头 ===== */
+.header {
+  position: relative; background: var(--bg-card);
+  border: 1px solid var(--border-soft); border-top: 4px solid var(--primary);
+  border-radius: var(--radius-lg); padding: 32px 36px; margin-bottom: 26px;
+  box-shadow: var(--shadow);
+}
+.header h1 { font-family: var(--font-serif); font-size: 30px; letter-spacing: 3px; color: var(--text-heading); margin-bottom: 8px; }
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; letter-spacing: .4px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 22px; font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px; background: var(--bg-soft); border-radius: var(--radius); margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.header .badge { background: var(--bg-tag); color: var(--primary-dark); padding: 4px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+.header .core-narrative {
+  margin-top: 16px; padding: 14px 18px;
+  background: linear-gradient(90deg, var(--primary-light), transparent);
+  border-left: 3px solid var(--primary);
+  font-size: 14.5px; color: var(--primary-dark); line-height: 1.7; font-family: var(--font-serif);
+}
+.header .stamp {
+  position: absolute; top: 26px; right: 30px;
+  font-family: var(--font-serif); font-size: 11px; letter-spacing: 4px;
+  color: var(--accent); border: 1px solid var(--accent);
+  padding: 5px 8px 5px 12px; opacity: .6; transform: rotate(-2deg);
+}
+
+/* ===== 区块 ===== */
+.section { margin-bottom: 30px; }
+.section h2 {
+  font-size: 19px; color: var(--text-heading); margin-bottom: 6px;
+  padding-bottom: 8px; border-bottom: 2px solid var(--primary-light);
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section h2 .sec-num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); letter-spacing: 1px; }
+.section .lead { font-size: 13px; color: var(--text-muted); margin: 10px 0 14px; line-height: 1.7; }
+.section h3 { font-size: 15.5px; color: var(--text-heading); margin: 22px 0 10px; }
+
+/* ===== 提问框 ===== */
+.hook-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin: 14px 0; }
+.hook-box .hook-q { font-family: var(--font-serif); font-size: 17px; color: var(--primary-dark); line-height: 1.7; margin-bottom: 10px; }
+.hook-box .hook-a { font-size: 14px; color: var(--text); line-height: 1.78; }
+.hook-box .hook-a strong { color: var(--accent-deep); }
+
+/* ===== 卡片 ===== */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 14px 0; }
+.info-grid.pair { grid-template-columns: repeat(2, 1fr); }
+.info-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft); border-radius: var(--radius);
+  padding: 18px 20px; transition: box-shadow .2s, transform .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.info-card .label { font-weight: 700; font-size: 14px; margin-bottom: 8px; padding-left: 10px; color: var(--text-heading); }
+.info-card .content { font-size: 13.8px; color: var(--text); line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px; background: var(--example-bg);
+  border-radius: var(--radius-sm); font-size: 12.5px; color: var(--text-muted);
+  border-left: 3px solid var(--border); line-height: 1.6;
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* ===== 洞察 / 规律 / 反思 ===== */
+.insight-card { background: var(--highlight); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 12px; }
+.insight-card .insight-title { font-weight: 700; font-size: 15px; color: var(--primary-dark); margin-bottom: 6px; }
+.insight-card .insight-body { font-size: 13.8px; line-height: 1.72; }
+.insight-card .insight-evidence { font-size: 12px; color: var(--text-muted); margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+
+.law-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary); border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 15px 20px; margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 5px; }
+.law-card p { font-size: 13.2px; line-height: 1.68; }
+.law-card.warn { border-left-color: var(--color-debate); }
+.law-card.warn h4 { color: #8c3320; }
+
+.reflection-block { background: var(--reflect-bg); border: 1px solid var(--border-soft); border-radius: var(--radius); padding: 16px 20px; margin: 14px 0; }
+.reflection-block .reflection-title { font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px; }
+.reflection-block p { font-size: 13.2px; line-height: 1.72; }
+
+/* ===== 引用 ===== */
+blockquote.quote-block {
+  background: var(--bg-soft); border-left: 5px solid var(--quote-border);
+  margin: 18px 0; padding: 16px 22px; font-family: var(--font-serif);
+  font-size: 15.5px; color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0; box-shadow: var(--shadow-sm); letter-spacing: .3px;
+}
+blockquote.quote-block .cite { display: block; margin-top: 10px; font-size: 12px; font-family: var(--font-sans); color: var(--text-muted); text-align: right; }
+
+/* ===== 论证链 ===== */
+.arg-flow { margin: 16px 0; }
+.arg-step { display: grid; grid-template-columns: 46px 1fr; gap: 14px; margin-bottom: 10px; }
+.arg-step .arg-num {
+  width: 46px; height: 46px; border-radius: 50%;
+  background: var(--primary); color: #fbeeee;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-size: 18px;
+  box-shadow: 0 0 0 4px var(--primary-light);
+  align-self: start; margin-top: 8px;
+}
+.arg-step:nth-child(3) .arg-num,
+.arg-step:nth-child(5) .arg-num { background: var(--accent); box-shadow: 0 0 0 4px #f6ecd8; color: #fffaf0; }
+.arg-step .arg-body {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 14px 18px;
+}
+.arg-step .arg-title { font-size: 14.5px; font-weight: 700; color: var(--text-heading); margin-bottom: 4px; }
+.arg-step .arg-title em { font-style: normal; font-family: var(--font-mono); font-size: 12px; color: var(--accent-deep); margin-left: 8px; letter-spacing: .5px; }
+.arg-step .arg-text { font-size: 13.4px; line-height: 1.7; }
+
+/* ===== 边缘革命四卡 ===== */
+.margin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 14px 0; }
+.margin-card {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--primary); border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.margin-card:nth-child(2) { border-top-color: #8a4a58; }
+.margin-card:nth-child(3) { border-top-color: var(--accent); }
+.margin-card:nth-child(4) { border-top-color: #5c6b3a; }
+.margin-card .m-head { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.margin-card .m-tag {
+  font-size: 11px; font-weight: 700; letter-spacing: .5px;
+  background: var(--bg-softer); color: var(--primary-dark);
+  padding: 2px 8px; border-radius: 10px;
+}
+.margin-card .m-name { font-size: 14.5px; font-weight: 700; color: var(--text-heading); }
+.margin-card .m-body { font-size: 13.2px; line-height: 1.7; }
+.margin-card .m-result {
+  margin-top: 9px; padding-top: 8px; border-top: 1px dashed var(--border);
+  font-size: 12.5px; color: var(--text-muted); line-height: 1.6;
+}
+.margin-card .m-result b { color: var(--accent-deep); }
+
+/* ===== 双轨示意 ===== */
+.dualtrack { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 16px 0; }
+.dt-head {
+  display: grid; grid-template-columns: 1fr 1fr;
+  font-size: 12.5px; font-weight: 700; letter-spacing: .5px;
+}
+.dt-head div { padding: 10px 16px; color: #fbeeee; background: var(--primary-dark); }
+.dt-head div + div { background: var(--accent-deep); }
+.dt-row { display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--border-soft); }
+.dt-cell { padding: 12px 16px; font-size: 12.8px; line-height: 1.65; }
+.dt-cell.plan { background: #fbf7f4; }
+.dt-cell.mkt { background: #fdf8ee; }
+.dt-cell b { color: var(--primary-dark); }
+.dt-cell.mkt b { color: var(--accent-deep); }
+.dt-note { padding: 10px 16px; background: var(--bg-soft); font-size: 12px; color: var(--text-muted); border-top: 1px solid var(--border-soft); line-height: 1.6; }
+
+/* ===== 三腿结构 ===== */
+.tripod { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+.tp-item {
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius); padding: 14px 16px;
+}
+.tp-item .tp-mark { font-family: var(--font-serif); font-size: 22px; color: var(--accent); line-height: 1; margin-bottom: 6px; }
+.tp-item .tp-name { font-size: 13.8px; font-weight: 700; color: var(--text-heading); margin-bottom: 4px; }
+.tp-item .tp-desc { font-size: 12.6px; line-height: 1.65; color: var(--text); }
+
+/* ===== 清单 ===== */
+.check-list { list-style: none; margin: 12px 0; }
+.check-list li {
+  position: relative; padding: 9px 14px 9px 38px;
+  background: var(--bg-card); border: 1px solid var(--border-soft);
+  border-radius: var(--radius-sm); margin-bottom: 7px; font-size: 13.2px; line-height: 1.68;
+}
+.check-list li::before { content: '▪'; position: absolute; left: 16px; top: 8px; color: var(--accent); font-size: 14px; }
+.check-list li b { color: var(--primary-dark); }
+
+/* ===== 两栏 ===== */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 14px 0; }
+
+/* ===== 延伸表 ===== */
+table.extension { width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0; background: var(--bg-card); }
+table.extension th {
+  background: var(--primary-light); color: var(--primary-dark);
+  padding: 10px 14px; text-align: left; font-weight: 700;
+  border-bottom: 2px solid var(--border); width: 17%;
+}
+table.extension td { padding: 10px 14px; border-bottom: 1px solid var(--border-soft); vertical-align: top; line-height: 1.65; }
+
+/* ===== 术语弹窗 ===== */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px; background: var(--accent); color: #fff;
+  border: none; border-radius: 50%; font-size: 11px; font-weight: 700;
+  cursor: pointer; vertical-align: middle; margin-left: 3px;
+  transition: transform .15s; line-height: 1;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(50,20,25,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card); border-radius: var(--radius-lg);
+  padding: 26px 32px; max-width: 580px; width: 90%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  position: relative; border-top: 4px solid var(--primary);
+}
+.modal-card .close-btn { position: absolute; top: 10px; right: 14px; background: none; border: none; font-size: 19px; cursor: pointer; color: var(--text-muted); }
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 13.8px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* ===== 返回顶部 ===== */
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff; border: none; border-radius: 50%;
+  width: 44px; height: 44px; font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2); z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 30px 0; }
+
+.footer-note { text-align: center; margin-top: 40px; padding: 16px; color: var(--text-muted); font-size: 12px; border-top: 1px solid var(--border-soft); }
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .modal-overlay, .back-to-top { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid, .info-grid.pair, .two-col, .margin-grid, .tripod { grid-template-columns: 1fr; }
+  .header h1 { font-size: 23px; letter-spacing: 1px; }
+  .header { padding: 24px 20px; }
+  .header .stamp { display: none; }
+  .arg-step { grid-template-columns: 36px 1fr; gap: 10px; }
+  .arg-step .arg-num { width: 36px; height: 36px; font-size: 15px; }
+  .dt-head, .dt-row { grid-template-columns: 1fr; }
+  .dt-head div + div { border-top: 1px solid rgba(255,255,255,.2); }
+}
+</style>
+</head>
+<body data-theme="burgundy">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#thesis">00 · 核心论点</a></li>
+    <li><a href="#ch1">01 · 毛时代的失败</a></li>
+    <li><a href="#ch2">02 · 转折年代</a></li>
+    <li><a href="#ch3">03 · 四次边缘革命</a></li>
+    <li><a href="#ch4">04 · 笼中之鸟</a></li>
+    <li><a href="#ch5">05 · 走出传统社会主义</a></li>
+    <li><a href="#ch6">06 · 多元资本主义</a></li>
+    <li><a href="#chain">07 · 论证链总览</a></li>
+    <li><a href="#laws">08 · 六条命题</a></li>
+    <li><a href="#critique">09 · 该被质疑之处</a></li>
+    <li><a href="#extend">10 · 延伸与局限</a></li>
+    <li><a href="#hook">11 · 记忆钩子</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="stamp">论点 · 中国经济</div>
+    <h1>变革中国</h1>
+    <div class="subtitle">市场经济的中国之路 ｜ 罗纳德·科斯 · 王宁 ｜ 徐尧、李哲民 译 ｜ 中信出版社 2013 年 1 月（原版 How China Became Capitalist, 2012）</div>
+    <div class="meta">
+      <span><strong>结构</strong> 六章 · 论点递进</span>
+      <span><strong>跨度</strong> 1949—2010 前后</span>
+      <span><strong>方法</strong> 制度经济学 + 经济史</span>
+      <span><strong>核心概念</strong> 边缘革命</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">A 类 · 论点论证链</span>
+      <span class="badge">单一核心命题</span>
+      <span class="badge">反顶层设计叙事</span>
+      <span class="badge">诺奖得主晚年之作</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：中国的市场经济不是被设计出来的，是被“边缘”长出来的——改革的设计师们真正做的，不是规划一个市场，而是允许那些已经在体制外活起来的市场不被掐死。
+    </div>
+  </div>
+
+  <!-- 00 核心论点 -->
+  <div class="section" id="thesis">
+    <h2><span class="sec-num">00</span>核心论点：一场没有被计划的革命</h2>
+    <p class="lead">全书六章不是六个话题，是一条论证。所有材料都指向同一个结论，而结论的角度很反直觉。</p>
+
+    <div class="hook-box">
+      <div class="hook-q">一个坚持社会主义的执政党，为什么会亲手培育出一个资本主义经济？</div>
+      <div class="hook-a">
+        通行的两种答案是：<b>顶层设计说</b>（领导人高瞻远瞩，逐步规划市场化）和<b>危机倒逼说</b>（文革把经济搞垮了，不改不行）。科斯和王宁都不满意。
+        <br><br>
+        他们给的是第三种：<strong>改革的核心不是政府“做了什么”，而是政府“没有阻止什么”</strong>。真正的市场化发生在国家控制最薄弱的地方——农村、乡镇、城市街边、沿海小岛。这四块地方长出了四个新部门，等到它们长到足够大、足够有用，中央才回头追认、命名、推广。<strong>顺序是“先有事实，后有政策”，不是相反。</strong>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      中国走向资本主义，是一条意外的路。
+      <span class="cite">—— 综合提炼，非逐字原文（原书核心判断为 an accidental path to capitalism）</span>
+    </blockquote>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">这个论点在反驳谁</div>
+        <div class="content">
+          反驳三类叙事：一、把改革写成领导人英明决策的“政策史”；二、把改革写成照搬西方模式的“转轨学”；三、把改革写成纯粹自发的“无为而治”。
+          <div class="example"><strong>科斯的立场其实在中间</strong>：既承认自发力量是主力，也承认没有政治上的默许与保护，那些自发力量活不过三年。这个“双重条件”是全书最容易被简化掉的部分。</div>
+        </div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">为什么由科斯来写</div>
+        <div class="content">
+          他一生只研究一个问题：<b>当交易成本不为零时，产权与制度如何决定经济结果</b>。中国的改革在他看来不是“从计划到市场”的切换，而是一场大规模的产权重新界定实验——恰好是他理论的极端检验场。
+          <div class="example"><strong>写作时间</strong>：本书英文版 2012 年出版，科斯 101 岁；中文版 2013 年 1 月，他 102 岁。他从未在中国长期居住，这是他反复自陈的遗憾。</div>
+        </div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">全书的方法钥匙：实事求是</div>
+        <div class="content">
+          四位作者反复用这四个字解释中国的做法：不预设终局、不迷信教条、先看什么管用。科斯认为这不是权宜之计，而是<b>一种认识论</b>——它恰好与他自己“拒绝黑板经济学、坚持观察真实制度”的方法同源。
+          <div class="example">这也是全书对中国的最高评价：不是“学得像西方”，而是“回到了自己务实的那一支传统”。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 毛时代 -->
+  <div class="section" id="ch1">
+    <h2><span class="sec-num">01</span>第一章 毛时代的中国：超级国家公司为何失败</h2>
+    <p class="lead">这一章的功能不是控诉，是<b>建立反例</b>——先把“完全替代市场”的方案推到极致，再让它在逻辑上自我崩解。</p>
+
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">超级国家公司：一个国家，一家企业<button class="glossary-trigger" onclick="openModal('superfirm')">?</button></div>
+        <div class="content">
+          科斯用他 1937 年《企业的性质》里的框架来看计划经济：整个国家被组织成一个巨型企业，所有交易被内部化，用指令替代价格。这个设计在理论上有一个致命前提——<b>中央计划者必须掌握全部信息</b>。
+          <div class="example"><strong>科斯的判词</strong>：企业之所以不能无限扩张，是因为内部管理成本会超过市场交易成本。计划经济把这条边界推到了国家尺度，于是管理成本以指数方式爆炸。</div>
+        </div>
+      </div>
+
+      <div class="info-card mechanism">
+        <div class="label">失败的三重机制</div>
+        <div class="content">
+          一、<b>信息</b>：价格被取消后，社会失去了唯一能汇总分散知识的装置，计划者只能靠层层上报的数字，而数字层层美化。<br>
+          二、<b>激励</b>：企业没有剩余索取权，做好做坏一个样，创新收益归公、失败风险也归公。<br>
+          三、<b>协调</b>：重工业优先的战略使消费品长期短缺，需求端的真实信号被彻底压制。
+          <div class="example">三者叠加的结果不是“低效率”，而是<b>不可校正</b>——系统内没有任何一个环节能发出“错了”的信号。</div>
+        </div>
+      </div>
+
+      <div class="info-card history">
+        <div class="label">为什么这一章必须放在最前面</div>
+        <div class="content">
+          因为全书后面所有的“边缘”都相对于这个中心才有意义。没有一个彻底失败的中心，就无法解释为什么边缘的试验会被容忍——中央不是不想管，是管不过来、也管不好了。
+          <div class="example"><strong>逻辑链</strong>：中心失效 → 控制松懈 → 边缘出现缝隙 → 缝隙里长出市场 → 市场大到无法忽视 → 被追认。缺了第一步，后面全都不成立。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">一句话概括这一章</div>
+      <p>不是“计划经济不好”，而是<b>计划经济在信息上不可能</b>。这个区分很重要：前者是价值判断，后者是技术判断，而科斯一辈子只做技术判断。</p>
+    </div>
+  </div>
+
+  <!-- 02 转折 -->
+  <div class="section" id="ch2">
+    <h2><span class="sec-num">02</span>第二章 中国在转折年代：没有蓝图的那两年</h2>
+    <p class="lead">1976—1978 这两年，是全书论证的关键证据：如果真有一套市场化蓝图，它应该在这时出现。它没有。</p>
+
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">思想上的解冻是渐进的，不是一次转向</div>
+        <div class="content">
+          从“两个凡是”到“实践是检验真理的唯一标准”，从平反到恢复高考，这一系列动作的共同点不是“确定了新方向”，而是<b>取消了唯一正确答案</b>。这一点常被读漏：解冻的实质是允许争论，不是宣布结论。
+          <div class="example">科斯对此的评价很干脆：<b>改革的起点不是一套方案，而是一种允许试错的政治气氛。</b></div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">决策层真没有蓝图吗</div>
+        <div class="content">
+          这是全书最容易被质疑的一处。1978 年确实有大规模出国考察、有各种改革设想、有“放权让利”的共识。作者的处理是区分<b>目标</b>与<b>路径</b>：目标很清楚（加快发展、改善生活），路径完全不清楚（怎么改、改到什么程度、允不允许私有制，全无共识）。
+          <div class="example"><strong>证据</strong>：1980 年代关于“雇工几个算剥削”“姓社姓资”的反复争论，说明连最基本的问题都还没定，谈不上蓝图。</div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">农村先动，是偶然还是必然</div>
+        <div class="content">
+          两者都有。偶然在于小岗村那份按手印的协议是农民自己冒着风险签的；必然在于国家控制在农村最薄——公社管得住劳动力，管不住“种什么、种多少、怎么分”。
+          <div class="example">所以改革的第一个突破口，选在了<b>监控成本最高的地方</b>。这不是政治智慧，是结构事实。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">这一章承担的论证任务</div>
+      <div class="insight-body">
+        证明“后来发生的事不是任何人计划的结果”。方法上很聪明：<b>不去证明领导人没有想法，而是证明他们的想法彼此冲突且不断变化</b>。当决策层内部对最基本的问题都没有共识时，“顶层设计”这个说法在史实上就站不住。
+      </div>
+      <div class="insight-evidence">这也是为什么全书用大量篇幅写 1980 年代的意识形态争论——那些争论恰好是“没有蓝图”的最好证据。</div>
+    </div>
+  </div>
+
+  <!-- 03 边缘革命 -->
+  <div class="section" id="ch3">
+    <h2><span class="sec-num">03</span>第三章 市场体制改革起源：四次边缘革命</h2>
+    <p class="lead">这是全书的心脏。四个部门，四个“体制外”，四次不由中央发起却最终改写全局的突破。</p>
+
+    <div class="margin-grid">
+      <div class="margin-card">
+        <div class="m-head">
+          <span class="m-tag">边缘一</span>
+          <span class="m-name">农业：家庭联产承包<button class="glossary-trigger" onclick="openModal('chengbao')">?</button></span>
+        </div>
+        <div class="m-body">
+          农民把集体土地分包到户，“交够国家的、留足集体的、剩下都是自己的”。这一句话解决了人民公社二十年没解决的问题：<b>把劳动的剩余索取权还给劳动者</b>。产量在几年内跃升，不是靠投入，是靠激励。
+        </div>
+        <div class="m-result"><b>连锁后果</b>：农业劳动力被释放出来 → 为后面三件事提供了人和原料。没有这一步，乡镇企业和城市个体户都无从谈起。</div>
+      </div>
+
+      <div class="margin-card">
+        <div class="m-head">
+          <span class="m-tag">边缘二</span>
+          <span class="m-name">农村工业化：乡镇企业<button class="glossary-trigger" onclick="openModal('tve')">?</button></span>
+        </div>
+        <div class="m-body">
+          社队企业转身为乡镇企业，“离土不离乡”。它们在计划体系之外获得原料、在计划体系之外销售产品，靠的是市场定价，而不是调拨指标。
+        </div>
+        <div class="m-result"><b>制度意义</b>：这是中国第一个完全在计划外运转的工业部门。它证明了一件事——<strong>不靠国家投资也能搞工业</strong>。1990 年代它们多数转制为私营，成了民营经济的前身。</div>
+      </div>
+
+      <div class="margin-card">
+        <div class="m-head">
+          <span class="m-tag">边缘三</span>
+          <span class="m-name">城市个体经济：温州与街边摊</span>
+        </div>
+        <div class="m-body">
+          返城知青、失业者、农民进城者，在国营体系覆盖不到的缝隙里摆摊、修鞋、做小商品。温州成了标本：没有资源、没有政策、没有外资，全靠人跑出去。
+        </div>
+        <div class="m-result"><b>最艰难的一支</b>：它必须突破意识形态禁区——雇工是不是剥削、个体户算不算劳动者。这一支的合法性争了整整十年，直到 1988 年宪法修正才落地。</div>
+      </div>
+
+      <div class="margin-card">
+        <div class="m-head">
+          <span class="m-tag">边缘四</span>
+          <span class="m-name">经济特区：深圳与全球市场<button class="glossary-trigger" onclick="openModal('sez')">?</button></span>
+        </div>
+        <div class="m-body">
+          1980 年设深圳、珠海、汕头、厦门四个特区。它们的地理位置本身就是“边缘”——远离政治中心、紧贴香港与海外市场。
+        </div>
+        <div class="m-result"><b>不同之处</b>：前三支是自发涌现后被追认，特区是<b>自上而下批准、但内容自下而上填充</b>。它是唯一一次“先有政策、后有实践”的边缘革命，也因此最容易被误读为“顶层设计有效”的证据。</div>
+      </div>
+    </div>
+
+    <h3>四支力量为什么能活下来：三个共同条件</h3>
+    <ul class="check-list">
+      <li><b>在监控成本最高处出现</b>：农村、乡镇、街边、海岛——都是行政体系覆盖成本最高、收益最低的地方。国家不是宽容，是划不来去管。</li>
+      <li><b>不挑战主流叙事</b>：它们都把自己包装成“社会主义的补充”而不是替代。家庭承包叫“责任制”，个体户叫“自谋职业”，特区叫“试验窗口”。命名上的退让换来了生存空间。</li>
+      <li><b>先有效果，再要名分</b>：全部是先干起来、见了成效，再回头争取合法地位。这个顺序一旦反过来（先争合法性），大概率活不到见效果那天。</li>
+    </ul>
+
+    <div class="insight-card">
+      <div class="insight-title">“边缘”这个词的准确含义</div>
+      <div class="insight-body">
+        不是“次要”，而是<b>“在计划体系的边界之外、但仍在政治允许的范围内”</b>。这个双重要件缺一不可：出界太远会被取缔（如某些早期的私营大户），留在界内则不会有任何突破。所谓边缘革命，就是在这条窄缝上反复试探、逐步把缝撑大。
+      </div>
+      <div class="insight-evidence">这也是全书最精确的一个概念贡献：边缘不是地理概念，是制度概念。</div>
+    </div>
+  </div>
+
+  <!-- 04 笼中之鸟 -->
+  <div class="section" id="ch4">
+    <h2><span class="sec-num">04</span>第四章 笼中之鸟：社会主义下的市场经济改革</h2>
+    <p class="lead">这一章写的是“官方主导的改革为什么大多不成功”。它是全书论证的反面证据，也是最容易被读者跳过的部分。</p>
+
+    <blockquote class="quote-block">
+      笼中之鸟：社会主义下的市场经济改革
+      <span class="cite">—— 第四章标题（原文）</span>
+    </blockquote>
+
+    <div class="info-grid pair">
+      <div class="info-card concept">
+        <div class="label">“鸟笼经济”：一个比喻，也是一种宪法<button class="glossary-trigger" onclick="openModal('birdcage')">?</button></div>
+        <div class="content">
+          陈云的说法大意是：搞活经济像养鸟，鸟要让它飞，但只能飞在笼子里，笼子就是计划。这个比喻的关键不在“鸟”，在<b>笼子的尺寸由谁决定、能不能改</b>。
+          <div class="example"><strong>注意</strong>：这个比喻流传极广，具体措辞在不同回忆与转述中略有差异，此处按通行的表述概括，不作逐字引用。</div>
+        </div>
+      </div>
+
+      <div class="info-card mechanism">
+        <div class="label">国企改革：四轮尝试，四轮失效<button class="glossary-trigger" onclick="openModal('soereform')">?</button></div>
+        <div class="content">
+          放权让利（1980 前后）→ 利改税（1983—1984）→ 承包经营责任制（1987 起）→ 股份制试点（1990 前后）。每一轮都试图在不改产权的前提下改激励。
+          <div class="example"><strong>共同失败点</strong>：产权不明 → 没有人真正对长期负责 → 承包期内拼设备、拼人力、不投资。激励给了，责任没给；这是四轮尝试的共同结构缺陷。</div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">双轨制：过渡的智慧，也是寻租的温床<button class="glossary-trigger" onclick="openModal('dualtrack')">?</button></div>
+        <div class="content">
+          同一件商品有两个价格：计划内调拨价、计划外市场价。它的历史功绩是让市场在不动存量利益的前提下生长起来——“增量改革”的经典样本。
+          <div class="example"><strong>但代价同样真实</strong>：两价之差就是租金，谁拿到批文谁就赚钱。1980 年代中后期的“官倒”与民怨，直接源头就在这里。书中对此的着墨明显少于对其过渡功能的肯定。</div>
+        </div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">1988 价格闯关：一次教科书式的失败<button class="glossary-trigger" onclick="openModal('pricejump')">?</button></div>
+        <div class="content">
+          试图一次性放开价格、取消双轨。结果在预期已经通胀化的条件下，放开价格等于发出“快买”的信号，抢购与囤积同时爆发，改革被迫中止。
+          <div class="example"><strong>教训（科斯式的读法）</strong>：价格不是可以“宣布放开”的东西，它依赖一整套配套制度——产权、竞争、货币纪律。缺了配套，放开只会释放混乱。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="dualtrack">
+      <div class="dt-head">
+        <div>计划轨（存量）</div>
+        <div>市场轨（增量）</div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-cell plan"><b>价格</b>：国家定价、调拨价</div>
+        <div class="dt-cell mkt"><b>价格</b>：议价、随行就市</div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-cell plan"><b>主体</b>：国营企业、供销社</div>
+        <div class="dt-cell mkt"><b>主体</b>：乡镇企业、个体户、特区企业</div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-cell plan"><b>资源</b>：计划指标、批文</div>
+        <div class="dt-cell mkt"><b>资源</b>：市场采购、议价原料</div>
+      </div>
+      <div class="dt-row">
+        <div class="dt-cell plan"><b>逻辑</b>：保既得利益、稳物价</div>
+        <div class="dt-cell mkt"><b>逻辑</b>：效率优先、允许试错</div>
+      </div>
+      <div class="dt-note">两轨并存的历史作用：让市场在不动存量的前提下长大。结构性代价：两轨之间的价差成为权力租金，形成 1980 年代最难处理的一类腐败。</div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这一章在全书中扮演什么角色</div>
+      <p>它是<b>对照组</b>。前面一章写“体制外的自发突破成功了”，这一章写“体制内的官方改革失败了”。两相对照，结论自然浮现：<b>改革的成败不取决于谁在推动，而取决于是否触碰了产权这一层。</b>不碰产权，怎么改激励都是短期的。</p>
+    </div>
+  </div>
+
+  <!-- 05 走出传统社会主义 -->
+  <div class="section" id="ch5">
+    <h2><span class="sec-num">05</span>第五章 走出传统社会主义：中国特色的资本主义</h2>
+    <p class="lead">1990 年代的三件事，把“边缘的市场”变成了“全国的市场”。科斯认为这才是中国经济真正的成型时刻。</p>
+
+    <div class="tripod">
+      <div class="tp-item">
+        <div class="tp-mark">壹</div>
+        <div class="tp-name">统一国内市场<button class="glossary-trigger" onclick="openModal('market')">?</button></div>
+        <div class="tp-desc">拆除地方保护、打通流通、统一税制与规则。市场从“一个个地方集市”变成“一个国家的市场”，规模效应才真正开始起作用。</div>
+      </div>
+      <div class="tp-item">
+        <div class="tp-mark">贰</div>
+        <div class="tp-name">国企改制<button class="glossary-trigger" onclick="openModal('soe')">?</button></div>
+        <div class="tp-desc">“抓大放小”、改制、兼并、破产、下岗分流。中小国企被出售或转为股份合作，国有资本向大型与战略性行业集中。</div>
+      </div>
+      <div class="tp-item">
+        <div class="tp-mark">叁</div>
+        <div class="tp-name">区域竞争<button class="glossary-trigger" onclick="openModal('regioncomp')">?</button></div>
+        <div class="tp-desc">地方政府为增长、税收、就业而相互竞争，成为事实上的增长引擎。这是中国模式中最独特、也最难复制的一环。</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card insight">
+        <div class="label">为什么“区域竞争”被看得这么重</div>
+        <div class="content">
+          在科斯的框架里，它解决了一个理论难题：<b>一个垄断政治权力的国家，如何产生接近市场的竞争？</b>答案是把竞争下放到地方政府之间——它们没有立法权，但有资源支配权，于是用土地、税收、审批速度互相竞价。
+          <div class="example"><strong>代价</strong>：重复建设、地方保护、环境竞次、债务累积。这些都是同一机制的副产品，书中承认但着墨不多。</div>
+        </div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">国企改制：一次没有理论指导的大规模产权重划</div>
+        <div class="content">
+          数千家企业、数千万职工，在十几年内完成了产权变更。它的推进方式高度实用主义：能卖的卖、能合的合、能破的破，理论争论远远滞后于操作。
+          <div class="example"><strong>两个后果并置</strong>：效率确实提高了，资产也确实以极低价格转移给了少数人。<b>这两件事同时为真</b>，任何只讲一半的叙述都是失真。</div>
+        </div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">三种地方模式：中国不是一种资本主义<button class="glossary-trigger" onclick="openModal('models')">?</button></div>
+        <div class="content">
+          苏南模式（集体所有、政府主导）、温州模式（家庭作坊、民间金融）、珠三角模式（外资、出口加工）。三种模式在同一时期、同一国家内并存，路径完全不同。
+          <div class="example"><strong>这个观察支撑了第六章的标题</strong>：中国不是“变成资本主义”，是变成了<b>很多种资本主义并存</b>的状态。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">这一章真正回答的问题</div>
+      <div class="insight-body">
+        前面两章解释了“市场怎么出现”，这一章解释“<b>市场怎么连成一片</b>”。散在四个边缘的市场，只有在统一国内市场、国企改制、区域竞争三件事同时发生后，才形成一个能自我维持的国民经济体系。缺任何一条，中国都只是“很多地方集市的总和”。
+      </div>
+      <div class="insight-evidence">这也是全书对“中国做对了什么”最实质的回答：不是某一个政策，是三件事的<b>同时成立</b>。</div>
+    </div>
+  </div>
+
+  <!-- 06 多元资本主义 -->
+  <div class="section" id="ch6">
+    <h2><span class="sec-num">06</span>第六章 从单一市场经济到多元市场经济</h2>
+    <p class="lead">最后一章从描述转向诊断。作者在这里提出了全书唯一的规范性主张，也是他们对中国未来最重的警告。</p>
+
+    <blockquote class="quote-block">
+      从单一市场经济到多元市场经济
+      <span class="cite">—— 第六章标题（原文）</span>
+    </blockquote>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">“多元”有两层意思</div>
+        <div class="content">
+          表层：区域模式多元（苏南、温州、珠三角各走各路）。深层：<b>制度试验的多元</b>——不同地方可以试不同办法，最后由结果筛选，而不是由上级裁定哪种对。
+          <div class="example">科斯认为这正是中国改革最值得保留的资产：<strong>它把“什么制度更好”这个问题，从意识形态辩论变成了地方性实验</strong>。</div>
+        </div>
+      </div>
+
+      <div class="info-card concept">
+        <div class="label">思想市场：全书唯一的规范性主张<button class="glossary-trigger" onclick="openModal('ideasmarket')">?</button></div>
+        <div class="content">
+          作者认为，商品市场的繁荣来自思想市场的繁荣。改革初期之所以能突破教条，靠的正是大学、媒体、研究机构、地方干部之间活跃的观念竞争。而这一市场至今受限。
+          <div class="example"><strong>核心判断</strong>：如果思想市场继续被垄断，商品市场的进一步深化会失去动力来源——因为下一步改革需要的不是资源，是新想法。</div>
+        </div>
+      </div>
+
+      <div class="info-card debate">
+        <div class="label">最强的警告</div>
+        <div class="content">
+          书中反复出现的一个判断：<b>政府对权力与思想的垄断，是中国未来最大的不确定性</b>。已经取得的成就来自放权与试错，而这些成就的可持续性取决于是否继续放权与试错。
+          <div class="example">这个判断在 2012 年提出，此后十余年的很多争论，恰好围绕它展开。这是本书最容易被忽略、也最耐读的一章。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">为什么这一章的评价最两极</div>
+      <p>因为它从经济分析转成了政治判断。前面五章都在用制度经济学的工具做描述，这一章提出了“应该怎样”。<b>喜欢的人认为这是全书最有价值的部分，不喜欢的人认为它超出了证据能支撑的范围。</b>两种读法都有道理——关键是要意识到：这里的语气变了，论证的严格程度也随之变了。</p>
+    </div>
+  </div>
+
+  <!-- 07 论证链 -->
+  <div class="section" id="chain">
+    <h2><span class="sec-num">07</span>论证链总览：六步推到一个结论</h2>
+    <p class="lead">把六章压成六个句子，就能看出这条链的紧密程度：每一步都在为下一步清场。</p>
+
+    <div class="arg-flow">
+      <div class="arg-step">
+        <div class="arg-num">壹</div>
+        <div class="arg-body">
+          <div class="arg-title">中心失效<em>第一章</em></div>
+          <div class="arg-text">超级国家公司在信息上不可能运转。这不是效率问题，是可校正性问题——系统内没有能发出“错了”的信号的地方。</div>
+        </div>
+      </div>
+      <div class="arg-step">
+        <div class="arg-num">贰</div>
+        <div class="arg-body">
+          <div class="arg-title">气氛松动，但没有蓝图<em>第二章</em></div>
+          <div class="arg-text">决策层取消了唯一正确答案，却没给出新答案。目标清楚、路径空白——这为自发试验留出了政治空间。</div>
+        </div>
+      </div>
+      <div class="arg-step">
+        <div class="arg-num">叁</div>
+        <div class="arg-body">
+          <div class="arg-title">边缘长出市场<em>第三章</em></div>
+          <div class="arg-text">农业、乡镇企业、个体经济、特区，四支力量在控制最薄弱处出现，先有效果再要名分。这是全书的核心证据。</div>
+        </div>
+      </div>
+      <div class="arg-step">
+        <div class="arg-num">肆</div>
+        <div class="arg-body">
+          <div class="arg-title">中心内的改革大多失败<em>第四章</em></div>
+          <div class="arg-text">国企四轮改革、价格闯关、双轨制，凡不碰产权的都只买来时间。对照组确立：成败分水岭是产权。</div>
+        </div>
+      </div>
+      <div class="arg-step">
+        <div class="arg-num">伍</div>
+        <div class="arg-body">
+          <div class="arg-title">边缘连成一体<em>第五章</em></div>
+          <div class="arg-text">统一国内市场、国企改制、区域竞争三件事同时成立，散落的地方市场才变成国民经济体系。</div>
+        </div>
+      </div>
+      <div class="arg-step">
+        <div class="arg-num">陆</div>
+        <div class="arg-body">
+          <div class="arg-title">结论与警告<em>第六章</em></div>
+          <div class="arg-text">中国不是变成一种资本主义，是很多种并存。而这个进程的下一步，取决于思想市场是否放开。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">这条链最脆弱的一环在哪</div>
+      <div class="insight-body">
+        在第三步到第五步之间。四支边缘力量如何从“局部有效”扩展到“改变全局”，书里的过渡偏快——第三章写的是 1978—1987，第五章直接跳到 1990 年代，中间的 1988—1992 只用政治事件带过。<b>而这五年恰恰是“边缘能否长大”最不确定的时期。</b>
+      </div>
+      <div class="insight-evidence">读的时候可以在这一处停下来问：如果 1992 年之后没有新一轮放权，那四支力量会不会只是一段插曲？书中没有正面回答。</div>
+    </div>
+  </div>
+
+  <!-- 08 命题 -->
+  <div class="section" id="laws">
+    <h2><span class="sec-num">08</span>六条可以带走的命题</h2>
+
+    <div class="law-card">
+      <h4>一 · 制度变迁常常是“事实先行，政策追认”</h4>
+      <p>几乎所有关键突破都是先有人干了、干成了、活下来了，才有文件承认它合法。这个顺序是理解中国改革的基本节奏，也是理解很多“政策创新”真实来源的关键。</p>
+    </div>
+    <div class="law-card">
+      <h4>二 · 突破发生在监控成本高于收益的地方</h4>
+      <p>农村、乡镇、街边、海岛——不是因为那里的人更勇敢，而是因为在那里管制的性价比最低。想找到下一个制度缝隙，先算这笔账。</p>
+    </div>
+    <div class="law-card">
+      <h4>三 · 不碰产权的激励改革，只能买时间</h4>
+      <p>放权让利、承包制、利润分成，四轮尝试的共同结局是短期见效、长期失效。原因始终同一个：收益给了，责任没给；期限给了，所有权没给。</p>
+    </div>
+    <div class="law-card">
+      <h4>四 · 双轨制用存量换增量，代价是租金</h4>
+      <p>它是让市场在不动既得利益的前提下长大的巧妙设计，但两价之差必然催生套利与腐败。任何“渐进过渡”方案都要预先回答：这笔租金归谁，怎么消化。</p>
+    </div>
+    <div class="law-card">
+      <h4>五 · 竞争可以被“下放”出来</h4>
+      <p>在政治权力集中的体制里，把经济竞争下放到地方政府之间，能造出近似市场的压力。这是中国最独特的机制，也自带重复建设、地方保护、债务累积的副作用。</p>
+    </div>
+    <div class="law-card">
+      <h4>六 · 商品市场的深化依赖思想市场</h4>
+      <p>这是全书唯一的规范性主张：下一步改革缺的不是资源，是新想法；而新想法来自允许争论、允许失败、允许多种方案并存的观念竞争。</p>
+    </div>
+  </div>
+
+  <!-- 09 质疑 -->
+  <div class="section" id="critique">
+    <h2><span class="sec-num">09</span>该被质疑的四处</h2>
+    <p class="lead">这本书论证漂亮，但有硬伤。英文版书评里被点名批评的两处，加上我读出来的两处，一并列出。</p>
+
+    <div class="law-card warn">
+      <h4>一 · 全书没有给“资本主义”下过操作性定义</h4>
+      <p>书名断言中国“已成为资本主义”，但通篇没有界定什么算资本主义、达到什么标准算“成为”。第六章给出的定义是“统一国内市场 + 国企私有化 + 区域竞争”，这个定义既窄又独特，与黄亚生等人使用的“资本主义”含义并不一致。定义的缺位让核心论断难以被证伪。</p>
+    </div>
+    <div class="law-card warn">
+      <h4>二 · 对 1990 年代的政策反转处理不足</h4>
+      <p>书中承认 1990 年代初曾出现对私营部门的政治打压，也承认国企垄断在加强，但没有把这些与“已经资本主义”的结论放在一起掂量。批评者指出：如果产权保护仍然脆弱、私人部门在关键行业仍被排斥，“转型完成”这个判断就过于乐观。</p>
+    </div>
+    <div class="law-card warn">
+      <h4>三 · 四支边缘力量存在幸存者偏差</h4>
+      <p>被写进书里的四个案例都是活下来并壮大的。同期大量民间尝试被取缔、被整治、被并入国营（1980 年代的私营大户、1990 年代被强制改制的乡镇企业），在叙事中的分量明显偏轻。<b>只统计成功者，会系统性高估“边缘突破”的存活率。</b></p>
+    </div>
+    <div class="law-card warn">
+      <h4>四 · 思想市场一章是主张，不是分析</h4>
+      <p>前五章都用制度经济学的工具做描述，第六章突然转入规范判断，却没有给出“思想市场如何建立、靠什么机制维持”的分析。这是全书最动人的部分，也是最缺少论证支撑的部分。</p>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">一个更根本的方法问题</div>
+      <p>两位作者都没有在中国长期生活，材料以文献、访谈、二手研究为主。<b>这带来两个后果</b>：好处是视角外部、不被内部话语裹挟；坏处是对基层的实际运作细节隔了一层，某些判断（尤其涉及地方政治与灰色地带）显得干净得过份。读这本书时，把它和周其仁、黄亚生、吴敬琏的实地研究对着看，效果最好。</p>
+    </div>
+  </div>
+
+  <!-- 10 延伸 -->
+  <div class="section" id="extend">
+    <h2><span class="sec-num">10</span>延伸与局限</h2>
+
+    <table class="extension">
+      <tr>
+        <th>本书定位</th>
+        <td>用新制度经济学的框架，给中国改革提供一个“非顶层设计”的解释。它的贡献不在于披露新材料，而在于把一个被政策叙事垄断的故事，重新讲成一场产权与制度的自发演化。</td>
+      </tr>
+      <tr>
+        <th>方法特点</th>
+        <td>六章递进式论证：反例（计划失败）→ 前提（无蓝图）→ 正面证据（四次边缘革命）→ 反面证据（体制内改革失败）→ 整合（三件事同时成立）→ 诊断（思想市场）。每章都在为下一章腾出位置，是标准的论著结构，不是通史结构。</td>
+      </tr>
+      <tr>
+        <th>主要局限</th>
+        <td>
+          一、<b>核心概念未定义</b>：“资本主义”缺操作性定义，结论难以证伪；<br>
+          二、<b>时间线断裂</b>：1988—1992 这段最不确定的时期被压缩处理，边缘力量的扩展过程交代不清；<br>
+          三、<b>幸存者偏差</b>：四个案例都是成功者，失败与被取缔的尝试权重过低；<br>
+          四、<b>双轨制的代价偏轻</b>：对寻租、官倒、社会不满的处理明显少于对其过渡功能的肯定；<br>
+          五、<b>末章越界</b>：从描述转向规范，但未提供相应论证；<br>
+          六、<b>田野厚度不足</b>：以文献与访谈为主，基层运作细节隔了一层。
+        </td>
+      </tr>
+      <tr>
+        <th>对照阅读</th>
+        <td>
+          <b>《变革中国》×《中国经济制度》</b>（张五常）——同一学派、同一批现象，张五常更强调县域竞争与合约结构，可补本书区域竞争一章的机制细节。<br>
+          <b>《变革中国》×《 Capitalism with Chinese Characteristics》</b>（黄亚生）——黄亚生认为 1990 年代是退步而非进步，与本书结论直接冲突，两本对读最能看清分歧所在。<br>
+          <b>《变革中国》×《筚路维艰》</b>（萧冬连）——后者从党史与决策过程内部写，可校验“没有蓝图”这一判断在档案层面站不站得住。<br>
+          <b>《变革中国》×《激荡三十年》《跌荡一百年》</b>（吴晓波）——把制度分析与具体企业与人物对照，抽象论证会立刻获得血肉。
+        </td>
+      </tr>
+      <tr>
+        <th>适合谁读</th>
+        <td>想理解“中国做对了什么”而不是“中国有多厉害”的人；做制度与政策判断的分析者；以及任何需要一套“非英雄史观”的解释框架的人——这本书的方法比结论更耐用。</td>
+      </tr>
+    </table>
+  </div>
+
+  <!-- 11 钩子 -->
+  <div class="section" id="hook">
+    <h2><span class="sec-num">11</span>记忆钩子</h2>
+    <p class="lead">一条口诀记住全书：一失效、一无图、四边缘、三归一。</p>
+
+    <ul class="check-list">
+      <li><b>一失效</b>：超级国家公司在信息上不可能，这是全书的起点。</li>
+      <li><b>一无图</b>：1976—1978 只有气氛松动，没有改革蓝图。这是“意外论”的证据基础。</li>
+      <li><b>四边缘</b>：农业（承包）、农村工业（乡镇企业）、城市个体（温州）、沿海特区（深圳）。<b>先说效果，再要名分。</b></li>
+      <li><b>三归一</b>：统一国内市场 + 国企改制 + 区域竞争，三件事同时成立，散的市场才连成一个体系。</li>
+      <li><b>加一条尾巴</b>：思想市场。这是作者对未来的下注，也是全书唯一超出描述的地方。</li>
+    </ul>
+
+    <div class="insight-card">
+      <div class="insight-title">如果只留一句</div>
+      <div class="insight-body">
+        这本书真正的洞见不是“中国会变成资本主义”，而是：<b>重大的制度变迁，往往不是被设计出来的，是被容忍出来的。</b>想预测下一个变化发生在哪里，不要看规划文件，去看哪里已经有人在做了、而且还没被管。
+      </div>
+      <div class="insight-evidence">综合提炼，非逐字原文。</div>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《变革中国》知识图谱 · 基于原书目录与内容整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  superfirm: {
+    title: "超级国家公司",
+    content: "<p>科斯与王宁用来描述计划经济的比喻：整个国家被组织成一家巨型企业，所有交易被内部化，用行政指令替代市场价格。</p><p>这个比喻直接来自科斯 1937 年的《企业的性质》：企业之所以存在，是因为用指令替代市场交易可以节省交易成本；但企业不能无限扩张，因为内部管理成本终会超过市场交易成本。</p><p>计划经济把这条边界推到了国家尺度，管理成本以指数方式上升，最终导致信息失灵与激励失效。这是全书批评计划体制的理论起点，而不是道德批判。</p>"
+  },
+  chengbao: {
+    title: "家庭联产承包责任制",
+    content: "<p>1978 年前后由农民自发开始、后被中央承认的农村土地经营制度。核心是一句话：交够国家的、留足集体的、剩下都是自己的。</p><p>它的实质不是“分田”，而是<b>把劳动的剩余索取权还给劳动者</b>——土地所有权仍归集体，但产出增量归农户。这一改动解决了人民公社二十年没能解决的问题。</p><p>在本书的论证中，它是“边缘革命”的第一支，也是唯一一支在几年内就获得全面合法化的。它的成功为后面三支提供了劳动力与原料。</p>"
+  },
+  tve: {
+    title: "乡镇企业",
+    content: "<p>由社队企业转化而来，1980 年代成为中国工业增长最快的部门。特征是“离土不离乡”：农民在本乡办厂，不进城市、不占国家计划指标。</p><p>制度意义极大：它在计划体系之外获得原料、在计划体系之外销售，靠市场定价运转。<b>这是中国第一个完全在计划外生存的工业部门</b>，证明了不靠国家投资也能搞工业。</p><p>1990 年代大规模改制，多数转为私营或股份合作制，成为民营经济的前身。</p>"
+  },
+  sez: {
+    title: "经济特区",
+    content: "<p>1980 年设立深圳、珠海、汕头、厦门四个特区，1988 年增设海南。以减免税、土地优惠、外资准入等政策吸引外资与出口加工。</p><p>在本书的框架里，它比较特殊：前三次边缘革命是自发涌现后被追认，特区是<b>自上而下批准、内容却自下而上填充</b>。它是唯一一次“先有政策、后有实践”的边缘革命，也因此常被误用作“顶层设计有效”的证据。</p><p>选址本身就符合“边缘”逻辑：远离政治中心，紧贴香港与海外市场。</p>"
+  },
+  birdcage: {
+    title: "鸟笼经济",
+    content: "<p>陈云在 1980 年代用来形容改革边界的一个比喻，大意是：搞活经济像养鸟，鸟要让它飞，但只能飞在笼子里，笼子就是计划。</p><p>这个比喻的关键不在“鸟”，而在<b>笼子的尺寸由谁决定、能不能改</b>。它精确地表达了那一代领导人的立场：市场可以被允许，但必须被限定在计划的框架内。</p><p>说明：该比喻流传极广，不同回忆与转述中的具体措辞略有差异，本书第四章借用它作为章标题，指代 1980 年代“社会主义下的市场改革”这一整体处境。</p>"
+  },
+  soereform: {
+    title: "国企四轮改革（1980s）",
+    content: "<p>在不改变产权归属的前提下，先后尝试了四种激励方案：</p><ul><li><b>放权让利</b>（1980 前后）：给企业留成利润、扩大自主权；</li><li><b>利改税</b>（1983—1984）：上缴利润改为缴税；</li><li><b>承包经营责任制</b>（1987 起）：企业向国家承包，超收多留；</li><li><b>股份制试点</b>（1990 前后）：引入多元股东。</li></ul><p>四轮的共同缺陷：产权不明，没有人对长期负责，承包人倾向在承包期内拼设备、拼人力、不投资。<b>激励给了，责任没给。</b></p>"
+  },
+  dualtrack: {
+    title: "双轨制",
+    content: "<p>同一商品同时存在两个价格：计划内调拨价（低）与计划外市场价（高）。1980 年代中期在钢材、煤炭等生产资料上普遍推行。</p><p>历史功绩：在不动存量既得利益的前提下，让市场部门在增量上生长起来，是中国“增量改革”的经典设计。</p><p>结构性代价：两价之差就是租金，谁拿到批文谁获利，直接催生“官倒”与 1980 年代后期的社会不满。<b>任何渐进过渡方案都必须预先回答：这笔租金归谁、如何消化。</b></p>"
+  },
+  pricejump: {
+    title: "1988 年价格闯关",
+    content: "<p>1988 年试图一次性放开价格、取消双轨制的改革尝试。当时通胀预期已经形成，放开价格等于向公众发出“马上要涨”的信号，抢购与囤积同时爆发，改革被迫中止，随后进入紧缩与整顿。</p><p>在本书的读法里，它的教训是：<b>价格不是可以“宣布放开”的东西</b>，它依赖一整套配套制度——清晰的产权、充分的竞争、有纪律的货币。缺了配套，放开只会释放混乱。</p>"
+  },
+  market: {
+    title: "统一国内市场",
+    content: "<p>1990 年代的关键工程：拆除地方保护、打通流通渠道、统一税制与市场规则，使商品、资本、劳动力能跨省自由流动。</p><p>在此之前，中国的市场更像“很多个地方集市的总和”，行政分割使规模效应无法发挥。统一市场形成后，大规模生产、全国性品牌、跨区域供应链才成为可能。</p><p>本书把它列为 1990 年代三件大事之首——没有它，前面那些边缘突破只能停留在局部。</p>"
+  },
+  soe: {
+    title: "国企改制与“抓大放小”",
+    content: "<p>1990 年代中后期对国有经济布局的调整：中小型国企通过出售、兼并、破产、股份合作制等方式退出；国有资本向大型企业和战略性行业集中。</p><p>推进方式高度实用主义——能卖的卖、能合的合、能破的破，理论争论远远滞后于操作。</p><p>两个后果同时为真：<b>效率确实提高</b>（大量亏损企业被清理），<b>资产也确实以极低价格转移到少数人手中</b>，并伴随大规模下岗。任何只讲一半的叙述都是失真。</p>"
+  },
+  regioncomp: {
+    title: "区域竞争",
+    content: "<p>指地方政府之间为招商引资、税收、就业而展开的竞争。在本书框架中，它解决了一个理论难题：<b>一个政治权力集中的体制，如何产生接近市场的竞争压力？</b></p><p>答案是把竞争下放到地方政府之间——它们没有立法权，但掌握土地、审批、财政资源，于是用这些互相竞价。这被认为是中国模式中最独特、也最难复制的一环。</p><p>副作用同样明显：重复建设、地方保护主义、环境“竞次”、地方政府债务累积。</p>"
+  },
+  models: {
+    title: "苏南 / 温州 / 珠三角三种模式",
+    content: "<p><b>苏南模式</b>：集体所有、政府主导，乡镇政府充当出资人与组织者，典型如华西村式的集体经济。</p><p><b>温州模式</b>：家庭作坊、专业市场、民间金融，几乎不依赖政府与外资，靠家族网络与外出经商扩张。</p><p><b>珠三角模式</b>：外资驱动、出口加工、“三来一补”，依赖香港的订单与资本。</p><p>三种模式在同一时期、同一国家内并存，产权结构、资金来源、政府角色完全不同——这是本书第六章“多元资本主义”最直接的证据。</p>"
+  },
+  ideasmarket: {
+    title: "思想市场（market for ideas）",
+    content: "<p>科斯晚年的核心主张之一：如同商品需要市场，思想也需要一个允许自由竞争、优胜劣汰的市场——不同学说、方案、判断可以公开比较，由实践检验。</p><p>在本书中它被用来解释改革初期的活力：之所以能突破教条，靠的是大学、媒体、研究机构、地方干部之间活跃的观念竞争。</p><p>作者据此提出全书唯一的规范性判断：<b>如果思想市场继续受限，商品市场的进一步深化会失去动力来源</b>——下一步改革缺的不是资源，是新想法。</p>"
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

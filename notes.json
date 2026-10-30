@@ -438,5 +438,45 @@
     "date": "2026-10-26",
     "category": "组织与管理",
     "author": "斯图尔特·克雷纳"
+  },
+  {
+    "id": "57",
+    "title": "《智能》",
+    "file": "notes/note57.html",
+    "date": "2026-10-30",
+    "category": "商业与市场",
+    "author": "曾鸣"
+  },
+  {
+    "id": "58",
+    "title": "《激荡三十年》",
+    "file": "notes/note58.html",
+    "date": "2026-10-29",
+    "category": "商业与市场",
+    "author": "吴晓波"
+  },
+  {
+    "id": "59",
+    "title": "《跌荡一百年》",
+    "file": "notes/note59.html",
+    "date": "2026-10-29",
+    "category": "商业与市场",
+    "author": "吴晓波"
+  },
+  {
+    "id": "60",
+    "title": "《变革中国》",
+    "file": "notes/note60.html",
+    "date": "2026-10-29",
+    "category": "政治与经济",
+    "author": "罗纳德·科斯、王宁"
+  },
+  {
+    "id": "61",
+    "title": "《第四消费时代》",
+    "file": "notes/note61.html",
+    "date": "2026-10-29",
+    "category": "社会与文化",
+    "author": "三浦展"
   }
 ]

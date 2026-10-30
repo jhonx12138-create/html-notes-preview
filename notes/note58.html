@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>激荡三十年 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+[data-theme="history"] {
+  --primary: #6b3a1f; --primary-light: #fdf2e9; --primary-dark: #4a2511;
+  --accent: #935116; --accent-deep: #6b3a1f;
+  --bg: #fefaf6; --bg-card: #ffffff; --bg-soft: #faf3eb; --bg-softer: #f5e6d3;
+  --bg-tag: #fdebd0;
+  --text: #3e2723; --text-heading: #2c1810; --text-muted: #8d6e63; --text-light: #a1887f;
+  --border: #d7ccc8; --border-soft: #e8d5c4;
+  --highlight: #fdf2e9; --highlight-strong: #fdebd0;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6b3a1f; --color-tool: #935116; --color-case: #7d6608;
+  --color-history: #b9770e; --color-insight: #6b3a1f; --color-debate: #c0392b;
+  --color-solution: #1e8449; --color-crisis: #e74c3c; --color-mechanism: #935116;
+  --color-effect: #7d3c98; --color-core: #4a2511;
+  --warn-bg: #fef9e7; --warn-border: #f0d58c; --example-bg: #fdfaf6;
+  --reflect-bg: #f5ede1; --quote-border: #935116;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+.sidebar .toc-l2 a { padding-left: 22px; font-size: 12px; color: var(--text-muted); }
+
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+.header {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+}
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px;
+  font-size: 14px;
+  color: var(--primary-dark);
+  line-height: 1.6;
+}
+
+.section {
+  margin-bottom: 28px;
+}
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 20px 0 10px;
+}
+.section .lead {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+  overflow: visible;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 15px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body {
+  font-size: 14px; color: var(--text); line-height: 1.7;
+}
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 {
+  font-size: 14px; color: var(--primary-dark); margin-bottom: 6px;
+}
+.law-card p {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc {
+  font-size: 13px; color: var(--text); line-height: 1.65;
+}
+.pattern-card .pattern-examples {
+  font-size: 12px; color: var(--text-light); margin-top: 8px;
+}
+
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 8px;
+}
+.reflection-block p {
+  font-size: 13px; color: var(--text); line-height: 1.7;
+}
+
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-style: normal;
+  color: var(--text-muted);
+  text-align: right;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 14px 0;
+}
+
+table.extension {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 2px;
+  transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 {
+  font-size: 16px; color: var(--text-heading); margin-bottom: 10px;
+}
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider {
+  border: none;
+  border-top: 1px dashed var(--border);
+  margin: 32px 0;
+}
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+/* ===== 图谱补充组件 ===== */
+.arg-chain { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+.arg-step {
+  flex: 1 1 150px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+}
+.arg-step .step-no {
+  font-size: 10.5px; font-weight: 700; color: var(--accent);
+  letter-spacing: 1.2px; text-transform: uppercase;
+}
+.arg-step .step-title {
+  font-size: 14px; font-weight: 700; color: var(--text-heading);
+  margin: 4px 0 6px; line-height: 1.4;
+}
+.arg-step .step-desc { font-size: 12px; color: var(--text-muted); line-height: 1.6; }
+
+.formula-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin: 16px 0;
+}
+.formula-main {
+  font-family: var(--font-mono);
+  font-size: 16px; font-weight: 700;
+  color: var(--primary-dark);
+  text-align: center;
+  padding: 14px 12px;
+  background: var(--highlight);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  line-height: 1.9;
+}
+.formula-note { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+.tree-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  overflow-x: auto;
+  margin: 14px 0;
+}
+.tree-box pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.7;
+  color: var(--text);
+  white-space: pre;
+}
+
+/* 水平时间轴 */
+.timeline-track {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  padding: 20px 0 8px;
+  margin: 14px 0;
+  position: relative;
+}
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 32px; left: 0; right: 0;
+  height: 3px;
+  background: var(--primary-light);
+  border-radius: 2px;
+}
+.timeline-node-tl {
+  flex: 0 0 auto;
+  text-align: center;
+  padding: 0 14px;
+  position: relative;
+  z-index: 1;
+  min-width: 96px;
+}
+.timeline-node-tl .era {
+  font-size: 12px; font-weight: 700;
+  color: var(--primary); margin-bottom: 6px;
+}
+.timeline-node-tl .dot {
+  width: 14px; height: 14px;
+  background: var(--primary);
+  border: 3px solid var(--primary-light);
+  border-radius: 50%;
+  margin: 0 auto 8px;
+}
+.timeline-node-tl .name {
+  font-size: 13px; font-weight: 600;
+  color: var(--text-heading); margin-bottom: 2px;
+  line-height: 1.3;
+}
+.timeline-node-tl .tl-sub {
+  font-size: 11px; color: var(--text-muted); line-height: 1.4;
+}
+
+/* 三线对照矩阵 */
+.matrix-wrap { overflow-x: auto; margin: 16px 0; }
+table.matrix {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+table.matrix th {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+  border: 1px solid var(--primary-dark);
+  font-size: 12.5px;
+}
+table.matrix th.rowhead {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  width: 13%;
+  border: 1px solid var(--border);
+}
+table.matrix td {
+  padding: 10px 12px;
+  border: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.6;
+  color: var(--text);
+}
+table.matrix td.rowhead {
+  background: var(--bg-soft);
+  font-weight: 700;
+  color: var(--primary-dark);
+  white-space: nowrap;
+}
+table.matrix tr:hover td { background: var(--bg-soft); }
+
+/* 时代段落标记 */
+.era-head {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px;
+  margin-bottom: 6px;
+}
+.era-tag {
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 700;
+  background: var(--primary);
+  color: #fff;
+  padding: 3px 12px;
+  border-radius: 4px;
+}
+.era-sub { font-size: 13px; color: var(--text-muted); }
+
+.hook-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  margin: 16px 0;
+  box-shadow: var(--shadow-sm);
+}
+.hook-line {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--primary-dark);
+  padding: 8px 0;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.hook-line:last-of-type { border-bottom: none; }
+.hook-note {
+  margin-top: 12px; font-size: 13px; color: var(--text-muted); line-height: 1.7;
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+
+@media (max-width: 800px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .two-col { grid-template-columns: 1fr; }
+  .header h1 { font-size: 22px; }
+  .modal-card { padding: 20px; }
+  .formula-main { font-size: 14px; }
+  .timeline-track::before { top: 28px; }
+  .timeline-node-tl { padding: 0 10px; min-width: 78px; }
+}
+</style>
+</head>
+<body data-theme="history">
+
+<nav class="sidebar" id="sidebar">
+  <h3>📖 本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">书名页</a></li>
+    <li><a href="#method">企业史怎么读</a></li>
+    <li><a href="#question">全书立场</a></li>
+    <li><a href="#timeline">三十年时间轴</a></li>
+    <li><a href="#part1">第一部 1978—1983</a></li>
+    <li><a href="#part2">第二部 1984—1992</a></li>
+    <li><a href="#part3">第三部 1993—1997</a></li>
+    <li><a href="#part4">第四部 1998—2002</a></li>
+    <li><a href="#part5">第五部 2003—2008</a></li>
+    <li><a href="#three-lines">三线对照矩阵</a></li>
+    <li><a href="#figures">人物四种结局</a></li>
+    <li><a href="#insights">贯穿论点</a></li>
+    <li><a href="#laws">贯穿规律</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+    <li><a href="#quotes">核心金句</a></li>
+    <li><a href="#extension">延伸与比较</a></li>
+    <li><a href="#reflection">延伸思辨</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <h1>激荡三十年</h1>
+    <div class="subtitle">吴晓波 · 中国企业 1978—2008 · 中信出版社十年典藏版（上下两册，812 页）</div>
+    <div class="meta">
+      <span><strong>作者</strong> 吴晓波（财经作家，蓝狮子财经出版创始人）</span>
+      <span><strong>初版</strong> 上卷 2007 / 下卷 2008</span>
+      <span><strong>结构</strong> 五部 · 三十章 · 每章一年 · 附「企业史人物」专栏</span>
+      <span><strong>体例</strong> 编年体 + 人物列传</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">企业史</span>
+      <span class="badge">制度变迁</span>
+      <span class="badge">编年体</span>
+      <span class="badge">所有制三线</span>
+      <span class="badge">企业家命运</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：<strong>这三十年真正的主角不是企业家，是制度。企业家做的事，是把制度松动的缝隙，一点点撑成了门。</strong>
+      所以读这本书，别只读"谁成功了"，要读"制度在什么时候、因为什么、允许了什么，又收回了什么"。
+    </div>
+  </div>
+
+  <!-- 企业史怎么读 -->
+  <div class="section" id="method">
+    <h2>整理方法：企业史为什么不能用一条时间轴讲</h2>
+    <p class="lead">这是这份图谱与前几本最大的不同。企业史如果按"一年一个节点"平铺，会得到 30 个孤立事件——读者只能看到"先后"，看不到"因果"和"命运"。所以我用了三层轴叠加。</p>
+
+    <div class="formula-box">
+      <div class="formula-main">
+        企业史 = 制度周期（何时允许）× 所有制格局（谁被允许）× 个人选择（谁抓住了）<br>
+        <span style="font-size:13px;font-weight:400;color:var(--text-muted);">三条轴必须叠在一起读，单独看任何一条都会误判</span>
+      </div>
+      <div class="formula-note">
+        只读制度周期，会变成政策文件摘要；只读所有制，会变成"国进民退"的抽象争论；只读人物，会变成成功学故事集。
+        <strong>三轴交叉处，才是这本书记录的东西。</strong>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">第一层轴：制度周期（原书五部的分法）</div>
+        <div class="content">吴晓波没有按十年分期，而是按<strong>政策松紧的节律</strong>切成五部：1978—1983 没有规则的骚动、1984—1992 被释放的精灵、1993—1997 民族品牌进行曲、1998—2002 在暴风雨中转折、2003—2008 大国梦想成真。
+        这五部的名字本身就是判断——"骚动""精灵""进行曲""转折""梦想"，语气一路变化，从摸索到亢奋再到复杂。</div>
+        <div class="example">💡 读法：注意每一部的<strong>开头两年</strong>。那通常是政策松动最猛的窗口，也是后来大部分主角登场的时刻。</div>
+      </div>
+
+      <div class="info-card tool">
+        <div class="label">第二层轴：所有制格局（本图谱补的对照矩阵）</div>
+        <div class="content">同一年、同一个政策，国企、民企、外资的处境可能完全相反。1998 年"国企三年脱困"对国企是生死关卡，对民企却是收购扩张的窗口；2001 年入世对外资是市场打开，对部分民企是"被合资、被收购"的开始。
+        <strong>不把三条线并排放，就看不出这种此消彼长。</strong></div>
+        <div class="example">💡 见下方<a href="#three-lines">三线对照矩阵</a>——这是整份图谱里信息密度最高的一块。</div>
+      </div>
+
+      <div class="info-card mechanism">
+        <div class="label">第三层轴：人物命运（原书自带的「企业史人物」专栏）</div>
+        <div class="content">原书在每一年正文之后，附一篇人物特写——"傻子"年广久、"老板"袁庚、步鑫生、马胜利、牟其中、仰融……<strong>这不是点缀，是另一种史观</strong>：年份正文写"时代怎样"，人物特写写"个体在时代里怎样"。两条线互相注解，才构成完整的企业史。</div>
+        <div class="example">💡 这份图谱把三十年的企业家按<strong>四种结局</strong>归类（见<a href="#figures">人物四种结局</a>），比按行业或地区分类更能看出制度的边界在哪。</div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">一个必须带着的问题读完全书</div>
+        <div class="content">每读到一个成功案例，问一句：<strong>他成功，是因为他更聪明，还是因为制度在那个时刻刚好允许？</strong> 每读到一个倒下的案例，问同一句。
+        这个问题会让全书读起来完全不一样——因为你会发现，很多"能力差异"其实是"时点差异"，很多"失败"其实是"越界被清算"。</div>
+      </div>
+    </div>
+
+    <div class="tree-box">
+<pre>原书的双轨体例（这也是最合适的整理骨架）
+
+   ┌─ 正文轨：按年叙事 ──────────────────────┐
+   │  1978 · 1979 · 1980 …… 2008           │
+   │  每年一章，写当年政策、事件、企业动态     │
+   └────────────────────────────────────────┘
+                    ↕ 互相注解
+   ┌─ 人物轨：「企业史人物」专栏 ─────────────┐
+   │  年广久 · 袁庚 · 步鑫生 · 马胜利 ……     │
+   │  每篇一人，写个体在时代夹缝里的选择与下场  │
+   └────────────────────────────────────────┘
+
+  本图谱的处理：
+  正文轨 → 归并为五部，每部给"背景/企业与人物/代价/洞察"四张卡
+  人物轨 → 打散重组，按"四种结局"归类
+  空白处 → 补一层"所有制对照矩阵"，这是原书散落在各章、但没有并置的信息</pre>
+    </div>
+  </div>
+
+  <!-- 全书立场 -->
+  <div class="section" id="question">
+    <h2>全书立场：一部"迷惑"的书</h2>
+    <p class="lead">吴晓波在前言里写了一句很诚实的话——「我对历史的本质始终迷惑不解」。这句话是理解全书态度的钥匙：他不是在写赞歌，也不是在写控诉。</p>
+
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">他写的到底是什么</div>
+        <div class="content">不是"中国企业家有多厉害"，而是<strong>一个没有商业传统的国家，如何在三十年里重新长出企业这个物种</strong>。所以书里充满了断裂、反复、荒诞和意外——很多企业的崛起靠的是政策缝隙，很多企业的死亡源于一纸文件。</div>
+        <div class="example">💡 这不是一部"成功史"，更像一部"幸存史"。作者自己也没打算把它写成励志书。</div>
+      </div>
+
+      <div class="info-card concept">
+        <div class="label">为什么用编年体</div>
+        <div class="content">编年体的好处是<strong>不给人 hindsight（后见之明）的特权</strong>。你会和当时的人一样，不知道下一年会发生什么。1984 年柳传志、张瑞敏、王石同时起步，但书里不会提前告诉你谁能活到最后——这种"不知道"才是历史的真实质感。</div>
+        <div class="example">💡 代价是：因果被年份切断。所以这份图谱才要额外补"规律"和"矩阵"两层，把跨年的因果接回来。</div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">它的盲区，作者自己也承认</div>
+        <div class="content">全书的主角是<strong>被记录下来的企业家</strong>。那些同样努力、同样聪明、但没有活下来、或者压根没被报纸报道过的人，基本不在书里。吴晓波在多个场合承认过这个"幸存者偏差"，前言那句"迷惑不解"某种意义上就是在说这件事。</div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">三十年的一句话总结</div>
+        <div class="content">1978 年，中国几乎不存在"企业"这个概念（只有工厂和公社）；2008 年，中国已经有了可以和世界巨头同台竞争的公司，也有了全球最多的上市公司之一批。
+        <strong>这个跨度不是靠管理学的进步完成的，是靠制度一层层放开完成的。</strong> 企业只是在每一层放开时，抢在别人前面钻了进去。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 时间轴 -->
+  <div class="section" id="timeline">
+    <h2>三十年时间轴：六个真正的转折点</h2>
+    <p class="lead">不是每一年都值得标在轴上。以下六个年份改变了后面所有年份的玩法。</p>
+
+    <div class="timeline-track">
+      <div class="timeline-node-tl">
+        <div class="era">1978</div>
+        <div class="dot"></div>
+        <div class="name">破冰</div>
+        <div class="tl-sub">三中全会<br>小岗村按印</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1984</div>
+        <div class="dot"></div>
+        <div class="name">公司元年</div>
+        <div class="tl-sub">联想/海尔/万科<br>同一年起步</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1988—89</div>
+        <div class="dot"></div>
+        <div class="name">价格闯关<br>与倒春寒</div>
+        <div class="tl-sub">抢购风<br>紧缩与退潮</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1992</div>
+        <div class="dot"></div>
+        <div class="name">春天的故事</div>
+        <div class="tl-sub">南巡<br>下海潮</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1998</div>
+        <div class="dot"></div>
+        <div class="name">闯地雷阵</div>
+        <div class="tl-sub">国企脱困<br>房改/下岗</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">2001</div>
+        <div class="dot"></div>
+        <div class="name">入世</div>
+        <div class="tl-sub">WTO<br>世界工厂</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">2008</div>
+        <div class="dot"></div>
+        <div class="name">终点即起点</div>
+        <div class="tl-sub">危机/四万亿<br>互联网接棒</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">看这条轴要注意的一件事</div>
+      <p>这条轴的形状是<strong>「松—紧—松—紧」交替</strong>，而不是一路向上。1984 的松、1989 的紧、1992 的再松、1998 的结构性收紧、2001 的被动开放——每一次松动都会催生一批企业，每一次收紧都会清算一批企业。<strong>活过两轮以上的，才算真正的企业家；只活过一轮的，往往是时运。</strong></p>
+    </div>
+  </div>
+
+  <!-- 第一部 -->
+  <div class="section" id="part1">
+    <div class="era-head">
+      <span class="era-tag">第一部</span>
+      <h2 style="border:none;padding:0;margin:0;">1978—1983　没有规则的骚动</h2>
+    </div>
+    <p class="lead">六年时间，中国从"没有企业"到"允许个体户"，走的是最小心的一步。这一部的关键词是<strong>合法性</strong>——不是能不能赚钱，而是"能不能存在"。</p>
+
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">制度背景：从"阶级斗争"转向"经济建设"</div>
+        <div class="content">1978 年底的十一届三中全会把工作重心转向经济建设；农村推行家庭联产承包，小岗村十八户农民按红手印分田到户。城市里开始"扩权让利"试点，首钢等国企试行利润留成。
+        <strong>但整个体制仍在一个"笼子"里</strong>——1981 年那章用"笼子与鸟"作标题，讲的就是计划与市场的关系：鸟可以飞，但不能飞出笼子。<span class="glossary-trigger" onclick="openModal('cageBird')">?</span></div>
+        <div class="example">💡 这个比喻统治了整个八十年代的思想界：改革不是拆笼子，是把笼子一点点撑大。</div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">企业现场：个体户的"非法生存"</div>
+        <div class="content">这一时期的主角不是公司，是<strong>个体户</strong>。他们没有法人地位，雇工超过七个人就会被质疑"是不是剥削"（马克思的经典界限）。温州、义乌、广州的街头摊贩构成了最早的市场网络。
+        1980 年深圳、珠海、汕头、厦门设经济特区，蛇口工业区喊出"时间就是金钱，效率就是生命"。</div>
+        <div class="example">💡 袁庚在蛇口做的不是招商，是<strong>造一个允许试错的容器</strong>——后来所有特区的逻辑都从这里来。</div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">代价：第一批"敢吃螃蟹的人"进了监狱</div>
+        <div class="content">1982 年打击经济领域犯罪，温州柳市的"八大王"（五金、螺丝、目录等八个专业户）被通缉、判刑；"傻子瓜子"的年广久因雇工超百人被反复调查、三次入狱。
+        <strong>他们的罪名不是偷抢，是"太早"。</strong> 这时候的法律还没准备好承认他们做的事。<span class="glossary-trigger" onclick="openModal('speculator')">?</span></div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">这一部最深的洞察：合法性是可以被争取的</div>
+        <div class="content">年广久的案子最后是被邓小平两次点名"放一放、看一看"解决的。这说明一个关键机制：<strong>在制度空白期，个别案例可以变成政策依据</strong>。一个人的命运被讨论，可能换来一个行业的合法化。
+        这不是法治的常态，但它是改革初期的真实路径——<strong>先有事实，后有文件</strong>。</div>
+        <div class="example">💡 所以这一代企业家最重要的能力不是经营，是<strong>让自己活到被承认的那一天</strong>。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第二部 -->
+  <div class="section" id="part2">
+    <div class="era-head">
+      <span class="era-tag">第二部</span>
+      <h2 style="border:none;padding:0;margin:0;">1984—1992　被释放的精灵</h2>
+    </div>
+    <p class="lead">这是全书最富戏剧性的九年：一批人同时起步，一批人同时倒下。关键词是<strong>野蛮生长</strong>——规则还没写，所有人都在试。</p>
+
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">1984：公司元年</div>
+        <div class="content">这一年，柳传志在中关村一间传达室创办联想前身，张瑞敏接手濒临倒闭的青岛电冰箱总厂，王石在深圳创办万科前身，李经纬做出健力宝。同年，十二届三中全会通过《关于经济体制改革的决定》，<strong>城市改革正式成为主轴</strong>。
+        <strong>中国第一批现代意义上的公司，是在同一年、几乎互不知情的情况下长出来的。</strong></div>
+        <div class="example">💡 吴晓波把 1984 称为"公司元年"——不是因为多了几家公司，而是因为人们第一次觉得"办公司"是件正经事。</div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">1985—1988：狂欢、通胀、与第一次清算</div>
+        <div class="content">价格双轨制让"批文"成了最值钱的商品，"官倒"和倒爷横行；1985 年海南汽车事件是一次典型的失控。1988 年价格闯关，全国抢购风，通胀高企。
+        同年，首届"全国优秀企业家"评选出二十位厂长经理——多年后这批人绝大多数离开了舞台，这一节因此被写成"廿人沉浮"。
+        <span class="glossary-trigger" onclick="openModal('dualTrack')">?</span></div>
+        <div class="example">💡 双轨制的伦理问题很尖锐：同一个东西，计划价和市场价差一倍，谁拿到批文谁发财——这不产生任何新价值。</div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">承包制：一场"包字进城"的实验</div>
+        <div class="content">1986 年后国企推行承包经营责任制，马胜利成为"承包典范"，一人承包上百家造纸厂。步鑫生在海盐衬衫总厂的改革也一度是全国样板，但后来因扩张与体制摩擦被免职。
+        <strong>承包制的根本缺陷是：它解决了短期激励，解决不了产权与长期投入。</strong><span class="glossary-trigger" onclick="openModal('contract')">?</span></div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">1989—1992：倒春寒，然后是春天</div>
+        <div class="content">1989 年后经济紧缩、外资观望、市场疲软，个体与私营经济进入最冷的三年（"倒春寒""乍热骤冷"）。1991 年牟其中用罐头换飞机的传闻式交易，成了那个沉闷年份里最戏剧化的一笔。
+        1992 年邓小平南巡，<strong>一年之内，整个气氛翻转</strong>：大批体制内官员下海，"92 派"成为新一批企业家。</div>
+        <div class="example">💡 从"倒春寒"到"春天的故事"，中间只隔了三年。这三年里死掉的企业，后来很少被提起——这就是编年体之外的另一半历史。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第三部 -->
+  <div class="section" id="part3">
+    <div class="era-head">
+      <span class="era-tag">第三部</span>
+      <h2 style="border:none;padding:0;margin:0;">1993—1997　民族品牌进行曲</h2>
+    </div>
+    <p class="lead">关键词是<strong>对抗</strong>。对内是乡镇企业、民营企业与国企争夺市场；对外是"民族品牌"与跨国公司的正面碰撞。</p>
+
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">制度背景：市场经济写进目标</div>
+        <div class="content">1993 年十四届三中全会确立"社会主义市场经济体制"框架，建立现代企业制度成为国企改革方向；1994 年分税制改革、汇率并轨，中央财政能力大幅增强——<strong>这一改动深刻塑造了此后二十年的地方政府行为</strong>。
+        <span class="glossary-trigger" onclick="openModal('taxSharing')">?</span></div>
+        <div class="example">💡 分税制之后，地方政府的收入越来越依赖土地与招商引资，这直接埋下了后来二十年城市化与地产的逻辑。</div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">标王时代：营销的第一次狂欢</div>
+        <div class="content">央视广告招标诞生"标王"，秦池、孔府宴等企业以天价夺标，一夜成名。三株、太阳神等保健品公司用地推与人海战术做出了惊人的销售规模。
+        <strong>这一代企业的共同点是：营销能力远超产品能力与治理能力。</strong> 所以它们的衰落也几乎同样迅速。</div>
+        <div class="example">💡 秦池的崩塌（产能跟不上标王销量、勾兑被曝光）后来成了中国营销史上的标准反面教材。</div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">327 国债事件：资本市场的第一次系统性失控</div>
+        <div class="content">1995 年，万国证券在"327"国债期货上巨亏并违规操作，最终导致国债期货市场被关闭、公司被重组。
+        <strong>这是中国资本市场早期的标志性事故</strong>：制度不完善、监管缺位、机构赌性，三者叠加。它让监管层对金融衍生品的态度保守了很长时间。</div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">这一部最深的洞察：民族品牌叙事的两面</div>
+        <div class="content">"收复之役"讲的是本土品牌对抗外资的进攻。但同一时期，大量本土品牌以合资方式被外资收购后消失（所谓"嫁出去的女儿"）。
+        <strong>爱国叙事能号召消费者，却挡不住资本与技术上的差距</strong>——真正守住市场的，是那些把产品和渠道同时做扎实的公司，而不是口号最响的公司。</div>
+        <div class="example">💡 家电行业是少见的例外：长虹的降价战、海尔的品质与服务，最终让本土品牌在家电领域站稳了。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第四部 -->
+  <div class="section" id="part4">
+    <div class="era-head">
+      <span class="era-tag">第四部</span>
+      <h2 style="border:none;padding:0;margin:0;">1998—2002　在暴风雨中转折</h2>
+    </div>
+    <p class="lead">关键词是<strong>闯关</strong>。这一部是整个三十年里最痛的一段：数千万人下岗、国企大面积改制、亚洲金融危机、互联网泡沫破裂——四件事挤在五年里。</p>
+
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">1998：三件事同时发生</div>
+        <div class="content">
+          <strong>① 国企三年脱困</strong>：大量亏损国企被兼并、破产、改制，"抓大放小"成为主调。<span class="glossary-trigger" onclick="openModal('graspBig')">?</span><br>
+          <strong>② 住房制度改革</strong>：停止福利分房，商品房市场启动——<strong>此后二十年最重要的资产逻辑在这一年被打开</strong>。<br>
+          <strong>③ 亚洲金融危机</strong>叠加特大洪水，外需与内需同时受压。</div>
+        <div class="example">💡 这一年同时终结了一种生活（单位分房、铁饭碗）并开启了一种生活（房贷、择业、下海）。</div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">代价：下岗与"被遗忘的大多数"</div>
+        <div class="content">国企改制与破产带来规模巨大的下岗分流，涉及数千万职工。他们中的绝大多数此后没有再成为"企业家"，也没有进入这本书的正文——只在背景里出现。
+        <strong>这是企业史写作最难处理的部分：改革的收益被记录，成本被摊薄成了统计数字。</strong></div>
+        <div class="example">💡 读这一节时最好停下来想一下：这本书写的是"企业的三十年"，不是"所有人的三十年"。</div>
+      </div>
+
+      <div class="info-card case">
+        <div class="label">1999—2000：庄家时代与互联网第一波</div>
+        <div class="content">股市里"庄家"横行，德隆、亿安科技等案例成为"恶之花"；胡润开始发布中国百富榜，第一次把富豪的名字摆到公众面前。
+        同期互联网兴起：新浪、搜狐、网易赴美上市，随即遭遇纳斯达克崩盘与股价跌破发行价，<strong>第一批互联网创业者经历了完整的过山车</strong>。
+        <span class="glossary-trigger" onclick="openModal('dealer')">?</span></div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">2001—2002：入世与出局，同时发生</div>
+        <div class="content">2001 年中国加入 WTO，制造业全面融入全球分工，"中国制造"开始席卷世界。但同一年，华晨的仰融在与地方的产权纠纷中出局、出走海外。
+        <strong>一个国家的开放与一个企业家的出局，可以是同一年的事。</strong> 这正是企业史最残酷的地方：宏观越好，个体的产权风险可能越尖锐。<span class="glossary-trigger" onclick="openModal('redHat')">?</span></div>
+        <div class="example">💡 仰融案的核心不是经营失败，是"这家公司到底是谁的"——产权不清的账单，在第十四年被寄到。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第五部 -->
+  <div class="section" id="part5">
+    <div class="era-head">
+      <span class="era-tag">第五部</span>
+      <h2 style="border:none;padding:0;margin:0;">2003—2008　大国梦想成真</h2>
+    </div>
+    <p class="lead">关键词是<strong>重量</strong>。中国企业开始变"重"——重化工业、重资本、重资产；同时开始变"大"——进世界五百强、参与全球并购。代价是调控与清算同步加码。</p>
+
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">2003：重型化运动</div>
+        <div class="content">钢铁、电解铝、水泥、汽车等行业投资狂飙，民营企业第一次大规模进入重化工业。随即迎来严厉的宏观调控。
+        <strong>这一轮"重型化"是民企试图从轻工消费品向上游资源升级的集体冲锋</strong>，但重化工业的资金门槛与政策敏感度，远高于此前的任何行业。</div>
+      </div>
+
+      <div class="info-card crisis">
+        <div class="label">2004：铁本与德隆，两种死法</div>
+        <div class="content">
+          <strong>铁本事件</strong>：戴国芳在江苏常州上马巨型钢铁项目，因违规审批与用地被查处，项目停摆，本人入狱。这是"民企越界撞上宏观调控"的标本。<br>
+          <strong>德隆崩盘</strong>：唐万新的产业+金融整合模式在资金链断裂后全面崩塌，成为当时最大的民营企业破产案。
+          <span class="glossary-trigger" onclick="openModal('originalSin')">?</span></div>
+        <div class="example">💡 一个死于"政策不允许"，一个死于"杠杆撑不住"——这是民企两种最典型的死法。</div>
+      </div>
+
+      <div class="info-card mechanism">
+        <div class="label">2005：深水区里的三件事</div>
+        <div class="content">
+          <strong>股权分置改革</strong>：解决流通股与非流通股的历史遗留问题，A 股进入全流通时代；<br>
+          <strong>人民币汇率形成机制改革</strong>：不再单一盯住美元；<br>
+          <strong>"非公经济36条"</strong>：第一次以国务院文件形式放宽非公经济市场准入。</div>
+        <div class="example">💡 这一年是"制度补课"的高峰：补的是 1990 年代留下的产权与市场基础问题。</div>
+      </div>
+
+      <div class="info-card insight">
+        <div class="label">2006—2008：资本盛宴与大国的两面</div>
+        <div class="content">银行改制上市、央企重组、股市冲上历史高点，2007 年中国 GDP 超过德国成为世界第三。2008 年全球金融危机爆发，四万亿刺激计划出台，同年还有奥运会与三聚氰胺事件。
+        <strong>"大国崛起"的叙事与"奶粉事件"的丑闻发生在同一年</strong>——这正是吴晓波式的写法：不给单一结论。</div>
+        <div class="example">💡 三聚氰胺不是偶然的质量事故，它是"高速扩张 + 上游失控 + 监管滞后"的必然产物——和这一部所有故事的机理一样。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 三线对照 -->
+  <div class="section" id="three-lines">
+    <h2>三线对照矩阵：同一年，三种企业的三种命运</h2>
+    <p class="lead">这是原书散落在三十章里、但没有并置呈现的信息。把它拼起来，才能看到"所有制"这条暗线。</p>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th class="rowhead">时期</th>
+            <th>🏭 国有企业</th>
+            <th>🏪 民营企业 / 个体户</th>
+            <th>🌏 外资企业</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rowhead">1978—1983</td>
+            <td>扩权让利试点、利润留成；仍是财政的附属单位，没有独立经营自主权</td>
+            <td>个体户刚获合法身份；雇工七人是红线；温州"八大王"被判刑，"傻子瓜子"被反复调查</td>
+            <td>几乎为零；仅有深圳等特区的"三来一补"加工贸易，规模极小</td>
+          </tr>
+          <tr>
+            <td class="rowhead">1984—1992</td>
+            <td>承包制、厂长负责制；短期激励有效但产权未动，后期大面积效益下滑、三角债</td>
+            <td>公司元年起步（联想、海尔、万科）；乡镇企业"三分天下有其一"；价格双轨制催生倒爷</td>
+            <td>三资企业法出台，沿海加工贸易扩张；总体仍是试探性进入</td>
+          </tr>
+          <tr>
+            <td class="rowhead">1993—1997</td>
+            <td>建立现代企业制度试点；"抓大放小"启动；大量中小国企开始改制</td>
+            <td>标王时代、保健品与家电大战；民族品牌正面抗击外资；同时大量品牌被合资后消失</td>
+            <td>大规模进入中国，合资潮；以资本与技术优势收购本土品牌、占据高端市场</td>
+          </tr>
+          <tr>
+            <td class="rowhead">1998—2002</td>
+            <td>三年脱困、下岗分流、债转股；中小国企大面积改制或破产</td>
+            <td>互联网第一波上市又破发；股市庄家横行；MBO 试水引发产权争议</td>
+            <td>入世前夜布局；制造业加速向中国转移，中国开始成为"世界工厂"</td>
+          </tr>
+          <tr>
+            <td class="rowhead">2003—2008</td>
+            <td>央企做大做强、重组上市；"国进民退"争论开始</td>
+            <td>重化工业越界（铁本）、资本系崩盘（德隆）、地产与股市造富</td>
+            <td>从合资转向并购（如凯雷徐工之争）；热钱涌入，参与中国资产重估</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这张表最值得看的一行</div>
+      <p>看 <strong>1998—2002</strong> 那一行：国企在"脱困"（本质是退出），民企在"试水资本市场"（本质是升级），外资在"布局入世"（本质是扩张）。<strong>同一个五年，三种完全相反的处境。</strong> 如果你只看任何一条线，读到的都是单一故事：国企读者读到悲壮，民企读者读到机遇，外资读者读到蓝图。只有并排看，才会明白为什么后来会出现"国进民退"的争论——因为它从这一格就开始埋了。</p>
+    </div>
+  </div>
+
+  <!-- 人物命运 -->
+  <div class="section" id="figures">
+    <h2>人物四种结局：制度的边界画在哪里</h2>
+    <p class="lead">原书的"企业史人物"专栏收录了大量个体命运。把它们按结局归类，比按行业归类更能说明问题——<strong>结局的分布，就是制度的轮廓</strong>。</p>
+
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">① 穿越周期者</div>
+        <div class="pattern-desc">活过两轮以上调控，企业持续经营。共同特征不是更聪明，而是<strong>三件事都做对了：产权早清晰、杠杆不失控、不越政策红线</strong>。他们往往极度低调，很少成为当年的"风云人物"。</div>
+        <div class="pattern-examples">鲁冠球（万向）、柳传志（联想）、张瑞敏（海尔）、何享健（美的）、任正非（华为）</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">② 高光后陨落</div>
+        <div class="pattern-desc">曾经是全国样板、媒体宠儿，然后因扩张过快、治理跟不上或产品出事而急速衰落。<strong>他们的高光往往来自"模式创新 + 营销势能"，衰落同样源于此</strong>——声势盖过了能力。</div>
+        <div class="pattern-examples">步鑫生、马胜利、秦池、三株、健力宝</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">③ 被制度清算</div>
+        <div class="pattern-desc">最有悲剧感的一类。他们的行为在当时"没人说不行"，几年后却成了罪状。<strong>不是他们变了，是制度追上来了。</strong> 这一类人的名单，就是"改革边界"的历史记录。</div>
+        <div class="pattern-examples">年广久（三次入狱）、牟其中、褚时健、戴国芳（铁本）、唐万新（德隆）、顾雏军</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">④ 出局与消失</div>
+        <div class="pattern-desc">不是失败，是"不属于这里了"。包括与地方产权纠纷后出走的企业家、被外资收购后消失的品牌创始人、以及<strong>最大的一群——国企改制中下岗的普通职工</strong>。他们没有传记，只在统计里。</div>
+        <div class="pattern-examples">仰融（华晨）、被合资吞并的品牌、数千万下岗职工</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这张分类最刺痛人的地方</div>
+      <p>三类主角（①②③）都有名字，第四类只有数字。<strong>而企业史最该被追问的，恰恰是第四类：那些同样被时代改变、但没有留下名字的人，他们的三十年算不算"激荡"？</strong> 吴晓波自己在前言里说"我对历史的本质始终迷惑不解"，我猜这句话里有一部分就是在说这个。</p>
+    </div>
+  </div>
+
+  <!-- 贯穿论点 -->
+  <div class="section" id="insights">
+    <h2>贯穿论点：五句最值得带走的话</h2>
+
+    <div class="insight-card">
+      <div class="insight-title">① 这不是一部企业成功史，是一部制度的形状史</div>
+      <div class="insight-body">把书里所有企业名字遮住，只看"谁在什么时候被允许做什么、什么时候被禁止做什么"，你会发现它的信息量几乎不损失。企业在这三十年里更像一根探针——<strong>它测的不是自己的能力上限，是制度边界的位置</strong>。所以这本书真正记录的是：那条边界线如何一年一年地移动。</div>
+      <div class="insight-evidence">证据：1982 年温州"八大王"被判刑，十年后同样的行为被鼓励；仰融 2001 年出局，公司却是那一年最成功的企业之一</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">② 企业家能力里，最大的一块是"活过周期"的能力</div>
+      <div class="insight-body">书里死于能力不足的企业很少，死于周期错位的企业很多。同一批在 1984 年起步的人，1989 年倒下一批，1998 年又倒下一批。<strong>决定生死的往往不是"做得多好"，而是"在松的时候有没有扩张过头、在紧的时候有没有现金"。</strong> 所谓穿越周期，说白了就是：不把上一轮的运气当成这一轮的实力。</div>
+      <div class="insight-evidence">证据：1988 价格闯关后的抢购与紧缩、1998 年亚洲金融危机下的资金链断裂、2004 年德隆与铁本</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">③ 改革是"先有事实，后有文件"，所以第一批人最勇敢也最危险</div>
+      <div class="insight-body">年广久的雇工问题，最后是靠个别案例被点名"放一放"才解决的。这意味着<strong>制度的合法化路径是从个案到通则</strong>：先有人做，再有争论，再有默许，最后才有文件。站在最前面的那个人，既可能成为"改革先锋"，也可能成为"犯罪分子"——区别只在于他有没有活到文件下来的那一天。</div>
+      <div class="insight-evidence">证据：傻子瓜子的三次入狱与两次被点名；小岗村按手印时的"托孤"心态</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">④ 产权模糊是早期的保护伞，也是后期的定时炸弹</div>
+      <div class="insight-body">"说不清是谁的"在扩张期是优势——有主管部门背书，能拿到贷款、批文、土地；在清算期则是致命伤——<strong>一旦企业值钱了，"这是谁的"就必须被回答</strong>。褚时健、仰融、大量集体企业改制的纠纷，本质是同一张账单，只是寄到的时间不同。</div>
+      <div class="insight-evidence">证据：红帽子企业、承包制的"包盈不包亏"、MBO 争论、2004 年郎咸平事件</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">⑤ 三十年最大的变化，是从"允许你存在"到"允许你竞争"</div>
+      <div class="insight-body">1978 年的问题是"个体户能不能合法存在"；2008 年的问题是"中国企业能不能在全球竞争"。<strong>议题的性质变了，说明阶段变了</strong>：合法性之争结束了，能力之争开始了。而 2008 年之后的十七年，题目又换了一次——从"能不能竞争"变成"竞争会不会被重新定义规则"，那是另一本书要写的事。</div>
+      <div class="insight-evidence">证据：1979—1983 的雇工与牌照之争 vs 2001 年入世后的全球竞争 vs 2008 年后的平台与监管</div>
+    </div>
+  </div>
+
+  <!-- 贯穿规律 -->
+  <div class="section" id="laws">
+    <h2>贯穿规律：六条在三十年里反复起作用的机制</h2>
+
+    <div class="law-card">
+      <h4>规律一：政策周期律——松紧交替，每一次调控都是一次洗牌</h4>
+      <p>放松（鼓励创业）→ 过热（投资与通胀）→ 收紧（调控与整顿）→ 萧条（资金链断裂）→ 再放松。三十年间这个循环至少跑了三轮。<strong>每一次洗牌，死掉的都不是最小的，而是现金流最脆弱、杠杆最高的。</strong> 所谓"企业家的能力"，很大一部分是"活过周期"的能力。</p>
+    </div>
+
+    <div class="law-card">
+      <h4>规律二：产权滞后律——先干起来，再谈这是谁的</h4>
+      <p>早期几乎所有成功企业都建立在"说不清是谁的"之上：集体的、乡镇的、戴红帽子的、挂靠的。这种模糊在扩张期是保护伞（有主管部门背书），在清算期就是定时炸弹（<strong>红帽子一摘，产权归谁？</strong>）。仰融、褚时健、大量集体企业改制的纠纷，都源于这一条。</p>
+    </div>
+
+    <div class="law-card">
+      <h4>规律三：越界与清算的时差律——同一个人，同一个行为，两种结局</h4>
+      <p>制度跑不赢企业时，越界者被称为"改革先锋"；制度追上企业时，同样的行为变成"违法犯罪"。<strong>决定命运的不是行为本身，而是行为与制度之间的时间差。</strong> 这条规律解释了书里最令人唏嘘的那批人：他们不是坏人，只是走得太早，而账单在后面。</p>
+    </div>
+
+    <div class="law-card">
+      <h4>规律四：笼子扩容律——改革不是拆笼子，是把笼子撑大</h4>
+      <p>这是全书最重要的隐喻。鸟（经济）长大了，笼子（体制）才被动地扩一圈；而不是先设计一个更大的笼子，再放鸟进去。<strong>改革是被现实逼出来的，不是被蓝图规划出来的</strong>——这一点与《筚路维艰》的判断完全一致：路径选择更多是"逼出来"的，而非"选出来"的。</p>
+    </div>
+
+    <div class="law-card">
+      <h4>规律五：代际更替律——大约十年换一茬人</h4>
+      <p>1983—1984 一代（步鑫生、鲁冠球、柳传志）、1992 一代（92 派官员下海）、1998—2000 一代（互联网创业者）、2003 后一代（重化与资本玩家）。<strong>每一代人的成功经验，很快会变成下一代人的认知包袱。</strong> 因为制度环境变了，上一轮的正确答案成了这一轮的陷阱。</p>
+    </div>
+
+    <div class="law-card">
+      <h4>规律六：幸存者记录律——历史只留下活下来的人</h4>
+      <p>这本书的方法论本身就受制于此：能被写进书里的，是有报道、有档案、有采访对象的企业。<strong>同期同样努力却无声消失的绝大多数，构成了这份历史的"暗物质"。</strong> 知道这一点，就不会把书里的"规律"当成充分条件——它们最多是必要条件。</p>
+    </div>
+  </div>
+
+  <!-- 记忆钩子 -->
+  <div class="section" id="hook">
+    <h2>记忆钩子：一个隐喻 + 三行公式</h2>
+
+    <div class="hook-box">
+      <div class="hook-line">① 中国企业三十年 = 制度松动（给空间）× 地方竞争（给保护）× 企业家胆量（抢时间）</div>
+      <div class="hook-line">② 一个人的结局 = 他做的事 ÷ 制度追上来所需的时间</div>
+      <div class="hook-line">③ 鸟长大了，笼子才扩一圈——笼子从来不是被拆掉的，是被撑大的</div>
+      <div class="hook-note">
+        如果只记一个画面，记这个：<strong>1978 年，笼子里几乎没有鸟；2008 年，笼子还是那个笼子，但已经大得能装下几只巨兽。</strong>
+        这三十年的故事，就是鸟和笼子互相长大的故事——不是谁战胜了谁，是两边都被现实推着变形。
+      </div>
+    </div>
+
+    <div class="tree-box">
+<pre>三十年的一句话骨架
+
+   1978 ── 没有企业，只有工厂和公社
+     │        ↓ 允许个体户存在（合法性之争）
+   1984 ── 公司元年：一批人同时起步
+     │        ↓ 双轨制与通胀（第一次狂欢与清算）
+   1989 ── 倒春寒：三年最冷
+     │        ↓ 南巡，气氛翻转
+   1992 ── 下海潮：92 派登场
+     │        ↓ 市场经济写进目标，民族品牌对抗外资
+   1998 ── 闯关：国企脱困 + 房改 + 下岗 + 亚洲金融危机
+     │        ↓ 入世，中国制造席卷全球
+   2003 ── 重型化：民企向上游冲锋，调控加码
+     │        ↓ 资本盛宴 + 大国叙事
+   2008 ── 终点，也是下一个三十年的起点</pre>
+    </div>
+  </div>
+
+  <!-- 金句 -->
+  <div class="section" id="quotes">
+    <h2>核心金句</h2>
+
+    <blockquote class="quote-block">
+      <p>"我对历史的本质始终迷惑不解。"</p>
+      <span class="cite">——《激荡三十年》前言标题。这句自白定了全书的调子：写史的人自己也不确定因果</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      <p>"笼子与鸟。"</p>
+      <span class="cite">—— 1981 年那一章的标题，也是理解整个八十年代改革逻辑的核心隐喻</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      <p>"这是最好的时代，这是最坏的时代。"</p>
+      <span class="cite">—— 狄更斯《双城记》开篇，书中引以概括这段历史的双重性</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      <p>"没有规则的骚动。"</p>
+      <span class="cite">—— 第一部的标题。它其实也是整部企业史的底色：规则总是滞后于行动</span>
+    </blockquote>
+  </div>
+
+  <!-- 延伸比较 -->
+  <div class="section" id="extension">
+    <h2>延伸与比较</h2>
+
+    <table class="extension">
+      <thead><tr><th>思考维度</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>中国第一部系统性的当代企业史。它的开创性不在史料（很多来自报纸与访谈），而在<strong>把"企业"当成历史主体来写</strong>——此前中国企业只出现在经济史的数字里，或成功学的故事里。它确立了一种写法：<strong>以年为单位，把政策、事件、人物编织在同一条时间线上</strong>。</td>
+        </tr>
+        <tr>
+          <td>方法论特征</td>
+          <td><strong>编年体 + 人物列传</strong>。编年体保住了"当时人的无知"（不给后见之明），人物列传保住了"个体的重量"。代价是因果链被年份切断，跨年的结构性变化要靠读者自己拼——这也是这份图谱要额外补"三线矩阵"和"规律"两层的原因。</td>
+        </tr>
+        <tr>
+          <td>局限</td>
+          <td>
+            <strong>① 幸存者偏差</strong>：只写活下来、被报道的企业。同期无声消失的绝大多数缺席，作者自己在前言里就承认了这种"迷惑"。<br>
+            <strong>② 编年体的代价</strong>：一年一章，因果被切片。你能看到"1988 年发生了什么"，但很难看到"1985 年的某个决定如何在 1995 年引爆"。<br>
+            <strong>③ 史料可核性弱</strong>：大量叙述依赖报纸报道与当事人访谈，缺少交叉验证，部分数字与细节在学界有争议。<br>
+            <strong>④ 政治与体制叙述的天花板</strong>：涉及关键年份时明显节制，重大转折的解释偏轻。<br>
+            <strong>⑤ 英雄史观倾向</strong>：制度变迁被写成企业家的舞台，普通工人、农民、下岗职工基本只是背景。<br>
+            <strong>⑥ 时间截止 2008</strong>：移动互联网、平台经济、AI 时代全部缺席——而这恰恰是中国商业变化最剧烈的十七年。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《大败局》</strong>（吴晓波）：同一作者的"失败者名录"。读完《激荡三十年》再读它，正好补上"幸存者偏差"那一半——那些当年比成功者更耀眼、后来彻底消失的企业。<br>
+            <strong>《跌荡一百年》</strong>（吴晓波）：《激荡三十年》的前传，写 1870—1977 的中国企业。读完会发现一个惊人的重复：<strong>官商关系、产权模糊、政策周期，一百年来几乎没有变过</strong>。<br>
+            <strong>《变革中国》</strong>（科斯）：诺贝尔经济学奖得主对同一段历史的解释，从制度经济学角度论证"边缘革命"——改革不是顶层设计，是底层试错被追认。与本书的"笼子与鸟"完全互证。<br>
+            <strong>《置身事内》</strong>（兰小欢）：讲地方政府如何成为经济活动的主体。本书里"地方竞争给保护"这条暗线，在那本书里有完整的机制解释。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            <strong>《筚路维艰》</strong>：制度视角的上游。那本讲 1949—2008 的五次路径选择，这本讲同期的企业命运——<strong>一个写"国家怎么选路"，一个写"企业在选定的路上怎么活"</strong>。两本对读，1978 和 1992 这两个转折点的意义会清楚得多。<br>
+            <strong>《县乡中国》</strong>：基层视角的补充。本书讲企业，那本讲县域治理——而乡镇企业、地方保护、招商引资，恰恰是两者的交叠处。<br>
+            <strong>《信息与激励经济学》</strong>：产权模糊为什么致命？用信息经济学的语言，就是<strong>剩余控制权没有界定清楚，激励必然扭曲</strong>。承包制解决短期激励、解决不了长期投入，正是教科书级的案例。<br>
+            <strong>《智能商业》</strong>：时间上的接续者。本书止于 2008，那本恰好从 2008 之后讲起——网络协同、数据智能、点线面体。<strong>两本拼起来，才是中国企业 1978—2018 的完整曲线</strong>：前三十年的主题是"制度松开"，后十年的主题是"技术重排"。
+          </td>
+        </tr>
+        <tr>
+          <td>现实应用</td>
+          <td>
+            <strong>判断周期位置</strong>：现在的政策环境是松还是紧？历史上同等松紧度下，什么类型的企业活得久？<br>
+            <strong>检查产权清晰度</strong>：有没有"说不清是谁的"部分（代持、挂靠、口头约定、合伙人股权未定）？它是你未来某一天的定时炸弹。<br>
+            <strong>估自己的杠杆</strong>：书里所有猝死的企业，死因几乎都是现金流断裂，而不是不赚钱。<br>
+            <strong>别用上一代的经验做这一代的判断</strong>：代际更替律意味着，你模仿的那个成功者的方法，很可能正是他被淘汰的原因。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 延伸思辨 -->
+  <div class="section" id="reflection">
+    <h2>延伸思辨</h2>
+
+    <div class="reflection-block">
+      <div class="reflection-title">一、这本书写的不是企业，是"制度的形状"</div>
+      <p>读完最强烈的感受是：<strong>企业在这三十年里更像一个探针，用来测量制度的边界在哪里。</strong> 谁在什么时候被判刑、什么时候被表彰、什么时候被允许上市、什么时候被要求改制——这条边界线的移动轨迹，就是中国改革的真实曲线。所以这本书的真正价值，不在于教人怎么经营，而在于让人理解：<strong>在一个规则不断变动的环境里，"正确"是一个有时效性的概念。</strong></p>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">二、编年体的诚实与不诚实</div>
+      <p>编年体最大的美德是<strong>拒绝后见之明</strong>：它让你和 1984 年的人一样，不知道谁会赢。但编年体也有一种隐蔽的不诚实——它把复杂因果压缩成"这一年发生了什么"，于是很多结构性力量被稀释成了"时代背景"。<strong>真正决定结局的往往不是某一年的大事，而是那些连续十年都在起作用、却从不构成"新闻"的东西</strong>：户籍制度、土地制度、金融抑制、地方财政结构。这本书写了大事件，但这些沉默的结构，才是真正的主角。</p>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">三、2008 之后的十七年，是另一半故事</div>
+      <p>这本书停在 2008 年，恰好停在一个巨大的转折点上：金融危机、四万亿、移动互联网爆发、平台经济崛起、再到 2021 年之后的反垄断与结构调整。<strong>前三十年，企业的命运主要由"制度允许什么"决定；后十七年，越来越多由"技术改变了什么"决定</strong>——这是两种完全不同的商业史。
+      如果用这套框架去写 2008—2026，我会加第四层轴：<strong>技术范式</strong>。因为移动互联网和 AI 带来的变化，很多不是政策给的窗口，而是技术自己创造的空间。</p>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">四、给读者的实用建议</div>
+      <p>不要把它当励志书读——书里最成功的人，往往是最不像英雄的那些。也不必通读三十章，可按下面这条线读：<br>
+      <strong>前言</strong>（作者的态度）→ <strong>1984 公司元年</strong>（起点是怎么发生的）→ <strong>1992 春天的故事</strong>（第二波是怎么来的）→ <strong>1998 闯地雷阵</strong>（代价是什么）→ <strong>2004 表面的胜利</strong>（越界的后果）。<br>
+      五章读完，三十年的骨架就有了。剩下的年份，当作血肉去补。<br>
+      最后留一个问题带着走：<strong>如果这三十年真正的主角是制度，那么今天被我们称为"能力"的东西，有多少只是"时点"？</strong></p>
+    </div>
+  </div>
+
+  <div class="footer-note">
+    《激荡三十年》知识图谱 · 基于中信十年典藏版目录与原著结构整理 · 金句取自前言与章节标题，其余为综合提炼，非逐字原文摘录 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  cageBird: {
+    title: '笼子与鸟',
+    content: '<p>1981 年那一章的标题，也是整个八十年代改革讨论的核心隐喻。</p><ul><li><strong>鸟</strong>：经济活动、市场、企业</li><li><strong>笼子</strong>：计划体制、行政控制</li></ul><p>含义是：鸟可以飞，但不能飞出笼子。改革的空间来自笼子的扩容，而不是笼子的拆除。</p><p>这个隐喻解释了此后三十年的节律——每一次“鸟长大了”，笼子才被动地扩一圈。</p>'
+  },
+  speculator: {
+    title: '投机倒把 / 倒爷',
+    content: '<p>计划经济时期的罪名“投机倒把”，指通过买卖差价获利的行为——在物资短缺与价格管制的年代，这被视为扰乱秩序。</p><p>1980 年代价格双轨制出现后，一批人依靠拿到计划价物资、再按市场价卖出而暴富，被称为“倒爷”。其中利用权力关系拿批文的，被称为“官倒”。</p><p>这个群体的存在，是双轨制伦理困境的直接产物：他们不创造价值，只搬运差价。</p>'
+  },
+  dualTrack: {
+    title: '价格双轨制',
+    content: '<p>同一商品同时存在计划价（低）与市场价（高）两种价格。1980 年代中期在中国推开，本意是渐进过渡、避免一次性放开引发震荡。</p><ul><li><strong>优点</strong>：避免了休克疗法的剧烈冲击，让体制内与体制外都能运转</li><li><strong>代价</strong>：制造了巨大的寻租空间——谁拿到批文，谁就获得无风险利润</li></ul><p>1988 年“价格闯关”试图并轨，结果引发全国抢购与高通胀，成为那一轮经济过热的标志性事件。</p>'
+  },
+  contract: {
+    title: '承包经营责任制',
+    content: '<p>1980 年代国企改革的主要形式：政府与企业签订承包合同，约定上缴利润或税收基数，超额部分由企业留用。</p><ul><li><strong>解决了什么</strong>：短期激励——多干多留，厂长经理有了积极性</li><li><strong>没解决什么</strong>：产权归属、长期投入、预算软约束</li></ul><p>典型后果是“包盈不包亏”：赚钱时企业留利，亏损时仍要政府兜底；同时企业倾向少投入、多分配，损害长期能力。</p>'
+  },
+  redHat: {
+    title: '红帽子企业',
+    content: '<p>指私营企业注册为集体企业或挂靠在国有企业、机关、学校名下，以获取合法身份与政策保护的現象。</p><ul><li><strong>为什么戴</strong>：私营经济地位不明，挂靠能拿到贷款、批文、税收优惠，也能规避政治风险</li><li><strong>为什么危险</strong>：帽子一摘，企业到底归谁就成了法律难题——出资人、挂靠单位、地方政府三方都能主张权利</li></ul><p>1990 年代大量产权纠纷与企业家的出局（如仰融案中的产权争议），根源都在这里。</p>'
+  },
+  graspBig: {
+    title: '抓大放小',
+    content: '<p>1990 年代中后期国企改革方针：集中力量搞好大型骨干企业（抓大），中小型国有企业则通过出售、兼并、租赁、股份合作等方式放开改制（放小）。</p><ul><li><strong>抓大</strong>：组建大型企业集团，推动央企做大做强</li><li><strong>放小</strong>：数以万计的中小国企在几年内完成改制或退出</li></ul><p>这条方针在效率上是成功的，但在过程公正性上留下了大量争议——包括管理层收购（MBO）与国有资产流失的讨论。</p>'
+  },
+  taxSharing: {
+    title: '分税制改革（1994）',
+    content: '<p>把税收划分为中央税、地方税、共享税，并设立国税、地税两套征管机构，大幅提高中央财政收入比重。</p><ul><li><strong>解决的</strong>：中央财政占GDP比重持续下滑、“两个比重”过低的问题</li><li><strong>带来的</strong>：地方政府事权未减而财权上收，被迫转向土地出让与招商引资获取收入</li></ul><p>此后二十年的城市化、土地财政、地方债逻辑，都可以从这次改革找到起点。</p>'
+  },
+  dealer: {
+    title: '庄家',
+    content: '<p>指在证券市场中凭借资金与信息优势，通过囤积筹码、对倒交易、操纵价格获利的大资金操盘者。</p><p>1990 年代末是中国股市“庄家时代”的高峰，德隆、亿安科技等案例成为标志。其共同特征：<strong>用高杠杆与关联交易维持股价叙事，一旦资金链断裂即全面崩塌</strong>。</p><p>2001 年后监管加强，“坐庄”模式逐步退出，但杠杆与叙事的组合从未真正消失。</p>'
+  },
+  originalSin: {
+    title: '“原罪”之争',
+    content: '<p>2000 年代关于中国民营企业早期积累方式的争论：第一桶金是否来自灰色地带（挂靠、批文、MBO、土地套利）？</p><ul><li><strong>一方认为</strong>：制度本身不完善，不能用后来的法律审判当时的行为</li><li><strong>另一方认为</strong>：如果不追究，等于承认越界是有效的竞争手段</li></ul><p>这场争论的实质，是“越界与清算的时差”该由谁承担——这也是《激荡三十年》里最沉重的伦理问题。</p>'
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>
