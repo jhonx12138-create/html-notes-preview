@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>组织的逻辑 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+[data-theme="plum"] {
+  --primary: #43263f; --primary-light: #f6edf2; --primary-dark: #281428;
+  --accent: #b3831f; --accent-deep: #8a6212; --accent2: #57806a;
+  --bg: #fbf8f4; --bg-card: #ffffff; --bg-soft: #f7f0ea; --bg-softer: #efe2dd;
+  --bg-tag: #ecdde7;
+  --text: #3d3239; --text-heading: #281428; --text-muted: #8a7b83; --text-light: #a5979d;
+  --border: #ddcfd5; --border-soft: #ece3e6;
+  --highlight: #f8f1f4; --highlight-strong: #efe0e9;
+  --shadow-sm: 0 1px 3px rgba(60,30,55,0.06); --shadow: 0 2px 10px rgba(60,30,55,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #6b2f5e; --color-tool: #8a6212; --color-case: #3f6b52;
+  --color-history: #9c6b1e; --color-insight: #4b6b7c; --color-debate: #a03c2e;
+  --color-solution: #3f6b52; --color-crisis: #a03c2e; --color-mechanism: #6b2f5e;
+  --color-effect: #7b5a91; --color-core: #281428;
+  --warn-bg: #fbf3e2; --warn-border: #e8cfa0; --example-bg: #fdfaf5;
+  --reflect-bg: #f6eef2; --quote-border: #b3831f;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 侧边栏 */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 216px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 26px 14px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.4px;
+  margin-bottom: 14px; font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 1px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px; color: var(--text);
+  border-left: 3px solid transparent;
+  transition: background .15s;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light); color: var(--primary-dark);
+  font-weight: 600; border-left-color: var(--primary);
+}
+
+.main { margin-left: 216px; max-width: 1080px; padding: 34px 40px 120px; }
+
+/* 页头 */
+.header {
+  position: relative; overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 34px 38px 30px;
+  margin-bottom: 26px;
+  box-shadow: var(--shadow);
+}
+.header h1 {
+  font-size: 29px; color: var(--text-heading);
+  margin-bottom: 8px; padding-left: 13px;
+  border-left: 5px solid var(--primary);
+  letter-spacing: .5px;
+}
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 16px; padding-left: 18px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 22px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px; background: var(--bg-soft);
+  border-radius: var(--radius); margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); font-weight: 600; }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.header .badge {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 16px; padding: 14px 18px;
+  background: var(--bg-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  font-size: 14.5px; color: var(--primary-dark); line-height: 1.75;
+}
+.seal {
+  position: absolute; top: 22px; right: 26px;
+  font-size: 11px; letter-spacing: 2px; font-weight: 700;
+  color: #fff; background: var(--primary);
+  padding: 8px 10px; border-radius: 4px;
+  writing-mode: vertical-rl; line-height: 1.3;
+  opacity: .88;
+}
+.watermark {
+  position: absolute; right: -8px; bottom: -48px;
+  font-family: var(--font-serif);
+  font-size: 128px; font-weight: 700;
+  color: var(--primary); opacity: .032;
+  letter-spacing: 10px; pointer-events: none;
+  white-space: nowrap;
+}
+
+/* 区块 */
+.section { margin-bottom: 34px; }
+.section h2 {
+  font-size: 20px; color: var(--text-heading);
+  margin-bottom: 6px; padding-bottom: 9px;
+  border-bottom: 2px solid var(--primary-light);
+  display: flex; align-items: baseline; gap: 10px;
+}
+.section h2 .h2-idx {
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent-deep); font-weight: 700;
+  letter-spacing: 1px;
+}
+.section h3 {
+  font-size: 15.5px; color: var(--text-heading);
+  margin: 22px 0 10px; padding-left: 10px;
+  border-left: 3px solid var(--border);
+}
+.lead { font-size: 14.5px; color: var(--text-muted); margin: 10px 0 14px; line-height: 1.8; }
+
+/* 卡片 */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 14px; margin: 14px 0;
+}
+.info-grid.pair { grid-template-columns: 1fr 1fr; }
+.info-grid.trio { grid-template-columns: repeat(3, 1fr); }
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 17px 19px;
+  transition: box-shadow .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700; font-size: 14px;
+  margin-bottom: 8px; color: var(--text-heading);
+  padding-left: 10px; line-height: 1.5;
+}
+.info-card .content { font-size: 13.8px; color: var(--text); line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--example-bg); border-radius: var(--radius-sm);
+  font-size: 12.8px; color: var(--text-muted);
+  border-left: 3px solid var(--border); line-height: 1.65;
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* 洞察卡 */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px; margin-bottom: 12px;
+}
+.insight-card .insight-title {
+  font-weight: 700; font-size: 14.5px;
+  color: var(--primary-dark); margin-bottom: 6px;
+}
+.insight-card .insight-body { font-size: 13.8px; color: var(--text); line-height: 1.75; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 9px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* 规律卡 */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 15px 19px; margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 5px; }
+.law-card p { font-size: 13.5px; color: var(--text); line-height: 1.7; }
+
+/* 引用 */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0; padding: 16px 20px;
+  font-family: var(--font-serif); font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px;
+  font-size: 12px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+}
+
+/* 两栏 */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 14px 0; }
+
+/* 六句话链 */
+.sixchain { margin: 16px 0; }
+.six-step {
+  display: grid; grid-template-columns: 44px 1fr;
+  gap: 14px; align-items: start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 14px 18px; margin-bottom: 9px;
+  position: relative;
+}
+.six-step::before {
+  content: ''; position: absolute; left: 35px; top: -9px;
+  width: 2px; height: 9px; background: var(--border);
+}
+.six-step:first-child::before { display: none; }
+.six-num {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: var(--primary-light); color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 700;
+  border: 1px solid var(--border);
+}
+.six-step.key .six-num { background: var(--primary); color: #fff; border-color: var(--primary); }
+.six-step.key .six-text strong { color: var(--primary-dark); }
+.six-text { font-size: 14px; line-height: 1.7; color: var(--text); }
+.six-text strong { color: var(--text-heading); }
+.six-src {
+  display: block; margin-top: 5px;
+  font-size: 11.5px; color: var(--text-light);
+  font-family: var(--font-mono); letter-spacing: .3px;
+}
+
+/* 概念关系图 */
+.cmap {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 22px 20px 16px; margin: 16px 0;
+}
+.cm-row {
+  display: flex; align-items: center; justify-content: center;
+  flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+}
+.cm-node {
+  background: var(--bg-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 14px; text-align: center;
+  font-size: 13.5px; font-weight: 600; color: var(--text-heading);
+  line-height: 1.4;
+  min-height: 54px;
+  display: inline-flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.cm-down {
+  text-align: center; color: var(--accent-deep);
+  font-size: 12px; margin: -2px 0 10px;
+  letter-spacing: 1.5px;
+}
+.cm-node small { display: block; font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+.cm-node.root { background: var(--primary); color: #fff; border-color: var(--primary); }
+.cm-node.root small { color: rgba(255,255,255,.72); }
+.cm-node.acc { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+.cm-node.acc small { color: rgba(255,255,255,.8); }
+.cm-arrow { color: var(--accent-deep); font-size: 17px; font-weight: 700; }
+.cm-op { font-size: 17px; color: var(--text-light); font-weight: 700; padding: 0 2px; }
+.cm-label {
+  text-align: center; font-size: 12px; color: var(--text-muted);
+  margin-top: 6px; padding-top: 10px;
+  border-top: 1px dashed var(--border);
+}
+
+/* 三级台阶 */
+.ladder { margin: 16px 0; }
+.ladder-step {
+  display: grid; grid-template-columns: 108px 1fr;
+  gap: 0; margin-bottom: 0;
+  border: 1px solid var(--border-soft);
+  background: var(--bg-card);
+  border-bottom: none;
+}
+.ladder-step:first-child { border-radius: var(--radius) var(--radius) 0 0; }
+.ladder-step:last-child { border-radius: 0 0 var(--radius) var(--radius); border-bottom: 1px solid var(--border-soft); }
+.ls-tag {
+  background: var(--primary-light);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 14px 8px; text-align: center;
+  border-right: 1px solid var(--border-soft);
+}
+.ls-tag .lv { font-family: var(--font-mono); font-size: 11px; color: var(--accent-deep); letter-spacing: 1px; }
+.ls-tag .nm { font-size: 14px; font-weight: 700; color: var(--primary-dark); margin-top: 3px; }
+.ls-body { padding: 14px 18px; }
+.ls-body .ls-q { font-size: 13.5px; font-weight: 700; color: var(--text-heading); margin-bottom: 5px; }
+.ls-body .ls-d { font-size: 13.3px; color: var(--text); line-height: 1.7; }
+.ls-body .ls-meta { font-size: 11.5px; color: var(--text-light); font-family: var(--font-mono); margin-top: 6px; }
+.ladder-step:nth-child(2) .ls-tag { background: #efe6ee; }
+.ladder-step:nth-child(3) .ls-tag { background: #e8e3ea; }
+
+/* 表格 */
+table.matrix {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 14px 0;
+}
+table.matrix th {
+  background: var(--primary); color: #f8f2f6;
+  padding: 10px 12px; text-align: left;
+  font-weight: 600; font-size: 12.5px;
+}
+table.matrix td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.65;
+}
+table.matrix tr:nth-child(even) td { background: var(--bg-soft); }
+table.matrix td:first-child { font-weight: 700; color: var(--text-heading); white-space: nowrap; }
+table.extension {
+  width: 100%; border-collapse: collapse;
+  font-size: 13px; margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light); color: var(--primary-dark);
+  padding: 10px 14px; text-align: left;
+  font-weight: 700; border-bottom: 2px solid var(--border);
+  width: 17%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.65;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 14px 0; }
+.table-scroll table { margin: 0; }
+
+/* 时间轴 */
+.timeline-track {
+  display: flex; gap: 0;
+  overflow-x: auto;
+  padding: 18px 0 10px; margin: 14px 0;
+  position: relative;
+}
+.timeline-track::before {
+  content: ''; position: absolute;
+  top: 30px; left: 0; right: 0; height: 3px;
+  background: var(--primary-light); border-radius: 2px;
+}
+.timeline-node-tl {
+  flex: 1 1 0; min-width: 96px;
+  text-align: center; padding: 0 8px;
+  position: relative; z-index: 1;
+}
+.timeline-node-tl .era {
+  font-size: 11.5px; font-weight: 700;
+  color: var(--primary); margin-bottom: 6px;
+  font-family: var(--font-mono);
+}
+.timeline-node-tl .dot {
+  width: 14px; height: 14px;
+  background: var(--primary);
+  border: 3px solid var(--primary-light);
+  border-radius: 50%; margin: 0 auto 8px;
+}
+.timeline-node-tl .name {
+  font-size: 12.5px; font-weight: 600;
+  color: var(--text-heading); margin-bottom: 3px;
+  line-height: 1.4; white-space: nowrap;
+}
+.timeline-node-tl .tl-sub { font-size: 11px; color: var(--text-muted); line-height: 1.45; }
+.timeline-node-tl.warn .dot { background: var(--color-debate); border-color: #f3ded9; }
+.timeline-node-tl.warn .era { color: var(--color-debate); }
+
+/* 案例三段式 */
+.case-tri {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; margin: 14px 0;
+}
+.ct-cell {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.ct-cell:nth-child(2) { border-top-color: var(--accent); }
+.ct-cell:nth-child(3) { border-top-color: var(--accent2); }
+.ct-cell .ct-head {
+  font-size: 11px; font-family: var(--font-mono);
+  color: var(--text-light); letter-spacing: 1px; margin-bottom: 5px;
+}
+.ct-cell .ct-name { font-size: 14px; font-weight: 700; color: var(--text-heading); margin-bottom: 6px; }
+.ct-cell .ct-desc { font-size: 13px; color: var(--text); line-height: 1.7; }
+
+/* 命名清单 */
+.num-list { margin: 12px 0; }
+.num-item {
+  display: grid; grid-template-columns: 30px 1fr;
+  gap: 12px; padding: 11px 0;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.num-item:last-child { border-bottom: none; }
+.num-item .n {
+  font-family: var(--font-mono); font-size: 13px;
+  font-weight: 700; color: var(--accent-deep);
+  text-align: right; padding-top: 1px;
+}
+.num-item .t { font-size: 13.8px; line-height: 1.7; }
+.num-item .t strong { color: var(--text-heading); }
+
+/* 提示条 */
+.note-bar {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius);
+  padding: 12px 16px; margin: 14px 0;
+  font-size: 13.3px; color: #6b5220; line-height: 1.7;
+}
+.note-bar strong { color: #4e3a12; }
+
+/* 术语 */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 10.5px; font-weight: 700;
+  cursor: pointer; vertical-align: middle;
+  margin-left: 3px; transition: transform .15s;
+  font-family: var(--font-sans);
+  line-height: 1;
+}
+.glossary-trigger:hover { transform: scale(1.15); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(40,20,40,0.42);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 26px 30px;
+  max-width: 580px; width: 90%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(40,20,40,0.22);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none;
+  font-size: 19px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; }
+.modal-card p { font-size: 13.8px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.7; }
+
+/* 记忆钩子 */
+.hook-box {
+  background: var(--primary); color: #f6eef3;
+  border-radius: var(--radius-lg);
+  padding: 26px 30px; margin-top: 16px;
+}
+.hook-box .hook-title {
+  font-size: 12px; letter-spacing: 2px;
+  color: rgba(255,255,255,.62); margin-bottom: 14px;
+  text-transform: uppercase;
+}
+.hook-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.hook-item .hk { font-size: 20px; font-weight: 700; color: #f0c86a; margin-bottom: 4px; letter-spacing: 1px; }
+.hook-item .hv { font-size: 12.5px; color: rgba(255,255,255,.82); line-height: 1.6; }
+
+/* 返回顶部 */
+.back-to-top {
+  position: fixed; bottom: 26px; right: 26px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 42px; height: 42px;
+  font-size: 17px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(40,20,40,0.22);
+  z-index: 200; opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 30px 0; }
+
+.footer-note {
+  text-align: center; margin-top: 38px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .back-to-top, .modal-overlay { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .header { padding: 22px 18px; }
+  .header h1 { font-size: 22px; }
+  .seal { display: none; }
+  .watermark { display: none; }
+  .info-grid, .info-grid.pair, .info-grid.trio, .two-col, .case-tri { grid-template-columns: 1fr; }
+  .ladder-step { grid-template-columns: 78px 1fr; }
+  .hook-grid { grid-template-columns: 1fr 1fr; }
+  .cm-row { gap: 6px; }
+  .cm-node { font-size: 12.5px; padding: 7px 10px; }
+  .timeline-node-tl .name { white-space: normal; font-size: 11.5px; }
+  .table-scroll table.matrix { min-width: 560px; }
+  .table-scroll table.extension { min-width: 560px; }
+  .modal-card { padding: 20px; }
+}
+</style>
+</head>
+<body data-theme="plum">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">书的身份</a></li>
+    <li><a href="#question">这本书在问什么</a></li>
+    <li><a href="#six">六句话与概念骨架</a></li>
+    <li><a href="#concept">底座：组织到底是什么</a></li>
+    <li><a href="#ladder">效率的三个台阶</a></li>
+    <li><a href="#ops">四个尺度：点线面体</a></li>
+    <li><a href="#struct">三种组织设计</a></li>
+    <li><a href="#form">形态：非结构性控制</a></li>
+    <li><a href="#edge">边缘：创新长在哪</a></li>
+    <li><a href="#cases">实践篇四个样本</a></li>
+    <li><a href="#laws">七条贯穿判断</a></li>
+    <li><a href="#misread">三个常见误读</a></li>
+    <li><a href="#extend">延伸与局限</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="seal">准教科书</div>
+    <div class="watermark">组织</div>
+    <h1>组织的逻辑</h1>
+    <div class="subtitle">丛龙峰 · 把「组织问题」和「组织结构问题」拆开的第一本书</div>
+    <div class="meta">
+      <span><strong>作者</strong> 丛龙峰</span>
+      <span><strong>出版</strong> 机械工业出版社 2020 年 12 月</span>
+      <span><strong>页数</strong> 376 页</span>
+      <span><strong>结构</strong> 上篇理论五章 + 下篇实践四章</span>
+      <span><strong>ISBN</strong> 9787111669692</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">组织机能论</span>
+      <span class="badge">组织形态说</span>
+      <span class="badge">点线面体四效率</span>
+      <span class="badge">三种组织设计</span>
+      <span class="badge">六句话逻辑链</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：<strong>大多数所谓「组织问题」，其实是被误诊成了「结构问题」。</strong>画一张新的组织架构图从来不解决问题，它只是把问题挪了个位置——因为结构只管「谁向谁汇报」，管不了「事怎么流、人愿不愿干、权怎么用、长出什么习性」。这本书的全部工作，就是把这四件事一层层从结构里剥出来。
+    </div>
+  </div>
+
+  <div class="section" id="question">
+    <h2><span class="h2-idx">00</span>这本书在问什么</h2>
+    <p class="lead">市面上的组织书大多在回答「怎么设计架构」，这本书问的是另一个问题。它的答案可以压缩成作者在前言里点明的那句话。</p>
+
+    <div class="two-col">
+      <div class="info-card crisis">
+        <div class="label">表层问题（大多数人问的）</div>
+        <div class="content">部门墙太厚、跨部门推不动、总部管太死、一线没积极性、招来的人不好用、老板一个人扛所有事。这些症状看起来都指向「架构不合理」，于是第一反应是调整架构、加个副总、拆个事业部。</div>
+        <div class="example">作者的态度很直接：这类动作之所以常常无效，是因为<strong>症状在结构层，病灶往往在机制层或能力层</strong>。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">真正的问题（作者问的）</div>
+        <div class="content">一群人凭什么能持续地为共同目标贡献意愿？结构只是这件事的骨架，机制是肌肉，能力是训练出来的本事，形态是长期养成的习性，而这一切的上限由创始人自己决定。</div>
+        <div class="example">所以全书的落点不在「怎么画图」，在<strong>「怎么让图上的东西真的跑起来」</strong>。</div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      企业成长和创新的最大瓶颈是组织的进化，而组织进化的最大瓶颈是创始人自身的进化。
+      <span class="cite">—— 内容简介，全书主线的第一次亮相</span>
+    </blockquote>
+
+    <div class="insight-card">
+      <div class="insight-title">为什么这个判断重要</div>
+      <div class="insight-body">它把「组织」从一个<em>设计对象</em>改成了一个<em>进化对象</em>。设计对象的思路是：找专家画一张更合理的图，然后推行。进化对象的思路是：组织有它自己的生长节律，你能做的是识别它现在卡在哪一层，然后在那一层使劲——在错误的层上使劲，越用力越糟。</div>
+      <div class="insight-evidence">对应第一章「组织成长与领导力的发展」与第四章「对组织成长进行管理」</div>
+    </div>
+  </div>
+
+  <div class="section" id="six">
+    <h2><span class="h2-idx">01</span>六句话与概念骨架</h2>
+    <p class="lead">作者在内容简介里把全书浓缩成六句话，这是理解这本书最省力的入口——六句话本身就是一条递进链，不是六个并列观点。</p>
+
+    <div class="sixchain">
+      <div class="six-step">
+        <div class="six-num">01</div>
+        <div class="six-text"><strong>组织管理是一类永远都不会过时的问题。</strong>技术会换代、风口会过去，但只要还是「一群人一起做事」，分权、协同、激励、传承这些事就一直在。<span class="six-src">对应：第一章 认识组织，组织起来</span></div>
+      </div>
+      <div class="six-step key">
+        <div class="six-num">02</div>
+        <div class="six-text"><strong>组织问题不等于组织结构问题。</strong>这是全书的分水岭。结构只是组织的一个切面，用它解释一切，等于用体温计解释发烧的原因。<span class="six-src">对应：第三章 组织层级与结构效率</span></div>
+      </div>
+      <div class="six-step key">
+        <div class="six-num">03</div>
+        <div class="six-text"><strong>仅有结构是不够的，关键是建立组织机制。</strong>结构决定「谁在哪一格」，机制决定「事怎么流动、利怎么分、例外怎么处理」。<span class="six-src">对应：第二章 组织流程与运营效率</span></div>
+      </div>
+      <div class="six-step">
+        <div class="six-num">04</div>
+        <div class="six-text"><strong>仅有机制是不够的，关键是形成组织能力。</strong>同样的机制，有的公司跑得起来，有的跑不动——差的是人会不会做、组织有没有积累。<span class="six-src">对应：第七章 韩都衣舍：仅靠机制是不够的</span></div>
+      </div>
+      <div class="six-step">
+        <div class="six-num">05</div>
+        <div class="six-text"><strong>组织机能能否被发挥出来，取决于组织形态。</strong>机制与能力合起来构成「机能」，而机能是被形态激活或压制的——同样的机能放进不同的形态，表现可以完全相反。<span class="six-src">对应：第四章 组织形态与整体效率</span></div>
+      </div>
+      <div class="six-step">
+        <div class="six-num">06</div>
+        <div class="six-text"><strong>组织形态能否被激活，取决于企业家领导力。</strong>形态不是设计出来的，是长出来的；长成什么样，很大程度取决于创始人的心智与选择。<span class="six-src">对应：第九章 创始人对组织的影响</span></div>
+      </div>
+    </div>
+
+    <h3>三个核心概念怎么串起来</h3>
+    <p class="lead">书里真正在用的只有三个概念：<strong>组织</strong>、<strong>组织机能</strong>、<strong>组织形态</strong>。其中「组织机能」又是一个复合词，由「组织机制」和「组织能力」构成。这个拆法是全书的地基。</p>
+
+    <div class="cmap">
+      <div class="cm-row">
+        <div class="cm-node root">组织<small>一群人 + 共同目标</small></div>
+        <div class="cm-arrow">→</div>
+        <div class="cm-node">组织机制<small>怎么分、怎么连、怎么分利</small></div>
+        <div class="cm-op">+</div>
+        <div class="cm-node">组织能力<small>会不会做、有没有积累</small></div>
+        <div class="cm-op">=</div>
+        <div class="cm-node" style="background:#efe0e9;border-color:#c9a6be;">组织机能<span class="glossary-trigger" onclick="openModal('orgfunc')">?</span><small>能不能真的跑起来</small></div>
+      </div>
+      <div class="cm-down">↓ 机能跑不跑得起来，往上看一层</div>
+      <div class="cm-row">
+        <div class="cm-node" style="background:#efe0e9;border-color:#c9a6be;min-width:132px;">组织机能</div>
+        <div class="cm-arrow">→</div>
+        <div class="cm-node" style="min-width:188px;">组织形态<small>经济 / 社会 / 政治三个切面</small></div>
+        <div class="cm-arrow">→</div>
+        <div class="cm-node acc" style="min-width:158px;">企业家领导力<small>心智决定上限</small></div>
+      </div>
+      <div class="cm-label">从「有组织」到「组织有效」，中间隔了机制、能力、形态、领导力四道关；任何一道不过，前面都白做</div>
+    </div>
+
+    <div class="note-bar">
+      <strong>用法提醒：</strong>这条链的诊断价值大于解释价值。遇到组织问题，先别问「架构怎么改」，先定位它卡在哪一环——是机制没建（事流不动、利分不公）、能力没长（人不会做）、形态不匹配（技术属性与组织方式打架），还是创始人自己没转过弯。四个答案对应四种完全不同的动作。
+    </div>
+  </div>
+
+  <div class="section" id="concept">
+    <h2><span class="h2-idx">02</span>底座：组织到底是什么</h2>
+    <p class="lead">第一章做了一件很不时髦的事：先把「组织」这个词洗干净。作者的写法是先驳当下的热词，再回到巴纳德。</p>
+
+    <div class="info-grid trio">
+      <div class="info-card concept">
+        <div class="label">共同的目标</div>
+        <div class="content">不是「老板的目标写在墙上」，是成员真心认下这个目标。它要解决三件事：目标怎么共同化（从个人目标到组织目标）、总目标与分目标怎么一致（不打架、不稀释）、目标怎么随环境动态调整（不改会僵，乱改会散）。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">贡献的意愿</div>
+        <div class="content">人愿不愿意为组织出力。作者把它压成两个动作：<strong>把人用好</strong>（岗位与人匹配、让人干得成事）、<strong>把人留住</strong>（留得住才谈得上积累）。这一条最容易被当成 HR 事务，其实是组织成立的前提条件。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">信息沟通<span class="glossary-trigger" onclick="openModal('barnard')">?</span></div>
+        <div class="content">前两条要变成真的，必须靠信息流动把它们缝在一起——目标要传下去、意愿要传上来、偏差要能被发现。没有这一条，前两条只是纸面共识。这是巴纳德三要素里最容易被跳过的，也是最容易出问题的。</div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      警惕时髦的观点，回归朴素的道理。
+      <span class="cite">—— 第一章「组织三要素」下的两个小节标题，作者的方法论宣言</span>
+    </blockquote>
+
+    <p class="lead">这两个小标题的先后顺序值得注意：先破再立。作者对平台化、去中心化、敏捷、自组织这类词保持了明显的距离——不是因为它们错，而是因为它们经常被用来<em>跳过基本功</em>：机制没建好就谈自组织，等于没学会走先练跑。</p>
+
+    <h3>成长阶段与领导力：三层台阶</h3>
+    <div class="insight-card">
+      <div class="insight-title">组织的复杂化和领导力的发展是同一件事的两面</div>
+      <div class="insight-body">书里给了三组对应：<strong>团队管理阶段</strong>的领导力靠「带头干、带人干」；<strong>组织建设阶段</strong>的领导力靠「建机制、搭班子」；<strong>文化管理阶段</strong>的领导力靠「定价值、管形态」。麻烦在于，创始人往往停在自己最擅长的那个阶段——业务出身的一直在带团队，机制出身的一直在调结构，而组织已经走到了下一段。</div>
+      <div class="insight-evidence">对应第一章第三节「组织成长与领导力的发展」</div>
+    </div>
+  </div>
+
+  <div class="section" id="ladder">
+    <h2><span class="h2-idx">03</span>效率的三个台阶</h2>
+    <p class="lead">第二、三、四章看起来是三块内容，其实是在同一个词上做三次抬升：<strong>效率</strong>。作者给的顺序是「运营效率 → 结构效率 → 整体效率」，并且明确说了后一层大于前一层<span class="glossary-trigger" onclick="openModal('threelayer')">?</span>。</p>
+
+    <div class="ladder">
+      <div class="ladder-step">
+        <div class="ls-tag"><span class="lv">LV.1</span><span class="nm">运营效率</span></div>
+        <div class="ls-body">
+          <div class="ls-q">同样的事，能不能做得更顺、更省、更快</div>
+          <div class="ls-d">落在岗位、流程、部门协同、企业间协作四个尺度上（点、线、面、体）。这一层是可以靠管理动作直接改善的，见效快，天花板也最低。</div>
+          <div class="ls-meta">第二章 · 引言：不能离开效率谈组织</div>
+        </div>
+      </div>
+      <div class="ladder-step">
+        <div class="ls-tag"><span class="lv">LV.2</span><span class="nm">结构效率</span></div>
+        <div class="ls-body">
+          <div class="ls-q">事本身分得对不对、层级与权责摆得对不对</div>
+          <div class="ls-d">三种基本设计：以任务为中心（直线职能）、以结果为中心（事业部）、以关系为中心（平台与生态）。<strong>结构错了，运营再努力也是在错的路上跑得快。</strong></div>
+          <div class="ls-meta">第三章 · 引言：结构效率大于运营效率</div>
+        </div>
+      </div>
+      <div class="ladder-step">
+        <div class="ls-tag"><span class="lv">LV.3</span><span class="nm">整体效率</span></div>
+        <div class="ls-body">
+          <div class="ls-q">这个组织整体上像不像一个活的东西、能不能自我调节</div>
+          <div class="ls-d">由形态决定，而形态由经济、社会、政治三个切面共同构成，还受技术属性（客观约束）与企业家心智（主观认定）双重作用。<strong>这一层管不到细节，却决定前面两层能发挥几成。</strong></div>
+          <div class="ls-meta">第四章 · 引言：非结构性控制见真章</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-bar">
+      <strong>「非结构性控制」<span class="glossary-trigger" onclick="openModal('nonstruct')">?</span>这个词是全书的题眼之一。</strong>意思是：真正让组织协调起来的，很多时候不是架构图上的汇报线，而是那些结构之外的东西——共同的价值判断、默认的做事方式、人与人之间的信任、干部的行为示范。它们不在图上，却比图管用。这也是为什么只改结构的努力经常落空。
+    </div>
+  </div>
+
+  <div class="section" id="ops">
+    <h2><span class="h2-idx">04</span>四个尺度：点、线、面、体</h2>
+    <p class="lead">这是全书最有辨识度的框架，也是最能直接拿去自查的一张表。四个尺度不是四个并列项，而是四级放大：岗位 → 流程 → 部门 → 企业。</p>
+
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th style="width:15%">尺度</th>
+            <th style="width:15%">本质</th>
+            <th style="width:20%">管的是什么</th>
+            <th style="width:28%">抓手 / 代表</th>
+            <th style="width:22%">失败时长得什么样</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>点效率<span class="glossary-trigger" onclick="openModal('dotline')">?</span></td>
+            <td>分工效率</td>
+            <td>一个岗位上，一个人的动作怎么更省力、更标准、更少出错</td>
+            <td>科学管理的起点；胖东来的岗位管理（把每个岗位的活拆细、写清、训练到位）</td>
+            <td>同一岗位不同人做出三种质量；熟练工一走，活就干不成</td>
+          </tr>
+          <tr>
+            <td>线效率</td>
+            <td>合工效率<span class="glossary-trigger" onclick="openModal('lineeff')">?</span></td>
+            <td>多个岗位串成一条流程，交接处怎么不掉东西</td>
+            <td>福特制、华为 IPD；流程管理四原则（统一领导、分解后自我管理、例外转例常、空白地带补强）</td>
+            <td>每段都达标，整条线交付慢；出问题互相推，谁都没错</td>
+          </tr>
+          <tr>
+            <td>面效率</td>
+            <td>部门间效率</td>
+            <td>部门与部门之间的协同、责任与利益怎么配</td>
+            <td>明确组织重心 → 构建流程闭环（产销、营销销、营销研）→ 责任分担匹配利益分享</td>
+            <td>开会能解决的事越来越少；每个部门 KPI 都完成，公司目标没完成</td>
+          </tr>
+          <tr>
+            <td>体效率</td>
+            <td>企业间效率</td>
+            <td>哪些环节自己做、哪些交给外部，边界画在哪</td>
+            <td>三问：哪些环节可以合作、哪些环节应该保留、哪类企业更具前途</td>
+            <td>什么都自己干，重资产拖死；什么都外包，核心能力被掏空</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>线效率：流程管理的四条原则</h3>
+    <p class="lead">这四条是全书最可直接落地的一段，每条都对应一类常见的流程病。</p>
+    <div class="info-grid pair">
+      <div class="info-card tool">
+        <div class="label">流程管理遵循统一领导原则</div>
+        <div class="content">一条流程只能有一个最终负责人。多头领导看起来「重视」，实际是把责任稀释掉了——出问题时每个人都能说「我以为他会管」。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">流程分解遵循自我管理原则</div>
+        <div class="content">拆开之后的每一段，要能在段内闭环、段内考核。拆得越细、段内越不自足，交接成本就越高，流程就会在接缝处失效。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">将例外事件转为例常管理<span class="glossary-trigger" onclick="openModal('exception')">?</span></div>
+        <div class="content">同一个「特殊情况」出现第三次，它就不再是例外，而是流程缺了一环。反复救火的组织，本质上是把设计缺失当成了执行意外。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">在空白地带补强管理功能</div>
+        <div class="content">流程图上没有归属的那一段（既不属于 A 也不属于 B），最容易出事，因为它在所有人的职责之外。补的方式不是加部门，是明确一个「谁兜底」。</div>
+      </div>
+    </div>
+
+    <h3>面效率：三件事，顺序不能反</h3>
+    <div class="num-list">
+      <div class="num-item">
+        <div class="n">01</div>
+        <div class="t"><strong>先定组织重心。</strong>基于竞争需求判断这个阶段公司最该强的是哪一块（研发？渠道？交付？），资源与话语权就往那里偏。重心不清，谈协同就是平均主义。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">02</div>
+        <div class="t"><strong>再搭流程闭环。</strong>生产与销售、营销与销售、营销与研发这三对关系是书里点名的重灾区，因为每一对都存在「谁听谁的」的天然张力。闭环的意思是：从需求到交付，责任在一处收口。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">03</div>
+        <div class="t"><strong>最后配利益。</strong>责任怎么分，利益就怎么分；两者错位，协同一定退化成博弈。这一条放在最后不是不重要，而是没有前两条，分了也不认。</div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">四尺度的真正用法：别跨级下药</div>
+      <div class="insight-body">一个典型的误诊链条是：交付慢（线效率问题）→ 判定为部门不配合（面效率）→ 解决方案是调整架构（结构效率）。层级一路往上跳，动作一路变重，问题却还在原地。正确的顺序是反过来：先确认是不是岗位动作不标准（点），再确认流程接缝（线），再确认协同机制（面），最后才动边界（体）。</div>
+      <div class="insight-evidence">综合第二章各节归纳，非原文表述</div>
+    </div>
+  </div>
+
+  <div class="section" id="struct">
+    <h2><span class="h2-idx">05</span>三种组织设计</h2>
+    <p class="lead">第三章把组织设计归成三种基本类型，划分依据不是「长什么样」，而是「以什么为中心」。这是全章最有用的一句：先看你把什么放在中心，就知道会得到什么结构，也会得到什么病。</p>
+
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th style="width:14%">类型</th>
+            <th style="width:20%">中心是什么</th>
+            <th style="width:24%">适用条件</th>
+            <th style="width:22%">主要风险</th>
+            <th style="width:20%">代表</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>以任务为中心</td>
+            <td>专业分工与职能职责，「谁负责什么专业」</td>
+            <td>业务相对单一、环境稳定、规模不大；专业深度比响应速度重要</td>
+            <td>部门墙、专业目标压过公司目标、职能消耗管理权威</td>
+            <td>直线层级制 + 职能部门</td>
+          </tr>
+          <tr>
+            <td>以结果为中心</td>
+            <td>经营结果与责任单元，「谁对什么结果负责」</td>
+            <td>多产品 / 多区域、需要快速响应本地市场、能算清各单元账</td>
+            <td>各自为政、重复建设、内在统一性被稀释</td>
+            <td>事业部制<span class="glossary-trigger" onclick="openModal('divisional')">?</span>（斯隆）</td>
+          </tr>
+          <tr>
+            <td>以关系为中心</td>
+            <td>组织之间的连接与协作，「谁和谁怎么连」</td>
+            <td>生态型业务、能力在外部、需要快速组合资源</td>
+            <td>概念被泛化、边界失控、管理半径撑不住</td>
+            <td>平台与生态<span class="glossary-trigger" onclick="openModal('platform')">?</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>以任务为中心：两组天生的矛盾</h3>
+    <div class="two-col">
+      <div class="info-card debate">
+        <div class="label">与直线层级相关的四个问题</div>
+        <div class="content"><strong>权力与权威</strong>不是一回事：有职位就有权力，有权威才有人服。<strong>权威与组织</strong>的关系决定了命令能不能被执行到底。<strong>信息不对称</strong>让上级永远比下级晚知道真相。<strong>管控与赋能</strong><span class="glossary-trigger" onclick="openModal('empower')">?</span>是一对反向拉力——管得越多，一线越不会自己判断。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">与职能部门相关的三个问题</div>
+        <div class="content"><strong>部门任务 vs 公司目标</strong>：职能部门的「把专业做到位」和公司的「把事做成」经常不同向。<strong>专业能力 vs 高管责任</strong>：专业最强的人未必该拍板。<strong>职能工作对管理权威的消耗</strong>：填表、评审、汇报这些动作本身在削弱一线的自主性，哪怕每一样都「有必要」。</div>
+      </div>
+    </div>
+
+    <h3>以结果为中心：斯隆那一刀切在哪</h3>
+    <div class="insight-card">
+      <div class="insight-title">事业部制的历史性贡献，不是「分权」，是「把责任做成可计量的单元」</div>
+      <div class="insight-body">斯隆在通用汽车做的事，常被简化成「分散经营、集中管理」八个字。书里把它拆成两个动作：<strong>纵向结构设计</strong>（哪一级做什么决策）与<strong>横向责任划分</strong>（同一级之间谁对什么结果负责）。前者决定决策速度，后者决定协同质量——只做前者，就是各自为政。</div>
+      <div class="insight-evidence">对应第三章第三节「斯隆的历史性贡献」</div>
+    </div>
+
+    <div class="info-grid pair">
+      <div class="info-card concept">
+        <div class="label">区域事业部制</div>
+        <div class="content">按地理划分。好处是贴近市场、响应快、责任清楚；代价是同一套能力在各区域重复建设。它的隐含假设是「区域差异大于产品差异」。</div>
+        <div class="example"><strong>判断口径：</strong>如果客户在各地要的东西差别很大、且当地关系与交付是胜负手，区域制才成立。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">产品事业部制</div>
+        <div class="content">按产品线划分。核心张力是<strong>外在多样性与内在统一性</strong>：前端越多样，越能抓住不同市场；但技术平台、品牌、渠道若不能复用，规模优势就消失了。</div>
+        <div class="example"><strong>判断口径：</strong>产品之间的技术底座与客户是否可复用，决定这个张力能不能被管住。</div>
+      </div>
+    </div>
+
+    <h3>以关系为中心：两个必须分清的概念</h3>
+    <div class="info-grid pair">
+      <div class="info-card insight">
+        <div class="label">狭义的平台与生态</div>
+        <div class="content">有明确的定义边界：平台是连接两侧、制定规则、收取租的角色；生态是围绕一个核心能力长出的互补群落。书里做了概念辨析，并给出平台企业的三种战略选择，还指出一条演化路径——<strong>从「中间组织」到「中间市场」</strong><span class="glossary-trigger" onclick="openModal('midorg')">?</span>。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">泛化的平台与生态</div>
+        <div class="content">几乎所有公司都在自称平台、自称生态。作者的态度是：这是已经发生的现实，不必纠正，但必须接上一个真问题——<strong>超组织管理的选择</strong>：当你的管理对象超出了自己的法人边界，你还管得了什么、该放什么。</div>
+        <div class="example">这一节是全书对「概念通胀」处理得最克制的地方：不否定用法，只追问管理含义。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="form">
+    <h2><span class="h2-idx">06</span>形态：非结构性控制</h2>
+    <p class="lead">第四章是全书最抽象、也最容易被略过的一章。它要回答的是：为什么两个结构几乎一样的公司，<strong>组织形态</strong><span class="glossary-trigger" onclick="openModal('orgform')">?</span>完全不同。</p>
+
+    <h3>形态的三个切面</h3>
+    <div class="info-grid trio">
+      <div class="info-card effect">
+        <div class="label">经济形态</div>
+        <div class="content">这个组织靠什么活、业务怎么组合、钱从哪来。它决定了组织的资源逻辑，也决定了什么行为会被奖励。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">社会形态</div>
+        <div class="content">人和组织是什么关系：是契约、是共同体、还是家族。它决定了员工的心理契约，也决定了危难时谁会留下。</div>
+      </div>
+      <div class="info-card effect">
+        <div class="label">政治形态</div>
+        <div class="content">权力怎么分配、决策怎么做出、分歧怎么解决。它决定了组织内部真实的秩序，往往和架构图上写的不一样。</div>
+      </div>
+    </div>
+
+    <p class="lead">三个切面合起来，就是「形态背后的文化」。作者用索尼做了一次完整解剖——同一家公司，三代领导人，三种形态。</p>
+
+    <div class="timeline-track">
+      <div class="timeline-node-tl">
+        <div class="era">1946—1995</div>
+        <div class="dot"></div>
+        <div class="name">井深大 → 大贺典雄</div>
+        <div class="tl-sub">技术立身<br>工程师主导</div>
+      </div>
+      <div class="timeline-node-tl warn">
+        <div class="era">1995—2005</div>
+        <div class="dot"></div>
+        <div class="name">出井伸之</div>
+        <div class="tl-sub">动荡十年<br>数字化冲击</div>
+      </div>
+      <div class="timeline-node-tl warn">
+        <div class="era">2005—2012</div>
+        <div class="dot"></div>
+        <div class="name">斯金格</div>
+        <div class="tl-sub">混乱七年<br>外来者改革</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">结论</div>
+        <div class="dot"></div>
+        <div class="name">接班之误</div>
+        <div class="tl-sub">形态断层<br>而非战略失误</div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">为什么叫「接班之误」而不是「战略之误」</div>
+      <div class="insight-body">索尼的问题不是没看到数字化，而是<strong>看到了也做不动</strong>。工程师主导的经济形态、终身雇佣式的社会形态、内部晋升的政治形态，三者咬合在一起，让任何一次转向都要付出组织层面的代价。换一个外来 CEO 看似解决了政治形态，却接不上社会形态——改革越猛，内部越散。</div>
+      <div class="insight-evidence">对应第四章第一节「索尼的接班之误」；此处为对作者叙述的归纳，非逐字原文</div>
+    </div>
+
+    <h3>形态由什么决定：两股力</h3>
+    <div class="two-col">
+      <div class="info-card tool">
+        <div class="label">客观约束：技术属性</div>
+        <div class="content">业务的技术特征会强行规定一部分组织方式。研发密集型难以高度标准化，交付型业务难以完全远程，重资产行业难以极轻组织。这部分不是选择题，忽视了会被现实打回来。</div>
+        <div class="example"><strong>自查：</strong>你现在的组织方式，有多少是技术属性逼出来的，有多少只是习惯？</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">主观认定：企业家心智</div>
+        <div class="content">在客观约束留出的空间里，创始人对「组织应该是什么样」的想象，直接决定了形态。他信什么，组织就会长成什么；他不信的东西，制度写得再漂亮也长不出来。</div>
+        <div class="example"><strong>推论：</strong>所以「组织进化的瓶颈是创始人自身的进化」不是鸡汤，是结构性的。</div>
+      </div>
+    </div>
+
+    <h3>应然与实然：没有完美的组织</h3>
+    <div class="num-list">
+      <div class="num-item">
+        <div class="n">01</div>
+        <div class="t"><strong>组织在空间上是不完美的。</strong>任何架构都在某些方向上高效、另一些方向上低效。你优化了一处协同，必然在别处增加了一层协调成本。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">02</div>
+        <div class="t"><strong>组织在时间上是不完美的。</strong>今天合适的形态，明天可能就是障碍。组织的调整永远滞后于业务的变化，这个时差是常态，不是失误。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">03</div>
+        <div class="t"><strong>没有企业家是完美的。</strong>创始人的强项会变成组织的偏向，偏向走到极端就是风险。承认这一点，才能设计出对创始人弱点有补偿的机制。</div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      增长并不等于发展。
+      <span class="cite">—— 第四章第三节小节标题</span>
+    </blockquote>
+
+    <p class="lead">这一句是全章的收束。<strong>增长</strong><span class="glossary-trigger" onclick="openModal('growth')">?</span>是规模变大，<strong>发展</strong>是机能变强。规模可以靠投入买来，机能只能靠时间养出来。顺着这个区分，作者先给三条判断尺度（前三张），再给三条管理动作（后三张）。</p>
+
+    <div class="info-grid">
+      <div class="info-card solution">
+        <div class="label">组织机能的竞争力</div>
+        <div class="content">真正难被复制的是机能，不是资源。资源可以买、可以融，机能只能长——它藏在人的默契、流程的熟练度、干部判断力的平均水平里。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">在长处上做文章</div>
+        <div class="content">补短板最多让你不输，拉长板才让你赢。组织的资源永远不够，把它投在已经强的地方，回报率远高于填坑。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">在瓶颈处做改善</div>
+        <div class="content">但长板能否变成结果，取决于瓶颈。瓶颈之外的一切改善都是浪费——这是约束理论的老话，作者把它放进组织语境里。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">以差距为目标</div>
+        <div class="content">目标不该定在「比现在好一点」，而该定在「和应有的水平差多少」。差距导向会暴露真问题，增量导向只会掩盖它。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">在不平衡中求发展</div>
+        <div class="content">组织永远是不平衡的，追求全面均衡等于放弃突破。正确的做法是主动选择在哪一段先突进，再带动其他部分追赶。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">管理的有限性</div>
+        <div class="content">管理能解决的问题是有边界的。有些问题是业务问题、有些是人的问题、有些只能靠时间。把一切都当成管理问题，是一种自负。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="edge">
+    <h2><span class="h2-idx">07</span>边缘：创新长在哪</h2>
+    <p class="lead">第五章是一个转折：前面四章讲的是「怎么把秩序建好」，这一章讲的是「秩序为什么杀创新」。</p>
+
+    <blockquote class="quote-block">
+      重大创新总来自边缘。
+      <span class="cite">—— 第五章引言标题</span>
+    </blockquote>
+
+    <div class="info-grid trio">
+      <div class="info-card case">
+        <div class="label">培育创新的土壤</div>
+        <div class="content">边缘<span class="glossary-trigger" onclick="openModal('edge')">?</span>之所以能长出东西，是因为它离考核远、离用户近、允许试错。土壤的核心不是资源，是<strong>容忍不确定性的空间</strong>——在主业考核体系里，任何不确定的事都算负分。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">呵护创新的种子</div>
+        <div class="content">新东西刚出来时一定粗糙、不达标、算不过账。用成熟业务的尺子去量它，结论永远是「不值得投入」。呵护的意思是：给它另一把尺子。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">对失败保持宽容</div>
+        <div class="content">不是宽容所有失败，是宽容「认真试过且学到了东西」的失败。区分不了这两种失败的组织，最终会连尝试都不再发生。</div>
+      </div>
+    </div>
+
+    <h3>三个具体的死法</h3>
+    <div class="ladder">
+      <div class="ladder-step">
+        <div class="ls-tag"><span class="lv">死法一</span><span class="nm">没有主人</span></div>
+        <div class="ls-body">
+          <div class="ls-q">警惕没有主人的项目</div>
+          <div class="ls-d">项目挂在部门之下、汇报给一个「兼管」的领导、KPI 里没有它。这种项目在资源冲突时第一个被牺牲，而且没人觉得这是决策——因为它从来没被正式决定过。</div>
+        </div>
+      </div>
+      <div class="ladder-step">
+        <div class="ls-tag"><span class="lv">死法二</span><span class="nm">死在 0.9</span></div>
+        <div class="ls-body">
+          <div class="ls-q">不要死在 0.9 阶段</div>
+          <div class="ls-d">0.9 是最危险的位置：它已经消耗了大量资源，看起来快成了，但还差最后一程。此时主业缺人、报表难看、耐心耗尽，于是被叫停——死在这一步的项目，比死在前面的多得多。</div>
+        </div>
+      </div>
+      <div class="ladder-step">
+        <div class="ls-tag"><span class="lv">死法三</span><span class="nm">政治</span></div>
+        <div class="ls-body">
+          <div class="ls-q">别让组织政治<span class="glossary-trigger" onclick="openModal('politics')">?</span>毁了创新</div>
+          <div class="ls-d">新业务一旦显出苗头，就会动到既有部门的资源与地位。于是它被「收编」（归入成熟体系后失去锐度）、被「抽干」（人被打散）、或被「做掉」（在评审会上被否）。这些动作都合规，动机不在台面上。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">第五章和第四章其实是同一件事的两面</div>
+      <div class="insight-body">第四章说形态决定机能能否发挥，第五章说形态也会压制边缘。一个健康的形态，标准不是「秩序多整齐」，而是<strong>能不能同时容纳一条主航道和几条小航道</strong>。这也是为什么作者把这一章放在理论篇的最后——它是对前面所有「建设」的自我限制。</div>
+      <div class="insight-evidence">综合第四、五章归纳</div>
+    </div>
+  </div>
+
+  <div class="section" id="cases">
+    <h2><span class="h2-idx">08</span>实践篇四个样本</h2>
+    <p class="lead">下篇四章是四个案例，但它们的价值不在故事本身，在于每个案例各自证明了理论篇的一个论断。</p>
+
+    <div class="info-grid pair">
+      <div class="info-card case">
+        <div class="label">德胜洋楼：三重理性</div>
+        <div class="content">一家把「规矩」做到极致的公司，被拆成三层：<strong>科学理性</strong>——一切按程序办事；<strong>制度理性</strong>——一切按制度办事，其中立法、执法、司法三段分明；<strong>道德理性</strong>——一切按文化办事，靠敬业精神与君子文化兜底。</div>
+        <div class="example"><strong>证明了什么：</strong>机制不是抽象概念，它可以细到「每件事都有程序、每个程序都有依据、每个依据都有人维护」。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">韩都衣舍：小组制与能力</div>
+        <div class="content">从「陆地世界到海洋世界」，电商改变了玩法，于是有了小组制与时尚孵化平台。但这一章真正的结论在第四节：<strong>仅靠机制是不够的，关键是能力</strong>——小组制谁都能抄，抄不走的是一线小组的产品判断力。</div>
+        <div class="example"><strong>证明了什么：</strong>第六句话中的第四句。机制可以被复制，能力不能。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">小米生态链：多样性与统一性</div>
+        <div class="content">从一只 90 分旅行箱切进去，看小米怎么帮被投企业，再引出「十问十答」，最后落在<strong>外在多样性与内在统一性</strong>：前端品类可以无限延展，前提是底层有可复用的东西（品牌、渠道、供应链、方法论）。</div>
+        <div class="example"><strong>证明了什么：</strong>以关系为中心的组织设计，边界不在股权，在可复用的核心。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">第九章：三家公司的统一模板</div>
+        <div class="content">喜家德（产品主义与以人为本）、德邦快递（从管理制胜到战略驱动）、传音控股（中国品牌出海的非洲样本）。三家行业完全不同，但作者用的是同一套分析框架——见下方三段式。</div>
+        <div class="example"><strong>证明了什么：</strong>框架的普适性，正是这本书自称「准教科书」的底气。</div>
+      </div>
+    </div>
+
+    <h3>案例的统一读法：三段式</h3>
+    <p class="lead">第九章对每家公司都按同样的顺序拆，这个顺序恰好就是理论篇的三层。看懂这个对应关系，四个案例才不是四个故事。</p>
+
+    <div class="case-tri">
+      <div class="ct-cell">
+        <div class="ct-head">STEP 01 / 源头</div>
+        <div class="ct-name">创始人对组织的影响</div>
+        <div class="ct-desc">创始人的性格、时间感、常识感如何渗进组织。喜家德看「时间感与常识感」，德邦看「长跑精神与大局观」，传音看「谦逊、产品经理、忘我勤奋」。这一段解释的是<strong>形态为什么长成这样</strong>。</div>
+      </div>
+      <div class="ct-cell">
+        <div class="ct-head">STEP 02 / 中段</div>
+        <div class="ct-name">组织机制问题</div>
+        <div class="ct-desc">总部与一线、一线与一线、总部与总部的关系怎么定；产品部与地区部怎么联动；变阵时机制怎么跟着调。这一段对应第二章与第三章，讲<strong>事怎么流、权怎么分</strong>。</div>
+      </div>
+      <div class="ct-cell">
+        <div class="ct-head">STEP 03 / 表象</div>
+        <div class="ct-name">组织形态问题</div>
+        <div class="ct-desc">员工与干部的工作风格、群体的气质、决策的习惯、文化的整体性与适应性。这一段对应第四章，讲<strong>这家长什么样、为什么改不动</strong>。</div>
+      </div>
+    </div>
+
+    <div class="note-bar">
+      <strong>阅读建议：</strong>作者自己在前言里说，可以<strong>先读第九章</strong>建立「质感」，再回头读理论篇。这个建议是认真的——理论篇的概念密度高，先有几个真实公司的样子垫底，抽象概念才挂得住。这也是全书唯一一处作者直接给出阅读路径的地方。
+    </div>
+  </div>
+
+  <div class="section" id="laws">
+    <h2><span class="h2-idx">09</span>七条贯穿判断</h2>
+    <p class="lead">这些判断散在各章，但反复出现，可以当作全书的「操作系统」。</p>
+
+    <div class="law-card">
+      <h4>一、先分清是哪一层的问题，再决定动不动结构</h4>
+      <p>机制、能力、形态、领导力四层，各有各的解。用结构手段解机制问题，是最常见也最昂贵的误诊。</p>
+    </div>
+    <div class="law-card">
+      <h4>二、结构解决「谁向谁汇报」，解决不了「事怎么流」</h4>
+      <p>流程是横的，结构是竖的。竖着切完再要求横着协同，靠的不是架构图，是机制与利益。</p>
+    </div>
+    <div class="law-card">
+      <h4>三、效率有层级，后一层大于前一层</h4>
+      <p>运营效率 &lt; 结构效率 &lt; 整体效率。层级越高，改进越慢，但天花板也越高。反过来，层级越低的问题越好解，代价是容易上瘾——一直修细枝末节，永远不碰结构。</p>
+    </div>
+    <div class="law-card">
+      <h4>四、机制能被抄走，能力不能</h4>
+      <p>这就是为什么对标学习经常失败：抄来的是制度文本，抄不来的是长期训练出的判断力。机制是充分条件的一半，能力是另一半。</p>
+    </div>
+    <div class="law-card">
+      <h4>五、形态是长出来的，不是设计出来的</h4>
+      <p>技术属性划定边界，企业家心智决定取向，两者共同作用若干年，才长成一个形态。想改形态，得从这两处下手，画图没用。</p>
+    </div>
+    <div class="law-card">
+      <h4>六、增长靠投入，发展靠时间</h4>
+      <p>规模可以买，机能只能养。把增长当成发展，会在最需要打基础的时候抽调基础。</p>
+    </div>
+    <div class="law-card">
+      <h4>七、秩序与创新是一对必须同时管的东西</h4>
+      <p>把秩序做到极致，创新就没了土壤；放任边缘，主业就没人守。真正的能力是同时容纳两者，而不是在两者之间来回摇摆。</p>
+    </div>
+  </div>
+
+  <div class="section" id="misread">
+    <h2><span class="h2-idx">10</span>三个常见误读</h2>
+
+    <div class="info-grid trio">
+      <div class="info-card debate">
+        <div class="label">误读一：这是一本组织设计手册</div>
+        <div class="content">书里确实讲了三种设计类型，但作者明确说定位是「准教科书」，重在建立概念体系与「质感」，不在给模板。想直接照抄架构方案的，会失望。</div>
+        <div class="example"><strong>正确用法：</strong>拿它的框架去诊断，别拿它的案例去复制。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读二：六句话是六个独立观点</div>
+        <div class="content">六句话是一条链，每一句都是前一句的「还不够」。跳过中间直接看最后一句（领导力决定一切），就会把一本结构严谨的书读成一本成功学。</div>
+        <div class="example"><strong>正确用法：</strong>按顺序读，注意每句开头的「仅有……是不够的」。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读三：案例公司是标杆，照做就行</div>
+        <div class="content">德胜、韩都、小米、喜家德、德邦、传音，每一家都长在自己的行业、规模、创始人气质上。作者写它们是为了呈现「机制与形态如何咬合」，不是为了提供最佳实践。</div>
+        <div class="example"><strong>正确用法：</strong>问「它当时面对什么约束」，而不是「它做了什么」。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="extend">
+    <h2><span class="h2-idx">11</span>延伸与局限</h2>
+
+    <h3>放在哪一排书架上</h3>
+    <div class="table-scroll">
+      <table class="extension">
+        <tr>
+          <th>对照阅读</th>
+          <td>《HR 三支柱》——三支柱讲 HR 职能自身怎么重组，这本书讲整个组织怎么运转。前者是专业分工方案，后者是诊断框架。两本一起读，能看清「HR 转型」为什么经常只是换了牌子。</td>
+        </tr>
+        <tr>
+          <th>对照阅读</th>
+          <td>《管理百年》——那本讲管理思想怎么一步步演化到今天的形态，这本讲这些思想落到一家具体公司身上是什么样。一个给时间轴，一个给剖面图。</td>
+        </tr>
+        <tr>
+          <th>对照阅读</th>
+          <td>《变革中国》——科斯讲制度变迁是「边缘先长出来、再被追认」。这本书第五章「重大创新总来自边缘」几乎是同一逻辑在组织内部的版本。两本并读，会发现「边缘突破」是个跨尺度的规律。</td>
+        </tr>
+        <tr>
+          <th>对照阅读</th>
+          <td>《智能》——曾鸣讲 AI 时代组织从「管人」变成「调度智能」。这本书成书于 2020 年，几乎没触及这一层。它不是过时，而是提供了一个对照基线：哪些组织原理是技术改不掉的。</td>
+        </tr>
+        <tr>
+          <th>定位</th>
+          <td>中国企业语境下的中观组织理论。上承巴纳德、斯隆这一脉，往下接的是和君咨询的本土案例库。它的独特价值在于「中观」——不抽象到哲学层，也不琐碎到工具层。</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>局限（如实列）</h3>
+    <div class="num-list">
+      <div class="num-item">
+        <div class="n">01</div>
+        <div class="t"><strong>案例高度集中于「已经成功」的公司。</strong>德胜、韩都、小米、喜家德、德邦、传音，都是各行业里跑出来的样本。用它们反推组织逻辑，天然带幸存者偏差——同样做法的失败者不在书里。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">02</div>
+        <div class="t"><strong>「准教科书」的定位带来一个代价：概念多、判据少。</strong>比如「组织形态」被拆成经济、社会、政治三个切面，但三个切面各自怎么判定、什么算匹配、什么算错配，书里给的是描述而非量表。读者容易点头，难以动手。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">03</div>
+        <div class="t"><strong>案例的顾问视角带有一点玫瑰色。</strong>作者是这些公司的常年管理顾问，写出来的多是「机制如何精妙」，对内部的权力博弈、失败的尝试、被牺牲的人，着墨很少。第四章讲组织政治时的那种锋利，到了实践篇明显收敛。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">04</div>
+        <div class="t"><strong>样本集中在消费品、餐饮、物流、制造，互联网平台型公司偏少。</strong>而后者恰恰是「以关系为中心」那一节最需要实证的地方。小米生态链补了一部分，但不足以支撑整个平台论的普适性。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">05</div>
+        <div class="t"><strong>2020 年成书，远程协作与 AI 对组织形态的冲击基本没有涉及。</strong>疫情后的分布式办公、AI 带来的中层消解，都是这本书之后才成规模的事。读的时候要把这一层时代差补上。</div>
+      </div>
+      <div class="num-item">
+        <div class="n">06</div>
+        <div class="t"><strong>「创始人决定上限」这个判断，解释力强但可操作性弱。</strong>它能解释很多事，却很难指导动作——告诉一个创始人「你要进化」，几乎等于什么都没说。书里对「怎么进化」着墨最少，而这恰恰是全书最重的那个结论。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="hook">
+    <h2><span class="h2-idx">12</span>记忆钩子</h2>
+    <p class="lead">四组数字，把这本书收进兜里。</p>
+
+    <div class="hook-box">
+      <div class="hook-title">ORGANIZATION · 4 × 3 × 3 × 1</div>
+      <div class="hook-grid">
+        <div class="hook-item">
+          <div class="hk">六句话</div>
+          <div class="hv">组织 → 非结构 → 机制 → 能力 → 形态 → 领导力。每句都是「仅有前一句还不够」。</div>
+        </div>
+        <div class="hook-item">
+          <div class="hk">点线面体</div>
+          <div class="hv">分工 / 合工 / 部门间 / 企业间。四个尺度，别跨级下药。</div>
+        </div>
+        <div class="hook-item">
+          <div class="hk">三种设计</div>
+          <div class="hv">以任务、以结果、以关系。看中心在哪，就知道会得什么病。</div>
+        </div>
+        <div class="hook-item">
+          <div class="hk">一个判断</div>
+          <div class="hv">组织问题 ≠ 组织结构问题。改图之前，先定位卡在哪一层。</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="lead" style="margin-top:16px;">再补三条作者自己的话，可以直接当座右铭：<strong>结构效率大于运营效率</strong> · <strong>非结构性控制见真章</strong> · <strong>增长并不等于发展</strong>。三句都来自章节标题，不是转述。</p>
+  </div>
+
+  <div class="footer-note">
+    《组织的逻辑》知识图谱 · 基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  barnard: {
+    title: "组织三要素（巴纳德）",
+    content: "<p>切斯特·巴纳德在《经理人员的职能》中提出，组织成立必须同时满足三个条件：</p><ul><li><strong>共同的目标</strong>——成员认可同一个目标，而不是各自有目标</li><li><strong>贡献的意愿</strong>——成员愿意为这个目标出力</li><li><strong>信息沟通</strong>——目标与意愿能互相传递、能纠偏</li></ul><p>丛龙峰在第一章回到这组要素，用意是先把「组织」这个词从热词里捞出来。三者缺一，组织就不成立：没有共同目标是一群散人，没有贡献意愿是一纸合同，没有信息沟通则前两条都无从验证。</p>"
+  },
+  lineeff: {
+    title: "合工效率",
+    content: "<p>与「分工效率」相对。分工效率问的是单个岗位怎么做得更省更好，合工效率问的是多个岗位串成一条线之后，整体是否顺畅。</p><p>分工越细，交接点越多，合工效率就越难保证——这是泰勒制之后所有流程管理的核心难题。福特制用流水线强行统一节拍，华为 IPD 用跨部门团队打通研发到交付，都是在解这道题。</p>"
+  },
+  exception: {
+    title: "例外事件转为例常管理",
+    content: "<p>流程管理的第三原则。意思是：反复出现的「特殊情况」，不应该继续靠特批、靠救火、靠某个人拍板来处理，而应该把它固化成常规流程的一部分。</p><p>判断标准很朴素——同一个例外出现第三次，它就不再是例外，而是流程设计缺了一环。一个组织如果长期靠「找人特事特办」运转，说明它的流程从未被真正设计过。</p>"
+  },
+  empower: {
+    title: "管控与赋能",
+    content: "<p>直线层级里的一对反向拉力。管控是「我替你判断、你来执行」，赋能是「我给你条件、你来判断」。</p><p>难点在于两者不是简单的此消彼长：管控太多，一线丧失判断力，组织反应变慢；赋能太快，一线能力跟不上，风险失控。真正要设计的是「在什么条件下放、放到什么程度」，而不是选一个立场。</p>"
+  },
+  divisional: {
+    title: "事业部制",
+    content: "<p>以结果为中心的组织设计的典型形态。斯隆在通用汽车确立，通常被概括为「分散经营、集中管理」。</p><p>书里把它拆成两个动作：<strong>纵向结构设计</strong>（哪一级做什么决策）与<strong>横向责任划分</strong>（同一级之间谁对什么结果负责）。前者决定决策速度，后者决定协同质量。</p><p>常见失败是只做前者——权力分下去了，责任没划清，结果变成各自为政、重复建设。区域事业部制与产品事业部制是它的两个变体，隐含假设不同：前者假设区域差异大于产品差异，后者相反。</p>"
+  },
+  platform: {
+    title: "平台与生态",
+    content: "<p>书里特意做了狭义与泛义的区分。</p><p><strong>狭义</strong>：平台是连接两侧、制定规则、收取租的角色；生态是围绕一个核心能力长出的互补群落。这一层有明确的定义边界，可以辨析。</p><p><strong>泛义</strong>：几乎所有公司都在自称平台、生态。作者不否认这是「已经发生的现实」，但要求接上一个真问题——超组织管理：当管理对象超出自己的法人边界，你还管得了什么、该放什么。</p>"
+  },
+  midorg: {
+    title: "从中间组织到中间市场",
+    content: "<p>描述平台角色演化的一条路径。</p><p><strong>中间组织</strong>：处在上下游之间，替一方或双方承担交易职能，本质还是组织，有边界、有内部管理。</p><p><strong>中间市场</strong>：自身成为一个交易发生的场所，规则由它制定，双边在此直接匹配。此时它更像市场而非组织，管理逻辑也随之改变——从「管人管事」变成「定规则、维秩序」。</p>"
+  },
+  dotline: {
+    title: "点效率与线效率的区别",
+    content: "<p><strong>点效率</strong>（分工效率）：单个岗位上，一个人的动作怎么更省力、更标准、更少出错。泰勒的动作研究是起点，胖东来的岗位管理是当代样本。</p><p><strong>线效率</strong>（合工效率）：多个岗位串成流程后，交接处怎么不掉东西。福特制与华为 IPD 是两个代表。</p><p>两者的关系是：点效率提升到极致，如果交接没设计好，整条线的效率反而可能下降——局部最优不等于整体最优。</p>"
+  },
+  politics: {
+    title: "组织政治",
+    content: "<p>书里在第五章「别让组织政治毁了创新」中用到这个词。指的不是办公室八卦，而是围绕资源与地位展开的、合乎规则却不上台面的博弈。</p><p>新业务一旦显出苗头，就会动到既有部门的资源与地位，于是常见的三种处理是：收编（归入成熟体系后失去锐度）、抽干（人被打散）、做掉（在评审会上被否）。三者都合规，动机不在台面上。</p><p>第四章讲形态时的「政治形态」是同一概念的宏观版本——权力怎么分配、决策怎么做出、分歧怎么解决。</p>"
+  },
+  orgfunc: {
+    title: "组织机能",
+    content: "<p>全书三个核心概念之一，由两个部分构成：</p><ul><li><strong>组织机制</strong>——怎么分工、怎么连接、怎么分利、例外怎么处理</li><li><strong>组织能力</strong>——人会不会做、组织有没有积累</li></ul><p>机能不等于结构。结构是骨架，机能是「能不能真的跑起来」。作者的递进是：仅有结构不够（要机制），仅有机制不够（要能力），机能能否发挥又取决于形态，形态能否激活取决于领导力。</p>"
+  },
+  orgform: {
+    title: "组织形态",
+    content: "<p>全书三个核心概念中最抽象的一个。指组织长期形成的整体性状，不是架构图能画出来的部分。</p><p>作者把它拆成三个切面观察：<strong>经济形态</strong>（靠什么活、业务怎么组合）、<strong>社会形态</strong>（人和组织是什么关系）、<strong>政治形态</strong>（权力与决策怎么分布）。三者合起来构成「形态背后的文化」。</p><p>形态由两股力共同决定：技术属性带来的客观约束，与企业家心智带来的主观认定。前者划边界，后者定取向。</p>"
+  },
+  nonstruct: {
+    title: "非结构性控制",
+    content: "<p>第四章的题眼。指那些不在架构图上、却真实发挥协调作用的机制：共同的价值判断、默认的做事方式、人与人之间的信任、干部的行为示范。</p><p>它们为什么重要？因为结构只能规定汇报关系，管不了「事到接缝处谁主动补位」「信息不对称时谁愿意说真话」「资源冲突时按什么排序」。这些恰恰是组织效率的真正来源。</p><p>所以只改结构的努力经常落空——它动了能画出来的部分，没动真正起作用的部分。</p>"
+  },
+  growth: {
+    title: "增长与发展的区别",
+    content: "<p>第四章第三节的核心区分。</p><p><strong>增长</strong>是规模变大：营收、人数、品类、区域。它可以靠投入买来——融资、招人、铺渠道。</p><p><strong>发展</strong>是机能变强：判断力、协同效率、干部水平、组织记忆。它只能靠时间养出来。</p><p>把增长当成发展，会在最需要打基础的时候抽调基础——用最能干的人去救火，用最该沉淀的时间去冲刺。这是很多公司规模上去了、组织反而更脆的原因。</p>"
+  },
+  edge: {
+    title: "边缘创新",
+    content: "<p>第五章主题：重大创新总来自边缘。</p><p>边缘之所以能长出东西，是因为它离考核远、离用户近、允许试错。在主业考核体系里，任何不确定的事都算负分，所以创新只能发生在尺子够不到的地方。</p><p>由此推出管理的三个动作：培育土壤（容忍不确定性的空间）、呵护种子（给它另一把尺子）、宽容失败（只宽容认真试过的那种）。以及三个典型死法：没有主人的项目、死在 0.9 阶段、被组织政治做掉。</p>"
+  },
+  threelayer: {
+    title: "效率的三层",
+    content: "<p>第二、三、四章各自对应一层，且作者明说后一层大于前一层。</p><ul><li><strong>运营效率</strong>（第二章）：同样的事做得更顺更省。可直接改善，见效快，天花板低。</li><li><strong>结构效率</strong>（第三章）：事分得对不对、权责摆得对不对。结构错了，运营越努力越偏。</li><li><strong>整体效率</strong>（第四章）：组织整体能不能自我调节。由形态决定，管不到细节，却决定前两层能发挥几成。</li></ul><p>诊断价值在于：先定位问题在哪一层，再决定动不动结构。</p>"
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

@@ -478,5 +478,45 @@
     "date": "2026-10-29",
     "category": "社会与文化",
     "author": "三浦展"
+  },
+  {
+    "id": "62",
+    "title": "《概率论通识讲义》",
+    "file": "notes/note62.html",
+    "date": "2026-11-04",
+    "category": "数学",
+    "author": "刘嘉"
+  },
+  {
+    "id": "63",
+    "title": "《组织的逻辑》",
+    "file": "notes/note63.html",
+    "date": "2026-11-05",
+    "category": "组织与管理",
+    "author": "丛龙峰"
+  },
+  {
+    "id": "64",
+    "title": "《刑法学讲义》",
+    "file": "notes/note64.html",
+    "date": "2026-11-04",
+    "category": "通识与科普",
+    "author": "罗翔"
+  },
+  {
+    "id": "65",
+    "title": "《刘擎西方现代思想讲义》",
+    "file": "notes/note65.html",
+    "date": "2026-11-06",
+    "category": "通识与科普",
+    "author": "刘擎"
+  },
+  {
+    "id": "66",
+    "title": "《医学通识讲义》",
+    "file": "notes/note66.html",
+    "date": "2026-11-04",
+    "category": "通识与科普",
+    "author": "薄世宁"
   }
 ]

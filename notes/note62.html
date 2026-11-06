@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>概率论通识讲义 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 石板蓝 + 金盏 */
+[data-theme="slate"] {
+  --primary: #33415c; --primary-light: #e9edf4; --primary-dark: #1d2739;
+  --accent: #d99a2b; --accent-deep: #a8741c;
+  --bg: #f8f8f6; --bg-card: #ffffff; --bg-soft: #f1f2ee; --bg-softer: #e8eae4;
+  --bg-tag: #e3e7ef;
+  --text: #2b3140; --text-heading: #171d2a; --text-muted: #767f8c; --text-light: #98a0ab;
+  --border: #d5d9de; --border-soft: #e6e8e6;
+  --highlight: #f5f3ea; --highlight-strong: #ebe4d1;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #33415c; --color-tool: #4a6fa5; --color-case: #4f7a52;
+  --color-history: #a8741c; --color-insight: #2f6f6a; --color-debate: #b8452f;
+  --color-solution: #4f7a52; --color-crisis: #b8452f; --color-mechanism: #4a6fa5;
+  --color-effect: #75608f; --color-core: #1d2739;
+  --warn-bg: #fdf6ea; --warn-border: #e8d3a8; --example-bg: #fbfbf9;
+  --reflect-bg: #f3f4ef; --quote-border: #d99a2b;
+  --warm: #b8452f;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--accent);
+}
+
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+.header {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.header .seal {
+  position: absolute;
+  top: 26px; right: 30px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--accent-deep);
+  border: 1.5px solid var(--accent);
+  border-radius: 4px;
+  padding: 4px 9px;
+  transform: rotate(-1.5deg);
+  opacity: .85;
+  white-space: nowrap;
+}
+.header .watermark {
+  position: absolute;
+  right: -6px; bottom: -52px;
+  font-family: var(--font-serif);
+  font-size: 122px;
+  font-weight: 700;
+  color: var(--primary);
+  opacity: .035;
+  letter-spacing: 8px;
+  pointer-events: none;
+  line-height: 1;
+}
+.header h1 {
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--accent);
+  position: relative; z-index: 1;
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+  position: relative; z-index: 1;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+  position: relative; z-index: 1;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; position: relative; z-index: 1; }
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 16px;
+  font-size: 14.5px;
+  color: var(--primary-dark);
+  line-height: 1.78;
+  padding: 14px 18px;
+  background: var(--highlight);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  position: relative; z-index: 1;
+}
+
+.section { margin-bottom: 34px; }
+.section h2 {
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 22px 0 10px;
+}
+.lead { font-size: 14px; color: var(--text-muted); margin: 8px 0 12px; line-height: 1.78; }
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-grid.pair { grid-template-columns: 1fr 1fr; }
+.info-grid.three { grid-template-columns: repeat(3, 1fr); }
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content { font-size: 14px; color: var(--text); line-height: 1.74; }
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title { font-weight: 700; font-size: 15px; color: var(--primary-dark); margin-bottom: 6px; }
+.insight-card .insight-body { font-size: 14px; color: var(--text); line-height: 1.74; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 6px; }
+.law-card p { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-grid.four { grid-template-columns: repeat(2, 1fr); }
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc { font-size: 13px; color: var(--text); line-height: 1.68; }
+.pattern-card .pattern-examples { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title { font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px; }
+.reflection-block p { font-size: 13.5px; color: var(--text); line-height: 1.74; }
+
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px;
+  font-size: 12px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+}
+
+table.extension { width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0; }
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px; text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 19%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.7;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+table.matrix { width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0; }
+table.matrix th {
+  background: var(--primary);
+  color: #f2f5fa;
+  padding: 9px 11px; text-align: left;
+  font-size: 12.5px; font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+table.matrix td {
+  padding: 9px 11px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top;
+  line-height: 1.65;
+}
+table.matrix tr:nth-child(even) td { background: var(--bg-soft); }
+table.matrix td:first-child { font-weight: 700; color: var(--primary-dark); white-space: nowrap; }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 14px 0; }
+.table-scroll table { margin: 0; }
+
+.tree-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+.tree-box pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: var(--text);
+  white-space: pre;
+}
+
+/* 公式盒 */
+.formula-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin: 16px 0;
+  text-align: center;
+}
+.formula-box .fb-main {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--primary-dark);
+  line-height: 1.9;
+  letter-spacing: .3px;
+}
+.formula-box .fb-main em { color: var(--accent-deep); font-style: normal; font-weight: 700; }
+.formula-box .fb-note {
+  margin-top: 10px;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  text-align: left;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border-soft);
+}
+
+/* 两派对峙 */
+.fork-map {
+  display: grid;
+  grid-template-columns: 1fr 54px 1fr;
+  gap: 0;
+  margin: 18px 0;
+  align-items: stretch;
+}
+.fork-side {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+}
+.fork-side .fs-head {
+  font-size: 15px; font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 4px;
+}
+.fork-side .fs-sub {
+  font-size: 11.5px; color: var(--text-muted);
+  letter-spacing: 1px; text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.fork-side .fs-body { font-size: 13px; color: var(--text); line-height: 1.75; }
+.fork-side .fs-body b { color: var(--primary-dark); }
+.fork-side.a { border-top: 3px solid var(--color-tool); }
+.fork-side.b { border-top: 3px solid var(--accent); }
+.vs-badge {
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 700;
+  color: var(--text-light);
+  letter-spacing: 1px;
+}
+
+/* 编号清单 */
+.num-list { margin: 14px 0; }
+.num-item {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 14px;
+  align-items: start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 9px;
+}
+.num-item .n-no {
+  font-family: var(--font-mono);
+  font-size: 18px; font-weight: 700;
+  color: var(--accent-deep);
+  line-height: 1.3;
+}
+.num-item .n-txt { font-size: 14px; font-weight: 600; color: var(--text-heading); margin-bottom: 3px; }
+.num-item .n-why { font-size: 12.5px; color: var(--text-muted); line-height: 1.62; }
+
+/* 钩子 */
+.hook-box {
+  background: var(--primary-dark);
+  color: #e6eaf2;
+  border-radius: var(--radius-lg);
+  padding: 26px 30px;
+  margin: 16px 0;
+}
+.hook-box .hook-title {
+  font-size: 12.5px; letter-spacing: 3px;
+  color: #d9b96e; margin-bottom: 16px;
+  font-family: var(--font-mono);
+}
+.hook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.hook-item .hi-head {
+  font-size: 12.5px; font-weight: 700;
+  color: #edcd87; margin-bottom: 4px;
+  letter-spacing: .5px;
+}
+.hook-item .hi-body { font-size: 13px; line-height: 1.72; color: #dde3ee; }
+
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 3px;
+  transition: transform .15s;
+  flex: 0 0 auto;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(29,39,57,0.52);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; padding-right: 24px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.72; }
+.modal-card code {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  background: var(--bg-soft);
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 32px 0; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid, .info-grid.pair, .info-grid.three, .pattern-grid, .pattern-grid.four { grid-template-columns: 1fr; }
+  .header { padding: 24px 20px; }
+  .header h1 { font-size: 22px; }
+  .header .seal { position: static; display: inline-block; margin-bottom: 10px; transform: none; }
+  .header .watermark { font-size: 76px; bottom: -16px; }
+  .fork-map { grid-template-columns: 1fr; }
+  .vs-badge { padding: 8px 0; }
+  .modal-card { padding: 20px; }
+  .hook-box { padding: 20px; }
+  .num-item { grid-template-columns: 32px 1fr; gap: 10px; }
+  .table-scroll table.matrix { min-width: 620px; }
+  .formula-box .fb-main { font-size: 14px; }
+}
+</style>
+</head>
+<body data-theme="slate">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">书名与判型</a></li>
+    <li><a href="#question">这本书在回答什么</a></li>
+    <li><a href="#tree">知识结构树</a></li>
+    <li><a href="#base">四大基石</a></li>
+    <li><a href="#calc">计算法则</a></li>
+    <li><a href="#freq">路线一：频率法</a></li>
+    <li><a href="#dist">概率分布</a></li>
+    <li><a href="#bayes">路线二：贝叶斯</a></li>
+    <li><a href="#fork">两派之争</a></li>
+    <li><a href="#mind">概率思维三原则</a></li>
+    <li><a href="#laws">六条贯穿规律</a></li>
+    <li><a href="#misread">六个常见误读</a></li>
+    <li><a href="#extend">延伸与局限</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="seal">序章 + 七章</div>
+    <div class="watermark">概率</div>
+    <h1>概率论通识讲义</h1>
+    <div class="subtitle">刘嘉 · 学习概率论拼的不是数学，而是语文</div>
+    <div class="meta">
+      <span><strong>作者</strong> 刘嘉（南京大学）</span>
+      <span><strong>出版</strong> 新星出版社 2021 年 8 月</span>
+      <span><strong>ISBN</strong> 9787513346054</span>
+      <span><strong>篇幅</strong> 232 页 · 七章</span>
+      <span><strong>系列</strong> 得到讲义</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">概率论</span>
+      <span class="badge">决策思维</span>
+      <span class="badge">零公式</span>
+      <span class="badge">贝叶斯</span>
+      <span class="badge">B 类 · 知识树</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：概率不消除不确定性，它只是把不确定性标上价格——让你在信息不全的时候，仍然能比较两个选择哪个更划算。
+    </div>
+  </div>
+
+  <div class="section" id="question">
+    <h2>这本书在回答什么</h2>
+    <p class="lead">前言标题就是全书的态度：<strong>学习概率论拼的不是数学，而是语文</strong>。因为概率题做错的绝大多数原因不是算不出来，而是读错了条件——“在什么前提下”“问的是谁的条件概率”“分母是谁”。</p>
+    <div class="info-grid pair">
+      <div class="info-card core">
+        <div class="label">表层问题：概率论有什么用</div>
+        <div class="content">它看起来只跟骰子、彩票、天气预报有关，离日常很远；一上公式就更远。于是多数人对概率的印象停留在“学过、忘了、用不上”。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">真实问题：不确定性怎么定价</div>
+        <div class="content">只要涉及选择，就涉及概率。判断一次跳槽、一笔投资、一场手术、一份保险，本质上都是在比较“不同结果的概率 × 后果”。没有这把尺子，决策只能靠感觉，而感觉系统性地偏向故事性强的那个选项。</div>
+      </div>
+    </div>
+    <blockquote class="quote-block">
+      随机和概率是这个世界的常态，也是这个世界的底色
+      <span class="cite">—— 前言，原书表述</span>
+    </blockquote>
+    <p class="lead">这本书的路径很清晰：先用四个概念把“概率”这个词说清楚，再教怎么算，然后给出两条度量路线（频率法、贝叶斯法），最后落回“怎么用它做决策”。全书没有复杂公式，代价是很多地方只能停在直觉层——这一点后面“局限”里会展开。</p>
+  </div>
+
+  <div class="section" id="tree">
+    <h2>知识结构树</h2>
+    <p class="lead">七章不是并列的七个知识点，而是“概念 → 计算 → 两条路线 → 汇合 → 应用”的一条推进线。第三章和第五章是全书的两个分岔：同样面对不确定，一个往回看（频率），一个往前看（信念更新）。</p>
+
+    <div class="tree-box">
+<pre>概率论
+├─ 序章 全貌：给不确定性定价
+├─ 一、四大基石（第 1 章）
+│   ├─ 随机 —— 随机 ≠ 不确定
+│   ├─ 概率 —— 是事件的长期倾向，不是事件本身
+│   ├─ 独立性 —— 硬币没有记忆
+│   └─ 概率度量 —— 降水概率 40% 到底指什么
+├─ 二、计算法则（第 2 章）
+│   ├─ 加法（互斥才相加）
+│   ├─ 乘法（独立才相乘）
+│   └─ 应用：真爱概率 = 一条乘法链
+├─ 三、路线一：频率法（第 3 章）
+│   ├─ 底层逻辑（可重复，才有频率）
+│   ├─ 大数定律（平均值会回归 ≠ 该我赢了）
+│   ├─ 数学期望（彩票为什么必亏）
+│   └─ 方差（巴菲特赢在活得久）
+├─ 四、概率分布（第 4 章）
+│   ├─ 分布模型（描述整体，不预测单次）
+│   ├─ 正态分布（平均的世界）
+│   ├─ 中心极限定理（正态为什么无处不在）
+│   ├─ 幂律分布（赢家通吃的世界）
+│   ├─ 泊松分布（稀有事件成群出现）
+│   └─ 假设检验（p 值不是你以为的那个）
+├─ 五、路线二：贝叶斯（第 5 章）
+│   ├─ 条件概率（辛普森案的陷阱）
+│   ├─ 贝叶斯推理（新证据不推翻，只更新）
+│   └─ 贝叶斯计算（数据为什么是资产）
+├─ 六、学派之争（第 6 章）
+│   └─ 概率是世界的属性，还是你的信念
+└─ 七、概率思维三原则（第 7 章）
+    └─ 能算就算 / 找条件 / 信系统</pre>
+    </div>
+  </div>
+
+  <div class="section" id="base">
+    <h2>四大基石：先把词说清楚</h2>
+    <p class="lead">这一章的价值不在知识，而在消除混淆。四个词日常都在用，但每一个都被用错了地方。</p>
+
+    <div class="info-grid pair">
+      <div class="info-card concept">
+        <div class="label">一、随机：随机和不确定是一回事吗<button class="glossary-trigger" onclick="openModal('random')">?</button></div>
+        <div class="content">不是。随机是<strong>结果不确定，但所有可能结果和各自概率都已知</strong>——掷骰子、抛硬币、抽签。不确定是<strong>连有哪些可能结果都不知道</strong>。前者能算，后者不能算。</div>
+        <div class="example"><strong>推论</strong>：黑天鹅无法用概率描述，因为它压根不在你的样本空间里。概率论处理的是“已知的未知”，处理不了“未知的未知”。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">二、概率：它描述的不是事件，是你对事件的把握</div>
+        <div class="content">“这枚硬币正面朝上的概率是 0.5”不是在描述硬币的某个物理属性，而是在描述<strong>长期重复中正面出现的比例</strong>。事件已经发生了，概率就没意义了——概率只对未来有效。</div>
+        <div class="example"><strong>常见混淆</strong>：把“概率”当成“命中率”。“这个方案成功概率 70%”不等于“这个方案有七成会被执行对”。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">三、独立性：连续 5 次正面，第 6 次更大吗<button class="glossary-trigger" onclick="openModal('indep')">?</button></div>
+        <div class="content">不大，还是 50%。独立意味着<strong>前一次的结果不改变后一次的概率</strong>。硬币没有记忆，轮盘没有情绪，彩票没有“欠你的”。</div>
+        <div class="example"><strong>两个反向错误</strong>：赌徒谬误（连输之后觉得“该赢了”）；热手谬误（连赢之后觉得“手正热”）。两者都假设了不存在的记忆。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">四、概率度量：降水概率 40% 到底在说什么</div>
+        <div class="content">它说的是：<strong>在气象条件相似的日子里，100 天里大约有 40 天会下雨</strong>。不是“40% 的地方下雨”，也不是“下 40% 的时间”，更不是“今天有四成可能会下”。</div>
+        <div class="example"><strong>为什么要抠这个</strong>：因为度量的口径决定了你能不能用它。口径不清的概率，等于没有概率。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="calc">
+    <h2>计算法则：两条法则，一条乘法链</h2>
+    <p class="lead">概率计算在通识层面只有两条法则，剩下全是它们的组合。</p>
+
+    <div class="info-grid pair">
+      <div class="info-card tool">
+        <div class="label">加法法则：互斥才相加</div>
+        <div class="content">如果两件事不可能同时发生（互斥），那么“发生 A 或 B”的概率等于两者之和。掷骰子出 1 或 2 的概率是 1/6 + 1/6 = 1/3。</div>
+        <div class="example"><strong>踩坑点</strong>：不互斥时直接相加会重复计算。出偶数或出 3 的倍数，6 被算了两次，必须减去交集。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">乘法法则：独立才相乘</div>
+        <div class="content">如果两件事互不影响（独立），那么“A 和 B 都发生”的概率等于两者之积。连抛三次正面的概率是 0.5³ = 0.125。</div>
+        <div class="example"><strong>踩坑点</strong>：现实里大部分事件不独立。不独立时要用条件概率 P(B|A)，这一步就是第五章的入口。</div>
+      </div>
+    </div>
+
+    <h3>应用：怎样提高找到真爱的概率</h3>
+    <p class="lead">书里用了数学家巴克斯的段子：把“同城 × 年龄匹配 × 单身 × 本科以上 × 我看得上她 × 她看得上我”连乘，得到一个极小极小的数字。这个算法本身没错，错的是用它当结论。</p>
+
+    <div class="insight-card">
+      <div class="insight-title">这条乘法链真正的用处，不是算出“没戏”，而是指出该改哪一环</div>
+      <div class="insight-body">链式相乘意味着：任何一环提高一倍，总概率就提高一倍。所以可操作的选项有三种——<strong>放宽某一环的标准</strong>（把 5% 变成 20%）、<strong>增加尝试次数</strong>（分母变大，命中数同比上升）、<strong>换一个环节</strong>（去更容易遇到目标人群的场景，而不是在原地提高努力程度）。</div>
+      <div class="insight-evidence">这是全书方法论的核心：概率不是命运，是参数。抱怨“整体概率太低”没有信息量，找到最便宜的那一环才有。</div>
+    </div>
+  </div>
+
+  <div class="section" id="freq">
+    <h2>路线一：频率法——回头看</h2>
+    <p class="lead">频率法的逻辑极简：一件事发生的概率，就是它在大量重复中出现的比例。它强在客观，弱在必须有“大量重复”。</p>
+
+    <div class="info-grid pair">
+      <div class="info-card mechanism">
+        <div class="label">底层逻辑：抛一万次能证明频率法吗<button class="glossary-trigger" onclick="openModal('freq')">?</button></div>
+        <div class="content">不能“证明”，只能“验证”。抛一万次得到接近 0.5 的比例，支持了“概率是 0.5”这个假设，但没法排除“抛一万零一次就变”的可能。<strong>频率法建立在一个无法被完全证明的信念上：世界是稳定的。</strong></div>
+        <div class="example"><strong>实践含义</strong>：频率法只适用于“可以重复”的事。你的这一次创业、这一场手术、这一生，都只有一次，没有频率可用。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">大数定律：否极泰来有依据吗</div>
+        <div class="content">没有。大数定律说的是<strong>样本量越大，平均值越接近期望值</strong>——是“比例”在收敛，不是“结果”在被补偿。连输十把之后，你赢的概率没变，只是之前那十把在总数里被稀释了。</div>
+        <div class="example"><strong>关键区别</strong>：平均值回归 ≠ 个体补偿。前者是真的，后者是赌场最喜欢的错觉。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">数学期望：靠买彩票发家为什么不现实<button class="glossary-trigger" onclick="openModal('expect')">?</button></div>
+        <div class="content">期望 = 每个结果的概率 × 该结果的收益，加总。彩票的返奖率通常在 50% 上下，意味着<strong>每投 100 元，长期平均收回 50 元</strong>。买得越多，越接近这个必然结果。</div>
+        <div class="example"><strong>唯一例外</strong>：奖池滚存导致的“正期望”窗口——这时数学上值得买，但中奖概率仍低到不该押上生活。期望为正和值得做，是两件事。</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">方差：为什么说巴菲特是出色的投资者<button class="glossary-trigger" onclick="openModal('var')">?</button></div>
+        <div class="content">因为他赢在<strong>方差小</strong>，不只是收益高。同样的年化收益，波动大的那条曲线会在某一年腰斩——而腰斩之后要涨 100% 才回本，很多人扛不到那一天。</div>
+        <div class="example"><strong>这条最反直觉</strong>：在长期游戏里，存活优先于收益。控制方差不是保守，是让自己有机会把复利跑完。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="dist">
+    <h2>概率分布：三种世界，一种检验</h2>
+    <p class="lead">分布是概率论的“地形图”。不懂分布的人只看平均值，懂分布的人先问形状——因为形状决定了均值有没有意义。</p>
+
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>分布</th><th>描述什么</th><th>关键性质</th><th>现实对应</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>正态分布</td>
+            <td>大量独立因素叠加后的结果</td>
+            <td>均值定位置、标准差定胖瘦；绝大多数值集中在均值附近，极端值很少</td>
+            <td>身高、考试分数、测量误差</td>
+          </tr>
+          <tr>
+            <td>幂律分布<button class="glossary-trigger" onclick="openModal('powerlaw')">?</button></td>
+            <td>强者愈强、赢家通吃的系统</td>
+            <td>没有特征尺度、长尾极长、<strong>均值不稳定</strong>，样本稍变均值就跳</td>
+            <td>图书销量、城市人口、财富、流量</td>
+          </tr>
+          <tr>
+            <td>泊松分布<button class="glossary-trigger" onclick="openModal('poisson')">?</button></td>
+            <td>单位时间/空间内稀有事件发生的次数</td>
+            <td>事件独立、发生率低、次数可数；<strong>会成群出现</strong></td>
+            <td>一天内的事故数、一段路上的车祸、呼叫中心来电</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>三个关键判断</h3>
+    <div class="info-grid three">
+      <div class="info-card insight">
+        <div class="label">正态：平均分不能衡量教学水平</div>
+        <div class="content">两个学校平均分都是 600，一个分布集中在 590—610，一个从 400 到 700 摊得很开。<strong>平均分相同，教出来的学生完全不同。</strong>更何况平均分首先反映的是生源，不是教学。看分布，别看均值。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">中心极限定理：正态为什么无处不在<button class="glossary-trigger" onclick="openModal('clt')">?</button></div>
+        <div class="content">大量独立随机变量相加，其和的分布会趋近正态——<strong>不管每个个体本身服从什么分布</strong>。这是正态在自然界泛滥的原因。1801 年高斯用最小二乘和正态假设，从少量观测数据里算出了谷神星的轨道位置。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">幂律：二八法则不能预测未来</div>
+        <div class="content">幂律分布没有“典型值”，均值依赖样本，多一个极端值整体就变。所以<strong>用历史均值预测幂律世界的下一步是无效的</strong>——这也是它和正态最本质的区别：正态可以外推，幂律不能。</div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">“五十年一遇”的暴雨连续两年来，正常吗</div>
+      <div class="insight-body">正常。因为“五十年一遇”描述的是<strong>某一个点的单次概率</strong>（每年 2%），而你在看的是<strong>大量地点 × 多年时间</strong>的总量。把全国几万个观测点乘上几十年，2% 的事件必然成群出现。真正反常的不是暴雨，是我们把单点概率当成了全局频率。</div>
+      <div class="insight-evidence">同一个逻辑解释了“祸不单行”“事故总在同一路段连发”——不是运气差，是泊松过程本来就会扎堆。</div>
+    </div>
+
+    <h3>假设检验：p 值不是你以为的那个</h3>
+    <div class="info-card concept" style="margin-top:12px;">
+      <div class="label">p 值的正确定义<button class="glossary-trigger" onclick="openModal('pvalue')">?</button></div>
+      <div class="content">p 值 = <strong>假设“什么都没发生”（原假设为真）时，出现当前观测结果或更极端结果的概率</strong>。它不是“原假设为真的概率”，也不是“结论正确的概率”。p 值小，只说明“如果没效果，这么极端的结果很难出现”，所以你要么运气极差，要么原假设有问题。</div>
+      <div class="example"><strong>系统性偏差</strong>：幸存者偏差（只看活下来的样本）、选择偏差（样本不是随机来的）、多重比较（试二十个方案，总有一个 p &lt; 0.05）。这三种偏差不会让 p 值算错，但会让整个结论作废。</div>
+    </div>
+  </div>
+
+  <div class="section" id="bayes">
+    <h2>路线二：贝叶斯——往前看</h2>
+    <p class="lead">频率法问“长期会怎样”，贝叶斯问“有了这条新信息，我该改多少判断”。前者需要大量重复，后者只需要一个先验和一条证据。</p>
+
+    <h3>条件概率：辛普森案里的陷阱</h3>
+    <div class="info-card debate" style="margin-top:12px;">
+      <div class="label">辩方的数字没错，错的是它回答的问题<button class="glossary-trigger" onclick="openModal('cond')">?</button></div>
+      <div class="content">辩方称：全美有大量殴打妻子的男性，其中最终杀死妻子的比例极低（书中引用的量级是数千分之一），所以“他有施暴史”不能推出“他杀了她”。<br><br>问题在于：<strong>P(杀妻 | 施暴) 和 P(施暴 | 被杀) 是两个完全不同的量。</strong>前者分母是“施暴的男性”，后者分母是“被杀的女性”。在已被杀害的女性中，凶手是亲密伴侣的比例高得惊人——也就是说，一旦知道“她被杀”，施暴史是极强的指向性信息。</div>
+      <div class="example"><strong>这个错误的名字</strong>：把条件概率的方向搞反，统计学上叫“条件概率倒置”，在法庭上叫“辩方谬误”（检察官用错方向时叫“检察官谬误”）。</div>
+    </div>
+
+    <h3>贝叶斯推理：新证据不推翻判断，只更新判断</h3>
+    <div class="formula-box">
+      <div class="fb-main">
+        P(<em>假设</em>|<em>证据</em>)&nbsp;=&nbsp;P(<em>假设</em>)&nbsp;×&nbsp;P(<em>证据</em>|<em>假设</em>)&nbsp;÷&nbsp;P(<em>证据</em>)
+      </div>
+      <div class="fb-note">
+        <strong>后验 = 先验 × 似然 ÷ 证据强度。</strong>先验是你原来相信什么，似然是“如果这个假设成立，出现这条证据的可能性有多大”，分母是“这条证据在任何情况下出现的总概率”。分母的作用是归一化——它保证了所有假设的后验加起来等于 1。
+      </div>
+    </div>
+
+    <div class="info-grid pair">
+      <div class="info-card mechanism">
+        <div class="label">为什么要这么算<button class="glossary-trigger" onclick="openModal('bayes')">?</button></div>
+        <div class="content">因为人脑不会做除法。我们会被一条“很像”的证据带着走，忽略它在别的假设下同样可能出现。贝叶斯公式强制你把<strong>分母</strong>算一遍——也就是问一句“如果事情不是这样，这条证据还会不会出现”。</div>
+        <div class="example"><strong>体检假阳性</strong>：一个患病率 1% 的病，检测灵敏度 99%、特异度 99%。测出阳性，真实患病的概率只有约 50%——因为健康人太多，1% 的误报在绝对数量上就压过了真患者。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">数据为什么是一种资产<button class="glossary-trigger" onclick="openModal('prior')">?</button></div>
+        <div class="content">因为每一条新数据都在更新后验。模型会过时，算法会迭代，但<strong>掌握独家数据的组织，每一轮都比别人多一次更新机会</strong>。这也是机器学习需要大量信息的原因：先验弱的时候，只能靠数据把后验“烧”出来。</div>
+        <div class="example"><strong>反过来说</strong>：先验很强的时候，少量数据就能改变判断——这正是专家和普通人的差别不在信息量，而在先验质量。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="fork">
+    <h2>两派之争：概率是世界的，还是你的</h2>
+    <p class="lead">第 6 章是全书的收口。频率法和贝叶斯不是两套算法，是两种对“概率”这个词的理解。</p>
+
+    <div class="fork-map">
+      <div class="fork-side a">
+        <div class="fs-head">频率学派</div>
+        <div class="fs-sub">Frequentist</div>
+        <div class="fs-body">
+          <b>概率是：</b>无限次重复中频率的极限，是世界的客观属性。<br>
+          <b>未知参数：</b>固定但未知，不能说“它有 70% 的概率等于 3”。<br>
+          <b>怎么估：</b>抽样 → 置信区间 → 假设检验 → p 值。<br>
+          <b>强项：</b>可重复实验、A/B 测试、质量控制、临床试验。<br>
+          <b>软肋：</b>一次性事件没有频率可用；p 值极易被误读。
+        </div>
+      </div>
+      <div class="vs-badge">VS</div>
+      <div class="fork-side b">
+        <div class="fs-head">贝叶斯学派</div>
+        <div class="fs-sub">Bayesian</div>
+        <div class="fs-body">
+          <b>概率是：</b>观察者对命题的信念强度，是主观的、可更新的。<br>
+          <b>未知参数：</b>是随机变量，本身就有分布。<br>
+          <b>怎么估：</b>先验 → 似然 → 后验 → 后验变先验，循环。<br>
+          <b>强项：</b>小样本、可迭代、能持续吸收新证据。<br>
+          <b>软肋：</b>先验主观，结论严重依赖先验怎么选。
+        </div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">分歧的实质，比“谁对”更有意思</div>
+      <p>两派争的不是数学，是一个哲学问题：<strong>概率是世界本身的属性，还是观察者心里的状态？</strong>频率派认为骰子有它自己的概率，你知不知道都一样；贝叶斯派认为“概率”只存在于你的模型里，换了信息就该变。这也是为什么频率派说“95% 置信区间”时不能讲成“参数有 95% 的概率落在里面”——在频率派看来参数是固定的，随机的是区间。</p>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">实践上早就合流了，只是教科书还没承认</div>
+      <div class="insight-body">算力和数据上来之后，贝叶斯方法在推荐、风控、医学诊断、大模型里大面积复兴——因为它天生适合“边跑边学”。而频率派的实验设计仍是判断因果的黄金标准。今天真正的分野不在学派，在<strong>你的问题是要“估计一个稳定参数”，还是要“随着新信息不断修正判断”</strong>。</div>
+      <div class="insight-evidence">书里对这一段的处理和得比较温和，实际两派在模型选择、因果推断上仍有尖锐对立（见“局限”第四条）。</div>
+    </div>
+  </div>
+
+  <div class="section" id="mind">
+    <h2>概率思维三原则</h2>
+    <p class="lead">第 7 章把前面所有工具压成三条可执行的原则。以下为原书三原则的归纳表述。</p>
+
+    <div class="num-list">
+      <div class="num-item">
+        <div class="n-no">01</div>
+        <div>
+          <div class="n-txt">对抗直觉，能算就算</div>
+          <div class="n-why">直觉在概率上是系统性失灵的：它高估生动事件、低估基数、把独立事件当成有记忆。凡是涉及数字的判断，先算一遍再看感觉对不对——顺序不能反。</div>
+        </div>
+      </div>
+      <div class="num-item">
+        <div class="n-no">02</div>
+        <div>
+          <div class="n-txt">寻找条件，增大概率</div>
+          <div class="n-why">乘法链里每一环都是可动的。与其抱怨整体概率低，不如找到<strong>最便宜的那一环</strong>去改：放宽标准、增加次数、换场景。这本书里“找真爱”“提高成功率”用的都是这一条。</div>
+        </div>
+      </div>
+      <div class="num-item">
+        <div class="n-no">03</div>
+        <div>
+          <div class="n-txt">相信系统，长期主义</div>
+          <div class="n-why">单次结果由运气决定，长期结果由系统决定。所以要建的是<strong>正期望 + 低方差 + 可重复</strong>的结构，而不是押注某一次。巴菲特的部分讲的正是这个：活得久，比某一年赚得多重要。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">三条原则的次序不是随意的</div>
+      <p>第一条解决<strong>认知</strong>（别信直觉），第二条解决<strong>行动</strong>（改哪个参数），第三条解决<strong>时间</strong>（靠什么持续）。少了第一条，后两条会算错；少了第二条，只有认知没有抓手；少了第三条，前两条都变成短跑思维——赢了这一把，下一把出局。</p>
+    </div>
+  </div>
+
+  <div class="section" id="laws">
+    <h2>六条贯穿全书的规律</h2>
+    <p class="lead">这些不是章节摘要，是把全书材料重压一遍之后剩下的东西，可以迁移到概率论之外。</p>
+
+    <div class="law-card">
+      <h4>一、概率描述的是分布，不是单次</h4>
+      <p>几乎所有概率误用，根源都是把“整体分布上的结论”套到了“这一个个体”上。“这个治疗方案成功率 90%”不能回答“我会不会好”，只能回答“一百个像我这样的人里，大概九十个会好”。</p>
+    </div>
+    <div class="law-card">
+      <h4>二、独立事件不记忆，但长期频率一定收敛</h4>
+      <p>这两件事同时成立，而且互不矛盾：单次概率永远不变（硬币没有记忆），但样本足够大时比例一定趋于期望（大数定律）。赌徒谬误就是把后者错当成了前者的补偿机制。</p>
+    </div>
+    <div class="law-card">
+      <h4>三、期望决定方向，方差决定你能不能走到那一天</h4>
+      <p>正期望但高方差的策略，会在中途把你淘汰出局——而出局之后就没有“长期”了。所以真实决策要同时看两个数，只看期望是学生思维。</p>
+    </div>
+    <div class="law-card">
+      <h4>四、概率是参数，不是命运</h4>
+      <p>一件事的概率不是刻在石头上的。改条件、加次数、换场景，都是在重设参数。这条是全书最实用的一条，也是“通识”二字真正的落点。</p>
+    </div>
+    <div class="law-card">
+      <h4>五、罕见事件在总量上必然成群出现</h4>
+      <p>“五十年一遇”连续出现两次不反常。单个点的低概率，乘以大量的点与时间，就会产生聚集。凡是看到“怎么这么巧”的疑问，先算一下总样本量。</p>
+    </div>
+    <div class="law-card">
+      <h4>六、新信息不推翻判断，只更新判断</h4>
+      <p>贝叶斯的核心不是公式，是态度：没有任何一条证据能单独定案，它只能把你的信念往某个方向推一点。极端的确信（先验为 0 或 1）意味着无论看到什么都学不到东西。</p>
+    </div>
+  </div>
+
+  <div class="section" id="misread">
+    <h2>六个常见误读</h2>
+    <div class="info-grid">
+      <div class="info-card debate">
+        <div class="label">误读一：降水概率 40% = 四成地区会下雨</div>
+        <div class="content">它的口径是“相似气象条件下的时间比例”。口径错了，后面的所有推断都错——这也是为什么先用一整节讲“度量”。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读二：连开五次正面，第六次该反面了</div>
+        <div class="content">赌徒谬误。独立事件不记忆。真正会变的是“连开六次正面”这个整体的概率，而不是第六次。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读三：p &lt; 0.05 说明假设为真的概率不到 5%</div>
+        <div class="content">p 值是“假设为真时出现这种数据的概率”，方向正好相反。这个误读在学术论文里都极其普遍，也是可重复性危机的一部分原因。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读四：二八法则可以用来预测未来</div>
+        <div class="content">幂律分布没有稳定均值，历史比例不构成对下一步的约束。它可以描述“已经形成的格局”，不能外推“下一个赢家是谁”。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读五：平均分一样，教学质量就一样</div>
+        <div class="content">忽略分布形态。同样的均值，一个是齐头并进，一个是两极分化，教育含义完全相反。只看均值等于把分布拍扁成一个点。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读六：P(杀妻|施暴) 很小，所以施暴史不重要</div>
+        <div class="content">条件概率倒置。该问的是 P(施暴|被杀)。分母换了，结论就反过来了——这是全书最值得记住的一个具体错误。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="extend">
+    <h2>延伸与局限</h2>
+
+    <h3>延伸比较：四本可以接着读的书</h3>
+    <table class="extension">
+      <tr>
+        <th>《思考，快与慢》</th>
+        <td>卡尼曼。这本书讲“概率应该怎么算”，那本讲“人实际怎么算错的”。两本对着读，才知道为什么要“对抗直觉”——不是因为直觉不可靠，而是因为它的错误有固定模式。</td>
+      </tr>
+      <tr>
+        <th>《黑天鹅》</th>
+        <td>塔勒布。本书说黑天鹅无法用概率描述，塔勒布把这句话推到了极致：整个概率框架对极端事件都是失效的，该做的是“反脆弱”而不是“更精确地估算”。立场比本书激进得多。</td>
+      </tr>
+      <tr>
+        <th>《 signal and the noise 》 / 《信号与噪声》</th>
+        <td>西尔弗。贝叶斯思维在真实预测场景（体育、选举、地震、经济）里的长篇实战记录，能补上本书“贝叶斯只讲了原理”的空白。</td>
+      </tr>
+      <tr>
+        <th>《概率论及其应用》</th>
+        <td>费勒。如果读完这本觉得“想要公式”，这是标准的入口。本书刻意不给公式，费勒正好补上另一半——但它是教材，不是通识。</td>
+      </tr>
+      <tr>
+        <th>对照阅读的价值</th>
+        <td>本书给的是“地图与语感”，上面四本给的是四种不同的用法：认知偏差、极端事件、实战预测、严格推导。只读本书容易停在“懂了但不会算”，配一本就补上了。</td>
+      </tr>
+    </table>
+
+    <h3>局限：几处需要打折的地方</h3>
+    <div class="reflection-block">
+      <div class="reflection-title">一、“零公式”的代价是停在直觉层</div>
+      <p>贝叶斯计算和假设检验只能讲到“大概是这个意思”。p 值的定义被简化，贝叶斯公式的分母几乎没展开，读者很容易产生“我懂了”的错觉，实际拿到数据仍然算不出来。这本书是入口，不是终点。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">二、案例偏生活化，专业场景几乎空白</div>
+      <p>相亲、彩票、高考、暴雨——这些例子好懂，但临床试验、A/B 测试、精算定价、风控模型、因果推断这些真正吃概率的领域基本没展开。读者会算“真爱概率”，但未必会用概率做一次实验设计。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">三、三原则更接近启发式，不是流程</div>
+      <p>“能算就算、找条件、信系统”方向上没错，但没给出可执行细节：先验怎么定？显著性阈值怎么选？方差控制在什么水平算合理？作为决策原则够用，作为操作方法不够。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">四、两派“和解”处理得偏快</div>
+      <p>书里倾向于说两种方法各有适用场景、实践中会融合。但真实的分歧仍然尖锐：2010 年代心理学可重复性危机，主要就是频率派工具（p 值 + 出版偏倚）失灵的结果；而因果推断领域（如潜在结果框架）至今仍以频率派语言为主。把它讲成“只是角度不同”，会削弱读者对方法论冲突的敏感度。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">五、幂律与黑天鹅之间有未讲透的张力</div>
+      <p>一边说黑天鹅不可预测、不在样本空间里，一边又用幂律分布去描述它。这两句话其实是冲突的：幂律一旦能拟合，黑天鹅就被纳入了概率框架。书里没有正面处理这个矛盾，读者容易同时接受两个互斥的立场。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">六、中文案例好懂，但迁移要靠自己</div>
+      <p>高考平均分、五十年一遇暴雨、辛普森案——语境选得很准。但结论从“这个案例”到“你的场景”之间那一跳，书里基本交给读者自己完成。这也是通识类书的通病：给的是范例，不是方法。</p>
+    </div>
+
+    <h3>怎么读这本书</h3>
+    <p class="lead">如果时间有限：先读第 1 章（把词说清楚）和第 7 章（三原则），再读第 5 章（贝叶斯，最有迁移价值），最后回头看第 4 章的三个分布。第 3 章的频率法是地基，但可以当参考手册查——用到期望和方差时再回来。</p>
+  </div>
+
+  <div class="section" id="hook">
+    <h2>记忆钩子</h2>
+    <div class="hook-box">
+      <div class="hook-title">REMEMBER · 四基石 · 两把尺 · 三世界 · 三原则</div>
+      <div class="hook-grid">
+        <div class="hook-item">
+          <div class="hi-head">四基石</div>
+          <div class="hi-body">随机（不同于不确定）· 概率（是倾向不是属性）· 独立（不记忆）· 度量（口径决定可用性）</div>
+        </div>
+        <div class="hook-item">
+          <div class="hi-head">两把尺</div>
+          <div class="hi-body">频率法回头看（大量重复、客观、怕一次性事件）· 贝叶斯往前看（先验更新、主观、能吸收新证据）</div>
+        </div>
+        <div class="hook-item">
+          <div class="hi-head">三个世界</div>
+          <div class="hi-body">正态（平均的世界，可外推）· 幂律（赢家通吃，均值不稳）· 泊松（稀有事件成群）</div>
+        </div>
+        <div class="hook-item">
+          <div class="hi-head">三原则</div>
+          <div class="hi-body">能算就算（抗直觉）· 找条件（改参数）· 信系统（控方差、活到复利兑现）</div>
+        </div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:16px;">如果只能带走一句话：<strong>概率不告诉你这一次会怎样，只告诉你这一百次大概会怎样——所以别跟单次结果较劲，去改那个能被改的参数。</strong></p>
+  </div>
+
+  <div class="footer-note">
+    《概率论通识讲义》知识图谱 · 基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  random: {
+    title: "随机 vs 不确定",
+    content: "<p><strong>随机</strong>：结果不确定，但所有可能结果及其概率都已知。掷骰子、抽签、轮盘。它可以被计算、被定价。</p><p><strong>不确定</strong>：连有哪些可能结果都不知道。新的病毒、没出现过的技术路线、第一次做的事。</p><p>这个区分来自奈特（Frank Knight）对“可度量的风险”与“不可度量的不确定性”的划分。黑天鹅之所以无法用概率描述，正是因为它不在既有的样本空间里——概率论处理“已知的未知”，处理不了“未知的未知”。</p>"
+  },
+  indep: {
+    title: "独立性（Independence）",
+    content: "<p>两个事件独立，指一个事件的发生不改变另一个事件的概率：<code>P(A|B) = P(A)</code>。</p><p>独立事件<strong>没有记忆</strong>。连开五次正面，第六次仍是 50%。反过来，连开六次正面的概率是 0.5⁶ ≈ 1.6%——变小的是“整串事件”，不是“第六次”。</p><ul><li><strong>赌徒谬误</strong>：连输之后认为“该赢了”</li><li><strong>热手谬误</strong>：连赢之后认为“手正热”</li></ul><p>两者都在假设一个不存在的记忆机制。</p>"
+  },
+  freq: {
+    title: "频率法（Frequentist）",
+    content: "<p>用事件在大量重复中出现的比例来度量概率。抛一万次硬币，正面比例接近 0.5。</p><p><strong>它的前提</strong>：事件可以重复、环境稳定、每次独立。三个条件缺一不可。</p><p><strong>它的局限</strong>：只能“验证”不能“证明”（归纳问题）；对一次性事件（这场手术、这次创业、这一生）完全无从下手——没有重复，就没有频率。</p>"
+  },
+  expect: {
+    title: "数学期望（Expected Value）",
+    content: "<p><code>E = Σ pᵢ × xᵢ</code>：每个结果的概率乘以该结果的收益，加总。</p><p>彩票的返奖率通常在 50% 左右，意味着期望值为负——每投 100 元，长期平均收回约 50 元。买得越多，越接近这个必然结果，这就是“靠买彩票发家不现实”的数学依据。</p><p><strong>注意</strong>：期望为正 ≠ 值得做。还要看方差、看本金承受力、看你能否重复足够多次。</p>"
+  },
+  var: {
+    title: "方差（Variance）",
+    content: "<p>衡量结果围绕期望值的离散程度。方差大，意味着同样的平均值下，单次结果可能剧烈偏离。</p><p><strong>为什么它比收益更重要</strong>：跌 50% 之后要涨 100% 才回本。高方差的策略即使期望为正，也可能在一次极端不利中被彻底淘汰——而出局之后就没有“长期”了。</p><p>所以长期游戏的第一原则是存活：控制方差不是保守，是让复利有机会跑完。</p>"
+  },
+  clt: {
+    title: "中心极限定理（Central Limit Theorem）",
+    content: "<p>大量<strong>独立</strong>随机变量之和，其分布趋近正态分布——<strong>无论每个变量本身服从什么分布</strong>。</p><p>这是正态分布在自然界泛滥的原因：身高、测量误差、考试成绩，都是许多微小因素叠加的结果，所以都长得像钟形。</p><p>历史案例：1801 年皮亚齐只观测到谷神星很短一段轨迹就失去了它，高斯用最小二乘法和正态误差假设，从少量数据推算出了它的位置，天文学家据此重新找到了它。</p><p><strong>前提</strong>：独立性 + 方差有限。重尾分布（如幂律）不满足，不能套用。</p>"
+  },
+  powerlaw: {
+    title: "幂律分布（Power Law）",
+    content: "<p>概率随规模按幂次衰减的分布，典型特征是长尾：少数个体占据绝大部分总量（二八法则的数学来源）。</p><ul><li>没有“特征尺度”——不存在一个“典型值”</li><li>均值极不稳定，样本里多一个极端值，均值就跳</li><li>方差可能不存在（重尾）</li></ul><p><strong>关键推论</strong>：幂律可以描述已经形成的格局，<strong>不能用来预测下一步</strong>。因为历史均值在这里没有预测力。这与正态分布正好相反——正态可以外推，幂律不能。</p>"
+  },
+  poisson: {
+    title: "泊松分布（Poisson Distribution）",
+    content: "<p>描述单位时间或空间内，稀有事件发生次数的分布。前提：事件独立、发生率低且稳定。</p><p>参数量只有一个 λ（平均发生率）。当 λ 较小时，分布明显右偏——0 次最常见，但也常有 2 次、3 次。</p><p><strong>它会成群出现</strong>：因为事件独立且概率低，聚集不是“有原因的连发”，而是纯随机的自然结果。这就是“五十年一遇的暴雨连续两年来”并不反常的原因——你在看的是大量地点乘多年时间的总量。</p>"
+  },
+  pvalue: {
+    title: "p 值（p-value）",
+    content: "<p>定义：<strong>在原假设成立的前提下</strong>，出现当前观测结果或更极端结果的概率。</p><p>它不是：</p><ul><li>不是“原假设为真的概率”</li><li>不是“结论正确的概率”</li><li>不是“效应很大的证据”</li></ul><p>p &lt; 0.05 只说明：如果什么都没发生，这么极端的数据很难出现——所以你面临两种可能：运气极差，或者原假设有问题。</p><p><strong>三种让 p 值失效的偏差</strong>：幸存者偏差、选择偏差、多重比较（试二十个方案，总有一个显著）。</p>"
+  },
+  cond: {
+    title: "条件概率（Conditional Probability）",
+    content: "<p><code>P(A|B) = P(A∩B) / P(B)</code>：在 B 已发生的条件下，A 发生的概率。</p><p><strong>方向不可交换</strong>：<code>P(A|B) ≠ P(B|A)</code>。把两者搞混，是司法、医学、政策判断中最常见的严重错误之一。</p><p>辛普森案里的辩方论证就是典型：用“施暴者中最终杀妻的比例很低”去反驳“施暴史与本案相关”，但真正该问的是“在已被杀害的女性中，凶手是亲密伴侣的比例有多高”。分母换了，结论就反了。</p>"
+  },
+  bayes: {
+    title: "贝叶斯推理（Bayesian Inference）",
+    content: "<p>核心公式：<code>P(H|E) = P(H) × P(E|H) / P(E)</code>。</p><ul><li><strong>先验</strong> P(H)：看到证据前你相信什么</li><li><strong>似然</strong> P(E|H)：如果假设成立，这条证据出现的可能性</li><li><strong>证据</strong> P(E)：这条证据在任何假设下出现的总概率（归一化项）</li><li><strong>后验</strong> P(H|E)：更新后的信念</li></ul><p>关键态度：<strong>没有单条证据能定案</strong>，它只能把信念往某个方向推一点。先验设为 0 或 1 意味着无论看到什么都学不到东西。</p><p>经典实例——体检假阳性：患病率 1%、灵敏度 99%、特异度 99%，测出阳性后真实患病概率约 50%。因为健康人基数太大，1% 的误报在绝对数量上压过了真患者。</p>"
+  },
+  prior: {
+    title: "先验（Prior）",
+    content: "<p>在观察到新数据之前，对参数或假设所持有的信念分布。贝叶斯方法必须显式写出它，这也是它最受批评的地方——先验从哪来？</p><p>实践中的几种处理：</p><ul><li><strong>无信息先验</strong>：尽量让数据说话</li><li><strong>弱信息先验</strong>：只约束量级，不预设结论</li><li><strong>经验先验</strong>：来自历史数据或同类研究</li></ul><p>“数据是资产”的逻辑就在这里：独家数据能持续更新后验，而模型和算法会过时。反过来，强先验 + 少量数据也能改变判断——专家与普通人的差别常常不在信息量，而在先验质量。</p>"
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

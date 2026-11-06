@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刑法学讲义 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 墨黑 + 芥末黄 + 冷白（判决书感） */
+[data-theme="statute"] {
+  --primary: #1f2a30; --primary-light: #eceee9; --primary-dark: #0e1317;
+  --accent: #c9971f; --accent-deep: #8a6410;
+  --bg: #f6f5f1; --bg-card: #ffffff; --bg-soft: #f1f0ea; --bg-softer: #e7e5db;
+  --bg-tag: #f0e6cb;
+  --text: #2e2f2c; --text-heading: #14161a; --text-muted: #78786f; --text-light: #9a9a91;
+  --border: #d8d6cb; --border-soft: #e4e2d8;
+  --highlight: #f4f0e4; --highlight-strong: #e9e0c7;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #3c4a52; --color-tool: #8a6410; --color-case: #2f6b5e;
+  --color-history: #9a6a2f; --color-insight: #1f2a30; --color-debate: #9c3b32;
+  --color-solution: #2f6b5e; --color-crisis: #a8382e; --color-mechanism: #4a6274;
+  --color-effect: #6b5a7a; --color-core: #1f2a30;
+  --warn-bg: #fdf7e6; --warn-border: #e8d9a8; --example-bg: #fbfaf6;
+  --reflect-bg: #f1efe6; --quote-border: #c9971f;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+  padding: 0;
+}
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 侧边栏 */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-size: 12px; color: var(--text-muted);
+  text-transform: uppercase; letter-spacing: 1.5px;
+  margin-bottom: 14px; font-weight: 600;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block; padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px; color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--accent);
+}
+
+/* 主内容 */
+.main { margin-left: 220px; max-width: 1100px; padding: 36px 40px 120px 40px; }
+
+/* 页头 */
+.header {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+  border-top: 4px solid var(--primary);
+}
+.header .stamp {
+  position: absolute; top: 26px; right: 32px;
+  border: 1px solid var(--accent); color: var(--accent-deep);
+  border-radius: 3px; padding: 3px 10px;
+  font-size: 11px; letter-spacing: 2px;
+  font-family: var(--font-mono);
+  opacity: .9;
+}
+.header h1 {
+  font-size: 28px; color: var(--text-heading);
+  margin-bottom: 6px; padding-left: 12px;
+  border-left: 5px solid var(--accent);
+  letter-spacing: 1px;
+}
+.header .subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 14px; }
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; }
+.header .badge {
+  background: var(--bg-tag); color: var(--primary-dark);
+  padding: 4px 14px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 14px; font-size: 14px; color: var(--primary-dark);
+  line-height: 1.7;
+  padding: 14px 18px;
+  background: var(--highlight);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* 区块 */
+.section { margin-bottom: 34px; }
+.sec-num {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--accent-deep); letter-spacing: 2.5px;
+  display: block; margin-bottom: 3px;
+}
+.section h2 {
+  font-size: 20px; color: var(--text-heading);
+  margin-bottom: 8px; padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 15px; color: var(--text-heading);
+  margin: 22px 0 10px; padding-left: 10px;
+  border-left: 3px solid var(--accent);
+}
+.lead { font-size: 14px; color: var(--text-muted); margin: 0 0 14px; line-height: 1.75; }
+
+/* info-grid */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px; margin: 14px 0;
+}
+.info-grid.pair { grid-template-columns: repeat(2, 1fr); }
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+  transition: box-shadow .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-weight: 700; font-size: 14px;
+  margin-bottom: 8px; color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px; padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 12.5px; color: var(--text-muted);
+  border-left: 3px solid var(--border);
+  line-height: 1.65;
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* 洞察卡 */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-left: 4px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 16px 20px; margin-bottom: 12px;
+}
+.insight-card .insight-title { font-weight: 700; font-size: 14.5px; color: var(--primary-dark); margin-bottom: 6px; }
+.insight-card .insight-body { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* 规律卡 */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 15px 18px; margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 6px; }
+.law-card p { font-size: 13px; color: var(--text); line-height: 1.7; }
+.law-card .law-use {
+  margin-top: 8px; font-size: 12.5px; color: var(--accent-deep);
+  padding-top: 7px; border-top: 1px dashed var(--border-soft);
+}
+
+/* 引用块 */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0; padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-size: 15px; color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px; font-size: 12px;
+  font-style: normal; color: var(--text-muted); text-align: right;
+}
+
+/* 反思块 */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 15px 18px; margin: 16px 0;
+}
+.reflection-block .reflection-title { font-weight: 700; font-size: 13.5px; color: var(--primary-dark); margin-bottom: 7px; }
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.75; }
+
+/* 提示条 */
+.note-strip {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  border-radius: var(--radius);
+  padding: 12px 16px; margin: 14px 0;
+  font-size: 13px; line-height: 1.72; color: var(--text);
+}
+.note-strip b { color: #7a5a10; }
+
+/* 三层楼 */
+.tier-stack { display: grid; gap: 10px; margin: 16px 0; }
+.tier-row {
+  display: grid;
+  grid-template-columns: 126px 1fr auto;
+  align-items: stretch;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.tier-tag {
+  background: var(--primary); color: #f2eedf;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 12px 14px;
+}
+.tier-tag b { font-size: 14px; display: block; margin-bottom: 2px; letter-spacing: 1px; }
+.tier-tag span { font-size: 11px; opacity: .75; letter-spacing: 1px; }
+.tier-body { padding: 12px 16px; font-size: 13.5px; line-height: 1.68; }
+.tier-body strong { color: var(--primary-dark); }
+.tier-num {
+  padding: 12px 16px; display: flex; align-items: center;
+  font-family: var(--font-mono); font-size: 12px;
+  color: var(--accent-deep); background: var(--bg-soft); white-space: nowrap;
+}
+
+/* 树 */
+.tree-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 18px 20px; margin: 14px 0;
+  font-family: var(--font-mono);
+  font-size: 12.5px; line-height: 1.9;
+  color: var(--text);
+  overflow-x: auto; white-space: pre;
+}
+
+/* 流程四步 */
+.flow-steps {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 30px; margin: 16px 0;
+}
+.flow-step {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--primary);
+  border-radius: var(--radius);
+  padding: 14px 15px;
+}
+.flow-step .fs-num {
+  font-family: var(--font-mono); font-size: 10.5px;
+  color: var(--accent-deep); letter-spacing: 1.5px; margin-bottom: 4px;
+}
+.flow-step .fs-name { font-weight: 700; font-size: 14px; color: var(--text-heading); margin-bottom: 6px; }
+.flow-step .fs-desc { font-size: 12.5px; color: var(--text); line-height: 1.6; }
+.flow-step .fs-q {
+  margin-top: 8px; padding-top: 6px;
+  border-top: 1px dashed var(--border-soft);
+  font-size: 12px; color: var(--text-muted);
+}
+.flow-step:not(:last-child)::after {
+  content: '→'; position: absolute;
+  right: -22px; top: 0; bottom: 0; margin: auto 0;
+  height: 16px; line-height: 16px;
+  color: var(--accent); font-size: 13px; z-index: 2;
+}
+
+/* 判决书风格案例卡 */
+.case-file {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--color-case);
+  border-radius: var(--radius);
+  padding: 15px 18px; margin: 12px 0;
+}
+.case-file .cf-head {
+  display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline;
+  padding-bottom: 8px; margin-bottom: 9px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.case-file .cf-no {
+  font-family: var(--font-mono); font-size: 11px;
+  color: var(--text-muted); letter-spacing: .5px;
+}
+.case-file .cf-title { font-weight: 700; font-size: 14px; color: var(--text-heading); }
+.case-file .cf-row {
+  display: grid; grid-template-columns: 54px 1fr; gap: 10px;
+  font-size: 13px; line-height: 1.68; margin-bottom: 5px;
+}
+.case-file .cf-row .k { color: var(--text-muted); font-size: 12px; }
+.case-file .cf-row .v strong { color: var(--primary-dark); }
+
+/* 双锁 */
+.lock-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0; }
+.lock-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 17px 19px;
+}
+.lock-card.lock-in { border-top: 4px solid var(--color-crisis); }
+.lock-card.lock-out { border-top: 4px solid var(--color-case); }
+.lock-card .lk-name { font-weight: 700; font-size: 15px; color: var(--text-heading); margin-bottom: 3px; }
+.lock-card .lk-sub { font-size: 11.5px; color: var(--text-muted); margin-bottom: 9px; letter-spacing: 1px; }
+.lock-card .lk-body { font-size: 13px; line-height: 1.7; }
+.lock-card ul { padding-left: 18px; margin-top: 8px; }
+.lock-card li { font-size: 12.5px; line-height: 1.65; margin-bottom: 3px; }
+
+/* 表格 */
+table.matrix {
+  width: 100%; border-collapse: collapse;
+  font-size: 12.5px; margin: 14px 0;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-sm);
+}
+table.matrix th {
+  background: var(--primary); color: #f2eedf;
+  padding: 9px 12px; text-align: left;
+  font-weight: 600; font-size: 12.5px;
+}
+table.matrix td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  vertical-align: top; line-height: 1.62;
+}
+table.matrix tr:nth-child(even) td { background: var(--bg-soft); }
+table.matrix td:first-child { font-weight: 600; color: var(--text-heading); }
+
+table.extension { width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0; }
+table.extension th {
+  background: var(--primary-light); color: var(--primary-dark);
+  padding: 10px 14px; text-align: left; font-weight: 700;
+  border-bottom: 2px solid var(--border); width: 16%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text); vertical-align: top; line-height: 1.68;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+/* 争议 */
+.dispute { display: grid; gap: 10px; margin: 14px 0; }
+.dispute-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 14px 17px;
+  display: grid; grid-template-columns: 32px 1fr; gap: 12px;
+}
+.dispute-item .d-no {
+  font-family: var(--font-mono); font-size: 13px;
+  color: var(--accent-deep); font-weight: 700;
+  text-align: center; padding-top: 2px;
+  border-right: 2px solid var(--border-soft);
+}
+.dispute-item .d-title { font-weight: 700; font-size: 14px; color: var(--text-heading); margin-bottom: 7px; }
+.dispute-item .d-two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 12.5px; line-height: 1.62; }
+.dispute-item .d-a, .dispute-item .d-b {
+  background: var(--bg-soft);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+}
+.dispute-item .d-a b, .dispute-item .d-b b {
+  display: block; font-size: 11px; color: var(--text-muted);
+  margin-bottom: 3px; letter-spacing: .5px;
+}
+.dispute-item .d-hold {
+  margin-top: 9px; font-size: 12.5px; color: var(--primary-dark);
+  border-left: 3px solid var(--accent); padding-left: 10px; line-height: 1.65;
+}
+
+/* 清单 */
+.check-list { list-style: none; padding: 0; margin: 12px 0; }
+.check-list li {
+  position: relative; padding-left: 22px;
+  font-size: 13.5px; line-height: 1.78; margin-bottom: 7px;
+}
+.check-list li::before {
+  content: '◆'; position: absolute; left: 4px; top: 0;
+  color: var(--accent); font-size: 10px;
+}
+.check-list li strong { color: var(--primary-dark); }
+
+/* 钩子 */
+.hook-box {
+  background: var(--primary); color: #f0ece0;
+  border-radius: var(--radius-lg);
+  padding: 24px 28px; margin: 16px 0;
+}
+.hook-box .hk-line {
+  font-family: var(--font-mono); font-size: 15px;
+  letter-spacing: 3px; color: #e8c05a;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid rgba(232,192,90,.3);
+}
+.hook-box ul { padding-left: 20px; }
+.hook-box li { font-size: 13.5px; line-height: 1.85; margin-bottom: 7px; }
+.hook-box li b { color: #e8c05a; }
+
+/* 术语 */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 50%;
+  font-size: 10.5px; font-weight: 700;
+  cursor: pointer; vertical-align: middle;
+  margin-left: 4px; transition: transform .15s;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(14,19,23,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999; backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 26px 30px;
+  max-width: 580px; width: 90%;
+  max-height: 80vh; overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 10px; right: 14px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer; color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; padding-right: 24px; }
+.modal-card p { font-size: 13.5px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.72; margin-bottom: 4px; }
+
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200; opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar, .back-to-top, .modal-overlay { display: none !important; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, .case-file, blockquote.quote-block { page-break-inside: avoid; }
+}
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 18px 14px 80px; }
+  .info-grid, .info-grid.pair, .lock-pair { grid-template-columns: 1fr; }
+  .flow-steps { grid-template-columns: 1fr; }
+  .flow-step:not(:last-child)::after {
+    content: '↓'; left: 0; right: 0; margin: 0 auto;
+    top: auto; bottom: -24px; width: 16px; text-align: center;
+  }
+  .tier-row { grid-template-columns: 1fr; }
+  .tier-tag { flex-direction: row; align-items: baseline; gap: 8px; }
+  .tier-num { justify-content: flex-end; }
+  .dispute-item { grid-template-columns: 1fr; }
+  .dispute-item .d-no { border-right: none; border-bottom: 2px solid var(--border-soft); text-align: left; padding-bottom: 4px; }
+  .dispute-item .d-two { grid-template-columns: 1fr; }
+  .header .stamp { display: none; }
+  .header h1 { font-size: 22px; }
+  table.matrix, table.extension { font-size: 12px; }
+}
+</style>
+</head>
+<body data-theme="statute">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#thesis">00 · 核心命题</a></li>
+    <li><a href="#tree">01 · 全书骨架</a></li>
+    <li><a href="#ch1">02 · 元规则：刑法凭什么管</a></li>
+    <li><a href="#ch2">03 · 定罪：什么算犯罪</a></li>
+    <li><a href="#ch3">04 · 量刑：怎么罚</a></li>
+    <li><a href="#fen1">05 · 分论一：人与财产</a></li>
+    <li><a href="#fen2">06 · 分论二：秩序与职务</a></li>
+    <li><a href="#method">07 · 三把尺子</a></li>
+    <li><a href="#gray">08 · 灰度地带</a></li>
+    <li><a href="#critique">09 · 该被追问之处</a></li>
+    <li><a href="#extend">10 · 延伸与局限</a></li>
+    <li><a href="#hook">11 · 记忆钩子</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="stamp">102 讲</div>
+    <h1>刑法学讲义</h1>
+    <div class="subtitle">写给普通人的刑法课 · 从"张三"的故事里看懂规则的边界</div>
+    <div class="meta">
+      <span><strong>作者</strong> 罗翔</span>
+      <span><strong>出版</strong> 云南人民出版社 2020 年 7 月</span>
+      <span><strong>体量</strong> 9 章 102 讲</span>
+      <span><strong>结构</strong> 总论 41 讲 + 分论 61 讲</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">B 类 · 教材通识</span>
+      <span class="badge">知识树</span>
+      <span class="badge">刑事实体法</span>
+      <span class="badge">2020 年版</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：刑法是"犯罪人的大宪章"——它一方面规定什么算犯罪、该怎么罚，另一方面死死限制住国家惩罚犯罪的权力。这两个方向必须同时成立，刑法才配叫刑法；只剩前一半，它就是一把随时能落到任何人头上的刀。
+    </div>
+  </div>
+
+  <!-- 00 -->
+  <section class="section" id="thesis">
+    <span class="sec-num">00</span>
+    <h2>核心命题：一部同时用来"抓人"和"放人"的法律</h2>
+    <p class="lead">这本书不讲刑法有多严，讲刑法有多克制。102 讲翻来覆去只在处理一个张力：国家要打击犯罪，但国家自己也可能犯错。</p>
+
+    <div class="lock-pair">
+      <div class="lock-card lock-in">
+        <div class="lk-name">入罪之锁</div>
+        <div class="lk-sub">法益保护 · 让坏人跑不掉</div>
+        <div class="lk-body">
+          刑法要把严重侵害他人生命、财产、自由、秩序的行为圈进来，给出确定的后果。没有这一半，社会退化成私力复仇。
+          <ul>
+            <li>圈定的标准必须写清楚，不能靠"看着不像好人"</li>
+            <li>圈外的行为，再可恶也不能罚</li>
+          </ul>
+        </div>
+      </div>
+      <div class="lock-card lock-out">
+        <div class="lk-name">限权之锁</div>
+        <div class="lk-sub">人权保障 · 让好人不会被抓</div>
+        <div class="lk-body">
+          同一部法律，也是被追诉者对抗国家的依据。罪刑法定、疑罪从无、禁止类推，都是这把锁的零件。
+          <ul>
+            <li>刑罚权一旦不受约束，杀伤力远超个体犯罪</li>
+            <li>辩护不是帮坏人，是帮法律不犯错</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      <p>不受约束的刑罚权，比犯罪更可怕。</p>
+      <span class="cite">—— 第一章第二节标题（原文）</span>
+    </blockquote>
+
+    <div class="info-grid">
+      <div class="info-card core">
+        <div class="label">这本书到底在回答三个问题</div>
+        <div class="content">什么行为算犯罪（定罪）？凭什么可以罚他（正当性）？罚到什么程度（量刑）？全书的 9 章，就是这三个问题的展开版：前三章给规则，后六章把规则套到具体罪名上。</div>
+        <div class="example">💡 <strong>读法</strong>：先读总论三章建立框架，再拿分论任意一章当练习题——看它怎么把"四步判断"套到一个具体罪名上。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">它的立场：对人性悲观，对权力警惕</div>
+        <div class="content">两个前提同时成立：一、人不是靠道德自律就能守住的，所以需要刑法；二、掌握刑罚权的人也一样不可靠，所以需要刑法反过来约束他们。前半句让人不天真，后半句让人不专断。</div>
+        <div class="example">💡 <strong>反面参照</strong>：只信前半句，会走向"严打"；只信后半句，会走向"什么都不敢管"。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">为什么值得非法律人读</div>
+        <div class="content">它训练的不是背法条，是一种判断顺序：先问"有没有规定"，再问"该不该罚"，最后才问"罚多少"。这个顺序可以用在职场规则、平台规则、合同条款上——先看文本，再谈情理。</div>
+        <div class="example">💡 很多人反着来：先有强烈的道德判断，再去找依据。刑法的训练正好把这两步倒回来。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">一句话记住这本书的位置</div>
+      <p>它不是法考教材，也不是学术专著，是一本"用极端案例把规则边界顶出来"的普及讲义。所以它最好的用法不是查答案，而是练判断：每读完一个罪名，问自己一句——如果事实再偏一点，结论会不会翻？会翻，说明你摸到边界了。</p>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section class="section" id="tree">
+    <span class="sec-num">01</span>
+    <h2>全书骨架：三层楼加六个分论模块</h2>
+    <p class="lead">102 讲看着多，其实只有两种内容：前三章讲"规则怎么用"，后六章讲"规则用在哪些事上"。先把楼层看清楚，再进去。</p>
+
+    <div class="tier-stack">
+      <div class="tier-row">
+        <div class="tier-tag"><b>第一层</b><span>元规则</span></div>
+        <div class="tier-body"><strong>刑法凭什么管人。</strong>刑法的来源与正当性、三大基本原则、解释方法、时空效力。这一层不解决具体案子，它决定"什么样的规定才算数"。</div>
+        <div class="tier-num">第 1 章 · 13 讲</div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-tag"><b>第二层</b><span>定罪</span></div>
+        <div class="tier-body"><strong>一个行为怎样才算犯罪。</strong>构成要件、违法性排除、有责性、未完成形态、共同犯罪。这是全书技术含量最高的一层，也是分论所有罪名的通用模板。</div>
+        <div class="tier-num">第 2 章 · 19 讲</div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-tag"><b>第三层</b><span>量刑</span></div>
+        <div class="tier-body"><strong>认定了犯罪之后怎么罚。</strong>刑种体系、死刑的存废、量刑情节、自首累犯、数罪并罚、减刑假释与追诉时效。</div>
+        <div class="tier-num">第 3 章 · 9 讲</div>
+      </div>
+      <div class="tier-row">
+        <div class="tier-tag"><b>分论</b><span>具体罪名</span></div>
+        <div class="tier-body"><strong>把上面三层套到具体事上。</strong>按"保护什么"分类：公共安全、市场秩序、人身权利、财产、社会管理秩序、职务廉洁。共 6 章、61 讲，占全书六成。</div>
+        <div class="tier-num">第 4—9 章 · 61 讲</div>
+      </div>
+    </div>
+
+    <h3>原书目录的全貌（按讲次归并）</h3>
+    <pre class="tree-box">刑法学讲义 · 102 讲
+│
+├─ 第一章 刑法基础知识 ........................... 001—013（13 讲）
+│   ├─ 刑法是什么    刑罚起源 / 道德最低要求 / 限权
+│   ├─ 三大原则      罪刑法定 · 罪刑相当 · 平等适用
+│   ├─ 解释方法      文理与论理 / 扩大 vs 类推 / 举轻明重
+│   └─ 效力范围      空间（属地·属人·保护·普遍）
+│                    时间（从旧兼从轻）
+│
+├─ 第二章 犯罪 ................................... 014—032（19 讲）
+│   ├─ 犯罪与责任    概念分类 / 作为不作为 / 因果 / 故意过失 / 动机
+│   ├─ 排除事由      正当防卫 / 紧急避险 / 责任能力 / 刑责年龄
+│   ├─ 未完成形态    预备 / 未遂 / 中止
+│   └─ 共同犯罪      概念 / 正犯与共犯 / 共犯中止 / 中立帮助
+│
+├─ 第三章 刑罚 ................................... 033—041（9 讲）
+│   ├─ 刑种体系      主刑五种 / 附加刑四种 / 死刑 / 社区矫正
+│   └─ 裁量与消灭    量刑 / 自首 / 累犯缓刑 / 减刑假释
+│
+└─ 分论 ........................................... 042—102（61 讲）
+    ├─ 第四章 危害公共安全罪 ..................... 042—046（5 讲）
+    ├─ 第五章 破坏社会主义市场经济秩序罪 ......... 047—059（13 讲）
+    ├─ 第六章 侵犯公民人身权利、民主权利罪 ....... 060—077（18 讲）
+    ├─ 第七章 侵犯财产罪 ......................... 078—087（10 讲）
+    ├─ 第八章 妨害社会管理秩序罪 ................. 088—094（7 讲）
+    └─ 第九章 贪污贿赂罪 ......................... 095—102（8 讲）</pre>
+
+    <div class="note-strip">
+      <b>版本提示</b>：上面是第一版（2020 年 7 月）的讲次。第二版把"罪数与数罪"单独拆成一讲，插在"累犯和缓刑"之后，因此第三章变为 10 讲，后面所有编号顺延一位。内容主体不变，讲次不能混用。
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">为什么分论要按"保护什么"排，而不是按"判几年"排</div>
+      <p>因为刑法分则的章节顺序，本身就是一份价值排序表：先保国家安全，再保公共安全，然后市场秩序，再到具体的人（人身、财产），最后是社会管理秩序和职务廉洁。这个顺序不是随意的——越靠前的，被认为是越基础的法益。看懂这个顺序，比记住任何单个罪名都有用。</p>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="section" id="ch1">
+    <span class="sec-num">02</span>
+    <h2>第一层：刑法凭什么管人（第 1 章 · 13 讲）</h2>
+    <p class="lead">这一章最像"废话"，其实是全书的地基。它回答的是一个前置问题：一条规定要满足什么条件，才有资格叫"刑法"。</p>
+
+    <h3>一、刑法为什么存在（001—003）</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">刑罚从哪来：报应与预防的拉锯</div>
+        <div class="content">报应论说，罚是因为他做了，罚得与罪相称就行；预防论说，罚是为了别人不敢做、为了他不再做。纯粹报应会变成残酷复仇，纯粹预防会滑向"为了多数人可以牺牲少数"——把人当工具。</div>
+        <div class="example">💡 <strong>书里的处理</strong>：报应划定上限（不能罚超过他该受的），预防划定下限（不能不罚）。两者都不许单独做主。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">刑法是道德伦理的最低要求</div>
+        <div class="content">法律不能强迫人做圣人。见义勇为值得赞美，但不做不构成犯罪；撒谎可耻，但只有特定类型的撒谎才入罪。刑法画的是"人绝不能越过"的那条线，而不是"人应该达到"的那条线。</div>
+        <div class="example">💡 <strong>推论</strong>：不道德不等于违法，违法也不等于不道德（比如未经许可经营专营物品）。两套标准不能互相替代。</div>
+      </div>
+      <div class="info-card core">
+        <div class="label">不受约束的刑罚权，比犯罪更可怕</div>
+        <div class="content">个体犯罪污染的是一段水流，滥用刑罚污染的可能是水源。因为犯罪只能伤害具体的人，而失控的刑罚权可以伤害任何人，且以"正义"的名义，让人无从抵抗。</div>
+        <div class="example">💡 这也是全书反复回到的原点：为什么要有罪刑法定，为什么要疑罪从无，答案都在这一句里。</div>
+      </div>
+    </div>
+
+    <h3>二、三大基本原则（004—007）</h3>
+    <div class="info-grid pair">
+      <div class="info-card core">
+        <div class="label">罪刑法定：法无明文规定不为罪<button class="glossary-trigger" onclick="openModal('feding')">?</button></div>
+        <div class="content">刑法第 3 条。四个派生要求：禁止类推、禁止以习惯法定罪、禁止绝对不定期刑、禁止溯及既往（新法更轻时例外）。它约束的主要不是罪犯，是司法者。</div>
+        <div class="example">💡 <strong>两个侧面</strong>：形式上要求"只能依成文法定罪"；实质上还要求法律本身明确、不含糊、不残虐——否则"依法"也能作恶。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">空白罪状：法条说"违反国家规定"<button class="glossary-trigger" onclick="openModal('kongbai')">?</button></div>
+        <div class="content">很多经济犯罪的法条不写具体行为，只写"违反国家规定，有下列行为……"，具体标准交给行政法规。好处是能跟上监管变化，风险是刑罚的边界被悄悄移到了行政机关手里。</div>
+        <div class="example">💡 <strong>判断法</strong>：如果一条罪名的成立完全取决于某个部门随时可改的规章，就要警惕它是否还符合罪刑法定的实质要求。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">罪刑相当：刑罚的标尺</div>
+        <div class="content">重罪重罚、轻罪轻罚、无罪不罚。衡量对象有两个：行为的客观危害，和行为人的主观恶性。只看前者会变成"结果归罪"，只看后者会变成"思想定罪"。</div>
+        <div class="example">💡 同样是致人死亡，故意、过失、意外，三种主观状态对应三种完全不同的处理——这就是"相当"的含义。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">平等适用：不是多余的重申</div>
+        <div class="content">它要禁止的是两种偏差：对有权势者的法外优待，和对弱势者的法外加重。同案不同判、同罪不同罚，破坏的不是某一个案，是"规则还算数"这个前提。</div>
+        <div class="example">💡 现实中的难点不在法条，而在量刑：同样的数额，不同地区、不同法官可能差出一大截。</div>
+      </div>
+    </div>
+
+    <h3>三、解释：法律文本只有一套，世界却有无限种情况（008—011）</h3>
+    <div class="info-grid">
+      <div class="info-card tool">
+        <div class="label">文理解释优先，论理解释补位</div>
+        <div class="content">先看词语的通常含义（文理），再看它在整部法律里的位置（体系）、立法时的意图（历史）、要保护什么（目的）。顺序不能倒——先讲目的再读文字，等于让解释者代替立法者。</div>
+        <div class="example">💡 "毁坏"通常指物理破坏。把别人的戒指扔进海里算不算毁坏？功能上永久丧失，多数观点认为算——这是从"物理"扩到"效用"。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">扩大解释与类推解释，一线之隔<button class="glossary-trigger" onclick="openModal('leitui')">?</button></div>
+        <div class="content">扩大解释还在词语可能的含义之内，允许；类推解释超出了词语含义，把"法律没写的事"按"类似的事"处理，禁止。这条线没有数学公式，靠的是"一般人对这个词的理解"。</div>
+        <div class="example">💡 把"汽车"解释为包括"农用三轮车"，多数人尚可接受；把"妇女"解释为包括"男子"（为适用某条罪），就越过了这条线。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">举轻以明重，举重以明轻</div>
+        <div class="content">法律规定了轻的情形要罚，那更重的情形自然要罚；规定了重的情形不罚，轻的自然不罚。这是"当然解释"，但它的使用有前提：法条本身已经把这类事包含进去了，不能拿它去填补法律空白。</div>
+        <div class="example">💡 公园禁止"折枝"，那"连根拔起"当然禁止。但如果公园只写"禁止机动车入内"，就不能用这条推出"禁止自行车入内"。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">朝着良善解释</div>
+        <div class="content">同一段文字往往有多种读法，都能自圆其说。这时需要一个价值取向：选择那个更尊重人、更少制造残酷后果的解释。这不是"讲人情"，而是承认法律的目的本身包含人道。</div>
+        <div class="example">💡 但它的边界是文本：良善解释只能在文义范围内挑一个更好的答案，不能用来突破文义。</div>
+      </div>
+    </div>
+
+    <h3>四、效力：管得了谁、管得了什么时候（012—013）</h3>
+    <div class="info-grid pair">
+      <div class="info-card mechanism">
+        <div class="label">空间效力：四把连接点</div>
+        <div class="content">属地（行为或结果有一项发生在中国境内）、属人（中国公民在境外犯罪）、保护（外国人在境外侵害中国国家或公民利益，且按本法最低刑为三年以上）、普遍管辖（条约规定的国际罪行）。四者可能重叠，实务上按先属地后其余的顺序处理。</div>
+        <div class="example">💡 <strong>常见误解</strong>：以为"出了国就不受中国刑法管"。中国公民在境外犯罪，原则上仍适用中国刑法。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">时间效力：从旧兼从轻</div>
+        <div class="content">原则上按行为时的法律处理（不能拿今天的新法去罚昨天的事）；但如果新法更轻（不认为是犯罪，或者处罚更轻），就适用新法。这个例外只为被告人的利益而设，方向是单向的。</div>
+        <div class="example">💡 <strong>为什么这样设计</strong>：既守住"不能用事后立法抓人"，又让法律变宽松的好处能立刻落到已经在押的人身上。</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这一章真正的分量</div>
+      <p>第 1 章 13 讲，几乎没有一个具体罪名，但它决定了后面 89 讲的所有结论能不能成立。如果罪刑法定守不住，后面每一个罪名都可以被随意扩张；如果解释没有边界，每一条法条都能被读到它本来不含的意思。这是全书最"无用"也最要紧的一章。</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="section" id="ch2">
+    <span class="sec-num">03</span>
+    <h2>第二层：一个行为怎样才算犯罪（第 2 章 · 19 讲）</h2>
+    <p class="lead">这是全书技术含量最高的一章。它给的不是答案，是一套四步检查顺序——顺序错了，结论就会错。</p>
+
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="fs-num">STEP 01</div>
+        <div class="fs-name">构成要件</div>
+        <div class="fs-desc">有没有一个符合法条描述的行为？主体、行为、结果、因果关系。</div>
+        <div class="fs-q">问：法条写的那些事，他做了吗？</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 02</div>
+        <div class="fs-name">违法性</div>
+        <div class="fs-desc">这个行为有没有正当理由？正当防卫、紧急避险、被害人承诺。</div>
+        <div class="fs-q">问：他做的事，法律是不是允许？</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 03</div>
+        <div class="fs-name">有责性</div>
+        <div class="fs-desc">能不能怪到他头上？责任能力、故意过失、认识错误、期待可能性。</div>
+        <div class="fs-q">问：这个人，在当时，能不能不这么做？</div>
+      </div>
+      <div class="flow-step">
+        <div class="fs-num">STEP 04</div>
+        <div class="fs-name">形态与共犯</div>
+        <div class="fs-desc">做到哪一步了？一个人做的还是几个人一起做的？</div>
+        <div class="fs-q">问：既遂了没有？各自担多少？</div>
+      </div>
+    </div>
+
+    <h3>一、不法的实质：行为、因果、心态</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">作为与不作为：不动也能犯罪<button class="glossary-trigger" onclick="openModal('buzuowei')">?</button></div>
+        <div class="content">刑法处罚的多数是"做了什么"，但也处罚"该做而没做"。不作为犯的成立前提是有作为义务——不是道德义务，是法律上的保证人地位。</div>
+        <div class="example">💡 <strong>四类义务来源</strong>：法律规定（父母对子女）、职务业务（警察、医生）、法律行为（保姆依合同）、先行行为（你把不会游泳的人推下水，就有救助义务）。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">见死不救，为什么一般不构成犯罪<button class="glossary-trigger" onclick="openModal('baozheng')">?</button></div>
+        <div class="content">因为没有保证人地位。路人没有救助义务，见死不救是可耻，但不是故意杀人。反过来，如果存在特定关系（夫妻、父子、带人进危险境地），不救就可能构成不作为的故意杀人。</div>
+        <div class="example">💡 <strong>这条线的现实意义</strong>：它承认了法律的限度——不能靠刑法把人改造成好人，只能防止人变成加害者。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">因果关系：从"条件"到"归责"<button class="glossary-trigger" onclick="openModal('guize')">?</button></div>
+        <div class="content">第一步用条件说筛（没有这个行为，结果会不会发生），但条件说太宽——杀人犯的母亲也"条件"了。所以还要问：这个行为是否制造了法律不允许的危险，这个危险是否实现为结果，结果是否在法条保护范围内。</div>
+        <div class="example">💡 甲轻伤乙，乙在医院因火灾死亡。伤害制造了危险，但死亡是火灾实现的，不是伤害实现的——不归责于甲。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">故意与过失：认识加意志</div>
+        <div class="content">故意 = 知道自己在干什么 + 希望或放任结果发生（直接故意 / 间接故意）。过失 = 应当预见而没有预见（疏忽大意），或预见了却轻信能避免（过于自信）。两者都没有，是意外事件，不构成犯罪。</div>
+        <div class="example">💡 <strong>间接故意的难点</strong>：明知可能撞死人仍高速冲卡，"撞死也无所谓"的心态，实践中常被认定为间接故意而非过失。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">不知法，能不能免责</div>
+        <div class="content">事实认识错误（以为袋子里是衣服，其实是毒品）可能阻却故意；法律认识错误（知道自己在做什么，但不知道这事违法）原则上不免责。理由是：否则每个人都能用"我不知道"逃掉。</div>
+        <div class="example">💡 <strong>例外</strong>：在极为罕见的、客观上无法获知法律的情形下，可能影响责任。但门槛极高，不能当常规抗辩。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">目的与动机：不是所有罪都看</div>
+        <div class="content">多数罪名不要求特定目的，只要故意即可。但财产犯罪里的"非法占有目的"、赌博罪里的"营利目的"，是构成要件的一部分——缺了它，行为再像也不构成本罪。</div>
+        <div class="example">💡 借了钱还不上，是民事纠纷；借的时候就没打算还，才可能构成诈骗。差别全在这个"目的"上，而它只能靠客观事实推定。</div>
+      </div>
+    </div>
+
+    <h3>二、排除事由：法律允许的"伤害"</h3>
+    <div class="info-grid pair">
+      <div class="info-card solution">
+        <div class="label">正当防卫：五个要件缺一不可<button class="glossary-trigger" onclick="openModal('fangwei')">?</button></div>
+        <div class="content">起因（不法侵害现实存在）、时间（正在进行）、对象（针对侵害人）、意图（为了制止侵害）、限度（没有明显超过必要限度造成重大损害）。刑法第 20 条。五个要件是并列的，缺一个就整条不成立。</div>
+        <div class="example">💡 <strong>最容易出错的是"时间"</strong>：侵害结束后再打，是事后报复，不是防卫；侵害还没开始就动手，是事前加害。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">特殊防卫：某些情况下没有"过当"<button class="glossary-trigger" onclick="openModal('teshufangwei')">?</button></div>
+        <div class="content">对正在进行的行凶、杀人、抢劫、强奸、绑架以及其他严重危及人身安全的暴力犯罪，采取防卫行为造成不法侵害人伤亡的，不属于防卫过当，不负刑事责任。</div>
+        <div class="example">💡 <strong>为什么这样规定</strong>：这类侵害一旦得手，损害无法挽回。要求防卫人在生死瞬间精确控制力度，等于要求他不是人。</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">紧急避险：两个法益之间做选择<button class="glossary-trigger" onclick="openModal('bixian')">?</button></div>
+        <div class="content">为了避免正在发生的危险，不得已损害另一较小法益。三个额外条件：危险现实存在、别无他法、损害的法益必须小于保护的法益。生命对生命不能比较，所以不能为了救一个人去杀另一个人。</div>
+        <div class="example">💡 <strong>与防卫的区别</strong>：防卫打的是侵害人，避险伤的是无辜第三人。所以避险的门槛更严，还要看第三人有没有忍受义务（如消防员）。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">责任能力与年龄：能不能"怪他"<button class="glossary-trigger" onclick="openModal('qidai')">?</button></div>
+        <div class="content">精神病人在不能辨认或控制自己行为时造成危害结果，不负刑事责任；间歇性精神病人在正常时犯罪要负责。年龄是另一道门槛：不满 12 周岁不负刑责；已满 16 周岁完全负责；14—16 周岁只对八类严重犯罪负责。</div>
+        <div class="example">💡 <strong>注意</strong>：不负刑事责任不等于没事——可以强制医疗、专门矫治教育，民事赔偿照样要承担。有责性还有第三层：即便有能力、有故意，若当时根本不能期待他守法，责任也会被减免。</div>
+      </div>
+    </div>
+
+    <div class="note-strip">
+      <b>⚠️ 时效提示（这一处书已经被立法追上了）</b>：第 024 讲标题是"刑事责任年龄需要下调吗"，书里是在提出问题、讨论理由。2020 年 12 月通过的《刑法修正案（十一）》给出了答案，自 2021 年 3 月 1 日起施行：已满 12 周岁不满 14 周岁，犯故意杀人、故意伤害罪，致人死亡或以特别残忍手段致人重伤造成严重残疾，情节恶劣，经最高人民检察院核准追诉的，应当负刑事责任。读这一讲时要叠加这条新规，否则会误以为法律还停在"14 岁起步"。
+    </div>
+
+    <h3>三、未完成与共同犯罪：做到哪一步、几个人一起做</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">预备 / 未遂 / 中止：一条线上的三段<button class="glossary-trigger" onclick="openModal('zhongzhi')">?</button></div>
+        <div class="content">预备是准备工具、制造条件（还没着手）；未遂是已经着手，因意志以外的原因没得逞；中止是自动放弃犯罪，或自动有效防止结果发生。前两者从宽是"因为没造成后果"，中止从宽是"因为他自己回头了"。</div>
+        <div class="example">💡 <strong>关键区分</strong>："能达目的而不欲"是中止，"欲达目的而不能"是未遂。想继续但被警察抓了，是未遂；能继续但自己走了，是中止。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">共同犯罪：违法是连带的，责任是个别的<button class="glossary-trigger" onclick="openModal('zhongli')">?</button></div>
+        <div class="content">两个人一起干，违法层面共同成立（都制造了法所不允许的危险），但责任层面各自判断——一个 20 岁、一个 13 岁，前者成立犯罪，后者不成立，但"共同"这件事依然影响前者的认定。</div>
+        <div class="example">💡 <strong>实践意义</strong>：这也是为什么"我只是帮忙望风"照样要担责——帮助行为促进了正犯，就进入共同犯罪的评价。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">中立的帮助行为：卖菜刀的人有罪吗</div>
+        <div class="content">日常职业行为客观上帮助了犯罪（卖刀、租房、提供网络服务），原则上不可罚。只有当行为人明确知道对方要犯罪、且这个帮助对犯罪有实质促进时，才可能成立帮助犯。</div>
+        <div class="example">💡 <strong>判断要点</strong>：看是否"针对特定犯罪"提供帮助。卖给所有人菜刀是中立；明知他今晚要去砍人还卖，就不再中立。</div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">这一章真正教的不是罪名，是"顺序感"</div>
+      <div class="insight-body">四步判断的价值在于：它强迫你把"这人真坏"和"法律能不能罚他"分开处理。跳过第一步直接到第三步（先觉得他可恨，再找法条），是绝大多数冤案的起点；跳过第二步（只看行为像不像，不问有没有正当理由），是绝大多数错判的起点。</div>
+      <div class="insight-evidence">对应讲次：014—032，其中 021—025（排除事由）与 026—032（形态与共犯）是全章最容易被跳读、也最容易出错的两段</div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="section" id="ch3">
+    <span class="sec-num">04</span>
+    <h2>第三层：认定了犯罪，怎么罚（第 3 章 · 9 讲）</h2>
+    <p class="lead">定罪解决"是不是"，量刑解决"多少"。这一章看着最枯燥，但它决定了前两章的所有判断最终落在什么后果上。</p>
+
+    <h3>一、刑种体系：五种主刑，四种附加刑</h3>
+    <table class="matrix">
+      <thead>
+        <tr><th>刑种</th><th>性质</th><th>期限 / 内容</th><th>要点</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>管制</td><td>主刑 · 不关押</td><td>3 个月—2 年</td><td>在社区执行，劳动同工同酬；羁押 1 日折抵 2 日</td></tr>
+        <tr><td>拘役</td><td>主刑 · 短期关押</td><td>1—6 个月</td><td>就近执行，每月可回家 1—2 天，参加劳动酌量给酬</td></tr>
+        <tr><td>有期徒刑</td><td>主刑</td><td>6 个月—15 年（数罪并罚可至 25 年）</td><td>适用面最广，量刑情节主要作用于此</td></tr>
+        <tr><td>无期徒刑</td><td>主刑</td><td>无期限，可减刑、假释</td><td>不等于关到死，实际执行通常不少于 13 年</td></tr>
+        <tr><td>死刑</td><td>主刑 · 最重</td><td>立即执行 / 缓期二年执行</td><td>对象受限、程序特殊、须最高法核准</td></tr>
+        <tr><td>罚金 / 剥夺政治权利 / 没收财产 / 驱逐出境</td><td>附加刑</td><td>可独立适用（驱逐出境仅适用于外国人）</td><td>剥夺政治权利含选举权、言论出版等自由、担任公职资格</td></tr>
+      </tbody>
+    </table>
+
+    <h3>二、死刑：限制，而不是废除</h3>
+    <div class="info-grid">
+      <div class="info-card debate">
+        <div class="label">死刑的三重限制<button class="glossary-trigger" onclick="openModal('sihuan')">?</button></div>
+        <div class="content">对象限制：犯罪时不满 18 周岁、审判时怀孕的妇女不适用；审判时已满 75 周岁原则上不适用（以特别残忍手段致人死亡的除外）。程序限制：必须报最高人民法院核准。执行限制：死缓制度给了两年的观察期。</div>
+        <div class="example">💡 <strong>死缓的实际效果</strong>：两年内没有故意犯罪，减为无期徒刑；确有重大立功，减为 25 年有期徒刑。它把"死刑"变成了一个带出口的判决。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">存废之争，三个回合</div>
+        <div class="content">报应论：杀人偿命，是正义的最低要求。功利论：没有可靠证据表明死刑比终身监禁更有威慑力。人权论：国家无权剥夺生命，且错判无法挽回。三方的分歧不在事实，在价值排序。</div>
+        <div class="example">💡 <strong>书里的倾向</strong>：逐步限制、最终废除，但不能无视民意一步到位。这是立场，不是定论——读者可以不同意。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">量刑与情节：从重、从轻、减轻、免除</div>
+        <div class="content">先定基准刑（对应基本构成要件），再看情节调节：从重（在法定幅度内偏重）、从轻（幅度内偏轻）、减轻（低于法定最低刑）、免除（定罪免罚）。四者的区别不是措辞，是能不能突破法定幅度。</div>
+        <div class="example">💡 <strong>常见误解</strong>：以为"自首就一定轻判"。自首是"可以"从轻，不是"应当"，恶性极深的案件照样可能判重。</div>
+      </div>
+    </div>
+
+    <h3>三、裁量与消灭：把刑期算清楚</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">自首、坦白、立功：三条从宽通道</div>
+        <div class="content">自首 = 自动投案 + 如实供述（两个条件都要）。坦白 = 被抓后如实交代（被动归案）。立功 = 揭发他人犯罪、提供重要线索，查证属实。三者的从宽力度依次递减，但都不是免罪金牌。</div>
+        <div class="example">💡 <strong>容易混的一点</strong>：被通缉后主动去派出所，仍算自动投案；被父母送去投案，也视为自动投案。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">累犯与缓刑：两个方向相反的制度</div>
+        <div class="content">累犯从重，且不得缓刑、不得假释：一般累犯（故意犯罪、前罪有期徒刑以上、刑罚执行完毕或赦免后 5 年内再犯）与特别累犯（危害国家安全、恐怖活动、黑社会性质组织犯罪，无时间限制）。缓刑则是把短期自由刑挂在外面，考验期内不犯事就不再执行。</div>
+        <div class="example">💡 <strong>缓刑的门槛</strong>：拘役或 3 年以下有期徒刑、犯罪情节较轻、有悔罪表现、没有再犯危险、宣告缓刑对社区无重大不良影响。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">数罪并罚：三种算法<button class="glossary-trigger" onclick="openModal('shuzui')">?</button></div>
+        <div class="content">吸收（重罪吸收轻罪，如无期吸收有期）、并科（各算各的，直接相加，如主刑加附加刑）、限制加重（在总和刑期以下、数刑中最高刑期以上决定，有期徒刑最高不超过 25 年）。判决宣告后又发现漏罪，或者又犯新罪，算法还不同。</div>
+        <div class="example">💡 <strong>为什么要"限制加重"</strong>：既不能放纵（否则犯的罪越多越划算），也不能简单相加（否则 10 个轻罪加起来比杀人还重）。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">减刑、假释与追诉时效</div>
+        <div class="content">减刑看悔改与立功表现，有最低执行期限制。假释是附条件提前出狱：有期徒刑执行原判刑期 1/2 以上、无期实际执行 13 年以上，且不致再危害社会。追诉时效按法定最高刑分档：不满 5 年→5 年，5—10 年→10 年，10 年以上→15 年，无期或死刑→20 年（须报最高检核准）。</div>
+        <div class="example">💡 <strong>时效的意义</strong>：时间本身就是一种惩罚，也让证据随时间流失的案子不再强推。它不是"放过罪犯"，是承认司法的能力边界。</div>
+      </div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">刑罚的目的，决定了所有细节</div>
+      <div class="insight-body">同样一条"自首从宽"，如果目的是报应，它毫无道理（自首不减轻他造成的损害）；如果目的是预防，它非常合理（自首降低了侦查成本和再犯可能）。书里几乎每一个量刑制度，背后都站着这个选择——而书没有替你选。</div>
+      <div class="insight-evidence">对应讲次：033—041，核心在 035（死刑存废）与 038—041（量刑、自首、累犯、消灭）</div>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="section" id="fen1">
+    <span class="sec-num">05</span>
+    <h2>分论一：对人与对财产（第 6、7 章 · 28 讲）</h2>
+    <p class="lead">这两章离日常生活最近，也是全书案例最密集的地方。人身边六个模块，财产边两种占有方式——记住这个分法，六十多个罪名就有了挂钩。</p>
+
+    <h3>一、侵犯人身权利：按"侵害了什么"分六块</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">生命：故意杀人与"参与自杀"</div>
+        <div class="content">故意杀人是最重的罪之一。自杀本身不构成犯罪，但教唆、帮助他人自杀，我国实践中一般按故意杀人罪处理，量刑时从轻。安乐死目前不合法，积极安乐死仍可能构成故意杀人，只是量刑上会考虑动机。</div>
+        <div class="example">💡 <strong>争议点</strong>：被害人明确承诺"杀了我"，能不能阻却违法？我国不承认生命可以被承诺放弃——这是与部分国家的实质差异。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">身体：故意伤害与器官买卖</div>
+        <div class="content">故意伤害要达到轻伤以上才构成犯罪（轻微伤走治安处罚）。组织出卖人体器官罪是独立罪名，即便被害人"自愿"，组织者仍构罪——身体不是可以自由处分的财产。</div>
+        <div class="example">💡 <strong>法条逻辑</strong>：这里保护的不是"健康"，是"人不能被当作零件仓库"这一层人格尊严。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">性：同意是唯一核心</div>
+        <div class="content">强奸罪的核心是"违背意志"，手段包括暴力、胁迫和其他手段。奸淫不满 14 周岁幼女，一律以强奸论并从重处罚——幼女没有性同意能力。2021 年起另设"负有照护职责人员性侵罪"，针对 14—16 周岁、处于监护收养教育医疗等特殊关系中的人。</div>
+        <div class="example">💡 <strong>难点在两处</strong>：一是"同意"的认定（是否真实、是否可随时撤回）；二是权力关系下的"同意"（职场、师生、上下级）是否还算自愿。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">自由：拘禁、绑架、拐卖</div>
+        <div class="content">非法拘禁是剥夺人身自由；绑架是以勒索财物或扣押人质为目的，法定刑远重于拘禁；拐卖妇女儿童以"出卖为目的"，与单纯收买是两个罪名。收买被拐卖的妇女儿童同样构成犯罪，法定刑三年以下。</div>
+        <div class="example">💡 <strong>2015 年的修改</strong>：原来"不阻碍其返回原居住地可以不追究刑事责任"，改为"可以从轻或者减轻处罚"。一字之差，从"基本不罚"变成"仍然要罚"。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">婚姻家庭：虐待、遗弃与家暴</div>
+        <div class="content">虐待罪要求"共同生活的家庭成员"，且需情节恶劣；遗弃罪针对有扶养义务而拒绝扶养。家庭暴力本身不是独立罪名，视后果按故意伤害、虐待等处理，另有人身安全保护令这一民事救济。</div>
+        <div class="example">💡 <strong>结构性问题</strong>：虐待罪常被视为"家务事"，取证难、告诉才处理的门槛，让很多案件停在门外。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">名誉与民主权利：侮辱、诽谤</div>
+        <div class="content">侮辱是公然贬损人格，诽谤是捏造事实散布。两者原则上"告诉才处理"（自诉），只有严重危害社会秩序和国家利益时才转为公诉。这个设计是为了避免公权力替人打名誉官司。</div>
+        <div class="example">💡 <strong>网络时代的张力</strong>：一条谣言传播极快，让受害人自己去取证起诉，成本高到几乎不可行——这是"自诉原则"当下最大的困境。</div>
+      </div>
+    </div>
+
+    <h3>二、侵犯财产：强制占有与平和占有</h3>
+    <div class="info-grid pair">
+      <div class="info-card crisis">
+        <div class="label">强制占有型：抢劫、抢夺、敲诈</div>
+        <div class="content">抢劫 = 暴力或胁迫 + 当场取得财物，两个"当场"是它的标志。八种加重情形（入户、公共交通工具上、抢劫银行、多次或数额巨大、致人重伤死亡、冒充军警、持枪、抢劫军用抢险物资）法定刑升到十年以上、无期或死刑。抢夺是对物使用暴力、对人身有危险；敲诈是恐吓使人交付财物。</div>
+        <div class="example">💡 <strong>划界方法</strong>：看压制的是"人的反抗能力"（抢劫）还是"人的意志决定"（敲诈），还是仅仅"人对物的持有"（抢夺）。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">平和占有型：盗窃、诈骗、侵占</div>
+        <div class="content">盗窃是以平和手段违反占有人意志、转移财物占有——"秘密窃取"不是必要要件，公开拿走也可能构成盗窃。诈骗要求四步链条：虚构事实或隐瞒真相 → 对方陷入错误认识 → 对方基于错误认识处分财产 → 造成损失。侵占是合法持有他人财物后拒不退还。<button class="glossary-trigger" onclick="openModal('zhanqu')">?</button></div>
+        <div class="example">💡 <strong>盗窃与侵占的分水岭</strong>：东西在谁手上。在别人手上，你拿走是盗窃；已经在你手上（代为保管、拾得遗忘物），你不还才是侵占，且需"拒不退还"。</div>
+      </div>
+    </div>
+
+    <div class="case-file">
+      <div class="cf-head">
+        <span class="cf-no">典型案例 · 处分行为</span>
+        <span class="cf-title">骗小孩去拿父母的钱，是诈骗还是盗窃？</span>
+      </div>
+      <div class="cf-row"><span class="k">事实</span><span class="v">甲对 6 岁的乙说"你回家把爸爸抽屉里的钱拿来，我給你买糖"，乙照做，甲取走钱。</span></div>
+      <div class="cf-row"><span class="k">争点</span><span class="v">乙把钱交给甲，形式上像"交付"，是否构成诈骗罪要求的<strong>处分行为</strong>？<button class="glossary-trigger" onclick="openModal('chufen')">?</button></span></div>
+      <div class="cf-row"><span class="k">结论</span><span class="v">不构成诈骗，构成盗窃（间接正犯）。处分行为要求处分人有处分意识和处分权限；6 岁儿童既不理解财产处分的意义，也无权处分父母财产，他的"交付"在法律上不算处分，只是行为人借他的手完成了窃取。</span></div>
+      <div class="cf-row"><span class="k">延伸</span><span class="v">同理，用捡到的银行卡在 ATM 取钱，机器没有处分意识，不成立诈骗（机器不能被骗），按盗窃或信用卡诈骗处理，视具体情形而定。</span></div>
+    </div>
+
+    <table class="matrix">
+      <thead>
+        <tr><th>对比项</th><th>核心手段</th><th>被害人角色</th><th>关键区分点</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>抢劫</td><td>暴力 / 胁迫压制反抗</td><td>被压制，无选择</td><td>两个"当场"：当场施暴、当场取财</td></tr>
+        <tr><td>抢夺</td><td>对物暴力、乘人不备</td><td>来不及反应</td><td>暴力指向财物，对人身仅有危险</td></tr>
+        <tr><td>敲诈勒索</td><td>恐吓、要挟</td><td>基于恐惧而交付</td><td>有交付行为，但意志被胁迫</td></tr>
+        <tr><td>诈骗</td><td>虚构事实 / 隐瞒真相</td><td>基于错误认识而处分</td><td>必须有处分行为和处分意识</td></tr>
+        <tr><td>盗窃</td><td>平和手段转移占有</td><td>完全不知情或来不及阻止</td><td>无处分行为，违反占有人意志</td></tr>
+        <tr><td>侵占</td><td>合法持有后拒不退还</td><td>财物本在行为人手中</td><td>先合法占有，后产生不法所有意图</td></tr>
+      </tbody>
+    </table>
+
+    <div class="reflection-block">
+      <div class="reflection-title">财产犯罪真正的分界线</div>
+      <p>不是"拿了多少钱"，是"用什么方式破坏了别人的占有"。暴力破坏 → 抢劫抢夺；欺骗让人自己交出来 → 诈骗；悄悄转移 → 盗窃；本来就在你手上 → 侵占。数额只决定量刑档，方式才决定罪名。这个顺序一旦搞反，就会得出"偷得多所以是抢劫"这种荒唐结论。</p>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="section" id="fen2">
+    <span class="sec-num">06</span>
+    <h2>分论二：对秩序与对职务（第 4、5、8、9 章 · 33 讲）</h2>
+    <p class="lead">这四章的共同点是：被害人往往不是某个具体的人，而是"某种秩序"。所以它们的入罪标准更依赖行政规范，也更容易长出"口袋"。</p>
+
+    <h3>一、危害公共安全：危险犯的领域</h3>
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">放火、爆炸、投放危险物质：不需要真出事</div>
+        <div class="content">这几个罪是"危险犯"——只要行为足以危及不特定多数人的生命财产安全，即便没造成实害，也构成既遂。立法逻辑是：这类危险一旦实现，后果不可控，不能等到出事才管。</div>
+        <div class="example">💡 <strong>与故意杀人的区别</strong>：针对特定一个人投毒，是故意杀人；在公共水源投毒，是投放危险物质罪。看危险是否"扩散到不特定人"。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">"以危险方法危害公共安全"的边界</div>
+        <div class="content">法条写的是"其他危险方法"，要求与放火、决水、爆炸、投放危险物质的危险性相当。这个"相当性"是它最容易被滥用的地方——一旦解释得太宽，任何危害公共秩序的行为都能装进来。</div>
+        <div class="example">💡 <strong>判断法</strong>：看危险是否具有"一次行为、多人受害、后果不可控"的特征。抢方向盘、高空抛物曾长期被塞进这一条，后来才单独立罪。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">交通肇事：过失犯罪里最重的一个</div>
+        <div class="content">成立要件：违反交通运输管理法规 + 发生重大事故（致人重伤、死亡或重大财产损失）+ 过失。基本刑三年以下；逃逸或有其他特别恶劣情节，三到七年；因逃逸致人死亡，七年以上。</div>
+        <div class="example">💡 <strong>为什么"逃逸"罚得这么重</strong>：逃逸让被害人失去被救助的机会，它制造的是新的、独立的危险，不只是"态度不好"。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">危险驾驶：四种行为，不需要后果</div>
+        <div class="content">追逐竞驶情节恶劣、醉酒驾驶、从事校车或旅客运输严重超载超速、违规运输危险化学品危及公共安全。都是行为犯，醉驾尤其如此——血液酒精含量达到标准即构罪，不问有没有撞到人。</div>
+        <div class="example">💡 <strong>争议</strong>：醉驾入刑十余年，犯罪数激增，学界一直在讨论"但书"出罪（情节显著轻微）能不能适用。这是一个真实的立法效果问题。</div>
+      </div>
+    </div>
+
+    <h3>二、破坏市场经济秩序：离"创业"最近的一章</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">伪劣商品与食品安全：数额犯与行为犯</div>
+        <div class="content">生产销售伪劣产品罪以销售金额 5 万元为起点，是数额犯；生产销售有毒有害食品罪是行为犯，只要掺入有毒有害的非食品原料即可构罪，不需要造成实害。后者的刑罚明显更重。</div>
+        <div class="example">💡 <strong>逻辑</strong>：食品面向不特定多数人，危害一旦扩散无法回收，所以把防线前移到"行为"本身。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">假药的定义被改过一次</div>
+        <div class="content">2019 年《药品管理法》修订后，假药按实质认定（成分不符、以非药品冒充药品等），未经批准进口的境外合法上市药品，不再一律按假药论处。这是对"药神案"这类案件的一次立法回应。</div>
+        <div class="example">💡 <strong>读法提醒</strong>：本书 2020 年 7 月出版，正好卡在这条修改之后不久，第 049 讲的表述要结合现行药品管理法一起看。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">非法集资：两个罪的分界在"目的"<button class="glossary-trigger" onclick="openModal('feiyi')">?</button></div>
+        <div class="content">非法吸收公众存款罪不要求非法占有目的，本质是"未经批准向社会公众吸收资金"；集资诈骗罪要求以非法占有为目的，本质是"骗"。前者可能还得上，后者从一开始就没打算还。</div>
+        <div class="example">💡 <strong>推定方法</strong>：看资金去向——是否用于生产经营、是否明显超过偿还能力、是否挥霍或转移隐匿。这些客观事实用来推定主观目的。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">非法经营罪：最典型的"口袋"<button class="glossary-trigger" onclick="openModal('koudai')">?</button></div>
+        <div class="content">法条列举了三类 + "其他严重扰乱市场秩序的非法经营行为"。这个兜底项，让很多新兴业务在被明确允许之前先被认定为犯罪。从卖书、代购到某些互联网服务，都曾在这里进出过。</div>
+        <div class="example">💡 <strong>为什么危险</strong>：它对"创新"征收了一种隐性税——先做的人可能先坐牢，等规则明确了，机会已经没了。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">金融类：信用卡诈骗与洗钱</div>
+        <div class="content">信用卡诈骗包括使用伪造卡、使用作废卡、冒用他人卡、恶意透支。恶意透支要求"以非法占有为目的"，且经发卡行两次有效催收超过三个月仍不归还。洗钱罪的上游犯罪范围经过多次扩大，已覆盖贪污、金融、黑社会等多种犯罪所得。</div>
+        <div class="example">💡 <strong>实务提醒</strong>：把银行卡借给别人"走一下账"，可能构成帮信罪或洗钱罪——"我不知道他用去干什么"不是免罪理由，取决于是否"应当知道"。</div>
+      </div>
+    </div>
+
+    <h3>三、妨害社会管理秩序：秩序本身作为法益</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">妨害公务与袭警</div>
+        <div class="content">以暴力、威胁方法阻碍国家机关工作人员依法执行职务，构成妨害公务罪。2021 年《刑法修正案（十一）》增设袭警罪，对暴力袭击正在依法执行职务的人民警察单独定罪，法定刑更重。</div>
+        <div class="example">💡 <strong>关键前提</strong>：必须是"依法"执行职务。执法行为本身违法，相对人的反抗不构成此罪——这一条在实务中被讨论得很多。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">寻衅滋事：四种类型与存废之争</div>
+        <div class="content">四种行为：随意殴打他人；追逐、拦截、辱骂、恐吓他人；强拿硬要或任意损毁、占用公私财物；在公共场所起哄闹事造成秩序严重混乱。问题在于"随意""任意""情节恶劣"这些词缺乏明确边界。</div>
+        <div class="example">💡 <strong>批评意见</strong>：它把大量本该按治安管理处罚处理的行为升格为犯罪，且标准模糊，容易成为压制表达的工具。主张废除或严格限缩的声音一直存在。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">考试作弊、虚假信息、律师伪证</div>
+        <div class="content">组织考试作弊罪针对法律规定的国家考试，组织者、提供器材者、代替他人考试者都可能构罪。编造、故意传播虚假信息罪限于险情、疫情、灾情、警情四类。律师伪证罪（辩护人、诉讼代理人毁灭证据、伪造证据、妨害作证）在实务中争议极大，因为它直接触及辩护权。</div>
+        <div class="example">💡 <strong>对比看</strong>：同样是"说假话"，普通证人和辩护律师适用的条文不同、门槛不同——立法者意识到辩护制度本身需要保护空间。</div>
+      </div>
+    </div>
+
+    <h3>四、贪污贿赂：职务犯罪的核心</h3>
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">贪污与挪用公款：还不还，是关键</div>
+        <div class="content">贪污 = 利用职务便利 + 侵吞、窃取、骗取公共财物 + 非法占有目的。挪用公款 = 利用职务便利 + 挪用归个人使用（进行非法活动、营利活动，或其他超过三个月未还），本质是"暂时用"，不要求永久占有。</div>
+        <div class="example">💡 <strong>转化点</strong>：挪用后携款潜逃、或销毁账目拒不归还，就从"挪用"转为"贪污"。主观意图靠客观行为推定。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">受贿的实质：权钱交易</div>
+        <div class="content">利用职务便利，索取或收受他人财物，为他人谋取利益。五种常见类型：索取型、收受型、斡旋型（通过其他国家工作人员的职务行为）、利用影响力型（近亲属或关系密切人）、交易型（以明显低于市价买入等）。</div>
+        <div class="example">💡 <strong>核心不是"收了钱"</strong>，是"钱"和"权"之间有没有对价关系。收钱不办事仍可能构成（承诺为他人谋利即可），关键在承诺。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">行贿：从"配角"到"一起查"</div>
+        <div class="content">长期以来司法实践重受贿、轻行贿。2024 年 3 月施行的《刑法修正案（十二）》明确加大对行贿的惩治，列出七类从重处罚情形（多次行贿、向多人行贿、向司法人员行贿等），并提高了单位行贿的刑罚。</div>
+        <div class="example">💡 <strong>读法提醒</strong>：本书第 101 讲写在这次修改之前，行贿部分的量刑标准已经变化，不能照搬。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">死刑能遏制贪腐吗</div>
+        <div class="content">书里给了两面：一面是死刑的威慑有限——贪腐的动因是权力缺乏制约，不是刑罚不够重；另一面是现阶段民意对巨贪仍有强烈的报应需求，简单废除会削弱公众对法律的信任。</div>
+        <div class="example">💡 <strong>更根本的问题</strong>：如果权力运行不透明，提高刑罚只会提高"被查到的风险溢价"，反而让腐败的价码更贵。</div>
+      </div>
+    </div>
+
+    <div class="note-strip">
+      <b>⚠️ 分论的时代性最强</b>：这一部分几乎每隔几年就会被修正案改写。本书出版后，修正案（十一）（2021.3.1）与修正案（十二）（2024.3.1）已改动多处——刑责年龄、袭警罪、催收非法债务罪、侵害英雄烈士名誉荣誉罪、高空抛物罪、妨害安全驾驶罪、行贿量刑。读分论必须以现行法条为准，本书只能当"理解框架"，不能当"条文索引"。
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="section" id="method">
+    <span class="sec-num">07</span>
+    <h2>贯穿全书的三把尺子</h2>
+    <p class="lead">102 讲里反复出现的，其实是三个判断动作。它们不在目录里，但每读完一个罪名，都会撞上它们。</p>
+
+    <div class="law-card">
+      <h4>第一把：形式判断在前，实质判断在后</h4>
+      <p>先问"法律有没有写"，再问"这事该不该罚"。顺序不能倒。倒过来就是：先有强烈的正义感，再去找一条能套上的法条——这正是类推解释和口袋罪的温床。罪刑法定之所以是原则而不是口号，就在于它强制你先看文本。</p>
+      <div class="law-use">用得上：判断自己或他人的行为是否越线时，先查规定，再谈情理。反过来做，容易自我合理化。</div>
+    </div>
+
+    <div class="law-card">
+      <h4>第二把：入罪与出罪必须对称</h4>
+      <p>刑法给了国家抓人的权力，就必须同时给出放人的机制：疑罪从无、存疑时有利于被告、非法证据排除、上诉不加刑。这些不是"对罪犯的优待"，是这套权力系统的安全阀。少了它们，抓对的概率不会提高，抓错的概率一定会提高。</p>
+      <div class="law-use">用得上：看到"这人明明有问题却放了"的新闻时，先分清是"证据不足"还是"法律不管"——两者都不是司法失败，而是制度在按设计运行。</div>
+    </div>
+
+    <div class="law-card">
+      <h4>第三把：一般人的尺子与具体人的尺子，不能混用</h4>
+      <p>判断防卫是否过当，用"一般人处在那个情境下会怎么做"（不能要求圣人）；判断有没有责任能力，用"这个具体的人能不能辨认和控制"（精神病人不罚）。前者防止苛求，后者防止放纵。两把尺子各有各的位置，互换就会出错。</p>
+      <div class="law-use">用得上：评价别人的选择时，先问自己用的是哪把尺子。要求别人做圣人，是拿错了尺子。</div>
+    </div>
+
+    <blockquote class="quote-block">
+      <p>法律要倾听民众的声音，但要超越民众的偏见。</p>
+      <span class="cite">—— 作者一贯立场，全书反复体现（综合提炼，非本书逐字原文）</span>
+    </blockquote>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这三把尺子为什么值得非法律人学</div>
+      <p>因为它们是可以迁移的：形式判断对应"先看规则文本再看情理"，对称性对应"权力必须自带纠错机制"，两把尺子对应"评价行为用一般人标准、追究责任用具体人标准"。公司管理、平台治理、家庭纠纷，凡是要"判一个对错"的场合，这套顺序都能用。这也是这本书超出普法范围的那部分价值。</p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="section" id="gray">
+    <span class="sec-num">08</span>
+    <h2>灰度地带：书里没有标准答案的地方</h2>
+    <p class="lead">刑法不是一本答案册。下面七处，是书里明说"有争议"或读者普遍会卡住的地方。每处我都标了双方立场和书中的倾向——倾向是作者的选择，不是通说。</p>
+
+    <div class="dispute">
+      <div class="dispute-item">
+        <div class="d-no">01</div>
+        <div>
+          <div class="d-title">死刑该不该废</div>
+          <div class="d-two">
+            <div class="d-a"><b>保留</b>报应正义的最低要求；对极端恶性犯罪，终身监禁不足以回应；民意强烈反对废除。</div>
+            <div class="d-b"><b>废除</b>国家无权剥夺生命；无实证显示更强威慑；错判不可逆，而错判一定存在。</div>
+          </div>
+          <div class="d-hold">书中倾向：逐步限制、最终废除，但不能无视民意一步到位。</div>
+        </div>
+      </div>
+      <div class="dispute-item">
+        <div class="d-no">02</div>
+        <div>
+          <div class="d-title">正当防卫的边界到底在哪</div>
+          <div class="d-two">
+            <div class="d-a"><b>从宽</b>不能苛求防卫人在紧急状态下精确计算力度，"法不能向不法让步"。</div>
+            <div class="d-b"><b>从严</b>防卫权一旦放开，容易变成私力报复的借口，需要客观限度约束。</div>
+          </div>
+          <div class="d-hold">书中倾向：明显偏向从宽。2018 年"昆山反杀案"与 2020 年两高一部《关于依法适用正当防卫制度的指导意见》，都推动了这一转向。</div>
+        </div>
+      </div>
+      <div class="dispute-item">
+        <div class="d-no">03</div>
+        <div>
+          <div class="d-title">性同意年龄要不要提高</div>
+          <div class="d-two">
+            <div class="d-a"><b>提高</b>14 岁的认知能力不足以理解性行为的后果，尤其在权力不对等的关系中。</div>
+            <div class="d-b"><b>维持</b>过高会压缩青少年的正常交往空间，也可能造成"两小无猜"型案件被过度入罪。</div>
+          </div>
+          <div class="d-hold">书中倾向：主张提高并引入分级。立法上的回应是 2021 年增设"负有照护职责人员性侵罪"，把 14—16 岁、处于特殊关系中的人单独保护，而不是整体抬高年龄线。</div>
+        </div>
+      </div>
+      <div class="dispute-item">
+        <div class="d-no">04</div>
+        <div>
+          <div class="d-title">寻衅滋事罪该不该废</div>
+          <div class="d-two">
+            <div class="d-a"><b>保留</b>现实中确有大量"没造成具体伤害但严重扰乱秩序"的行为需要处理。</div>
+            <div class="d-b"><b>废除</b>构成要件模糊，"随意""任意""情节恶劣"缺乏可预测性，与罪刑法定的实质要求冲突。</div>
+          </div>
+          <div class="d-hold">书中倾向：明确批评其口袋化倾向。近年立法把高空抛物、抢方向盘、催收非法债务等单独立罪，实际上是在往外掏它的内容。</div>
+        </div>
+      </div>
+      <div class="dispute-item">
+        <div class="d-no">05</div>
+        <div>
+          <div class="d-title">索赔和敲诈勒索的界线</div>
+          <div class="d-two">
+            <div class="d-a"><b>权利行使</b>只要主张的权利有事实基础，即便金额偏高、手段强硬，也不构成敲诈。</div>
+            <div class="d-b"><b>构成敲诈</b>以揭发隐私、举报违法相要挟，索要明显超出合理范围的金额，已不是维权而是牟利。</div>
+          </div>
+          <div class="d-hold">书中的处理（第 083 讲）：索赔是正当权利，关键看有没有"非法占有目的"和手段是否超出社会相当性。</div>
+        </div>
+      </div>
+      <div class="dispute-item">
+        <div class="d-no">06</div>
+        <div>
+          <div class="d-title">收买被拐妇女儿童该不该重罚</div>
+          <div class="d-two">
+            <div class="d-a"><b>加重</b>没有收买就没有拐卖，买方是需求源头；现刑期三年以下，与造成的伤害不匹配。</div>
+            <div class="d-b"><b>谨慎</b>部分地区存在"买来的媳妇"已形成家庭、有子女的复杂现实，重罚可能让被害人处境更糟。</div>
+          </div>
+          <div class="d-hold">书中倾向：主张加重。2015 年修正案（九）已把"可以不追究刑事责任"改为"可以从轻或减轻处罚"，但法定刑尚未提高，社会上仍有修法呼声。</div>
+        </div>
+      </div>
+      <div class="dispute-item">
+        <div class="d-no">07</div>
+        <div>
+          <div class="d-title">安乐死与协助自杀</div>
+          <div class="d-two">
+            <div class="d-a"><b>有限允许</b>尊重终末期病人的自主决定，是人格尊严的一部分；严格程序可以防止滥用。</div>
+            <div class="d-b"><b>禁止</b>生命不可承诺放弃；一旦开口，"自愿"与"被自愿"无法可靠区分，弱势者最易被裹挟。</div>
+          </div>
+          <div class="d-hold">书中倾向：我国目前不承认。积极安乐死仍可能构成故意杀人，实践中会在量刑时考虑动机，但不定罪免罚。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section class="section" id="critique">
+    <span class="sec-num">09</span>
+    <h2>该被追问之处</h2>
+    <p class="lead">这本书的优点是清楚的，缺点也是清楚的。下面七条不是挑刺，是读它时必须自己补上的部分。</p>
+
+    <ul class="check-list">
+      <li><strong>时效性：出版后已被两次修正案改写。</strong>2020 年 7 月出版，《刑法修正案（十一）》2021 年 3 月施行、《刑法修正案（十二）》2024 年 3 月施行。刑责年龄、袭警罪、行贿量刑、催收非法债务、高空抛物、妨害安全驾驶等，书里都没有。最刺眼的一处是第 024 讲还在问"刑责年龄需要下调吗"，而答案半年后就落地了。</li>
+      <li><strong>体例决定它不能当工具书。</strong>没有脚注、没有判例编号、没有法条对照表，讲次之间也缺交叉索引。想查"这条罪判几年"，这本书帮不上忙。</li>
+      <li><strong>争议处只给立场，不给完整的反对理由。</strong>死刑存废、寻衅滋事存废、性同意年龄，书里的处理都是"我倾向于"，但没有把对方最强的论证展开。作为普及读物可以理解，作为判断依据不够。</li>
+      <li><strong>案例的传播效果，牺牲了真实的灰度。</strong>"张三"系列是高度提纯的，事实清楚、争点单一。真实案件最难的部分——事实认定、证据采信、程序博弈——基本不涉及。读者容易误以为"想清楚法律问题就能得出案件结论"。</li>
+      <li><strong>分论不全。</strong>危害国家安全罪、渎职罪、军人违反职责罪整块未讲；破坏选举、部分扰乱市场秩序罪名略过。书名是"讲义"而不是"刑法学"，这个取舍合理，但读者要知道手上不是全图。</li>
+      <li><strong>完全不讲刑事诉讼法。</strong>而现实中绝大多数"结果不如预期"的案件，问题出在证据和程序，不在实体法。只看这本书，会高估法条的作用、低估程序的分量。</li>
+      <li><strong>价值判断密度很高。</strong>作者对弱者的同情、对权力的警惕贯穿全书。这是它动人的原因，也是它需要被警惕的原因——读者容易把"应该这样判"误读成"法律就是这样"。</li>
+    </ul>
+
+    <div class="note-strip">
+      <b>使用时的一条硬规则</b>：把这本书当"理解框架"，不当"条文依据"。任何涉及真实纠纷的判断，都要以现行《刑法》及修正案、司法解释、指导性案例为准；涉及具体案件，必须找执业律师。这本书能让你听懂专业意见，不能替代专业意见。
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="section" id="extend">
+    <span class="sec-num">10</span>
+    <h2>延伸与局限</h2>
+
+    <table class="extension">
+      <thead>
+        <tr><th>维度</th><th>内容</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>本书定位</td>
+          <td>面向普通读者的刑法通识讲义：9 章 102 讲，以案讲法，覆盖总论（元规则、定罪、量刑）与六类常见罪名。介于普法读物与教科书之间——比普法系统，比教科书好读。</td>
+        </tr>
+        <tr>
+          <td>方法特点</td>
+          <td>一案一理：用极端化的"张三"案例把规则边界顶出来；先给结论再讲理由；价值判断与法条分析并行，不假装中立。优点是记得住，代价是简化。</td>
+        </tr>
+        <tr>
+          <td>主要局限</td>
+          <td>
+            ① 时效：未覆盖修正案（十一）（十二）；<br>
+            ② 无注释与判例索引，不能当工具书；<br>
+            ③ 争议处只给倾向，反对论证展开不足；<br>
+            ④ 案例提纯，真实的事实认定与证据规则缺席；<br>
+            ⑤ 分论缺危害国家安全罪、渎职罪、军人违反职责罪；<br>
+            ⑥ 不涉刑事诉讼法，易高估法条、低估程序；<br>
+            ⑦ 价值判断密度高，易把"应然"读成"实然"。
+          </td>
+        </tr>
+        <tr>
+          <td>对照阅读</td>
+          <td>
+            <strong>《圆圈正义》（罗翔）</strong>——同一作者的法理随笔，讲"正义像圆，画不出但存在"，补足本书的价值论底色。<br>
+            <strong>《刑法学》（张明楷）</strong>——学术教科书，体系完整、观点鲜明、有注释，用来校正本书的简化。<br>
+            <strong>《论犯罪与刑罚》（贝卡里亚）</strong>——罪刑法定与刑罚人道主义的源头，理解"为什么限权"必读。<br>
+            <strong>《规训与惩罚》（福柯）</strong>——把刑罚放回社会史里看：监狱不只是惩罚，也是一套治理技术。<br>
+            <strong>《历史深处的忧虑》（林达）</strong>——从美国宪法案例看程序如何保护权利，补上本书缺失的程序视角。
+          </td>
+        </tr>
+        <tr>
+          <td>跨书链接</td>
+          <td>
+            与《思考，快与慢》——法官的判断同样受直觉与锚定影响，"量刑偏差"在实验里被反复验证；<br>
+            与《信息与激励经济学》——刑罚是一套激励设计，威慑力取决于"被发现的概率 × 后果"，而非只看后果；<br>
+            与《管理百年》——两者都在处理同一个问题：制度如何既有效又不失控，答案都是"加上自我纠错机制"。
+          </td>
+        </tr>
+        <tr>
+          <td>适合谁读</td>
+          <td>
+            <strong>适合</strong>：想搞清"这事到底犯不犯法"的普通人；写作者与自媒体（判断内容边界）；管理者（职务犯罪、单位犯罪、合规）；对法理有兴趣的非法律人。<br>
+            <strong>不适合</strong>：备考法考的人（观点与体例都不同于法考教材，且缺最新修正案）；需要查条文与量刑幅度的人；处理真实案件的人（必须找执业律师）。
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="reflection-block">
+      <div class="reflection-title">一个更根本的追问</div>
+      <p>这本书反复说"刑法要约束自己"，但约束刑法的力量从哪来？答案是：来自一个愿意被约束的共同体。法条写不出这种意愿，法官的良知也保证不了它。所以罗翔讲刑法，最后总要绕回"人为什么要做好人"这种看起来不像法律的问题——不是跑题，是他知道技术解决不了最后一公里。</p>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="section" id="hook">
+    <span class="sec-num">11</span>
+    <h2>记忆钩子</h2>
+
+    <div class="hook-box">
+      <div class="hk-line">一道门 · 两把锁 · 三层楼 · 四问法</div>
+      <ul>
+        <li><b>一道门</b>：罪刑法定。进刑法的门必须有明文，没有明文，再可恶也进不来。</li>
+        <li><b>两把锁</b>：入罪之锁（法益保护）+ 限权之锁（人权保障）。两把锁必须同时上，缺一把就成了凶器。</li>
+        <li><b>三层楼</b>：元规则（凭什么管）→ 定罪（什么算犯罪）→ 量刑（怎么罚）。分论是拿这三层去套具体罪名。</li>
+        <li><b>四问法</b>：有没有规定？构不构成？有没有正当理由？该罚多少？——顺序不能乱，乱了就出错案。</li>
+      </ul>
+    </div>
+
+    <div class="info-grid pair">
+      <div class="info-card insight">
+        <div class="label">四个最容易记混的点</div>
+        <div class="content">
+          ① 盗窃 vs 侵占：看东西在谁手上。<br>
+          ② 诈骗 vs 盗窃：看有没有处分行为。<br>
+          ③ 未遂 vs 中止：看"能不能继续"而不是"想不想继续"。<br>
+          ④ 挪用 vs 贪污：看还不还、有没有非法占有目的。
+        </div>
+      </div>
+      <div class="info-card core">
+        <div class="label">最后一句</div>
+        <div class="content">书里所有案例的主角都叫张三。不是因为他特别坏，是因为作者想让读者认出来：那个在特定情境下会动念、会侥幸、会失手的人，可能就是自己。刑法划线，划的不是"好人与坏人"之间的线，是"人"与"人的行为"之间的线。</div>
+        <div class="example">综合提炼，非逐字原文。</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    《刑法学讲义》知识图谱 · 基于原著整理 · 仅供个人学习回顾<br>
+    法条与量刑以现行《刑法》及修正案、司法解释为准；具体案件请咨询执业律师
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  feding: {
+    title: '罪刑法定原则',
+    content: '<p>刑法第 3 条：法律明文规定为犯罪行为的，依照法律定罪处刑；法律没有明文规定为犯罪行为的，不得定罪处刑。</p><ul><li><strong>四个派生要求</strong>：禁止类推解释、禁止以习惯法定罪、禁止绝对不定期刑、禁止溯及既往（新法更轻时例外）。</li><li><strong>形式侧面</strong>：只能依成文法定罪，限制司法权。</li><li><strong>实质侧面</strong>：法律本身必须明确、不得含混、不得设置残虐刑罚——否则"依法"也能作恶。</li></ul><p>它是全书的地基：后面每一个罪名的边界，都靠这一条守住。</p>'
+  },
+  leitui: {
+    title: '扩大解释与类推解释',
+    content: '<p><strong>扩大解释</strong>：把法条用语解释到其可能含义的最大边缘，仍在词语射程内，允许。</p><p><strong>类推解释</strong>：把法律没有规定的事项，按"类似事项"处理，超出词语可能含义，禁止。</p><ul><li>界限不是数学公式，靠"一般人对这个词的理解"。</li><li>例：把"汽车"解释为包括农用三轮车，多可接受；把"妇女"解释为包括男子以适用某罪，就越界了。</li></ul><p>允许扩大、禁止类推，是罪刑法定在解释领域的落地方式。</p>'
+  },
+  kongbai: {
+    title: '空白罪状',
+    content: '<p>法条不直接描述具体行为，只写"违反国家规定，有下列行为之一……"，具体标准交由行政法规、部门规章确定。</p><ul><li><strong>优点</strong>：能跟上监管变化，不必频繁修法。</li><li><strong>风险</strong>：刑罚边界被移到行政机关手里，部门改一条规章，入罪范围就变了。</li></ul><p>判断一条空白罪状是否合宪合法，要看被参照的规范是否明确、是否公开、是否可预期。</p>'
+  },
+  buzuowei: {
+    title: '不作为犯',
+    content: '<p>以"没有做该做的事"方式实现的犯罪。成立需要两个条件：</p><ul><li><strong>有作为义务</strong>（保证人地位）；</li><li><strong>有能力履行而不履行</strong>，且结果可以避免。</li></ul><p>义务来源四类：法律规定（父母对未成年子女）、职务或业务要求（警察、医生、救生员）、法律行为（合同约定的保姆、护工）、先行行为（自己的行为使他人陷入危险）。</p>'
+  },
+  baozheng: {
+    title: '保证人地位',
+    content: '<p>指某人在法律上负有防止特定危害结果发生的义务，因而处于"保证人"位置。</p><ul><li>有保证人地位而不救助，可能构成不作为的故意杀人或过失致人死亡。</li><li>没有保证人地位的普通路人，见死不救不构成犯罪——这是法律的限度，不是道德的评价。</li></ul><p>判断顺序：先问有没有义务来源，再问有没有履行能力，最后问履行了能不能避免结果。</p>'
+  },
+  guize: {
+    title: '客观归责',
+    content: '<p>在条件因果关系之上，进一步判断结果能否"算到这个行为头上"的三层检验：</p><ul><li><strong>制造危险</strong>：行为是否制造了法律所不允许的危险（降低风险的不算）。</li><li><strong>实现危险</strong>：结果是否是这种危险实现的（介入因素异常独立时，不归责）。</li><li><strong>保护范围</strong>：结果是否在该构成要件保护的目的之内（被害人自陷风险、自我答责的情形常被排除）。</li></ul><p>例：轻伤他人，伤者在医院死于火灾——伤害制造了危险，但死亡由火灾实现，不归责。</p>'
+  },
+  fangwei: {
+    title: '正当防卫',
+    content: '<p>刑法第 20 条：为了使国家、公共利益、本人或他人的人身、财产和其他权利免受正在进行的不法侵害，而采取的制止行为，造成损害的不负刑事责任。</p><ul><li><strong>五个要件</strong>：不法侵害现实存在（起因）、正在进行（时间）、针对侵害人（对象）、有防卫意图（主观）、没有明显超过必要限度造成重大损害（限度）。</li><li>五者是并列关系，缺一不成立。</li><li>明显超过必要限度造成重大损害的，是防卫过当，应负刑责但应当减轻或免除处罚。</li></ul>'
+  },
+  teshufangwei: {
+    title: '特殊防卫（无限防卫权）',
+    content: '<p>刑法第 20 条第 3 款：对正在进行的行凶、杀人、抢劫、强奸、绑架以及其他严重危及人身安全的暴力犯罪，采取防卫行为，造成不法侵害人伤亡的，不属于防卫过当，不负刑事责任。</p><ul><li>它免除的不是"防卫权"，是"限度要求"——这类侵害一旦得手，损害不可挽回。</li><li>前提仍是侵害"正在进行"且"严重危及人身安全"，不是任何暴力犯罪都能套用。</li></ul>'
+  },
+  bixian: {
+    title: '紧急避险',
+    content: '<p>刑法第 21 条：为了使国家、公共利益、本人或他人的人身、财产和其他权利免受正在发生的危险，不得已采取的紧急避险行为，造成损害的不负刑事责任。</p><ul><li><strong>额外条件</strong>：危险现实存在、别无他法（不得已）、损害的法益必须小于所保护的法益。</li><li>超过必要限度造成不应有损害的，应负刑责但应当减轻或免除处罚。</li><li>与正当防卫的区别：防卫针对侵害人，避险损害的是无辜第三人，所以门槛更严；职务上负有特定责任的人（如消防员）不适用。</li></ul>'
+  },
+  qidai: {
+    title: '期待可能性',
+    content: '<p>判断在行为时的具体情境下，能不能"期待"这个人做出合法行为。如果不能期待，就阻却或减轻责任。</p><ul><li>它是责任的第三层检验（责任能力 → 故意过失 → 期待可能性）。</li><li>典型情形：被长期虐待后反抗、极端困境下的求生行为。</li><li>我国刑法没有明文规定，但理论与实务都承认其精神，常通过"情节"影响量刑而非直接出罪。</li></ul>'
+  },
+  zhongzhi: {
+    title: '犯罪中止',
+    content: '<p>在犯罪过程中，自动放弃犯罪，或自动有效地防止犯罪结果发生。</p><ul><li><strong>关键在"自动"</strong>：能继续而自愿停止，是中止；想继续而被阻止，是未遂。</li><li>没有造成损害的，应当免除处罚；造成损害的，应当减轻处罚——比未遂更宽。</li><li>理解依据：中止犯的人身危险性已经降低，刑法用更大幅度的从宽去"奖励回头"。</li></ul>'
+  },
+  zhongli: {
+    title: '中立的帮助行为',
+    content: '<p>外表上属于日常职业或生活行为（卖菜刀、租房、提供网络服务、运输货物），客观上对他人的犯罪起了帮助作用。</p><ul><li><strong>原则上不可罚</strong>：否则所有正常交易都要先审查对方会不会犯罪，社会无法运转。</li><li><strong>可罚的例外</strong>：行为人明确知道对方将实施特定犯罪，且帮助行为对该犯罪有实质促进。</li><li>判断要点：是否"针对特定犯罪"提供帮助，而不是面向不特定人的一般供给。</li></ul>'
+  },
+  sihuan: {
+    title: '死刑缓期执行（死缓）',
+    content: '<p>判处死刑同时宣告缓期二年执行，是死刑的一种执行方式，不是独立刑种。</p><ul><li>二年内没有故意犯罪：减为无期徒刑。</li><li>确有重大立功表现：减为二十五年有期徒刑。</li><li>故意犯罪且情节恶劣、查证属实：报最高法核准后执行死刑。</li></ul><p>它的意义在于给死刑装了一个"出口"，把不可逆的判决变成可回退的判决，也限制了死刑的实际执行量。</p>'
+  },
+  shuzui: {
+    title: '数罪并罚',
+    content: '<p>一个人犯数个罪，法院分别定罪量刑后，按一定规则决定执行的刑罚。三种算法：</p><ul><li><strong>吸收</strong>：重刑吸收轻刑（如无期徒刑吸收有期徒刑）。</li><li><strong>并科</strong>：各算各的，直接相加（主刑与附加刑之间通常如此）。</li><li><strong>限制加重</strong>：在总和刑期以下、数刑中最高刑期以上决定，有期徒刑最高不超过二十五年。</li></ul><p>判决宣告后又发现漏罪（先并后减）与又犯新罪（先减后并），算法不同，实际刑期也不同。</p>'
+  },
+  zhanqu: {
+    title: '侵占罪与盗窃罪的界线',
+    content: '<p><strong>侵占罪</strong>：将代为保管的他人财物、他人的遗忘物或埋藏物非法占为己有，数额较大、拒不退还。</p><p><strong>分水岭在"东西在谁手上"</strong>：</p><ul><li>财物在他人占有之下，你违反其意志取走 → 盗窃。</li><li>财物已经合法在你手中（保管、拾得），你拒不返还 → 侵占。</li></ul><p>侵占罪的成立还要求"拒不退还"这一后续行为，且属于"告诉才处理"的自诉案件，实务中追责难度明显高于盗窃。</p>'
+  },
+  chufen: {
+    title: '处分行为（诈骗罪的必要环节）',
+    content: '<p>诈骗罪要求四步链条：虚构事实或隐瞒真相 → 被害人陷入错误认识 → 被害人基于错误认识<strong>处分财产</strong> → 行为人取得财物、被害人遭受损失。</p><ul><li>处分行为要求处分人具有<strong>处分意识</strong>（知道自己正在转移财产）和<strong>处分权限</strong>。</li><li>没有处分行为，就不是诈骗：可能是盗窃。</li><li>机器（ATM、自动售货机）没有处分意识，所以"机器不能被骗"。</li></ul><p>这是区分盗窃与诈骗最核心的一把尺子。</p>'
+  },
+  feiyi: {
+    title: '非法占有目的',
+    content: '<p>指排除权利人、将他人的财物作为自己的所有物进行支配的意思。它不是法条里的一句空话，而是许多罪名成立与否的分界。</p><ul><li>有它：集资诈骗、贷款诈骗、恶意透支型信用卡诈骗、贪污。</li><li>没它：非法吸收公众存款、骗取贷款、挪用公款（"暂时使用"）。</li></ul><p>主观目的无法直接证明，只能靠客观事实推定：资金去向、是否有归还能力、是否挥霍或转移隐匿、是否逃避返还。</p>'
+  },
+  koudai: {
+    title: '口袋罪',
+    content: '<p>指构成要件高度模糊、外延过宽的罪名，任何"看着不顺眼"的行为都可能被装进去。典型如非法经营罪的兜底项、寻衅滋事罪、以危险方法危害公共安全罪的"其他危险方法"。</p><ul><li><strong>危害</strong>：与罪刑法定的实质要求（明确性）冲突；让公民无法预测行为后果；为选择性执法留出空间。</li><li><strong>成因</strong>：立法者为应对未知情况留出弹性，司法机关为处理"没有合适条文"的案件寻找出口。</li><li><strong>趋势</strong>：近年通过单独立罪（高空抛物、妨害安全驾驶、催收非法债务）逐步往外掏内容，是"去口袋化"的一种路径。</li></ul>'
+  }
+};
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

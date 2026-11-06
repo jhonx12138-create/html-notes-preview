@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>医学通识讲义 · 知识图谱</title>
+<style>
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Consolas, monospace;
+}
+
+/* 青瓷临床 */
+[data-theme="clinic"] {
+  --primary: #0f4c46; --primary-light: #e6f4f1; --primary-dark: #08302c;
+  --accent: #1f8a7c; --accent-deep: #0f4c46;
+  --bg: #f6faf9; --bg-card: #ffffff; --bg-soft: #eef6f4; --bg-softer: #e2efec;
+  --bg-tag: #d3e8e3;
+  --text: #22332f; --text-heading: #10241f; --text-muted: #6d8580; --text-light: #8fa5a0;
+  --border: #cfdedb; --border-soft: #e3edeb;
+  --highlight: #eaf5f2; --highlight-strong: #d3e8e3;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 2px 8px rgba(0,0,0,0.08);
+  --radius-sm: 4px; --radius: 8px; --radius-lg: 12px;
+  --color-concept: #0f4c46; --color-tool: #1f8a7c; --color-case: #4a7c2f;
+  --color-history: #a8761f; --color-insight: #17706a; --color-debate: #b3492b;
+  --color-solution: #3d7a4a; --color-crisis: #b3492b; --color-mechanism: #1f8a7c;
+  --color-effect: #7a5a9c; --color-core: #08302c;
+  --warn-bg: #fdf6ec; --warn-border: #ecd2a6; --example-bg: #fbfdfc;
+  --reflect-bg: #eff7f5; --quote-border: #1f8a7c;
+  --warm: #b3492b;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  min-height: 100vh;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* 侧边栏 */
+.sidebar {
+  position: fixed; top: 0; left: 0;
+  width: 220px; height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-soft);
+  padding: 24px 16px;
+  overflow-y: auto;
+  z-index: 100;
+}
+.sidebar h3 {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 14px;
+}
+.sidebar .toc-list { list-style: none; padding: 0; margin: 0; }
+.sidebar .toc-list li { margin-bottom: 2px; }
+.sidebar .toc-list a {
+  display: block;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--text);
+  transition: background .15s;
+  border-left: 3px solid transparent;
+}
+.sidebar .toc-list a:hover { background: var(--bg-softer); text-decoration: none; }
+.sidebar .toc-list a.active {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-weight: 600;
+  border-left-color: var(--primary);
+}
+
+.main {
+  margin-left: 220px;
+  max-width: 1100px;
+  padding: 36px 40px 120px 40px;
+}
+
+/* 页头 */
+.header {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-bottom: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.header .seal {
+  position: absolute;
+  top: 26px; right: 30px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--warm);
+  border: 1.5px solid var(--warm);
+  border-radius: 4px;
+  padding: 4px 9px;
+  transform: rotate(2deg);
+  opacity: .78;
+  white-space: nowrap;
+}
+.header .watermark {
+  position: absolute;
+  right: 18px; bottom: -26px;
+  font-family: var(--font-serif);
+  font-size: 118px;
+  font-weight: 700;
+  color: var(--primary);
+  opacity: .045;
+  letter-spacing: 6px;
+  pointer-events: none;
+  line-height: 1;
+}
+.header h1 {
+  font-family: var(--font-sans);
+  font-size: 28px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+  padding-left: 12px;
+  border-left: 5px solid var(--primary);
+  position: relative; z-index: 1;
+}
+.header .subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 14px;
+  position: relative; z-index: 1;
+}
+.header .meta {
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+  font-size: 13px; color: var(--text-muted);
+  padding: 12px 16px;
+  background: var(--bg-soft);
+  border-radius: var(--radius);
+  margin-bottom: 14px;
+  position: relative; z-index: 1;
+}
+.header .meta strong { color: var(--text-heading); }
+.header .framework-badges { display: flex; flex-wrap: wrap; gap: 8px; position: relative; z-index: 1; }
+.header .badge {
+  background: var(--bg-tag);
+  color: var(--primary-dark);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.header .core-narrative {
+  margin-top: 16px;
+  font-size: 14.5px;
+  color: var(--primary-dark);
+  line-height: 1.75;
+  padding: 14px 18px;
+  background: var(--highlight);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  position: relative; z-index: 1;
+}
+
+/* 区块 */
+.section { margin-bottom: 34px; }
+.section h2 {
+  font-family: var(--font-sans);
+  font-size: 20px;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--primary-light);
+}
+.section h3 {
+  font-size: 16px;
+  color: var(--text-heading);
+  margin: 22px 0 10px;
+}
+.lead {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 8px 0 12px;
+  line-height: 1.75;
+}
+
+/* 卡片 */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 14px;
+  margin: 14px 0;
+}
+.info-grid.pair { grid-template-columns: 1fr 1fr; }
+.info-grid.three { grid-template-columns: repeat(3, 1fr); }
+.info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  transition: box-shadow .2s;
+}
+.info-card:hover { box-shadow: var(--shadow-sm); }
+.info-card .label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: var(--text-heading);
+  padding-left: 10px;
+}
+.info-card .content { font-size: 14px; color: var(--text); line-height: 1.72; }
+.info-card .example {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--example-bg);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  color: var(--text-muted);
+  border-left: 3px solid var(--border);
+}
+.info-card .example strong { color: var(--accent-deep); }
+.info-card.concept .label { border-left: 4px solid var(--color-concept); }
+.info-card.tool .label { border-left: 4px solid var(--color-tool); }
+.info-card.case .label { border-left: 4px solid var(--color-case); }
+.info-card.history .label { border-left: 4px solid var(--color-history); }
+.info-card.insight .label { border-left: 4px solid var(--color-insight); }
+.info-card.debate .label { border-left: 4px solid var(--color-debate); }
+.info-card.mechanism .label { border-left: 4px solid var(--color-mechanism); }
+.info-card.crisis .label { border-left: 4px solid var(--color-crisis); }
+.info-card.solution .label { border-left: 4px solid var(--color-solution); }
+.info-card.effect .label { border-left: 4px solid var(--color-effect); }
+.info-card.core .label { border-left: 4px solid var(--color-core); }
+
+/* 洞察卡 */
+.insight-card {
+  background: var(--highlight);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.insight-card .insight-title { font-weight: 700; font-size: 15px; color: var(--primary-dark); margin-bottom: 6px; }
+.insight-card .insight-body { font-size: 14px; color: var(--text); line-height: 1.72; }
+.insight-card .insight-evidence {
+  font-size: 12px; color: var(--text-muted); margin-top: 8px;
+  padding-top: 8px; border-top: 1px dashed var(--border);
+}
+
+/* 规律卡 */
+.law-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-left: 5px solid var(--primary);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 16px 20px;
+  margin-bottom: 10px;
+}
+.law-card h4 { font-size: 14px; color: var(--primary-dark); margin-bottom: 6px; }
+.law-card p { font-size: 13.5px; color: var(--text); line-height: 1.7; }
+
+/* 模式网格 */
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin: 14px 0;
+}
+.pattern-grid.four { grid-template-columns: repeat(2, 1fr); }
+.pattern-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 18px;
+}
+.pattern-card .pattern-name {
+  font-weight: 700; font-size: 14px;
+  color: var(--primary-dark); margin-bottom: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-soft);
+}
+.pattern-card .pattern-desc { font-size: 13px; color: var(--text); line-height: 1.65; }
+.pattern-card .pattern-examples { font-size: 12px; color: var(--text-light); margin-top: 8px; }
+
+/* 反思块 */
+.reflection-block {
+  background: var(--reflect-bg);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  margin: 14px 0;
+}
+.reflection-block .reflection-title { font-weight: 700; font-size: 14px; color: var(--primary-dark); margin-bottom: 8px; }
+.reflection-block p { font-size: 13px; color: var(--text); line-height: 1.72; }
+
+/* 引用 */
+blockquote.quote-block {
+  background: var(--bg-soft);
+  border-left: 5px solid var(--quote-border);
+  margin: 18px 0;
+  padding: 16px 20px;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 15px;
+  color: var(--text-heading);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  box-shadow: var(--shadow-sm);
+}
+blockquote.quote-block .cite {
+  display: block; margin-top: 10px;
+  font-size: 12px; font-style: normal;
+  color: var(--text-muted); text-align: right;
+}
+
+/* 表格 */
+table.extension {
+  width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0;
+}
+table.extension th {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  padding: 10px 14px; text-align: left;
+  font-weight: 700;
+  border-bottom: 2px solid var(--border);
+  width: 18%;
+}
+table.extension td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.68;
+}
+table.extension tr:hover td { background: var(--bg-soft); }
+
+table.unlock {
+  width: 100%; border-collapse: collapse; font-size: 13px; margin: 14px 0;
+}
+table.unlock th {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 12px; text-align: left;
+  font-weight: 600; font-size: 12.5px;
+  letter-spacing: .5px;
+}
+table.unlock td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border-soft);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.62;
+}
+table.unlock td:first-child { font-weight: 700; color: var(--primary-dark); white-space: nowrap; }
+table.unlock tr:nth-child(even) td { background: var(--bg-soft); }
+table.unlock .gain { color: #2f6b4f; }
+table.unlock .lost { color: var(--warm); }
+.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 14px 0; }
+.table-scroll table { margin: 0; }
+
+table.unlock .grp td {
+  background: var(--bg-softer) !important;
+  font-size: 12px; font-weight: 700;
+  color: var(--primary-dark);
+  letter-spacing: 1.5px;
+}
+
+/* 知识结构树 */
+.tree-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  margin: 14px 0;
+  overflow-x: auto;
+}
+.tree-box pre {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: var(--text);
+  white-space: pre;
+}
+
+/* 层级条带 */
+.layer-band {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: var(--bg-card);
+}
+.layer-band .band-label {
+  background: var(--primary);
+  color: #fff;
+  padding: 14px 12px;
+  display: flex; flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+}
+.layer-band .band-label .bl-num {
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 2px; opacity: .7;
+}
+.layer-band .band-label .bl-name { font-size: 13.5px; font-weight: 700; letter-spacing: .5px; }
+.layer-band .band-body { padding: 13px 16px; font-size: 13.5px; line-height: 1.7; }
+.layer-band .band-body strong { color: var(--primary-dark); }
+.layer-band.alt .band-label { background: var(--accent); }
+.layer-band.warm .band-label { background: var(--warm); }
+
+/* 时间轴 */
+.timeline-track {
+  display: flex; gap: 0;
+  overflow-x: auto;
+  padding: 22px 0 8px;
+  margin: 14px 0;
+  position: relative;
+}
+.timeline-track::before {
+  content: '';
+  position: absolute;
+  top: 38px; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary-light), var(--accent), var(--primary-light));
+  border-radius: 2px;
+}
+.timeline-node-tl {
+  flex: 1 1 0;
+  text-align: center;
+  padding: 0 6px;
+  position: relative;
+  z-index: 1;
+  min-width: 78px;
+}
+.timeline-node-tl .era {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 700;
+  color: var(--primary); margin-bottom: 8px;
+  letter-spacing: .5px;
+}
+.timeline-node-tl .dot {
+  width: 13px; height: 13px;
+  background: var(--bg-card);
+  border: 3px solid var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 9px;
+  transition: transform .15s;
+}
+.timeline-node-tl:hover .dot { transform: scale(1.35); background: var(--accent); }
+.timeline-node-tl .name {
+  font-size: 12.5px; font-weight: 600;
+  color: var(--text-heading); margin-bottom: 3px;
+  line-height: 1.35;
+  white-space: nowrap;
+}
+.timeline-node-tl .tl-sub { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+/* 步骤链 */
+.step-flow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin: 18px 0;
+}
+.step-flow .flow-step {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+.step-flow .flow-step .st-no {
+  font-family: var(--font-mono);
+  font-size: 10px; letter-spacing: 1.5px;
+  color: var(--accent); font-weight: 700;
+  margin-bottom: 4px;
+}
+.step-flow .flow-step .st-name {
+  font-size: 14px; font-weight: 700;
+  color: var(--text-heading); margin-bottom: 6px;
+}
+.step-flow .flow-step .st-desc { font-size: 12.5px; color: var(--text); line-height: 1.62; }
+.step-flow .flow-step:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px; top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent);
+  font-size: 13px;
+  z-index: 2;
+}
+
+/* 五问清单 */
+.q-list { margin: 14px 0; }
+.q-item {
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  gap: 14px;
+  align-items: start;
+  background: var(--bg-card);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 9px;
+}
+.q-item .q-no {
+  font-family: var(--font-mono);
+  font-size: 19px; font-weight: 700;
+  color: var(--accent);
+  line-height: 1.35;
+}
+.q-item .q-txt { font-size: 14px; font-weight: 600; color: var(--text-heading); margin-bottom: 3px; }
+.q-item .q-why { font-size: 12.5px; color: var(--text-muted); line-height: 1.6; }
+
+/* 钩子 */
+.hook-box {
+  background: var(--primary-dark);
+  color: #e6f4f1;
+  border-radius: var(--radius-lg);
+  padding: 26px 30px;
+  margin: 16px 0;
+}
+.hook-box .hook-title {
+  font-size: 13px; letter-spacing: 3px;
+  color: #8fc7bb; margin-bottom: 16px;
+  font-family: var(--font-mono);
+}
+.hook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+.hook-item .hi-head {
+  font-size: 13px; font-weight: 700;
+  color: #a8d8cc; margin-bottom: 4px;
+  letter-spacing: .5px;
+}
+.hook-item .hi-body { font-size: 13px; line-height: 1.7; color: #dcefeb; }
+
+/* 术语按钮 */
+.glossary-trigger {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 17px; height: 17px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  font-size: 10px; font-weight: 700;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-left: 3px;
+  transition: transform .15s;
+  flex: 0 0 auto;
+}
+.glossary-trigger:hover { transform: scale(1.18); }
+
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(8,48,44,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 999;
+  backdrop-filter: blur(2px);
+}
+.modal-overlay.hidden { display: none; }
+.modal-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  max-width: 580px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  position: relative;
+}
+.modal-card .close-btn {
+  position: absolute; top: 12px; right: 16px;
+  background: none; border: none;
+  font-size: 20px; cursor: pointer;
+  color: var(--text-muted);
+}
+.modal-card h4 { font-size: 16px; color: var(--text-heading); margin-bottom: 10px; padding-right: 24px; }
+.modal-card p { font-size: 14px; line-height: 1.8; margin-bottom: 8px; }
+.modal-card ul { padding-left: 20px; margin: 8px 0; }
+.modal-card li { font-size: 13px; line-height: 1.72; }
+
+.back-to-top {
+  position: fixed; bottom: 28px; right: 28px;
+  background: var(--primary); color: #fff;
+  border: none; border-radius: 50%;
+  width: 44px; height: 44px;
+  font-size: 18px; cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 200;
+  opacity: 0; transition: opacity .3s;
+}
+.back-to-top.visible { opacity: 1; }
+
+hr.divider { border: none; border-top: 1px dashed var(--border); margin: 32px 0; }
+
+.footer-note {
+  text-align: center; margin-top: 40px; padding: 16px;
+  color: var(--text-muted); font-size: 12px;
+  border-top: 1px solid var(--border-soft);
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 0; max-width: 100%; }
+  .modal-overlay { display: none !important; }
+  .back-to-top { display: none; }
+  h2, h3 { page-break-after: avoid; }
+  .info-card, .insight-card, .law-card, blockquote.quote-block, .layer-band { page-break-inside: avoid; }
+  a { color: inherit; text-decoration: none; }
+}
+
+@media (max-width: 860px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; padding: 16px 14px 80px; }
+  .info-grid, .info-grid.pair, .info-grid.three, .pattern-grid, .pattern-grid.four { grid-template-columns: 1fr; }
+  .header { padding: 24px 20px; }
+  .header h1 { font-size: 22px; }
+  .header .seal { position: static; display: inline-block; margin-bottom: 10px; transform: none; }
+  .header .watermark { font-size: 74px; bottom: -14px; }
+  .layer-band { grid-template-columns: 96px 1fr; }
+  .layer-band .band-label { padding: 10px 6px; }
+  .layer-band .band-label .bl-name { font-size: 12px; }
+  .timeline-track::before { top: 34px; }
+  .timeline-node-tl { min-width: 62px; padding: 0 3px; }
+  .step-flow { grid-template-columns: 1fr; gap: 26px; }
+  .step-flow .flow-step:not(:last-child)::after {
+    content: '↓';
+    right: 50%; top: auto; bottom: -20px;
+    transform: translateX(50%);
+  }
+  .modal-card { padding: 20px; }
+  .hook-box { padding: 20px; }
+  .q-item { grid-template-columns: 34px 1fr; gap: 10px; }
+  .table-scroll table.unlock { min-width: 600px; }
+}
+</style>
+</head>
+<body data-theme="clinic">
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#header">书名与判型</a></li>
+    <li><a href="#question">这本书在回答什么</a></li>
+    <li><a href="#ground">四条地基</a></li>
+    <li><a href="#tree">知识结构树</a></li>
+    <li><a href="#disease">认知层：什么是疾病</a></li>
+    <li><a href="#practice">实践层：医疗怎么做</a></li>
+    <li><a href="#reknow">六种被误解的病</a></li>
+    <li><a href="#milestone">历史层：13 个里程碑</a></li>
+    <li><a href="#doctors">六位大医生</a></li>
+    <li><a href="#apply">医生三关与病人修炼</a></li>
+    <li><a href="#laws">六条贯穿规律</a></li>
+    <li><a href="#misread">五个常见误读</a></li>
+    <li><a href="#extend">延伸与局限</a></li>
+    <li><a href="#hook">记忆钩子</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <div class="seal">七章 · 48 节</div>
+    <div class="watermark">医学</div>
+    <h1>医学通识讲义</h1>
+    <div class="subtitle">薄世宁 · 一生需要上一次医学院</div>
+    <div class="meta">
+      <span><strong>作者</strong> 薄世宁（北医三院重症医学科）</span>
+      <span><strong>出版</strong> 中信出版社 2019 年 10 月</span>
+      <span><strong>ISBN</strong> 9787521709605</span>
+      <span><strong>篇幅</strong> 374 页 · 七章</span>
+      <span><strong>来源</strong> “得到”《医学通识 50 讲》</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">医学通识</span>
+      <span class="badge">重症医学视角</span>
+      <span class="badge">科学史</span>
+      <span class="badge">健康决策</span>
+      <span class="badge">B 类 · 知识树</span>
+    </div>
+    <div class="core-narrative">
+      一句话灵魂：医学不是修理一台坏掉的机器，而是支持一个本来就擅长自我修复的生命——所以医生最难的功夫，往往不是“做什么”，而是知道什么时候“不做什么”。
+    </div>
+  </div>
+
+  <div class="section" id="question">
+    <h2>这本书在回答什么</h2>
+    <p class="lead">作者是 ICU 医生，每天面对的是“再晚十分钟就没了”的病人。他写这本书的动机不是科普知识点，而是发现一个更基础的问题：绝大多数人对自己身体里正在发生什么，处在一种“盲目的遵医嘱”状态。</p>
+    <div class="info-grid pair">
+      <div class="info-card core">
+        <div class="label">表层问题：我该怎么配合治疗</div>
+        <div class="content">不知道怎么问、不知道问什么、不知道医生给的方案背后在权衡什么。于是治疗变成一场单方面的执行，患者只剩下“同意”或“拒绝”两个按钮。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">真实问题：医学到底是什么</div>
+        <div class="content">如果不先回答“医学的边界在哪、它能做什么不能做什么”，所有具体的健康建议都会变成零散的偏方。这本书的野心是给人一副完整的框架，而不是一袋药。</div>
+      </div>
+    </div>
+    <blockquote class="quote-block">
+      医疗的本质是支持生命自我修复
+      <span class="cite">—— 第一章第三节标题，原文如此</span>
+    </blockquote>
+    <p class="lead">这一句是全书的地基。它改变了三件事的权重：医生的角色从“修复者”降为“助攻手”；治疗的评价标准从“消灭异常”变成“恢复平衡”；而“不干预”第一次成为一种主动的医学决策，而不是失职。</p>
+  </div>
+
+  <div class="section" id="ground">
+    <h2>四条地基：全书反复回到的四句话</h2>
+    <p class="lead">后面所有章节，包括癌症、指南、循证医学、善终，其实都是这四条地基的展开。读这本书如果只记四句话，就记这四句。</p>
+
+    <div class="insight-card">
+      <div class="insight-title">一、生命第一：医学存在的终极理由</div>
+      <div class="insight-body">先是保证活着，再是为人找回尊严，最后是支持生命的意义。这个顺序不能颠倒——没有第一层，后两层是空话；只有第一层，医学就退化成兽医式的“维持生物学指标”。</div>
+      <div class="insight-evidence">对应第一章第一节。三层是有优先级的，不是并列的选项。</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">二、医疗的本质是支持自我修复<button class="glossary-trigger" onclick="openModal('selfrepair')">?</button></div>
+      <div class="insight-body">身体自己就能止血、愈合、抗感染、代偿。医学做的所有事——输液、呼吸机、抗生素、手术——本质都是给这套系统争取时间和条件。这个视角一换，“治疗”就不再是加法，而常常是减法：撤掉阻碍修复的东西。</div>
+      <div class="insight-evidence">对应第一章第三节。这也是 ICU 医生最日常的经验：很多病人的好转，是从停掉某个治疗开始的。</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">三、医学有双重性格：科学 + 人文</div>
+      <div class="insight-body">作者用“倔强的老头”来形容医学的性格：认死理、只服证据；但这个老头又必须弯下腰听病人说话。原书那句判断很硬——有了人文的科学才更科学，伴随着科学的人文才是真人文。两者不是并列的两件事，是同一件事的两个面。</div>
+      <div class="insight-evidence">对应第一章第四节。书里用“体面”和“生存质量”来定义医学的基本人文性。</div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">四、医患关系的实质是联盟，不是消费</div>
+      <div class="insight-body">医疗活动不是花钱买服务：你付钱，不保证拿到健康；医生接诊，也不能承诺结果。把它当消费，必然产生“我花了钱你就得治好”的错位。而联盟的前提是双方各出一半——病人提供信息、配合、决策参与，医生提供专业判断。作者还专门写了一节“病人的巨大贡献”，指出医学的很多进步其实是病人用身体换来的。</div>
+      <div class="insight-evidence">对应第一章第五节。这一条也是全书最容易被读者忽略、但在现实中最影响就医体验的一条。</div>
+    </div>
+  </div>
+
+  <div class="section" id="tree">
+    <h2>知识结构树</h2>
+    <p class="lead">七章不是七个并列的主题，而是三层加一条纵轴：前三章讲认知与实践（是什么、怎么做），第四章用六个病做实例检验，第五章往回看历史，第六章看人，第七章落到自己身上。</p>
+
+    <div class="layer-band">
+      <div class="band-label"><span class="bl-num">CH 1</span><span class="bl-name">前提</span></div>
+      <div class="band-body"><strong>理解医学的前提</strong>：生命第一 · 疾病与生命同行 · 支持自我修复 · 双重性格 · 医患是联盟。这一章定调，后面全是它的展开。</div>
+    </div>
+    <div class="layer-band alt">
+      <div class="band-label"><span class="bl-num">CH 2</span><span class="bl-name">认知</span></div>
+      <div class="band-body"><strong>什么是疾病</strong>：进化遗产 · 病因追溯 · 病与症 · 代偿 · 共生 · 免疫。回答“病从哪来、为什么没感觉、为什么不能全杀”。</div>
+    </div>
+    <div class="layer-band">
+      <div class="band-label"><span class="bl-num">CH 3</span><span class="bl-name">实践</span></div>
+      <div class="band-body"><strong>医疗活动的实质</strong>：诊断 · 治疗 · 指南 · 药 · 医院 · 公共卫生。回答“医疗系统这台机器靠什么运转”。</div>
+    </div>
+    <div class="layer-band alt">
+      <div class="band-label"><span class="bl-num">CH 4</span><span class="bl-name">实例</span></div>
+      <div class="band-body"><strong>需要重新认识的疾病</strong>：癌症 · 冠心病 · 心身疾病 · 医源性损害 · 疼痛 · 衰老。六个病例，检验前三章那套框架管不管用。</div>
+    </div>
+    <div class="layer-band">
+      <div class="band-label"><span class="bl-num">CH 5</span><span class="bl-name">历史</span></div>
+      <div class="band-body"><strong>医学演化的里程碑</strong>：13 项技术，每一项都是解除一条限制。这是全书的纵轴，也是最容易读成故事、其实最该读成方法论的一章。</div>
+    </div>
+    <div class="layer-band alt">
+      <div class="band-label"><span class="bl-num">CH 6</span><span class="bl-name">人物</span></div>
+      <div class="band-body"><strong>改变医学的大医生</strong>：希波克拉底 · 奥斯勒 · 福斯曼 · 塞麦尔维斯 · 伍连德 · 林巧稚。六个人对应六种“医学难题的类型”。</div>
+    </div>
+    <div class="layer-band warm">
+      <div class="band-label"><span class="bl-num">CH 7</span><span class="bl-name">应用</span></div>
+      <div class="band-body"><strong>医生的精进与病人的修炼</strong>：少即是多 · 不确定性决策 · 克服不理性 ｜ 健康三道防线 · 五个问题 · 善终与生前预嘱。落到“我明天能做什么”。</div>
+    </div>
+
+    <div class="tree-box">
+<pre>医学通识
+├─ 一、前提：医学为什么存在
+│   ├─ 生命第一（活着 → 尊严 → 意义）
+│   ├─ 疾病与生命同行（健康与疾病可以共存）
+│   ├─ 医疗 = 支持自我修复，不是替代
+│   ├─ 双重性格：科学 + 人文
+│   └─ 医患 = 联盟，不是消费
+├─ 二、认知：什么是疾病
+│   ├─ 进化遗产（基因 / 器官 / 适应力 三重不完美）
+│   ├─ 病因追溯（开脑洞 → 病理学）
+│   ├─ 病 ≠ 症（症状是把双刃剑）
+│   ├─ 代偿（突然发现，不是突然发生）
+│   ├─ 共生（不能全杀）
+│   └─ 免疫（健康的底层逻辑）
+├─ 三、实践：医疗活动怎么做
+│   ├─ 诊断（假设 ⇄ 验证的循环）
+│   ├─ 治疗（核心是"目标问题"）
+│   ├─ 指南（地板，不是天花板）
+│   ├─ 药（解决方案的物质载体）
+│   ├─ 医院（分工 / 能量 / 信息）
+│   └─ 公共卫生（性价比最高的健康工程）
+├─ 四、实例：六种被误解的病
+│   └─ 癌症 / 冠心病 / 心身疾病 / 医源性损害 / 疼痛 / 衰老
+├─ 五、历史：13 个里程碑
+│   ├─ 预防与通路：疫苗 · 输液
+│   ├─ 让手术成为可能：麻醉 · 护理 · X 射线
+│   ├─ 对抗感染与衰竭：抗生素 · 呼吸机 · 免疫疗法
+│   ├─ 重新定义人与终点：氯丙嗪 · 脑死亡 · 避孕药
+│   └─ 让判断有依据：循证医学 · 诺奖级基础研究
+├─ 六、人物：6 位大医生
+│   └─ 疾病观 / 实践 / 打破禁区 / 体系之错 / 公共卫生 / 女性从医
+└─ 七、应用：医生三关 + 病人修炼
+    ├─ 少即是多 / 不确定性下决策 / 克服不理性
+    ├─ 健康三道防线（避高危 / 护修复 / 早筛查）
+    └─ 五个问题 / 善终六要求 / 生前预嘱</pre>
+    </div>
+  </div>
+
+  <div class="section" id="disease">
+    <h2>认知层：什么是疾病</h2>
+    <p class="lead">这一章是全书最“反直觉”的部分。它拆掉了三个常识：生病是意外、没感觉就是没病、治病就是把坏东西全消灭。</p>
+
+    <h3>一、疾病是人类进化的遗产</h3>
+    <p class="lead">不是身体设计得不好，而是进化只保证“能繁殖”，不保证“能健康到八十岁”。作者列了三重不完美：</p>
+    <div class="info-grid three">
+      <div class="info-card concept">
+        <div class="label">基因的不完美</div>
+        <div class="content">很多致病基因在生育年龄之后才起作用，自然选择对它没有淘汰压力。所以糖尿病、高血压、多数癌症的易感基因，都被完整地传了下来。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">器官的不完美</div>
+        <div class="content">直立行走解放了双手，也把脊柱和膝关节变成了“结构性欠账”；人类的产道为了直立而变窄，于是分娩成了哺乳动物里最危险的。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">适应能力的不完美</div>
+        <div class="content">身体是为“饥一顿饱一顿、天天走路、活到四十岁”的环境调校的。环境在几十年内巨变，基因来不及跟上，于是代谢病成了现代病。</div>
+        <div class="example"><strong>关键推论</strong>：这类病不可能靠“回归自然”解决，只能靠医学和制度长期对冲。</div>
+      </div>
+    </div>
+
+    <h3>二、病与症：不用治的“病”</h3>
+    <div class="info-grid pair">
+      <div class="info-card mechanism">
+        <div class="label">症状不是病<button class="glossary-trigger" onclick="openModal('symptom')">?</button></div>
+        <div class="content">发烧、咳嗽、腹泻、疼痛，大多是身体在防御，不是敌人本身。把症状当病来“压”，有时候等于撤掉了自己的防线——这也是为什么退烧药不能无限加量、止泻药有时反而延长病程。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">但症状是把双刃剑</div>
+        <div class="content">防御过久也会伤自己：持续高热会损伤脏器，剧烈咳嗽会撕裂组织。所以原则不是“一律不干预”，而是<strong>从病入手治疗，对症状适度干预</strong>——“适度”两个字是全书最难拿捏的地方，也是医生经验真正值钱的地方。</div>
+      </div>
+    </div>
+
+    <h3>三、代偿：疾病不是突然发生的，是突然发现的</h3>
+    <blockquote class="quote-block">
+      疾病不是突然发生的，而是突然发现的
+      <span class="cite">—— 第二章第四节标题，原文如此</span>
+    </blockquote>
+    <div class="insight-card">
+      <div class="insight-title">代偿是身体的“分期付款”<button class="glossary-trigger" onclick="openModal('compensation')">?</button></div>
+      <div class="insight-body">一个肾坏了，另一个会代偿性增大；一段血管窄了，侧支循环会长出来；心肌变薄了，心室会扩张来维持泵血量。指标看起来正常，是因为身体正在超额工作把窟窿填上。等到填不动的那天，指标会在一夜之间崩掉——病人觉得“突然”，其实是账已经欠了很多年。</div>
+      <div class="insight-evidence">这一条直接推出了全书的健康策略：定期筛查的价值不在于“查病”，而在于在代偿还没耗尽时发现它。</div>
+    </div>
+
+    <h3>四、共生：不能全杀</h3>
+    <div class="info-grid pair">
+      <div class="info-card concept">
+        <div class="label">共生：相爱相杀，互利互惠<button class="glossary-trigger" onclick="openModal('symbiosis')">?</button></div>
+        <div class="content">人体携带的微生物数量与自身细胞相当，它们参与消化、合成维生素、训练免疫、甚至影响情绪。它们不是入侵者，是长期租客。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">打破共生就带来疾病</div>
+        <div class="content">广谱抗生素一杀一大片，会顺带拆掉这套生态系统，于是出现艰难梭菌感染、菌群紊乱、耐药菌定植。作者由此推到一条判断：<strong>“杀菌”从来不是目的，“恢复生态平衡”才是。</strong></div>
+        <div class="example"><strong>延伸</strong>：同一个逻辑在癌症免疫治疗里又出现了一次——不是直接杀癌细胞，而是修复免疫系统的识别能力。</div>
+      </div>
+    </div>
+
+    <h3>五、免疫：健康的底层逻辑</h3>
+    <div class="info-card concept" style="margin-top:12px;">
+      <div class="label">人体免疫是健康的底层逻辑<button class="glossary-trigger" onclick="openModal('immunity')">?</button></div>
+      <div class="content">感染、肿瘤、自身免疫病、过敏、部分不孕与流产，追到底都和免疫的识别与容忍出了问题。免疫系统的核心不是“强”，而是<strong>分得清敌我、该出手时出手、该收手时收手</strong>。作者给了三个增强方向：认真打疫苗（给免疫系统一张通缉令）、善待肠道菌群（别乱用抗生素）、保持规律作息与适度运动（免疫细胞也有节律）。</div>
+      <div class="example"><strong>需要纠正的说法</strong>：免疫力不是越高越好。过高就是过敏和自身免疫病，免疫治疗中最危险的副作用也正是“过度激活”。</div>
+    </div>
+  </div>
+
+  <div class="section" id="practice">
+    <h2>实践层：医疗活动到底在做什么</h2>
+    <p class="lead">这一章把“看病”这件神秘的事拆成六个可理解的部分。理解它们，才知道在医院里那些等待、重复检查、签同意书到底在干什么。</p>
+
+    <h3>一、诊断：假设与验证的循环</h3>
+    <div class="step-flow">
+      <div class="flow-step">
+        <div class="st-no">STEP 01</div>
+        <div class="st-name">形成假设</div>
+        <div class="st-desc">从主诉和体征里先猜几个可能，靠的是知识储备与经验。</div>
+      </div>
+      <div class="flow-step">
+        <div class="st-no">STEP 02</div>
+        <div class="st-name">保持开放</div>
+        <div class="st-desc">不锁定第一个假设。越像典型病例，越容易漏掉不典型的那个。</div>
+      </div>
+      <div class="flow-step">
+        <div class="st-no">STEP 03</div>
+        <div class="st-name">抓反常疑点</div>
+        <div class="st-desc">所有对不上的细节——年龄不对、病程不对、治疗反应不对——都是入口。</div>
+      </div>
+      <div class="flow-step">
+        <div class="st-no">STEP 04</div>
+        <div class="st-name">验证或推翻</div>
+        <div class="st-desc">用检查去证伪，而不是去“凑证据”。循环回到第一步。</div>
+      </div>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">为什么“检查做全了”反而可能误诊</div>
+      <p>诊断是一个收敛过程，不是收集过程。没有假设的全面检查会产生大量假阳性，每一个假阳性都会引出下一轮检查，最后人被一堆异常指标拖着走，真正的问题还在原地。这也解释了为什么好医生会问很多“看起来无关”的问题——他在缩小假设空间。</p>
+    </div>
+
+    <h3>二、治疗：核心是目标问题</h3>
+    <div class="info-grid pair">
+      <div class="info-card insight">
+        <div class="label">先定目标，再选手段</div>
+        <div class="content">同一个病，目标可以完全不同：根治、延长生存、缓解症状、恢复功能、还是让病人舒服地走完最后一段。目标不同，方案可能完全相反。很多医患冲突的根源不是技术分歧，而是<strong>双方心里的目标根本不是同一个</strong>。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">用医学目标匹配患者需求</div>
+        <div class="content">作者的提醒很直白：医学目标要服从患者需求，而不是让患者需求去迁就科室擅长什么。一个能手术的晚期病人，未必应该手术——如果他要的是“能自己上厕所”而不是“肿瘤缩小两厘米”。</div>
+      </div>
+    </div>
+
+    <h3>三、指南：是地板，不是天花板</h3>
+    <blockquote class="quote-block">
+      临床诊治指南：是地板，而不是天花板
+      <span class="cite">—— 第三章第三节标题，原文如此</span>
+    </blockquote>
+    <div class="info-card concept" style="margin-top:12px;">
+      <div class="label">指南保证基本与规范，不保证最优<button class="glossary-trigger" onclick="openModal('guideline')">?</button></div>
+      <div class="content">指南的价值是“让普通医生在普通情况下不出大错”，它给的是人群统计意义上的最优解，不是你这个人的最优解。所以指南会不断迭代，也会在特殊人群、合并症、罕见情况下让位给个体判断。反过来，跳出指南必须有理由、有记录——否则“个体化”就成了随意性的遮羞布。</div>
+    </div>
+
+    <h3>四、药、医院与公共卫生：三个被低估的系统</h3>
+    <div class="info-grid three">
+      <div class="info-card mechanism">
+        <div class="label">药：解决方案的物质载体</div>
+        <div class="content">一款药能不能上市，反映的是整个医学的认知水平，而不是某家公司的聪明程度。青蒿素、胰岛素、PD-1 抑制剂，每一种背后都是一次基础认知的跃迁。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">医院：最高效的组织形式</div>
+        <div class="content">医院之所以存在，不是因为医生多，而是因为它同时解决了三件事：高度分工协作、能量（设备与人）高效利用、信息高速流动。这三条一旦失效，医院就退化成“很多诊室的集合”。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">公共卫生：性价比最高的健康工程</div>
+        <div class="content">烟草、疫苗、饮水、洗手、筛查——这些“不治病”的事，救的人比任何一项尖端技术都多。作者用英国霍乱倒逼公共卫生体系建立的案例说明：公共卫生的进步往往靠灾难推动，而不是靠理性预判。</div>
+      </div>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">一个尖锐的排序</div>
+      <p>如果按“投入产出比”给医学排序，第一名不是手术也不是靶向药，而是公共卫生与预防。但资源与关注度永远向“能救活一个人”的高技术倾斜。这不是医生的错，是人性——看得见的抢救比看不见的预防更有叙事力量。作者没有展开这一层，但书里的材料足以推出这个结论。</p>
+    </div>
+  </div>
+
+  <div class="section" id="reknow">
+    <h2>实例：六种需要重新认识的病</h2>
+    <p class="lead">这六个病不是随机挑的，每一个都在纠正一个普遍误解。读法建议：先看“误解”，再看“机制”，最后看“结论”——结论几乎都指向“少做一点，早做一点”。</p>
+
+    <div class="info-grid pair">
+      <div class="info-card crisis">
+        <div class="label">癌症：时间的老朋友</div>
+        <div class="content"><strong>误解</strong>：癌症是外来物、是运气不好。<br><strong>机制</strong>：致癌的最大单一危险因素是年龄增长——细胞分裂次数越多，突变积累越多。它是进化付出的代价，不是异常。作者用“同归于尽的疯狂跑车”形容失控增殖：癌细胞把宿主和自己一起开下悬崖。</div>
+        <div class="example"><strong>三条建议</strong>：正常面对衰老带来的风险、把筛查放在治疗前面、治疗目标要与分期匹配（早期求根治，晚期求生活质量）。</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">冠心病：不只是器官病，是全身病</div>
+        <div class="content"><strong>误解</strong>：堵了哪里就通哪里，装个支架就好了。<br><strong>机制</strong>：动脉粥样硬化是全身性、进行性的，冠脉只是最先出事的那一段。解决一个点不等于解决整体问题。</div>
+        <div class="example"><strong>推论</strong>：支架解决的是当下最危险的那处狭窄，真正决定长期结局的是血脂、血压、血糖、吸烟这些全身因素。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">心身疾病：不仅是心病，也是身病<button class="glossary-trigger" onclick="openModal('psychosomatic')">?</button></div>
+        <div class="content"><strong>误解</strong>：查不出器质性病变就是“想多了”。<br><strong>机制</strong>：长期应激通过下丘脑—垂体—肾上腺轴和自主神经，真实地改变胃酸分泌、血压、免疫与炎症水平。书里引用两只遭电击的猴子与列宁格勒保卫战期间高血压暴增的例子。</div>
+        <div class="example"><strong>治疗原则</strong>：心身同治。只治身，复发；只治心，病人不信。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">医源性损害：只能靠制度压到最小<button class="glossary-trigger" onclick="openModal('iatrogenic')">?</button></div>
+        <div class="content"><strong>误解</strong>：好医生就不会造成损害。<br><strong>机制</strong>：只要干预，就有损害的可能——药物副作用、院内感染、检查并发症、过度治疗。个人的谨慎无法消除系统性风险。</div>
+        <div class="example"><strong>解法</strong>：制度。核对清单、分级授权、多学科会诊、不良事件上报——不追责的上报文化，才是把损害压下来的前提。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">疼痛：不仅是症，还可能是病</div>
+        <div class="content"><strong>误解</strong>：忍一忍就过去了，止痛药会上瘾。<br><strong>机制</strong>：疼痛有明确神经通路；持续三个月以上的慢性疼痛本身就是疾病，会重塑神经系统，越忍越敏感。</div>
+        <div class="example"><strong>判断</strong>：急性疼痛是警报，需要找原因；慢性疼痛是病，需要规范治疗。作者的结论很直接——疼痛，永远不需要忍受。</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">衰老：老不是问题，衰才是关键</div>
+        <div class="content"><strong>误解</strong>：年龄就是衰老。<br><strong>机制</strong>：年龄只反映时间，衰的本质是自我修复能力与代偿储备下降。同龄人之间的功能差异，比年龄差异大得多。</div>
+        <div class="example"><strong>可做的事</strong>：延缓衰老的方向不是“补”，而是保住修复与代偿能力——力量训练、蛋白摄入、疫苗、慢病控制，都比保健品可靠。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="milestone">
+    <h2>历史层：13 个里程碑，13 次解除限制</h2>
+    <p class="lead">这一章最容易被读成一串发明故事，但它的结构其实非常统一：<strong>每一项技术，都是把医生从“只能靠身体硬扛”里解放出来一步。</strong>按“解除了什么限制”来读，13 项就变成了一条清晰的线，而不是 13 个孤立的知识点。</p>
+
+    <div class="timeline-track">
+      <div class="timeline-node-tl">
+        <div class="era">1796</div>
+        <div class="dot"></div>
+        <div class="name">疫苗</div>
+        <div class="tl-sub">不必先得病</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1830s</div>
+        <div class="dot"></div>
+        <div class="name">输液</div>
+        <div class="tl-sub">开辟给药通路</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1846</div>
+        <div class="dot"></div>
+        <div class="name">麻醉</div>
+        <div class="tl-sub">不疼才有手术</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1850s</div>
+        <div class="dot"></div>
+        <div class="name">护理</div>
+        <div class="tl-sub">南丁格尔</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1895</div>
+        <div class="dot"></div>
+        <div class="name">X射线</div>
+        <div class="tl-sub">不用切开能看</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1928</div>
+        <div class="dot"></div>
+        <div class="name">抗生素</div>
+        <div class="tl-sub">巧用物种竞争</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1950s</div>
+        <div class="dot"></div>
+        <div class="name">呼吸机</div>
+        <div class="tl-sub">先维持再修复</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1950s</div>
+        <div class="dot"></div>
+        <div class="name">氯丙嗪</div>
+        <div class="tl-sub">精神病可治</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1960s</div>
+        <div class="dot"></div>
+        <div class="name">避孕药</div>
+        <div class="tl-sub">与生育分割</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1968</div>
+        <div class="dot"></div>
+        <div class="name">脑死亡</div>
+        <div class="tl-sub">重定义终点</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">1990s</div>
+        <div class="dot"></div>
+        <div class="name">循证医学</div>
+        <div class="tl-sub">证据分级</div>
+      </div>
+      <div class="timeline-node-tl">
+        <div class="era">2010s</div>
+        <div class="dot"></div>
+        <div class="name">免疫疗法</div>
+        <div class="tl-sub">修复生态韧性</div>
+      </div>
+    </div>
+
+    <div class="table-scroll">
+    <table class="unlock">
+      <thead>
+        <tr><th style="width:16%">里程碑</th><th style="width:42%">解除了什么限制</th><th style="width:42%">换来什么能力</th></tr>
+      </thead>
+      <tbody>
+        <tr class="grp"><td colspan="3">一 · 预防与通路：让“还没病”和“不能吃”都有办法</td></tr>
+        <tr>
+          <td>疫苗</td>
+          <td class="lost">必须真的得一次病，才能获得免疫</td>
+          <td class="gain">用“生小病”甚至“不生小病”的方式，提前训练免疫系统；后来还能用于治疗</td>
+        </tr>
+        <tr>
+          <td>静脉输液</td>
+          <td class="lost">病人不能口服，就等于没办法给药</td>
+          <td class="gain">绕开消化道直接进血，霍乱脱水第一次能被救回来；也是抢救的基本通路</td>
+        </tr>
+        <tr class="grp"><td colspan="3">二 · 让外科成为可能：不疼、不感染、看得见</td></tr>
+        <tr>
+          <td>麻醉</td>
+          <td class="lost">手术必须以剧痛和挣扎为代价，只能做几分钟的快刀</td>
+          <td class="gain">进入“不疼的时代”，复杂精细的手术才得以实施；疼痛本身成为可管理的问题</td>
+        </tr>
+        <tr>
+          <td>护理</td>
+          <td class="lost">术后能不能活，靠运气和病房环境</td>
+          <td class="gain">把“执行医嘱”升级为“安全代言人”——观察、记录、核对、感染控制</td>
+        </tr>
+        <tr>
+          <td>X 射线</td>
+          <td class="lost">想知道体内情况，只能切开看</td>
+          <td class="gain">以最小干预获取体内信息，影像医学的起点；代价是早期医生“拿着生命在摄影”</td>
+        </tr>
+        <tr class="grp"><td colspan="3">三 · 对抗感染与衰竭：把必死变成可救</td></tr>
+        <tr>
+          <td>抗生素</td>
+          <td class="lost">感染只能靠自身免疫硬扛</td>
+          <td class="gain">巧妙地利用物种竞争关系杀菌；同时打开了耐药这个长期战场</td>
+        </tr>
+        <tr>
+          <td>呼吸机</td>
+          <td class="lost">呼吸停了就是死</td>
+          <td class="gain">把“治疗”变成“热修复”——先维持住，再给修复争取时间；ICU 的技术底座</td>
+        </tr>
+        <tr>
+          <td>癌症免疫疗法</td>
+          <td class="lost">只能靠外部手段杀癌细胞</td>
+          <td class="gain">改为修复免疫系统的识别能力，激发生态韧性；但过度激活的副作用也随之而来</td>
+        </tr>
+        <tr class="grp"><td colspan="3">四 · 重新定义人与终点：医学开始处理“非技术问题”</td></tr>
+        <tr>
+          <td>氯丙嗪</td>
+          <td class="lost">精神病人只能被关起来、约束住</td>
+          <td class="gain">第一种有效的抗精神病药，精神科从“看管”转向“治疗”</td>
+        </tr>
+        <tr>
+          <td>脑死亡<button class="glossary-trigger" onclick="openModal('braindeath')">?</button></td>
+          <td class="lost">死亡只能以心跳呼吸停止来判断</td>
+          <td class="gain">更科学的死亡标准；与植物人明确区分；器官移植与终止无效治疗有了依据</td>
+        </tr>
+        <tr>
+          <td>避孕药</td>
+          <td class="lost">性与生育绑定，生育与死亡风险绑定</td>
+          <td class="gain">把女人的身体还给女人：性与生育分割、生育与死亡分割、生育与年龄分割</td>
+        </tr>
+        <tr class="grp"><td colspan="3">五 · 让判断有依据：从权威到证据</td></tr>
+        <tr>
+          <td>循证医学<button class="glossary-trigger" onclick="openModal('ebm')">?</button></td>
+          <td class="lost">治疗方案取决于医生的个人经验和权威说法</td>
+          <td class="gain">五级证据体系，把“最佳方案”变成可比较、可更新的东西</td>
+        </tr>
+        <tr>
+          <td>诺贝尔奖与基础研究</td>
+          <td class="lost">临床只能靠试错往前挪</td>
+          <td class="gain">自然科学的成果为医学所用；研究越微观，治疗越治本——“所有科学奖都是医学奖”</td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这一章真正的方法论</div>
+      <p>13 项里有至少 4 项是意外发现的（X 射线、青霉素、氯丙嗪、福斯曼的心导管）。作者没有把功劳都记在“天才的灵光”上，而是反复指向同一个条件：<strong>只有当基础认知、技术条件、临床需求三者同时到位，意外才会被认出来。</strong>伦琴之前也有人看到过底片雾化，只是他们不知道那意味着什么。</p>
+    </div>
+  </div>
+
+  <div class="section" id="doctors">
+    <h2>六位大医生：六种医学难题的类型</h2>
+    <p class="lead">选这六个人不是为了排资论辈，而是因为他们分别解决了医学史上六类不同性质的难题——观念、方法、禁区、体系、群体、身份。这个分类比按年代排列有用得多。</p>
+
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">希波克拉底 · 观念</div>
+        <div class="content">2 500 年前的誓言今天还在用，因为他解决的不是某个病，而是<strong>医学该以什么姿态存在</strong>：疾病有自然原因（不是神罚）、医生有技术标准、行业有职业道德。三者合起来，医学才从巫术里独立出来。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">威廉·奥斯勒 · 方法</div>
+        <div class="content">他把“实践”变成医学教育的核心：床旁教学、住院医师制。理论到诊断之间没有直达车，必须经过实践这座桥。今天医学生“规培”的制度源头就在这里。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">沃纳·福斯曼 · 禁区</div>
+        <div class="content">1929 年把导管插进自己的心脏，证明“心脏是禁区”只是观念而非事实。他后来被所在医院辞退——这也说明打破禁区的代价常常由个人承担。心导管技术日后救了无数人。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">塞麦尔维斯 · 体系之错</div>
+        <div class="content">发现产妇死亡率的差异来自医生是否洗手，用数据证明了它，却被同行排挤至精神崩溃。他的悲剧说明：<strong>纠正“无知的错”不能靠一个人的正确，只能靠整个体系提高认知</strong>——这也是后来消毒制度、核对清单的逻辑起点。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">伍连德 · 群体</div>
+        <div class="content">1910 年东北肺鼠疫，在病原体尚未完全明确时，靠隔离、封锁、口罩、焚烧尸体控制住疫情。他给出的是公共卫生最重要的一条原则：<strong>防控不以明确病原体为必需前提</strong>。做对的事，不必等所有答案到齐。</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">林巧稚 · 身份</div>
+        <div class="content">中国妇产科学奠基人。她回答的问题很具体：为什么现在女医生这么多？因为某些领域——尤其是涉及身体隐私与生育的领域——患者的信任本身就要求医者的身份。这是医学社会属性的一面。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="apply">
+    <h2>应用层：医生三关与病人修炼</h2>
+    <p class="lead">前六章讲的是“医学是什么”，这一章讲“所以你能做什么”。分两半：给医者的三关，给普通人的三道防线与五个问题。</p>
+
+    <h3>医生精进的三关</h3>
+    <div class="info-grid three">
+      <div class="info-card tool">
+        <div class="label">第一关：少即是多</div>
+        <div class="content">多治疗不等于彻底治疗。每加一项干预，就多一份损害风险与假阳性。做到“少”的三个方法：先明确目标、优先非药物与最小干预、对“还能再加点什么”保持警惕。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">第二关：信息不完备下快速决策</div>
+        <div class="content">急诊和 ICU 没有“等检查齐了再决定”的奢侈。这一关靠的是四条经验法则，见下方。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">第三关：克服不理性的冲动<button class="glossary-trigger" onclick="openModal('narrowing')">?</button></div>
+        <div class="content">高压下注意力会“窄化”——只盯着最显眼的那个指标，忽略整体。一流智慧的标志是能在最紧张的时候仍然保有多线程判断，并且承认自己会犯错。</div>
+      </div>
+    </div>
+
+    <h3>四条决策法则</h3>
+    <div class="pattern-grid four">
+      <div class="pattern-card">
+        <div class="pattern-name">唐僧法则</div>
+        <div class="pattern-desc">先保住命，再谈别的。像唐僧一样，只要人还在，就有下一步的可能。对应到临床：先处理威胁生命的问题，其他都往后排。</div>
+        <div class="pattern-examples">ICU 场景：先保证气道、呼吸、循环</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">第一张骨牌法则</div>
+        <div class="pattern-desc">找到那张一倒就带倒一片的牌。复杂病情里往往只有一个原发问题，其余都是它的连锁反应；推倒第一张，后面自己会顺。</div>
+        <div class="pattern-examples">感染性休克：先控感染源，而不是逐个处理器官衰竭</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">马蹄声法则</div>
+        <div class="pattern-desc">听到马蹄声，先想马，别先想斑马。概率优先——常见病常见，罕见病罕见。但前提是：如果证据对不上，要敢于换马。</div>
+        <div class="pattern-examples">发热先想感染，而不是罕见自身免疫病</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">高尔夫法则</div>
+        <div class="pattern-desc">一杆打不好，下一杆就往回找补。决策是连续的修正过程，不必一次到位，但每一步都要为下一步留出余地。</div>
+        <div class="pattern-examples">用药从小剂量起始，观察反应再调整</div>
+      </div>
+    </div>
+
+    <h3>普通人的三道防线：把自己挡在去医院的路上</h3>
+    <div class="layer-band">
+      <div class="band-label"><span class="bl-num">LINE 1</span><span class="bl-name">避高危</span></div>
+      <div class="band-body">不吸烟、控体重、限酒、打疫苗、注意驾驶与居家安全。<strong>收益最大、成本最低，也最没人愿意做</strong>——因为它没有即时反馈。</div>
+    </div>
+    <div class="layer-band alt">
+      <div class="band-label"><span class="bl-num">LINE 2</span><span class="bl-name">护修复</span></div>
+      <div class="band-body">保住自我修复与代偿能力：睡眠、蛋白质摄入、力量训练、慢病控制。<strong>不是“补”，而是“别透支”</strong>——这两件事在商业话术里经常被故意混淆。</div>
+    </div>
+    <div class="layer-band warm">
+      <div class="band-label"><span class="bl-num">LINE 3</span><span class="bl-name">早筛查</span></div>
+      <div class="band-body">按年龄与风险做有针对性的筛查，不是“全套体检”。<strong>筛查的价值在于赶在代偿耗尽之前</strong>，而不在于查出多少个箭头。</div>
+    </div>
+
+    <h3>做聪明的患者：五个问题</h3>
+    <p class="lead">作者给的不是话术，是五个能把“我该不该做”逼出答案的问题。以下为原书内容的提炼表述，不是逐字引用。</p>
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-no">01</div>
+        <div>
+          <div class="q-txt">我真的需要做这个检查、治疗或手术吗？</div>
+          <div class="q-why">逼出适应证。如果答案是“做一下更放心”，那它可能不是医学需要，而是心理需要。</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-no">02</div>
+        <div>
+          <div class="q-txt">有什么风险、副作用或并发症？</div>
+          <div class="q-why">任何有效的手段都有代价。听不到风险，通常意味着风险没被说清，而不是不存在。</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-no">03</div>
+        <div>
+          <div class="q-txt">有没有更简单、创伤更小的替代方案？</div>
+          <div class="q-why">对应“少即是多”。这一问能挡掉相当一部分过度治疗。</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-no">04</div>
+        <div>
+          <div class="q-txt">如果什么都不做，会怎么样？</div>
+          <div class="q-why">这是最有价值的一问。很多病自然病程就是会好，很多病做什么都一样——知道“不做的结局”，才知道治疗真正买到了什么。</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-no">05</div>
+        <div>
+          <div class="q-txt">做了之后，我的生活会变成什么样？</div>
+          <div class="q-why">把“生存”还原成“生活”。这一问把治疗目标从指标拉回到人。</div>
+        </div>
+      </div>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">还有一条比五个问题更重要的</div>
+      <p>找对第一联系人：<strong>主管医生</strong>才是你该反复沟通的人，而不是到处找熟人、刷专家号。碎片化的“多方咨询”往往只拿到互相矛盾的结论，却没有一个人掌握你的完整病程。</p>
+    </div>
+
+    <h3>最后的告别：善终与生前预嘱</h3>
+    <div class="info-grid pair">
+      <div class="info-card debate">
+        <div class="label">善终的六个要求（原书归纳）</div>
+        <div class="content">无痛苦的躯体状态、被当作一个人对待的尊严、有人陪伴、心愿被听见、不给家人留下过重负担、按自己的意愿而非默认流程离开。这六条没有一条是技术指标。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">生前预嘱：把决定提前做完<button class="glossary-trigger" onclick="openModal('advance')">?</button></div>
+        <div class="content">在还能表达的时候，写下“到什么程度我不再要什么”。它的作用不是放弃治疗，而是<strong>把决策权从“家属在走廊里的猜测”转回本人</strong>。这也顺带减轻了家属最沉重的那种负担——替别人决定他该怎么死。</div>
+      </div>
+    </div>
+    <blockquote class="quote-block">
+      衰老：老不是问题，衰才是关键
+      <span class="cite">—— 第四章第六节标题，原文如此</span>
+    </blockquote>
+  </div>
+
+  <div class="section" id="laws">
+    <h2>六条贯穿全书的规律</h2>
+    <p class="lead">这六条不是章节摘要，是把全书材料重新压一遍之后剩下的东西。它们可以迁移到医学之外。</p>
+
+    <div class="law-card">
+      <h4>一、医学的进步，主要不是“更强”，而是“更早”和“更少”</h4>
+      <p>疫苗、筛查、指南、微创、早诊——真正把人均寿命拉上去的，多半是让人不得病或在早期被拦住；而真正提高单次抢救成功率的尖端技术，对总体寿命的贡献反而有限。</p>
+    </div>
+    <div class="law-card">
+      <h4>二、每一次技术跃迁，都是把自己从“只能靠身体硬扛”里解放一步</h4>
+      <p>不能口服就输液，不能呼吸就上机，看不见就影像，忍不住痛就麻醉，判不了死就脑死亡标准。技术史就是“解除限制”的清单，而不是“发明物”的清单。</p>
+    </div>
+    <div class="law-card">
+      <h4>三、治疗的目标不是消灭异常，而是恢复平衡</h4>
+      <p>免疫不能一味增强，菌群不能一味杀灭，指标不能一味压到最低。凡是把“对抗”当唯一手段的地方，最后都会遇到反噬——耐药、菌群紊乱、自身免疫、过度医疗。</p>
+    </div>
+    <div class="law-card">
+      <h4>四、越是系统的病，越不能靠单点解决</h4>
+      <p>冠心病不是一段血管的事，医源性损害不是一个医生的事，耐药不是一个病人的事。系统性问题必须用系统性办法（制度、指南、公共卫生）处理，个人努力只能改变斜率，改不了方向。</p>
+    </div>
+    <div class="law-card">
+      <h4>五、不确定性无法消除，只能被制度吸收</h4>
+      <p>指南、循证分级、核对清单、多学科会诊、不良事件上报——这些东西的共同作用是：把“某个人今天状态好不好”变成“一个系统在多数情况下不出大错”。医学的可靠性来自制度，不来自圣人。</p>
+    </div>
+    <div class="law-card">
+      <h4>六、技术决定能做什么，人文决定该做什么</h4>
+      <p>能把生命维持十年，和该不该维持十年，是两个问题。前者靠科学，后者靠对“人”的理解。作者把这一条放在第一章，说明他认为这不是补充，是前提。</p>
+    </div>
+  </div>
+
+  <div class="section" id="misread">
+    <h2>五个常见误读</h2>
+    <div class="info-grid">
+      <div class="info-card debate">
+        <div class="label">误读一：感觉良好就是没病</div>
+        <div class="content">代偿机制让器官在损失相当一部分功能后仍能维持正常指标。没感觉，只说明储备还够，不说明没病。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读二：指标正常就是健康</div>
+        <div class="content">参考范围是人群统计结果，覆盖 95% 的人。对个体而言，“在范围内”不等于“对你正常”——一个血压常年 100 的人升到 135，虽然还在范围里，对他已经是变化。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读三：治得越多越彻底</div>
+        <div class="content">多治疗会带来更多干预风险、更多假阳性、更多连锁检查。作者把“少即是多”放在医生精进第一关，正是因为它违背直觉。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读四：要“增强免疫力”</div>
+        <div class="content">免疫是平衡系统，不是肌肉。过高会过敏、会自身免疫、会在免疫治疗中造成严重不良反应。真正该做的是“别破坏它”，而不是“给它加油”。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">误读五：癌症是突然得的</div>
+        <div class="content">最大的单一危险因素是年龄。一个 40 岁的人得肺癌，通常意味着突变已经积累了二三十年。所谓“突然”，只是第一次被看见。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" id="extend">
+    <h2>延伸与局限</h2>
+
+    <h3>延伸比较：四本可以接着读的书</h3>
+    <table class="extension">
+      <tr>
+        <th>《众病之王：癌症传》</th>
+        <td>穆克吉。把本书第四章“癌症”那一节展开成六百年战争史，能看到治疗范式如何从“切得更多”转向“打得准”再到“唤醒免疫”。</td>
+      </tr>
+      <tr>
+        <th>《当呼吸化为空气》</th>
+        <td>保罗·卡拉尼什。一位神经外科医生变成晚期肺癌病人。这本书补上了本书最缺的一块：当医生成为病人，前面所有框架会怎样被重新排序。</td>
+      </tr>
+      <tr>
+        <th>《最好的告别》</th>
+        <td>阿图·葛文德。本书第七章“善终”那一节的完整版，处理的是养老、衰弱、临终决策这些“医学之外但必须由医学回答”的问题。</td>
+      </tr>
+      <tr>
+        <th>《清单革命》</th>
+        <td>同作者葛文德。本书反复提到“制度才能让损害最小化”，这本讲的就是制度的具体形态——核对清单如何把复杂系统的失误率压下来。</td>
+      </tr>
+      <tr>
+        <th>对照阅读的价值</th>
+        <td>本书给的是“医学的全景地图”，上面四本给的是四块“高分辨率局部”。地图的作用是知道自己在哪，局部的作用是知道那一步具体怎么走。只读地图会空泛，只读局部会迷路。</td>
+      </tr>
+    </table>
+
+    <h3>局限：几处需要打折的地方</h3>
+    <div class="reflection-block">
+      <div class="reflection-title">一、这是科普书，不是诊疗手册</div>
+      <p>全书的建议都在原则层面，不能替代个体化诊疗。不少“三条建议”（如增强免疫的三个方法）缺剂量、频次、适用人群与禁忌，照做可能无效，个别情况还可能有害。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">二、视角高度集中在院内与重症</div>
+      <p>作者是 ICU 医生，全书最有说服力的材料都在“命悬一线”的场景。对慢病长期管理、基层医疗、费用与可及性、护理与康复的连续性，谈得明显偏薄——而这恰恰是绝大多数人真实的就医处境。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">三、部分结论有时效性</div>
+      <p>2019 年出版。此后免疫检查点抑制剂的适应证大幅扩张、mRNA 技术成熟、AI 影像进入临床、减重药物改写代谢病治疗路径。书中对免疫治疗的乐观、对某些药物格局的判断，需要按今天的情况重新校准。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">四、“医患联盟”一章偏理想化</div>
+      <p>把沟通当成主要解法，前提是双方地位对等。但信息不对称、支付制度、举证责任、时间成本这些结构性因素，书里基本没有处理。在门诊三分钟的现实里，“共同决策”需要的不只是意愿，还有制度给他的时间。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">五、应然与落地之间缺一段</div>
+      <p>善终、生前预嘱、脑死亡标准，在中国都涉及家属决策权、法律配套与文化观念。书中给的是“应该怎样”，落地路径（谁签、怎么执行、冲突怎么处理）没有展开。</p>
+    </div>
+    <div class="reflection-block">
+      <div class="reflection-title">六、叙事仍偏“英雄 + 突破”</div>
+      <p>作者已承认很多里程碑是意外，但整体框架仍以“某位医生 + 某个突破”为单元，对失败路径、被埋没的平行方案、以及技术得以成立的组织与工业条件着墨较少。读的时候要自己补上“幸存者”这一层。</p>
+    </div>
+
+    <h3>怎么读这本书</h3>
+    <p class="lead">按顺序读会得到完整框架，但效率最高的读法是倒着来：先读第七章（能立刻用），再读第二、三章（建立判断力），然后回头看第四章的六个病（检验），最后把第五章当索引——哪天遇到某个具体技术，再回来查它解除了哪条限制。</p>
+  </div>
+
+  <div class="section" id="hook">
+    <h2>记忆钩子</h2>
+    <div class="hook-box">
+      <div class="hook-title">REMEMBER · 四句 · 三钥 · 一史 · 一道</div>
+      <div class="hook-grid">
+        <div class="hook-item">
+          <div class="hi-head">四句地基</div>
+          <div class="hi-body">命第一 · 靠自己 · 科学加人文 · 医患是联盟</div>
+        </div>
+        <div class="hook-item">
+          <div class="hi-head">三把钥匙看疾病</div>
+          <div class="hi-body">病与症分开（别乱压症状）· 代偿解释“突然”（其实欠了很久）· 共生解释“为什么不能全杀”</div>
+        </div>
+        <div class="hook-item">
+          <div class="hi-head">一条史观</div>
+          <div class="hi-body">医学史不是发明史，是不断解除限制的历史——每一项技术都在替身体多扛一会儿。</div>
+        </div>
+        <div class="hook-item">
+          <div class="hi-head">一道防线</div>
+          <div class="hi-body">把自己挡在去医院的路上：避高危 · 护修复 · 早筛查。做前两件的人，远比做第三件的人少。</div>
+        </div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:16px;">如果只能带走一句话：<strong>医学能做的，是给你的自我修复争取时间；你能做的，是别把这个时间提前用完。</strong></p>
+  </div>
+
+  <div class="footer-note">
+    《医学通识讲义》知识图谱 · 基于原著整理 · 仅供个人学习回顾
+  </div>
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" id="modalCard" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const glossary = {
+  selfrepair: {
+    title: "自我修复（Self-repair）",
+    content: "<p>身体自带的损伤修复能力：凝血、炎症、组织再生、免疫清除、代偿。医学的所有手段本质上是为这套系统争取时间和条件，而不是替代它。</p><p>这个视角带来一个反直觉的结论：很多治疗是减法——撤掉阻碍修复的因素（停用有害药物、解除压迫、控制感染源），而不是不断加药。</p>"
+  },
+  compensation: {
+    title: "代偿（Compensation）",
+    content: "<p>器官功能受损后，身体通过其他部分超额工作来维持整体指标正常。例如一侧肾切除后对侧代偿性增大、血管狭窄后侧支循环形成、心肌受损后心室扩张维持泵血。</p><ul><li>代偿期：指标正常，人无感觉</li><li>失代偿期：储备耗尽，指标骤然崩坏</li></ul><p>所以“疾病不是突然发生的，而是突然发现的”。这也是定期筛查真正的价值所在。</p>"
+  },
+  symptom: {
+    title: "症状（Symptom）",
+    content: "<p>症状是身体对疾病的反应，不等于疾病本身。发热是免疫应答，咳嗽是清除异物，腹泻是排出病原，疼痛是警报。</p><p>症状是把双刃剑：过度压制会削弱防御、掩盖病情；放任不管则可能造成继发损害。原则是从病入手治疗，对症状适度干预。</p>"
+  },
+  symbiosis: {
+    title: "共生（Symbiosis）",
+    content: "<p>人体与微生物群落长期共存、互利互惠的关系。菌群参与消化吸收、维生素合成、免疫训练、屏障防御，甚至影响情绪与代谢。</p><p>共生被打破会带来疾病：广谱抗生素导致菌群紊乱与艰难梭菌感染，菌群失调与肥胖、过敏、炎症性肠病相关。因此“杀菌”不是目的，“恢复生态平衡”才是。</p>"
+  },
+  immunity: {
+    title: "免疫（Immunity）",
+    content: "<p>识别“自我”与“非我”、清除病原与异常细胞、并维持对自身与共生菌的容忍。核心能力是<strong>分清敌我</strong>，而不是“强”。</p><p>免疫失衡的两个方向：过低导致感染与肿瘤；过高导致过敏与自身免疫病。因此“增强免疫力”在免疫学上不是一个严谨的目标，更准确的说法是“维持免疫平衡”。</p>"
+  },
+  guideline: {
+    title: "临床诊治指南（Clinical Guideline）",
+    content: "<p>基于系统评价的证据，对特定临床问题给出的推荐意见。作用是保证基本与规范的诊疗，降低不同医生、不同医院之间的差异。</p><p>“是地板，不是天花板”：它给的是人群统计意义上的较优解，对合并症多、情况特殊的个体未必最优。跳出指南需要理由与记录，否则“个体化”会成为随意性的借口。</p>"
+  },
+  iatrogenic: {
+    title: "医源性损害（Iatrogenic Harm）",
+    content: "<p>由医疗行为本身造成的损害：药物不良反应、院内感染、检查或手术并发症、过度诊疗带来的伤害。</p><p>关键认知：只要干预就存在损害可能，个人的谨慎无法消除系统性风险。真正有效的办法是制度——核对清单、分级授权、多学科会诊、不追责的不良事件上报文化。</p>"
+  },
+  psychosomatic: {
+    title: "心身疾病（Psychosomatic Disease）",
+    content: "<p>心理社会因素在发病、发展、转归中起重要作用，并伴有明确器质性改变或生理功能异常的疾病。如原发性高血压、消化性溃疡、部分皮肤病与功能性胃肠病。</p><p>机制通路：长期应激 → 下丘脑—垂体—肾上腺轴与自主神经 → 影响血压、胃酸、免疫与炎症。治疗原则是心身同治，只治一头都会复发或不被接受。</p>"
+  },
+  ebm: {
+    title: "循证医学（Evidence-Based Medicine）",
+    content: "<p>将最佳研究证据、临床经验与患者价值三者结合来做临床决策。核心工具是证据分级：</p><ul><li>一级：随机对照试验的系统评价</li><li>二级：单个大样本随机对照试验</li><li>三级：有对照但非随机的研究</li><li>四级：无对照的病例系列</li><li>五级：专家意见、个案报道</li></ul><p>它的意义在于把“谁说的”换成“证据有多硬”。</p>"
+  },
+  braindeath: {
+    title: "脑死亡（Brain Death）",
+    content: "<p>以全脑（含脑干）功能不可逆丧失作为死亡判定标准，区别于心跳呼吸停止的传统标准。</p><p>与植物人的关键区别：植物人保留脑干功能，有睡眠—觉醒周期与自主呼吸，存在恢复可能；脑死亡者脑干功能丧失，无自主呼吸，不可逆。</p><p>价值：更科学的死亡判定、避免无意义治疗、为器官移植提供依据。落地需要法律与伦理配套。</p>"
+  },
+  narrowing: {
+    title: "窄化效应（Narrowing）",
+    content: "<p>在高压力、高负荷或强烈情绪下，注意力范围收窄，只关注最显眼的信息，忽略其他同样重要的线索。急诊与 ICU 中最常见的判断失误来源之一。</p><p>对抗方法：结构化核对、主动寻找反证、把决策交给团队复核、以及在紧张时特意问一句“我还漏了什么”。</p>"
+  },
+  advance: {
+    title: "生前预嘱（Advance Directive）",
+    content: "<p>人在意识清楚、具备决策能力时，预先对自己未来失去决策能力后的医疗选择作出的书面说明，例如是否接受心肺复苏、气管插管、鼻饲、透析等。</p><p>它不是“放弃治疗”，而是把决策权从家属的猜测转回本人意愿，同时减轻家属替他人决定生死的精神负担。执行需与当地法律、医疗机构流程配套。</p>"
+  }
+};
+
+function openModal(key) {
+  const data = glossary[key];
+  if (!data) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + data.title + '</h4>' + data.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+(function() {
+  var links = document.querySelectorAll('.sidebar .toc-list a[href^="#"]');
+  var sections = [];
+  links.forEach(function(l) {
+    var id = l.getAttribute('href').substring(1);
+    var el = document.getElementById(id);
+    if (el) sections.push({ link: l, el: el });
+  });
+  function update() {
+    var scrollY = window.scrollY + 120;
+    var current = null;
+    for (var i = sections.length - 1; i >= 0; i--) {
+      if (sections[i].el.offsetTop <= scrollY) { current = sections[i].link; break; }
+    }
+    links.forEach(function(l) { l.classList.toggle('active', l === current); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function() {
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function() { btn.classList.toggle('visible', window.scrollY > 400); });
+})();
+</script>
+</body>
+</html>

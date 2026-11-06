@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刘擎西方现代思想讲义 · 知识图谱</title>
+<style>
+:root {
+  --primary: #3a2434;
+  --primary-soft: #553a4d;
+  --accent: #b8863b;
+  --accent-2: #7d3f52;
+  --bg: #faf7f2;
+  --bg-soft: #f3ece2;
+  --bg-softer: #ede3d6;
+  --card: #fffdf9;
+  --border: #e0d3c2;
+  --text: #2e2730;
+  --text-heading: #2a1c26;
+  --text-muted: #7a6b6f;
+  --color-core: #7d3f52;
+  --color-concept: #b8863b;
+  --color-mechanism: #4a6b63;
+  --color-tool: #6b5a8c;
+  --radius: 10px;
+  --shadow: 0 1px 3px rgba(58,36,52,.06), 0 6px 20px rgba(58,36,52,.04);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.78;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 侧栏 */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 208px;
+  background: var(--primary);
+  padding: 26px 0;
+  overflow-y: auto;
+  z-index: 40;
+}
+.sidebar .nav-title {
+  font-size: 11px; letter-spacing: 2px; color: rgba(255,255,255,.42);
+  padding: 0 22px 12px; text-transform: uppercase;
+}
+.sidebar a {
+  display: block; padding: 8px 22px;
+  font-size: 13px; color: rgba(255,255,255,.72);
+  text-decoration: none; border-left: 2px solid transparent;
+  transition: all .18s;
+}
+.sidebar a:hover { color: #fff; background: rgba(255,255,255,.06); border-left-color: var(--accent); }
+.sidebar a.active { color: #fff; background: rgba(184,134,59,.16); border-left-color: var(--accent); font-weight: 600; }
+.main { margin-left: 208px; padding: 0 0 60px; }
+
+/* 页头 */
+.header {
+  position: relative; overflow: hidden;
+  background: linear-gradient(135deg, var(--primary) 0%, #4a2e42 55%, #5b3a4e 100%);
+  color: #fff;
+  padding: 46px 56px 40px;
+}
+.header-inner { position: relative; z-index: 2; max-width: 980px; }
+.seal {
+  position: absolute; right: 46px; top: 40px;
+  width: 76px; height: 76px; border: 2px solid rgba(184,134,59,.7);
+  border-radius: 6px; display: flex; align-items: center; justify-content: center;
+  font-size: 11.5px; line-height: 1.3; text-align: center; letter-spacing: 1px;
+  color: rgba(212,169,105,.95); transform: rotate(3deg);
+}
+.header h1 {
+  font-size: 34px; font-weight: 700; letter-spacing: 1.5px; line-height: 1.3;
+  margin-bottom: 10px;
+}
+.subtitle { font-size: 14.5px; color: rgba(255,255,255,.74); max-width: 640px; }
+.meta-row {
+  display: flex; flex-wrap: wrap; gap: 6px 22px;
+  margin-top: 22px; font-size: 12.5px; color: rgba(255,255,255,.62);
+}
+.meta-item strong { color: rgba(255,255,255,.9); font-weight: 600; }
+.tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.tag {
+  font-size: 11.5px; padding: 3px 10px; border-radius: 20px;
+  border: 1px solid rgba(184,134,59,.45); color: rgba(226,190,133,.95);
+  background: rgba(184,134,59,.08);
+}
+.soul-box {
+  margin-top: 28px; padding: 18px 22px;
+  background: rgba(255,255,255,.06);
+  border-left: 2px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  font-size: 15px; line-height: 1.85; color: rgba(255,255,255,.92);
+  max-width: 760px;
+}
+.soul-label {
+  display: block; font-size: 10.5px; letter-spacing: 2px;
+  color: rgba(212,169,105,.9); margin-bottom: 8px;
+}
+.watermark {
+  position: absolute; right: -10px; bottom: -60px;
+  font-size: 190px; font-weight: 800; letter-spacing: 6px;
+  color: rgba(255,255,255,.032); line-height: 1; pointer-events: none;
+  user-select: none;
+}
+
+/* 区块 */
+section { padding: 40px 56px 6px; max-width: 1080px; }
+.sect-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+.sect-num {
+  font-size: 11.5px; font-weight: 700; letter-spacing: 1px;
+  color: var(--accent); font-family: ui-monospace, Menlo, monospace;
+}
+h2 {
+  font-size: 21px; font-weight: 700; color: var(--text-heading);
+  letter-spacing: .5px;
+}
+.lead { font-size: 14px; color: var(--text-muted); margin: 8px 0 18px; max-width: 820px; }
+
+/* 两栏 */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.col-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 18px 20px; box-shadow: var(--shadow);
+}
+.cc-title {
+  font-size: 13px; font-weight: 700; color: var(--color-core);
+  letter-spacing: .5px; margin-bottom: 8px;
+}
+.col-card.alt .cc-title { color: var(--color-mechanism); }
+.cc-body { font-size: 13.8px; line-height: 1.8; color: var(--text); }
+
+/* 中心议题图 */
+.issue-map {
+  margin: 20px 0 8px; padding: 22px;
+  background: var(--bg-soft); border-radius: 14px;
+  border: 1px solid var(--border);
+}
+.im-center {
+  max-width: 640px; margin: 0 auto;
+  background: var(--primary); color: #fff;
+  border-radius: 12px; padding: 18px 24px; text-align: center;
+  box-shadow: 0 8px 24px rgba(58,36,52,.18);
+}
+.im-kicker {
+  font-size: 10.5px; letter-spacing: 2.4px; color: rgba(212,169,105,.95);
+  display: block; margin-bottom: 6px;
+}
+.im-title { font-size: 16.5px; font-weight: 700; line-height: 1.6; }
+.im-branches {
+  display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px;
+  margin-top: 20px; position: relative;
+}
+.im-branch {
+  grid-column: span 2;
+  background: var(--card); border: 1px solid var(--border);
+  border-top: 3px solid var(--accent);
+  border-radius: 8px; padding: 13px 14px; text-align: left;
+}
+.im-branch.wide { grid-column: span 3; }
+.im-branch .bn {
+  font-size: 10.5px; font-weight: 700; color: var(--accent);
+  letter-spacing: 1px; display: block; margin-bottom: 4px;
+  font-family: ui-monospace, Menlo, monospace;
+}
+.im-branch .bt { font-size: 13px; font-weight: 700; color: var(--text-heading); line-height: 1.45; display: block; margin-bottom: 4px; }
+.im-branch .bd { font-size: 11.8px; color: var(--text-muted); line-height: 1.65; display: block; }
+
+/* 编号清单 */
+.num-list { margin: 14px 0; }
+.num-item {
+  display: grid; grid-template-columns: 44px 1fr; gap: 14px;
+  padding: 13px 0; border-bottom: 1px dashed var(--border);
+}
+.num-item:last-child { border-bottom: none; }
+.n-idx {
+  font-family: ui-monospace, Menlo, monospace;
+  font-size: 12.5px; font-weight: 700; color: var(--accent);
+  padding-top: 2px;
+}
+.n-body { font-size: 13.8px; line-height: 1.8; color: var(--text); }
+.n-title { font-weight: 700; color: var(--text-heading); display: block; margin-bottom: 3px; }
+
+/* 卡片网格 */
+.info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 14px 0; }
+.info-grid.pair { grid-template-columns: 1fr 1fr; }
+.info-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 18px; box-shadow: var(--shadow);
+}
+.info-card .label {
+  font-size: 13px; font-weight: 700; color: var(--text-heading);
+  padding-left: 10px; margin-bottom: 8px;
+  border-left: 3px solid var(--color-concept);
+  display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+}
+.info-card p { font-size: 13.5px; line-height: 1.8; color: var(--text); }
+.info-card p + p { margin-top: 7px; }
+.info-card.core .label { border-left-color: var(--color-core); }
+.info-card.concept .label { border-left-color: var(--color-concept); }
+.info-card.mechanism .label { border-left-color: var(--color-mechanism); }
+.info-card.tool .label { border-left-color: var(--color-tool); }
+.example {
+  margin-top: 10px; padding: 10px 12px;
+  background: var(--bg-soft); border-radius: 6px;
+  font-size: 12.8px; line-height: 1.75; color: var(--text-muted);
+}
+.example strong { color: var(--color-core); }
+
+/* 思想家卡 */
+.thinker-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin: 16px 0; }
+.thinker-grid.two { grid-template-columns: 1fr 1fr; }
+.thinker-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 0; overflow: hidden; box-shadow: var(--shadow);
+  display: flex; flex-direction: column;
+}
+.tc-head {
+  background: var(--bg-softer);
+  padding: 13px 18px 11px; border-bottom: 1px solid var(--border);
+}
+.tc-name {
+  font-size: 15px; font-weight: 700; color: var(--text-heading);
+  letter-spacing: .5px; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap;
+}
+.tc-life {
+  font-size: 11.5px; font-weight: 400; color: var(--text-muted);
+  font-family: ui-monospace, Menlo, monospace;
+}
+.tc-thesis {
+  margin-top: 5px; font-size: 12.5px; color: var(--color-core);
+  font-weight: 600; line-height: 1.55;
+}
+.tc-points { padding: 14px 18px 4px; list-style: none; flex: 1; }
+.tc-points li {
+  position: relative; padding-left: 14px; margin-bottom: 9px;
+  font-size: 13.2px; line-height: 1.75;
+}
+.tc-points li::before {
+  content: ''; position: absolute; left: 0; top: 9px;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--accent);
+}
+.tc-points li strong { color: var(--text-heading); }
+.tc-quote {
+  margin: 0 18px 16px; padding: 9px 12px;
+  background: var(--bg-soft); border-left: 2px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  font-size: 12.5px; color: var(--text-muted); line-height: 1.7;
+}
+
+/* 对决 */
+.duel {
+  display: grid; grid-template-columns: 1fr 64px 1fr;
+  align-items: stretch; gap: 0; margin: 18px 0;
+}
+.duel-side {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 18px 20px; box-shadow: var(--shadow);
+  border-top: 3px solid var(--color-core);
+}
+.duel-side.right { border-top-color: var(--color-mechanism); }
+.ds-name { font-size: 15.5px; font-weight: 700; color: var(--text-heading); margin-bottom: 3px; }
+.ds-sub { font-size: 12px; color: var(--accent); font-weight: 600; margin-bottom: 10px; }
+.ds-list { list-style: none; }
+.ds-list li {
+  position: relative; padding-left: 13px; margin-bottom: 8px;
+  font-size: 13.2px; line-height: 1.75;
+}
+.ds-list li::before {
+  content: '·'; position: absolute; left: 2px; top: -1px;
+  color: var(--accent); font-weight: 700;
+}
+.vs {
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 800; color: var(--accent);
+  font-family: ui-monospace, Menlo, monospace; letter-spacing: 1px;
+}
+
+/* 表格 */
+table.matrix {
+  width: 100%; border-collapse: collapse; margin: 16px 0;
+  font-size: 12.8px; background: var(--card);
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+table.matrix th {
+  background: var(--primary); color: #f6efe4;
+  font-weight: 600; font-size: 12.2px; letter-spacing: .5px;
+  padding: 11px 12px; text-align: left;
+}
+table.matrix td { padding: 10px 12px; border-top: 1px solid var(--border); line-height: 1.7; vertical-align: top; }
+table.matrix tbody tr:nth-child(even) { background: var(--bg-soft); }
+table.matrix td:first-child { font-family: ui-monospace, Menlo, monospace; color: var(--accent); font-weight: 600; white-space: nowrap; }
+table.matrix td .who { font-weight: 700; color: var(--text-heading); }
+table.extension {
+  width: 100%; border-collapse: collapse; margin: 16px 0;
+  font-size: 12.8px; background: var(--card);
+  border: 1px solid var(--border); border-radius: 8px; overflow: hidden;
+}
+table.extension th {
+  background: var(--bg-softer); color: var(--text-heading);
+  font-weight: 600; font-size: 12.2px; padding: 10px 12px; text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+table.extension td { padding: 10px 12px; border-top: 1px solid var(--border); line-height: 1.7; vertical-align: top; }
+table.extension td:first-child { font-weight: 700; color: var(--text-heading); white-space: nowrap; }
+
+/* 其他块 */
+.insight-card {
+  background: var(--bg-soft); border-left: 3px solid var(--accent);
+  border-radius: 0 8px 8px 0; padding: 15px 18px; margin: 14px 0;
+  font-size: 13.6px; line-height: 1.82;
+}
+.insight-card .ic-label {
+  display: block; font-size: 11px; letter-spacing: 1.6px;
+  color: var(--accent); font-weight: 700; margin-bottom: 6px;
+}
+.quote-block {
+  margin: 18px 0; padding: 20px 26px;
+  background: var(--primary); color: rgba(255,255,255,.93);
+  border-radius: 10px; font-size: 15.5px; line-height: 1.9;
+  font-style: italic; letter-spacing: .3px;
+}
+.quote-block .qb-from {
+  display: block; margin-top: 10px; font-size: 11.5px;
+  color: rgba(212,169,105,.9); font-style: normal; letter-spacing: 1px;
+}
+.law-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 17px; box-shadow: var(--shadow);
+  border-top: 2px solid var(--accent-2);
+}
+.law-card .lw-idx {
+  font-family: ui-monospace, Menlo, monospace; font-size: 11px;
+  color: var(--accent); font-weight: 700; letter-spacing: 1px;
+  display: block; margin-bottom: 5px;
+}
+.law-card .lw-title { font-size: 13.2px; font-weight: 700; color: var(--text-heading); margin-bottom: 6px; line-height: 1.5; }
+.law-card p { font-size: 12.8px; line-height: 1.75; color: var(--text-muted); }
+.law-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.law-grid .law-card { display: flex; flex-direction: column; }
+.law-grid .law-card.span-all { grid-column: 1 / -1; background: var(--bg-soft); border-top-color: var(--accent); }
+.law-grid .law-card.span-all p { max-width: 900px; }
+
+/* 著作年表 */
+.tl-track { position: relative; display: flex; margin: 26px 0 6px; padding-bottom: 4px; }
+.tl-track::before {
+  content: ''; position: absolute; left: 3%; right: 3%; top: 22px; height: 2px;
+  background: linear-gradient(90deg, var(--border), var(--accent), var(--border));
+}
+.tl-node { flex: 1 1 0; min-width: 0; position: relative; z-index: 1; padding: 0 7px; text-align: center; }
+.tl-era { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; font-weight: 700; color: var(--accent); letter-spacing: .5px; margin-bottom: 7px; }
+.tl-dot { width: 11px; height: 11px; border-radius: 50%; background: var(--card); border: 3px solid var(--accent); margin: 0 auto 9px; }
+.tl-name { font-size: 12.8px; font-weight: 700; color: var(--text-heading); line-height: 1.45; min-height: 4.35em; }
+.tl-works { font-size: 11.5px; color: var(--text-muted); line-height: 1.6; margin-top: 4px; }
+.tl-works em { font-style: normal; color: var(--color-core); }
+.nw { white-space: nowrap; }
+
+/* 返回顶部 */
+.to-top {
+  position: fixed; right: 24px; bottom: 24px; width: 40px; height: 40px;
+  border-radius: 50%; border: none; background: var(--primary); color: #f2e7d5;
+  font-size: 16px; cursor: pointer; z-index: 60; opacity: 0; pointer-events: none;
+  transition: opacity .25s; box-shadow: 0 4px 14px rgba(58,36,52,.28);
+}
+.to-top.show { opacity: 1; pointer-events: auto; }
+.critique-block {
+  margin: 16px 0; padding: 18px 22px;
+  background: var(--card); border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-2); border-radius: 0 10px 10px 0;
+}
+.critique-block h3 { font-size: 13.5px; color: var(--text-heading); margin-bottom: 8px; }
+.critique-block ol { padding-left: 18px; }
+.critique-block li { font-size: 13.2px; line-height: 1.8; margin-bottom: 8px; }
+.critique-block li strong { color: var(--color-core); }
+.hook-box {
+  margin: 18px 0 0; padding: 24px 26px;
+  background: var(--primary); color: rgba(255,255,255,.9);
+  border-radius: 12px;
+}
+.hook-box h3 { font-size: 13px; letter-spacing: 2px; color: rgba(212,169,105,.95); margin-bottom: 14px; font-weight: 700; }
+.hook-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+.hook-item .hi-k { font-size: 11px; letter-spacing: 1.4px; color: rgba(212,169,105,.8); display: block; margin-bottom: 4px; }
+.hook-item .hi-v { font-size: 13.5px; line-height: 1.7; }
+.footer-note {
+  padding: 26px 0 0; margin-top: 24px;
+  font-size: 11.5px; color: var(--text-muted); border-top: 1px solid var(--border);
+  line-height: 1.8;
+}
+
+/* 术语按钮 */
+.glossary-trigger {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 15px; height: 15px; border-radius: 50%;
+  border: 1px solid var(--accent); background: transparent;
+  color: var(--accent); font-size: 10px; font-weight: 700;
+  cursor: pointer; vertical-align: middle; margin-left: 3px;
+  line-height: 1; padding: 0; font-family: inherit;
+  transition: all .15s;
+}
+.glossary-trigger:hover { background: var(--accent); color: #fff; }
+
+/* 弹窗 */
+.modal-mask {
+  position: fixed; inset: 0; background: rgba(42,28,38,.55);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100; padding: 20px;
+}
+.modal-mask.show { display: flex; }
+.modal-card {
+  background: var(--card); border-radius: 12px; max-width: 480px; width: 100%;
+  padding: 22px 24px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  max-height: 80vh; overflow-y: auto;
+}
+.modal-title { font-size: 15px; font-weight: 700; color: var(--text-heading); margin-bottom: 10px; padding-right: 26px; }
+.modal-body { font-size: 13.5px; line-height: 1.85; color: var(--text); }
+.modal-close {
+  position: absolute; right: 14px; top: 12px;
+  background: none; border: none; font-size: 20px; color: var(--text-muted);
+  cursor: pointer; line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .header { padding: 34px 22px 30px; }
+  .header h1 { font-size: 25px; }
+  .seal { display: none; }
+  .watermark { font-size: 110px; bottom: -30px; }
+  section { padding: 30px 20px 4px; }
+  .two-col, .info-grid, .info-grid.pair, .thinker-grid, .thinker-grid.two, .hook-grid, .law-grid { grid-template-columns: 1fr; }
+  .law-grid .law-card.span-all { grid-column: auto; }
+  .im-branches { grid-template-columns: 1fr 1fr; }
+  .im-branch { grid-column: span 1; }
+  .im-branch.wide { grid-column: span 2; }
+  .tl-track { overflow-x: auto; }
+  .tl-track::before { left: 0; right: 0; }
+  .tl-node { flex: 0 0 132px; }
+  .duel { grid-template-columns: 1fr; }
+  .vs { padding: 8px 0; }
+  table.matrix, table.extension { display: block; overflow-x: auto; white-space: nowrap; }
+  .footer-note { padding: 22px 0 0; }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="nav-title">本书图谱导航</div>
+  <a href="#question">这本书在问什么</a>
+  <a href="#map">一个病灶，四次追问</a>
+  <a href="#modern">起点：现代是什么</a>
+  <a href="#timeline">时间轴 · 著作年表</a>
+  <a href="#p1">战场一 精神危机</a>
+  <a href="#p2">战场二 二十世纪教训</a>
+  <a href="#p3">战场三 公正之争</a>
+  <a href="#p4">战场四 世界秩序</a>
+  <a href="#index">十九人索引</a>
+  <a href="#method">刘擎的写法</a>
+  <a href="#laws">七条贯穿判断</a>
+  <a href="#critique">局限与未完成</a>
+  <a href="#extend">延伸与对照</a>
+  <a href="#hook">记忆钩子</a>
+</nav>
+
+<div class="main">
+
+<header class="header" id="header">
+  <div class="watermark">思想</div>
+  <div class="seal">43 讲<br>19 人</div>
+  <div class="header-inner">
+    <h1>刘擎西方现代思想讲义</h1>
+    <p class="subtitle">从韦伯到福山，十九位思想家围绕同一个问题给出的十九种答案——以及他们为什么互相不同意。</p>
+    <div class="meta-row">
+      <span class="meta-item"><strong>作者</strong> 刘擎</span>
+      <span class="meta-item"><strong>出版</strong> 新星出版社 · 2021 年 1 月</span>
+      <span class="meta-item"><strong>ISBN</strong> 9787513342919</span>
+      <span class="meta-item"><strong>篇幅</strong> 374 页 · 43 讲</span>
+      <span class="meta-item"><strong>来源</strong> 得到 App 课程讲义</span>
+    </div>
+    <div class="tag-row">
+      <span class="tag">思想史</span>
+      <span class="tag">政治哲学</span>
+      <span class="tag">现代性</span>
+      <span class="tag">多视角辩论</span>
+      <span class="tag">讲义体</span>
+    </div>
+    <div class="soul-box">
+      <span class="soul-label">一句话灵魂</span>
+      现代人不是"失去了"意义，而是第一次必须自己造意义。这本书真正讲的不是十八九个人的学说，而是一个更难受的事实：<strong>在没有标准答案之后，人还能凭什么活、凭什么要求别人、凭什么相信明天更好。</strong>
+    </div>
+  </div>
+</header>
+
+<section id="question">
+  <div class="sect-head"><span class="sect-num">00</span><h2>这本书在问什么</h2></div>
+  <p class="lead">书名容易让人以为是一部"西方哲学史普及读本"。它不是。全书有一条很强的主线：现代性给人松了绑，同时抽走了三样东西的支撑——意义的确定性、共同体的归属、以及"什么是好生活"的公认标准。十九位思想家是对这三处塌陷的不同回应。</p>
+  <div class="two-col">
+    <div class="col-card">
+      <div class="cc-title">表层问题</div>
+      <div class="cc-body">为什么现代人物质上从未如此富足，精神上却长期处在一种说不清的疲惫里？为什么"做自己"喊得越响，越不知道自己要什么？为什么技术进步没能让人变得更讲道理？</div>
+    </div>
+    <div class="col-card alt">
+      <div class="cc-title">真实问题</div>
+      <div class="cc-body">当"世界为什么是这样"不再有唯一答案，判断的标准从哪里来？个人自己立法，凭什么要求别人服从？如果价值之间无法用理性分出高下，公共生活还能靠什么维持——这正是全书从韦伯一路推到罗尔斯、哈贝马斯的那根线。</div>
+    </div>
+  </div>
+  <div class="insight-card">
+    <span class="ic-label">读这本书的关键姿势</span>
+    不要把它当"知识点合集"读。每一位思想家的两到三讲，实际上是<strong>一个论证的骨架</strong>：他诊断了什么病、开了什么方、这个方有什么副作用。真正值得学的是第三项——因为刘擎在几乎每一章结尾都会点出那位思想家的代价，而这正是下一章要处理的问题。
+  </div>
+</section>
+
+<section id="map">
+  <div class="sect-head"><span class="sect-num">01</span><h2>一个病灶，四次追问</h2></div>
+  <p class="lead">全书结构不是按年代排的，而是按"问题推进"排的。韦伯给出诊断，然后四组人分头找答案；每一组的答案又会制造出下一组必须处理的新麻烦。</p>
+
+  <div class="issue-map">
+    <div class="im-center">
+      <span class="im-kicker">CORE QUESTION</span>
+      <div class="im-title">世界祛魅之后，意义、自由与公正同时失去了共同的参照系。<br>现代人该怎么办？</div>
+    </div>
+    <div class="im-branches">
+      <div class="im-branch">
+        <span class="bn">BASE</span>
+        <span class="bt">我们失去了什么</span>
+        <span class="bd">韦伯：祛魅、诸神之争、工具理性、铁笼。全书的诊断书。</span>
+      </div>
+      <div class="im-branch">
+        <span class="bn">ASK 1</span>
+        <span class="bt">没有答案怎么活</span>
+        <span class="bd">尼采、弗洛伊德、萨特。从个体内部找支点。</span>
+      </div>
+      <div class="im-branch">
+        <span class="bn">ASK 2</span>
+        <span class="bt">善意为何做出恶</span>
+        <span class="bd">鲍曼、阿伦特、波普尔、哈耶克、伯林、马尔库塞。</span>
+      </div>
+      <div class="im-branch wide">
+        <span class="bn">ASK 3</span>
+        <span class="bt">什么才算公正</span>
+        <span class="bd">罗尔斯、诺齐克、德沃金、桑德尔、沃尔泽、泰勒、哈贝马斯。</span>
+      </div>
+      <div class="im-branch wide">
+        <span class="bn">ASK 4</span>
+        <span class="bt">世界会走向哪里</span>
+        <span class="bd">福山、亨廷顿。冷战结束后的两种预言。</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <span class="ic-label">结构上的一个巧思</span>
+    四个"战场"之间是有承接关系的：<strong>精神危机</strong>的答案是"自己造价值"，可如果人人都自己造，公共判断就没了依据，于是进入<strong>二十世纪教训</strong>（有人替你造，会造出什么）；教训指向"必须给权力设限"，可设限之后又回到<strong>谁该得到什么</strong>的分配之争；分配之争在国内层面争不完，就溢到<strong>世界秩序</strong>。这条链条不是刘擎明写的标题结构，是我按全书推进逻辑抽出来的——但它能解释为什么章节顺序是这样。
+  </div>
+</section>
+
+<section id="modern">
+  <div class="sect-head"><span class="sect-num">02</span><h2>起点：现代到底哪里不一样</h2></div>
+  <p class="lead">导论三讲（01—03）给全书打地基。核心是一句判断：现代不是"时间上更晚"，而是一套结构——人不再从外部世界领受意义和位置，而要自己给自己立法。</p>
+
+  <div class="num-list">
+    <div class="num-item">
+      <div class="n-idx">01</div>
+      <div class="n-body">
+        <span class="n-title">从"自然"中脱离</span>
+        古代宇宙是一个有目的、有等级的秩序，人处在其中某一格，做什么、配得到什么，由这个秩序给出。现代科学把宇宙变成一架没有目的的机器，人不再是"宇宙的一环"，而成了站在世界对面、可以测量和改造世界的主体。
+      </div>
+    </div>
+    <div class="num-item">
+      <div class="n-idx">02</div>
+      <div class="n-body">
+        <span class="n-title">从"共同体"中脱离</span>
+        身份不再由出身、家族、地缘给定，而变成"可以选择的"。这带来自由，也带来一件事：<strong>你必须为自己的选择负责，因为那确实是你选的。</strong>现代人的焦虑有相当一部分来自这里，而不是来自压力本身。
+      </div>
+    </div>
+    <div class="num-item">
+      <div class="n-idx">03</div>
+      <div class="n-body">
+        <span class="n-title">从"意义"中脱离</span>
+        意义从"被发现"变成"被赋予"。这在文化上是巨大的解放，在心理上是巨大的负担：它意味着意义问题永远无法一次性解决，只能一直维持。
+      </div>
+    </div>
+  </div>
+
+  <p class="lead" style="margin-top:22px">承接这三重脱离的，是全书第一章对韦伯的四讲拆解。这四讲是全书的诊断书，后面所有人都在这份诊断上做文章。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card concept">
+      <div class="label">祛魅：梦醒时分<button class="glossary-trigger" onclick="openModal('disenchant')">?</button></div>
+      <p>世界不再充斥着不可计算的神秘力量。一切原则上都可以被认知、被预测、被操作。这是理性的胜利，但代价是：世界不再"自带意义"，它只是"如此这般"。</p>
+      <p>刘擎把祛魅称作"人类的梦醒时分"——醒了，就回不去。所以抵抗现代性的一切努力（怀旧、神秘主义、返魅）都只能是局部麻醉。</p>
+    </div>
+    <div class="info-card concept">
+      <div class="label">诸神之争：价值多元<button class="glossary-trigger" onclick="openModal('polytheism')">?</button></div>
+      <p>事实可以讲对错，价值不能。不同终极价值（自由 vs 平等、效率 vs 情义）之间没有共同的度量单位，理性无法裁决谁更高。</p>
+      <p>后果是双面的：它保护了多元与宽容，也让"我们该往哪走"永远无法靠论证解决，只能靠政治、传统或强力暂时落定。</p>
+    </div>
+    <div class="info-card core">
+      <div class="label">工具理性：手段吞掉目的<button class="glossary-trigger" onclick="openModal('instrumental')">?</button></div>
+      <p>工具理性只问"怎样最有效"，不问"这值不值得做"。它极其好用，于是不断扩张，把价值判断挤出决策现场。</p>
+      <p>最典型的现代病不是有人存心作恶，而是<strong>整条链条上每个人都在做"专业上正确"的事</strong>，最后结果荒谬。后面鲍曼讲大屠杀、阿伦特讲平庸之恶，都是这条线延长出来的。</p>
+    </div>
+    <div class="info-card core">
+      <div class="label">铁笼：制度化的工具理性<button class="glossary-trigger" onclick="openModal('ironcage')">?</button></div>
+      <p>工具理性不是靠观念统治人，而是靠制度：官僚制、科层考核、资本核算、法律程序。它一旦建成，个人反不反抗都没什么用。</p>
+      <p>韦伯那句断言因此格外冷：<em>"专家没有灵魂，纵欲者没有心肝；这个废物幻想着它自己已达到了前所未有的文明程度。"</em></p>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "专家没有灵魂，纵欲者没有心肝。"
+    <span class="qb-from">韦伯《新教伦理与资本主义精神》结尾 · 书中引用</span>
+  </div>
+</section>
+
+<section id="timeline">
+  <div class="sect-head"><span class="sect-num">02B</span><h2>时间轴 · 著作年表</h2></div>
+  <p class="lead">这本书按问题排，不按年代排，代价是读者容易失去时间感。下面这条轴是把十九人的代表作按出版年份摊开——看清它，就能看出一个规律：<strong>诊断总是先于方案，而方案总是晚一代人。</strong></p>
+
+  <div class="tl-track">
+    <div class="tl-node">
+      <div class="tl-era">1883—85</div>
+      <div class="tl-dot"></div>
+      <div class="tl-name">尼采</div>
+      <div class="tl-works"><em>《查拉图斯特拉如是说》</em><br>最早喊出价值坍塌，但当时几乎无人接住</div>
+    </div>
+    <div class="tl-node">
+      <div class="tl-era">1904—05</div>
+      <div class="tl-dot"></div>
+      <div class="tl-name">韦伯</div>
+      <div class="tl-works"><em>《新教伦理与资本主义精神》</em><br>把"现代"诊断成一套结构，而非一个时期</div>
+    </div>
+    <div class="tl-node">
+      <div class="tl-era">1930—45</div>
+      <div class="tl-dot"></div>
+      <div class="tl-name"><span class="nw">弗洛伊德</span> · <span class="nw">哈耶克</span> · <span class="nw">波普尔</span></div>
+      <div class="tl-works"><em>《文明及其不满》1930</em><br><em>《通往奴役之路》1944</em><br><em>《开放社会及其敌人》1945</em></div>
+    </div>
+    <div class="tl-node">
+      <div class="tl-era">1958—64</div>
+      <div class="tl-dot"></div>
+      <div class="tl-name"><span class="nw">阿伦特</span> · <span class="nw">伯林</span> · <span class="nw">马尔库塞</span></div>
+      <div class="tl-works"><em>《人的境况》1958</em><br><em>《两种自由概念》1958</em><br><em>《单向度的人》1964</em></div>
+    </div>
+    <div class="tl-node">
+      <div class="tl-era">1971—83</div>
+      <div class="tl-dot"></div>
+      <div class="tl-name">罗尔斯一系</div>
+      <div class="tl-works"><em>《正义论》1971</em><br><em>《无政府、国家与乌托邦》1974</em><br><em>《正义诸领域》1983</em></div>
+    </div>
+    <div class="tl-node">
+      <div class="tl-era">1989—93</div>
+      <div class="tl-dot"></div>
+      <div class="tl-name"><span class="nw">鲍曼</span> · <span class="nw">福山</span> · <span class="nw">泰勒</span> · <span class="nw">亨廷顿</span></div>
+      <div class="tl-works"><em>《现代性与大屠杀》1989</em><br><em>《承认的政治》1992</em><br><em>《文明的冲突》1993</em></div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <span class="ic-label">从这条轴上能看出的三件事</span>
+    <strong>一、时差。</strong>韦伯 1905 年就写完了诊断，而"如何补救"的成体系方案要到 1971 年罗尔斯才出现——中间隔了六十多年，两代人。<strong>二、地域分工。</strong>1930—60 年代，德语区（弗洛伊德、阿伦特、马尔库塞）在追问"文明为什么会自我毁灭"；英语区（哈耶克、波普尔、伯林）在回答"如何防止它"。<strong>三、议题漂移。</strong>1989 年之后，问题从"制度怎么设计"转向"身份怎么被承认"——鲍曼、泰勒、亨廷顿都在处理这一转向，而这也是全书最接近当下的一段。
+  </div>
+</section>
+
+<section id="p1">
+  <div class="sect-head"><span class="sect-num">03</span><h2>战场一 · 没有答案，人怎么活</h2></div>
+  <p class="lead">韦伯只诊断不开方。第一批开方的人不约而同地把目光转向个体内部：既然外部世界不给意义，那就从生命本身、从无意识、从选择里榨出意义来。三个人的方子一个比一个激进。</p>
+
+  <div class="thinker-grid">
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">尼采<span class="tc-life">1844—1900</span></div>
+        <div class="tc-thesis">最高价值自行贬黜之后，人要么造价值，要么变成"末人"。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>"上帝死了"不是无神论宣言。</strong>它说的不是"天上没有神"，而是"以神为担保的那套价值等级已经塌了"。杀死它的不是无神论者，是基督教自身道德中长出的诚实。</li>
+        <li><strong>虚无主义有两种。</strong>消极的虚无主义承认"什么都没意义"然后躺平；积极的虚无主义承认旧价值已死，然后自己立法。尼采要的是后者。</li>
+        <li><strong>"超人"不是超级英雄。</strong>是能承担"创造价值"这件事的人；反面是"末人"——只求舒适、安全、不再渴望伟大的人。这一对照是全书最容易被当成鸡汤误读的地方。</li>
+        <li><strong>没有"共同真相"吗？</strong><button class="glossary-trigger" onclick="openModal('perspectivism')">?</button>视角主义主张不存在脱离一切视角的"上帝视角"。刘擎特意做了辨析：这不等于"怎么说都行"，因为视角有强弱之分——能容纳更多视角、解释更多现象的那个更强。</li>
+      </ul>
+      <div class="tc-quote">读法提示：尼采的危险不在于他说"没有真理"，而在于他的方案只对极少数人成立。这套哲学一旦下沉为大众口号，就是相对主义加自我崇拜。</div>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">弗洛伊德<span class="tc-life">1856—1939</span></div>
+        <div class="tc-thesis">人不是自己家的主人——理性只是冰山露出水面的那一角。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>宣告"理性人"的死亡。</strong>启蒙把人定义为理性动物，弗洛伊德指出：决定行为的绝大部分是无意识与本能的冲突，理性更像事后找理由的辩护人。</li>
+        <li><strong>文明是有代价的。</strong>文明靠压抑本能才得以建立，因此每个人身上都带着"文明带来的不适"。这是对"进步必然带来幸福"最直接的反驳。</li>
+        <li><strong>它到底算不算科学？</strong>关键在可证伪性<button class="glossary-trigger" onclick="openModal('falsify')">?</button>：精神分析的解释几乎什么都能解释，也就难以被推翻。刘擎没有替它辩护，也没有一脚踢开，而是把这个尴尬摆在那里——这恰好接上下一章波普尔的科学哲学。</li>
+      </ul>
+      <div class="tc-quote">注意这条暗线：弗洛伊德让"自我"变得不可靠，而"自己给自己立法"恰恰要求自我可靠。尼采的方子在这里第一次出现裂缝。</div>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">萨特<span class="tc-life">1905—1980</span></div>
+        <div class="tc-thesis">存在先于本质：你先被抛到这里，然后才成为什么。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>人被判定为自由。</strong>没有预先写好的本质，因此也没有"我本来就是这样"的豁免。你不选择，本身也是一种选择。</li>
+        <li><strong>自由是沉重的。</strong>因为自由与全责绑定：你做的每件事都在为"人应该怎样"提供一个样本。所以焦虑不是病，是自由的眩晕。</li>
+        <li><strong>"自欺"是最常见的逃避。</strong>把自己说成"性格如此""身不由己""角色要求"，就是把自由推给别人。萨特把这叫做不诚实，而不是可怜。</li>
+        <li><strong>"他人即地狱"被误读最多。</strong>它讲的不是人际关系恶劣，而是：他人的目光会把你凝固成一个对象、一个标签。人因此永远在"被看"与"自主"之间拉扯。</li>
+      </ul>
+      <div class="tc-quote">这一章的落点很硬：自由无法转让，但也无法独自完成。萨特把担子全压在个体身上，这恰恰是下一章——社会与制度层面——必须接手的地方。</div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <span class="ic-label">三张方子的共同副作用</span>
+    尼采、弗洛伊德、萨特都在个体内部找支点，都没有回答一个问题：<strong>如果每个人都能自己立法，人与人之间凭什么达成一致？</strong>而这个空缺，在二十世纪被另一种力量填上了——不是哲学家，是国家。
+  </div>
+</section>
+
+<section id="p2">
+  <div class="sect-head"><span class="sect-num">04</span><h2>战场二 · 善意为何做出恶</h2></div>
+  <p class="lead">第三章是全书最沉的一章。它处理的不是"坏人做坏事"，而是一个更难接受的命题：二十世纪最大的灾难，是受过良好教育、讲道理、按流程办事的人共同完成的。</p>
+
+  <div class="thinker-grid">
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">鲍曼<span class="tc-life">1925—2017</span></div>
+        <div class="tc-thesis">大屠杀不是现代性的失败，而是现代性的一次成功应用。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>不是疯狂，是分工。</strong>从识别、登记、运输到处置，每个环节只做一小段，没有人对"整体"负责。道德问题被拆解成技术问题。</li>
+        <li><strong>社会距离产生道德盲视。</strong>你按下按钮时看不到那张脸，责任就消失了。现代组织的一切设计（层级、文书、指标）都在加大这个距离。</li>
+        <li><strong>受害者也被"理性化"处理。</strong>把一部分人先划出"我们"的范围，剩下的残忍就变成行政事务。</li>
+      </ul>
+      <div class="tc-quote">与韦伯的关系：铁笼不是"限制自由"，而是"让恶变得可以日常执行"。这是全书对工具理性最重的一次落地。</div>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">阿伦特<span class="tc-life">1906—1975</span></div>
+        <div class="tc-thesis">平庸之恶：最极端的恶，可能由不思考的人完成。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>艾希曼不像恶魔。</strong>他像一枚勤勉的官僚，满口套话、按规章办事。阿伦特因此提出"恶的平庸性"<button class="glossary-trigger" onclick="openModal('banality')">?</button>——不是指恶很普通，而是指作恶可以不需要动机。</li>
+        <li><strong>核心是"无思"。</strong>停止从他人立场想象、停止追问"我在做什么"，人就成了可替换的齿轮。她后来把判断力看作抵抗的关键。</li>
+        <li><strong>这个说法争议极大。</strong>批评者认为它淡化了加害者的主动性，也可能让"思考"背上过重的负担。刘擎把这层争议写进去了，没有替她圆场。</li>
+      </ul>
+      <div class="tc-quote">与鲍曼互补：鲍曼讲结构如何让人不去想，阿伦特讲人如何自愿不去想。一个讲外部，一个讲内部。</div>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">波普尔<span class="tc-life">1902—1994</span></div>
+        <div class="tc-thesis">科学不是"被证实"，而是"尚未被推翻"；社会也一样。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>可证伪性<button class="glossary-trigger" onclick="openModal('falsify')">?</button>重划了科学的边界。</strong>一个理论的价值不在于能解释多少，而在于它敢不敢预言"什么情况下我错了"。永远正确的东西不是科学，是信念。</li>
+        <li><strong>反对"乌托邦工程"。</strong>整体改造社会需要预测全部后果，而知识永远不完整。可行的做法是"零星工程"：小步试、看结果、允许撤回。</li>
+        <li><strong>开放社会的方法论版本。</strong>不是"谁的理论对"，而是"如何让错误被发现并及时纠正"。制度的核心功能是纠错，而不是证明英明。</li>
+      </ul>
+      <div class="tc-quote">这一讲是全书的枢纽：他把"人类不能设计完美社会"从道德告诫变成了认识论结论。</div>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">哈耶克<span class="tc-life">1899—1992</span></div>
+        <div class="tc-thesis">秩序可以没有设计者；而"理性的自负"必然失败。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>知识是分散的。</strong>没有哪个中央机构能收集全部信息。价格之所以重要，是因为它把无数人的局部知识压缩成一个可以使用的信号。</li>
+        <li><strong>自发秩序<button class="glossary-trigger" onclick="openModal('spontaneous')">?</button>不是无政府。</strong>它是规则演化出来的复杂秩序，能处理远超任何设计者处理能力的信息量。</li>
+        <li><strong>"理性的自负"的危险。</strong>不是指某人狂妄，而是指一种方法论错误：认为社会可以被完整认知并整体重写。他由此推出《通往奴役之路》的核心论断。</li>
+      </ul>
+      <div class="tc-quote">与波普尔同源不同路：波普尔讲"不能全知所以不能全设"，哈耶克讲"不能全知所以必须留出试错空间"。两人共同构成对计划理性的双重否证。</div>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">伯林<span class="tc-life">1909—1997</span></div>
+        <div class="tc-thesis">价值不可通约；而"积极自由"随时可能翻转为专制。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>狐狸与刺猬。</strong>刺猬相信有一个统一答案把一切串起来，狐狸承认许多彼此冲突的价值。伯林站狐狸，并指出刺猬式的诱惑正是二十世纪灾难的思想源头。</li>
+        <li><strong>价值一元论错在哪。</strong>它假设所有好东西最终能排列成一个序列。但自由与平等、效率与情义、真理与慈悲之间，往往只能取舍，无法兼得。</li>
+        <li><strong>两种自由<button class="glossary-trigger" onclick="openModal('liberty')">?</button>的分野是全章核心。</strong>消极自由是"免于干涉"（没人拦我），积极自由是"自我主宰"（我按真我行事）。危险在于：一旦有人认为他比你更懂你的"真我"，就有理由替你做主。</li>
+      </ul>
+      <div class="tc-quote">伯林提供的是一把尺子而不是一个方案：判断一个政权，不看它宣称追求什么，看它是否承认"有些事不能做"。</div>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">马尔库塞<span class="tc-life">1898—1979</span></div>
+        <div class="tc-thesis">最牢固的统治不是压住你，是让你满意地不再想别的。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>"舒适的不自由"。</strong>发达工业社会用丰裕和便利换取了顺从。你没有感到被压迫，所以也不觉得需要反抗。</li>
+        <li><strong>虚假需求。</strong>被制造出来的欲望，把人的注意力引向可购买的东西，从而消耗掉本该用于公共生活的精力。</li>
+        <li><strong>单面人<button class="glossary-trigger" onclick="openModal('onedim')">?</button>。</strong>技术理性把否定性、批判性的那一维吸收掉了。反对意见可以被容忍，因为它已被预先安排在一个安全的位置上。</li>
+      </ul>
+      <div class="tc-quote">他与前五人的关系：鲍曼、阿伦特讲的是硬的暴力，马尔库塞讲的是软的顺从。前者靠恐惧，后者靠满足——后者更难识别，也更难反驳。</div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <span class="ic-label">这一章真正教会的事</span>
+    六个人给出了同一个警告的不同版本：<strong>灾难不需要恶人，只需要一批把判断交给流程、把责任交给上级、把目标交给指标的人。</strong>反过来，抵抗也不需要英雄，只需要有人坚持问"我在做什么"。
+  </div>
+</section>
+
+<section id="p3">
+  <div class="sect-head"><span class="sect-num">05</span><h2>战场三 · 什么才算公正</h2></div>
+  <p class="lead">第三章的结论是"必须给权力设限"，于是自由成了共识。但自由一旦成为共识，立刻分裂成两派：一派说自由要求再分配，一派说再分配本身就是不自由。这一章就是这场内战的战场。</p>
+
+  <div class="duel">
+    <div class="duel-side">
+      <div class="ds-name">罗尔斯</div>
+      <div class="ds-sub">正义即公平 · 33 讲</div>
+      <ul class="ds-list">
+        <li><strong>无知之幕<button class="glossary-trigger" onclick="openModal('veil')">?</button></strong>：设想你不知道自己会投胎成谁，此时你会同意怎样的规则？这样选出的规则才是公正的。</li>
+        <li><strong>差异原则<button class="glossary-trigger" onclick="openModal('difference')" aria-label="术语：差异原则">?</button></strong>：不平等只有在"最有利于最不利者"时才被允许。天赋是抽签结果，不能自动兑换成分配优势。</li>
+        <li><strong>他的目标</strong>：把自由与平等同时容纳——先保障基本自由，再让社会经济不平等接受这道检验。</li>
+      </ul>
+    </div>
+    <div class="vs">VS</div>
+    <div class="duel-side right">
+      <div class="ds-name">诺齐克</div>
+      <div class="ds-sub">持有正义 · 34 讲</div>
+      <ul class="ds-list">
+        <li><strong>正义看历史，不看结果。</strong>只要最初的获取正当、每一次转让自愿，那么无论最后多不平等，都是正当的。</li>
+        <li><strong>天赋属于个人。</strong>把天赋视为"集体资产"等于把人当工具。以"公平"为名征税，和强制劳动在性质上相邻。</li>
+        <li><strong>最小国家</strong>：国家只负责保护契约与安全，无权做分配。他的结论是罗尔斯式国家侵犯了人。</li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="lead">这场对决没有胜负，但把问题逼到了最锋利处：<strong>一个人得到的，多少算他挣的，多少算他碰巧赶上的？</strong>后面五个人各自从这条缝里切进去。</p>
+
+  <div class="thinker-grid">
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">德沃金<span class="tc-life">1931—2013</span></div>
+        <div class="tc-thesis">平等不是分东西，是"敏于志向、钝于禀赋"。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>平等关切与尊重</strong>是政治合法性的前提：政府必须对每个人同等关心，而不是同等对待。</li>
+        <li><strong>资源平等</strong>：因选择造成的差距可以保留，因运气（出身、天赋、疾病）造成的差距要补偿。这把罗尔斯与诺齐克的分歧重新切了一刀。</li>
+        <li><strong>难点</strong>：怎么区分"选择"与"运气"？一个人的偏好本身可能就是他成长环境的产物。</li>
+      </ul>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">桑德尔<span class="tc-life">1953—</span></div>
+        <div class="tc-thesis">无知之幕后面没有人——因为人不能脱离他的归属来思考。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>对罗尔斯的核心批评</strong>：一个剥离了家庭、历史、信仰的"自我"，不是真实的自我，只是一个抽象的计算者。</li>
+        <li><strong>构成性归属</strong>：有些责任不是我们选的，却构成了我们是谁（家庭、国家、历史）。所以"当代人需要为历史事件负责吗"的答案是：某种意义上，需要。</li>
+        <li><strong>代价</strong>：这条思路一旦推到极端，会与个人自由冲突，也可能被民族主义挪用。</li>
+      </ul>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">沃尔泽<span class="tc-life">1935—</span></div>
+        <div class="tc-thesis">正义是复数的：每个领域有自己该用的那把尺。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>复合平等</strong>：不追求所有人各方面都相等，而要求一个领域的优势不能自动兑换成另一个领域的优势（钱不能买选票、不能买健康）。</li>
+        <li><strong>"原子化的个人"是怎么诞生的</strong>：不是理论失误，是现代社会制度（市场、流动、福利国家）一步步造出来的。</li>
+        <li><strong>实用价值</strong>：这是全书最容易拿去做现实判断的一条——看一个社会是否公正，先看有没有"领域通兑"。</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="thinker-grid two">
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">泰勒<span class="tc-life">1931—</span></div>
+        <div class="tc-thesis">"成为你自己"不是关起门来自恋，而是在有意义的视野里对话。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>本真性<button class="glossary-trigger" onclick="openModal('authenticity')" aria-label="术语：本真性">?</button>有道德分量</strong>：它不只是"想怎样就怎样"，而是一种要求——对自己真实。</li>
+        <li><strong>意义的视野</strong>：自我只能在有背景框架的情况下被定义。抽掉这个框架，"做自己"就退化成随波逐流。</li>
+        <li><strong>承认的政治<button class="glossary-trigger" onclick="openModal('recognition')">?</button></strong>：人的尊严部分来自被承认。这把文化认同、少数群体议题带进了自由主义内部。</li>
+      </ul>
+    </div>
+
+    <div class="thinker-card">
+      <div class="tc-head">
+        <div class="tc-name">哈贝马斯<span class="tc-life">1929—</span></div>
+        <div class="tc-thesis">合法性不来自传统或强力，来自"可以不被强制地达成同意"。</div>
+      </div>
+      <ul class="tc-points">
+        <li><strong>交往理性<button class="glossary-trigger" onclick="openModal('communicative')" aria-label="术语：交往理性">?</button></strong>：理性不只有工具那一维。人在交谈中会提出三种有效性主张——真实、正当、真诚。</li>
+        <li><strong>公共领域</strong>：一个介于国家与私人之间的空间，靠说理而不是靠权力运作。它的健康程度决定民主的质量。</li>
+        <li><strong>程序主义</strong>：不预先规定好生活的答案，只规定"怎样达成答案"的程序。这是对"诸神之争"的最终回应——承认无共识，但保证共存。</li>
+      </ul>
+      <div class="tc-quote">与韦伯闭环：韦伯说价值无法用理性裁决，哈贝马斯说——那我们至少可以用理性约定"裁决的方式"。</div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <span class="ic-label">这一章的隐含结论</span>
+    自由主义之所以不断遭到挑战，不是因为它错，而是因为它<strong>把最难的问题留给了自己</strong>：它同时许诺自由、平等、多元，而这三者在具体分配时必然互相拉扯。批判者不是外人，多数是它自己阵营里的人。
+  </div>
+</section>
+
+<section id="p4">
+  <div class="sect-head"><span class="sect-num">06</span><h2>战场四 · 世界会走向哪里</h2></div>
+  <p class="lead">尾声两讲是全书最短、也最快过时的一段。1990 年代的两个预言，今天回看，一个被现实部分证伪，一个被现实部分验证，而两者都错在同一件事上：把"文明"当成了单一的、有边界的实体。</p>
+
+  <div class="duel">
+    <div class="duel-side">
+      <div class="ds-name">福山</div>
+      <div class="ds-sub">历史终结论 · 41 讲<button class="glossary-trigger" onclick="openModal('endhistory')" aria-label="术语：历史终结论">?</button></div>
+      <ul class="ds-list">
+        <li><strong>他说的"终结"不是"没有事件了"</strong>，而是意识形态演化的终点：自由民主是唯一还能提供"被承认"的方案。</li>
+        <li><strong>论证靠的是"承认的斗争"</strong>：人不仅要活，还要被当作平等的主体对待，这个需求只有自由民主能长期满足。</li>
+        <li><strong>他自己后来也退了</strong>：政治衰败、中产阶级萎缩、身份政治，都写进了后续著作。书里这一讲按 1992 年的原意讲，没有替他补。</li>
+      </ul>
+    </div>
+    <div class="vs">VS</div>
+    <div class="duel-side right">
+      <div class="ds-name">亨廷顿</div>
+      <div class="ds-sub">文明冲突论 · 42 讲<button class="glossary-trigger" onclick="openModal('clash')" aria-label="术语：文明冲突论">?</button></div>
+      <ul class="ds-list">
+        <li><strong>冲突线移位</strong>：冷战后的主要断裂带不在意识形态，而在文明（宗教—文化）边界。</li>
+        <li><strong>他的预测力来自一个朴素观察</strong>：人对自己是谁的答案，越来越从宗教与语言里找，而不是从政体里找。</li>
+        <li><strong>最重的批评</strong>：把文明本质化、当成铁板一块的行动者，忽略了文明内部的巨大分裂与相互渗透。这套框架也容易被用来为对抗提供借口。</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <span class="ic-label">两讲之后刘擎自己提的问题</span>
+    结语（43 讲）没有给答案，只给了一个判断：<strong>我们可能正处在一个"历史转折点"上，但转折点长什么样，要等它过去才知道。</strong>这句话不是敷衍，而是全书方法的一致——不给终局，只给坐标。
+  </div>
+</section>
+
+<section id="index">
+  <div class="sect-head"><span class="sect-num">07</span><h2>十九人索引</h2></div>
+  <p class="lead">这张表是全书的压缩版，也是复习时最该用的一页：讲次、人名、关键词、他真正回答的那个问题。</p>
+  <table class="matrix">
+    <thead>
+      <tr><th>讲次</th><th>思想家</th><th>关键词</th><th>他真正回答的问题</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>05—08</td><td><span class="who">韦伯</span></td><td>祛魅 / 诸神之争 / 工具理性 / 铁笼</td><td>现代性到底是什么，它的代价是什么</td></tr>
+      <tr><td>10—12</td><td><span class="who">尼采</span></td><td>上帝死了 / 超人 / 视角主义</td><td>价值崩塌之后，人凭什么创造价值</td></tr>
+      <tr><td>13—14</td><td><span class="who">弗洛伊德</span></td><td>无意识 / 文明的不适 / 可证伪性</td><td>人真的能理性地主宰自己吗</td></tr>
+      <tr><td>15—17</td><td><span class="who">萨特</span></td><td>存在先于本质 / 自欺 / 他人即地狱</td><td>自由为什么是一种负担</td></tr>
+      <tr><td>19</td><td><span class="who">鲍曼</span></td><td>大屠杀与现代性 / 社会距离</td><td>现代组织为什么会生产恶</td></tr>
+      <tr><td>20—21</td><td><span class="who">阿伦特</span></td><td>平庸之恶 / 无思 / 判断力</td><td>不作恶需要什么能力</td></tr>
+      <tr><td>22—23</td><td><span class="who">波普尔</span></td><td>可证伪性 / 开放社会 / 零星工程</td><td>为什么不能设计完美社会</td></tr>
+      <tr><td>24—25</td><td><span class="who">哈耶克</span></td><td>自发秩序 / 分散知识 / 理性的自负</td><td>没有设计者，秩序如何可能</td></tr>
+      <tr><td>26—28</td><td><span class="who">伯林</span></td><td>狐狸与刺猬 / 价值多元 / 两种自由</td><td>自由为什么会反过来压迫人</td></tr>
+      <tr><td>29—31</td><td><span class="who">马尔库塞</span></td><td>舒适的不自由 / 单面人 / 虚假需求</td><td>为什么被统治的人不反抗</td></tr>
+      <tr><td>33</td><td><span class="who">罗尔斯</span></td><td>无知之幕 / 差异原则</td><td>什么样的不平等是可以接受的</td></tr>
+      <tr><td>34</td><td><span class="who">诺齐克</span></td><td>持有正义 / 最小国家</td><td>再分配是否侵犯了人</td></tr>
+      <tr><td>35</td><td><span class="who">德沃金</span></td><td>资源平等 / 敏于志向钝于禀赋</td><td>运气造成的差距该不该补</td></tr>
+      <tr><td>36</td><td><span class="who">桑德尔</span></td><td>社群主义 / 构成性归属</td><td>人能不能脱离归属来思考公正</td></tr>
+      <tr><td>37</td><td><span class="who">沃尔泽</span></td><td>复合平等 / 领域正义</td><td>一种优势能否通兑所有领域</td></tr>
+      <tr><td>38</td><td><span class="who">泰勒</span></td><td>本真性 / 承认的政治</td><td>"做自己"为什么会变成自恋</td></tr>
+      <tr><td>39</td><td><span class="who">哈贝马斯</span></td><td>交往理性 / 公共领域 / 程序主义</td><td>没有共识，社会靠什么维持</td></tr>
+      <tr><td>41</td><td><span class="who">福山</span></td><td>历史终结论 / 承认的斗争</td><td>自由民主是不是终点</td></tr>
+      <tr><td>42</td><td><span class="who">亨廷顿</span></td><td>文明冲突 / 断裂带</td><td>未来的冲突会沿哪条线发生</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="method">
+  <div class="sect-head"><span class="sect-num">08</span><h2>刘擎的写法：这门课真正的技术</h2></div>
+  <p class="lead">这本书能卖成畅销书，靠的不是知识点，是三个写法上的决定。看懂这三点，比记住十九个人名有用得多。</p>
+
+  <div class="info-grid">
+    <div class="info-card mechanism">
+      <div class="label">一、先给命题，再给论证</div>
+      <p>每一讲标题本身就是一个判断句："为什么说'祛魅'是人类的梦醒时分""'理性的自负'为什么很危险"。标题已经把结论摆出来，正文负责撑住它。</p>
+      <p>结果是：读者不会读完不知道讲了什么。代价是：那些无法压缩成一句话的复杂性，被压掉了。</p>
+    </div>
+    <div class="info-card mechanism">
+      <div class="label">二、把概念翻成可感的意象</div>
+      <p>铁笼、单面人、平庸之恶、无知之幕、舒适的不自由——这些不是装饰，是<strong>认知脚手架</strong>。一个抽象命题一旦有了画面，就能被记住、被转述、被拿去用。</p>
+      <p>这也是"讲义体"相对论文的优势：它优先保证你能带走，而不是保证精确。</p>
+    </div>
+    <div class="info-card mechanism">
+      <div class="label">三、在每章结尾留下代价</div>
+      <p>刘擎几乎从不把某位思想家讲成"正确答案"。他说完方案，一定补一句这个方案的副作用，然后指出下一章要处理它。</p>
+      <p>于是全书读起来像一场接力，而不是十九座雕像。这是他作为作者最克制、也最值得学的地方。</p>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "思想不惑，精神明亮。"
+    <span class="qb-from">本书宣传语 · 非正文原句</span>
+  </div>
+</section>
+
+<section id="laws">
+  <div class="sect-head"><span class="sect-num">09</span><h2>七条贯穿判断</h2></div>
+  <p class="lead">以下七条是我从全书抽出来的结构性判断，不是刘擎的原话，但每一条都能在书里找到落地处。</p>
+  <div class="law-grid">
+    <div class="law-card">
+      <span class="lw-idx">LAW 01</span>
+      <div class="lw-title">现代性不是一个时期，是一套"自己给自己立法"的结构</div>
+      <p>所以"传统 vs 现代"不是时间先后，而是合法性来源的区别：从外部（神、自然、祖训）转到内部（理性、同意、契约）。</p>
+    </div>
+    <div class="law-card">
+      <span class="lw-idx">LAW 02</span>
+      <div class="lw-title">多数现代困境是同一个动作的副产品：把"好不好"换成"有没有效"</div>
+      <p>韦伯的工具理性、鲍曼的分工、阿伦特的无思、马尔库塞的技术理性，都是这一个动作在不同尺度上的结果。</p>
+    </div>
+    <div class="law-card">
+      <span class="lw-idx">LAW 03</span>
+      <div class="lw-title">思想家的分歧，多半不在价值，而在"人是什么"这个前提</div>
+      <p>罗尔斯假设人能剥离归属来计算，桑德尔说不能；诺齐克假设天赋属于个人，罗尔斯说那是抽签。前提一换，结论全变。</p>
+    </div>
+    <div class="law-card">
+      <span class="lw-idx">LAW 04</span>
+      <div class="lw-title">二十世纪的灾难不是理性缺席，是理性只在一维上运转</div>
+      <p>每个环节都"科学"，整体却荒谬。这是全书最实用的一条诊断工具，今天可以直接拿去审视任何一套流程。</p>
+    </div>
+    <div class="law-card">
+      <span class="lw-idx">LAW 05</span>
+      <div class="lw-title">自由的两难：消极自由保安全但空，积极自由给意义但危险</div>
+      <p>伯林给的这把尺子，后来成了全书判断政治现象的默认工具：看它是否承认"有些事不能做"。</p>
+    </div>
+    <div class="law-card">
+      <span class="lw-idx">LAW 06</span>
+      <div class="lw-title">公正之争的实质，是"应得"的三个来源怎么分</div>
+      <p>天赋（抽签）、努力（选择）、运气（环境）。罗尔斯压低第一项，诺齐克抬高第二项，德沃金想精确切开前两项与第三项。</p>
+    </div>
+    <div class="law-card span-all">
+      <span class="lw-idx">LAW 07 · 总纲</span>
+      <div class="lw-title">这本书的方法比结论更值钱</div>
+      <p>它示范了一件事：把任何断言还原成"他的前提是什么、他排除了什么"，你就已经能自己判断它站不站得住。</p>
+    </div>
+  </div>
+</section>
+
+<section id="critique">
+  <div class="sect-head"><span class="sect-num">10</span><h2>局限：这本书没做的六件事</h2></div>
+  <p class="lead">讲义体的长处是清楚，短处也来自清楚。以下六条不是挑刺，是读它时要自己补的缺口。</p>
+
+  <div class="critique-block">
+    <ol>
+      <li><strong>简化是结构性的，不是偶然的。</strong>每人两到三讲，等于把一部著作压成一个论证骨架。罗尔斯的《正义论》五百多页，书里只有一讲；读它可以建立地图，但不能替代读原著。</li>
+      <li><strong>选人有明显偏向。</strong>十九人里德语区 + 政治哲学占绝对多数。分析哲学传统（维特根斯坦、罗素、蒯因）几乎缺席，现象学（胡塞尔、海德格尔）只作背景，结构主义与后结构主义（列维-斯特劳斯、德里达、福柯）基本没有独立席位——而福柯对"现代性"的批判力度，不下于书中任何一位。</li>
+      <li><strong>时间窗停在 2019 年前后。</strong>民粹主义回潮、平台资本主义、算法治理、气候政治、AI 对"人的独特性"的冲击，都没进框架。尾声那两个预言（福山、亨廷顿）在今天就已明显变形，而书里没有更新机制。</li>
+      <li><strong>"路标式"叙述有柔化效应。</strong>把学说整理成"他问了什么、答了什么"，容易让读者以为这些人在温和对话。实际上伯林对积极自由的敌意、哈耶克对计划者的敌意、马尔库塞对自由主义的敌意，都是真刀真枪的。</li>
+      <li><strong>本土例子是双刃。</strong>用中国读者熟悉的场景降低门槛非常有效，但个别地方例子替代了论证：读者点头是因为例子熟悉，而不是因为论证成立。</li>
+      <li><strong>性别与后殖民视角缺席。</strong>波伏娃、巴特勒、萨义德、斯皮瓦克这一整条线没有位置。而"谁被算作思想大家"本身就是这本书未曾反思的前提。</li>
+    </ol>
+  </div>
+</section>
+
+<section id="extend">
+  <div class="sect-head"><span class="sect-num">11</span><h2>延伸与对照</h2></div>
+  <p class="lead">如果想继续往下走，按"补哪一块缺口"来选，比按"哪本更有名"来选有效得多。</p>
+  <table class="extension">
+    <thead>
+      <tr><th>读什么</th><th>补的是哪块</th><th>读它的代价</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>罗素《西方哲学史》</td><td>时间轴。这本书按问题排，罗素按年代排，两者互补</td><td>罗素个人偏见极重，且哲学史写法已过时</td></tr>
+      <tr><td>桑德尔《公正》</td><td>同一批议题的课堂版，案例密度远高于本书</td><td>立场偏社群主义，对自由主义不够公平</td></tr>
+      <tr><td>马尔库塞《单向度的人》</td><td>把"舒适的不自由"读完整，讲义只给了骨架</td><td>1964 年的语境，需要自行翻译到平台经济</td></tr>
+      <tr><td>罗尔斯《正义论》</td><td>无知之幕与差异原则的完整论证</td><td>极难读，建议先读本书第 33 讲再进</td></tr>
+      <tr><td>福柯《规训与惩罚》</td><td>本书缺席的那条批判线：权力如何通过知识与制度塑造人</td><td>文风晦涩，且极易被误用为"一切都是权力"</td></tr>
+      <tr><td>吉登斯《现代性的后果》</td><td>把"现代性"当社会学问题而非哲学问题处理</td><td>比讲义枯燥，但结构更硬</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section id="hook">
+  <div class="sect-head"><span class="sect-num">12</span><h2>记忆钩子</h2></div>
+  <p class="lead">如果只能记四组东西，记这四组。</p>
+  <div class="hook-box">
+    <h3>四组锚点</h3>
+    <div class="hook-grid">
+      <div class="hook-item">
+        <span class="hi-k">一个诊断</span>
+        <div class="hi-v">韦伯四步：祛魅 → 诸神之争 → 工具理性 → 铁笼。世界失去意义，价值失去共识，手段吞掉目的，最后用制度把人锁住。</div>
+      </div>
+      <div class="hook-item">
+        <span class="hi-k">四次追问</span>
+        <div class="hi-v">怎么活（尼采·弗洛伊德·萨特）→ 为什么善意作恶（鲍曼·阿伦特·波普尔·哈耶克·伯林·马尔库塞）→ 什么算公正（七人）→ 世界去哪（福山 vs 亨廷顿）。</div>
+      </div>
+      <div class="hook-item">
+        <span class="hi-k">三把尺子</span>
+        <div class="hi-v">可证伪性（这是不是科学）、两种自由（这是不是胁迫）、领域通兑（这是不是不公）。三把尺子各管一类问题。</div>
+      </div>
+      <div class="hook-item">
+        <span class="hi-k">一句总纲</span>
+        <div class="hi-v">现代人得到了自由，代价是必须自己承担意义；而所有二十世纪的灾难，都发生在有人想替所有人承担这件事的时候。</div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-note">
+    《刘擎西方现代思想讲义》知识图谱 · 基于原书目录与章节要点整理，仅个人学习笔记。文中"七条贯穿判断""三重脱离"等提法为阅读归纳，非原书术语；引用韦伯语系书中转引。
+  </div>
+</section>
+
+</div>
+
+<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部">↑</button>
+
+<div class="modal-mask" id="modalMask" onclick="if(event.target===this)closeModal()">  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const glossary = {
+  disenchant: {
+    t: "祛魅（Entzauberung）",
+    d: "指现代科学理性把世界从「充满神秘力量」变成「可按因果计算」的过程。世界因此变得可控，但也失去了内在的意义与神圣性——韦伯称之为「梦醒时分」。"
+  },
+  polytheism: {
+    t: "诸神之争",
+    d: "韦伯的比喻，指价值领域的多元冲突：不同终极价值（自由、平等、信仰、效率）各有其「神」，彼此之间无法用同一个理性标准裁决高下。事实有对错，价值只能选择。"
+  },
+  instrumental: {
+    t: "工具理性 / 价值理性",
+    d: "工具理性只计算手段是否有效，不问目的是否值得；价值理性则追问行动本身的意义。韦伯认为现代性的核心问题是工具理性不断扩张，把价值判断挤出决策现场。"
+  },
+  ironcage: {
+    t: "现代的铁笼",
+    d: "韦伯对现代处境的比喻：官僚制、资本核算、法律程序把工具理性制度化，形成一套个人无法反抗的结构。笼中人可以很富足、很专业，却不再追问意义。"
+  },
+  perspectivism: {
+    t: "视角主义",
+    d: "尼采的立场：不存在脱离一切视角的「上帝视角」，一切认识都从某个角度看。刘擎强调这不等于相对主义——视角仍有强弱，能容纳更多视角的那个更强。"
+  },
+  falsify: {
+    t: "可证伪性",
+    d: "波普尔提出的科学划界标准：一个理论要算科学，必须能说出「什么情况下它会被推翻」。永远无法被反驳的陈述，不是更强的知识，而是信念。"
+  },
+  banality: {
+    t: "平庸之恶",
+    d: "阿伦特在艾希曼审判后提出的概念。它不等于「恶很普通」，而是指：最极端的恶可以不来自邪恶动机，而来自不思考、只按规章办事的官僚心态。"
+  },
+  spontaneous: {
+    t: "自发秩序",
+    d: "哈耶克的核心概念：秩序可以不依靠中央设计，而由无数个体遵循规则互动演化出来。它之所以有效，是因为能利用分散在无数人手中的局部知识。"
+  },
+  liberty: {
+    t: "消极自由 / 积极自由",
+    d: "伯林的分野：消极自由是「没有外部干涉」（免于……的自由）；积极自由是「自我主宰」（去做……的自由）。危险在于，一旦有人宣称比你更懂你的「真我」，积极自由就可以变成替你做主的理由。"
+  },
+  veil: {
+    t: "无知之幕",
+    d: "罗尔斯的思想实验：设想你在不知道自己会是谁（天赋、出身、阶层）的情况下商定社会规则。因为无法为自己量身定制，选出的规则才可能是公正的。"
+  },
+  recognition: {
+    t: "承认的政治",
+    d: "泰勒等人的议题：人的尊严部分来自被他人与社会承认。这一视角把文化认同、少数群体、身份政治带进自由主义内部，也构成对「只要不干涉就公平」的批评。"
+  },
+  onedim: {
+    t: "单面人",
+    d: "马尔库塞的概念：发达工业社会用技术理性与消费满足，把人的否定性、批判性维度吸收掉，只剩下顺从的一面。反对意见仍被允许，但已被安置在无害的位置上。"
+  },
+  difference: {
+    t: "差异原则",
+    d: "罗尔斯正义第二原则的组成部分：社会与经济的不平等，只有在「最有利于最不利者」并且「机会公平开放」的条件下才被允许。它把「平等」从结果均分改写为「任何不平等都要向处境最差者交代」。"
+  },
+  communicative: {
+    t: "交往理性",
+    d: "哈贝马斯的核心概念：理性不只体现在「手段是否有效」，也体现在「能否在不受强制的前提下达成理解」。一次真正的交谈会同时提出三种有效性主张——陈述真实、规范正当、表达真诚；对方可以逐一质疑。"
+  },
+  authenticity: {
+    t: "本真性（本己性）",
+    d: "泰勒讨论的伦理要求：对自己真实，而不是照着别人的期待活。但他强调这不是自恋式的「想怎样就怎样」——本真性只有在有意义的视野（语言、传统、他人的承认）中才成立，抽掉背景就退化为随波逐流。"
+  },
+  endhistory: {
+    t: "历史终结论",
+    d: "福山 1989 年论文、1992 年成书的判断：不是「不再有事件发生」，而是意识形态演化的终点已现——自由民主是唯一还能在原则上满足「人被平等承认」这一需求的政体。他本人后来在《政治秩序与政治衰败》中大幅修正了这一判断。"
+  },
+  clash: {
+    t: "文明冲突论",
+    d: "亨廷顿 1993 年提出的框架：冷战后主要的断裂带不在意识形态，而在宗教—文化构成的文明边界。批评集中在两点：把文明本质化为铁板一块的行动者；忽略文明内部的撕裂与相互渗透。"
+  }
+};
+
+function openModal(key) {
+  const item = glossary[key];
+  if (!item) return;
+  document.getElementById("modalTitle").textContent = item.t;
+  document.getElementById("modalBody").textContent = item.d;
+  document.getElementById("modalMask").classList.add("show");
+}
+function closeModal() {
+  document.getElementById("modalMask").classList.remove("show");
+}
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Escape") closeModal();
+});
+
+// 侧栏滚动高亮
+(function () {
+  var links = document.querySelectorAll(".sidebar a[href^='#']");
+  var items = [];
+  links.forEach(function (l) {
+    var el = document.getElementById(l.getAttribute("href").slice(1));
+    if (el) items.push({ link: l, el: el });
+  });
+  function sync() {
+    var y = window.scrollY + 140, cur = null;
+    for (var i = items.length - 1; i >= 0; i--) {
+      if (items[i].el.offsetTop <= y) { cur = items[i].link; break; }
+    }
+    links.forEach(function (l) { l.classList.toggle("active", l === cur); });
+  }
+  window.addEventListener("scroll", sync);
+  sync();
+})();
+
+// 返回顶部
+(function () {
+  var btn = document.getElementById("toTop");
+  window.addEventListener("scroll", function () {
+    btn.classList.toggle("show", window.scrollY > 500);
+  });
+})();
+</script>
+</body>
+</html>
