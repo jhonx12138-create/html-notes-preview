@@ -328,7 +328,75 @@ if (imgOpened) {
   ok('图片笔记时字号按钮置灰', false, '同上');
 }
 
-console.log('\n=== ⑦ 控制台 ===');
+console.log('\n=== ⑦ 删除后回到列表并提示 ===');
+/* headless 里 touchstart+touchEnd 会额外合成一次 click，长按菜单刚开就被关掉，
+   所以这里切到桌面视口，用「右键 → 删除」这条入口，走的是同一个 deleteNoteById。 */
+await p.setViewport({ width: 1280, height: 900, deviceScaleFactor: 1 });
+await sleep(1000);
+
+const firstId = await p.evaluate(() => {
+  const c = document.querySelector('.book-card');
+  if (!c) return null;
+  c.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  return c.dataset.id;
+});
+await sleep(1600);
+const openedDesk = await p.evaluate(() => document.getElementById('previewTitle').textContent);
+ok('桌面端能打开笔记（复现前提）', !!openedDesk && openedDesk !== '选择一篇笔记', openedDesk);
+
+await p.evaluate((id) => {
+  const c = document.querySelector(`.book-card[data-id="${id}"]`);
+  c.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+}, firstId);
+await sleep(600);
+const sheetOk = await p.evaluate(() => !!document.querySelector('[data-as-action="delete"]'));
+ok('右键能开出操作面板', sheetOk, String(sheetOk));
+
+if (sheetOk) {
+  await p.evaluate(() => document.querySelector('[data-as-action="delete"]').click());
+  await sleep(600);
+  const confirmShown = await p.evaluate(() => !document.getElementById('confirmModal').classList.contains('hidden'));
+  await p.evaluate(() => document.getElementById('confirmModalOk').click());
+  await sleep(1200);
+  const afterDel = await p.evaluate(() => ({
+    previewTitle: document.getElementById('previewTitle').textContent,
+    activeCards: document.querySelectorAll('.book-card.active').length,
+    toast: (document.querySelector('.toast') || {}).textContent || '',
+  }));
+  ok('确认弹窗出现', confirmShown, String(confirmShown));
+  ok('删除后回到列表（右侧不再自动打开别的笔记）', afterDel.previewTitle === '选择一篇笔记' && afterDel.activeCards === 0, JSON.stringify(afterDel));
+  ok('删除后有「已删除」提示', /已删除/.test(afterDel.toast), afterDel.toast);
+}
+
+// 移动端：正在读这篇的时候把它删掉，全屏阅读层要一起收起
+await p.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+await sleep(1000);
+const mId = await p.evaluate(() => {
+  const c = document.querySelector('.book-card');
+  if (!c) return null;
+  c.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  return c.dataset.id;
+});
+await sleep(2000);
+const mOverlayOpen = await p.evaluate(() => !document.getElementById('previewOverlay').classList.contains('hidden'));
+await p.evaluate((id) => {
+  const c = document.querySelector(`.book-card[data-id="${id}"]`);
+  c.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, cancelable: true }));
+}, mId);
+await sleep(500);
+await p.evaluate(() => document.querySelector('[data-as-action="delete"]').click());
+await sleep(500);
+await p.evaluate(() => document.getElementById('confirmModalOk').click());
+await sleep(1300);
+const mAfter = await p.evaluate(() => ({
+  overlayHidden: document.getElementById('previewOverlay').classList.contains('hidden'),
+  navVisible: document.querySelector('.bottom-nav') ? getComputedStyle(document.querySelector('.bottom-nav')).display !== 'none' : true,
+  toast: (document.querySelector('.toast') || {}).textContent || '',
+}));
+ok('移动端删除当前笔记后阅读层收起', mOverlayOpen && mAfter.overlayHidden, JSON.stringify(mAfter));
+ok('移动端删除后底部导航恢复', mAfter.navVisible, String(mAfter.navVisible));
+
+console.log('\n=== ⑧ 控制台 ===');
 ok('无页面报错', errors.length === 0, errors.slice(0, 2).join(' | '));
 
 await browser.close();

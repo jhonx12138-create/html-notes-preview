@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.14.0</title>
+<title>📚 书阁 v8.14.1</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -518,7 +518,7 @@ html, body {
 /* ========== Hero Picker (v8.13) ==========
    首页头图和分享图头图分开设。分享图那行多一个「同」= 跟随首页。
    缩略图用 background-image，选中的加一圈 accent 描边。
-   v8.14.0：内置头图扩到 5 张，一行塞不下 6~7 个（li 内容宽只有 ~302px），
+   v8.14.1：内置头图扩到 5 张，一行塞不下 6~7 个（li 内容宽只有 ~302px），
    所以标签固定、缩略图区横向滑动——和系统相册选图一样，右侧露出半个就是可滑的提示。 */
 .hero-picks { display: flex; flex-direction: column; gap: 9px; flex: 1 1 auto; min-width: 0; }
 /* 头图这一项：标签单独一行，两排缩略图在下面占满宽度（横着塞 label+选择器在小屏会挤）。
@@ -1516,7 +1516,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.14.0</span>
+        <span class="hero-version">v8.14.1</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1542,7 +1542,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.14.0</span>
+              <span class="hero-version">v8.14.1</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1680,11 +1680,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.14.0</span>
+                <span class="setting-value">v8.14.1</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.14.0</div>
+              <div class="about-version">📚 书阁 v8.14.1</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2355,8 +2355,17 @@ html, body {
           saveEdits(edits);
         }
         else { await DB.delete(noteId); STATE.userNotesIndex = STATE.userNotesIndex.filter(n => n.id !== noteId); saveUserNotesIndex(); }
-        if (STATE.selectedId === noteId) { mergeNotes(); STATE.notes.length ? showPreview(STATE.notes[0]) : showWelcome(); }
-        else { mergeNotes(); refreshCurrentView(); }
+        /* v8.14.1：删掉的正是当前打开的那篇时，回到列表页并提示。
+           原来这里是 showPreview(STATE.notes[0])，删完会顺手把第一篇打开，
+           看起来就像"没退出去、还跳进了另一本"。 */
+        const wasCurrent = (STATE.selectedId === noteId);
+        mergeNotes();
+        if (wasCurrent) {
+          if (STATE.isMobile) closePreviewOverlay();   // 移动端收起全屏阅读层
+          showWelcome();                               // 桌面端右侧回到占位，同时清 selectedId
+        }
+        refreshCurrentView();
+        showToast('已删除「' + note.title + '」');
       } catch(err) { console.error(err); showToast('删除失败：'+err.message); }
     });
   }
