@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.13.3</title>
+<title>📚 书阁 v8.14.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -518,7 +518,7 @@ html, body {
 /* ========== Hero Picker (v8.13) ==========
    首页头图和分享图头图分开设。分享图那行多一个「同」= 跟随首页。
    缩略图用 background-image，选中的加一圈 accent 描边。
-   v8.13.3：内置头图扩到 5 张，一行塞不下 6~7 个（li 内容宽只有 ~302px），
+   v8.14.0：内置头图扩到 5 张，一行塞不下 6~7 个（li 内容宽只有 ~302px），
    所以标签固定、缩略图区横向滑动——和系统相册选图一样，右侧露出半个就是可滑的提示。 */
 .hero-picks { display: flex; flex-direction: column; gap: 9px; flex: 1 1 auto; min-width: 0; }
 /* 头图这一项：标签单独一行，两排缩略图在下面占满宽度（横着塞 label+选择器在小屏会挤）。
@@ -716,6 +716,16 @@ html, body {
 .preview-overlay .overlay-body iframe { width: 100%; height: 100%; border: none; background: #fff; }
 #overlayBodyContent { width: 100%; height: 100%; }
 
+/* ========== v8.14 图片 / PDF 笔记 ==========
+   图片按容器宽度铺满、可纵向滚动；PDF 交给原生 viewer，灰底是 Chrome 阅读器同色，
+   避免加载瞬间闪白。 */
+.img-note {
+  width: 100%; height: 100%; overflow: auto; -webkit-overflow-scrolling: touch;
+  background: #fff; padding: 14px; box-sizing: border-box;
+}
+.img-note img { display: block; width: 100%; height: auto; border-radius: 3px; }
+.pdf-note { width: 100%; height: 100%; border: 0; display: block; background: #525659; }
+
 .preview-overlay.landscape .overlay-header {
   display: flex; position: fixed; top: max(12px, env(safe-area-inset-top, 12px));
   left: 50%; transform: translateX(-50%);
@@ -764,27 +774,43 @@ html, body {
 
 /* ========== 移动端阅读增强 (v8.5.0) ========== */
 /* ---- P0-1 字号调节面板 ---- */
-#fontPanel {
+/* ---- v8.14：字号 / 亮度面板，共用样式，都改成拖动滑块 ---- */
+#fontPanel, #brightnessPanel {
   display: none; position: absolute; z-index: 530;
   top: calc(var(--header-h, 63px) + 8px); right: 12px;
-  flex-direction: column; gap: 10px; padding: 12px;
+  flex-direction: column; gap: 8px; padding: 12px 14px;
+  width: 220px; box-sizing: border-box;
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius-md); box-shadow: var(--shadow-lg);
 }
-#fontPanel.show { display: flex; }
-#fontPanel .font-panel-row { display: flex; align-items: center; gap: 8px; }
-.font-panel-btn {
-  min-width: 46px; height: 38px; padding: 0 10px;
-  border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-  background: var(--bg-page); color: var(--text-secondary);
-  font-size: 0.9rem; font-weight: 600; font-family: inherit; line-height: 1;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: all var(--transition);
+#fontPanel.show, #brightnessPanel.show { display: flex; }
+.panel-row { display: flex; align-items: center; gap: 9px; }
+.panel-end { font-size: 12px; color: var(--text-muted); flex-shrink: 0; line-height: 1; }
+.panel-end-lg { font-size: 15px; font-weight: 600; }
+.panel-range {
+  -webkit-appearance: none; appearance: none;
+  flex: 1; height: 4px; border-radius: 2px; margin: 0;
+  background: var(--border); outline: none; cursor: pointer;
 }
-.font-panel-btn:hover:not(:disabled) { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
-.font-panel-btn:disabled { opacity: 0.38; cursor: not-allowed; }
-#fontLevelText { flex: 1; text-align: center; font-size: 0.9rem; font-weight: 600; color: var(--text-primary); }
-#fontResetBtn { width: 100%; }
+.panel-range::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg-card);
+  box-shadow: 0 1px 4px rgba(0,0,0,.22); cursor: pointer;
+}
+.panel-range::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg-card);
+  box-shadow: 0 1px 4px rgba(0,0,0,.22); cursor: pointer;
+}
+.panel-val { text-align: center; font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+
+/* 亮度遮罩：只压暗正文，不拦截滚动与点击 */
+#dimLayer {
+  position: absolute; inset: 0; background: #000; opacity: 0;
+  pointer-events: none; z-index: 40; transition: opacity .12s linear;
+}
+.overlay-tool-btn:disabled { opacity: .34; cursor: default; }
 
 /* ---- P0-2 预览加载态 ---- */
 #overlayLoading {
@@ -1475,7 +1501,7 @@ html, body {
 </svg>
 
 <!-- Hidden file input for upload -->
-<input type="file" id="uploadFileInput" accept=".html" style="display:none">
+<input type="file" id="uploadFileInput" accept=".html,.htm,image/*,application/pdf" style="display:none">
 <!-- Hidden file input for backup import (v8.6.2) -->
 <input type="file" id="importFileInput" accept=".zip,.json,application/zip,application/json" style="display:none">
 <!-- Hidden file input for avatar (v8.9.2) -->
@@ -1490,7 +1516,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.13.3</span>
+        <span class="hero-version">v8.14.0</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1516,7 +1542,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.13.3</span>
+              <span class="hero-version">v8.14.0</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1609,7 +1635,7 @@ html, body {
               </div>
             </div>
             <button class="btn-upload-submit" id="uploadSubmitBtn" disabled>上传笔记</button>
-            <div class="upload-hint">仅支持 .html 文件</div>
+            <div class="upload-hint">支持 .html、图片（jpg/png/webp/gif）、PDF</div>
           </div>
         </div>
       </div>
@@ -1654,11 +1680,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.13.3</span>
+                <span class="setting-value">v8.14.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.13.3</div>
+              <div class="about-version">📚 书阁 v8.14.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1695,7 +1721,7 @@ html, body {
     <button class="overlay-back-btn" id="overlayBackBtn" aria-label="返回列表">←</button>
     <span class="overlay-title" id="overlayTitle">选择一篇笔记</span>
     <div class="overlay-toolbar" id="overlayToolbar">
-      <button class="overlay-tool-btn" id="overlayThemeBtn" title="主题" aria-label="切换预览主题">🌓</button>
+      <button class="overlay-tool-btn" id="overlayThemeBtn" title="亮度" aria-label="调节阅读亮度">☀️</button>
       <button class="overlay-tool-btn" id="overlayFontBtn" title="字号" aria-label="调节阅读字号">🔠</button>
       <!-- v8.8：移动端横屏按钮已移除，横竖屏由设备方向自动切换 -->
     </div>
@@ -1708,19 +1734,30 @@ html, body {
     <div id="overlayLoading">
       <div class="loading-spinner"><div class="spinner"></div>正在加载笔记…</div>
     </div>
+    <!-- v8.14：亮度遮罩（替代夜间模式）。只压暗正文，不拦事件 -->
+    <div id="dimLayer" aria-hidden="true"></div>
   </div>
   <!-- P1-5 横屏常驻退出按钮 -->
   <button class="landscape-exit-btn" id="landscapeExitBtn" title="退出横屏" aria-label="退出横屏">↩️</button>
   <!-- P1-6 左缘侧滑返回热区（仅作几何标记，不拦截点击） -->
   <div class="edge-swipe-zone" id="edgeSwipeZone" aria-hidden="true"></div>
-  <!-- P0-1 字号调节面板 -->
+  <!-- P0-1 字号调节面板（v8.14 改成滑块） -->
   <div id="fontPanel" role="dialog" aria-label="阅读字号">
-    <div class="font-panel-row">
-      <button class="font-panel-btn" id="fontMinusBtn" title="缩小字号" aria-label="缩小字号">A-</button>
-      <span id="fontLevelText">100%</span>
-      <button class="font-panel-btn" id="fontPlusBtn" title="放大字号" aria-label="放大字号">A+</button>
+    <div class="panel-row">
+      <span class="panel-end">小</span>
+      <input type="range" class="panel-range" id="fontRange" min="70" max="150" step="5" value="100" aria-label="阅读字号百分比">
+      <span class="panel-end panel-end-lg">大</span>
     </div>
-    <button class="font-panel-btn" id="fontResetBtn" title="恢复默认字号">恢复默认</button>
+    <div class="panel-val" id="fontLevelText">100%</div>
+  </div>
+  <!-- v8.14 亮度面板（替代夜间模式） -->
+  <div id="brightnessPanel" role="dialog" aria-label="阅读亮度">
+    <div class="panel-row">
+      <span class="panel-end">🌙</span>
+      <input type="range" class="panel-range" id="brightnessRange" min="20" max="100" step="5" value="100" aria-label="阅读亮度百分比">
+      <span class="panel-end">☀️</span>
+    </div>
+    <div class="panel-val" id="brightnessVal">100%</div>
   </div>
 </div>
 
@@ -1931,10 +1968,12 @@ html, body {
   const landscapeExitBtn  = $('#landscapeExitBtn');    // P1-5 横屏常驻退出
   const edgeSwipeZone     = $('#edgeSwipeZone');       // P1-6 左缘侧滑热区
   const fontPanel         = $('#fontPanel');           // P0-1 字号面板
-  const fontMinusBtn      = $('#fontMinusBtn');
+  const fontRange         = $('#fontRange');           // v8.14：滑块替代 A- / A+
   const fontLevelText     = $('#fontLevelText');
-  const fontPlusBtn       = $('#fontPlusBtn');
-  const fontResetBtn      = $('#fontResetBtn');
+  const brightnessPanel   = $('#brightnessPanel');     // v8.14：亮度面板（替代夜间模式）
+  const brightnessRange   = $('#brightnessRange');
+  const brightnessVal     = $('#brightnessVal');
+  const dimLayer          = $('#dimLayer');            // v8.14：亮度遮罩
 
   // Category detail view
   const categoryDetailView = $('#categoryDetailView');
@@ -2010,14 +2049,15 @@ html, body {
     highlights: {},          // v8.9 每日回顾：noteId -> [{text, section}]
     blobUrl: null,
     overlayBlobUrl: null,
-    previewDark: false,
     isLandscape: false,
     landscapeHideTimer: null,
     focusHideTimer: null,
     // v8.6.2：长按打开操作面板后，忽略抬手合成的那一次 click，避免面板自我关闭
     actionSheetOpenedAt: 0,
     // v8.5.0 阅读增强
-    fontLevelIndex: 1,          // P0-1 当前字号档位下标，默认 1（即 1.0）
+    fontPct: 100,               // v8.14：字号百分比（70–150），替代原来的档位下标
+    dim: 100,                   // v8.14：阅读亮度百分比（20–100），替代原来的夜间模式开关
+    readerKind: 'html',         // 当前正文类型：html / image / pdf（后两者不支持调字号）
     loadingFallbackTimer: null, // P0-2 加载态兜底定时器
     readerLastScrollY: 0,       // P1-4 上一次滚动位置，用于方向判定
     readerScrollBound: false,   // P1-4 是否已成功绑定 iframe 内滚动
@@ -2025,11 +2065,20 @@ html, body {
 
   /* ---- 阅读增强常量 (v8.5.0) ---- */
   /* v8.13：原来最小只到 85%，小屏读长文还是偏大。前面垫一档 70%，向下多给两级。 */
-  const FONT_LEVELS = [0.7, 0.85, 1.0, 1.15, 1.3, 1.5];   // P0-1 字号档位
-  const FONT_DEFAULT_INDEX = 2;                            // = 1.0
+  /* v8.14：字号从 6 个档位改成连续滑块（70%–150%，步长 5）。
+     下面两张表只用于迁移老数据，两张都要留：
+       LEGACY5 —— v8.12 及更早，5 档，索引 1 = 100%
+       LEGACY6 —— v8.13，前面垫了 0.7，索引 2 = 100%
+     少了任何一张，从那个版本直接升上来的用户字号都会跳变。 */
+  const FONT_LEVELS_LEGACY5 = [0.85, 1.0, 1.15, 1.3, 1.5];
+  const FONT_LEVELS_LEGACY6 = [0.7, 0.85, 1.0, 1.15, 1.3, 1.5];
+  const FONT_MIN_PCT = 70, FONT_MAX_PCT = 150, FONT_DEFAULT_PCT = 100;
   const FONT_STORAGE_KEY = 'notes-reader-font';
-  const FONT_LEVELS_VER_KEY = 'notes-reader-font-ver';     // 档位表版本，用于迁移老索引
-  const FONT_LEVELS_VER = '2';
+  const FONT_LEVELS_VER_KEY = 'notes-reader-font-ver';     // 存储格式版本，用于迁移老索引
+  const FONT_LEVELS_VER = '3';                              // 3 = 百分比（v8.14 起）
+  /* v8.14：夜间模式改成亮度调节。存的是亮度百分比，越低越暗（DIM_MIN 最暗） */
+  const DIM_STORAGE_KEY = 'notes-reader-dim';
+  const DIM_MIN = 20, DIM_MAX = 100, DIM_DEFAULT = 100;
   const READER_SCROLL_THRESHOLD = 8;   // P1-4 滚动方向阈值（px），避免快速抖动
   const EDGE_SWIPE_MIN_DX = 60;        // P1-6 侧滑触发的最小水平位移
   const EDGE_SWIPE_MAX_DY = 50;        // P1-6 侧滑允许的最大垂直偏移
@@ -2185,7 +2234,7 @@ html, body {
     async getAll() { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readonly'); const s=t.objectStore('user-notes'); const r=s.getAll(); r.onsuccess=()=>res(r.result||[]); r.onerror=e=>rej(e.target.error); }); },
     async delete(id) { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readwrite'); const s=t.objectStore('user-notes'); const r=s.delete(id); r.onsuccess=()=>res(); r.onerror=e=>rej(e.target.error); }); },
     async clear() { const d=await this.open(); return new Promise((res,rej)=>{ const t=d.transaction('user-notes','readwrite'); const s=t.objectStore('user-notes'); const r=s.clear(); r.onsuccess=()=>res(); r.onerror=e=>rej(e.target.error); }); },
-    async estimateSize() { const a=await this.getAll(); let t=0; for(const n of a) t+=(n.content||'').length*2; return t; },
+    async estimateSize() { const a=await this.getAll(); let t=0; for(const n of a){ const c=n.content; t += (typeof c==='string') ? c.length*2 : (c && c.byteLength ? c.byteLength : 0); } return t; },
   };
   function formatBytes(b) { if(b<1024) return b+' B'; if(b<1048576) return (b/1024).toFixed(1)+' KB'; return (b/1048576).toFixed(2)+' MB'; }
 
@@ -4119,18 +4168,41 @@ html, body {
     const hasFile = uploadFileInput.files && uploadFileInput.files.length>0;
     uploadSubmitBtn.disabled = !(hasFile && uploadCategory.value);
   }
+  /* v8.14：上传支持 html / 图片 / PDF。
+     图片和 PDF 按二进制存（IndexedDB 原生支持 ArrayBuffer），记录里用 kind 区分类型。
+     不给 PDF 上 pdf.js：原生 viewer 在所有现代浏览器都能翻页缩放，引库要 1MB 不划算。 */
+  const UPLOAD_MAX = 60 * 1024 * 1024;   // 60MB，超过就提示，避免写库失败
+  function detectUploadKind(file) {
+    const name = (file.name || '').toLowerCase();
+    if (/\.pdf$/.test(name) || file.type === 'application/pdf') return { kind: 'pdf', mime: 'application/pdf' };
+    if (/^image\//.test(file.type) || /\.(jpe?g|png|webp|gif|bmp|heic|heif)$/.test(name)) {
+      return { kind: 'image', mime: file.type || (/\.png$/.test(name) ? 'image/png' : 'image/jpeg') };
+    }
+    if (/\.html?$/.test(name) || file.type === 'text/html') return { kind: 'html', mime: 'text/html' };
+    return null;
+  }
+
   async function handleUpload(file) {
-    if(!file.name.toLowerCase().endsWith('.html')) { showToast('仅支持上传 .html 文件'); return; }
     const cat=uploadCategory.value; if(!cat) { showToast('请选择分类'); return; }
+    const info = detectUploadKind(file);
+    if (!info) { showToast('仅支持 .html、图片或 PDF'); return; }
+    if (file.size > UPLOAD_MAX) { showToast('文件超过 60MB，换个小一点的'); return; }
     try {
-      const content=await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=e=>rej(e.target.error);r.readAsText(file,'UTF-8');});
-      let title=uploadTitle.value.trim()||file.name.replace(/\.html$/i,'').trim()||'未命名笔记';
+      let content;
+      if (info.kind === 'html') {
+        content = await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=e=>rej(e.target.error);r.readAsText(file,'UTF-8');});
+      } else {
+        content = await new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=e=>rej(e.target.error);r.readAsArrayBuffer(file);});
+      }
+      const baseName = file.name.replace(/\.[^.]+$/, '').trim();
+      let title=uploadTitle.value.trim()||baseName||'未命名笔记';
       const author=uploadAuthorInput.value.trim();
       const allTitles=STATE.notes.map(n=>n.title); let final=title, c=1;
       while(allTitles.includes(final)) { final=title+' ('+(c++)+')'; }
       const id=genId(), now=new Date().toISOString().slice(0,10);
-      await DB.put({id,title:final,file:file.name,date:now,author,category:cat,content});
-      STATE.userNotesIndex.unshift({id,title:final,file:file.name,date:now,author,category:cat});
+      const rec={id,title:final,file:file.name,date:now,author,category:cat,content,kind:info.kind,mime:info.mime};
+      await DB.put(rec);
+      STATE.userNotesIndex.unshift({id,title:final,file:file.name,date:now,author,category:cat,kind:info.kind,mime:info.mime});
       saveUserNotesIndex(); mergeNotes(); refreshCurrentView(); resetUploadForm();
       switchTab('home'); showToast('✅ 笔记上传成功！');
     } catch(err) { console.error(err); showToast('上传失败：'+err.message); }
@@ -4144,6 +4216,30 @@ html, body {
   //         + 43 个内置笔记正文 notes/*.html + user-notes/*.html。
   //         导入兼容旧的 .json 备份。
   const BACKUP_LS_KEYS = ['notes-pinned','notes-theme','notes-categories-v2','notes-edits','notes-reader-font','user-notes-index','notes-nickname','notes-avatar','notes-search-history'];
+
+  /* v8.14：图片/PDF 笔记的 content 是 ArrayBuffer，JSON.stringify 会把它变成 {}，
+     所以导出时转 base64 并打 enc 标记，导入时再还原。分块处理避免大文件爆栈。 */
+  function abToBase64(buf) {
+    const bytes = new Uint8Array(buf);
+    let s = '';
+    const CH = 0x8000;
+    for (let i = 0; i < bytes.length; i += CH) s += String.fromCharCode.apply(null, bytes.subarray(i, i + CH));
+    return btoa(s);
+  }
+  function base64ToAb(b64) {
+    const bin = atob(b64);
+    const u = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    return u.buffer;
+  }
+  /* 备份包里那份「人肉可看」的副本：二进制笔记包一层 HTML，解压后双击就能看 */
+  function wrapBinaryAsHtml(rec, b64) {
+    const t = escapeHtml(rec.title || '笔记');
+    if (rec.kind === 'pdf') {
+      return `<!doctype html><meta charset="utf-8"><title>${t}</title><body style="margin:0"><iframe src="${b64}" style="border:0;width:100vw;height:100vh"></iframe>`;
+    }
+    return `<!doctype html><meta charset="utf-8"><title>${t}</title><body style="margin:0;background:#fff"><img src="${b64}" alt="${t}" style="display:block;max-width:100%;height:auto;margin:0 auto">`;
+  }
 
   /* ---- 极简 ZIP 写入（仅 store，不压缩；~60 行，避免引入第三方库） ---- */
   const CRC_TABLE = (() => {
@@ -4272,6 +4368,13 @@ html, body {
     showToast('⏳ 正在导出，请稍候…');
     try {
       const userNotes = await DB.getAll();   // 批量读取，一次 getAll
+      /* v8.14：二进制笔记（图片/PDF）在写进 data.json 之前转成 base64 */
+      const userNotesForJson = userNotes.map(function (n) {
+        if (n && (n.kind === 'image' || n.kind === 'pdf') && n.content && n.content.byteLength != null) {
+          return Object.assign({}, n, { content: abToBase64(n.content), enc: 'base64' });
+        }
+        return n;
+      });
       const ls = {};
       for (const k of BACKUP_LS_KEYS) { const v = localStorage.getItem(k); if (v !== null) ls[k] = v; }
 
@@ -4316,7 +4419,7 @@ html, body {
         exportedAt: new Date().toISOString(),
         counts: { categories: catCount, builtinBooks: bundledBooks, builtinNotes: bundledNotes, userNotes: userNotes.length },
         localStorage: ls,
-        userNotes
+        userNotes: userNotesForJson
       };
       files.unshift({ name: 'data.json', data: JSON.stringify(meta, null, 2) });
 
@@ -4331,7 +4434,9 @@ html, body {
         let dup = 2;
         while (usedNames.has(fname)) { fname = `user-notes/${cat}/${title}(${dup++}).html`; }
         usedNames.add(fname);
-        files.push({ name: fname, data: String(n.content) });
+        const isBin = (n.kind === 'image' || n.kind === 'pdf') && n.content && n.content.byteLength != null;
+        const b64 = isBin ? 'data:' + (n.mime || (n.kind === 'pdf' ? 'application/pdf' : 'image/jpeg')) + ';base64,' + abToBase64(n.content) : '';
+        files.push({ name: fname, data: isBin ? wrapBinaryAsHtml(n, b64) : String(n.content) });
         userIndex.push({ cat, title, fname });
       }
 
@@ -4435,7 +4540,14 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
       try {
         for (const k of BACKUP_LS_KEYS) { if (typeof ls[k] === 'string') localStorage.setItem(k, ls[k]); }
         const notes = Array.isArray(payload.userNotes) ? payload.userNotes : [];
-        for (const rec of notes) { if (rec && rec.id) await DB.put(rec); }
+        for (const rec of notes) {
+          if (!rec || !rec.id) continue;
+          /* v8.14：图片/PDF 笔记导出时转过 base64，这里还原回 ArrayBuffer */
+          if (rec.enc === 'base64' && typeof rec.content === 'string') {
+            try { rec.content = base64ToAb(rec.content); delete rec.enc; } catch (_) {}
+          }
+          await DB.put(rec);
+        }
         showToast('✅ 导入成功，正在刷新…');
         setTimeout(() => location.reload(), 600);
       } catch(err) { console.error(err); showToast('导入失败：'+err.message); }
@@ -4607,9 +4719,24 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     if(note.source==='user') {
       DB.get(note.id).then(rec=>{
         if(rec&&rec.content) {
-          const b=new Blob([rec.content],{type:'text/html'}); const u=URL.createObjectURL(b); STATE[blobKey]=u;
-          targetBody.innerHTML=`<iframe src="${u}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe>`;
-          if (isOverlayTarget) bindOverlayIframe();
+          /* v8.14：按 kind 分流。图片用 <img> 铺满宽度，PDF 交给浏览器原生 viewer，
+             HTML 维持原来的 iframe + sandbox。PDF 的 iframe 不加 sandbox —— Chrome 的
+             内置 PDF 阅读器在沙箱 iframe 里会被拦掉。 */
+          const kind = rec.kind || 'html';
+          const mime = rec.mime || (kind==='pdf' ? 'application/pdf' : kind==='image' ? 'image/jpeg' : 'text/html');
+          STATE.readerKind = kind;                 // 图片 / PDF 没有字号可调
+          if (isOverlayTarget) updateFontPanel();
+          const b=new Blob([rec.content],{type:mime}); const u=URL.createObjectURL(b); STATE[blobKey]=u;
+          if (kind === 'image') {
+            targetBody.innerHTML=`<div class="img-note reader-scalable"><img src="${u}" alt="${escapeHtml(note.title)}"></div>`;
+            if (isOverlayTarget) { hideOverlayLoading(); applyFontLevel(); }
+          } else if (kind === 'pdf') {
+            targetBody.innerHTML=`<iframe class="pdf-note" src="${u}" title="${escapeHtml(note.title)}"></iframe>`;
+            if (isOverlayTarget) { hideOverlayLoading(); bindOverlayIframe(); }
+          } else {
+            targetBody.innerHTML=`<iframe src="${u}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe>`;
+            if (isOverlayTarget) bindOverlayIframe();
+          }
         }
         else {
           targetBody.innerHTML=`<div class="welcome"><div class="welcome-icon">⚠️</div><h3>笔记内容为空</h3><p>「${escapeHtml(note.title)}」的内容似乎丢失了。</p></div>`;
@@ -4620,6 +4747,8 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
         if (isOverlayTarget) hideOverlayLoading();
       });
     } else {
+      STATE.readerKind = 'html';
+      if (isOverlayTarget) updateFontPanel();
       targetBody.innerHTML=`<iframe src="${escapeHtml(note.file)}" title="${escapeHtml(note.title)}" sandbox="allow-same-origin allow-scripts"></iframe><div class="welcome" style="display:none"><div class="welcome-icon">⚠️</div><h3>笔记加载失败</h3><p>无法加载「${escapeHtml(note.title)}」。</p></div>`;
       const ifr=targetBody.querySelector('iframe'), err=targetBody.querySelector('.welcome');
       if(ifr&&err) ifr.addEventListener('error',()=>{ifr.style.display='none';err.style.display='';});
@@ -4870,32 +4999,56 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
    * =================================================================== */
 
   /* ---- P0-1 字号调节 ---- */
-  function loadFontIndex() {
-    let idx = FONT_DEFAULT_INDEX;
+  function loadFontPct() {
+    let pct = FONT_DEFAULT_PCT;
     try {
-      let raw = localStorage.getItem(FONT_STORAGE_KEY);
-      /* v8.13：档位从 5 档变成 6 档（前面垫了 0.7），老的索引整体后移一位。
-         只迁移一次：靠 FONT_LEVELS_VER_KEY 打标记，否则用户在新版选的 0.7 下次进来会被当成老数据再 +1。 */
-      let ver = null;
-      try { ver = localStorage.getItem(FONT_LEVELS_VER_KEY); } catch (_) {}
-      if (ver !== FONT_LEVELS_VER) {
-        const n0 = parseInt(raw, 10);
-        if (raw !== null && raw !== '' && !isNaN(n0) && n0 >= 0) {
-          raw = String(n0 + 1);
-          try { localStorage.setItem(FONT_STORAGE_KEY, raw); } catch (_) {}
-        }
-        try { localStorage.setItem(FONT_LEVELS_VER_KEY, FONT_LEVELS_VER); } catch (_) {}
+      const raw = localStorage.getItem(FONT_STORAGE_KEY);
+      const ver = localStorage.getItem(FONT_LEVELS_VER_KEY);
+      let v = parseInt(raw, 10);
+      if (isNaN(v)) v = FONT_DEFAULT_PCT;
+      /* ver < 3，或者读到小于 FONT_MIN_PCT 的值：说明这是老的「档位索引」（0..5），
+         换算成百分比。旧备份导进来也是这个形态，所以不能只看 ver。 */
+      if (ver !== FONT_LEVELS_VER || (v >= 0 && v < FONT_MIN_PCT)) {
+        // ver 有值说明是 v8.13 的 6 档索引；没值则是 v8.12 及更早的 5 档
+        const table = (ver === '2') ? FONT_LEVELS_LEGACY6 : FONT_LEVELS_LEGACY5;
+        pct = (v >= 0 && v < table.length) ? Math.round(table[v] * 100) : FONT_DEFAULT_PCT;
+        try {
+          localStorage.setItem(FONT_STORAGE_KEY, String(pct));
+          localStorage.setItem(FONT_LEVELS_VER_KEY, FONT_LEVELS_VER);
+        } catch (_) {}
+      } else {
+        pct = Math.min(FONT_MAX_PCT, Math.max(FONT_MIN_PCT, v));
       }
-      if (raw !== null && raw !== '') {
-        const n = parseInt(raw, 10);
-        if (!isNaN(n) && n >= 0 && n < FONT_LEVELS.length) idx = n;
-      }
-    } catch (_) { idx = FONT_DEFAULT_INDEX; }
-    STATE.fontLevelIndex = idx;
+    } catch (_) { pct = FONT_DEFAULT_PCT; }
+    STATE.fontPct = pct;
   }
 
-  function saveFontIndex() {
-    try { localStorage.setItem(FONT_STORAGE_KEY, String(STATE.fontLevelIndex)); } catch (_) {}
+  function saveFontPct() {
+    try {
+      localStorage.setItem(FONT_STORAGE_KEY, String(STATE.fontPct));
+      localStorage.setItem(FONT_LEVELS_VER_KEY, FONT_LEVELS_VER);
+    } catch (_) {}
+  }
+
+  /* ---- 亮度（v8.14，替代夜间模式） ---- */
+  function loadDim() {
+    let v = DIM_DEFAULT;
+    try {
+      const raw = localStorage.getItem(DIM_STORAGE_KEY);
+      const n = parseInt(raw, 10);
+      if (!isNaN(n)) v = n;
+    } catch (_) {}
+    STATE.dim = Math.min(DIM_MAX, Math.max(DIM_MIN, v));
+  }
+  function saveDim() {
+    try { localStorage.setItem(DIM_STORAGE_KEY, String(STATE.dim)); } catch (_) {}
+  }
+  /* 亮度用一层黑色遮罩实现：浏览器改不了屏幕背光，只能把内容压暗。
+     pointer-events:none 保证不挡滚动和点击。 */
+  function applyDim() {
+    if (!dimLayer) return;
+    const ratio = (DIM_MAX - STATE.dim) / (DIM_MAX - DIM_MIN);   // 0 = 最亮，1 = 最暗
+    dimLayer.style.opacity = String(Math.min(0.82, ratio * 0.82));
   }
 
   /** 取移动端正文 iframe（不存在时返回 null） */
@@ -4903,16 +5056,22 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     return overlayBodyContent ? overlayBodyContent.querySelector('iframe') : null;
   }
 
-  /** 把当前字号档位写进 iframe 的 body。contentDocument 不可用时静默降级 */
+  /** 把当前字号百分比写进 iframe 的 body。contentDocument 不可用时静默降级 */
   function applyFontLevel() {
+    const z = String(STATE.fontPct / 100);
     const ifr = getOverlayIframe();
-    if (!ifr) return;
-    try {
-      const doc = ifr.contentDocument;
-      if (doc && doc.body) doc.body.style.zoom = String(FONT_LEVELS[STATE.fontLevelIndex]);
-    } catch (_) {
-      // file:// 或跨域 iframe 读取 contentDocument 会抛 SecurityError，静默降级
+    if (ifr) {
+      try {
+        const doc = ifr.contentDocument;
+        if (doc && doc.body) doc.body.style.zoom = z;
+      } catch (_) {
+        // file:// 或跨域 iframe 读取 contentDocument 会抛 SecurityError，静默降级
+      }
+      return;
     }
+    /* 图片笔记没有 iframe，直接缩放外层容器 */
+    const scal = overlayBodyContent ? overlayBodyContent.querySelector('.reader-scalable') : null;
+    if (scal) scal.style.zoom = z;
   }
 
   /* v8.13：转屏后字号「突然变大」的兜底。
@@ -4927,26 +5086,62 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     _readerRO.observe(ifr);
   }
 
-  /** 刷新字号面板文案与按钮可用态 */
-  function updateFontPanel() {    if (fontLevelText) fontLevelText.textContent = Math.round(FONT_LEVELS[STATE.fontLevelIndex] * 100) + '%';
-    if (fontMinusBtn) fontMinusBtn.disabled = (STATE.fontLevelIndex <= 0);
-    if (fontPlusBtn) fontPlusBtn.disabled = (STATE.fontLevelIndex >= FONT_LEVELS.length - 1);
-    if (overlayFontBtn) overlayFontBtn.classList.toggle('active', STATE.fontLevelIndex !== FONT_DEFAULT_INDEX);
+  /** 刷新字号面板（滑块位置 + 百分比文案 + 工具栏高亮） */
+  function updateFontPanel() {
+    if (fontLevelText) fontLevelText.textContent = STATE.fontPct + '%';
+    if (fontRange) fontRange.value = String(STATE.fontPct);
+    if (overlayFontBtn) {
+      overlayFontBtn.classList.toggle('active', STATE.fontPct !== FONT_DEFAULT_PCT);
+      /* 图片 / PDF 没有字号可调，按钮置灰 */
+      overlayFontBtn.disabled = (STATE.readerKind !== 'html');
+    }
   }
 
-  function setFontIndex(idx) {
-    let next = parseInt(idx, 10);
-    if (isNaN(next)) next = FONT_DEFAULT_INDEX;
-    next = Math.max(0, Math.min(FONT_LEVELS.length - 1, next));
-    if (next === STATE.fontLevelIndex) { updateFontPanel(); return; }
-    STATE.fontLevelIndex = next;
-    saveFontIndex();
+  function setFontPct(p) {
+    let next = parseInt(p, 10);
+    if (isNaN(next)) next = FONT_DEFAULT_PCT;
+    next = Math.round(next / 5) * 5;
+    next = Math.max(FONT_MIN_PCT, Math.min(FONT_MAX_PCT, next));
+    if (next === STATE.fontPct) { updateFontPanel(); return; }
+    STATE.fontPct = next;
+    saveFontPct();
     applyFontLevel();
     updateFontPanel();
   }
 
+  /* ---- 亮度面板（v8.14） ---- */
+  function updateBrightnessPanel() {
+    if (brightnessVal) brightnessVal.textContent = STATE.dim + '%';
+    if (brightnessRange) brightnessRange.value = String(STATE.dim);
+    if (overlayThemeBtn) overlayThemeBtn.classList.toggle('active', STATE.dim !== DIM_DEFAULT);
+  }
+  function setDim(v) {
+    let next = parseInt(v, 10);
+    if (isNaN(next)) next = DIM_DEFAULT;
+    next = Math.round(next / 5) * 5;
+    next = Math.max(DIM_MIN, Math.min(DIM_MAX, next));
+    if (next === STATE.dim) { updateBrightnessPanel(); return; }
+    STATE.dim = next;
+    saveDim(); applyDim(); updateBrightnessPanel();
+  }
+  function openBrightnessPanel() {
+    if (!brightnessPanel) return;
+    closeFontPanel();
+    updateBrightnessPanel();
+    brightnessPanel.classList.add('show');
+  }
+  function closeBrightnessPanel() {
+    if (brightnessPanel) brightnessPanel.classList.remove('show');
+  }
+  function toggleBrightnessPanel() {
+    if (!brightnessPanel) return;
+    if (brightnessPanel.classList.contains('show')) closeBrightnessPanel(); else openBrightnessPanel();
+  }
+
   function openFontPanel() {
     if (!fontPanel) return;
+    if (STATE.readerKind !== 'html') { showToast('图片和 PDF 笔记没有字号可调'); return; }
+    closeBrightnessPanel();
     updateFontPanel();
     fontPanel.classList.add('show');
   }
@@ -5096,35 +5291,17 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
     previewOverlay.addEventListener('touchcancel', function() { tracking = false; }, { passive: true });
   }
 
-  /* ---- Preview Theme Toggle ---- */
-  function togglePreviewTheme() {
-    STATE.previewDark = !STATE.previewDark;
-    if (STATE.previewDark) {
-      previewOverlay.classList.add('preview-dark');
-      overlayThemeBtn.textContent = '🌙';
-      overlayThemeBtn.classList.add('preview-dark-active');
-    } else {
-      previewOverlay.classList.remove('preview-dark');
-      overlayThemeBtn.textContent = '🌓';
-      overlayThemeBtn.classList.remove('preview-dark-active');
-    }
-  }
+  /* ---- v8.14：原来这里是夜间模式开关，现在换成亮度调节（面板 + 遮罩，见 setDim / applyDim） ---- */
 
   /* ---- Close Preview (reset state) ---- */
   function closePreviewOverlay() {
     previewOverlay.classList.add('hidden');
     sidebar.classList.remove('hidden');
     // v8.5.0：关闭预览时重置所有阅读增强状态
-    closeFontPanel(); hideOverlayLoading(); resetReaderState();
+    closeFontPanel(); closeBrightnessPanel(); hideOverlayLoading(); resetReaderState();
     if (STATE.isLandscape) {
       STATE.isLandscape = false;
       applyLandscapeState();
-    }
-    if (STATE.previewDark) {
-      STATE.previewDark = false;
-      previewOverlay.classList.remove('preview-dark');
-      overlayThemeBtn.textContent = '🌓';
-      overlayThemeBtn.classList.remove('preview-dark-active');
     }
     bottomNav.style.display = '';
     if (STATE.landscapeHideTimer) { clearTimeout(STATE.landscapeHideTimer); STATE.landscapeHideTimer = null; }
@@ -5188,26 +5365,49 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
   overlayBackBtn.addEventListener('click',()=>closePreviewOverlay());
 
   // Preview toolbar buttons
-  overlayThemeBtn.addEventListener('click', (e) => { e.stopPropagation(); togglePreviewTheme(); });
+  overlayThemeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleBrightnessPanel(); });
   overlayFontBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleFontPanel(); });
+
+  /* v8.14：滑块拖动。拖的时候先把百分比写上去，真正改样式用 rAF 合并，
+     否则 iframe 内 body 的 zoom 一帧写十几次会卡。 */
+  let _rangeRaf = 0;
+  function scheduleRange(fn) {
+    if (_rangeRaf) cancelAnimationFrame(_rangeRaf);
+    _rangeRaf = requestAnimationFrame(function () { _rangeRaf = 0; fn(); });
+  }
+  if (fontRange) {
+    fontRange.addEventListener('input', function () {
+      const v = Math.round(this.value / 5) * 5;
+      if (fontLevelText) fontLevelText.textContent = v + '%';
+      scheduleRange(function () { setFontPct(v); });
+    });
+  }
+  if (brightnessRange) {
+    brightnessRange.addEventListener('input', function () {
+      const v = Math.round(this.value / 5) * 5;
+      if (brightnessVal) brightnessVal.textContent = v + '%';
+      scheduleRange(function () { setDim(v); });
+    });
+  }
   // v8.8：移动端横屏按钮已移除（横竖屏自动切换），此处不再绑定
   desktopLandscapeBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleLandscape(); });
 
   // P1-5 横屏常驻退出按钮
   landscapeExitBtn.addEventListener('click', (e) => { e.stopPropagation(); exitLandscape(); });
 
-  // P0-1 字号面板按钮
-  fontMinusBtn.addEventListener('click', (e) => { e.stopPropagation(); setFontIndex(STATE.fontLevelIndex - 1); });
-  fontPlusBtn.addEventListener('click', (e) => { e.stopPropagation(); setFontIndex(STATE.fontLevelIndex + 1); });
-  fontResetBtn.addEventListener('click', (e) => { e.stopPropagation(); setFontIndex(FONT_DEFAULT_INDEX); });
+  // P0-1 字号面板（v8.14：按钮换成滑块，面板内点击不冒泡关闭）
   fontPanel.addEventListener('click', (e) => { e.stopPropagation(); });
+  brightnessPanel.addEventListener('click', (e) => { e.stopPropagation(); });
 
-  // P0-1 点击面板外区域关闭字号面板
+  // P0-1 点击面板外区域关闭字号 / 亮度面板
   document.addEventListener('click', (e) => {
-    if (!fontPanel || !fontPanel.classList.contains('show')) return;
     const t = e.target;
-    if (t && t.closest && (t.closest('#fontPanel') || t.closest('#overlayFontBtn'))) return;
-    closeFontPanel();
+    if (fontPanel && fontPanel.classList.contains('show')) {
+      if (!(t && t.closest && (t.closest('#fontPanel') || t.closest('#overlayFontBtn')))) closeFontPanel();
+    }
+    if (brightnessPanel && brightnessPanel.classList.contains('show')) {
+      if (!(t && t.closest && (t.closest('#brightnessPanel') || t.closest('#overlayThemeBtn')))) closeBrightnessPanel();
+    }
   });
 
   // P1-5 横屏唤出工具栏 —— 监听整个 overlay。
@@ -5348,7 +5548,9 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
    * =================================================================== */
   async function init() {
     // v8.5.0 阅读增强初始化
-    loadFontIndex(); updateFontPanel(); syncHeaderHeight();
+    loadFontPct(); updateFontPanel();
+    loadDim(); applyDim(); updateBrightnessPanel();
+    syncHeaderHeight();
     loadTheme(); loadNickname(); loadSearchHistory(); loadUserNotesIndex(); checkMobile();
     renderAvatars(); applyHeroMode();   // v8.9.2：初始渲染头像，并按当前 tab 决定是否隐藏品牌栏
     renderHeroPickers(); bindHeroPickers(); applyHeroImage();   // v8.13：头图设置

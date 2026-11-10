@@ -4,7 +4,7 @@
  * 运行: node test/test-v813.mjs
  */
 import puppeteer from 'puppeteer';
-import { mkdirSync, existsSync } from 'node:fs';
+import { mkdirSync, existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const BASE = process.env.BASE || 'http://localhost:8899/index.html';
@@ -25,13 +25,14 @@ const p = await browser.newPage();
 const errors = [];
 p.on('pageerror', e => errors.push(e.message));
 await p.evaluateOnNewDocument(() => {
-  try { localStorage.setItem('notes-reader-font', '1'); localStorage.removeItem('notes-reader-font-ver'); } catch (_) {}
+  // 模拟 v8.13 用户：6 档索引 2（=100%），带 ver=2
+  try { localStorage.setItem('notes-reader-font', '2'); localStorage.setItem('notes-reader-font-ver', '2'); } catch (_) {}
 });
 await p.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
 await p.goto(BASE, { waitUntil: 'networkidle0' });
 await sleep(1800);
 
-console.log('\n=== ① 字号：下限 70% + 老索引迁移 ===');
+console.log('\n=== ① 字号滑块：70–150 + 老索引迁移 ===');
 await p.evaluate(() => document.querySelector('.nav-item[data-tab="notes"]').click());
 await sleep(800);
 const cbox = await p.evaluate(() => {
@@ -41,21 +42,38 @@ const cbox = await p.evaluate(() => {
 await p.mouse.move(cbox.x, cbox.y); await p.mouse.down(); await p.mouse.up();
 await sleep(2600);
 
-const lv0 = await p.evaluate(() => document.getElementById('fontLevelText').textContent);
-ok('老索引 1 迁移后仍是 100%', lv0 === '100%', lv0);
-
-const seq = [];
-for (let i = 0; i < 6; i++) {
-  await p.evaluate(() => document.getElementById('fontMinusBtn').click());
-  await sleep(110);
-  seq.push(await p.evaluate(() => document.getElementById('fontLevelText').textContent));
-}
-ok('可以缩到 70%', seq.includes('70%'), seq.join(' → '));
-const minState = await p.evaluate(() => ({
+const f0 = await p.evaluate(() => ({
   text: document.getElementById('fontLevelText').textContent,
-  disabled: document.getElementById('fontMinusBtn').disabled,
+  min: document.getElementById('fontRange').min,
+  max: document.getElementById('fontRange').max,
+  step: document.getElementById('fontRange').step,
+  val: document.getElementById('fontRange').value,
 }));
-ok('到 70% 后减号禁用', minState.text === '70%' && minState.disabled, JSON.stringify(minState));
+ok('v8.13 的索引 2 迁移后仍是 100%', f0.text === '100%' && f0.val === '100', JSON.stringify(f0));
+ok('滑块范围 70–150、步长 5', f0.min === '70' && f0.max === '150' && f0.step === '5', `${f0.min}-${f0.max}/${f0.step}`);
+
+const dragFont = async (v) => {
+  await p.evaluate((val) => {
+    const r = document.getElementById('fontRange');
+    r.value = String(val);
+    r.dispatchEvent(new Event('input', { bubbles: true }));
+  }, v);
+  await sleep(320);
+};
+const zoomOfTop = () => p.evaluate(() => {
+  const all = [...document.querySelectorAll('iframe')];
+  const ifr = all[all.length - 1];
+  return ifr && ifr.contentDocument && ifr.contentDocument.body
+    ? (ifr.contentDocument.body.style.zoom || '(none)') : '(no-iframe)';
+});
+
+await dragFont(70);
+const z70 = await zoomOfTop();
+ok('拖到 70% 后正文缩到 0.7', z70 === '0.7', String(z70));
+await dragFont(150);
+const z150 = await zoomOfTop();
+ok('拖到 150% 后正文是 1.5', z150 === '1.5', String(z150));
+await dragFont(100);
 
 console.log('\n=== ② 转屏后字号不跳 ===');
 const zoomOf = () => p.evaluate(() => {
@@ -166,7 +184,151 @@ ok('5 个正文文件都能取到且标题正确',
   fileChecks.every(c => c.code === 200 && c.okTitle),
   JSON.stringify(fileChecks.map(c => `${c.id}:${c.code}${c.okTitle ? '✓' : '✗'}`)));
 
-console.log('\n=== ⑤ 控制台 ===');
+console.log('\n=== ⑤ 亮度调节（替代夜间模式）===');
+await p.evaluate(() => document.querySelector('.nav-item[data-tab="notes"]').click());
+await sleep(800);
+const cbox2 = await p.evaluate(() => {
+  const r = document.querySelector('.book-card').getBoundingClientRect();
+  return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+});
+await p.mouse.move(cbox2.x, cbox2.y); await p.mouse.down(); await p.mouse.up();
+await sleep(2400);
+
+await p.evaluate(() => document.getElementById('overlayThemeBtn').click());
+await sleep(300);
+const dimUi = await p.evaluate(() => ({
+  open: document.getElementById('brightnessPanel').classList.contains('show'),
+  min: document.getElementById('brightnessRange').min,
+  max: document.getElementById('brightnessRange').max,
+  icon: document.getElementById('overlayThemeBtn').textContent.trim(),
+}));
+ok('亮度面板能打开（工具栏不再是夜间模式）', dimUi.open && dimUi.icon === '☀️', JSON.stringify(dimUi));
+
+const dragDim = async (v) => {
+  await p.evaluate((val) => {
+    const r = document.getElementById('brightnessRange');
+    r.value = String(val);
+    r.dispatchEvent(new Event('input', { bubbles: true }));
+  }, v);
+  await sleep(350);
+};
+await dragDim(50);
+const dim50 = await p.evaluate(() => ({
+  op: parseFloat(document.getElementById('dimLayer').style.opacity || '0'),
+  val: document.getElementById('brightnessVal').textContent,
+  saved: localStorage.getItem('notes-reader-dim'),
+}));
+ok('亮度 50% 时遮罩压暗正文', dim50.op > 0.4 && dim50.op < 0.65, JSON.stringify(dim50));
+ok('亮度值写进 localStorage', dim50.saved === '50', String(dim50.saved));
+
+await dragDim(100);
+const dim100 = await p.evaluate(() => parseFloat(document.getElementById('dimLayer').style.opacity || '0'));
+ok('拖回 100% 遮罩消失', dim100 === 0, String(dim100));
+
+const dimCover = await p.evaluate(() => {
+  const d = document.getElementById('dimLayer').getBoundingClientRect();
+  const h = document.getElementById('overlayHeader').getBoundingClientRect();
+  return { dimTop: Math.round(d.top), headerBottom: Math.round(h.bottom) };
+});
+ok('遮罩不盖住顶栏', dimCover.dimTop >= dimCover.headerBottom - 2, JSON.stringify(dimCover));
+
+console.log('\n=== ⑥ 上传图片 / PDF ===');
+await p.evaluate(() => document.getElementById('overlayBackBtn').click());
+await sleep(700);
+
+// 造测试素材：1x1 PNG + 用 Chrome 自己打印一份合法 PDF
+const pngPath = path.resolve('test/_tmp-tiny.png');
+const pdfPath = path.resolve('test/_tmp-tiny.pdf');
+writeFileSync(pngPath, Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64'));
+const pdfPage = await browser.newPage();
+await pdfPage.setContent('<h1>书阁测试 PDF</h1><p>第二行</p>');
+await pdfPage.pdf({ path: pdfPath, format: 'A5' });
+await pdfPage.close();
+
+async function uploadOne(filePath, title) {
+  await p.evaluate(() => document.querySelector('.nav-item[data-tab="upload"]').click());
+  await sleep(700);
+  const input = await p.$('#uploadFileInput');
+  await input.uploadFile(filePath);
+  await sleep(500);
+  await p.evaluate((t) => {
+    const ti = document.getElementById('uploadTitle');
+    if (ti) ti.value = t;
+    const sel = document.getElementById('uploadCategory');
+    if (sel && !sel.value) {
+      const opt = [...sel.options].find(o => o.value);
+      if (opt) { sel.value = opt.value; sel.dispatchEvent(new Event('change', { bubbles: true })); }
+    }
+  }, title);
+  await sleep(250);
+  await p.evaluate(() => document.getElementById('uploadSubmitBtn').click());
+  await sleep(2200);
+}
+
+await uploadOne(pngPath, '测试图片笔记');
+await uploadOne(pdfPath, '测试PDF笔记');
+
+const uploaded = await p.evaluate(() => {
+  const idx = JSON.parse(localStorage.getItem('user-notes-index') || '[]');
+  return idx.slice(0, 2).map(n => ({ id: n.id, title: n.title, kind: n.kind, mime: n.mime }));
+});
+ok('图片笔记按 image 类型存下', uploaded.some(u => u.kind === 'image'), JSON.stringify(uploaded));
+ok('PDF 笔记按 pdf 类型存下', uploaded.some(u => u.kind === 'pdf'), JSON.stringify(uploaded));
+
+// 打开图片笔记，检查渲染成 <img> 而不是 iframe
+const imgNote = uploaded.find(u => u.kind === 'image');
+await p.evaluate(() => document.querySelector('.nav-item[data-tab="notes"]').click());
+await sleep(900);
+// 用书卡自带的键盘 Enter 入口打开（shelfContainer 的 keydown 处理器直接调 showPreview），
+// 比模拟点按稳：点按要先滚动到元素，而切 tab 后书架重渲染会把滚动位置清零。
+const imgOpened = await p.evaluate((id) => {
+  const card = document.querySelector(`.book-card[data-id="${id}"]`);
+  if (!card) return false;
+  card.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+  return true;
+}, imgNote ? imgNote.id : '-1');
+if (imgOpened) {
+  await sleep(2400);
+  const imgRender = await p.evaluate(() => {
+    const img = document.querySelector('#overlayBodyContent .img-note img');
+    return {
+      hasImg: !!img,
+      blob: img ? img.src.slice(0, 5) : '',
+      fontBtnDisabled: document.getElementById('overlayFontBtn').disabled,
+      hasIframe: !!document.querySelector('#overlayBodyContent iframe'),
+      overlayTitle: document.getElementById('overlayTitle').textContent,
+    };
+  });
+  ok('图片笔记渲染成 <img>（blob URL）', imgRender.hasImg && imgRender.blob === 'blob:' && !imgRender.hasIframe, JSON.stringify(imgRender));
+  ok('图片笔记时字号按钮置灰', imgRender.fontBtnDisabled === true, String(imgRender.fontBtnDisabled));
+
+  // 再打开 PDF 笔记
+  await p.evaluate(() => document.getElementById('overlayBackBtn').click());
+  await sleep(800);
+  const pdfNote = uploaded.find(u => u.kind === 'pdf');
+  const pdfOpened = await p.evaluate((id) => {
+    const card = document.querySelector(`.book-card[data-id="${id}"]`);
+    if (!card) return false;
+    card.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    return true;
+  }, pdfNote ? pdfNote.id : '-1');
+  if (pdfOpened) {
+    await sleep(2400);
+    const pdfRender = await p.evaluate(() => {
+      const f = document.querySelector('#overlayBodyContent iframe.pdf-note');
+      return { has: !!f, src: f ? f.getAttribute('src').slice(0, 5) : '', sandbox: f ? f.getAttribute('sandbox') : null };
+    });
+    ok('PDF 笔记渲染成 iframe 且不套 sandbox（否则原生阅读器被拦）',
+      pdfRender.has && pdfRender.src === 'blob:' && !pdfRender.sandbox, JSON.stringify(pdfRender));
+  } else {
+    ok('PDF 笔记渲染成 iframe 且不套 sandbox（否则原生阅读器被拦）', false, '书架上没找到 PDF 笔记');
+  }
+} else {
+  ok('图片笔记渲染成 <img>（blob URL）', false, '书架上没找到刚上传的图片笔记');
+  ok('图片笔记时字号按钮置灰', false, '同上');
+}
+
+console.log('\n=== ⑦ 控制台 ===');
 ok('无页面报错', errors.length === 0, errors.slice(0, 2).join(' | '));
 
 await browser.close();
