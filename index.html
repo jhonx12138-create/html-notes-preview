@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.14.1</title>
+<title>📚 书阁 v8.15.0</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -1288,6 +1288,23 @@ html, body {
 .book-card:active { transform: translateY(-1px); }
 .book-card.active { outline: none; box-shadow: 0 0 0 2px var(--accent), 0 10px 22px rgba(96,78,52,.20); }
 
+/* v8.15：封面右下角的豆瓣评分。没有评分的书不渲染这个节点 */
+.book-rating {
+  position: absolute; right: 7px; bottom: 7px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 3px;
+  padding: 1px 6px 1px 5px; border-radius: 999px;
+  background: rgba(16, 30, 24, .70);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  color: #fff; font-size: 10px; font-weight: 600; line-height: 1.35;
+  letter-spacing: .2px; pointer-events: none;
+}
+.book-rating .star { color: #F6C445; font-size: 8.5px; line-height: 1; transform: translateY(-.5px); }
+/* v8.15：手机上书卡只有 ~79px 宽，胶囊按桌面尺寸会占到一半，单独收一档 */
+@media (max-width: 767px), (max-width: 1023px) and (any-pointer: coarse) {
+  .book-rating { font-size: 9px; padding: 1px 5px 1px 4px; gap: 2px; }
+  .book-rating .star { font-size: 8px; }
+}
+
 /* 封面：压印细边 + 7px 烫金书脊 */
 .book-card .book-cover {
   position: relative; flex: 1 1 auto; min-height: 0;
@@ -1516,7 +1533,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.14.1</span>
+        <span class="hero-version">v8.15.0</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1542,7 +1559,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.14.1</span>
+              <span class="hero-version">v8.15.0</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1680,11 +1697,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.14.1</span>
+                <span class="setting-value">v8.15.0</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.14.1</div>
+              <div class="about-version">📚 书阁 v8.15.0</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2803,6 +2820,7 @@ html, body {
           <span class="m">${escapeHtml(t.main)}</span>
           ${t.sub ? `<span class="s">${escapeHtml(t.sub)}</span>` : ''}
         </div>
+        ${n.rating ? `<span class="book-rating" title="豆瓣评分 ${Number(n.rating).toFixed(1)}"><span class="star">★</span>${Number(n.rating).toFixed(1)}</span>` : ''}
       </div>
       <div class="book-meta">
         <span class="book-author-text${unknown ? ' unk' : ''}">${escapeHtml(author)}</span>

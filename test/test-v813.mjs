@@ -396,6 +396,54 @@ const mAfter = await p.evaluate(() => ({
 ok('移动端删除当前笔记后阅读层收起', mOverlayOpen && mAfter.overlayHidden, JSON.stringify(mAfter));
 ok('移动端删除后底部导航恢复', mAfter.navVisible, String(mAfter.navVisible));
 
+/* ===== ⑦.5 v8.15 豆瓣评分 ===== */
+console.log('\n=== ⑦.5 豆瓣评分（封面右下角） ===');
+// 上一步删完会停在列表/首页，先把书架切出来（移动端用底部导航，桌面用顶栏 tab）
+await p.evaluate(() => {
+  const btn = document.querySelector('.tab-btn[data-tab="notes"]');
+  const nav = document.querySelector('.nav-item[data-tab="notes"]');
+  const el = (btn && btn.offsetParent !== null) ? btn : nav;
+  if (el) el.click();
+});
+await p.waitForFunction(() => {
+  const c = document.querySelector('.book-card');
+  return c && c.getBoundingClientRect().width > 0;
+}, { timeout: 15000 });
+await sleep(400);
+const rateInfo = await p.evaluate(async () => {
+  const data = await (await fetch('notes.json')).json();
+  const ratedIds = new Set(data.filter(n => n.rating).map(n => String(n.id)));
+  const cards = [...document.querySelectorAll('.book-card')].filter(c => c.getBoundingClientRect().width > 0);
+  let matched = 0, mismatch = [], offCorner = 0, overlap = 0, sample = '';
+  for (const c of cards) {
+    const id = String(c.dataset.id);
+    const badge = c.querySelector('.book-rating');
+    const expect = ratedIds.has(id);
+    if (!!badge === expect) matched++; else mismatch.push(id + (expect ? ':缺' : ':多'));
+    if (!badge) continue;
+    const b = badge.getBoundingClientRect();
+    const cover = c.querySelector('.book-cover').getBoundingClientRect();
+    const t = c.querySelector('.book-t').getBoundingClientRect();
+    const dx = cover.right - b.right, dy = cover.bottom - b.bottom;
+    if (dx < 5 || dx > 9 || dy < 5 || dy > 9) offCorner++;
+    if (!(b.right <= t.left || b.left >= t.right || b.bottom <= t.top || b.top >= t.bottom)) overlap++;
+    if (!sample) sample = badge.textContent.trim();
+  }
+  return {
+    cards: cards.length,
+    rated: cards.filter(c => c.querySelector('.book-rating')).length,
+    expectedRated: cards.filter(c => ratedIds.has(String(c.dataset.id))).length,
+    matched, mismatch, offCorner, overlap, sample,
+    unratedTitle: (cards.find(c => !c.querySelector('.book-rating')) || {}).title || '',
+  };
+});
+ok('有评分的书都渲染了胶囊、没评分的不渲染', rateInfo.matched === rateInfo.cards && rateInfo.mismatch.length === 0, JSON.stringify(rateInfo.mismatch.slice(0, 4)) + ` matched=${rateInfo.matched}/${rateInfo.cards}`);
+ok('评分数量与 notes.json 一致', rateInfo.rated === rateInfo.expectedRated && rateInfo.rated > 0, `${rateInfo.rated}/${rateInfo.expectedRated}`);
+ok('没有评分的书保持干净', rateInfo.rated < rateInfo.cards, `未评分：${rateInfo.unratedTitle}`);
+ok('胶囊贴在封面右下角（距边 7px）', rateInfo.offCorner === 0, `偏移异常 ${rateInfo.offCorner} 个`);
+ok('胶囊不遮挡书名', rateInfo.overlap === 0, `重叠 ${rateInfo.overlap} 个`);
+ok('胶囊文案是 ★+一位小数', /^★\d\.\d$/.test(rateInfo.sample), rateInfo.sample);
+
 console.log('\n=== ⑧ 控制台 ===');
 ok('无页面报错', errors.length === 0, errors.slice(0, 2).join(' | '));
 

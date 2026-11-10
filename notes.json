@@ -21,7 +21,8 @@
     "file": "notes/note4.html",
     "date": "2026-10-17",
     "category": "AI与科技",
-    "author": "刘云浩"
+    "author": "刘云浩",
+    "rating": 8.4
   },
   {
     "id": "5",
@@ -29,7 +30,8 @@
     "file": "notes/note5.html",
     "date": "2026-07-14",
     "category": "AI与科技",
-    "author": "迈克尔·加扎尼加"
+    "author": "迈克尔·加扎尼加",
+    "rating": 8.2
   },
   {
     "id": "6",
@@ -37,7 +39,8 @@
     "file": "notes/note6.html",
     "date": "2026-07-13",
     "category": "AI与科技",
-    "author": "托马斯·库恩"
+    "author": "托马斯·库恩",
+    "rating": 9.1
   },
   {
     "id": "7",
@@ -45,7 +48,8 @@
     "file": "notes/note7.html",
     "date": "2026-10-17",
     "category": "AI与科技",
-    "author": "汪波"
+    "author": "汪波",
+    "rating": 8.7
   },
   {
     "id": "8",
@@ -53,7 +57,8 @@
     "file": "notes/note8.html",
     "date": "2026-06-16",
     "category": "AI与科技",
-    "author": "斯图尔特·罗素"
+    "author": "斯图尔特·罗素",
+    "rating": 8.2
   },
   {
     "id": "9",
@@ -85,7 +90,8 @@
     "file": "notes/note12.html",
     "date": "2026-07-28",
     "category": "政治与经济",
-    "author": "钱穆"
+    "author": "钱穆",
+    "rating": 9.3
   },
   {
     "id": "13",
@@ -93,7 +99,8 @@
     "file": "notes/note13.html",
     "date": "2026-06-08",
     "category": "政治与经济",
-    "author": "周雪光"
+    "author": "周雪光",
+    "rating": 9.3
   },
   {
     "id": "14",
@@ -101,7 +108,8 @@
     "file": "notes/note14.html",
     "date": "2026-06-09",
     "category": "政治与经济",
-    "author": "周飞舟"
+    "author": "周飞舟",
+    "rating": 9.2
   },
   {
     "id": "15",
@@ -117,7 +125,8 @@
     "file": "notes/note16.html",
     "date": "2026-05-23",
     "category": "政治与经济",
-    "author": "吴晓波"
+    "author": "吴晓波",
+    "rating": 8.7
   },
   {
     "id": "17",
@@ -141,7 +150,8 @@
     "file": "notes/note19.html",
     "date": "2026-05-14",
     "category": "数学",
-    "author": "朱迪亚·珀尔"
+    "author": "朱迪亚·珀尔",
+    "rating": 8.8
   },
   {
     "id": "20",
@@ -149,7 +159,8 @@
     "file": "notes/note20.html",
     "date": "2026-05-24",
     "category": "数学",
-    "author": "吴军"
+    "author": "吴军",
+    "rating": 9.0
   },
   {
     "id": "21",
@@ -157,7 +168,8 @@
     "file": "notes/note21.html",
     "date": "2026-05-23",
     "category": "数学",
-    "author": "汤姆·奇弗斯"
+    "author": "汤姆·奇弗斯",
+    "rating": 9.1
   },
   {
     "id": "22",
@@ -173,7 +185,8 @@
     "file": "notes/note23.html",
     "date": "2026-07-25",
     "category": "社会与文化",
-    "author": "冯友兰"
+    "author": "冯友兰",
+    "rating": 9.1
   },
   {
     "id": "24",
@@ -181,7 +194,8 @@
     "file": "notes/note24.html",
     "date": "2026-07-28",
     "category": "社会与文化",
-    "author": "费孝通"
+    "author": "费孝通",
+    "rating": 9.2
   },
   {
     "id": "25",
@@ -189,7 +203,8 @@
     "file": "notes/note25.html",
     "date": "2026-05-24",
     "category": "社会与文化",
-    "author": "艾伦·麦克法兰"
+    "author": "艾伦·麦克法兰",
+    "rating": 8.1
   },
   {
     "id": "26",
@@ -197,7 +212,8 @@
     "file": "notes/note26.html",
     "date": "2026-07-28",
     "category": "社会与文化",
-    "author": "吴晗 / 费孝通"
+    "author": "吴晗 / 费孝通",
+    "rating": 8.6
   },
   {
     "id": "27",
@@ -205,7 +221,8 @@
     "file": "notes/note27.html",
     "date": "2026-07-26",
     "category": "社会与文化",
-    "author": "项飙"
+    "author": "项飙",
+    "rating": 9.4
   },
   {
     "id": "28",
@@ -221,7 +238,8 @@
     "file": "notes/note29.html",
     "date": "2026-07-29",
     "category": "认知与心理",
-    "author": "戴维·迈尔斯"
+    "author": "戴维·迈尔斯",
+    "rating": 9.4
   },
   {
     "id": "30",
@@ -229,7 +247,8 @@
     "file": "notes/note30.html",
     "date": "2026-07-25",
     "category": "组织与管理",
-    "author": "切斯特·巴纳德"
+    "author": "切斯特·巴纳德",
+    "rating": 8.9
   },
   {
     "id": "31",
@@ -245,7 +264,8 @@
     "file": "notes/note32.html",
     "date": "2026-06-07",
     "category": "通识与科普",
-    "author": "曹天元"
+    "author": "曹天元",
+    "rating": 9.3
   },
   {
     "id": "33",
@@ -253,7 +273,8 @@
     "file": "notes/note33.html",
     "date": "2026-05-25",
     "category": "通识与科普",
-    "author": "王立铭"
+    "author": "王立铭",
+    "rating": 8.8
   },
   {
     "id": "34",
@@ -269,7 +290,8 @@
     "file": "notes/note35.html",
     "date": "2026-10-17",
     "category": "金融与财务",
-    "author": "黄达"
+    "author": "黄达",
+    "rating": 8.7
   },
   {
     "id": "36",
@@ -277,7 +299,8 @@
     "file": "notes/note36.html",
     "date": "2026-08-31",
     "category": "政治与经济",
-    "author": "陈钊"
+    "author": "陈钊",
+    "rating": 8.6
   },
   {
     "id": "37",
@@ -285,7 +308,8 @@
     "file": "notes/note37.html",
     "date": "2026-08-31",
     "category": "政治与经济",
-    "author": "杨华"
+    "author": "杨华",
+    "rating": 8.7
   },
   {
     "id": "38",
@@ -293,7 +317,8 @@
     "file": "notes/note38.html",
     "date": "2026-08-31",
     "category": "政治与经济",
-    "author": "王东京"
+    "author": "王东京",
+    "rating": 7.5
   },
   {
     "id": "39",
@@ -301,7 +326,8 @@
     "file": "notes/note39.html",
     "date": "2026-10-09",
     "category": "AI与科技",
-    "author": "凯文·凯利"
+    "author": "凯文·凯利",
+    "rating": 8.6
   },
   {
     "id": "40",
@@ -309,7 +335,8 @@
     "file": "notes/note40.html",
     "date": "2026-10-09",
     "category": "AI与科技",
-    "author": "布莱恩·阿瑟"
+    "author": "布莱恩·阿瑟",
+    "rating": 8.5
   },
   {
     "id": "41",
@@ -317,7 +344,8 @@
     "file": "notes/note41.html",
     "date": "2026-10-09",
     "category": "政治与经济",
-    "author": "萧冬连"
+    "author": "萧冬连",
+    "rating": 9.2
   },
   {
     "id": "42",
@@ -325,7 +353,8 @@
     "file": "notes/note42.html",
     "date": "2026-10-09",
     "category": "社会与文化",
-    "author": "齐格蒙特·鲍曼"
+    "author": "齐格蒙特·鲍曼",
+    "rating": 8.9
   },
   {
     "id": "43",
@@ -333,7 +362,8 @@
     "file": "notes/note43.html",
     "date": "2026-10-09",
     "category": "商业与市场",
-    "author": "杨飞"
+    "author": "杨飞",
+    "rating": 8.0
   },
   {
     "id": "44",
@@ -341,7 +371,8 @@
     "file": "notes/note44.html",
     "date": "2026-10-09",
     "category": "通识与科普",
-    "author": "金观涛、华国凡"
+    "author": "金观涛、华国凡",
+    "rating": 9.2
   },
   {
     "id": "45",
@@ -349,7 +380,8 @@
     "file": "notes/note45.html",
     "date": "2026-10-20",
     "category": "商业与市场",
-    "author": "江南春"
+    "author": "江南春",
+    "rating": 7.6
   },
   {
     "id": "46",
@@ -357,7 +389,8 @@
     "file": "notes/note46.html",
     "date": "2026-10-21",
     "category": "商业与市场",
-    "author": "曾鸣"
+    "author": "曾鸣",
+    "rating": 8.5
   },
   {
     "id": "47",
@@ -365,7 +398,8 @@
     "file": "notes/note47.html",
     "date": "2026-10-19",
     "category": "商业与市场",
-    "author": "菲利普·科特勒"
+    "author": "菲利普·科特勒",
+    "rating": 9.4
   },
   {
     "id": "48",
@@ -373,7 +407,8 @@
     "file": "notes/note48.html",
     "date": "2026-10-21",
     "category": "认知与心理",
-    "author": "米哈里·契克森米哈赖"
+    "author": "米哈里·契克森米哈赖",
+    "rating": 8.2
   },
   {
     "id": "49",
@@ -381,7 +416,8 @@
     "file": "notes/note49.html",
     "date": "2026-10-21",
     "category": "认知与心理",
-    "author": "丹尼尔·卡尼曼"
+    "author": "丹尼尔·卡尼曼",
+    "rating": 8.2
   },
   {
     "id": "50",
@@ -389,7 +425,8 @@
     "file": "notes/note50.html",
     "date": "2026-10-21",
     "category": "认知与心理",
-    "author": "丹·艾瑞里"
+    "author": "丹·艾瑞里",
+    "rating": 8.1
   },
   {
     "id": "51",
@@ -397,7 +434,8 @@
     "file": "notes/note51.html",
     "date": "2026-10-21",
     "category": "认知与心理",
-    "author": "丹·艾瑞里"
+    "author": "丹·艾瑞里",
+    "rating": 7.9
   },
   {
     "id": "52",
@@ -405,7 +443,8 @@
     "file": "notes/note52.html",
     "date": "2026-10-21",
     "category": "金融与财务",
-    "author": "贾宁"
+    "author": "贾宁",
+    "rating": 8.4
   },
   {
     "id": "53",
@@ -413,7 +452,8 @@
     "file": "notes/note53.html",
     "date": "2026-10-28",
     "category": "商业与市场",
-    "author": "尼尔·埃亚尔"
+    "author": "尼尔·埃亚尔",
+    "rating": 7.9
   },
   {
     "id": "54",
@@ -421,7 +461,8 @@
     "file": "notes/note54.html",
     "date": "2026-10-26",
     "category": "商业与市场",
-    "author": "彼得·蒂尔"
+    "author": "彼得·蒂尔",
+    "rating": 8.2
   },
   {
     "id": "55",
@@ -429,7 +470,8 @@
     "file": "notes/note55.html",
     "date": "2026-10-28",
     "category": "组织与管理",
-    "author": "戴维·尤里奇"
+    "author": "戴维·尤里奇",
+    "rating": 7.8
   },
   {
     "id": "56",
@@ -437,7 +479,8 @@
     "file": "notes/note56.html",
     "date": "2026-10-26",
     "category": "组织与管理",
-    "author": "斯图尔特·克雷纳"
+    "author": "斯图尔特·克雷纳",
+    "rating": 8.5
   },
   {
     "id": "57",
@@ -445,7 +488,8 @@
     "file": "notes/note57.html",
     "date": "2026-10-30",
     "category": "商业与市场",
-    "author": "曾鸣"
+    "author": "曾鸣",
+    "rating": 7.7
   },
   {
     "id": "58",
@@ -453,7 +497,8 @@
     "file": "notes/note58.html",
     "date": "2026-10-29",
     "category": "商业与市场",
-    "author": "吴晓波"
+    "author": "吴晓波",
+    "rating": 8.9
   },
   {
     "id": "59",
@@ -461,7 +506,8 @@
     "file": "notes/note59.html",
     "date": "2026-10-29",
     "category": "商业与市场",
-    "author": "吴晓波"
+    "author": "吴晓波",
+    "rating": 8.7
   },
   {
     "id": "60",
@@ -469,7 +515,8 @@
     "file": "notes/note60.html",
     "date": "2026-10-29",
     "category": "政治与经济",
-    "author": "罗纳德·科斯、王宁"
+    "author": "罗纳德·科斯、王宁",
+    "rating": 9.0
   },
   {
     "id": "61",
@@ -477,7 +524,8 @@
     "file": "notes/note61.html",
     "date": "2026-10-29",
     "category": "社会与文化",
-    "author": "三浦展"
+    "author": "三浦展",
+    "rating": 8.1
   },
   {
     "id": "62",
@@ -485,7 +533,8 @@
     "file": "notes/note62.html",
     "date": "2026-11-04",
     "category": "数学",
-    "author": "刘嘉"
+    "author": "刘嘉",
+    "rating": 8.8
   },
   {
     "id": "63",
@@ -493,7 +542,8 @@
     "file": "notes/note63.html",
     "date": "2026-11-05",
     "category": "组织与管理",
-    "author": "丛龙峰"
+    "author": "丛龙峰",
+    "rating": 8.4
   },
   {
     "id": "64",
@@ -501,7 +551,8 @@
     "file": "notes/note64.html",
     "date": "2026-11-04",
     "category": "通识与科普",
-    "author": "罗翔"
+    "author": "罗翔",
+    "rating": 8.9
   },
   {
     "id": "65",
@@ -509,7 +560,8 @@
     "file": "notes/note65.html",
     "date": "2026-11-06",
     "category": "通识与科普",
-    "author": "刘擎"
+    "author": "刘擎",
+    "rating": 9.0
   },
   {
     "id": "66",
@@ -517,6 +569,7 @@
     "file": "notes/note66.html",
     "date": "2026-11-04",
     "category": "通识与科普",
-    "author": "薄世宁"
+    "author": "薄世宁",
+    "rating": 8.9
   }
 ]
