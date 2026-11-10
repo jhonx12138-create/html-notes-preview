@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.15.0</title>
+<title>📚 书阁 v8.15.1</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -1533,7 +1533,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.15.0</span>
+        <span class="hero-version">v8.15.1</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1559,7 +1559,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.15.0</span>
+              <span class="hero-version">v8.15.1</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1697,11 +1697,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.15.0</span>
+                <span class="setting-value">v8.15.1</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.15.0</div>
+              <div class="about-version">📚 书阁 v8.15.1</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -2915,7 +2915,8 @@ html, body {
      创始人、董事长）出版 中信出版集团 · 2018年8月 页数304页 …」这种目录串，读起来像乱码。 */
   async function extractNoteExcerpt(note) {
     if (!note || !note.file) return '';
-    const html = await fetchTextOrNull(note.file);
+    // v8.15.1：抓正文加 12s 上限，弱网/坏文件也不会把分享图永远卡在 loading
+    const html = await fetchTextOrNull(note.file, 12000);
     if (!html) return '';
     let cand = [];
     try {
@@ -3519,14 +3520,22 @@ html, body {
 
   /* ---- 分享弹层 ---- */
   let _sharing = false;
+  /* v8.15.1：每次生成递增的令牌。关闭弹层即刷新令牌，作废在途的那次构建，
+     避免「关掉后重开」时旧构建回填旧图，或旧的 _sharing 卡住导致下次点了没反应。 */
+  let _shareToken = 0;
   let _shareBlob = null;
   let _shareName = '书阁-读书笔记.png';
 
   /* 打开弹层 → 等图 → 备好 Blob。书卡海报和观点海报共用这一套弹层流程，
      之前这段逻辑只在 openShareCard 里写死过一份。 */
   function _presentShare(promise, name, hint) {
-    if (_sharing) return Promise.resolve();
+    // v8.15.1：只在「弹层正在显示、正在生成」时才拦截重复点击。
+    // 之前是 `if (_sharing) return`，而 closeShareCard 又不复位 _sharing——
+    // 于是慢速构建途中关掉弹层后再点「生成分享图」会直接 return，弹层不打开、图不出来
+    // （用户看到的就是「点了生成不出来」）。现在关弹层会复位 _sharing 并刷新令牌，重开即可重新生成。
+    if (_sharing && shareModalBackdrop.classList.contains('show')) return Promise.resolve();
     _sharing = true;
+    const token = ++_shareToken;
     _shareName = name;
 
     shareModalBackdrop.classList.add('show');
@@ -3536,6 +3545,7 @@ html, body {
     if (shareModalSave) { shareModalSave.disabled = true; shareModalSave.style.opacity = '0.5'; }
 
     return promise.then(res => {
+      if (token !== _shareToken) return;   // 已被关闭 / 被新的分享取代，丢弃这次结果
       if (shareModalImg) {
         shareModalImg.src = res.dataUrl;
         shareModalImg.style.display = 'block';
@@ -3543,14 +3553,16 @@ html, body {
       if (shareModalLoading) shareModalLoading.style.display = 'none';
       // 同时准备一份 Blob，点「保存图片」时直接下载
       res.canvas.toBlob(b => {
+        if (token !== _shareToken) return;
         _shareBlob = b;
         if (shareModalSave) { shareModalSave.disabled = false; shareModalSave.style.opacity = ''; }
       }, 'image/png');
     }).catch(err => {
+      if (token !== _shareToken) return;
       console.error('[share] 生成失败', err);
       closeShareCard();
       showToast('分享图生成失败，请重试');
-    }).finally(() => { _sharing = false; });
+    }).finally(() => { if (token === _shareToken) _sharing = false; });
   }
 
   function openShareCard(noteId) {
@@ -3574,6 +3586,9 @@ html, body {
   }
 
   function closeShareCard() {
+    // v8.15.1：复位生成标志 + 刷新令牌——保证关闭后能立即重新生成，且作废在途的旧构建。
+    _sharing = false;
+    _shareToken++;
     shareModalBackdrop.classList.remove('show');
     _shareBlob = null;
     if (shareModalImg) { shareModalImg.removeAttribute('src'); shareModalImg.style.display = 'none'; }
@@ -4361,8 +4376,21 @@ html, body {
     return out;
   }
 
-  async function fetchTextOrNull(url) {
-    try { const r = await fetch(url, { cache: 'no-store' }); return r.ok ? await r.text() : null; } catch (_) { return null; }
+  async function fetchTextOrNull(url, timeoutMs) {
+    // v8.15.1：可选超时。移动端弱网时，抓正文可能长时间挂起，
+    // 之前 fetch 不设上限会让「生成分享图」永远卡在 loading。给了超时就 abort→返回 null，
+    // 分享图仍能出（仅少一段摘录），不会卡死。不传 timeoutMs 时行为与旧版完全一致。
+    let timer = null;
+    try {
+      const opts = { cache: 'no-store' };
+      if (timeoutMs && typeof AbortController !== 'undefined') {
+        const ctl = new AbortController();
+        opts.signal = ctl.signal;
+        timer = setTimeout(() => ctl.abort(), timeoutMs);
+      }
+      const r = await fetch(url, opts);
+      return r.ok ? await r.text() : null;
+    } catch (_) { return null; } finally { if (timer) clearTimeout(timer); }
   }
   function downloadBlob(blob, filename) {
     const url = URL.createObjectURL(blob);

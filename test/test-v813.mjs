@@ -32,6 +32,22 @@ await p.setViewport({ width: 390, height: 844, deviceScaleFactor: 2, isMobile: t
 await p.goto(BASE, { waitUntil: 'networkidle0' });
 await sleep(1800);
 
+/* [QA 环境补丁 2026-11-10] 本机沙箱里 Chrome 没有帧时钟，requestAnimationFrame 永不触发，
+   而字号/亮度滑块是 rAF 合帧后才真正改样式（scheduleRange），于是断言会看到「文案变了、样式没变」。
+   这里先探测一次，只有帧时钟真的不转时才用 setTimeout 兜底（≈60fps），不影响真机行为，也不碰 index.html。 */
+const rafAlive = await p.evaluate(() => new Promise(res => {
+  let fired = false;
+  requestAnimationFrame(() => { fired = true; });
+  setTimeout(() => res(fired), 250);
+}));
+if (!rafAlive) {
+  console.log('[env] 检测到 rAF 不触发，已用 setTimeout 兜底帧时钟');
+  await p.evaluate(() => {
+    window.requestAnimationFrame = cb => setTimeout(() => cb(performance.now()), 16);
+    window.cancelAnimationFrame = id => clearTimeout(id);
+  });
+}
+
 console.log('\n=== ① 字号滑块：70–150 + 老索引迁移 ===');
 await p.evaluate(() => document.querySelector('.nav-item[data-tab="notes"]').click());
 await sleep(800);
