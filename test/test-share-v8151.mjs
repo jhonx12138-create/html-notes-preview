@@ -27,6 +27,8 @@ import { mkdirSync, existsSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 const BASE = process.env.BASE || 'http://127.0.0.1:8899/index.html';
+// v8.15.3：当前展示版本号（升版时只改这一处）
+const APP_VERSION = 'v8.15.3';
 const CHROME = '/Users/xuezhiyong/.cache/puppeteer/chrome/mac_arm-149.0.7827.22/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing';
 const SHOTS = path.resolve('shots');
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -200,9 +202,11 @@ const verM = await mp.evaluate(() => ({
   aboutVersion: (document.querySelector('.about-version') || {}).textContent || '',
   settingVersion: [...document.querySelectorAll('.profile-setting-item .setting-value')].map(e => e.textContent.trim()),
 }));
-ok('页面标题是 v8.15.1', /v8\.15\.1/.test(verM.title), verM.title);
-ok('品牌栏版本号是 v8.15.1', verM.heroVersion.length > 0 && verM.heroVersion.every(v => v === 'v8.15.1'), verM.heroVersion.join('/'));
-ok('「我的 → 关于」是 v8.15.1', /v8\.15\.1/.test(verM.aboutVersion) && verM.settingVersion.every(v => !/v8\.15\.0/.test(v)), `${verM.aboutVersion} | ${verM.settingVersion.join('/')}`);
+// v8.15.3：版本断言原来写死 v8.15.1（v8.15.2 升版时漏改，导致 4 条假失败），
+// 改为跟随 APP_VERSION 常量，以后每次升版只改这一处。
+ok(`页面标题是 ${APP_VERSION}`, verM.title.includes(APP_VERSION), verM.title);
+ok(`品牌栏版本号是 ${APP_VERSION}`, verM.heroVersion.length > 0 && verM.heroVersion.every(v => v === APP_VERSION), verM.heroVersion.join('/'));
+ok(`「我的 → 关于」是 ${APP_VERSION}`, verM.aboutVersion.includes(APP_VERSION) && verM.settingVersion.includes(APP_VERSION), `${verM.aboutVersion} | ${verM.settingVersion.join('/')}`);
 
 console.log('\n=== ⑦-B 豆瓣评分胶囊（移动端） ===');
 await gotoNotes(mp);
@@ -446,7 +450,7 @@ const verD = await dp.evaluate(() => ({
   title: document.title,
   heroVersion: [...document.querySelectorAll('.hero-version')].map(e => e.textContent.trim()),
 }));
-ok('桌面端标题 / 品牌栏版本是 v8.15.1', /v8\.15\.1/.test(verD.title) && verD.heroVersion.every(v => v === 'v8.15.1'), `${verD.title} | ${verD.heroVersion.join('/')}`);
+ok(`桌面端标题 / 品牌栏版本是 ${APP_VERSION}`, verD.title.includes(APP_VERSION) && verD.heroVersion.every(v => v === APP_VERSION), `${verD.title} | ${verD.heroVersion.join('/')}`);
 
 await gotoNotes(dp);
 const deskId = await dp.evaluate(() => {

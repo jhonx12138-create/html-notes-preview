@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#FFFBF5">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<title>📚 书阁 v8.15.2</title>
+<title>📚 书阁 v8.15.3</title>
 <link rel="icon" href="data:,">
 <style>
 /* ========== Design System ========== */
@@ -1162,9 +1162,37 @@ html, body {
   overflow-y: auto;
   flex: 1;
   min-height: 0;
+  /* v8.15.3：修「分类页两行书卡之间 135px 空白」。
+     本网格是 flex:1 的定高容器（视口高），而 align-content 默认 normal→stretch，
+     会把剩余空间平均分配给 auto 行轨道：行高 145.3 → 268.7px，卡片因 aspect-ratio
+     保持 145.3px 不拉伸，多出来的 123.4px 就变成行下方的空白。
+     改成 start 后行轨道按内容高度排列，行距回到设计的 12px。
+     （首页 .book-row 在高度自适应的 .shelf-section 里没有剩余空间，所以一直正常，
+       这里也就无需改动书架页样式。） */
+  align-content: start;
+  /* v8.15.3（同批补修）：修「书多了以后行轨道塌缩、卡片互相叠压」的既有隐患。
+     auto 行轨道的 base size 取 min-content（实测 ≈68px）。当所有行装不进网格可视高度时，
+     Maximize Tracks 不再执行，轨道就停在 base size，比卡片矮，卡片溢出轨道压到下一行：
+     13 本（4 行）→ 行轨 128.3px，重叠 5px；20 本（5 行）→ 行轨 100.3px，重叠 33px
+     （桌面 1440×900 更严重：13 本重叠 54.5px、20 本重叠 90px，且几乎滚不动）。
+     用 max-content 让行轨道按卡片的最大内容高度（= aspect-ratio 算出的 145.3px）定尺，
+     8 本时数据与改前逐像素一致（145.312px / 行距 12 / 卡片 77.5×145.31），
+     13/20 本则回到 145.312px、行距 12、scrollHeight 真正大于 clientHeight。
+     注：只加 align-self/align-items 不解决问题（轨道本身仍会塌缩），必须约束轨道尺寸。 */
+  grid-auto-rows: max-content;
 }
 .category-detail-grid::-webkit-scrollbar { width: 4px; }
 .category-detail-grid::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+/* v8.15.3：分类详情页「右滑返回」手势的样式层。
+   跟手位移由 JS 直接写 inline transform（此时没有 transition，才跟得住手指）；
+   只有松手回弹 / 滑出时才挂 .cat-swipe-animating 让位移平滑过渡。
+   touch-action: pan-y 保留纵向滚动与双指缩放，仅把横向手势让给 JS。 */
+.category-detail-view { touch-action: pan-y pinch-zoom; }
+.category-detail-view.cat-swipe-animating {
+  transition: transform 220ms cubic-bezier(.22,.61,.36,1), opacity 220ms ease;
+  will-change: transform, opacity;
+}
 
 /* v8.7：分类区块改为独立卡片，强化类别之间的视觉分隔 */
 .shelf-section {
@@ -1533,7 +1561,7 @@ html, body {
       <h1>
         <span class="hero-avatar" id="brandAvatar">📚</span>
         <span class="hero-name" id="brandName">书阁</span>
-        <span class="hero-version">v8.15.2</span>
+        <span class="hero-version">v8.15.3</span>
       </h1>
       <button class="icon-btn" id="searchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
     </div>
@@ -1559,7 +1587,7 @@ html, body {
             <div class="hero-brand">
               <span class="hero-avatar" id="heroAvatar">📚</span>
               <span class="hero-name" id="heroName">书阁</span>
-              <span class="hero-version">v8.15.2</span>
+              <span class="hero-version">v8.15.3</span>
             </div>
             <button class="icon-btn hero-search" id="heroSearchBtn" title="搜索笔记" aria-label="搜索笔记"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-search"/></svg></button>
           </div>
@@ -1697,11 +1725,11 @@ html, body {
               </li>
               <li class="profile-setting-item">
                 <span class="setting-label"><svg class="setting-ico" viewBox="0 0 24 24" aria-hidden="true"><use href="#ico-about"/></svg>关于</span>
-                <span class="setting-value">v8.15.2</span>
+                <span class="setting-value">v8.15.3</span>
               </li>
             </ul>
             <div class="profile-about">
-              <div class="about-version">📚 书阁 v8.15.2</div>
+              <div class="about-version">📚 书阁 v8.15.3</div>
               <div class="about-desc">一款简洁优雅的读书笔记浏览与管理工具。<br>支持 HTML 笔记预览、上传管理、分类筛选、搜索历史、暗色模式等功能。</div>
             </div>
           </div>
@@ -1998,6 +2026,28 @@ html, body {
   const categoryDetailTitle = $('#categoryDetailTitle');
   const categoryDetailCount = $('#categoryDetailCount');
   const backCatBtn = $('#backCatBtn');
+
+  /* v8.15.3：分类详情页「右滑返回」手势的常量与状态。
+     放在这里（而不是手势监听处）是因为 openCategoryDetail / closeCategoryDetail
+     会读写这几个状态，前置声明可彻底避开 let 的 TDZ 陷阱。 */
+  const CAT_SWIPE_DECIDE_X  = 12;    // 横移超过 12px 才开始判方向
+  const CAT_SWIPE_RATIO     = 1.5;   // 横向位移必须 > 纵向位移 * 1.5
+  const CAT_SWIPE_TRIGGER   = 70;    // 松手时横移 ≥ 70px 即返回
+  const CAT_SWIPE_FLICK_DX  = 40;    // 轻扫：位移不够但速度够快也返回
+  const CAT_SWIPE_FLICK_V   = 0.5;   // 轻扫速度阈值（px/ms）
+  const CAT_SWIPE_ANIM_MS   = 220;   // 滑出 / 回弹动画时长（与 CSS 保持一致）
+
+  let catSwipeTracking   = false;    // 手指按下中
+  let catSwipeActive     = false;    // 已判定为横滑（跟手中）
+  let catSwipeStartX     = 0;
+  let catSwipeStartY     = 0;
+  let catSwipeStartT     = 0;
+  let catSwipeDx         = 0;
+  let catSwipeWidth      = 0;
+  let catSwipeToken      = 0;        // 关闭动画的一次性令牌，防止重复关闭
+  let catSwipeCloseTimer = null;
+  let catSwipeAnimTimer  = null;     // 回弹动画结束后摘掉 transition 类
+  let catSwipeGuardUntil = 0;        // 关闭后短暂吞掉合成 click，避免误开笔记
 
   // Confirm modal
   const confirmModal        = $('#confirmModal');
@@ -3615,6 +3665,8 @@ html, body {
    *  CATEGORY DETAIL VIEW
    * =================================================================== */
   function openCategoryDetail(catName) {
+    // v8.15.3：清掉上一次右滑返回可能残留的位移/透明度和动画类
+    resetCatSwipeStyles();
     shelfContainer.style.display = 'none';
     categoryDetailView.classList.remove('hidden');
     categoryDetailTitle.textContent = catName;
@@ -3622,6 +3674,9 @@ html, body {
   }
 
   function closeCategoryDetail() {
+    // v8.15.3：取消尚未执行的右滑关闭动画，避免同一帧内重复关闭/重复渲染书架
+    catSwipeToken += 1;
+    if (catSwipeCloseTimer) { clearTimeout(catSwipeCloseTimer); catSwipeCloseTimer = null; }
     categoryDetailView.classList.add('hidden');
     shelfContainer.style.display = '';
     renderShelf();
@@ -5568,6 +5623,142 @@ ${userIndex.length ? '\n你的笔记清单：\n' + byCat(userIndex) + '\n' : ''}
   categoryDetailGrid.addEventListener('touchcancel', function() {
     if (catDetailLongTimer) { clearTimeout(catDetailLongTimer); catDetailLongTimer = null; catDetailLongCard = null; }
   });
+
+  /* ===================================================================
+   * v8.15.3：分类详情页「右滑返回」手势
+   * ---------------------------------------------------------------
+   * 起因：分类展开页此前完全没有侧滑返回，移动端用户按 iOS 习惯
+   *       从屏幕左侧往右划没有任何反应，只能点左上角返回箭头。
+   * 设计约束：
+   *   1) 只监听 touch 事件 → 桌面鼠标/触控板行为完全不变；
+   *   2) 与纵向滚动共存：横移未达判定条件时一律不拦截，避免打断滚动；
+   *   3) 与书卡长按菜单（catDetailLongTimer）互斥：判定为横滑即刻撤销长按；
+   *   4) 手势成功后复用既有的 closeCategoryDetail()，不另写一套恢复逻辑；
+   *   5) 判定条件（三项同时满足才算横滑）：
+   *        dx > 0（只认向右）· dx ≥ 12px · dx > |dy| * 1.5（横向明显占优）
+   *      松手阈值：dx ≥ 70px，或 dx ≥ 40px 且速度 ≥ 0.5px/ms（轻扫）。
+   *   常量与状态变量统一声明在 DOM 缓存区（见 CAT_SWIPE_DECIDE_X 附近）。
+   * =================================================================== */
+
+  /** 把跟手位移/动画类全部清掉（进入分类页与手势结束时都要调）。 */
+  function resetCatSwipeStyles() {
+    catSwipeTracking = false;
+    catSwipeActive = false;
+    catSwipeDx = 0;
+    if (catSwipeAnimTimer) { clearTimeout(catSwipeAnimTimer); catSwipeAnimTimer = null; }
+    categoryDetailView.classList.remove('cat-swipe-animating');
+    categoryDetailView.style.transform = '';
+    categoryDetailView.style.opacity = '';
+  }
+
+  /** 回弹动画跑完后摘掉 transition 类，避免下一次跟手出现拖尾。 */
+  function scheduleCatSwipeAnimClear() {
+    if (catSwipeAnimTimer) clearTimeout(catSwipeAnimTimer);
+    catSwipeAnimTimer = setTimeout(function() {
+      catSwipeAnimTimer = null;
+      categoryDetailView.classList.remove('cat-swipe-animating');
+    }, CAT_SWIPE_ANIM_MS + 40);
+  }
+
+  categoryDetailView.addEventListener('touchstart', function(e) {
+    // 只在分类页可见、单指触摸时记录起点
+    if (categoryDetailView.classList.contains('hidden')) { catSwipeTracking = false; return; }
+    if (!e.touches || e.touches.length !== 1) { catSwipeTracking = false; catSwipeActive = false; return; }
+    catSwipeTracking = true;
+    catSwipeActive = false;
+    catSwipeDx = 0;
+    catSwipeStartX = e.touches[0].clientX;
+    catSwipeStartY = e.touches[0].clientY;
+    catSwipeStartT = e.timeStamp || Date.now();
+    catSwipeWidth = categoryDetailView.getBoundingClientRect().width || window.innerWidth;
+  }, { passive: true });
+
+  categoryDetailView.addEventListener('touchmove', function(e) {
+    if (!catSwipeTracking || !e.touches || e.touches.length !== 1) return;
+    const dx = e.touches[0].clientX - catSwipeStartX;
+    const dy = e.touches[0].clientY - catSwipeStartY;
+
+    if (!catSwipeActive) {
+      if (dx <= 0) return;                                     // 只认向右滑
+      if (dx < CAT_SWIPE_DECIDE_X) return;                      // 位移太小，继续观察
+      if (dx <= Math.abs(dy) * CAT_SWIPE_RATIO) return;         // 竖划 / 斜划 → 交给滚动
+      catSwipeActive = true;
+      categoryDetailView.classList.remove('cat-swipe-animating');
+      // 与长按菜单互斥：横滑已成立，撤销长按计时，避免滑完弹出操作面板
+      if (catDetailLongTimer) { clearTimeout(catDetailLongTimer); catDetailLongTimer = null; }
+      catDetailLongCard = null;
+    }
+    // 横滑期间阻止纵向滚动/横向回弹（仅此分支 preventDefault，不影响正常滚动）
+    if (e.cancelable) e.preventDefault();
+    catSwipeDx = Math.max(0, Math.min(dx, catSwipeWidth));
+    categoryDetailView.style.transform = 'translateX(' + catSwipeDx.toFixed(1) + 'px)';
+    // 轻微淡出，让「正在返回」有更明确的反馈（不做成 0，避免翻页闪白）
+    const fade = Math.max(0.55, 1 - catSwipeDx / Math.max(1, catSwipeWidth * 1.6));
+    categoryDetailView.style.opacity = fade.toFixed(3);
+  }, { passive: false });
+
+  categoryDetailView.addEventListener('touchend', function(e) {
+    if (!catSwipeTracking) return;
+    const wasActive = catSwipeActive;
+    catSwipeTracking = false;
+    catSwipeActive = false;
+    if (!wasActive) return;                    // 没进入横滑 → 什么都不做（点击照常）
+
+    // 横滑过的松手会合成一次 click，落在书卡上会误开笔记，必须吞掉
+    if (e.cancelable) e.preventDefault();
+    // 防御窗口：动画（220ms）结束后再多留 120ms，既够挡住合成 click，
+    // 又不会让用户「滑回来想马上点分类」时点不动
+    catSwipeGuardUntil = Date.now() + CAT_SWIPE_ANIM_MS + 120;
+
+    const dt = Math.max(1, (e.timeStamp || Date.now()) - catSwipeStartT);
+    const velocity = catSwipeDx / dt;          // px/ms
+    const shouldClose = catSwipeDx >= CAT_SWIPE_TRIGGER
+      || (catSwipeDx >= CAT_SWIPE_FLICK_DX && velocity >= CAT_SWIPE_FLICK_V);
+
+    categoryDetailView.classList.add('cat-swipe-animating');
+
+    if (!shouldClose) {
+      // 距离/速度不够 → 回弹
+      categoryDetailView.style.transform = '';
+      categoryDetailView.style.opacity = '';
+      catSwipeDx = 0;
+      scheduleCatSwipeAnimClear();
+      return;
+    }
+
+    // 达标 → 顺势滑出，动画结束后复用既有 closeCategoryDetail()
+    catSwipeToken += 1;
+    const token = catSwipeToken;
+    categoryDetailView.style.transform = 'translateX(' + catSwipeWidth.toFixed(1) + 'px)';
+    categoryDetailView.style.opacity = '0';
+    if (catSwipeCloseTimer) clearTimeout(catSwipeCloseTimer);
+    catSwipeCloseTimer = setTimeout(function() {
+      catSwipeCloseTimer = null;
+      if (token !== catSwipeToken) return;     // 期间又重新打开过，放弃这次关闭
+      resetCatSwipeStyles();                   // 先复位样式，下次进入不会带位移
+      closeCategoryDetail();
+    }, CAT_SWIPE_ANIM_MS);
+  }, { passive: false });
+
+  categoryDetailView.addEventListener('touchcancel', function() {
+    if (!catSwipeTracking && !catSwipeActive) return;
+    // 被系统打断（来电/切后台）→ 一律回弹到原位
+    catSwipeTracking = false;
+    catSwipeActive = false;
+    catSwipeDx = 0;
+    categoryDetailView.classList.add('cat-swipe-animating');
+    categoryDetailView.style.transform = '';
+    categoryDetailView.style.opacity = '';
+    scheduleCatSwipeAnimClear();
+  }, { passive: true });
+
+  // 手势刚结束时吞掉可能到来的合成 click（捕获阶段，一次性窗口 500ms 内）
+  document.addEventListener('click', function(e) {
+    if (Date.now() < catSwipeGuardUntil) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+  }, true);
 
   window.matchMedia('(orientation: landscape)').addEventListener('change',()=>checkLandscape());
 
