@@ -3,391 +3,1075 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>芯片简史 — 一页纸知识图谱</title>
+<title>芯片简史 · 知识图谱</title>
 <style>
-:root{--bg:#fafbfc;--sidebar-bg:#eef2f7;--card-bg:#ffffff;--border:#d1d9e6;--text:#2c2416;--text-muted:#6b6258;--accent:#2563eb;--accent-light:#dbeafe;--shadow:0 2px 12px rgba(0,0,0,0.06);--highlight:#dbeafe;--radius:10px;--font-sans:system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;--font-serif:'Noto Serif SC','Songti SC','SimSun','STSong',Georgia,serif;--sidebar-width:260px}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.7}
-.sidebar{position:fixed;left:0;top:0;width:var(--sidebar-width);height:100vh;background:var(--sidebar-bg);border-right:1px solid var(--border);overflow-y:auto;padding:24px 16px;z-index:100}
-.sidebar .book-identity{margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--accent)}
-.sidebar .book-identity h1{font-family:var(--font-serif);font-size:18px;color:var(--accent);line-height:1.4}
-.sidebar .book-identity .subtitle{font-size:12px;color:var(--text-muted);margin-top:4px}
-.sidebar .toc-list{list-style:none}
-.sidebar .toc-list li a{display:block;padding:6px 10px;font-size:13px;color:var(--text-muted);text-decoration:none;border-radius:6px;transition:all .2s;line-height:1.5}
-.sidebar .toc-list li a:hover,.sidebar .toc-list li a.active{background:var(--accent-light);color:var(--accent)}
-.sidebar .toc-list li a.active{font-weight:600}
-.sidebar .toc-list li.toc-era a{font-weight:500;color:var(--text)}
-.sidebar .toc-list li.toc-sub a{padding-left:24px;font-size:12px}
-.main{margin-left:var(--sidebar-width);padding:40px 48px 80px;max-width:900px}
-.header-section{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:32px 36px;margin-bottom:40px;box-shadow:var(--shadow)}
-.header-section .book-title{font-family:var(--font-serif);font-size:28px;color:var(--accent);margin-bottom:8px}
-.header-section .book-subtitle{font-size:15px;color:var(--text-muted);margin-bottom:16px}
-.header-section .meta-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.header-section .badge{display:inline-block;padding:3px 10px;font-size:12px;border-radius:20px;background:var(--accent-light);color:var(--accent);border:1px solid var(--accent)}
-.header-section .badge.type-badge{background:#f8f5fb;color:#8b7aaa;border-color:#8b7aaa}
-.header-section .thesis-quote{font-family:var(--font-serif);font-size:14px;color:var(--text);background:#fff9e6;border-left:3px solid #d4a017;padding:12px 16px;margin-top:16px;line-height:1.6}
-.era-section{margin-bottom:48px}
-.era-section h2{font-family:var(--font-serif);font-size:22px;color:var(--accent);border-bottom:2px solid var(--accent-light);padding-bottom:8px;margin-bottom:20px}
-.era-section h2 .era-label{display:inline-block;background:var(--accent);color:#fff;font-size:13px;font-family:var(--font-sans);padding:2px 10px;border-radius:20px;margin-right:8px;vertical-align:middle}
-.era-section h3{font-size:16px;color:var(--text);margin:24px 0 12px;font-weight:600}
-.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
-.info-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px;border-left:4px solid var(--border);box-shadow:var(--shadow)}
-.info-card.concept{border-left-color:#2563eb;background:#dbeafe}
-.info-card.case{border-left-color:#b8956a;background:#fdf8f2}
-.info-card.tool{border-left-color:#7a9f7a;background:#f5faf5}
-.info-card.history{border-left-color:#8b7aaa;background:#f8f5fb}
-.info-card .label{font-size:11px;font-weight:700;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px;letter-spacing:.5px}
-.info-card .content{font-size:14px;line-height:1.7;color:var(--text)}
-.info-card .example{font-size:13px;background:#fff9e6;padding:8px 12px;border-radius:6px;margin-top:8px;color:#6b5a3a;line-height:1.5}
-.insight-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:20px 24px;margin-bottom:16px;box-shadow:var(--shadow);border-top:3px solid var(--accent)}
-.insight-card .insight-title{font-size:15px;font-weight:700;color:var(--accent);margin-bottom:8px}
-.insight-card .insight-body{font-size:14px;line-height:1.7;color:var(--text)}
-.insight-card .insight-evidence{font-size:13px;color:var(--text-muted);margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)}
-.pattern-section,.thesis-section,.extension-section{margin-bottom:48px}
-.pattern-section h2,.thesis-section h2,.extension-section h2{font-family:var(--font-serif);font-size:22px;color:var(--accent);border-bottom:2px solid var(--accent-light);padding-bottom:8px;margin-bottom:20px}
-.pattern-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.pattern-card{background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;box-shadow:var(--shadow)}
-.pattern-card .pattern-name{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:4px}
-.pattern-card .pattern-desc{font-size:13px;color:var(--text);line-height:1.6}
-.pattern-card .pattern-examples{font-size:12px;color:var(--text-muted);margin-top:6px}
-table.extension{width:100%;border-collapse:collapse;background:var(--card-bg);border-radius:var(--radius);box-shadow:var(--shadow);font-size:14px}
-table.extension th{background:var(--accent-light);color:var(--accent);font-weight:600;text-align:left;padding:12px 16px;border-bottom:2px solid var(--accent)}
-table.extension td{padding:10px 16px;border-bottom:1px solid var(--border);color:var(--text);line-height:1.6}
-table.extension tr:last-child td{border-bottom:none}
-.era-intro{font-size:15px;color:var(--text);line-height:1.8;margin-bottom:16px;font-family:var(--font-serif)}
-.reflection-block{background:#fff9e6;border:1px solid #e6d5a0;border-radius:var(--radius);padding:16px 20px;margin-top:20px;font-size:14px;color:#6b5a3a;line-height:1.7}
-.reflection-block .reflection-title{font-weight:700;color:#a0845a;margin-bottom:6px;font-size:13px}
-.back-to-top{position:fixed;right:24px;bottom:24px;width:40px;height:40px;background:var(--accent);color:#fff;border:none;border-radius:50%;font-size:18px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:200;display:flex;align-items:center;justify-content:center}
-.back-to-top.visible{opacity:1}
-@media(max-width:900px){.sidebar{display:none}.main{margin-left:0;padding:20px 16px 60px}.info-grid,.pattern-grid{grid-template-columns:1fr}}
-@media print{.sidebar{display:none}.main{margin-left:0}.back-to-top{display:none}}
+/* ===== 主题 wafer：青黑 + 晶圆青 + 琥珀 ===== */
+:root {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", sans-serif;
+  --font-serif: Georgia, "Noto Serif SC", "Source Han Serif SC", STSong, serif;
+  --font-mono: "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --primary: #1b2a33; --primary-2: #24363f; --primary-light: #e7efee;
+  --accent: #2a9d8f; --accent-deep: #1c7a70; --accent-soft: #e8f4f2;
+  --amber: #cf8a2d; --amber-soft: #fbf3e6;
+  --bg: #f5f6f5; --bg-soft: #eceeec; --bg-softer: #e0e4e1;
+  --card: #ffffff;
+  --text: #232a2e; --text-heading: #14191d; --muted: #68737a; --light: #8f989d;
+  --border: #dfe2df; --border-soft: #eaeceb;
+  --radius: 9px; --radius-lg: 13px;
+  --shadow: 0 1px 3px rgba(20,25,29,.05), 0 8px 24px rgba(20,25,29,.05);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text); font-family: var(--font-sans);
+  font-size: 15px; line-height: 1.78; -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+}
+a { color: var(--accent-deep); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== 侧栏 ===== */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 212px;
+  background: var(--primary); padding: 24px 0 30px; overflow-y: auto; z-index: 40;
+}
+.sidebar .nav-title { font-size: 10.5px; letter-spacing: .2em; color: rgba(255,255,255,.38); padding: 0 20px 12px; text-transform: uppercase; }
+.sidebar a { display: block; padding: 6px 20px; font-size: 12.5px; color: rgba(255,255,255,.68); border-left: 2px solid transparent; transition: all .16s; line-height: 1.6; }
+.sidebar a:hover { color: #fff; background: rgba(255,255,255,.05); }
+.sidebar a.active { color: #fff; background: rgba(42,157,143,.18); border-left-color: var(--accent); font-weight: 600; }
+.sidebar .nav-sep { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .18em; color: rgba(255,255,255,.26); padding: 14px 20px 5px; }
+.main { margin-left: 212px; padding: 0 0 70px; }
+
+/* ===== 页头 ===== */
+.hero { position: relative; overflow: hidden; background: radial-gradient(circle at 82% 18%, #26424a 0%, #1b2a33 46%, #141e25 100%); color: #eef3f2; padding: 44px 52px 40px; }
+.hero::before {
+  content: ''; position: absolute; right: -110px; top: -90px; width: 420px; height: 420px; border-radius: 50%;
+  background-image: repeating-linear-gradient(45deg, rgba(42,157,143,.16) 0 1px, transparent 1px 22px), repeating-linear-gradient(-45deg, rgba(42,157,143,.16) 0 1px, transparent 1px 22px);
+  mask-image: radial-gradient(circle, #000 42%, transparent 72%);
+  -webkit-mask-image: radial-gradient(circle, #000 42%, transparent 72%);
+}
+.hero > * { position: relative; z-index: 1; }
+.hero .kicker { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .26em; color: #6fbdb4; margin-bottom: 12px; }
+.hero h1 { font-size: 34px; letter-spacing: -.01em; color: #f4f8f7; line-height: 1.25; }
+.hero .sub { font-size: 13.5px; color: #9aadaf; margin: 6px 0 20px; }
+.hero .meta { display: flex; flex-wrap: wrap; gap: 6px 22px; font-size: 12.5px; color: #a8b8b9; padding: 11px 15px; background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.08); border-radius: 8px; margin-bottom: 16px; }
+.hero .meta b { color: #e8efee; font-weight: 600; }
+.hero .badges { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+.hero .badge { font-size: 11.5px; font-weight: 600; color: #b8e2dc; background: rgba(42,157,143,.14); border: 1px solid rgba(42,157,143,.36); border-radius: 20px; padding: 3px 12px; }
+.hero .soul { font-size: 14.5px; line-height: 1.8; color: #d9e4e2; border-left: 3px solid var(--amber); padding-left: 15px; max-width: 800px; }
+.hero .soul b { color: #f0c48c; }
+.hero .stamp { position: absolute; right: 44px; bottom: 34px; border: 1.5px solid rgba(240,196,140,.5); color: #f0c48c; font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; line-height: 1.6; padding: 6px 11px; border-radius: 4px; transform: rotate(-3.5deg); text-align: center; }
+
+/* ===== 区块 ===== */
+section { max-width: 1020px; padding: 40px 52px 0; }
+.sect-head { display: flex; align-items: baseline; gap: 11px; margin-bottom: 4px; }
+.sect-num { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; color: var(--accent); letter-spacing: .1em; }
+section h2 { font-size: 20px; color: var(--text-heading); font-weight: 700; letter-spacing: -.01em; }
+.lead { font-size: 13.2px; color: var(--muted); line-height: 1.8; margin: 6px 0 18px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+section h3 { font-size: 15px; color: var(--text-heading); margin: 24px 0 10px; padding-left: 9px; border-left: 3px solid var(--amber); }
+
+/* ===== 卡片网格 ===== */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin: 14px 0; }
+.grid.two { grid-template-columns: repeat(2, 1fr); }
+.grid.three { grid-template-columns: repeat(3, 1fr); }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px 18px; transition: box-shadow .18s; }
+.card:hover { box-shadow: var(--shadow); }
+.card .c-k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; color: var(--accent-deep); margin-bottom: 5px; display: block; }
+.card .c-t { font-weight: 700; font-size: 13.8px; color: var(--text-heading); margin-bottom: 6px; line-height: 1.5; }
+.card .c-b { font-size: 13.2px; line-height: 1.75; }
+.card .c-e { margin-top: 9px; padding: 8px 11px; background: #fbfbf9; border-left: 3px solid var(--border); border-radius: 0 4px 4px 0; font-size: 12.3px; color: var(--muted); line-height: 1.65; }
+.card .c-e b { color: var(--amber); }
+.card.hot { border-left: 4px solid var(--amber); }
+.card.cool { border-left: 4px solid var(--accent); }
+.card.dark { background: var(--primary); border-color: var(--primary); }
+.card.dark .c-t { color: #f2f7f6; }
+.card.dark .c-b, .card.dark .c-k { color: #b6c7c6; }
+.card.dark .c-e { background: rgba(255,255,255,.05); border-left-color: rgba(42,157,143,.5); color: #a9bcba; }
+
+/* ===== 芯片树 ===== */
+.chip-tree { position: relative; margin: 20px 0 4px; padding-left: 28px; }
+.chip-tree::before { content: ''; position: absolute; left: 10px; top: 12px; bottom: 12px; width: 2px; background: linear-gradient(180deg, var(--accent), #cfe2df 55%, var(--amber)); }
+.ct-node { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: 9px; padding: 12px 15px; margin-bottom: 9px; }
+.ct-node::before { content: ''; position: absolute; left: -23px; top: 17px; width: 9px; height: 9px; border-radius: 50%; background: #fff; border: 2.5px solid var(--accent); }
+.ct-k { font-family: var(--font-mono); font-size: 10px; letter-spacing: .13em; color: var(--accent-deep); }
+.ct-t { font-weight: 700; font-size: 14px; color: var(--text-heading); margin: 2px 0 3px; }
+.ct-d { font-size: 12.7px; color: var(--muted); line-height: 1.68; }
+.ct-node.trunk { border-left: 4px solid var(--primary); }
+.ct-node.trunk::before { border-color: var(--primary); }
+.ct-node.branch { border-left: 4px solid var(--amber); background: var(--amber-soft); }
+.ct-node.branch::before { border-color: var(--amber); }
+.ct-node.leaf { border-left: 4px solid var(--accent); background: var(--accent-soft); }
+.ct-split { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+
+/* ===== 对照 ===== */
+.versus { display: grid; grid-template-columns: 1fr 44px 1fr; gap: 10px; margin: 18px 0; align-items: stretch; }
+.vs-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+.vs-card.win { border-color: #a9d4ce; background: #f2fafa; }
+.vs-h { font-weight: 700; font-size: 13.4px; color: var(--text-heading); margin-bottom: 5px; }
+.vs-p { font-size: 12.7px; line-height: 1.72; }
+.vs-mid { display: flex; align-items: center; justify-content: center; }
+.vs-mid span { width: 34px; height: 34px; border: 1px dashed var(--border); border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 9.5px; color: var(--muted); }
+
+/* ===== 流程 ===== */
+.flow { margin: 16px 0; }
+.flow-step { display: grid; grid-template-columns: 28px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px dashed var(--border); }
+.flow-step:last-child { border-bottom: none; }
+.fs-n { width: 25px; height: 25px; border-radius: 50%; background: var(--primary); color: #eaf1f0; font-family: var(--font-mono); font-size: 10.5px; display: flex; align-items: center; justify-content: center; }
+.fs-t { font-weight: 700; font-size: 13.2px; color: var(--text-heading); }
+.fs-d { font-size: 12.7px; line-height: 1.7; margin-top: 2px; }
+
+/* ===== 数字条 ===== */
+.stat-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 9px; margin: 16px 0; }
+.stat { background: var(--bg-soft); border-left: 3px solid var(--accent); border-radius: 0 7px 7px 0; padding: 11px 13px; }
+.stat .s-n { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--primary); letter-spacing: -.02em; line-height: 1.3; }
+.stat .s-l { font-size: 11.4px; color: var(--muted); margin-top: 3px; line-height: 1.55; }
+
+/* ===== 时间轴 ===== */
+.tl { position: relative; display: flex; margin: 24px 0 4px; }
+.tl::before { content: ''; position: absolute; left: 4%; right: 4%; top: 20px; height: 2px; background: linear-gradient(90deg, #dfeae8, var(--accent), #dfeae8); }
+.tl-n { flex: 1 1 0; min-width: 0; position: relative; z-index: 1; text-align: center; padding: 0 6px; }
+.tl-y { font-family: var(--font-mono); font-size: 11.5px; font-weight: 700; color: var(--amber); margin-bottom: 7px; }
+.tl-d { width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 3px solid var(--accent); margin: 0 auto 8px; }
+.tl-t { font-size: 12.4px; font-weight: 700; color: var(--text-heading); line-height: 1.45; min-height: 3.4em; }
+.tl-s { font-size: 11.3px; color: var(--muted); line-height: 1.55; margin-top: 2px; }
+.nw { white-space: nowrap; }
+
+/* ===== 表格 ===== */
+.tscroll { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 16px 0; }
+.tscroll table { margin: 0; }
+table.mx { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+table.mx th { background: var(--primary); color: #eaf1f0; padding: 10px 12px; text-align: left; font-size: 11.8px; font-weight: 700; }
+table.mx td { padding: 9px 12px; border-bottom: 1px solid var(--border-soft); vertical-align: top; line-height: 1.65; }
+table.mx tbody tr:nth-child(even) td { background: #fafbfa; }
+table.mx td:first-child { font-weight: 700; color: var(--text-heading); }
+table.ext { width: 100%; border-collapse: collapse; font-size: 12.6px; margin: 14px 0; }
+table.ext th { background: var(--accent-soft); color: var(--accent-deep); padding: 10px 13px; text-align: left; font-weight: 700; width: 15%; border-bottom: 2px solid #cfe6e2; }
+table.ext td { padding: 10px 13px; border-bottom: 1px solid var(--border-soft); vertical-align: top; line-height: 1.72; }
+
+/* ===== 人物 ===== */
+.people-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin: 16px 0; }
+.person { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 11px 13px; }
+.person .p-n { font-weight: 700; font-size: 13px; color: var(--text-heading); }
+.person .p-y { font-family: var(--font-mono); font-size: 10.2px; color: var(--accent-deep); letter-spacing: .04em; }
+.person .p-w { font-size: 12px; line-height: 1.62; margin-top: 4px; color: var(--text); }
+
+/* ===== 判断 ===== */
+.law-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; margin: 16px 0; }
+.law { background: var(--card); border: 1px solid var(--border); border-top: 3px solid var(--accent); border-radius: 8px; padding: 14px 16px; }
+.law .l-i { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; color: var(--amber); }
+.law .l-t { font-weight: 700; font-size: 13.2px; color: var(--text-heading); margin: 4px 0 5px; line-height: 1.5; }
+.law .l-p { font-size: 12.4px; line-height: 1.68; color: var(--text); }
+.law.wide { grid-column: 1 / -1; border-top-color: var(--amber); background: var(--bg-soft); }
+
+/* ===== 引用 ===== */
+.quote-block { background: var(--accent-soft); border-left: 4px solid var(--accent); border-radius: 0 9px 9px 0; padding: 15px 20px; margin: 18px 0; font-family: var(--font-serif); font-size: 15px; line-height: 1.85; color: var(--primary); }
+.quote-block .qb-from { display: block; margin-top: 8px; font-family: var(--font-sans); font-size: 11.4px; color: var(--muted); text-align: right; }
+
+/* ===== 洞察 ===== */
+.insight { background: var(--amber-soft); border: 1px solid #eddfc4; border-radius: 9px; padding: 14px 18px; margin: 16px 0; }
+.insight .i-l { font-family: var(--font-mono); font-size: 10px; letter-spacing: .13em; color: #a06a1d; display: block; margin-bottom: 5px; }
+.insight p { font-size: 13px; line-height: 1.78; }
+.insight b { color: #8a5a15; }
+
+/* ===== 局限 ===== */
+ol.limits { list-style: none; counter-reset: lm; margin: 14px 0; }
+ol.limits li { counter-increment: lm; position: relative; padding: 10px 0 10px 34px; border-bottom: 1px dashed var(--border); font-size: 13px; line-height: 1.75; }
+ol.limits li:last-child { border-bottom: none; }
+ol.limits li::before { content: counter(lm, decimal-leading-zero); position: absolute; left: 0; top: 11px; font-family: var(--font-mono); font-size: 11px; color: var(--amber); font-weight: 700; }
+ol.limits strong { color: var(--text-heading); }
+
+/* ===== 术语 ===== */
+.gloss { display: inline-flex; align-items: center; justify-content: center; width: 17px; height: 17px; background: var(--accent); color: #fff; border: none; border-radius: 50%; font-size: 10.5px; font-weight: 700; cursor: pointer; vertical-align: middle; margin-left: 3px; font-family: var(--font-sans); line-height: 1; transition: transform .14s, background .14s; }
+.gloss:hover { transform: scale(1.14); background: var(--amber); }
+.mask { position: fixed; inset: 0; background: rgba(16,22,26,.46); backdrop-filter: blur(2px); display: flex; align-items: center; justify-content: center; z-index: 900; padding: 18px; }
+.mask.hide { display: none; }
+.modal { background: #fff; border-radius: var(--radius-lg); max-width: 560px; width: 93%; max-height: 78vh; overflow-y: auto; padding: 26px 30px; position: relative; box-shadow: 0 12px 44px rgba(0,0,0,.24); }
+.modal .x { position: absolute; top: 9px; right: 13px; background: none; border: none; font-size: 19px; color: var(--muted); cursor: pointer; line-height: 1; }
+.modal h4 { font-size: 15.5px; color: var(--text-heading); margin-bottom: 9px; padding-right: 22px; }
+.modal p { font-size: 13.3px; line-height: 1.82; margin-bottom: 8px; }
+
+/* ===== 页脚 / 回顶 ===== */
+.footer-note { max-width: 1020px; margin: 34px 0 0; padding: 16px 52px 0; border-top: 1px solid var(--border); font-size: 11.3px; color: var(--muted); line-height: 1.8; }
+.to-top { position: fixed; right: 24px; bottom: 24px; width: 40px; height: 40px; border-radius: 50%; border: none; background: var(--primary); color: #dceae7; font-size: 16px; cursor: pointer; z-index: 60; opacity: 0; pointer-events: none; transition: opacity .25s; box-shadow: 0 4px 14px rgba(16,22,26,.3); }
+.to-top.show { opacity: 1; pointer-events: auto; }
+
+@media print {
+  body { background: #fff; }
+  .sidebar, .to-top, .mask { display: none !important; }
+  .main { margin-left: 0; }
+  section, .footer-note { padding-left: 0; padding-right: 0; }
+  .hero { background: #1b2a33 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  h2, h3 { page-break-after: avoid; }
+  .card, .law, .insight { page-break-inside: avoid; }
+}
+@media (max-width: 820px) {
+  .sidebar { display: none; }
+  .main { margin-left: 0; }
+  .hero { padding: 30px 20px; }
+  .hero h1 { font-size: 24px; }
+  .hero .stamp { display: none; }
+  .hero .soul { padding-right: 0; }
+  section { padding: 30px 18px 0; }
+  .footer-note { padding: 14px 18px 0; }
+  .grid, .grid.two, .grid.three, .law-grid, .people-grid, .ct-split { grid-template-columns: 1fr; }
+  .law.wide { grid-column: auto; }
+  .versus { grid-template-columns: 1fr; }
+  .vs-mid { padding: 4px 0; }
+  .tl { overflow-x: auto; padding-bottom: 6px; }
+  .tl::before { left: 0; right: 0; }
+  .tl-n { flex: 0 0 128px; }
+  .tscroll table.mx { min-width: 620px; }
+  .tscroll table.ext { min-width: 540px; }
+}
 </style>
 </head>
-<body><nav class="sidebar" id="sidebar">
-<div class="book-identity"><h1>芯片简史</h1><div class="subtitle">一页纸知识图谱 · 汪波</div></div>
-<ul class="toc-list" id="toc-list">
-<li class="toc-era"><a href="#era1">Era 1：前芯片时代</a></li>
-<li class="toc-sub"><a href="#era1-vacuum">真空管时代</a></li>
-<li class="toc-sub"><a href="#era1-eniac">ENIAC</a></li>
-<li class="toc-sub"><a href="#era1-solidstate">固体物理奠基</a></li>
-<li class="toc-era"><a href="#era2">Era 2：晶体管革命</a></li>
-<li class="toc-sub"><a href="#era2-transistor">点接触晶体管</a></li>
-<li class="toc-sub"><a href="#era2-junction">面结型晶体管</a></li>
-<li class="toc-sub"><a href="#era2-traitorous">八叛逆与仙童</a></li>
-<li class="toc-era"><a href="#era3">Era 3：集成电路时代</a></li>
-<li class="toc-sub"><a href="#era3-ic">IC双雄</a></li>
-<li class="toc-sub"><a href="#era3-planar">平面工艺</a></li>
-<li class="toc-sub"><a href="#era3-fairchild">仙童裂变</a></li>
-<li class="toc-sub"><a href="#era3-moore">摩尔定律</a></li>
-<li class="toc-era"><a href="#era4">Era 4：微处理器与PC</a></li>
-<li class="toc-sub"><a href="#era4-4004">Intel 4004</a></li>
-<li class="toc-sub"><a href="#era4-x86">x86架构</a></li>
-<li class="toc-sub"><a href="#era4-risc">RISC vs CISC</a></li>
-<li class="toc-era"><a href="#era5">Era 5：光刻与制程</a></li>
-<li class="toc-sub"><a href="#era5-lithography">光刻技术演进</a></li>
-<li class="toc-sub"><a href="#era5-node">制程节点长征</a></li>
-<li class="toc-sub"><a href="#era5-euv">EUV光刻</a></li>
-<li class="toc-era"><a href="#era6">Era 6：移动与专用芯片</a></li>
-<li class="toc-sub"><a href="#era6-arm">ARM</a></li>
-<li class="toc-sub"><a href="#era6-gpu">GPU与NVIDIA</a></li>
-<li class="toc-sub"><a href="#era6-fpga">FPGA/ASIC</a></li>
-<li class="toc-era"><a href="#era7">Era 7：AI芯片与未来</a></li>
-<li class="toc-sub"><a href="#era7-dlhw">深度学习硬件</a></li>
-<li class="toc-sub"><a href="#era7-neuromorphic">类脑与量子</a></li>
-<li class="toc-sub"><a href="#era7-geopolitics">芯片地缘政治</a></li>
-<li class="toc-era"><a href="#thesis">贯穿论点</a></li>
-<li class="toc-era"><a href="#patterns">反复出现的规律</a></li>
-<li class="toc-era"><a href="#extension">延伸与比较</a></li>
-</ul>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="nav-title">本书图谱</div>
+  <a href="#hero">封面与一句话</a>
+  <a href="#tree">全书骨架：芯片树</a>
+  <div class="nav-sep">PART 1 · 诞生</div>
+  <a href="#born">01 从灯泡到半导体</a>
+  <a href="#transistor">02 晶体管的两次发明</a>
+  <a href="#silicon">03 硅谷是怎么长出来的</a>
+  <a href="#chip">04 芯片的发明</a>
+  <div class="nav-sep">PART 2 · 演进</div>
+  <a href="#mos">05 MOS 的二十年冷板凳</a>
+  <a href="#moore">06 摩尔定律</a>
+  <a href="#compute">07 计算芯片</a>
+  <a href="#memory">08 存储芯片</a>
+  <div class="nav-sep">PART 3 · 多样</div>
+  <a href="#analog">09 模拟与功率</a>
+  <a href="#photonic">10 光电器件</a>
+  <div class="nav-sep">PART 4 · 建构</div>
+  <a href="#design">12 设计自动化</a>
+  <a href="#fab">13 制造与光刻</a>
+  <a href="#future">14 挑战与三条路</a>
+  <div class="nav-sep">收束</div>
+  <a href="#lines">三条主线</a>
+  <a href="#laws">七条判断</a>
+  <a href="#limits">局限与争议</a>
+  <a href="#extension">延伸比较</a>
+  <a href="#people">芯片群英谱</a>
+  <a href="#reflect">留给读者</a>
 </nav>
+
 <div class="main">
 
-<section class="header-section" id="header">
-<div class="book-title">芯片简史</div>
-<div class="book-subtitle">半导体产业的跃迁之路——从真空管到量子芯片</div>
-<div class="meta-row">
-<span class="badge">汪波 著</span><span class="badge">2023</span><span class="badge type-badge">C+A 混合型：历史叙事为主·核心论点为辅</span>
-</div>
-<div class="thesis-quote">贯穿论点：芯片的每次跃迁不是天才独角戏，是物理直觉、工程执念与时代需求的碰撞。技术突破从来不只是"某个人灵光一闪"，而是多条线索在特定历史时刻交汇的结果。</div>
-</section><section class="era-section" id="era1">
-<h2><span class="era-label">Era 1</span> 前芯片时代（1900s—1940s）</h2>
-<div class="era-intro">在芯片诞生之前，人类已用真空管构建了第一代电子计算器。但真空管的脆弱、庞大与耗电，恰恰成为推动固体物理研究、最终孕育晶体管和芯片的真正动力——需求创造问题，问题催生理论，理论等待工程。</div>
+  <!-- 页头 -->
+  <div class="hero" id="hero">
+    <div class="kicker">A BRIEF HISTORY OF CHIPS</div>
+    <h1>芯片简史</h1>
+    <div class="sub">芯片是如何诞生并改变世界的</div>
+    <div class="meta">
+      <span><b>作者</b> 汪波</span>
+      <span><b>出版</b> 湛庐文化 / 浙江教育出版社</span>
+      <span><b>版本</b> 2023 年 4 月 · ISBN 978-7-5722-5475-8</span>
+      <span><b>篇幅</b> 四部分 14 章 · 539 页</span>
+      <span><b>推荐序</b> 宋继强（英特尔中国研究院）</span>
+    </div>
+    <div class="badges">
+      <span class="badge">技术史</span>
+      <span class="badge">发明史</span>
+      <span class="badge">产业史</span>
+      <span class="badge">C 型 · 因果时序</span>
+    </div>
+    <div class="soul">
+      一句话灵魂：<b>芯片不是被"发明"出来的，是被"逼"出来的</b>——真空管太热、雷达太急、电容太占地方、光刻的波长快用完了。每一次突破都先是一次失败：晶体管的第一次成功来自被否定的表面态研究，集成电路的胜负不在谁先想到，而在谁能批量做出来。
+    </div>
+    <div class="stamp">四部分<br>14 章<br>1904—2021</div>
+  </div>
 
-<h3 id="era1-vacuum">真空管：第一代电子开关</h3>
-<div class="info-grid">
-<div class="info-card history"><div class="label">历史节点</div><div class="content">1904年<b>弗莱明</b>发明热电子二极管——利用灯丝加热后电子单向流动实现整流，是第一个真正意义上的电子元器件。1906年<b>德福雷斯特</b>加入第三电极（栅极），发明三极管（Audion），实现信号放大功能。核心机制：栅极微弱电压变化控制阴极到阳极的大电流——用小信号驾驭大功率。</div><div class="example">类比：弗莱明二极管像单向门——只能往一个方向走。德福雷斯特加了个门卫，门卫小声喊话就能决定多少人通过——这就是"放大"的本质：小信号控制大电流。</div></div>
-<div class="info-card case"><div class="label">关键案例</div><div class="content">德福雷斯特本人不完全理解三极管原理，最初当作"气体放大器"而非真空管使用，管内残留气体低功率下起放大作用但高功率时不稳定。真正的真空管放大直到1912年才被理解并优化。先做出东西再搞清楚为什么，是技术史常见模式。</div><div class="example">类比：像哥伦布发现美洲却以为自己到了印度——到达的地方是对的，对"为什么在这里"的解释却是错的。</div></div>
+  <!-- 骨架 -->
+  <section id="tree">
+    <div class="sect-head"><span class="sect-num">00</span><h2>全书骨架：一棵芯片树</h2></div>
+    <p class="lead">作者本人在解读这本书时，把芯片的发展画成一棵树：根是物理，干是器件，枝是各类芯片，树冠是设计与制造方法。这个比喻比目录更好用——它一眼说清了"为什么第 5 章要等第 2 章"。</p>
+
+    <div class="chip-tree">
+      <div class="ct-node trunk">
+        <div class="ct-k">ROOT · 根</div>
+        <div class="ct-t">量子力学与固体物理</div>
+        <div class="ct-d">1900—1928。能带理论回答了一个此前没人能答的问题：为什么铜导电、玻璃绝缘，而硅这种东西"导电又不导电"。半导体不是坏导体，是带隙可调的材料。</div>
+      </div>
+      <div class="ct-node trunk">
+        <div class="ct-k">TRUNK · 干</div>
+        <div class="ct-t">半导体物理 → 半导体器件</div>
+        <div class="ct-d">提纯、掺杂、PN 结。第 1—2 章。技术上的关键不是"懂原理"，而是能把杂质控制到十亿分之一——没有这个手艺，原理只是纸上的。</div>
+      </div>
+      <div class="ct-node trunk">
+        <div class="ct-k">TRUNK · 干</div>
+        <div class="ct-t">晶体管 → 集成电路</div>
+        <div class="ct-d">第 3—4 章。从"一个器件"到"一片电路"，中间隔着平面工艺和互连方案两道坎，也隔着基尔比与诺伊斯的两场官司。</div>
+      </div>
+      <div class="ct-split">
+        <div class="ct-node branch">
+          <div class="ct-k">BRANCH A · 数字</div>
+          <div class="ct-t">演进：越做越大</div>
+          <div class="ct-d">MOS（第 5 章）→ 摩尔定律（第 6 章）→ 处理器（第 7 章）→ 存储器（第 8 章）。这条枝干只关心一件事：单位面积上能塞多少个晶体管。</div>
+        </div>
+        <div class="ct-node branch">
+          <div class="ct-k">BRANCH B · 多样</div>
+          <div class="ct-t">多样：越做越杂</div>
+          <div class="ct-d">模拟、功率、MEMS（第 9 章）→ 太阳能、图像传感器、LED 与激光器（第 10—11 章）。这条枝干不追求密度，追求"把物理量翻译成电信号"。</div>
+        </div>
+      </div>
+      <div class="ct-node leaf">
+        <div class="ct-k">CANOPY · 冠</div>
+        <div class="ct-t">建构：设计与制造</div>
+        <div class="ct-d">第 12—13 章。EDA、IP 授权、代工、光刻、FinFET。树冠决定了整棵树能长多高——因为从这里开始，瓶口不再是物理，而是工具和良率。</div>
+      </div>
+      <div class="ct-node leaf">
+        <div class="ct-k">WEATHER · 天气</div>
+        <div class="ct-t">挑战：摩尔定律之后</div>
+        <div class="ct-d">第 14 章。物理极限、成本极限、地缘极限同时到来。作者给出三条路径，也承认"不只是芯片"。</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">为什么这棵树值得记住</span>
+      <p>它解释了这门生意最反常识的一点：<b>芯片的进步不是一条直线，而是一棵树的分叉</b>。数字芯片沿着"更小"狂奔，模拟与光电芯片沿着"更准、更亮、更耐用"走，两条枝干的评价标准完全不同。把两者混为一谈，就会看不懂为什么有些公司明明技术落后却能活三十年。</p>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="s-n">1904</div><div class="s-l">弗莱明真空二极管，芯片史的前传从灯泡开始</div></div>
+      <div class="stat"><div class="s-n">1947</div><div class="s-l">点接触晶体管诞生，12 月 23 日</div></div>
+      <div class="stat"><div class="s-n">1958—59</div><div class="s-l">基尔比做出单片集成，诺伊斯给出可制造方案</div></div>
+      <div class="stat"><div class="s-n">2300</div><div class="s-l">1971 年 4004 的晶体管数，10 微米工艺</div></div>
+      <div class="stat"><div class="s-n">2021</div><div class="s-l">全书叙事终点，此后是另一个故事</div></div>
+    </div>
+  </section>
+
+  <!-- 01 -->
+  <section id="born">
+    <div class="sect-head"><span class="sect-num">01</span><h2>从电灯泡到半导体</h2></div>
+    <p class="lead">第 1 章讲的是"前史"。芯片的故事没有一个体面的起点：它起于一个没人想要的副作用——灯泡内壁莫名其妙地变黑。</p>
+
+    <div class="grid two">
+      <div class="card cool">
+        <span class="c-k">STEP 1 · 意外</span>
+        <div class="c-t">爱迪生效应：一个被搁置的副作用</div>
+        <div class="c-b">1880 年代，爱迪生团队发现灯泡玻璃内壁会发黑，且在灯丝与一块额外金属板之间加电压时，有电流穿过真空。爱迪生把它记进专利，但没当回事——他要的是照明，不是电子。</div>
+        <div class="c-e"><b>转折</b>：这个"没用的现象"被弗莱明捡起来，1904 年做成真空二极管，用来检无线电波。</div>
+      </div>
+      <div class="card cool">
+        <span class="c-k">STEP 2 · 放大</span>
+        <div class="c-t">德福雷斯特加了一片栅极</div>
+        <div class="c-b">1906 年，在二极管里插入第三极（栅极），栅极电压的一点点变化就能控制大得多的板极电流——<b>放大</b>出现了。此后半个世纪，无线电、电话中继、雷达、早期计算机全靠真空管。</div>
+        <div class="c-e"><b>代价</b>：发热、易碎、寿命短。ENIAC 用了一万八千只电子管，每天都有管子烧掉，找坏管成了日常工作。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">STEP 3 · 换地基</span>
+        <div class="c-t">量子力学解释了"半"导体</div>
+        <div class="c-b">1900 年普朗克提出能量量子，1925—27 年量子力学成型，1928 年布洛赫给出能带理论。半导体终于有了理论：它的导电性可以被"掺"出来，而不是被"炼"出来。</div>
+        <div class="c-e"><b>关键</b>：理论的价值不是让发明变容易，而是让失败变得可解释——工程师第一次知道该往哪个方向试。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">STEP 4 · 手艺</span>
+        <div class="c-t">提纯与掺杂：真正卡脖子的地方</div>
+        <div class="c-b">硅要提纯到"十亿分之几"的杂质水平，再精确掺入硼或磷，才能得到稳定的 P 型与 N 型。1940 年代，能做到这一点的实验室屈指可数，这也是为什么晶体管只能先在贝尔这样的地方诞生。</div>
+        <div class="c-e"><b>对照</b>：今天的光刻胶、电子级硅、高纯气体，仍是同一类门槛——技术在原理上公开，在手艺上封闭。</div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      变黑的灯泡，真空管的发明 · 绝望的行动，量子之变 · 惊险的一跃，半导体的奇迹
+      <span class="qb-from">第 1 章 三个小节标题（原书）</span>
+    </blockquote>
+
+    <p class="lead" style="border:none;padding:0;margin:0 0 10px">这三句小标题其实就是本章的三幕：一个副作用被发现 → 理论走投无路时的一次跳跃 → 半导体从"脏金属"变成"可设计的材料"。作者把物理学写成悬念，代价是读者容易忽略一个事实：<b>没有二战雷达对高频检波器的巨量需求，这些实验室里的东西不会那么快变成工业</b>。<button class="gloss" onclick="openModal('doping')" aria-label="术语：掺杂">?</button></p>
+  </section>
+
+  <!-- 02 -->
+  <section id="transistor">
+    <div class="sect-head"><span class="sect-num">02</span><h2>晶体管的两次发明</h2></div>
+    <p class="lead">第 2 章的标题是"创造性失败"。这是全书最重要的一章，因为它解释了芯片史的底层逻辑：<b>搞错了，才知道对的是什么</b>。</p>
+
+    <div class="card dark" style="margin-bottom:14px">
+      <span class="c-k">核心判断</span>
+      <div class="c-t">晶体管不是一次发明，是两次，而且两次的逻辑完全相反</div>
+      <div class="c-b">第一次（1947 年 12 月，巴丁与布拉顿）是<b>实验先成、理论后补</b>：他们本来在验证肖克利的场效应设想，结果失败了，却在失败中发现了表面态，改用两个金触点压在锗片上，做出了能放大的器件。<br>第二次（肖克利，1948 年提出、1950 年做成）是<b>理论先行、工艺实现</b>：他不满意"说不清原理的东西"，设计出三明治式的结型结构，把放大机制完全放在体材料内部。</div>
+    </div>
+
+    <div class="versus">
+      <div class="vs-card">
+        <div class="vs-h">点接触晶体管</div>
+        <div class="vs-p">两个金属尖触点压在锗表面，靠表面附近的载流子实现放大。<b>先做出来，原理当时并不完全清楚。</b>脆弱、难复制、参数分散，但它是第一个能工作的晶体管。</div>
+      </div>
+      <div class="vs-mid"><span>VS</span></div>
+      <div class="vs-card win">
+        <div class="vs-h">结型晶体管</div>
+        <div class="vs-p">三层半导体夹在一起（N-P-N），放大发生在材料体内，不依赖脆弱的表面。<b>结构可设计、参数可预测、能批量生产</b>——所以它成了工业的起点。</div>
+      </div>
+    </div>
+
+    <h3>三件值得记住的事</h3>
+    <div class="grid three">
+      <div class="card">
+        <span class="c-k">01 组织</span>
+        <div class="c-t">贝尔实验室的"组队方式"</div>
+        <div class="c-b">1945 年成立固体物理组，把理论家（肖克利）、实验家（巴丁）、工艺家（布拉顿）放在一个走廊里。这个配置后来被无数实验室模仿，但很少成功——因为它需要长期的、不追问产出的资金。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">02 人性</span>
+        <div class="c-t">肖克利被排除在专利之外</div>
+        <div class="c-b">点接触晶体管的专利上只有巴丁和布拉顿的名字。肖克利随后用自己的方案"反戈一击"，做出了结型晶体管。三人关系从此紧张，1956 年同台领诺奖时已近乎陌路。</div>
+        <div class="c-e"><b>后果</b>：这种"要把名字写上去"的执念，后来直接催生了硅谷的出走文化。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">03 争议</span>
+        <div class="c-t">"我们也发明了晶体管"</div>
+        <div class="c-b">1950 年代，多家实验室（西屋、飞利浦、RCA 等）都声称自己更早做出过类似器件。专利战与优先权之争贯穿了整个五十年代，也逼出了"专利交叉授权"这套行业惯例。</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">"创造性失败"到底指什么</span>
+      <p>不是"失败是成功之母"这种鸡汤。它指的是一种具体的研发机制：<b>当一个理论预测失败时，失败本身会暴露一个此前不知道的机制</b>（这里是表面态），而这个机制往往比原目标更有用。所以贝尔实验室真正值钱的不是聪明人，是"允许把失败写进报告"的制度。</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section id="silicon">
+    <div class="sect-head"><span class="sect-num">03</span><h2>硅谷是怎么长出来的</h2></div>
+    <p class="lead">第 3 章的标题是"接连不断的出走"。这一章讲的不是技术，是<b>一种可以复制的组织模板</b>。</p>
+
+    <div class="tl">
+      <div class="tl-n">
+        <div class="tl-y">1955</div><div class="tl-d"></div>
+        <div class="tl-t">肖克利回乡</div>
+        <div class="tl-s">离开贝尔，到山景城创办肖克利半导体实验室</div>
+      </div>
+      <div class="tl-n">
+        <div class="tl-y">1956</div><div class="tl-d"></div>
+        <div class="tl-t">招来八个年轻人</div>
+        <div class="tl-s">诺伊斯、摩尔、格鲁夫之前的"八叛徒"</div>
+      </div>
+      <div class="tl-n">
+        <div class="tl-y">1957</div><div class="tl-d"></div>
+        <div class="tl-t">集体出走</div>
+        <div class="tl-s">八人离职，创办仙童半导体</div>
+      </div>
+      <div class="tl-n">
+        <div class="tl-y">1968</div><div class="tl-d"></div>
+        <div class="tl-t">再次出走</div>
+        <div class="tl-s">诺伊斯与摩尔创办英特尔</div>
+      </div>
+      <div class="tl-n">
+        <div class="tl-y">1969—</div><div class="tl-d"></div>
+        <div class="tl-t">裂变</div>
+        <div class="tl-s">仙童系衍生出上百家公司</div>
+      </div>
+    </div>
+
+    <div class="grid two" style="margin-top:22px">
+      <div class="card hot">
+        <span class="c-k">为什么是硅，不是锗</span>
+        <div class="c-t">材料换了一次，产业才立起来</div>
+        <div class="c-b">锗的电子迁移率更高，早期器件都用锗。但锗的氧化物溶于水、耐温差、储量少；硅的二氧化硅却是一层天然的、致密的绝缘膜。<b>这层膜后来变成了平面工艺的地基</b>——芯片能"印"出来，靠的就是它。</div>
+        <div class="c-e"><b>书里的线索</b>：一节标题叫"热油中的音乐播放器"，讲硅晶体管进了便携收音机，第一次证明它能民用。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">为什么是硅谷，不是波士顿</span>
+        <div class="c-t">地理不是原因，是结果</div>
+        <div class="c-b">东岸有贝尔、有 MIT、有军工订单，却没能长出芯片产业；西岸只有一个斯坦福和一片果园。差别在两点：<b>股权可以分给工程师</b>，以及<b>离职创业不被视为背叛</b>。仙童把期权制度带进半导体，八叛徒把离职变成了惯例。</div>
+        <div class="c-e"><b>对照</b>：这条逻辑与《变革中国》里的"边缘革命"同构——新组织总是从旧体制管不到的地方长出来。</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">这一章真正的结论</span>
+      <p>硅谷输出的不是技术，是<b>一套让人敢走的制度</b>：扁平结构、期权、对失败的容忍、以及"前同事就是下一轮投资人"的网络。技术在实验室里会扩散，制度不会自动扩散——所以世界上只有一个硅谷，却有无数个"硅谷式园区"。</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section id="chip">
+    <div class="sect-head"><span class="sect-num">04</span><h2>芯片的发明：谁先想到不重要</h2></div>
+    <p class="lead">第 4 章的两条线索交叉推进：霍尼的平面工艺、基尔比的单片集成、诺伊斯的互连方案。最终胜出的不是最早的那个想法。</p>
+
+    <div class="flow">
+      <div class="flow-step"><div class="fs-n">01</div><div><div class="fs-t">霍尼：把"保护层"变成"工艺"<button class="gloss" onclick="openModal('planar')" aria-label="术语：平面工艺">?</button></div><div class="fs-d">1959 年，让二氧化硅不再只是绝缘层，而是<b>掩模</b>——先在氧化层上开窗，再扩散杂质，pn 结就被"关"在硅片内部，表面被永久钝化。这一步让晶体管从"手工装配的器件"变成"可以批量印制的结构"。</div></div></div>
+      <div class="flow-step"><div class="fs-n">02</div><div><div class="fs-t">基尔比：把整块电路做在一片材料上</div><div class="fs-d">1958 年，德州仪器新人基尔比用一块锗片做出相移振荡器，所有元件同处一材。<b>想法成立，但工艺不成立</b>：元件之间靠极细的金线手工焊接，一根线断了整块报废，无法量产。</div></div></div>
+      <div class="flow-step"><div class="fs-n">03</div><div><div class="fs-t">诺伊斯：用蒸发铝膜做互连</div><div class="fs-d">在霍尼平面工艺之上，诺伊斯把铝蒸镀到整片氧化层上，再光刻出连线。<b>互连从"焊"变成"印"</b>，芯片第一次具备了可制造性。</div></div></div>
+      <div class="flow-step"><div class="fs-n">04</div><div><div class="fs-t">十年官司：谁拥有"互连"</div><div class="fs-d">德州仪器与仙童互相起诉，最终诺伊斯/仙童的互连专利被认定为基础专利，双方交叉授权。<b>这场官司定义了此后半个世纪的行业规则：赢家不是发明者，是能把专利变成标准的人。</b></div></div></div>
+    </div>
+
+    <div class="versus">
+      <div class="vs-card">
+        <div class="vs-h">基尔比的路：先证明"能"</div>
+        <div class="vs-p">用飞线和手工装配，把概念变成实物。价值在于<b>打通了"单片集成"这个观念</b>——此前没人相信一整块电路可以是一个器件。</div>
+      </div>
+      <div class="vs-mid"><span>VS</span></div>
+      <div class="vs-card win">
+        <div class="vs-h">诺伊斯的路：先证明"能造很多"</div>
+        <div class="vs-p">平面工艺 + 蒸发互连，让芯片可以像印报纸一样重复生产。<b>工业史上，可复制性永远打败先发性。</b>基尔比拿了诺奖，诺伊斯拿到了产业。</div>
+      </div>
+    </div>
+
+    <blockquote class="quote-block">
+      "大规模白痴" —— 当时有人这样讥讽"把整块电路做在一片材料上"的设想。
+      <span class="qb-from">第 4 章 章节标题（原书）</span>
+    </blockquote>
+  </section>
+
+  <!-- 05 -->
+  <section id="mos">
+    <div class="sect-head"><span class="sect-num">05</span><h2>MOS 的二十年冷板凳</h2></div>
+    <p class="lead">第 5 章的标题借了克里斯坦森的"创新者的窘境"。这一章是全书最反直觉的一段：一项被自己的发明者判了死刑的技术，最后统治了世界。</p>
+
+    <div class="grid two">
+      <div class="card cool">
+        <span class="c-k">起点</span>
+        <div class="c-t">场效应比晶体管更早被想到</div>
+        <div class="c-b">1920—30 年代就有专利描述了用电场控制半导体导电的想法，但没人做出来——表面态把外加电场屏蔽掉了。直到 1960 年，用热氧化硅钝化表面之后，第一个可用的 MOS 晶体管才出现。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">悖论</span>
+        <div class="c-t">"规划出来的失败"</div>
+        <div class="c-b">贝尔实验室当时把资源压在结型与外延工艺上，MOS 被认为又慢又不稳定，被归入次要方向。<b>大机构的选择失误不是因为看不到，而是因为它在旧路线上的投入太重。</b></div>
+        <div class="c-e"><b>这一节的原题</b>："规划出来的失败，贝尔的悖论"。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">逆转</span>
+        <div class="c-t">赢了，但赢的不是速度</div>
+        <div class="c-b">MOS 比结型慢，这是事实。但它有三个致命优势：<b>自隔离</b>（器件之间不用挖隔离槽）、<b>占位小</b>、<b>工艺步骤少</b>。当竞争目标从"快"变成"每片能放多少个"，评价标准整体翻转。</div>
+        <div class="c-e"><b>关键概念</b>：一项技术赢，往往不是因为它最强，而是因为它<b>最容易被复制</b>。</div>
+      </div>
+      <div class="card cool">
+        <span class="c-k">成型</span>
+        <div class="c-t">CMOS：把功耗问题一起解决</div>
+        <div class="c-b">NMOS 与 PMOS 互补配对，静态时几乎不耗电。这条路线让芯片能进手表、计算器、后来的手机——凡是靠电池跑的东西，都只能选它。</div>
+        <div class="c-e"><b>后果</b>：低功耗不只是省电，它决定了芯片能离开插座，也就决定了芯片能进入生活。</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">这一章可以单独拿去用</span>
+      <p>判断一项技术会不会赢，不要问"它现在性能怎么样"，要问三件事：<b>它占的资源是不是更少？它能不能被标准化地重复制造？它的短板是不是正在被别处的进步补上？</b>MOS 三条全中，而当年的专家只看了第一条的反面。</p>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section id="moore">
+    <div class="sect-head"><span class="sect-num">06</span><h2>摩尔定律：一句预言如何变成行业宪法</h2></div>
+    <p class="lead">第 6 章讲的不是一条定律，是一个<b>自我实现的协调装置</b>——它本来只是观察，后来变成了目标，最后变成了枷锁。</p>
+
+    <div class="flow">
+      <div class="flow-step"><div class="fs-n">1965</div><div><div class="fs-t">一篇约稿，一次外推</div><div class="fs-d">摩尔在《Electronics》杂志的专稿里，把当时最经济的芯片元件数按年份画在坐标上，发现每年翻一倍。他预测这个趋势还能维持十年。<b>当时"最优点"只有几十个元件</b>——这个外推在当时看起来相当大胆。</div></div></div>
+      <div class="flow-step"><div class="fs-n">1975</div><div><div class="fs-t">第一次修正</div><div class="fs-d">十年后他自己把速度改成"每两年翻倍"。<b>后来流传最广的"18 个月"，其实是英特尔另一位高管用来描述"性能"翻倍的说法，不是摩尔的原话。</b></div></div></div>
+      <div class="flow-step"><div class="fs-n">1974</div><div><div class="fs-t">登纳德缩放：把预言变成工程手册</div><div class="fs-d">尺寸等比缩小的同时降低电压，单位面积功耗保持不变——这条规则让"缩小"在物理上和经济上都成立，也让整个行业有了共同的技术路线图。</div></div></div>
+      <div class="flow-step"><div class="fs-n">2005—</div><div><div class="fs-t">缩放失效，拯救开始</div><div class="fs-d">电压不能再降，功耗墙出现，主频停在几个吉赫兹。行业转向多核、应变硅、高介电常数金属栅、FinFET、极紫外光刻——每一次都是"用结构换延续"。<b>所谓"延续摩尔定律"，本质是不断给它打补丁。</b></div></div></div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">摩尔定律真正的功能</span>
+      <p>它从来不是物理定律，而是<b>一份跨公司的共同节奏表</b>：设备商知道几年后要做什么精度的机器，材料商知道要开发什么纯度的化学品，设计师知道几年后能用多少晶体管。有了共同节奏，几万家公司的投资才敢同时下注。<b>它一旦成为目标，就会被资源自我实现；也正因为成为目标，它不再能被轻易质疑。</b></p>
+    </div>
+
+    <blockquote class="quote-block">
+      一切过往皆可超越
+      <span class="qb-from">第 6 章 章节标题（原书）</span>
+    </blockquote>
+  </section>
+
+  <!-- 07 -->
+  <section id="compute">
+    <div class="sect-head"><span class="sect-num">07</span><h2>计算芯片：把"通用"塞进一片硅</h2></div>
+    <p class="lead">第 7 章从莱布尼茨的二进制讲到 FPGA。它的主线不是算力，是<b>"专用"与"通用"之间的反复拉扯</b>。</p>
+
+    <div class="grid two">
+      <div class="card">
+        <span class="c-k">思想线</span>
+        <div class="c-t">两百年的准备</div>
+        <div class="c-b">莱布尼茨的二进制、巴贝奇的差分机、图灵 1936 年的可计算性论文、冯·诺依曼 1945 年的存储程序报告。这四步把"计算"从一个动作变成了一个<b>可以被机器执行的抽象过程</b>。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">转折点</span>
+        <div class="c-t">一张订单逼出的通用架构</div>
+        <div class="c-b">1969 年，日本计算器公司找英特尔做定制芯片。霍夫提出：与其为每台计算器单独设计，不如做一颗<b>可编程的通用处理器</b>，功能用程序改。法金把它实现成 4004——2300 个晶体管，1971 年交货。</div>
+        <div class="c-e"><b>意义</b>：芯片从"专用电路"变成"可被软件定义的平台"，这是整个信息产业的分水岭。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">另一条路</span>
+        <div class="c-t">FPGA：用冗余换灵活</div>
+        <div class="c-b">1984 年，弗里曼创办赛灵思，做出可现场编程的逻辑阵列。书里称之为"最没效率的方法"——它用大量冗余布线和查找表，换取"出厂后还能改"的能力。</div>
+        <div class="c-e"><b>为什么成立</b>：当产量小、需求变化快时，"低效率但可改"比"高效率但定死"更值钱。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">代价</span>
+        <div class="c-t">通用性是要付利息的</div>
+        <div class="c-b">越通用的架构，单位任务的能效越低。所以当 AI 算力需求爆发时，行业又开始从 CPU 往回走——GPU、TPU、NPU，本质都是"为了一个场景重新变专用"。</div>
+        <div class="c-e"><b>读法</b>：这条钟摆没有终点，它随"场景是否稳定"来回摆。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section id="memory">
+    <div class="sect-head"><span class="sect-num">08</span><h2>存储芯片：把电荷关起来</h2></div>
+    <p class="lead">第 8 章讲的是另一条完全不同的技术路线。计算芯片追求"算得快"，存储芯片追求"记得住、便宜、断电不丢"。</p>
+
+    <div class="grid three">
+      <div class="card">
+        <span class="c-k">DRAM</span>
+        <div class="c-t">一个晶体管加一个电容</div>
+        <div class="c-b">登纳德提出用单管单电容存一位，靠不断刷新维持电荷。结构极简，所以能做到极高的密度——<b>存储芯片的价格战，从此由"每比特成本"决定</b>。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">浮栅</span>
+        <div class="c-t">把电子关进绝缘层<button class="gloss" onclick="openModal('floating')" aria-label="术语：浮栅">?</button></div>
+        <div class="c-b">施敏与姜大元提出浮栅结构：电子被注入一层被绝缘体包围的"孤岛"里，断电也跑不掉。这是所有非易失存储（EPROM、EEPROM、闪存）的共同祖先。</div>
+        <div class="c-e"><b>书里的小节名</b>："芝士蛋糕的诱惑"。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">闪存</span>
+        <div class="c-t">能擦写，才有了U盘与手机</div>
+        <div class="c-b">舛冈富士雄在东芝提出闪存结构，解决了"电擦除"的问题。此后 NAND 把成本压到极致，才有了数码相机、U 盘、固态硬盘和智能手机。</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">为什么存储产业最早"东移"</span>
+      <p>因为存储是<b>标准品</b>：同样的容量、同样的接口，谁便宜买谁。标准品只有一条护城河——规模和良率，而规模和良率靠持续砸资本开支。这正好是日本、韩国财团的强项，也是美国公司陆续退出的原因。<b>技术领先在标准品市场里撑不过两轮价格周期。</b></p>
+    </div>
+  </section>
+
+  <!-- 09 -->
+  <section id="analog">
+    <div class="sect-head"><span class="sect-num">09</span><h2>模拟与功率：不追密度的那条枝</h2></div>
+    <p class="lead">第 9 章的标题是"知而行之"。这一章提醒读者：世界不只有 0 和 1，还有温度、压力、声音、电流——这些都得靠模拟芯片翻译。</p>
+
+    <div class="grid two">
+      <div class="card">
+        <span class="c-k">模拟</span>
+        <div class="c-t">维德勒与"电路的手艺"</div>
+        <div class="c-b">把几十个分立元件做成一个黑块，让设计者只需接三根线。模拟电路的设计靠经验、靠手感、靠对寄生参数的理解，<b>很难像数字电路那样被自动化</b>。</div>
+        <div class="c-e"><b>后果</b>：模拟芯片行业格局极稳，龙头靠几十年的工艺积累和料号库，后来者很难靠砸钱追上。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">传感</span>
+        <div class="c-t">MEMS：把机械结构做进硅里<button class="gloss" onclick="openModal('mems')" aria-label="术语：MEMS">?</button></div>
+        <div class="c-b">彼得森 1982 年的论文证明硅不只是电子材料，也是优良的机械材料。此后加速度计、陀螺仪、麦克风、压力传感器全部微缩进芯片——手机能感知方向，靠的就是它。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">功率</span>
+        <div class="c-t">IGBT：让电"可控地流"<button class="gloss" onclick="openModal('igbt')" aria-label="术语：IGBT">?</button></div>
+        <div class="c-b">把 MOS 的栅极控制与双极型的低导通损耗结合，做出既能承受高电压、又能被小信号开关的器件。电动车、高铁、变频空调、光伏逆变器，全靠这一族器件。</div>
+        <div class="c-e"><b>书里的小节名</b>："IGBT 功率器件的发明之争"——又一次优先权之争。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">判断</span>
+        <div class="c-t">模拟芯片是"反摩尔"的</div>
+        <div class="c-b">它不靠缩小尺寸获得性能，靠电路拓扑、匹配精度、噪声控制。所以它不受先进制程约束，一家公司可以用成熟工艺活得很久。</div>
+        <div class="c-e"><b>读者容易忽略</b>：一台设备里，数字芯片可能只有几颗，模拟芯片却有几百颗。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section id="photonic">
+    <div class="sect-head"><span class="sect-num">10—11</span><h2>光电器件：把光变成电，再把电变成光</h2></div>
+    <p class="lead">第 10、11 章合起来讲一个对称的故事：光→电（太阳能电池、图像传感器）与电→光（LED、激光器）。</p>
+
+    <div class="grid two">
+      <div class="card">
+        <span class="c-k">光 → 电</span>
+        <div class="c-t">太阳能电池：从太空回来</div>
+        <div class="c-b">1954 年贝尔实验室做出硅太阳能电池，效率只有个位数。真正推动它的是卫星——太空里没有电网，只能靠光。此后成本一路下降，才有了今天的地面电站。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">光 → 电</span>
+        <div class="c-t">图像传感器：CCD 与 CMOS 的交替</div>
+        <div class="c-b">CCD 把光生电荷逐级搬运读出，画质好但耗电、难集成；CMOS 传感器把读出电路做在同一片硅上，靠工艺进步反超。<b>今天手机里的摄像头，几乎全是 CMOS。</b></div>
+        <div class="c-e"><b>书里的小节名</b>："诺奖委员会搞错了吗"——作者对某次奖项的归属提出了疑问，这一节值得单独读。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">电 → 光</span>
+        <div class="c-t">红光 LED 与半导体激光器</div>
+        <div class="c-b">1962 年，红光 LED 与半导体激光器几乎同时在几个实验室出现。激光器后来进了光通信、光盘、测距、切割——一个实验室器件变成了工业工具。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">电 → 光</span>
+        <div class="c-t">蓝光：卡了三十年的最后一环</div>
+        <div class="c-b">有了红、绿，缺蓝就做不出白光。氮化镓的晶体生长极难，直到 1990 年代中村修二在日亚化学做出高亮度蓝光 LED，白光照明与蓝光光盘才同时成立。<b>2014 年诺贝尔物理学奖颁给了赤崎勇、天野浩与中村修二。</b></div>
+        <div class="c-e"><b>为什么难</b>：不是不懂原理，是长不出足够好的晶体——又一次"手艺卡住原理"。</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">这一族芯片的共同点</span>
+      <p>它们全都<b>被材料统治</b>：谁能长出更好的晶体、做出更好的异质结<button class="gloss" onclick="openModal('hetero')" aria-label="术语：异质结">?</button>，谁就赢。数字芯片比的是"设计 + 制程"，光电芯片比的是"材料 + 外延"。这也解释了为什么光电领域的领先者常是材料出身的企业，而不是逻辑芯片巨头。</p>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section id="design">
+    <div class="sect-head"><span class="sect-num">12</span><h2>设计自动化：一个看不见的分水岭</h2></div>
+    <p class="lead">第 12 章的标题是"破除悖论"。悖论是：芯片越来越复杂，人却越来越少——因为设计被"分层"了。</p>
+
+    <div class="flow">
+      <div class="flow-step"><div class="fs-n">01</div><div><div class="fs-t">手工画图时代</div><div class="fs-d">工程师用红蓝铅笔在巨大的聚酯薄膜上画版图，一层一张。改一次设计等于重画一遍，一个人一辈子只能做几个芯片。</div></div></div>
+      <div class="flow-step"><div class="fs-n">02</div><div><div class="fs-t">SPICE：让电路可以被"算"</div><div class="fs-d">1971 年伯克利推出的电路仿真程序，把"这个电路能不能工作"从搭板子变成跑程序。<b>设计第一次有了"预测"能力</b>。</div></div></div>
+      <div class="flow-step"><div class="fs-n">03</div><div><div class="fs-t">Mead 与 Conway：把设计变成规则</div><div class="fs-d">1980 年的《VLSI 系统导论》提出用一套可缩放的几何规则来描述版图，让"设计"与"工艺"解耦。<b>这是 fabless<button class="gloss" onclick="openModal('fabless')" aria-label="术语：fabless">?</button>模式的技术前提</b>——你不需要有厂，也能设计芯片。</div></div></div>
+      <div class="flow-step"><div class="fs-n">04</div><div><div class="fs-t">硬件描述语言：设计变成写代码</div><div class="fs-d">Verilog 与 VHDL 让工程师用文本描述逻辑，再由工具自动综合成门级电路。设计规模从此可以随晶体管数一起涨。</div></div></div>
+      <div class="flow-step"><div class="fs-n">05</div><div><div class="fs-t">EDA 双寡头与 ARM 的 IP 授权</div><div class="fs-d">工具集中到少数几家，架构被切成可授权的 IP 核。<b>一颗芯片里可以没有一行自己写的代码，全是买来的 IP 核<button class="gloss" onclick="openModal('ipcore')" aria-label="术语：IP 核">?</button>拼起来</b>——产业被彻底分层。</div></div></div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">这一段最容易被低估</span>
+      <p>大多数人把 EDA 当成"画图软件"。它真正的功能是<b>把芯片产业切成三层</b>：架构（ARM）／设计（fabless）／制造（foundry）。没有设计自动化，就没有这种分工；没有这种分工，一家新公司不可能只用几千万美元就做出芯片。<b>工具不是效率问题，是产业结构的塑造者。</b><button class="gloss" onclick="openModal('eda')" aria-label="术语：EDA">?</button></p>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section id="fab">
+    <div class="sect-head"><span class="sect-num">13</span><h2>制造：良率才是护城河</h2></div>
+    <p class="lead">第 13 章的标题是"精雕细刻"。四件事：代工模式、光刻的发明、浸没式光刻、FinFET。</p>
+
+    <h3>光刻段的基本循环<button class="gloss" onclick="openModal('litho')" aria-label="术语：光刻">?</button></h3>
+    <div class="flow">
+      <div class="flow-step"><div class="fs-n">1</div><div><div class="fs-t">清洗与氧化</div><div class="fs-d">在硅片表面长出一层均匀的二氧化硅，作为绝缘与掩蔽的基础。</div></div></div>
+      <div class="flow-step"><div class="fs-n">2</div><div><div class="fs-t">涂胶</div><div class="fs-d">旋涂光刻胶，厚度控制在纳米级——厚一点，分辨率就掉。</div></div></div>
+      <div class="flow-step"><div class="fs-n">3</div><div><div class="fs-t">曝光</div><div class="fs-d">光透过掩模照在胶上。图形能否做小，取决于光源波长与镜头的数值孔径。</div></div></div>
+      <div class="flow-step"><div class="fs-n">4</div><div><div class="fs-t">显影与刻蚀</div><div class="fs-d">洗掉被曝光（或未被曝光）的部分，再用等离子体把图形刻进下层材料。</div></div></div>
+      <div class="flow-step"><div class="fs-n">5</div><div><div class="fs-t">重复几十次</div><div class="fs-d">一颗先进逻辑芯片的掩模层数可以接近百层。每一层都要对准上一层，误差以纳米计。</div></div></div>
+    </div>
+
+    <div class="grid two" style="margin-top:18px">
+      <div class="card hot">
+        <span class="c-k">模式</span>
+        <div class="c-t">代工：不与客户争<button class="gloss" onclick="openModal('foundry')" aria-label="术语：代工">?</button></div>
+        <div class="c-b">1987 年台积电成立，只做制造、不做自己的品牌芯片。这个"不竞争"的承诺，让所有设计公司敢把图纸交给它。<b>书里用"水利万物而不争"来形容这个选择。</b></div>
+        <div class="c-e"><b>后果</b>：芯片产业从垂直整合（一家公司从设计做到封装）变成垂直分工，创新速度整体加快。</div>
+      </div>
+      <div class="card hot">
+        <span class="c-k">工艺</span>
+        <div class="c-t">浸没式：用水买到一代制程<button class="gloss" onclick="openModal('immersion')" aria-label="术语：浸没式光刻">?</button></div>
+        <div class="c-b">193 纳米光源快走到尽头时，林本坚提出在镜头与硅片之间充满高纯水，等效提高数值孔径。当时被普遍认为不可行（气泡、污染、量产），最后成为延续十几年的主流方案。</div>
+        <div class="c-e"><b>判断</b>：这是一次典型的"用工程取巧绕开物理终点"，与摩尔定律的每一次续命同构。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">结构</span>
+        <div class="c-t">FinFET：把沟道立起来<button class="gloss" onclick="openModal('finfet')" aria-label="术语：FinFET">?</button></div>
+        <div class="c-b">平面晶体管缩小到一定程度，栅极就管不住沟道了（短沟道效应）。胡正明提出把沟道做成一片"鱼鳍"，让栅极从三面包住它。<b>2011 年英特尔在 22 纳米节点量产，此后成为行业标准。</b></div>
+      </div>
+      <div class="card">
+        <span class="c-k">真相</span>
+        <div class="c-t">难的从来不是"做出来"<button class="gloss" onclick="openModal('yield')" aria-label="术语：良率">?</button></div>
+        <div class="c-b">实验室能做出一颗芯片，和工厂能每天稳定产出几十万颗良品，是两件完全不同的事。良率每提高一个百分点，都是数据、工艺、设备、人经验的合力。<b>这就是为什么先进制程只剩三家。</b></div>
+        <div class="c-e"><b>数字</b>：先进节点<button class="gloss" onclick="openModal('node')" aria-label="术语：制程节点">?</button>的一次掩模套片成本可达千万美元级，试错不起。</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section id="future">
+    <div class="sect-head"><span class="sect-num">14</span><h2>挑战：三条路与一个更硬的约束</h2></div>
+    <p class="lead">第 14 章是全书的落点。作者承认摩尔定律正在失效，但没有唱衰，而是把选择摊开。</p>
+
+    <div class="grid three">
+      <div class="card">
+        <span class="c-k">路径一</span>
+        <div class="c-t">继续缩小</div>
+        <div class="c-b">极紫外光刻、环绕栅极（GAA）晶体管、更高数值孔径。本质是把"光刻"和"结构"再往前推一步，代价是成本曲线陡然上升。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">路径二</span>
+        <div class="c-t">换维度：不缩了，往上堆</div>
+        <div class="c-b">先进封装、芯粒（Chiplet）、3D 堆叠、硅中介层。既然单个芯片做不大，就把多个芯片拼成一个系统——<b>把"集成"从晶圆级转到封装级</b>。</div>
+      </div>
+      <div class="card">
+        <span class="c-k">路径三</span>
+        <div class="c-t">换原理</div>
+        <div class="c-b">光子计算、量子计算、新型存储与类脑器件。它们要解决的不是"更快"，而是"某些问题在硅上根本算不动"。</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">"不只是芯片"这句的真正含义</span>
+      <p>作者把最后一节写成"不只是芯片，彼此依存的世界"。这句话有两层：一层是技术上的——芯片已经和能源、材料、设备深度绑定，任何一环断掉，整条链都停；另一层是政治上的——<b>一颗芯片要经过几十个国家、上千道工序，这种相互依存既是效率的来源，也是最脆弱的地方。</b>2023 年之后发生的事，正好给这一节做了注脚。</p>
+    </div>
+
+    <blockquote class="quote-block">
+      在我的智慧终结处启程
+      <span class="qb-from">后记 标题（原书）</span>
+    </blockquote>
+  </section>
+
+  <!-- 主线 -->
+  <section id="lines">
+    <div class="sect-head"><span class="sect-num">15</span><h2>三条主线：技术、地理、组织</h2></div>
+    <p class="lead">书是按芯片种类分章写的，读起来容易散。把同一段历史按三条线重排，会看得更清楚——这三条线互相牵引，缺一条就解释不通。</p>
+
+    <div class="tscroll">
+      <table class="mx">
+        <thead>
+          <tr><th style="width:12%">时期</th><th style="width:30%">技术主线</th><th style="width:29%">地理主线</th><th style="width:29%">组织主线</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1904—1947</td><td>真空管 → 半导体物理 → 点接触晶体管</td><td>美国东岸：贝尔实验室一家独大</td><td>大企业中央实验室，长期资金、不问产出</td></tr>
+          <tr><td>1948—1959</td><td>结型晶体管 → 硅材料 → 平面工艺</td><td>东岸发明，西岸落地（帕洛阿托）</td><td>实验室出走，创业公司出现</td></tr>
+          <tr><td>1960—1970</td><td>集成电路 → MOS → CMOS</td><td>硅谷成形，仙童系裂变</td><td>期权 + 扁平 + 离职创业成为惯例</td></tr>
+          <tr><td>1971—1985</td><td>微处理器、DRAM、闪存雏形</td><td>美国主导，日本以 DRAM 切入</td><td>垂直整合（设计制造一体）</td></tr>
+          <tr><td>1986—1999</td><td>设计自动化、IP 复用、光刻进步</td><td>日本存储登顶 → 韩国接棒；台湾切入代工</td><td>垂直分工：fabless / foundry 分离</td></tr>
+          <tr><td>2000—2021</td><td>浸没式光刻、FinFET、先进封装</td><td>全球分工极致化：美国设计、东亚制造、荷兰设备</td><td>平台化：架构、工具、产能三处卡口</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="insight">
+      <span class="i-l">三条线的耦合点</span>
+      <p>每一次地理转移，背后都是组织形式的改变：日本靠财团做标准品，韩国靠逆周期投资做存储，台湾靠"不竞争承诺"做代工。而每一次组织形式改变，前提都是技术被<b>标准化</b>了——只有标准化，才能把一段工序切出去交给别人做。<b>所以芯片产业史，本质是一部"标准化进度史"。</b></p>
+    </div>
+  </section>
+
+  <!-- 判断 -->
+  <section id="laws">
+    <div class="sect-head"><span class="sect-num">16</span><h2>七条可迁移的判断</h2></div>
+    <p class="lead">以下七条是我从全书抽出来的结构性判断，不是作者原话，但每条都能在书里找到落点。</p>
+
+    <div class="law-grid">
+      <div class="law">
+        <div class="l-i">LAW 01</div>
+        <div class="l-t">胜负在"可制造性"，不在"第一"</div>
+        <div class="l-p">基尔比先做出单片集成，诺伊斯先让它能批量生产。产业记住的是后者。任何"我先想到"的叙事，都该追问一句：你能做第一万个吗？</div>
+      </div>
+      <div class="law">
+        <div class="l-i">LAW 02</div>
+        <div class="l-t">赢的技术往往不是最强的</div>
+        <div class="l-p">MOS 比结型慢，却因为占位小、工艺简单、易集成而统治世界。评价标准一变，冠军就换人。</div>
+      </div>
+      <div class="law">
+        <div class="l-i">LAW 03</div>
+        <div class="l-t">失败是最贵的情报</div>
+        <div class="l-p">晶体管诞生于一次被否定的场效应实验。允许失败被记录、被讨论的组织，等于给自己开了一条信息通道。</div>
+      </div>
+      <div class="law">
+        <div class="l-i">LAW 04</div>
+        <div class="l-t">产业分层是工具逼出来的</div>
+        <div class="l-p">没有 VLSI 设计规则与 EDA，就没有 fabless；没有 fabless，就没有台积电。工具的形态，决定产业能切成几段。</div>
+      </div>
+      <div class="law">
+        <div class="l-i">LAW 05</div>
+        <div class="l-t">良率是看不见的护城河</div>
+        <div class="l-p">实验室能做出来不算本事，能连续三年稳定产出才算。良率靠数据、靠人、靠时间，买不到、抄不走。</div>
+      </div>
+      <div class="law">
+        <div class="l-i">LAW 06</div>
+        <div class="l-t">组织模板比技术更容易扩散</div>
+        <div class="l-p">硅谷真正的输出不是电路，是"期权 + 扁平 + 允许出走"。技术在实验室里会漏，制度不会自动漏。</div>
+      </div>
+      <div class="law wide">
+        <div class="l-i">LAW 07 · 总纲</div>
+        <div class="l-t">摩尔定律不是定律，是协调装置</div>
+        <div class="l-p">它把设备、材料、设计、资本拉到同一个节拍上，所以它能自我实现；也因为它成了共同目标，没人敢先停下来问"这条路还划算吗"。<b>当一个行业把观察变成承诺，它同时获得了速度和盲区。</b></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 局限 -->
+  <section id="limits">
+    <div class="sect-head"><span class="sect-num">17</span><h2>局限与可质疑处</h2></div>
+    <p class="lead">这本书的优点是把技术写成了故事，缺点也来自同一个地方。</p>
+
+    <ol class="limits">
+      <li><strong>产业与资本被压缩。</strong>军方订单、阿波罗计划、风投的作用散落在各章，没有系统处理。而 1950—60 年代美国芯片业的第一桶金，很大一部分来自导弹与航天采购——这条线不写清楚，"为什么能撑过不赚钱的头十年"就答不上来。</li>
+      <li><strong>发明叙事有视角偏向。</strong>"发明之争"各章多按一方档案展开，基尔比与诺伊斯、IGBT 的归属，读者只能看到一个版本。作者自己在小标题里写了问号，但没有给出裁决。</li>
+      <li><strong>中国几乎缺席。</strong>全书止于全球分工框架，对国产替代、设备与材料的卡点、以及 2018 年之后的断供没有交代。对中文读者来说，这是最大的信息缺口。</li>
+      <li><strong>时效性已部分到期。</strong>2023 年 4 月出版，此后 AI 算力爆发、HBM 与先进封装成为主角、出口管制多轮升级、GAA 进入量产。第 14 章的"三条路径"需要按今天重读。</li>
+      <li><strong>失败路线着墨太少。</strong>磁泡存储、砷化镓逻辑、超导计算这些被淘汰的分支基本一笔带过。只看成功者，会高估必然性、低估偶然性。</li>
+      <li><strong>机制解释弱于故事。</strong>为什么是贝尔而不是别的实验室？为什么是硅谷而不是波士顿？书里给了线索（组织、资金、文化），但没有系统比较。想找因果分析的读者，需要另找书补。</li>
+      <li><strong>缺数字。</strong>良率曲线、单位成本、资本开支、研发投入占比——这些最能说明"摩尔定律经济学"的东西，书里几乎没有量化。读者知道它变便宜了，但不知道便宜得有多快、代价有多大。</li>
+    </ol>
+  </section>
+
+  <!-- 延伸 -->
+  <section id="extension">
+    <div class="sect-head"><span class="sect-num">18</span><h2>延伸与比较</h2></div>
+
+    <table class="ext">
+      <tr><th>定位</th><td>一本以"人 + 器件"为主线的芯片技术史。它回答"这东西是怎么被想出来、做出来、做便宜的"，不回答"谁在打谁"。</td></tr>
+      <tr><th>阅读门槛</th><td>零基础可读，但第 5、12、13 章涉及器件结构与工艺，需要一点耐心。作者刻意压低了公式密度，代价是有些机制只能"体会"。</td></tr>
+      <tr><th>最适合谁</th><td>想搞懂芯片从哪来、为什么难、卡在哪儿的人；做硬件与半导体研究、需要一条完整时间线的从业者；被"卡脖子"新闻绕晕、想补底层的读者。</td></tr>
+      <tr><th>局限</th><td>产业与地缘弱、中国缺席、数据少、2023 年后部分过时。当技术史读，不要当产业分析读。</td></tr>
+      <tr><th>对照阅读</th><td>《芯片战争》（克里斯·米勒）：补产业与地缘，两本合起来才是完整图景。<br>《光刻巨人》（瑞尼·雷吉梅克）：把 ASML 一条线写到极致，可与本书第 13 章对读。<br>《技术的本质》（阿瑟）：本书的每个故事都能套进"组合进化"的框架——晶体管是现象的捕获，集成电路是构件的组合，重新域定就是"把军用技术搬到民用"。<br>《创新者的窘境》（克里斯坦森）：第 5 章直接借用了这个概念，读原著能看清 MOS 为什么被大公司错过。</td></tr>
+      <tr><th>不建议</th><td>想找投资标的人。这本书讲的是六十年的技术逻辑，不是下一季的财报。</td></tr>
+    </table>
+
+    <div class="insight">
+      <span class="i-l">和已读的书接上</span>
+      <p><b>《技术的本质》</b>：阿瑟说技术由技术组合而成——芯片就是最好的例证，光刻来自印刷、封装来自陶瓷、EDA 来自软件。<b>《智能》</b>：AI 之所以能爆发，前提是算力这种"通用构件"变得便宜，而算力的价格曲线正是本书第 6 章画的。<b>《变革中国》</b>：制度缝隙里长出新组织，与仙童出走、台积电切分工是同一套逻辑。</p>
+    </div>
+  </section>
+
+  <!-- 群英谱 -->
+  <section id="people">
+    <div class="sect-head"><span class="sect-num">19</span><h2>芯片群英谱</h2></div>
+    <p class="lead">原书附录里有"芯片群英谱"，这里按"他解决了哪个卡点"重排，不按年代。</p>
+
+    <div class="people-grid">
+      <div class="person"><div class="p-n">巴丁 / 布拉顿</div><div class="p-y">1947</div><div class="p-w">做出点接触晶体管。一个理论家、一个实验家，在失败里捡到了答案。</div></div>
+      <div class="person"><div class="p-n">肖克利</div><div class="p-y">1948</div><div class="p-w">结型晶体管。把"说不清的东西"改造成"可设计的结构"，也把坏脾气带进了硅谷。</div></div>
+      <div class="person"><div class="p-n">霍尼</div><div class="p-y">1959</div><div class="p-w">平面工艺。让二氧化硅从绝缘层变成掩模，芯片才可能被"印"出来。</div></div>
+      <div class="person"><div class="p-n">基尔比</div><div class="p-y">1958</div><div class="p-w">第一块单片集成电路。想法赢了，工艺没跟上；诺奖给了他。</div></div>
+      <div class="person"><div class="p-n">诺伊斯</div><div class="p-y">1959</div><div class="p-w">蒸发铝互连。把"能做出一个"变成"能做出百万个"，也创立了英特尔。</div></div>
+      <div class="person"><div class="p-n">摩尔</div><div class="p-y">1965</div><div class="p-w">一句外推。把观察变成行业六十年的共同节拍。</div></div>
+      <div class="person"><div class="p-n">霍夫 / 法金</div><div class="p-y">1971</div><div class="p-w">通用 CPU 架构与 4004 实现。芯片从此可以被软件定义。</div></div>
+      <div class="person"><div class="p-n">登纳德</div><div class="p-y">1966</div><div class="p-w">单管 DRAM。用最简结构换取最高密度，存储价格战的起点。</div></div>
+      <div class="person"><div class="p-n">施敏 / 姜大元</div><div class="p-y">1967</div><div class="p-w">浮栅结构。把电子关进绝缘层，才有了断电不丢的存储。</div></div>
+      <div class="person"><div class="p-n">舛冈富士雄</div><div class="p-y">1980s</div><div class="p-w">闪存。让相机、U 盘、手机有了记忆。</div></div>
+      <div class="person"><div class="p-n">维德勒</div><div class="p-y">1960s</div><div class="p-w">模拟集成电路。证明电路设计也可以是手艺与艺术。</div></div>
+      <div class="person"><div class="p-n">彼得森</div><div class="p-y">1982</div><div class="p-w">把硅当机械材料。MEMS 传感器的起点。</div></div>
+      <div class="person"><div class="p-n">博伊尔 / 史密斯</div><div class="p-y">1969</div><div class="p-w">CCD。让光变成可以被搬运的电荷，数字影像由此开始。</div></div>
+      <div class="person"><div class="p-n">中村修二</div><div class="p-y">1993</div><div class="p-w">高亮度蓝光 LED。补上三原色的最后一环，白光照明成立。</div></div>
+      <div class="person"><div class="p-n">康韦 / 米德</div><div class="p-y">1980</div><div class="p-w">VLSI 设计方法。让设计脱离工艺，fabless 才有土壤。</div></div>
+      <div class="person"><div class="p-n">张忠谋</div><div class="p-y">1987</div><div class="p-w">纯代工模式。用"不竞争"换来所有人的图纸。</div></div>
+      <div class="person"><div class="p-n">林本坚</div><div class="p-y">2002</div><div class="p-w">浸没式光刻。用水给 193 纳米续了十几年的命。</div></div>
+      <div class="person"><div class="p-n">胡正明</div><div class="p-y">1999</div><div class="p-w">FinFET。把沟道立起来，让栅极重新管得住电流。</div></div>
+    </div>
+  </section>
+
+  <!-- 反思 -->
+  <section id="reflect">
+    <div class="sect-head"><span class="sect-num">20</span><h2>留给读者的四个问题</h2></div>
+
+    <div class="insight">
+      <span class="i-l">问题一</span>
+      <p>你所在的行当，现在卡在哪一层？是<b>原理</b>（不知道该用什么物理效应）、<b>工艺</b>（知道怎么做但做不稳）、还是<b>工具</b>（做得了但离不开别人的软件和设备）？三层的解法完全不同，而多数团队把工艺问题当原理问题攻关，白烧三年钱。</p>
+    </div>
+    <div class="insight">
+      <span class="i-l">问题二</span>
+      <p>如果你的一项技术"更强但更难造"，它会不会输？MOS 的故事说明：<b>只要评价标准还是"单位成本下的产出"，可制造性就永远压过性能</b>。反过来，什么时候性能会重新压过成本？——当场景被卡死的时候（比如手机散热）。</p>
+    </div>
+    <div class="insight">
+      <span class="i-l">问题三</span>
+      <p>摩尔定律失效之后，"进步"由谁定义？如果不再靠缩小，而靠封装、靠架构、靠软件协同，那么评价体系就要换一套。换体系的时候，原来的领先者往往最不适应——<b>这不是技术问题，是度量问题。</b></p>
+    </div>
+    <div class="insight">
+      <span class="i-l">问题四</span>
+      <p>这本书几乎没有写中国。那么读完它，你能自己回答吗：<b>一条被切成几十段的产业链，哪些段是可以靠投入追上的，哪些段只能靠时间熬？</b>书里给出的线索是——设备与材料靠"手艺 + 数据"积累，设计靠"工具 + 生态"，制造靠"良率 + 资本"。三类难点的性质不同，用同一种办法应对，必然有一类会落空。</p>
+    </div>
+
+    <div class="quote-block">
+      芯片的发展史，就是一部创新史与叛逆史。
+      <span class="qb-from">内容简介（原书）</span>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    《芯片简史》知识图谱 · 基于汪波原著（湛庐文化 / 浙江教育出版社，2023 年 4 月）整理 · 章节目录经国家出版发行信息平台与作者本人解读核对 · 文中"七条判断""三条主线"为阅读归纳，非原书术语 · 仅供个人学习回顾
+  </div>
 </div>
 
-<h3 id="era1-eniac">ENIAC：真空管计算机的巅峰与局限</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content">1945年宾夕法尼亚大学完成的<b>ENIAC</b>：17468个真空管、30吨重、占地167平方米、耗电150千瓦。平均每两天就有一个真空管烧毁，工程师需逐个排查替换。计算弹道表格仅需30秒（人工需20小时），但每次换程序都要重新接线——编程即物理重组。根本矛盾：计算能力已够用，但硬件不可靠性和编程笨拙使更大规模系统几乎不可能。</div><div class="example">类比：想象一支17468人的军队，每两天就有一个人突然倒下，你得逐个检查是谁、替换他，才能让整支部队继续运作。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">真空管暴露<b>三个根本性瓶颈</b>：①体积庞大（不可能集成百万个）；②功耗惊人（加热灯丝能耗远超开关所需）；③可靠性低（热阴极会烧毁）。三者指向同一解法：寻找不需要加热、不需要真空、体积微小的<b>固体电子开关</b>。</div><div class="example">类比：真空管像用蒸汽机驱动汽车——功率够大但太笨重。问题不是"能不能更大"，而是"能不能换一种更小更可靠的动力源"。</div></div>
-</div>
+<button class="to-top" id="toTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部">↑</button>
 
-<h3 id="era1-solidstate">固体物理奠基：能带、PN结与掺杂</h3>
-<div class="info-grid">
-<div class="info-card concept"><div class="label">核心概念</div><div class="content"><b>能带理论</b>解释了金属导电、玻璃绝缘、半导体介于两者之间：导体价带与导带重叠，绝缘体有巨大禁带，半导体禁带较小，少量电子可跃迁到导带。<b>掺杂</b>是关键工程手段：纯硅中掺磷（多一个电子→N型）或硼（少一个电子→P型），可精确控制载流子类型和浓度。<b>PN结</b>是掺杂的几何后果：P型与N型交界处形成内建电场，电子单向流动——半导体二极管的物理基础。</div><div class="example">类比：能带像多层停车场——低层满了（价带），高层空着（导带），中间有栏杆（禁带）。金属栏杆拆了，绝缘体栏杆极高，半导体栏杆不高，少量电子能翻过去。掺杂就是给停车场加斜坡。</div></div>
-<div class="info-card tool"><div class="label">工具与方法</div><div class="content">1930年代A.H. Wilson提出能带模型，为半导体研究提供理论框架。但当时半导体研究在学术界地位边缘——物理学家觉得它"太工程"，工程师觉得它"太理论"。正是这种跨领域的尴尬位置，使贝尔实验室这样兼具研究与工程的机构最适合攻克半导体难题。</div><div class="example">类比：半导体物理当时像一个"双语者"——两边都觉得你不够纯正，但恰恰是双语者才能做翻译。</div></div>
+<div class="mask hide" id="mask" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <button class="x" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
 </div>
-<div class="reflection-block"><div class="reflection-title">延伸思辨</div>真空管时代留下深刻教训：技术瓶颈的"解法"往往不在当前技术体系内部。真空管的问题是"管子太大太脆弱"，答案不在"做更小更好的真空管"，而在"换一种完全不同的开关"。技术突破常需范式跃迁而非渐进优化——范式跃迁的前提，是理论物理已准备好了新地基。</div>
-</section><section class="era-section" id="era2">
-<h2><span class="era-label">Era 2</span> 晶体管革命（1947—1959）</h2>
-<div class="era-intro">晶体管的诞生故事本身就是"碰撞"论点的最佳注脚：肖克利的场效应构想先行失败，巴丁和布拉顿的表面态理论改变了方向，点接触晶体管在1947年12月23日意外诞生——然后肖克利又"偷偷"发明了更好的面结型晶体管。天才之间的竞争、合作与背叛，交织出半导体史上最戏剧性的一幕。</div>
-
-<h3 id="era2-transistor">点接触晶体管：从失败到偶然成功</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content"><b>肖克利</b>1945年提出场效应晶体管构想——在半导体表面施加电场调制电流，理论上完美。但实验反复失败，原因是<b>表面态</b>：半导体表面的悬挂键捕获载流子，外部电场无法穿透到内部。<b>巴丁</b>提出表面态理论解释了失败原因，反而打开新路——既然表面态阻止场效应，就利用表面态附近条件做开关。1947年12月23日，巴丁和布拉顿用两根金属丝压在锗片表面，成功实现电流调制——<b>点接触晶体管</b>诞生。不是肖克利最初构想，而是对失败原因的深入理解催生了替代方案。</div><div class="example">类比：你想打开窗户透气（场效应），但窗框被锈住了（表面态）。研究锈的原理后发现锈层本身可导电，于是利用锈层做了新窗户。失败的研究反而带来了成功。</div></div>
-<div class="info-card history"><div class="label">历史节点</div><div class="content">点接触晶体管虽成功，但结构脆弱——两根金属丝要精确压在锗表面微米级区域，制造困难、一致性差。肖克利得知巴丁和布拉顿成功后，独自在酒店里花一个月发明了<b>面结型晶体管</b>（1950年专利），利用PN结的内部电场而非表面接触控制电流。但肖克利排挤巴丁和布拉顿——将他们排除在专利之外——直接导致巴丁离开贝尔实验室去超导领域（后来拿了第二个诺贝尔奖）。</div><div class="example">类比：三人组队爬山，队长路线走不通，队友发现另一条路成功登顶，队长又找到更好路线——但队长在日志里把队友名字写得很小。队友离开后独自登了更高的山。</div></div>
-</div>
-
-<h3 id="era2-junction">面结型晶体管与从锗到硅</h3>
-<div class="info-grid">
-<div class="info-card concept"><div class="label">核心概念</div><div class="content"><b>面结型晶体管</b>原理：N-P-N三层结构，中间P层（基极）像阀门——小电流通过基极即可调制从发射极到集电极的大电流。完全利用<b>PN结的内建电场</b>而非表面接触。从锗到硅的转变：锗禁带0.67eV，室温本征导电太强导致热不稳定；硅禁带1.12eV，更稳定，且<b>SiO&#8322;天然是优良绝缘体</b>——这个特性后来成为平面工艺的关键。</div><div class="example">类比：锗像性格太活跃的员工——室温下容易自作主张。硅像稳重员工——室温服从指令，自带"防护服"（SiO&#8322;氧化层）。</div></div>
-<div class="info-card tool"><div class="label">工具与方法</div><div class="content"><b>区域提纯法</b>是从锗到硅的关键瓶颈突破。锗相对容易提纯（熔点937°C），硅极难提纯（熔点1414°C且化学活性高）。1950年代德州仪器的<b>蒂尔</b>开发了区域提纯法，逐步将硅纯度提升到半导体级。同时，生长结技术和合金结技术使面结型晶体管量产成为可能。</div><div class="example">类比：区域提纯像用越来越细的筛子反复筛沙——每次通过一个区域，杂质被推到一端，最后留下超纯的部分。</div></div>
-</div>
-
-<h3 id="era2-traitorous">八叛逆与仙童半导体——硅谷起源</h3>
-<div class="info-grid">
-<div class="info-card history"><div class="label">历史节点</div><div class="content">1956年肖克利离开贝尔实验室创办肖克利半导体，召集8位顶尖年轻科学家（包括诺伊斯和摩尔）。但肖克利管理偏执——对员工不信任、甚至对小事故动用测谎仪。1957年8人集体辞职（"Traitorous Eight"），经亚瑟·洛克融资后创办<b>仙童半导体</b>。仙童后来裂变出100+公司，包括Intel、AMD、National Semiconductor。硅谷的"仙童系"谱系比任何单一公司的贡献都大。</div><div class="example">类比：仙童像一棵蒲公英——种子飘散到各处，每颗种子都长出了自己的花园。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">仙童事件揭示了<b>组织创新与技术创新的互动</b>：肖克利的科学天才不可否认，但他的管理缺陷直接催生了仙童——一家比肖克利半导体更成功的公司。深层规律：半导体产业的创新速度要求组织形式开放、扁平，而肖克利的独裁式管理窒息了创新土壤。</div><div class="example">类比：好的土壤比好的种子更重要。肖克利有最好的种子，但土壤有毒；仙童土壤肥沃，种子自由生长。</div></div>
-</div>
-<div class="reflection-block"><div class="reflection-title">延伸思辨</div>晶体管的诞生揭示了"失败前置"模式——肖克利场效应构想的失败不是终点，而是巴丁发现表面态、进而发明点接触晶体管的起点。在技术史上，"失败"往往是"成功"的必要前置步骤。同时，肖克利与巴丁的冲突提醒我们：技术创新从来不只是智力竞赛，更是组织与人际的博弈。</div>
-</section><section class="era-section" id="era3">
-<h2><span class="era-label">Era 3</span> 集成电路时代（1958—1970s）</h2>
-<div class="era-intro">集成电路的诞生再次印证了"碰撞"论点：基尔比和诺伊斯几乎同时但分别独立发明了IC——基尔比用锗，诺伊斯用硅和平面工艺。硅基平面工艺的工程优势最终胜出，奠定了此后60年芯片制造的基础范式。</div>
-
-<h3 id="era3-ic">IC双雄：基尔比 vs 诺伊斯</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content">1958年<b>基尔比</b>在德州仪器用锗片制作了第一个集成电路——把多个元器件做在同一块半导体上，用金丝连线。同年<b>诺伊斯</b>在仙童独立提出硅基IC方案，用<b>平面工艺</b>制作——利用SiO&#8322;氧化层做绝缘、铝层做互连，无需金丝飞线。基尔比先做出实物，诺伊斯先提出可量产方案。</div><div class="example">类比：基尔比做了第一辆能开的车（锗基IC），但手工焊接金丝连线——量产困难。诺伊斯做了第一辆可量产的车（硅基平面工艺IC）。先做出原型和先做出可量产方案，价值完全不同。</div></div>
-<div class="info-card history"><div class="label">历史节点</div><div class="content">基尔比2000年获诺贝尔物理学奖（诺伊斯1990年已去世未能获奖），但业界公认<b>诺伊斯的平面工艺方案</b>才是真正改变了世界的发明。"第一个做出原型"和"第一个做出可复制方案"的贡献可能不同——技术的社会价值在于可复制性，不仅仅是可能性。</div><div class="example">类比：第一个登上珠穆朗玛峰的人很重要，但第一个找到可重复攀登路线的人更重要——后者让更多人可以登顶。</div></div>
-</div>
-
-<h3 id="era3-planar">平面工艺：芯片制造的范式基石</h3>
-<div class="info-grid">
-<div class="info-card concept"><div class="label">核心概念</div><div class="content"><b>平面工艺</b>由仙童的<b>霍尼</b>1959年发明，核心步骤：①在硅片表面生长SiO&#8322;氧化层；②在氧化层上光刻开窗；③通过窗口扩散掺杂（形成PN结）；④再生长氧化层+铝互连。关键优势：所有元器件和连线都在硅片<b>同一平面</b>上完成；SiO&#8322;同时充当绝缘和保护层。60多年后的3nm制程仍在用这一思路的变体。</div><div class="example">类比：平面工艺像在一块平地上盖城市——先铺地基（SiO&#8322;），再挖地基开窗口（光刻），再在窗口里建房子（扩散掺杂），最后铺马路连起来（铝互连）。所有建筑都在同一层平面上。</div></div>
-<div class="info-card tool"><div class="label">工具与方法</div><div class="content">平面工艺的关键工具是<b>光刻</b>——用紫外线通过掩模版在硅片上"印刷"电路图案。光刻技术的每一次进步都直接决定了芯片集成度的上限。平面工艺让芯片制造从"手工制作"变成了"印刷复制"——这是摩尔定律得以成立的前提。</div><div class="example">类比：没有平面工艺之前做晶体管像手写书法。平面工艺之后像活字印刷——同一版可以印无数份，每份都一样。</div></div>
-</div>
-
-<h3 id="era3-fairchild">仙童裂变：硅谷的蒲公英效应</h3>
-<div class="info-grid">
-<div class="info-card history"><div class="label">历史节点</div><div class="content">1960年代仙童内部矛盾激化——东部母公司关注利润而非创新，西部工程师渴望自治。1967-1968年核心人员大规模离职：诺伊斯和摩尔创办<b>Intel</b>，桑德斯创办<b>AMD</b>。此后十年从仙童裂变出<b>100+衍生公司</b>。硅谷之所以成为硅谷，不是因为有一家伟大公司，而是因为有一棵不断散种的蒲公英。</div><div class="example">类比：仙童像蒲公英——不是自己长得最高，而是种子最远。Intel是最大的一颗种子。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">"蒲公英效应"揭示了<b>组织裂变驱动产业生态</b>：一家公司的人才外溢比自身产品创新对产业的影响更大。仙童的裂变不仅催生了多家芯片公司，还催生了风险投资体系（红杉资本创始人是仙童系）和硅谷创业文化。</div><div class="example">类比：一颗蒲公英的贡献不在它自己开花有多美，而在它散出的种子开出了多少花园。</div></div>
-</div>
-
-<h3 id="era3-moore">摩尔定律：从观察到预言再到自我实现</h3>
-<div class="info-grid">
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">1965年<b>摩尔</b>在《电子学》杂志上发表文章，观察到芯片上的元器件数量每年翻倍（后来修正为每18-24个月），并预言这一趋势将继续。摩尔定律的演变经历了三个阶段：<b>观察期</b>（1965-1975，摩尔只是描述已发生的事实）；<b>预言期</b>（1975后，业界开始以它为目标规划未来）；<b>自我实现期</b>（1990s后，摩尔定律变成了整个产业的集体承诺——大家投入资源确保定律成立，如果它不再成立就不是"自然规律失效"而是"产业共识崩塌"）。</div><div class="example">类比：摩尔定律从"天气预报"变成了"航班时刻表"——最初只是描述天气规律，后来变成了航空公司必须执行的排班计划。如果航班延误了，不是天气的问题，而是航空公司没投入足够资源。</div></div>
-<div class="info-card case"><div class="label">关键案例</div><div class="content">摩尔定律的自我实现机制：Intel每年投入数十亿美元研发新制程，台积电投入数百亿美元建新工厂，ASML投入数十亿研发新光刻机——所有人的计划都以摩尔定律为前提。如果某年有人觉得"做不到"就减少投入，那定律真的会失效。但没有人敢做那个"叛徒"，因为这意味着在竞争中落后。这形成了一个<b>正反馈循环</b>：定律成立→信心增强→更多投入→定律继续成立。</div><div class="example">类比：一群人一起跑步，有人说"我们每年提速10%"。最初只是观察，后来变成了约定——谁不提速就落后。于是所有人拼命训练确保"定律"成立。不是定律驱动进步，是进步驱动定律。</div></div>
-</div>
-<div class="reflection-block"><div class="reflection-title">延伸思辨</div>集成电路时代的核心教训：技术史上的"竞赛"不是零和游戏。基尔比和诺伊斯不是争夺"谁是第一"的对手——他们的不同路径最终汇合成了更强大的硅基平面工艺范式。同样，仙童的裂变不是公司衰败，而是产业生态繁荣。摩尔定律从观察到自我实现的演变，则提醒我们：技术进步有时不是被"自然规律"推动，而是被"集体承诺"推动——一旦集体承诺瓦解，进步可能停滞。</div>
-</section><section class="era-section" id="era4">
-<h2><span class="era-label">Era 4</span> 微处理器与PC（1971—1990s）</h2>
-<div class="era-intro">微处理器的诞生是芯片从"被动元件"到"主动计算"的质变——一块芯片上集成了完整的CPU，计算机从巨型机器变成了桌上设备。Intel的崛起、x86架构的统治、RISC与CISC的哲学之争，勾勒出芯片从实验室走向大众市场的完整路径。</div>
-
-<h3 id="era4-4004">Intel 4004：第一颗微处理器</h3>
-<div class="info-grid">
-<div class="info-card history"><div class="label">历史节点</div><div class="content">1968年<b>摩尔和诺伊斯</b>离开仙童创办Intel（Integrated Electronics），最初做存储芯片（DRAM）。1971年，Intel工程师<b>Faggin</b>完成了<b>4004微处理器</b>——2300个晶体管、10微米工艺、740kHz时钟频率。4004最初是为日本Busicom计算器公司定制的，但Intel意识到通用微处理器比专用芯片更有价值，回购了设计权。这一决策让Intel从存储芯片公司转型为微处理器公司，最终改变了整个产业格局。</div><div class="example">类比：4004像第一台智能手机——最初只是给特定客户做的计算器芯片，但Intel意识到"通用性"比"专用性"更值钱，就像iPhone最初只是给AT&T做的手机，但苹果意识到它可以是一台通用计算设备。</div></div>
-<div class="info-card case"><div class="label">关键案例</div><div class="content">4004的2300个晶体管在今天看来微不足道（2023年Apple M2有200亿个），但它证明了<b>"一块芯片可以包含一个完整CPU"</b>这一根本性命题。微处理器让计算机的硬件成本从百万美元级降到了百美元级——PC革命的硬件基础由此奠定。关键转折：Intel从"做客户想要的"变成了"做市场需要的"——从被动接单到主动定义产品方向。</div><div class="example">类比：2300个晶体管像一支2300人的小镇——规模不大，但已经具备了城镇的所有功能（行政、商业、交通）。今天的200亿晶体管是200亿人的全球帝国。</div></div>
-</div>
-
-<h3 id="era4-x86">x86架构：IBM PC押注Intel</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content">1981年<b>IBM PC</b>选择了Intel 8088处理器（16位内部/8位外部，29400晶体管）——这个选择不是因为8088技术最好（Motorola 68000更强），而是因为<b>商业策略</b>：IBM为了加速开发、避免对单一供应商过度依赖，选择了开放的x86架构+第三方操作系统（Microsoft DOS）。结果是IBM开放了PC标准但Intel和Microsoft捕获了最大价值——"IBM兼容机"时代，所有PC厂商都要用x86 CPU和Windows OS。Intel从芯片供应商变成了产业规则制定者。</div><div class="example">类比：IBM像一个国王开放了领土但没守住关卡——关卡（CPU和OS）被Intel和Microsoft占领了。所有通过关卡的人都要交"过路费"。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">x86架构的成功揭示了<b>生态锁定效应</b>：一旦大量软件基于x86编写，切换到其他架构的成本极高（所有软件都要重写）。这就是"生态壁垒"或"路径依赖"——即使技术上更优的架构也无法轻易替代已有生态。ARM后来在移动端打破x86统治，不是因为技术更好，而是因为应用场景不同（移动端需要低功耗，x86生态壁垒在移动端不存在）。</div><div class="example">类比：x86像英语——不是最"优美"的语言，但一旦全球论文、合同、软件都用英语写，切换到法语的成本太高。ARM在移动端成功就像中文在亚洲的统治——不同领域有不同的"官方语言"。</div></div>
-</div>
-
-<h3 id="era4-risc">RISC vs CISC：架构哲学之争</h3>
-<div class="info-grid">
-<div class="info-card concept"><div class="label">核心概念</div><div class="content"><b>CISC</b>（复杂指令集，x86代表）：每条指令可以做复杂操作（如一条指令完成内存读取+计算+存储），硬件复杂但软件简单。<b>RISC</b>（精简指令集，ARM/MIPS代表）：每条指令只做简单操作（如只有"加法""读取""存储"），硬件简单但需要更多指令组合完成任务。1980年代<b>Patterson和Hennessy</b>的RISC研究表明：简单指令+编译器优化 ≈ 复杂指令的性能，但硬件更简单、更容易提升时钟频率。RISC在学术上赢了，但x86在市场上赢了——Intel用微码转换把x86指令翻译成内部RISC操作，"用CISC的外壳包裹RISC的内核"。</div><div class="example">类比：CISC像瑞士军刀——一把刀能做很多事，但每件工具都不够专业。RISC像一套专业厨具——每件只做一件事，但做得很好，组合起来更高效。Intel的做法是用瑞士军刀的外壳，里面装了一套专业厨具。</div></div>
-<div class="info-card case"><div class="label">关键案例</div><div class="content">RISC vs CISC之争的结局不是"一方消灭另一方"，而是<b>融合</b>：现代x86处理器内部是RISC内核+微码翻译层，ARM处理器也在逐步增加复杂指令（如NEON SIMD）。这说明技术史上的"哲学之争"往往以融合而非替代结束——纯理论上的"正确"在实践中会被商业现实修正。</div><div class="example">类比：就像素食主义和肉食主义的争论——现实中大多数人既吃蔬菜也吃肉。技术史上，极端的哲学立场很少成为最终答案。</div></div>
-</div>
-<div class="reflection-block"><div class="reflection-title">延伸思辨</div>微处理器时代揭示了"应用场景决定技术路线"的规律：x86统治PC不是因为技术最优，而是因为生态锁定；ARM统治移动不是因为指令集最优，而是因为低功耗适配移动场景。技术竞争不是"谁更先进"的学术比拼，而是"谁更适合应用场景"的市场博弈。更深层的问题是：当技术选择被商业生态锁定后，更好的技术能否突破壁垒？历史表明，只有在应用场景发生根本性变化时（从PC到移动），锁定才会被打破。</div>
-</section><section class="era-section" id="era5">
-<h2><span class="era-label">Era 5</span> 光刻与制程演进（1960s—2020s）</h2>
-<div class="era-intro">光刻技术是芯片制造的"印刷术"——它的精度决定了芯片上能画多细的线、能放多少元器件。从10微米到3纳米的长征，是光刻技术不断突破物理极限的过程。而EUV光刻的出现，则让ASML成为全球唯一能制造最先进光刻机的公司——一个荷兰小国掌握了人类最精密制造技术的命脉。</div>
-
-<h3 id="era5-lithography">光刻技术演进：从接触到扫描</h3>
-<div class="info-grid">
-<div class="info-card tool"><div class="label">工具与方法</div><div class="content">光刻技术的四代演进：<b>接触式</b>（1960s，掩模版直接接触硅片，精度10微米但掩模版容易磨损）；<b>接近式</b>（1970s，掩模版与硅片保持微小间隙，精度2-3微米但间隙导致衍射模糊）；<b>投影式</b>（1970s末，用透镜系统将掩模版图案投影到硅片，精度提升到1微米以下）；<b>步进扫描式</b>（1990s至今，逐区域扫描曝光+深紫外光源，精度进入纳米级）。每次演进的核心逻辑相同：让掩模版与硅片的"距离"更灵活可控，同时用更短波长光源减小衍射效应。</div><div class="example">类比：光刻演进像印刷术进步——从直接盖章（接触式）到隔着纸盖章（接近式）到用放大镜投影（投影式）到用激光精雕（步进扫描式）。每一步都是在不触碰原件的情况下获得更高精度。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">光刻精度受<b>瑞利判据</b>约束：分辨率 ≈ k1 × λ / NA（k1是工艺系数，λ是光源波长，NA是透镜数值孔径）。要提升精度有三条路：①缩短λ（从436nm汞灯→365nm→248nm→193nm→13.5nm EUV）；②增大NA（透镜设计越来越复杂）；③减小k1（OPC光学邻近效应校正等软件补偿）。三条路越来越贵、越来越难——光刻成本的指数级增长是摩尔定律经济代价的缩影。</div><div class="example">类比：瑞利判据像"相机拍照的清晰度公式"——要拍更清晰的照片，要么用更短波长的光（紫外线比红光更清晰），要么用更好的镜头（更大的NA），要么用软件锐化（减小k1）。每条路都要花钱。</div></div>
-</div>
-
-<h3 id="era5-node">制程节点长征：从10微米到3纳米</h3>
-<div class="info-grid">
-<div class="info-card history"><div class="label">历史节点</div><div class="content">制程节点数字从10μm（1971 Intel 4004）一路缩小：3μm（1979 8088）→1μm（1989 486）→0.5μm（1993 Pentium）→0.25μm→0.13μm→90nm→65nm→45nm→32nm→28nm→14nm→10nm→7nm→5nm→3nm（2022 Samsung/台积电）。每个节点大约2-3年一代，晶体管密度每代翻倍。但"节点数字"从2010s开始不再精确对应物理尺寸——7nm节点的实际栅长并非7nm，而是marketing约定。真正的物理极限挑战从14nm开始加剧。</div><div class="example">类比：制程节点像马拉松的里程碑——从10微米到3纳米跑了50年。但近年"里程碑数字"变成了营销标签而非真实距离——就像马拉松赛道上有些里程碑不再标注公里数而是标注"精神鼓励"。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">制程缩小的物理障碍不断变化：微米级主要受<b>光刻精度</b>限制；深亚微米级受<b>短沟道效应</b>（晶体管太小导致栅极无法有效控制电流）限制；纳米级受<b>量子隧穿</b>（电子穿透绝缘层导致漏电）限制。每次障碍不同，解决方案也不同——从更好的光刻到FinFET立体结构再到GAA全环绕栅极。物理极限不是一堵墙，而是一系列越来越高的门槛。</div><div class="example">类比：制程缩小像通过越来越窄的隧道——刚开始只是缩窄一点（光刻），后来隧道弯道增多（短沟道效应），再后来隧道壁开始渗水（量子隧穿）。每次都要换一种新的通过策略。</div></div>
-</div>
-
-<h3 id="era5-euv">EUV光刻：ASML的垄断与13.5nm极紫外</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content"><b>EUV光刻</b>是7nm以下制程的必要工具，使用13.5nm极紫外光源（此前DUV用193nm深紫外）。EUV光源的产生方式极复杂：用高功率CO2激光轰击滴落的锡液滴，每次轰击产生极紫外脉冲——每秒要轰击50000次锡滴，每滴都要精确命中。ASML是<b>全球唯一能制造EUV光刻机</b>的公司（每台超1亿美元，重180吨，零件超10万个），供应链跨越全球（德国蔡司镜头+美国Cymer光源+荷兰自研整机）。ASML的垄断不是因为"最先做"，而是因为整合了全球最顶尖子系统——任何单独国家无法复制。</div><div class="example">类比：EUV光刻机像一台由全球顶级供应商组装的太空望远镜——德国造镜头、美国造激光器、荷兰做系统集成。你要复制它，不是复制一台机器，而是复制整个全球精密制造供应链。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">ASML垄断揭示了<b>精密制造的全球协作依赖</b>：EUV光刻不是一国之力能完成的，它依赖德国的光学、美国的激光、日本的材料、荷兰的集成。芯片产业的"供应链全球化"不仅是经济选择，更是技术必然——极端精密的制造需要极端精密的子系统，而这些子系统分散在全球最顶尖的专业公司手中。地缘政治试图"断链脱钩"时面临的根本矛盾：技术本身要求全球协作，政治却要求主权独立。</div><div class="example">类比：EUV光刻机像一道需要8位顶级厨师各做一道菜的盛宴——每个厨师只有自己做的那道菜能做到极致。你要在自家厨房复制整桌盛宴，就得同时培养8位顶级厨师——这需要几十年。</div></div>
-</div>
-<div class="reflection-block"><div class="reflection-title">延伸思辨</div>光刻与制程演进揭示了"物理极限是可移动的"这一悖论：每次看似不可逾越的物理障碍（光刻衍射极限、短沟道效应、量子隧穿）都被工程创新绕过——不是打破物理定律，而是用新结构（FinFET、GAA）或新工具（EUV）在定律约束内找到新路径。但每次绕过的成本越来越高。摩尔定律在经济上还能持续多久，取决于社会是否愿意为每一代制程投入数百亿美元——这不再是纯技术问题，而是经济学和政治学问题。</div>
-</section><section class="era-section" id="era6">
-<h2><span class="era-label">Era 6</span> 移动与专用芯片（1990s—2010s）</h2>
-<div class="era-intro">移动时代改变了芯片竞争的基本规则：功耗取代性能成为第一优先级，ARM的低功耗IP授权模式取代了x86的自研制造模式，GPU从游戏显卡意外成为并行计算革命的引擎。专用芯片（FPGA/ASIC）则在特定场景证明了"通用不如专用"的效率优势。</div>
-
-<h3 id="era6-arm">ARM：低功耗IP授权的全球统治</h3>
-<div class="info-grid">
-<div class="info-card history"><div class="label">历史节点</div><div class="content"><b>ARM</b>（Acorn RISC Machine）的故事始于1983年英国Acorn电脑公司——他们需要一个低功耗处理器用于BBC Micro电脑的下一代。Acorn的工程师设计了ARM1（1985，25MHz，仅25000晶体管，功耗不到1瓦——同期Intel 80386功耗是3-5瓦）。1990年ARM独立为ARM Ltd，开创<b>IP授权模式</b>：不制造芯片，只卖设计授权——任何公司买了ARM架构后可以在自己的芯片中使用。这种模式让ARM迅速扩散：苹果、Qualcomm、三星、华为都基于ARM设计自己的SoC。到2010s，ARM统治了全球99%的智能手机处理器。</div><div class="example">类比：ARM不卖芯片只卖图纸——像建筑设计师不盖房子只卖设计图。全世界都买ARM的设计图盖自己的房子，结果ARM成了移动端的"建筑设计标准"。Intel自己设计自己盖，像开发商——更可控但更贵。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">ARM成功的核心逻辑：<b>低功耗 + IP授权</b>的组合完美适配移动时代。低功耗是物理需求（手机电池容量有限）；IP授权是商业模式创新——传统芯片公司自己设计自己制造（IDM模式），ARM只设计不制造，让客户自己制造，降低了进入门槛。Qualcomm、苹果不需要建芯片工厂就能做出ARM架构芯片——这使得移动芯片市场比PC市场更开放、更多样。ARM证明了<b>"轻资产+强生态"</b>可以打败"重资产+强制造"。</div><div class="example">类比：Intel像一家自己设计自己生产汽车的制造商（福特模式）。ARM像一家只卖汽车设计图纸的设计公司（可口可乐卖配方不卖饮料）——全世界都在用ARM的"配方"做自己的"饮料"。</div></div>
-</div>
-
-<h3 id="era6-gpu">GPU与NVIDIA：从游戏显卡到并行计算革命</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content">1993年<b>黄仁勋</b>（Jensen Huang）与两位合伙人创办NVIDIA，最初做3D游戏图形加速芯片。1999年发布<b>GeForce 256</b>——第一个被称为GPU的产品（Graphics Processing Unit）。GPU的核心架构与CPU不同：CPU是<b>少数强大核心</b>（擅长串行复杂逻辑），GPU是<b>大量简单核心</b>（擅长并行简单计算）。2006年NVIDIA发布<b>CUDA</b>（Compute Unified Device Architecture）——让GPU不仅能画图，还能做通用并行计算。CUDA是GPU从"游戏外设"变成"计算引擎"的关键转折。2012年AlexNet用GPU训练深度神经网络，开启了AI与GPU的结合。</div><div class="example">类比：CPU像一个超级教授——一个人解决复杂问题但速度有限。GPU像1000个研究生——每人只能做简单计算，但1000人同时开工，总吞吐量远超教授。CUDA让这1000个研究生不仅能画图，还能做数学作业。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">GPU揭示了一个深层规律：<b>应用场景的"意外"转移</b>。GPU被发明是为了游戏——但它的并行计算架构恰好适配了科学计算、密码学、金融建模、深度学习。这不是"天才预见"，而是"架构的通用潜力在特定时刻被激活"。CUDA的战略意义在于：它把GPU从专用硬件变成了通用并行计算平台——任何开发者都能用CUDA编程。这创造了一个正反馈循环：更多开发者用CUDA→更多应用依赖GPU→NVIDIA卖更多GPU→投入更多研发CUDA→更强大的生态。</div><div class="example">类比：GPU像一把原本只用来切面包的刀——刀本身并没有限定用途，只是最初只切面包。后来有人用它切水果（科学计算）、切肉（金融）、雕花（AI）。刀的设计者没预见这些用途，但刀的"锋利+通用"属性使这些延伸成为可能。</div></div>
-</div>
-
-<h3 id="era6-fpga">FPGA与ASIC：专用化的效率优势</h3>
-<div class="info-grid">
-<div class="info-card tool"><div class="label">工具与方法</div><div class="content"><b>FPGA</b>（Field Programmable Gate Array，现场可编程门阵列）：芯片出厂后可以被用户重新编程改变内部逻辑——像一块"可擦写的硬件"。用于原型验证、通信基站、金融高频交易等需要<b>灵活+高性能</b>的场景。Xilinx（现AMD收购）和Intel Altera是主要供应商。<b>ASIC</b>（Application Specific Integrated Circuit，专用集成电路）：为单一任务定制的芯片——像一块"不可擦写的硬件"，但效率极高。比特币矿机ASIC就是例子——做SHA256哈希比GPU快100倍、能效比GPU高1000倍。</div><div class="example">类比：FPGA像乐高积木——出厂是空白的，你可以反复拼拆成不同形状。ASIC像用钢铸造的专用模具——只做一件事但做得极快极省。乐高灵活但慢，钢模具专用但快。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">FPGA vs ASIC vs GPU vs CPU构成了<b>灵活性与效率的谱系</b>：CPU最灵活最慢（通用计算）；GPU较灵活较快（并行计算）；FPGA中等灵活中等快（可编程硬件）；ASIC最不灵活最快（专用硬件）。选择取决于<b>迭代速度 vs 性能需求</b>的权衡：迭代快的领域（AI训练）选GPU/ FPGA；迭代慢的领域（挖矿）选ASIC。芯片设计不是追求"最快"，而是在灵活性和效率之间找到最适合应用场景的平衡点。</div><div class="example">类比：CPU像瑞士军刀（万能但慢），GPU像电动锯（能锯很多材料且快），FPGA像3D打印机（可定制中等速度），ASIC像数控机床（只做一种零件但极快极精）。</div></div>
-</div>
-<div class="reflection-block"><div class="reflection-title">延伸思辨</div>移动与专用芯片时代揭示了"应用场景决定芯片架构"的铁律：移动需要低功耗→ARM胜出；游戏需要并行渲染→GPU诞生；深度学习需要并行矩阵运算→GPU被"意外"激活。没有任何架构在所有场景都最优——芯片设计是一场永无终点的"场景适配"竞赛。ARM的IP授权模式还揭示了一个商业规律：在足够开放的市场中，"卖设计"比"卖产品"更容易建立生态壁垒。</div>
-</section><section class="era-section" id="era7">
-<h2><span class="era-label">Era 7</span> AI芯片与未来（2010s— ）</h2>
-<div class="era-intro">AI芯片时代是芯片史上最快的范式转换：2012年AlexNet用GPU训练神经网络，2020s各大公司争相开发专用AI加速器（TPU/NPU），同时类脑计算和量子芯片试图从根本架构上突破冯·诺伊曼瓶颈。但芯片地缘政治的阴影也在加深——中美竞争、台积电的脆弱性、供应链重构，使得"技术进步"与"国家安全"交织成前所未有的复杂局面。</div>
-
-<h3 id="era7-dlhw">深度学习硬件：从GPU到专用加速器</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content">2012年<b>AlexNet</b>用两块NVIDIA GTX 580 GPU训练深度神经网络，在ImageNet竞赛中大幅超越传统方法——这是GPU进入AI领域的里程碑。此后硬件路径分化：<b>GPU路线</b>（NVIDIA持续优化Tesla/A100/H100系列，通用性强但功耗高）；<b>TPU路线</b>（Google 2016年发布Tensor Processing Unit，专为矩阵运算优化，在Google内部大规模部署但不开源）；<b>NPU路线</b>（华为麒麟970首次集成NPU、苹果Neural Engine、各大SoC厂商自研AI加速器，面向终端推理而非训练）。2020s的新趋势：<b>存算一体</b>（在存储单元内直接计算，减少数据搬运功耗）和<b>稀疏计算</b>（利用神经网络权重稀疏性跳过无效计算）。</div><div class="example">类比：AI硬件演进像交通工具的分化——GPU像跑车（通用但费油），TPU像火车（专用路线但运载量大），NPU像电动自行车（终端轻量推理）。存算一体像在仓库里直接加工——不把原料搬出仓库再运回来。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">AI芯片的核心矛盾是<b>冯·诺伊曼瓶颈</b>：传统架构中计算单元和存储单元分离，数据搬运的功耗和时间远超计算本身。AI推理中90%以上的能耗用于数据搬运而非计算。这催生了存算一体的思路——让存储单元本身具备计算能力。更深层的挑战是<b>精度与效率的权衡</b>：神经网络推理可以用8位甚至4位整数代替32位浮点，精度损失很小但效率提升巨大。量化推理正在成为AI芯片设计的标配。</div><div class="example">类比：冯·诺伊曼瓶颈像厨师做饭要去隔壁仓库取食材——90%时间花在跑路上而不是炒菜。存算一体像把食材仓库搬到厨房里，直接就地取材炒菜。</div></div>
-</div>
-
-<h3 id="era7-neuromorphic">类脑计算与量子芯片：下一代范式？</h3>
-<div class="info-grid">
-<div class="info-card concept"><div class="label">核心概念</div><div class="content"><b>类脑计算</b>（Neuromorphic Computing）试图模仿大脑的信息处理方式：用<b>脉冲神经网络</b>（SNN）替代传统深度神经网络——神经元只在"需要时"才发出脉冲（事件驱动而非时钟驱动），功耗极低。Intel的Loihi芯片和IBM的TrueNorth芯片是代表。但目前类脑计算面临<b>算法不成熟</b>的瓶颈——SNN的训练方法远不如传统DNN成熟，"硬件领先算法"的尴尬局面。<b>量子芯片</b>利用量子叠加和纠缠实现指数级加速，理论上可在特定问题（如量子模拟、优化）上超越经典计算机。但量子芯片面临<b>退相干</b>（量子态极易被环境干扰破坏）和<b>纠错</b>（量子比特需要大量冗余纠错比特）的巨大挑战。2020s的量子芯片仍在"实验室阶段"——几十到几百个物理量子比特，远达不到实用纠错所需的百万级。</div><div class="example">类比：类脑计算像试图用"大脑的语言"（脉冲）而非"数学的语言"（数字）做计算——但还没学好大脑的语法。量子计算像试图用"概率的语言"而非"确定的语言"做计算——但概率太容易被噪声打断。</div></div>
-<div class="info-card history"><div class="label">历史节点</div><div class="content">类脑和量子芯片目前都处于"理论前景远大于实际成果"的阶段——与1950年代的晶体管相似。关键区别：1950年代有明确的<b>应用需求</b>驱动（真空管计算机的瓶颈），而类脑和量子芯片的需求还不够明确和紧迫。量子计算的"杀手级应用"尚未确定——密码破解？药物设计？金融优化？类脑计算的杀手级应用也不确定——低功耗边缘AI？自动驾驶感知？需求不清+技术不成熟的双重瓶颈，使得范式跃迁的时间表难以预测。</div><div class="example">类比：类脑和量子芯片像1900年代的飞机理论——原理上可行，莱特兄弟可能已经在造了，但谁会买票坐飞机？需求在哪里？这要到一战和商用航空才清晰。</div></div>
-</div>
-
-<h3 id="era7-geopolitics">芯片地缘政治：中美竞争与供应链重构</h3>
-<div class="info-grid">
-<div class="info-card case"><div class="label">关键案例</div><div class="content">2020s芯片产业被地缘政治深刻重塑：美国对华为的芯片禁令（2019）直接切断了中国高端芯片获取渠道；美国CHIPs Act（2022）拨款527亿美元补贴本土芯片制造；中国"大基金"三期投入数千亿人民币发展国产替代。<b>台积电</b>成为全球芯片供应链的"最关键节点"——它生产了全球90%的最先进芯片（7nm以下），其中大部分在台湾本土。任何台海冲突都会造成全球芯片供应链瘫痪——这不是假设而是现实风险。美国推动台积电在亚利桑那建厂、日本推动台积电在熊本建厂，都是在做"供应链冗余"——但建厂周期3-5年，且无法复制台湾的完整生态（人才、供应商、文化）。</div><div class="example">类比：台积电像全球供应链的"心脏"——心脏停跳3秒全球就休克。美国和日本在做"体外循环系统"（建海外工厂），但体外循环永远不如自体心脏——成本更高、效率更低。</div></div>
-<div class="info-card concept"><div class="label">核心概念</div><div class="content">芯片地缘政治的核心矛盾：<b>技术全球化 vs 政治本地化</b>。芯片供应链天然是全球化的——美国设计+台湾制造+中国封装+全球销售——每个环节都依赖其他环节。但政治要求"主权可控"——美国要芯片在本土制造，中国要芯片自主设计制造。这个矛盾不可能完美解决——只能做"冗余"和"替代"，代价是效率下降和成本上升。更深层的规律：当技术成为国家安全工具，技术进步的动力从"商业竞争"变成了"政治竞争"——后者更不计成本但也更不理性。</div><div class="example">类比：全球化供应链像一条高效的河流——水自然流向最低处。政治本地化像在河流上筑坝——坝越高成本越高，而且水会从其他地方溢出。不可能把所有河流都筑坝。</div></div>
-</div>
-<div class="reflection-block"><div class="reflection-title">延伸思辨</div>AI芯片时代最大的不确定性不在技术而在政治：类脑和量子芯片的技术成熟度不确定，但更大的不确定在于"全球芯片供应链能否在地缘政治压力下保持运转"。如果供应链断裂，不是技术停滞而是文明层面的冲击——从手机到汽车到军事系统都依赖芯片。历史教训：1980s日本芯片产业被美国打压后，日本从芯片强国退化为芯片配角——不是日本技术不行，而是政治不允许它继续领先。今天中国面临类似处境，但中国市场规模远大于1980s的日本——结局可能不同。</div>
-</section><section class="thesis-section" id="thesis">
-<h2>贯穿论点</h2>
-<div class="insight-card">
-<div class="insight-title">论点一：芯片跃迁不是天才独角戏，是多条线索的碰撞</div>
-<div class="insight-body">每一次重大突破都有多条独立线索交汇：点接触晶体管需要肖克利的失败+巴丁的表面态理论+布拉顿的实验技巧；IC需要基尔比的锗基尝试+诺伊斯的硅基平面工艺+霍尼的平面工艺发明；GPU的AI应用需要CUDA架构+AlexNet算法+ImageNet数据集。没有任何单一因素能独立完成突破。</div>
-<div class="insight-evidence">证据：肖克利场效应失败→巴丁表面态→点接触晶体管；基尔比锗基IC→诺伊斯硅基平面工艺IC；GPU游戏显卡→CUDA→AlexNet→AI训练</div>
-</div>
-
-<div class="insight-card">
-<div class="insight-title">论点二：物理直觉先行，工程执念落实，时代需求牵引</div>
-<div class="insight-body">理论物理提供方向（能带理论→半导体研究方向），工程执念提供路径（平面工艺→从理论到量产），时代需求提供动力（ENIAC的瓶颈→寻找固体开关；移动时代→低功耗优先；AI时代→并行计算优先）。三者缺一不可——没有理论是瞎跑，没有工程是空想，没有需求是自嗨。</div>
-<div class="insight-evidence">证据：能带理论→平面工艺→ENIAC需求；RISC理论→ARM工程→移动需求；量子理论→退相干工程难题→杀手级应用未定</div>
-</div>
-
-<div class="insight-card">
-<div class="insight-title">论点三：失败是成功的必要前置步骤</div>
-<div class="insight-body">肖克利场效应构想失败了，但失败的研究催生了表面态理论和点接触晶体管；摩尔定律最初是观察而非预言，"观察"本身就是对已发生事实的确认而非对未来趋势的预见。技术史上的"突破"往往建立在一系列"失败"之上——失败的路径揭示了物理规律，失败的尝试积累了工程经验。</div>
-<div class="insight-evidence">证据：肖克利场效应失败→巴丁表面态→点接触晶体管；EUV光源研发20年无数次失败→ASML最终成功；量子纠错理论提出→实验反复失败→仍在探索</div>
-</div>
-
-<div class="insight-card">
-<div class="insight-title">论点四：组织形式与技术创新相互塑造</div>
-<div class="insight-body">肖克利的独裁式管理窒息了创新→八叛逆出走→仙童开放文化催生IC；仙童的裂变不是衰败而是生态繁荣；ARM的IP授权模式创造了移动芯片生态；NVIDIA的CUDA生态锁定了AI计算市场。技术创新的速度要求组织形式必须匹配——慢组织做不出快技术，快技术也会重塑组织形式。</div>
-<div class="insight-evidence">证据：肖克利独裁→仙童开放→Intel/AMD诞生；仙童裂变→100+衍生公司→硅谷生态；ARM IP授权→全球移动芯片生态</div>
-</div>
-
-<div class="insight-card">
-<div class="insight-title">论点五：物理极限是可移动的，但成本极限可能是不可移动的</div>
-<div class="insight-body">芯片史上每次看似不可逾越的物理障碍（光刻衍射、短沟道效应、量子隧穿）都被工程创新绕过——不是打破物理定律，而是在定律约束内找到新路径。但绕过的成本越来越高：EUV光刻机超1亿美元/台，7nm以下制程工厂超200亿美元。摩尔定律的终结不是因为物理不可能，而是因为经济不合理——当每一代制程的投资回报率开始下降，产业可能主动放弃继续缩小。</div>
-<div class="insight-evidence">证据：光刻衍射→投影式→EUV（成本10x）；短沟道→FinFET→GAA（设计复杂度10x）；量子隧穿→新材料探索（成本未知）；Intel 10nm延期→7nm投资回收周期延长</div>
-</div>
-</section><section class="pattern-section" id="patterns">
-<h2>反复出现的规律</h2>
-<div class="pattern-grid">
-
-<div class="pattern-card">
-<div class="pattern-name">范式跃迁：瓶颈解法不在体系内部</div>
-<div class="pattern-desc">真空管瓶颈→固体开关；单晶体管瓶颈→集成电路；手工连线瓶颈→平面工艺光刻；CPU瓶颈→GPU/NPU/ASIC专用化。每次跃迁都是跳出当前范式、寻找全新物理基础或工程方法。渐进优化只在范式内有效，跨范式需要全新的思路和工具。</div>
-<div class="pattern-examples">真空管→晶体管；离散元器件→IC；CPU→GPU；冯诺伊曼→存算一体</div>
-</div>
-
-<div class="pattern-card">
-<div class="pattern-name">失败前置：失败研究催生成功路径</div>
-<div class="pattern-desc">肖克利场效应失败→表面态理论→点接触晶体管；EUV早期光源方案失败→最终找到锡液滴方案；RISC纯理论在PC市场失败→在移动市场成功。失败不是终点而是路径探索——每个失败揭示了物理规律或市场规律的边界，为下一步成功指明了方向。</div>
-<div class="pattern-examples">场效应失败→点接触；CISC vs RISC纯理论→融合；EUV光源探索→锡滴方案</div>
-</div>
-
-<div class="pattern-card">
-<div class="pattern-name">生态锁定：应用场景决定技术路线</div>
-<div class="pattern-desc">x86锁定PC生态（软件壁垒）→ARM打破移动端锁定（场景不同）；NVIDIA CUDA锁定AI计算生态（开发者壁垒）→其他GPU/TPU难以进入。技术竞争的核心不是"谁更先进"而是"谁更能锁定生态"——一旦生态形成，更好的技术也难以替代，除非应用场景发生根本性变化。</div>
-<div class="pattern-examples">x86 PC锁定→ARM移动突破；CUDA AI锁定→TPU专用挑战</div>
-</div>
-
-<div class="pattern-card">
-<div class="pattern-name">蒲公英效应：组织裂变驱动产业生态</div>
-<div class="pattern-desc">仙童裂变→100+衍生公司→硅谷生态；贝尔实验室→多位诺贝尔奖得主→各领域突破；Intel→多位创始人→AMD等竞争者。人才和知识的外溢比单一公司的产品创新对产业影响更大。稳态组织可能适合渐进创新，裂变组织更适合范式跃迁。</div>
-<div class="pattern-examples">仙童→Intel/AMD/NS；肖克利→仙童；ARM授权→全球SoC生态</div>
-</div>
-
-<div class="pattern-card">
-<div class="pattern-name">意外应用：架构的通用潜力被新场景激活</div>
-<div class="pattern-desc">GPU原本做游戏→被AI激活；ARM原本做嵌入式→被移动激活；FPGA原本做原型验证→被金融高频交易激活。很多技术的"杀手级应用"不是发明时预见的，而是在技术足够成熟后被新场景"发现"的。这说明：设计架构时应保留足够的通用性，而非过度专用化。</div>
-<div class="pattern-examples">GPU→AI；ARM→移动；FPGA→高频交易；CPU→通用计算</div>
-</div>
-
-<div class="pattern-card">
-<div class="pattern-name">成本极限：物理可突破但经济可能不可突破</div>
-<div class="pattern-desc">光刻精度→EUV（成本10x）；制程缩小→FinFET/GAA（设计复杂度10x）；工厂投资→200亿美元级（回报周期延长）。每次物理障碍被突破的代价是成本指数增长。当投资回报率低于资本成本，产业可能主动停止缩小——摩尔定律的经济终结而非物理终结。</div>
-<div class="pattern-examples">EUV光刻机>1亿美元；7nm工厂>200亿美元；Intel 10nm延期</div>
-</div>
-
-</div>
-</section><section class="extension-section" id="extension">
-<h2>延伸与比较</h2>
-<table class="extension">
-<tr><th>维度</th><th>内容</th></tr>
-<tr><td>定位</td><td>芯片产业全景式叙事史——从物理原理到工程实践到地缘政治，覆盖半导体产业7个时代的完整演进路径。定位为"大众可读的技术史"，而非学术专著或行业报告。</td></tr>
-<tr><td>论点倾向</td><td>强调"碰撞论"而非"天才论"——芯片的每次跃迁是多条线索的交汇而非单个人灵光一闪。同时对摩尔定律的自我实现机制保持批判性观察，对地缘政治的影响持审慎态度。</td></tr>
-<tr><td>局限</td><td>①技术叙事偏"英雄故事"模式（肖克利、诺伊斯、黄仁勋），对产业工人、普通工程师的贡献描述不足；②中国芯片产业叙事偏少，更多聚焦欧美日视角；③对软件生态（编译器、操作系统）与硬件的互动关系描述不足；④对2020s最新进展（RISC-V、Chiplet、存算一体）覆盖较浅。</td></tr>
-<tr><td>对照阅读</td><td>《芯片战争》（Chris Miller, 2022）——更聚焦地缘政治视角；《计算机体系结构：量化研究方法》（Hennessy & Patterson）——技术深度而非叙事；《硅谷之火》（Michael Malone）——仙童/Intel创业故事更详尽；《半导体物理与器件》（Neamen）——物理原理的教科书级解释。</td></tr>
-<tr><td>跨书链接</td><td>与《技术的本质》（Brian Arthur）的"技术组合进化"理论呼应——新技术是已有技术的组合；与《创新者的窘境》（Christensen）的"颠覆从低端开始"呼应——ARM从嵌入式低端切入最终颠覆x86高端；与《枪炮、病菌与钢铁》（Diamond）的"地理决定论"有张力——芯片产业既有地理因素（硅谷生态）也有非地理因素（全球供应链）。</td></tr>
-<tr><td>现实应用</td><td>①理解AI芯片投资热潮的逻辑——GPU→TPU→NPU的路径是否符合"碰撞论"而非"天才论"；②评估芯片地缘政治的真实影响——供应链断裂的代价vs冗余建设的成本；③预判下一代范式跃迁的方向——类脑/量子/存算一体哪个更有需求牵引；④理解RISC-V开放的深层逻辑——IP授权模式的进化而非颠覆。</td></tr>
-</table>
-</section>
-
-</div><!-- end .main -->
-
-<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#8679;</button>
 
 <script>
-// Sidebar scroll highlight
-const tocLinks = document.querySelectorAll('.toc-list a');
-const sections = [];
-tocLinks.forEach(link => {
-  const id = link.getAttribute('href').slice(1);
-  const el = document.getElementById(id);
-  if (el) sections.push({id, el, link});
-});
-
-function updateActive() {
-  const scrollY = window.scrollY + 120;
-  let current = '';
-  for (const s of sections) {
-    if (s.el.offsetTop <= scrollY) current = s.id;
+const glossary = {
+  doping: {
+    t: "掺杂（doping）",
+    d: "往高纯硅里掺入极微量的三价或五价元素，改变载流子的类型与浓度。掺硼得到 P 型（多空穴），掺磷得到 N 型（多电子）。听起来简单，难点在「极微量」——杂质浓度要控制在十亿分之几，否则器件参数完全不可预测。"
+  },
+  eda: {
+    t: "EDA（电子设计自动化）",
+    d: "把电路描述、仿真、综合、布局布线、验证串成一套软件工具链。它的产业意义远大于「提高效率」：正因为设计可以被工具化、被抽象成规则，设计公司才不需要拥有工厂，芯片产业才切出了 fabless 与 foundry 两层。"
+  },
+  planar: {
+    t: "平面工艺（planar process）",
+    d: "霍尼 1959 年提出：用二氧化硅作掩模，在硅片表面开窗、扩散、再封回氧化层，把 PN 结埋在材料内部。它同时解决了两件事——表面被永久钝化（稳定），以及图形可以用光刻复制（可量产）。"
+  },
+  litho: {
+    t: "光刻（photolithography）",
+    d: "把掩模上的图形转移到硅片上的工艺，源自印刷与照相制版。分辨率大致取决于光源波长与镜头数值孔径，所以整部光刻史就是「把波长做短、把孔径做大」的历史：436nm → 365 → 248 → 193 → 浸没式 193 → 13.5nm 极紫外。"
+  },
+  immersion: {
+    t: "浸没式光刻",
+    d: "在镜头与硅片之间充入高纯水，利用水的折射率把等效数值孔径推高到 1.3 以上。2002 年由林本坚提出，当时被普遍认为不可量产（气泡、污染、缺陷），最终成为 193nm 之后延续十几年的主流方案。"
+  },
+  finfet: {
+    t: "FinFET",
+    d: "把沟道做成一片竖起的「鱼鳍」，让栅极从三面包住它，从而在尺寸缩小时重新获得对沟道的控制。胡正明团队 1999 年提出，英特尔 2011 年在 22 纳米节点量产，此后成为行业标准结构。"
+  },
+  yield: {
+    t: "良率（yield）",
+    d: "一片晶圆上合格芯片的比例。它决定了单位成本，也决定了先进制程能不能商业化。良率不靠单点突破，靠设备状态、工艺窗口、缺陷数据与经验的长期积累——所以它是最难被复制的一种能力。"
+  },
+  node: {
+    t: "制程节点（process node）",
+    d: "如 28nm、7nm、3nm 这样的命名。它原本指晶体管的关键尺寸，后来演变为营销标签，与实际物理尺寸不再一一对应。看节点不如看三个指标：每平方毫米的晶体管数、功耗、以及单位晶体管成本。"
+  },
+  foundry: {
+    t: "代工（foundry）",
+    d: "只做制造、不做自有品牌芯片的商业模式，1987 年由台积电确立。它的前提是一个承诺：不与客户竞争。有了这个承诺，设计公司才敢把最核心的图纸交出去。"
+  },
+  fabless: {
+    t: "Fabless / 垂直分工",
+    d: "设计公司只做设计，把制造外包。它成立的技术前提是设计自动化与 IP 复用——没有 EDA 与可授权核，小公司根本画不出一颗芯片；它成立的商业前提是代工模式。"
+  },
+  ipcore: {
+    t: "IP 核（IP core）",
+    d: "可授权复用的电路模块，如处理器核、接口控制器、模拟单元。它把「设计」再切一刀：架构归架构公司，实现归设计公司。一颗现代芯片里可能没有一行自己写的底层电路。"
+  },
+  floating: {
+    t: "浮栅（floating gate）",
+    d: "被绝缘层完全包围的一层导体，电子注入后无法轻易流失，从而实现断电保存。EPROM、EEPROM、闪存都是它的后代。代价是擦写次数有限——每次擦写都会损伤绝缘层。"
+  },
+  hetero: {
+    t: "异质结（heterojunction）",
+    d: "两种不同半导体材料相接形成的结。因为能带结构不同，可以把载流子限制在极薄的一层里，大幅提高发光效率与器件速度。半导体激光器、高电子迁移率晶体管、蓝光 LED 都建立在它之上。"
+  },
+  mems: {
+    t: "MEMS（微机电系统）",
+    d: "把可动的机械结构（悬臂、薄膜、梳齿）用半导体工艺做在硅片上。加速度计、陀螺仪、麦克风、压力传感器都是 MEMS。它证明了硅不只是电子材料，也是优良的机械材料。"
+  },
+  igbt: {
+    t: "IGBT（绝缘栅双极晶体管）",
+    d: "把 MOSFET 的「栅极电压控制」与双极型晶体管的「低导通损耗」结合，既能承受高电压大电流，又能被小信号开关。电动车、高铁、变频家电、光伏逆变器的核心器件。"
   }
-  tocLinks.forEach(link => {
-    const id = link.getAttribute('href').slice(1);
-    link.classList.toggle('active', id === current);
-  });
+};
+
+function openModal(key) {
+  var d = glossary[key];
+  if (!d) return;
+  document.getElementById("modalBody").innerHTML = "<h4>" + d.t + "</h4><p>" + d.d + "</p>";
+  document.getElementById("mask").classList.remove("hide");
+  document.body.style.overflow = "hidden";
 }
+function closeModal() {
+  document.getElementById("mask").classList.add("hide");
+  document.body.style.overflow = "";
+}
+document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeModal(); });
 
-window.addEventListener('scroll', updateActive);
-updateActive();
+(function () {
+  var links = document.querySelectorAll(".sidebar a[href^='#']");
+  var items = [];
+  links.forEach(function (l) {
+    var el = document.getElementById(l.getAttribute("href").slice(1));
+    if (el) items.push({ link: l, el: el });
+  });
+  function sync() {
+    var y = window.scrollY + 130, cur = null;
+    for (var i = items.length - 1; i >= 0; i--) {
+      if (items[i].el.offsetTop <= y) { cur = items[i].link; break; }
+    }
+    links.forEach(function (l) { l.classList.toggle("active", l === cur); });
+  }
+  window.addEventListener("scroll", sync);
+  sync();
+})();
 
-// Back to top visibility
-const btn = document.getElementById('backToTop');
-window.addEventListener('scroll', () => {
-  btn.classList.toggle('visible', window.scrollY > 400);
-});
+(function () {
+  var btn = document.getElementById("toTop");
+  window.addEventListener("scroll", function () { btn.classList.toggle("show", window.scrollY > 500); });
+})();
 </script>
 </body>
 </html>

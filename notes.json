@@ -46,7 +46,7 @@
     "id": "7",
     "title": "《芯片简史》",
     "file": "notes/note7.html",
-    "date": "2026-10-17",
+    "date": "2026-11-09",
     "category": "AI与科技",
     "author": "汪波",
     "rating": 8.7
@@ -570,6 +570,24 @@
     "date": "2026-11-04",
     "category": "通识与科普",
     "author": "薄世宁",
+    "rating": 8.9
+  },
+  {
+    "id": "67",
+    "title": "《时间简史》",
+    "file": "notes/note67.html",
+    "date": "2026-11-11",
+    "category": "通识与科普",
+    "author": "史蒂芬·霍金",
+    "rating": 9.1
+  },
+  {
+    "id": "68",
+    "title": "《时间的秩序》",
+    "file": "notes/note68.html",
+    "date": "2026-11-11",
+    "category": "通识与科普",
+    "author": "卡洛·罗韦利",
     "rating": 8.9
   }
 ]

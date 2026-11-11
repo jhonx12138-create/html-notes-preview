@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《时间的秩序》· 知识图谱</title>
+<style>
+:root{
+  --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Hiragino Sans GB",sans-serif;
+  --font-serif:Georgia,"Songti SC","Noto Serif SC",STSong,serif;
+  --font-mono:"SF Mono","Cascadia Code",Consolas,monospace;
+  --deep:#1b2027; --deep2:#252d36; --deep3:#333d48;
+  --paper:#f7f5f0; --card:#ffffff; --soft:#efece4; --softer:#e7e3d8;
+  --line:#dcd7ca; --line-soft:#e9e5db;
+  --ink:#252a31; --head:#171c22; --muted:#6e7278; --faint:#979a9d;
+  --blue:#46586b; --blue-l:#9fb0bd;
+  --rose:#9c5a5a; --rose-l:#c79a94;
+  --sand:#b39a6d; --teal:#4c7a72;
+  --radius:7px; --shadow:0 1px 8px rgba(23,28,34,.06);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-sans);background:var(--paper);color:var(--ink);line-height:1.8;font-size:15px;}
+a{color:var(--blue);text-decoration:none;}
+
+/* 侧栏 */
+.sidebar{position:fixed;top:0;left:0;width:214px;height:100vh;background:#20262d;overflow-y:auto;padding:26px 13px 40px;z-index:100;}
+.brand{padding:0 10px 16px;margin-bottom:12px;border-bottom:1px solid rgba(255,255,255,.09);}
+.brand-t{display:block;font-size:15px;font-weight:700;color:#f3f0e8;letter-spacing:.03em;}
+.brand-s{display:block;font-size:10px;color:var(--sand);letter-spacing:.16em;margin-top:4px;opacity:.85;}
+.toc-list{list-style:none;}
+.toc-list li{margin-bottom:1px;}
+.toc-list a{display:block;padding:6px 10px;font-size:12.6px;color:#a4abb4;border-left:2px solid transparent;transition:.15s;}
+.toc-list a:hover{color:#fff;background:rgba(255,255,255,.05);}
+.toc-list a.active{color:#fff;background:rgba(156,90,90,.18);border-left-color:var(--rose-l);font-weight:600;}
+.toc-l2 a{padding-left:22px;font-size:11.6px;color:#7f868f;}
+
+/* 主区 */
+.main{margin-left:214px;max-width:1000px;padding:28px 46px 100px;}
+
+/* 页头 */
+.hero{position:relative;overflow:hidden;background:linear-gradient(150deg,#171c22 0%,#242c34 58%,#1a2027 100%);border-radius:10px;padding:38px 42px 34px;color:#e9e6dd;box-shadow:0 8px 30px rgba(23,28,34,.25);}
+.hero::after{content:'';position:absolute;left:42px;right:42px;bottom:0;height:1px;background:linear-gradient(90deg,rgba(199,154,148,.75),rgba(199,154,148,.15) 45%,transparent 88%);}
+.hero .mark{position:absolute;right:36px;top:30px;font-family:var(--font-serif);font-size:60px;line-height:1;color:rgba(255,255,255,.05);letter-spacing:.04em;}
+.hero .kick{position:relative;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.24em;color:var(--sand);margin-bottom:16px;}
+.hero h1{position:relative;font-size:33px;font-weight:700;letter-spacing:.03em;color:#faf8f2;}
+.hero .en{position:relative;font-family:var(--font-serif);font-style:italic;font-size:13.5px;color:#94a0ab;margin-top:7px;}
+.hero .meta{position:relative;display:flex;flex-wrap:wrap;gap:5px 20px;font-size:12px;color:#a6aeb7;margin:18px 0 14px;padding:10px 14px;background:rgba(255,255,255,.04);border-left:2px solid rgba(179,154,109,.55);border-radius:0 4px 4px 0;}
+.hero .meta strong{color:#e9e6dd;font-weight:600;}
+.hero .badges{position:relative;display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px;}
+.hero .badge{font-size:11px;padding:3px 11px;border:1px solid rgba(159,176,189,.32);border-radius:20px;color:#c0c9d2;}
+.hero .soul{position:relative;font-family:var(--font-serif);font-size:18.5px;line-height:1.8;color:#f5f1e6;border-left:3px solid var(--rose-l);padding-left:15px;}
+.hero .narr{position:relative;margin-top:16px;font-size:12.8px;line-height:1.85;color:#aab2bb;max-width:84%;}
+
+/* 区块 */
+.section{margin-top:38px;scroll-margin-top:20px;}
+.sect-head{display:flex;align-items:baseline;gap:12px;padding-bottom:8px;border-bottom:1px solid var(--line);margin-bottom:16px;}
+.sect-num{font-family:var(--font-mono);font-size:11.5px;color:var(--rose);letter-spacing:.08em;font-weight:700;}
+.section h2{font-size:20.5px;font-weight:700;color:var(--head);}
+.phase{margin-left:auto;font-size:10.5px;letter-spacing:.1em;padding:2px 9px;border-radius:10px;font-weight:600;}
+.phase.crash{color:#8c4f4f;background:#f0e2de;border:1px solid #e3cec8;}
+.phase.build{color:#3c6259;background:#e2ece8;border:1px solid #cfe0da;}
+.section h3{font-size:14.6px;color:var(--head);margin:20px 0 9px;font-weight:700;}
+.lead{font-size:13.3px;color:var(--muted);line-height:1.85;margin-bottom:15px;max-width:93%;}
+
+/* 表 */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:13px 0;}
+table.matrix{width:100%;border-collapse:collapse;font-size:12.6px;background:var(--card);}
+table.matrix th{background:var(--deep2);color:#e9e6dd;font-weight:600;text-align:left;padding:9px 11px;font-size:11.8px;letter-spacing:.02em;}
+table.matrix td{padding:9px 11px;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.72;}
+table.matrix tr:nth-child(even) td{background:#fbfaf6;}
+table.matrix td strong{color:var(--head);}
+.mono{font-family:var(--font-mono);font-size:11.4px;color:var(--blue);white-space:nowrap;}
+
+/* 三次死亡 */
+.death-list{margin:14px 0;}
+.death{display:flex;gap:18px;padding:15px 0;border-bottom:1px dashed var(--line);}
+.death:last-child{border-bottom:none;}
+.dth-n{flex:0 0 46px;font-family:var(--font-serif);font-size:26px;line-height:1;color:var(--rose-l);text-align:center;padding-top:2px;}
+.dth-b{flex:1;}
+.dth-t{font-size:14.2px;font-weight:700;color:var(--head);margin-bottom:4px;}
+.dth-b p{font-size:12.8px;line-height:1.8;color:var(--ink);}
+.dth-src{display:block;margin-top:5px;font-family:var(--font-mono);font-size:10.6px;color:var(--faint);letter-spacing:.04em;}
+
+/* 卡片 */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:12px;margin:13px 0;}
+.info-grid.pair{grid-template-columns:repeat(2,1fr);}
+.info-card{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--radius);padding:15px 17px;box-shadow:var(--shadow);}
+.info-card .label{font-size:13.4px;font-weight:700;color:var(--head);margin-bottom:7px;padding-left:9px;border-left:3px solid var(--blue);}
+.info-card .content{font-size:13px;line-height:1.78;color:var(--ink);}
+.info-card .example{margin-top:9px;padding:8px 10px;background:#faf7f1;border-left:2px solid var(--sand);font-size:12px;color:var(--muted);line-height:1.7;}
+
+/* 三块砖 */
+.brick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+.brick{background:var(--card);border:1px solid var(--line-soft);border-top:3px solid var(--teal);border-radius:0 0 var(--radius) var(--radius);padding:15px 17px;}
+.brick .bk-n{font-family:var(--font-mono);font-size:10.4px;color:var(--teal);letter-spacing:.1em;margin-bottom:4px;}
+.brick .bk-t{font-size:13.6px;font-weight:700;color:var(--head);margin-bottom:6px;}
+.brick .bk-b{font-size:12.6px;line-height:1.78;color:var(--ink);}
+
+/* 洞察 */
+.insight-card{background:#f4f1e8;border:1px solid var(--line);border-left:3px solid var(--sand);border-radius:var(--radius);padding:15px 19px;margin:13px 0;}
+.ic-t{font-size:13.6px;font-weight:700;color:var(--head);margin-bottom:5px;}
+.ic-b{font-size:13px;line-height:1.8;color:var(--ink);}
+.ic-n{margin-top:8px;padding-top:7px;border-top:1px dashed var(--line);font-size:11.4px;color:var(--faint);}
+
+/* 引用 */
+.quote-block{background:#f6f3ec;border-left:3px solid var(--rose);border-radius:0 var(--radius) var(--radius) 0;padding:17px 21px;margin:16px 0;font-family:var(--font-serif);font-size:16px;line-height:1.9;color:#1e242b;}
+.qb-from{display:block;margin-top:9px;font-family:var(--font-sans);font-size:11.2px;color:var(--faint);text-align:right;}
+
+/* 判断卡 */
+.pattern-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:13px 0;}
+.pattern-card{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow);}
+.pt-n{font-family:var(--font-mono);font-size:10.4px;color:var(--rose);letter-spacing:.08em;margin-bottom:4px;}
+.pt-t{font-size:13.3px;font-weight:700;color:var(--head);margin-bottom:5px;padding-bottom:5px;border-bottom:1px dashed var(--line-soft);}
+.pt-b{font-size:12.4px;line-height:1.75;color:var(--ink);}
+.pattern-card.wide{grid-column:1 / -1;background:linear-gradient(135deg,#1d232a,#2b343d);border-color:#2b343d;}
+.pattern-card.wide .pt-n{color:var(--sand);}
+.pattern-card.wide .pt-t{color:#f4f1e7;border-bottom-color:rgba(255,255,255,.16);}
+.pattern-card.wide .pt-b{color:#b7bec6;}
+
+/* 局限 */
+.law-card{background:var(--card);border:1px solid var(--line-soft);border-left:3px solid var(--rose);border-radius:0 var(--radius) var(--radius) 0;padding:12px 16px;margin-bottom:8px;}
+.lw-idx{font-family:var(--font-mono);font-size:10.2px;color:var(--faint);letter-spacing:.06em;}
+.lw-t{font-size:13.2px;font-weight:700;color:var(--head);margin:2px 0 3px;}
+.lw-b{font-size:12.5px;line-height:1.75;color:var(--ink);}
+
+/* 延伸表 */
+table.extension{width:100%;border-collapse:collapse;font-size:12.6px;background:var(--card);}
+table.extension th{width:16%;background:#f1eee5;color:var(--head);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:12px;vertical-align:top;}
+table.extension td{padding:10px 12px;border-bottom:1px solid var(--line-soft);line-height:1.75;vertical-align:top;}
+
+/* 反思 */
+.reflection-block{background:#f6f4ee;border:1px dashed var(--line);border-radius:var(--radius);padding:15px 19px;margin:13px 0;}
+.rf-t{font-size:13.2px;font-weight:700;color:var(--head);margin-bottom:5px;}
+.reflection-block p{font-size:12.7px;line-height:1.8;color:var(--ink);}
+
+.note{font-size:11.6px;color:var(--faint);line-height:1.78;margin:7px 0 0;}
+
+/* 术语按钮 */
+.gloss{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:3px;background:var(--rose);color:#fff;border:none;border-radius:50%;font-size:10px;font-weight:700;cursor:pointer;vertical-align:super;line-height:1;padding:0;font-family:var(--font-mono);}
+.gloss:hover{background:var(--blue);}
+
+/* 弹窗 */
+.modal-mask{position:fixed;inset:0;background:rgba(23,28,34,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
+.modal-mask.hidden{display:none;}
+.modal-box{background:#fdfcf9;border-radius:9px;max-width:560px;width:100%;max-height:76vh;overflow-y:auto;padding:25px 29px;position:relative;box-shadow:0 16px 46px rgba(0,0,0,.28);}
+.m-close{position:absolute;top:11px;right:15px;background:none;border:none;font-size:17px;color:var(--faint);cursor:pointer;line-height:1;}
+.m-t{font-size:15.5px;font-weight:700;color:var(--head);margin-bottom:9px;padding-right:22px;}
+.m-b{font-size:13.2px;line-height:1.85;color:var(--ink);}
+
+.backtop{position:fixed;right:26px;bottom:26px;width:38px;height:38px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:15px;cursor:pointer;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 4px 14px rgba(23,28,34,.25);}
+.backtop.on{opacity:1;pointer-events:auto;}
+
+.footer-note{margin-top:40px;padding-top:15px;border-top:1px solid var(--line);font-size:11.2px;color:var(--faint);line-height:1.85;}
+
+@media (max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:15px 15px 70px;}
+  .hero{padding:26px 21px 24px;}
+  .hero h1{font-size:23px;}
+  .hero .soul{font-size:16px;}
+  .hero .narr{max-width:100%;font-size:12.2px;}
+  .hero .mark{display:none;}
+  .info-grid,.info-grid.pair,.brick-grid,.pattern-grid{grid-template-columns:1fr;}
+  .pattern-card.wide{grid-column:auto;}
+  .hero .meta{font-size:11.2px;gap:3px 13px;}
+  .death{gap:12px;}
+  .dth-n{flex:0 0 32px;font-size:21px;}
+  table.matrix{min-width:560px;}
+  table.extension{min-width:560px;}
+}
+@media print{
+  .sidebar,.backtop,.modal-mask{display:none!important;}
+  .main{margin-left:0;max-width:100%;padding:0;}
+  body{background:#fff;}
+  .hero{background:#1b2027;box-shadow:none;}
+  .section{page-break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="brand">
+    <span class="brand-t">时间的秩序</span>
+    <span class="brand-s">THE ORDER OF TIME</span>
+  </div>
+  <ul class="toc-list">
+    <li><a href="#frame">00 这本书做的是减法</a></li>
+    <li><a href="#deaths">01 时间的三次死亡</a></li>
+    <li><a href="#k1">02 第一刀：统一性</a></li>
+    <li><a href="#k2">03 第二刀：方向</a></li>
+    <li><a href="#k3">04 第三刀：当下</a></li>
+    <li><a href="#k4">05 第四刀：独立性</a></li>
+    <li><a href="#k5">06 第五刀：连续性</a></li>
+    <li><a href="#mid">07 中场：没有时间的世界</a></li>
+    <li class="toc-l2"><a href="#b1">砖一：熵与模糊</a></li>
+    <li class="toc-l2"><a href="#b2">砖二：视角</a></li>
+    <li class="toc-l2"><a href="#b3">砖三：记忆与情感</a></li>
+    <li><a href="#words">08 书中六个关键词</a></li>
+    <li><a href="#laws">09 七条可迁移判断</a></li>
+    <li><a href="#debate">10 争议与时效</a></li>
+    <li><a href="#limits">11 局限</a></li>
+    <li><a href="#extend">12 延伸与比较</a></li>
+    <li><a href="#reflect">13 留给读者</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+<div class="hero" id="hero">
+  <div class="mark">ⅩⅢ</div>
+  <div class="kick">L'ORDINE DEL TEMPO · 2017 / 2019</div>
+  <h1>时间的秩序</h1>
+  <div class="en">The Order of Time — Carlo Rovelli</div>
+  <div class="meta">
+    <span><strong>卡洛·罗韦利</strong>（1956— ）</span>
+    <span>杨光 译</span>
+    <span>湖南科学技术出版社 2019 年 6 月</span>
+    <span>183 页 · 三部分 13 章</span>
+    <span>意大利语原版 Adelphi，2017</span>
+  </div>
+  <div class="badges">
+    <span class="badge">理论物理</span>
+    <span class="badge">时间哲学</span>
+    <span class="badge">减法结构</span>
+    <span class="badge">立场鲜明</span>
+  </div>
+  <div class="soul">时间不是宇宙的骨架，是我们在自己的尺度上，与世界打交道时浮现出来的一种秩序。</div>
+  <div class="narr">这本书不长，一百八十页，但它的写法很反常：前一百页在拆东西，把我们对时间的六条直觉一条条拆掉；后八十页在重建，从"一个没有时间的世界"里，把时间重新长出来。拆的时候像物理课，重建的时候像散文。读完你会发现，它真正回答的不是"时间是什么"，而是"我们为什么觉得时间在流逝"。</div>
+</div>
+
+<div class="section" id="frame">
+  <div class="sect-head"><span class="sect-num">00</span><h2>这本书做的是减法，不是加法</h2></div>
+  <p class="lead">《时间简史》是一层一层往上搭：先讲时空，再讲膨胀，最后讲统一。这本书相反：先把"时间"这个词拆成五个可以分别检验的特征，逐个证伪，然后看剩下什么还能用。</p>
+
+  <div class="table-scroll">
+    <table class="matrix">
+      <tr><th style="width:20%">我们以为的</th><th style="width:26%">它意味着</th><th>被什么拆掉</th><th style="width:20%">拆完剩下</th></tr>
+      <tr><td><strong>统一</strong></td><td>全宇宙只有一个钟，此刻对所有人都一样</td><td>狭义相对论：不同速度的观察者，时间流逝速度不同</td><td>每个观察者自己的时间</td></tr>
+      <tr><td><strong>方向</strong></td><td>时间从过去流向未来，不可逆</td><td>物理定律几乎都时间反演对称；只有熵增给出方向</td><td>一个统计性的、依赖初始条件的方向</td></tr>
+      <tr><td><strong>当下</strong></td><td>"现在"是宇宙中真实存在的一层切片</td><td>同时性相对：没有跨越全宇宙的"现在"</td><td>只在你附近的"当下气泡"</td></tr>
+      <tr><td><strong>独立</strong></td><td>时间在万物之外均匀流动，是舞台</td><td>广义相对论：时间就是引力场，随物质弯曲</td><td>一个和物质纠缠在一起的场</td></tr>
+      <tr><td><strong>连续</strong></td><td>时间可以无限细分，任意两个瞬间之间还有瞬间</td><td>量子引力：时间有最小单位，不能无限细分</td><td>分立的、一份一份的"时间量子"</td></tr>
+    </table>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">注意：这不是"时间不存在"的论证</div>
+    <div class="ic-b">拆完之后，罗韦利并没有说"时间是个幻觉，一切都静止"。他说的是：时间<strong>不是基本的</strong>。它不像电子电荷那样属于世界的底层结构，而是从更底层的东西（量子态、熵、观察者的视角）里<strong>涌现</strong>出来的。这个区别很关键——媒体标题写"物理学家证明时间不存在"，作者本人并不同意。</div>
+    <div class="ic-n">他在书里反复强调：时间不是幻象，它是真实的，只是不是根本的。</div>
+  </div>
+</div>
+
+<div class="section" id="deaths">
+  <div class="sect-head"><span class="sect-num">01</span><h2>时间的三次死亡</h2></div>
+  <p class="lead">罗韦利没有按年代讲物理学史，但这本书背后有一条清晰的历史线：时间被杀了三次，一次比一次彻底。</p>
+
+  <div class="death-list">
+    <div class="death">
+      <div class="dth-n">Ⅰ</div>
+      <div class="dth-b">
+        <div class="dth-t">1905—1915：统一的钟死了</div>
+        <p>狭义相对论说，运动的钟走得慢；广义相对论说，引力强的地方钟也走得慢。两句话合起来意味着：不存在"宇宙的现在几点"。每个人、每个位置，都有自己的时间。</p>
+        <span class="dth-src">对应第 1、3、4 章</span>
+      </div>
+    </div>
+    <div class="death">
+      <div class="dth-n">Ⅱ</div>
+      <div class="dth-b">
+        <div class="dth-t">1967：时间从基本方程里消失了</div>
+        <p>惠勒与德维特写出描述"整个宇宙的量子态"的方程<button class="gloss" onclick="openModal('wdw')" aria-label="术语：惠勒-德维特方程">?</button>，结果发现方程里根本没有时间变量。这不是算错了，是结构性的：当你把宇宙当成一个整体来量子化，就没有"外部时钟"可以参照。</p>
+        <span class="dth-src">对应第 4—5 章</span>
+      </div>
+    </div>
+    <div class="death">
+      <div class="dth-n">Ⅲ</div>
+      <div class="dth-b">
+        <div class="dth-t">1980 年代以后：连续的时间死了</div>
+        <p>圈量子引力<button class="gloss" onclick="openModal('lqg')" aria-label="术语：圈量子引力">?</button>给出一个更狠的结论：空间和时间不是连续的，它们由有限大小的"量子"组成。不存在无限短的瞬间，就像不存在无限小的长度。</p>
+        <span class="dth-src">对应第 5 章</span>
+      </div>
+    </div>
+  </div>
+
+  <p class="note">前史：牛顿在 1687 年给了时间第一个严格定义——"绝对的、真实的、数学的时间，自身在流逝"。罗韦利说，这句话把时间变成了一个可以独立讨论的对象，也埋下了后来两百年被逐个拆掉的伏笔。</p>
+</div>
+
+<div class="section" id="k1">
+  <div class="sect-head"><span class="sect-num">02</span><h2>第一刀：统一性的消失</h2><span class="phase crash">崩塌</span></div>
+  <p class="lead">第 1 章。罗韦利从最日常的地方切入：山上的钟比海边的钟走得快。不是因为钟不准，是因为时间本身在山上流得更快<button class="gloss" onclick="openModal('gravin')" aria-label="术语：引力时间膨胀">?</button>。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">差多少？小到必须用原子钟才看得见</div>
+      <div class="content">高度每升高约 1 米，时间流逝就快约 10⁻¹⁶ 的相对量。这个数字小得离谱，但 2010 年 NIST 用两台铝离子光钟做过实验：把其中一台抬高 33 厘米，就能测出它走得更快。</div>
+      <div class="example"><strong>意义</strong>：不是"接近极限时才有相对论"，是"任何高度差都有效，只是平时感觉不到"。相对论不是极端物理，是日常物理的精确版本。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">速度也会让时间变慢</div>
+      <div class="content">狭义相对论：运动的钟走得慢。这不是"钟坏了"，是时间本身的流逝率依赖于观察者的运动状态。μ 子在大气层高处产生，寿命极短，按理到不了地面，但因为速度接近光速，它的"时间"被拉长，所以能穿到地面被我们探测到。</div>
+      <div class="example"><strong>常见误读</strong>：不是"你觉得它慢、它觉得你快"这种心理相对。是双方各自带着自己的钟，测出来的物理量确实不同，而且都对。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">所以"宇宙年龄 138 亿年"是什么意思</div>
+      <div class="content">它指的是"对于我们这类处在平均宇宙背景下的观察者"所测的时间。换一个高速运动或强引力场里的观察者，这个数字会不同。宇宙年龄不是一个绝对事实，是一个带观察者标签的事实。</div>
+      <div class="example">罗韦利在这里的态度比他后来的表述温和：先承认"有无数个时间"，再说"那我们平时用的那个是什么"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">GPS 是这本书最硬的日常证据</div>
+      <div class="content">卫星钟每天比地面钟快约 45 微秒（引力效应），慢约 7 微秒（速度效应），净快约 38 微秒。不校正，定位每天漂移十公里级。</div>
+      <div class="example">这不是"理论被应用"，是"理论每天都在你手机里被强制执行"。</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "我们一直在谈论时间，却从未真正想过，我们说的'时间'到底指什么。"
+    <span class="qb-from">第 1 章大意 · 综合提炼，非逐字引用</span>
+  </div>
+</div>
+
+<div class="section" id="k2">
+  <div class="sect-head"><span class="sect-num">03</span><h2>第二刀：方向的消失</h2><span class="phase crash">崩塌</span></div>
+  <p class="lead">第 2 章。这一章是全书最锋利的一刀：物理定律本身没有"过去"和"未来"的区别，那"时间之箭"<button class="gloss" onclick="openModal('arrow')" aria-label="术语：时间之箭">?</button>是从哪来的？</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">定律是对称的</div>
+      <div class="content">牛顿力学、电磁学、量子力学、广义相对论，把时间 t 换成 -t，方程照样成立。一个球从高处落下和从低处弹起，录像倒放，看不出哪一帧违反了定律。定律不区分前后。</div>
+      <div class="example">唯一明显不对称的是热力学第二定律：<button class="gloss" onclick="openModal('entropy')" aria-label="术语：熵">?</button>熵总是增加。但这是统计性的，不是基本的。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">方向来自"初始条件"，不是"定律"</div>
+      <div class="content">宇宙在极早期处于一个熵极低的状态，此后一直往高熵走。所以"过去"和"未来"的差别，本质上是"离那个低熵起点有多远"的差别。定律没给方向，起点给了。</div>
+      <div class="example"><strong>问题在于</strong>：为什么起点熵那么低？这一条罗韦利也没有回答，他只是指出这是全部方向的来源。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">模糊：我们认为的"现在"是一个粗粒化的状态</div>
+      <div class="content">我们看不到每个分子的位置和速度，只能看到温度、压强这类宏观量。这种"看不清细节"就是模糊。正因为模糊，一个宏观状态才对应天文数字般的微观排列，熵才有意义。</div>
+      <div class="example"><strong>关键一步</strong>：罗韦利说，时间的方向感，来自我们以模糊的方式与世界互动。这一步是他自己的立场，争议最大。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">为什么记得过去，不记得未来</div>
+      <div class="content">记忆是一个物理过程：它把过去的状态编码进大脑，同时增加熵。所以"能记住"的方向，必然是熵增的方向。这和霍金在《时间简史》里的说法基本一致，但罗韦利把它推得更远——连"当下"本身都是模糊的产物。</div>
+      <div class="example">两本书在这里分岔：霍金把箭头归给宇宙初始条件，罗韦利还要再问一句"初始条件为什么被我们看成特殊"。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="k3">
+  <div class="sect-head"><span class="sect-num">04</span><h2>第三刀：当下的终结</h2><span class="phase crash">崩塌</span></div>
+  <p class="lead">第 3 章，全书最短也最狠的一章。它要取消的不是"时间"，是我们最舍不得的那个东西——"现在"。</p>
+
+  <div class="insight-card">
+    <div class="ic-t">"现在"是一个气泡，不是一层切片</div>
+    <div class="ic-b">因为同时性是相对的，所以"此刻全宇宙发生的事"没有定义。罗韦利给了一个可操作的图像：以你为中心，光速能在一个极短时间窗内往返的范围，构成你的"当下气泡"。这个气泡之外的任何事件，与你的"现在"没有确定的先后关系——它既可能在你之前，也可能在你之后，取决于你怎么追过去。</div>
+    <div class="ic-n">气泡的大小取决于你允许多大的时间误差：误差越小，气泡越小。误差为零时，气泡缩成一个点——只剩你自己。</div>
+  </div>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">这不是哲学思辨，是狭义相对论的直接推论</div>
+      <div class="content">两个相距很远的事件，是否为"同时"<button class="gloss" onclick="openModal('simultaneity')" aria-label="术语：同时性">?</button>，取决于观察者的速度。既然没有优先的观察者，就没有客观的"同时"。所以"宇宙此刻的样子"这个说法，在物理上没有指称对象。</div>
+      <div class="example"><strong>一个具体的例子</strong>：比邻星离我们 4.2 光年。你此刻看到的是它 4.2 年前的样子；而"它此刻在做什么"，在你到达那里之前没有确定答案。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">但"局部当下"是真实的</div>
+      <div class="content">在自己的气泡内，先后关系依然明确，因果依然成立。罗韦利并不否认"你现在在读这句话"这件事的真实性。他否认的是：把无数个局部当下拼成一个全宇宙共享的"现在"。</div>
+      <div class="example">这也是他被误读最多的地方：<button class="gloss" onclick="openModal('localnow')" aria-label="术语：局部当下">?</button>"当下不存在"是标题党的说法，准确的说法是"当下不是全局的"。</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "过去、现在与未来之间的区别，只是一种顽固的幻觉。"
+    <span class="qb-from">爱因斯坦悼念贝索的信 · 书中引用</span>
+  </div>
+
+  <p class="note">罗韦利特意提醒：这句话常被当成"时间不存在"的证据，但爱因斯坦说的大概只是"当下的特殊性是幻觉"，而不是"时间本身是幻觉"。引用这句话的人，多半没读上下文。</p>
+</div>
+
+<div class="section" id="k4">
+  <div class="sect-head"><span class="sect-num">05</span><h2>第四刀：独立性的消失</h2><span class="phase crash">崩塌</span></div>
+  <p class="lead">第 4 章。前三刀拆的是"时间有多少"，这一刀拆的是"时间是什么"：它到底是一个容器，还是容器里的东西之一？</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">牛顿的舞台，被爱因斯坦拆了</div>
+      <div class="content">牛顿需要一个绝对空间和时间当"舞台"，物体在上面运动。爱因斯坦的做法相反：时空不是舞台，是引力场本身。物质告诉时空怎么弯，时空告诉物质怎么走。时间不再独立于万物。</div>
+      <div class="example">换句话说：问"如果没有物质，时间还存在吗"，在广义相对论里是个没有意义的问题——时间就是那个场的几何性质之一。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">到了量子引力，时间连"变量"都不是了</div>
+      <div class="content">把广义相对论量子化，得到惠勒-德维特方程。这个方程描述宇宙整体的量子态，但它里面没有 t。物理学家为此争论了几十年：如果基本方程里没有时间，那时间从哪来？</div>
+      <div class="example"><strong>两种回答</strong>：一种说"时间只是近似的，基本层面没有"；另一种说"我们选错了变量，时间藏在某个场里"。罗韦利属于前者。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">它的意义：时间不再"流淌"</div>
+      <div class="content">如果时间不是一个独立流动的量，而是与其他变量纠缠在一起的场，那"时间在流逝"这个说法就失去了物理基础。变化的不是"时间"，是事物之间的关系在变。</div>
+      <div class="example">罗韦利的比喻：不是河流在流，是河里的东西在彼此改变位置。这个比喻他自己也承认有局限。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">于是"变化"反而变成更基本的东西</div>
+      <div class="content">这是全书立场翻转的关键：传统上"时间"是基本的，"变化"是时间里的变化。罗韦利反过来——变化（事件之间的关系）是基本的，"时间"是我们从变化里提炼出的一个近似量。这与"块宇宙"<button class="gloss" onclick="openModal('block')" aria-label="术语：块宇宙">?</button>的图像是相容的：如果所有时刻同等真实，"现在"当然没有特殊地位。</div>
+      <div class="example">这个翻转，直接导向第二部分的事件本体论。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="k5">
+  <div class="sect-head"><span class="sect-num">06</span><h2>第五刀：连续性的消失</h2><span class="phase crash">崩塌</span></div>
+  <p class="lead">第 5 章「时间量子」。这是全书唯一一处明显带有作者自己研究纲领的地方，读的时候要留个心眼。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">时间有最小单位<button class="gloss" onclick="openModal('quantumtime')" aria-label="术语：时间量子">?</button></div>
+      <div class="content">圈量子引力认为，空间不是连续的，而是由离散的"量子"构成，尺度大约在普朗克长度（1.6×10⁻³⁵ 米）。时间也一样：存在一个最小的时间间隔，短于此就没有"更短"可言。<button class="gloss" onclick="openModal('planck')" aria-label="术语：普朗克尺度">?</button></div>
+      <div class="example"><strong>怎么理解</strong>：不是"我们的仪器测不到更短"，是"更短这件事没有物理意义"。类似"比一个像素更小的像素"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">这解决了芝诺悖论的一半</div>
+      <div class="content">"阿基里斯追不上乌龟"依赖于"空间和时间可以无限细分"。如果时空是分立的，无限细分这一步就不成立，悖论消失。当然，芝诺悖论在数学上早已用极限解决，这里说的是物理层面的对应。</div>
+      <div class="example">罗韦利没有把话说满：他承认这是"理论的自然推论"，不是"已被证实的结论"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">为什么这很重要</div>
+      <div class="content">如果时间连续，"瞬间"就是一个无限小的东西，而一个无限小的东西如何承载一个确定的状态？这是量子引力长期的技术困难之一。分立的时间，让"状态"有了落脚点。</div>
+      <div class="example">这也是他反对"时间是实数轴"这个图像的核心：实数轴本身可能只是一个宏观近似。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">但这一章要打个折扣读</div>
+      <div class="content">圈量子引力是罗韦利参与开创的纲领，书中"时间量子"的表述接近信仰陈述，而不是公认结论。弦论、因果集等竞争方案对"时空是否离散"给出不同答案，至今没有实验能判决。</div>
+      <div class="example">读法建议：把这一章当作"一种自洽的可能"，而不是"物理学已经得出的结论"。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="mid">
+  <div class="sect-head"><span class="sect-num">07</span><h2>中场：一个没有时间的世界，长什么样</h2></div>
+  <p class="lead">第 6—8 章。拆完五刀，罗韦利停下来描述这个"没有时间"的世界。这三章是全书的哲学核心，也是最容易被当成文学来读、从而被低估的部分。</p>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <div class="label">第 6 章 · 世界由事件<button class="gloss" onclick="openModal('event')" aria-label="术语：事件">?</button>构成，不是物体</div>
+      <div class="content">一块石头看起来是"物体"，但它其实是无数事件在时间中的稳定模式：原子在振动，电子在跃迁。罗韦利说，物理学的基本描述里只有事件（"这里发生了一次相互作用"），没有"东西"。</div>
+      <div class="example"><strong>区别在哪</strong>：物体可以"存在"，事件只能"发生"。如果世界的基本单位是事件，那"存在"就是"持续发生得足够久"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">第 7 章 · 语法的力不从心</div>
+      <div class="content">我们的语言以名词为中心：主语 + 谓语。这套语法天然适合描述"物体"，不适合描述"关系"和"过程"。罗韦利说，物理学的困难有一部分是语言造成的：我们被迫用"东西"的词去说"过程"的事。</div>
+      <div class="example">他举的例子大意是：说"一个电子存在"时，我们其实在说"某种相互作用模式在这里重复出现"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">第 8 章 · 以关联为动力</div>
+      <div class="content">物理量不是物体"自带"的属性，而是两个系统相互作用时才显现的关系。质量、速度、甚至"存在与否"，都是相对于另一个系统而言的。</div>
+      <div class="example"><strong>推到极致</strong>：一个物体的属性，只有在与另一个物体相互作用时才有意义。没有"绝对属性"这种东西。</div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">这三章在做一件很冒险的事：用物理学为一种哲学立场背书</div>
+    <div class="ic-b">"世界由事件构成""属性都是关系"——这些命题在哲学里有很长的历史（怀特海、关系主义），罗韦利把它们接到量子引力的语言上。他的论证是"这样描述更自洽"，不是"实验证明如此"。这是本书最需要读者自己判断的地方。</div>
+    <div class="ic-n">他本人在书里承认：这是"一种看待世界的方式"，不是"唯一正确的描述"。</div>
+  </div>
+</div>
+
+<div class="section" id="b1">
+  <div class="sect-head"><span class="sect-num">07A</span><h2>第一块砖：熵与模糊</h2><span class="phase build">重建</span></div>
+  <p class="lead">第 9 章「时间即无知」。全书标题最刺眼的一章，也是争议最大的一章。</p>
+
+  <div class="brick-grid">
+    <div class="brick">
+      <div class="bk-n">BRICK 01</div>
+      <div class="bk-t">熵需要"看不清"</div>
+      <div class="bk-b">熵不是系统本身的属性，而是相对于"我们能分辨什么"才有意义。同一堆分子，如果你知道每一个的位置和速度，就没有熵；如果你只知道温度，熵就出现了。</div>
+    </div>
+    <div class="brick">
+      <div class="bk-n">BRICK 02</div>
+      <div class="bk-t">"当下"是模糊的产物</div>
+      <div class="bk-b">因为我们无法分辨微观细节，才把一大类微观状态当成同一个"现在"。罗韦利说：当下不是世界的一层，是我们粗糙观察方式的界面。</div>
+    </div>
+    <div class="brick">
+      <div class="bk-n">BRICK 03</div>
+      <div class="bk-t">方向也随之而来</div>
+      <div class="bk-b">既然"现在"是粗粒化的结果，那么"从过去到未来"也就是粗粒化状态之间的演化方向。时间之箭不是宇宙的箭，是我们看世界的方式留下的箭。</div>
+    </div>
+  </div>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">这一步强在哪</div>
+      <div class="content">它一次解释了三个特征：为什么有方向、为什么有当下、为什么时间看起来连续。三件事共用一个来源——观察者的模糊。这种"一个机制解释多个现象"的结构，是理论美感的主要来源。</div>
+      <div class="example">罗韦利的原话大意：时间是我们与世界的相互作用中，因为无知而产生的秩序。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">这一步弱在哪</div>
+      <div class="content">很多统计力学研究者不接受这个方向。他们的看法是：熵增和箭头是客观的，来自宇宙的初始条件，不需要"观察者无知"这个额外前提。把物理的方向归给认识论，是把两件事混在一起。</div>
+      <div class="example"><strong>批评者代表</strong>：物理哲学家大卫·阿尔伯特在书评里就指出，这个论证有循环的味道——先用熵定义时间方向，再用时间方向解释熵。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="b2">
+  <div class="sect-head"><span class="sect-num">07B</span><h2>第二块砖：视角</h2><span class="phase build">重建</span></div>
+  <p class="lead">第 10—11 章。拆掉"全局时间"之后，剩下的不是"没有时间"，而是"很多个局部时间"。这两章的任务，是把"视角"从一个贬义词变成物理概念。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">"视角"<button class="gloss" onclick="openModal('perspective')" aria-label="术语：视角">?</button>不是主观意见</div>
+      <div class="content">在日常语言里，"这只是你的视角"意味着"不是客观事实"。罗韦利的用法相反：视角是物理系统之间的真实关系。温度是相对于温度计的，速度是相对于参照系的——这些都不是"主观"，而是"关系性"。</div>
+      <div class="example"><strong>关键区分</strong>：主观 = 因人而异且无客观依据；关系性 = 因参照系而异，但每个参照系下的值都精确可测。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">于是时间变成"相对于系统"的量</div>
+      <div class="content">不存在"宇宙的时间"，只存在"系统 A 相对于系统 B 的时间"。就像不存在"绝对位置"，只存在"相对于某物的位置"。时间从一个绝对量，降格为一个关系量。</div>
+      <div class="example">这一步和相对论是一致的，但罗韦利把它推到量子层面：连"哪个系统当钟"都变成了物理选择。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">第 11 章：特殊之处会出现什么</div>
+      <div class="content">如果时间是从关系中涌现的，那它需要一些"特殊条件"才能涌现：宇宙初始低熵、存在大量粒子、存在能记录信息的系统。这些条件凑齐了，时间感才出现。</div>
+      <div class="example">换句话说：时间的秩序不是必然的，是一组偶然条件的结果。这个说法和"人择原理"有点像，但罗韦利没有走到"宇宙为了观察者而存在"那一步。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">为什么"涌现"这个词重要</div>
+      <div class="content"><button class="gloss" onclick="openModal('emergence')" aria-label="术语：涌现">?</button>涌现 = 底层没有这个性质，但大量底层单元组合后出现了。温度就是这样：单个分子没有温度，一桶分子有。罗韦利说时间也是这样：底层没有时间，足够复杂的系统之间有。</div>
+      <div class="example">这个类比的软肋：温度可以用统计力学严格推导出来，时间的涌现目前还只是一个纲领。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="b3">
+  <div class="sect-head"><span class="sect-num">07C</span><h2>第三块砖：记忆与情感</h2><span class="phase build">重建</span></div>
+  <p class="lead">第 12—13 章与后记。到这里，书从物理转向了第一人称。很多人觉得这是全书最动人的部分，也是它最容易被误读的部分。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">第 12 章 · 玛德琳蛋糕的香味</div>
+      <div class="content">普鲁斯特的一块小蛋糕，能召回整个童年。罗韦利借这个意象说：我们对时间的体验，不是钟表读数，而是记忆、期待、情感交织出的质地。同一段时间，在焦虑里很长，在专注里很短。</div>
+      <div class="example"><strong>他的用意</strong>：不是说"时间主观因此不存在"，而是说"我们日常说的'时间'，本来就混着这两层——物理的与体验的"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">第 13 章 · 时间的来源</div>
+      <div class="content">全书的收束：时间的三个来源——熵（给出方向）、量子不确定性（给出涨落与事件）、我们作为观察者的视角（给出"现在"）。三者缺一，时间感就不成立。</div>
+      <div class="example">他把这三者称为时间的"三个来源"，而不是"三个原因"——措辞很谨慎，因为这不是一个已经完成的推导。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">后记 · 安眠的姊妹</div>
+      <div class="content">后记写父母的去世，写他自己对死亡与时间终结的感受。标题来自古典文学里"睡"与"死"是姊妹的意象。这一段没有任何物理，但它解释了作者为什么要写这本书。</div>
+      <div class="example"><strong>读法</strong>：把它当"作者动机"读，不要当"论证"读。这是全书最容易被误当证据的部分。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">这一块砖的作用：把"时间"还给人</div>
+      <div class="content">前两部分把时间拆得只剩关系与概率，读者会产生一种失重感。第三块砖的回答是：时间感确实不是宇宙的骨架，但它真实地属于我们——属于会记忆、会期待、会失去的这类存在。</div>
+      <div class="example">这也是这本书比《时间简史》更"人文"的原因：霍金在结尾谈上帝，罗韦利在结尾谈父母。</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "我们属于时间，而不是时间属于我们。"
+    <span class="qb-from">第 13 章大意 · 综合提炼</span>
+  </div>
+</div>
+
+<div class="section" id="words">
+  <div class="sect-head"><span class="sect-num">08</span><h2>书中六个关键词：日常含义 vs 书中含义</h2></div>
+  <p class="lead">罗韦利大量使用日常词汇，但给了它们专门的用法。不区分这两层，很容易读成"物理学证明了一切都是虚幻"。</p>
+
+  <div class="table-scroll">
+    <table class="matrix">
+      <tr><th style="width:18%">词</th><th style="width:34%">日常含义</th><th>书中含义</th></tr>
+      <tr><td><strong>时间</strong></td><td>钟表读数，从过去流向未来</td><td>不是基本量。是熵、量子不确定性、观察者视角三者共同涌现出的近似秩序。</td></tr>
+      <tr><td><strong>当下</strong></td><td>全宇宙共享的这一秒</td><td>只存在于局部。是一个以观察者为中心、半径由时间精度决定的气泡。</td></tr>
+      <tr><td><strong>事件</strong></td><td>发生了的事</td><td>世界的基本单位。不是"物体在时间中变化"，是"事件之间的关系构成世界"。</td></tr>
+      <tr><td><strong>模糊</strong></td><td>不清楚、不精确</td><td>技术含义：无法分辨微观状态，只能掌握宏观量。熵与时间方向的前提。</td></tr>
+      <tr><td><strong>视角</strong></td><td>个人看法，带主观色彩</td><td>系统之间的真实物理关系。不是"因人而异"，是"因参照系而异"。</td></tr>
+      <tr><td><strong>涌现</strong></td><td>突然出现</td><td>底层没有的性质，在大量单元组合后出现。温度之于分子，时间之于事件。</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section" id="laws">
+  <div class="sect-head"><span class="sect-num">09</span><h2>七条可迁移的判断</h2></div>
+  <p class="lead">以下七条是我从全书抽出来的结构性判断，不是罗韦利的原话，但每一条都能在书里找到落点。它们不限于物理学。</p>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 01</div>
+      <div class="pt-t">先问"这个词指什么"，再问"它存不存在"</div>
+      <div class="pt-b">全书的方法论核心：把"时间"拆成统一、方向、当下、独立、连续五个可分别检验的特征。笼统地问"时间存在吗"，只会得到笼统的答案。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 02</div>
+      <div class="pt-t">拆掉一个概念，要给出替代品，否则只是破坏</div>
+      <div class="pt-b">罗韦利拆完五刀之后，用三块砖重建。很多"颠覆常识"的书写到拆完就停了，读者只剩失重感。这本书的可信度，一半来自它愿意重建。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 03</div>
+      <div class="pt-t">"不是基本的"不等于"不存在"</div>
+      <div class="pt-b">温度不是基本量，但你不能说温度不存在。这本书对时间的结论是同一层级：不是骨架，但是真实现象。这个区分能过滤掉九成的科普误读。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 04</div>
+      <div class="pt-t">当两套理论都成立却互相矛盾，答案往往在"两者都不是"的层面</div>
+      <div class="pt-b">广义相对论有连续时空、没有时间变量；量子力学有时间、但时空是背景。罗韦利的解法是：两者描述的都是近似，底层是事件与关系。这个动作值得学。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 05</div>
+      <div class="pt-t">把"观察者"放回物理，不等于唯心主义</div>
+      <div class="pt-b">熵需要"能分辨什么"才有意义，这听起来像"世界依赖意识"。但罗韦利说的是任何物理系统都能当观察者，不是必须有人的意识。这个界限他画得很清楚。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 06</div>
+      <div class="pt-t">语言会偷偷替你做本体论承诺</div>
+      <div class="pt-b">"电子存在"这句话里的"存在"，预设了名词优先的世界观。换一套语法（过程、关系），问题可能自己消失。这在组织、产品、战略讨论里同样成立：说"我们有这个能力"，往往掩盖了"这个能力只在特定关系里成立"。</div>
+    </div>
+    <div class="pattern-card wide">
+      <div class="pt-n">JUDGE 07 · 总纲</div>
+      <div class="pt-t">最难的不是证明"时间不是基本的"，是接受"我们的日常经验依然有效"</div>
+      <div class="pt-b">这本书真正的张力在这里：如果时间不是基本的，那我们按时上班、怀念过去、害怕衰老，这些事还有意义吗？罗韦利的回答不是"都是幻觉"，而是"这些经验属于另一个层级，那个层级同样真实"。能把"底层解释"和"生活经验"分成两层而不互相取消，是一种很稀缺的思维能力——它同样适用于看经济、看组织、看人。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="debate">
+  <div class="sect-head"><span class="sect-num">10</span><h2>争议与时效：这本书哪几句要打折</h2></div>
+  <p class="lead">这本书 2017 年出意大利语版，物理内容到今天没有过时（它讲的是纲领，不是数据），但有五处必须知道它的立场性。</p>
+
+  <div class="table-scroll">
+    <table class="matrix">
+      <tr><th style="width:26%">书中的说法</th><th>需要补充的背景</th><th style="width:18%">性质</th></tr>
+      <tr>
+        <td>圈量子引力认为时空是离散的，时间有最小单位</td>
+        <td>这是作者的纲领，不是学界共识。弦论认为时空连续，因果集理论又是另一种离散方案。三种方案并列，至今没有任何实验能判决。</td>
+        <td><strong>学派立场</strong></td>
+      </tr>
+      <tr>
+        <td>时间的方向来自观察者的模糊（时间即无知）</td>
+        <td>统计力学主流看法更倾向：方向来自宇宙初始的低熵条件，是客观事实，不需要"无知"这个前提。物理哲学家大卫·阿尔伯特的书评就批评这里有循环论证。</td>
+        <td><strong>有争议</strong></td>
+      </tr>
+      <tr>
+        <td>当下不存在，只有局部气泡</td>
+        <td>物理依据（同时性相对）是硬的，但"当下是幻觉"这个表述超出了依据。"局部当下真实存在"这一点，罗韦利自己也承认。</td>
+        <td><strong>表述过强</strong></td>
+      </tr>
+      <tr>
+        <td>世界由事件构成，不是物体</td>
+        <td>这是本体论主张，不是实验结论。它可以和量子场论自洽，但也能和别的本体论自洽。属于"选一种描述"，不是"证明了某种描述"。</td>
+        <td><strong>哲学立场</strong></td>
+      </tr>
+      <tr>
+        <td>惠勒-德维特方程里没有时间</td>
+        <td>这一点是技术事实，没有争议。但"方程里没有 t"是否意味着"世界里没有时间"，学界分歧极大——有人主张时间藏在某个变量里（"时钟场"方案）。</td>
+        <td><strong>事实清楚，解释分歧</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">最需要警惕的一句："物理学证明了时间不存在"</div>
+    <div class="ic-b">这是中文互联网上对本书最常见的概括，也是罗韦利本人反对的概括。他在书里和访谈里都说过：时间不是幻象，它是真实的，只是不是根本的。把"不是基本的"翻译成"不存在"，等于把"温度不是基本量"翻译成"温度不存在"。</div>
+    <div class="ic-n">区分"本体论上的基本性"和"现象上的真实性"，是读这本书的第一道门槛。</div>
+  </div>
+</div>
+
+<div class="section" id="limits">
+  <div class="sect-head"><span class="sect-num">11</span><h2>局限与可质疑处</h2></div>
+  <p class="lead">这本书写得漂亮，但漂亮本身是一种风险。以下六条，是我认为读的时候该打个标记的地方。</p>
+
+  <div class="law-card"><span class="lw-idx">LIMIT 01</span><div class="lw-t">全书没有一条方程、一组数据、一个实验细节</div><div class="lw-b">183 页里几乎全是叙述与类比。好处是能读，坏处是读者无法自己检验任何一步。它要求你信任作者，而不是跟着他算一遍。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 02</span><div class="lw-t">"时间量子"这一章带着作者的研究立场</div><div class="lw-b">圈量子引力是罗韦利参与开创的纲领。书中对"时空离散"的表述接近确定语气，但这是三大竞争方案之一，且没有实验支持。读这一章要自动减掉三分确定性。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 03</span><div class="lw-t">"时间即无知"把认识论和本体论混在一起</div><div class="lw-b">如果时间方向来自"我们看不清微观细节"，那它就是一个关于观察者的陈述；但书里又用它解释宇宙的演化，那是在说世界本身。这两层之间的跳转，书里没有严格交代。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 04</span><div class="lw-t">从"没有全局当下"滑到"当下是幻觉"，中间有跳跃</div><div class="lw-b">物理能支持的是"当下不是全局的"，这已经足够反直觉。但"你的此刻不真实"是另一个更强的命题，需要的论证比书里给的多。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 05</span><div class="lw-t">抒情段落与物理论证并排，容易混淆权重</div><div class="lw-b">写父母的去世、写玛德琳蛋糕、写音乐，这些段落极好，但它们的作用是让读者"感到"时间，不是"证明"时间的性质。混排读法容易把感染力当论证力。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 06</span><div class="lw-t">引用爱因斯坦那句"顽固的幻觉"，需要还原语境</div><div class="lw-b">这句话出自悼念贝索的信，说的是"当下的特殊性"，常被当成"时间不存在"的铁证。罗韦利在书里做了提醒，但很多读者会跳过那段提醒，只记住那句漂亮话。</div></div>
+</div>
+
+<div class="section" id="extend">
+  <div class="sect-head"><span class="sect-num">12</span><h2>延伸与比较</h2></div>
+
+  <div class="table-scroll">
+    <table class="extension">
+      <tr><th>本书定位</th><td>一本用物理学写成的哲学散文。它在"时间"这个题目上给出的不是知识汇总，而是一个立场：时间是从更底层的关系里涌现出来的秩序。适合已经知道相对论和熵是什么、想再往前一步的读者。</td></tr>
+      <tr><th>适合谁读</th><td>读过《七堂极简物理课》、想继续深入的人；对"时间感"这件事本身有困惑的人；喜欢短句、留白、非教科书式写法的读者。</td></tr>
+      <tr><th>不适合谁</th><td>想系统学相对论或量子力学的人（这本书没有推导）；想了解量子引力研究现状的人（它给的是立场，不是综述）；受不了"文学腔讲物理"的人。</td></tr>
+      <tr><th>本书局限</th><td>无方程无数据；圈量子引力立场明显；"时间即无知"有循环论证之嫌；抒情与论证混排；对爱因斯坦那句名言的引用容易被断章取义。</td></tr>
+      <tr><th>对照阅读</th><td>
+        <strong>霍金《时间简史》</strong>：同一主题，相反的写法。霍金做加法、讲观测、结尾谈上帝；罗韦利做减法、讲本体论、结尾谈父母。两本对照，能看清"时间"这个词在物理里至少有三种用法。<br>
+        <strong>罗韦利《七堂极简物理课》</strong>：更短，先读这本再读《时间的秩序》，理解会顺很多。<br>
+        <strong>罗韦利《现实不似你所见》</strong>：圈量子引力的完整版，技术细节多得多。想知道《时间的秩序》背后那套理论长什么样，读这本。<br>
+        <strong>肖恩·卡罗尔《从永恒到此刻》</strong>：时间箭头的统计力学派代表作，立场与罗韦利对立——方向来自初始条件，不需要观察者。两本对读，能看清"时间即无知"到底争的是什么。<br>
+        <strong>柏格森《物质与记忆》</strong>：哲学上的"绵延"，主张时间不能被空间化。罗韦利的立场恰好是柏格森反对的那一路，对照读很有意思。<br>
+        <strong>奥古斯丁《忏悔录》卷十一</strong>：时间哲学的起点。"时间是什么？没人问我时我知道，有人问我我就不知道。"一千六百年后，这句话依然成立。
+      </td></tr>
+      <tr><th>读法建议</th><td>第一遍按顺序读，第 3—5 章（当下、独立性、时间量子）是理解全书的关键，不要跳过。第二遍只读第 9、10、13 章——重建的三块砖都在这里。后记单独读，读完再回头看第 12 章。</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section" id="reflect">
+  <div class="sect-head"><span class="sect-num">13</span><h2>留给读者</h2></div>
+
+  <div class="reflection-block">
+    <div class="rf-t">一个问题：如果时间不是基本的，那"衰老"这件事还剩下什么？</div>
+    <p>物理层面，衰老是熵增、是分子损伤的累积，这些都不需要"时间"这个概念就能描述。但你经验到的衰老，是"再也回不去"的那种感觉。罗韦利的答案是：这种感觉属于另一个层级，它不因为底层没有时间而失效。你能不能接受这种"两层都真"的说法，是读这本书的分水岭。</p>
+  </div>
+
+  <div class="reflection-block">
+    <div class="rf-t">第二个问题：为什么这本书要把物理和悼词写在一起？</div>
+    <p>因为它真正想问的不是"时间的本质"，而是"我们该怎么活在一个没有永恒的世界里"。物理学给出了结构，后记给出了动机。你可以说这是越界，也可以说这是诚实——绝大多数科普书藏起了作者为什么关心这个问题。</p>
+  </div>
+
+  <div class="reflection-block">
+    <div class="rf-t">第三个问题：如果"当下"只是局部气泡，那"珍惜当下"这句话还有意义吗？</div>
+    <p>有，但含义变了。它不再是"抓住宇宙中那个真实的此刻"，而是"承认你只能在自己的气泡里生活"。物理取消了全局的现在，反而让"你的现在"变成唯一真实的那个。这大概是这本书最不像物理学、却最容易被记住的一句话。</p>
+  </div>
+
+  <div class="footer-note">
+    《时间的秩序》知识图谱 · 依据杨光译本（湖南科学技术出版社，2019 年 6 月，ISBN 978-7-5710-0163-6）整理<br>
+    版本信息：意大利语原版 L'ordine del tempo（Adelphi，2017）；英译本 The Order of Time（2018）；中译本 183 页，三部分 13 章，附后记「安眠的姊妹」<br>
+    引文说明：标注"综合提炼"者为对原书论述的转述，非逐字原文；标注章节者仅指该论述出现的位置
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="modal-mask hidden" id="modalMask" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="m-close" onclick="closeModal()" aria-label="关闭">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<button class="backtop" id="backtop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部">↑</button>
+
+<script>
+const glossary = {
+  wdw: { t: "惠勒-德维特方程", d: "1967 年由惠勒与德维特写出，试图把整个宇宙的量子态用一个波函数描述。它的结构类似薛定谔方程，但等号右边为零，且方程里不出现时间变量 t。这种时间缺失不是计算疏漏，而是广义相对论的时间重参数化不变性带来的结果，也是量子引力中“时间问题”的技术源头。" },
+  lqg: { t: "圈量子引力", d: "罗韦利与阿什提卡等人在 1980 年代末发展出的量子引力方案。核心主张：时空不是连续的背景，而是由离散的量子单元（自旋网络）构成，面积与体积取分立的值。优点是不需要额外维度、背景独立；缺点是至今没有任何实验验证，且与弦论并列为竞争方案。" },
+  entropy: { t: "熵", d: "系统的无序程度，或同一宏观状态对应的微观排列数。热力学第二定律说孤立系统的熵不减。注意：熵的定义依赖我们能分辨什么——如果知道每个分子的状态，就不需要熵这个概念。" },
+  localnow: { t: "局部当下", d: "罗韦利用来替代“全局现在”的概念。以观察者为中心，光速能在一个给定时间精度内往返的范围，构成一个“当下气泡”。气泡内部先后关系明确；气泡之外的事件与该观察者的“现在”没有确定先后。" },
+  planck: { t: "普朗克尺度", d: "由普朗克常数、光速、引力常数组合出的最小尺度：长度约 1.6×10⁻³⁵ 米，时间约 5.4×10⁻⁴⁴ 秒。圈量子引力认为时空的离散间隔就在这个量级，短于此的“更短”没有物理意义。" },
+  event: { t: "事件本体论", d: "主张世界的基本构成单位是“事件”（发生的事情、一次相互作用），而不是“物体”（持续存在的东西）。在这个框架里，物体是事件的稳定模式，存在是持续发生得足够久。这是罗韦利从量子场论与关系主义哲学接出来的一种本体论立场，不是实验结论。" },
+  emergence: { t: "涌现", d: "底层单元没有的性质，在大量单元组合后出现。典型例子是温度：单个分子没有温度，一桶分子有。罗韦利主张时间也是涌现的——底层（量子事件之间的关系）没有时间，足够复杂的系统之间才出现时间。难点在于：温度的涌现可以用统计力学严格推导，时间的涌现目前还只是纲领。" },
+  perspective: { t: "视角（关系性）", d: "在书里不是主观看法，而是系统之间的真实物理关系。速度相对于参照系，温度相对于温度计——这些量随参照系变化，但每个参照系下的值都精确可测。罗韦利把时间也归入这一类：不存在绝对时间，只存在系统之间的时间关系。" },
+  arrow: { t: "时间之箭", d: "指时间的方向性。物理定律几乎都时间反演对称，唯一给出方向的是热力学第二定律（熵增）。争议在于：这个方向是宇宙初始低熵条件带来的客观事实，还是观察者模糊认知的产物。罗韦利主张后者，统计力学主流主张前者。" },
+  quantumtime: { t: "时间量子", d: "圈量子引力中的概念：时间不是连续的，存在最小间隔，不能无限细分。动机之一是解决“一个无限小的瞬间如何承载确定状态”这个技术困难，也在物理层面回应了芝诺式的无限分割悖论。属于纲领性推论，尚无实验支持。" },
+  block: { t: "块宇宙", d: "把时空看成一个四维整体，过去、现在、未来都同样存在，没有哪一个时刻更特殊。这是广义相对论的自然图像，也是“当下是幻觉”这一说法的物理来源。罗韦利部分接受这个图像，但他更进一步：连这个四维块本身都不是基本的。" },
+  simultaneity: { t: "同时性的相对性", d: "狭义相对论的核心结论之一：两个空间上分离的事件是否同时，取决于观察者的运动状态。既然没有优先的观察者，就不存在客观的同时。这是“全局当下不存在”的直接依据，比任何哲学论证都硬。" },
+  gravin: { t: "引力时间膨胀", d: "引力势越低（离质量越近）的地方，时间流逝越慢。这不是比喻：2010 年 NIST 用铝离子光钟做实验，把一台抬高 33 厘米，就测出了可重复的频率差。GPS 卫星每天因此净快约 38 微秒，必须校正。" }
+};
+
+function openModal(key){
+  var d = glossary[key];
+  if(!d) return;
+  document.getElementById('modalBody').innerHTML = '<div class="m-t">'+d.t+'</div><div class="m-b">'+d.d+'</div>';
+  document.getElementById('modalMask').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modalMask').classList.add('hidden');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+
+(function(){
+  var links = document.querySelectorAll('.toc-list a[href^="#"]');
+  var items = [];
+  links.forEach(function(l){
+    var el = document.getElementById(l.getAttribute('href').slice(1));
+    if(el) items.push({link:l, el:el});
+  });
+  function update(){
+    var y = window.scrollY + 140, cur = null;
+    for(var i=items.length-1;i>=0;i--){
+      if(items[i].el.offsetTop <= y){ cur = items[i].link; break; }
+    }
+    links.forEach(function(l){ l.classList.toggle('active', l===cur); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function(){
+  var b = document.getElementById('backtop');
+  window.addEventListener('scroll', function(){ b.classList.toggle('on', window.scrollY>500); });
+})();
+</script>
+</body>
+</html>

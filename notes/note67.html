@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《时间简史》· 知识图谱</title>
+<style>
+:root{
+  --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Hiragino Sans GB",sans-serif;
+  --font-serif:Georgia,"Songti SC","Noto Serif SC",STSong,serif;
+  --font-mono:"SF Mono","Cascadia Code",Consolas,monospace;
+  --deep:#0a1020; --deep2:#141d33; --deep3:#1c2842;
+  --paper:#f5f4ef; --card:#ffffff; --soft:#eeece5; --softer:#e6e4db;
+  --line:#dbd8cc; --line-soft:#e8e6de;
+  --text:#2b3140; --head:#0f1729; --muted:#6f7583; --faint:#959aa6;
+  --blue:#1d3557; --blue-m:#3a5a86; --blue-l:#9db3cf;
+  --neb:#c25b39; --aur:#2f7d7a; --starl:#e3c894;
+  --radius:8px; --shadow:0 2px 10px rgba(15,23,41,.07);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-sans);background:var(--paper);color:var(--text);line-height:1.78;font-size:15px;}
+a{color:var(--blue);text-decoration:none;}
+
+/* 侧栏 */
+.sidebar{position:fixed;top:0;left:0;width:216px;height:100vh;background:#0c1220;overflow-y:auto;padding:26px 14px 40px;z-index:100;}
+.sidebar .brand{padding:0 10px 18px;margin-bottom:14px;border-bottom:1px solid rgba(255,255,255,.09);}
+.sidebar .brand-t{display:block;font-size:15px;font-weight:700;color:#f2efe6;letter-spacing:.04em;}
+.sidebar .brand-s{display:block;font-size:10.5px;color:var(--starl);letter-spacing:.18em;margin-top:4px;opacity:.8;}
+.toc-list{list-style:none;}
+.toc-list li{margin-bottom:1px;}
+.toc-list a{display:block;padding:6px 10px;font-size:12.8px;color:#a8b0bf;border-left:2px solid transparent;border-radius:0 4px 4px 0;transition:.15s;}
+.toc-list a:hover{color:#fff;background:rgba(255,255,255,.05);}
+.toc-list a.active{color:#fff;background:rgba(194,91,57,.16);border-left-color:var(--neb);font-weight:600;}
+.toc-l2 a{padding-left:22px;font-size:11.8px;color:#818a99;}
+
+/* 主区 */
+.main{margin-left:216px;max-width:1010px;padding:30px 48px 100px;}
+
+/* 页头 */
+.hero{position:relative;overflow:hidden;background:linear-gradient(158deg,#080d18 0%,#121b30 52%,#0b1322 100%);border-radius:12px;padding:40px 44px 36px;color:#e8e6df;box-shadow:0 10px 34px rgba(8,13,24,.28);}
+.hero .star{position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(1.4px 1.4px at 12% 22%,rgba(255,255,255,.85),transparent),
+  radial-gradient(1.2px 1.2px at 28% 68%,rgba(255,255,255,.6),transparent),
+  radial-gradient(1.6px 1.6px at 44% 14%,rgba(227,200,148,.9),transparent),
+  radial-gradient(1px 1px at 58% 44%,rgba(255,255,255,.7),transparent),
+  radial-gradient(1.3px 1.3px at 72% 76%,rgba(255,255,255,.55),transparent),
+  radial-gradient(1.7px 1.7px at 86% 28%,rgba(227,200,148,.8),transparent),
+  radial-gradient(1px 1px at 94% 62%,rgba(255,255,255,.6),transparent),
+  radial-gradient(1.2px 1.2px at 20% 88%,rgba(255,255,255,.45),transparent),
+  radial-gradient(1px 1px at 66% 8%,rgba(255,255,255,.5),transparent);
+  opacity:.9;}
+.hero .kicker{position:relative;font-family:var(--font-mono);font-size:11px;letter-spacing:.28em;color:var(--starl);text-transform:uppercase;margin-bottom:16px;}
+.hero h1{position:relative;font-size:34px;font-weight:700;letter-spacing:.02em;line-height:1.3;color:#fbf9f3;}
+.hero .h1-en{position:relative;font-family:var(--font-serif);font-style:italic;font-size:14px;color:#8fa2bd;margin-top:6px;letter-spacing:.02em;}
+.hero .meta{position:relative;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:12.2px;color:#a9b3c4;margin:20px 0 16px;padding:11px 15px;background:rgba(255,255,255,.045);border-left:2px solid rgba(227,200,148,.5);border-radius:0 4px 4px 0;}
+.hero .meta strong{color:#e8e6df;font-weight:600;}
+.hero .badges{position:relative;display:flex;flex-wrap:wrap;gap:7px;margin-bottom:18px;}
+.hero .badge{font-size:11.2px;padding:4px 12px;border:1px solid rgba(157,179,207,.35);border-radius:20px;color:#c3cee0;letter-spacing:.04em;}
+.hero .soul{position:relative;font-family:var(--font-serif);font-size:19px;line-height:1.75;color:#f6f2e7;border-left:3px solid var(--neb);padding-left:16px;margin-bottom:16px;}
+.hero .narrative{position:relative;font-size:13.2px;line-height:1.85;color:#b3bccb;max-width:80%;}
+.hero .stamp{position:absolute;right:34px;bottom:26px;font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;color:rgba(227,200,148,.55);border:1px solid rgba(227,200,148,.28);padding:6px 10px;border-radius:3px;line-height:1.7;text-align:center;}
+
+/* 区块 */
+.section{margin-top:40px;scroll-margin-top:20px;}
+.sect-head{display:flex;align-items:baseline;gap:14px;padding-bottom:9px;border-bottom:1px solid var(--line);margin-bottom:18px;}
+.sect-num{font-family:var(--font-mono);font-size:12px;color:var(--neb);letter-spacing:.1em;font-weight:700;}
+.section h2{font-size:21px;font-weight:700;color:var(--head);letter-spacing:.01em;}
+.section h3{font-size:15px;color:var(--head);margin:22px 0 10px;font-weight:700;}
+.lead{font-size:13.6px;color:var(--muted);line-height:1.85;margin-bottom:16px;max-width:92%;}
+
+/* 问题链 */
+.chain{position:relative;padding-left:6px;}
+.chain::before{content:'';position:absolute;left:27px;top:16px;bottom:16px;width:1px;background:linear-gradient(180deg,var(--blue-l),var(--line));}
+.ch-item{position:relative;display:flex;gap:16px;padding:10px 0 10px 0;}
+.ch-n{flex:0 0 44px;height:32px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;font-weight:700;color:var(--blue);background:var(--card);border:1px solid var(--line);border-radius:16px;z-index:1;}
+.ch-b{flex:1;padding-top:2px;}
+.ch-b b{display:block;font-size:14.4px;color:var(--head);margin-bottom:2px;}
+.ch-b span{display:block;font-size:12.8px;color:var(--muted);line-height:1.75;}
+
+/* 卡片 */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:13px;margin:14px 0;}
+.info-grid.pair{grid-template-columns:repeat(2,1fr);}
+.info-grid.three{grid-template-columns:repeat(3,1fr);}
+.info-card{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow);}
+.info-card .label{font-size:13.6px;font-weight:700;color:var(--head);margin-bottom:7px;padding-left:9px;border-left:3px solid var(--blue);}
+.info-card .content{font-size:13.1px;line-height:1.78;color:var(--text);}
+.info-card .example{margin-top:10px;padding:8px 11px;background:#faf8f2;border-left:2px solid var(--starl);border-radius:0 4px 4px 0;font-size:12.2px;color:var(--muted);line-height:1.7;}
+
+.insight-card{background:linear-gradient(135deg,#f7f4ea,#f2efe4);border:1px solid var(--line);border-left:3px solid var(--starl);border-radius:var(--radius);padding:16px 20px;margin:14px 0;}
+.ic-t{font-size:14px;font-weight:700;color:var(--head);margin-bottom:5px;}
+.ic-b{font-size:13.2px;line-height:1.8;color:var(--text);}
+.ic-n{margin-top:9px;padding-top:8px;border-top:1px dashed var(--line);font-size:11.6px;color:var(--faint);}
+
+/* 表格 */
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0;}
+table.matrix{width:100%;border-collapse:collapse;font-size:12.8px;background:var(--card);}
+table.matrix th{background:var(--deep3);color:#eae7dd;font-weight:600;text-align:left;padding:9px 12px;font-size:12px;letter-spacing:.03em;}
+table.matrix td{padding:9px 12px;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.7;}
+table.matrix tr:nth-child(even) td{background:#fbfaf6;}
+table.matrix td strong{color:var(--head);}
+.mono{font-family:var(--font-mono);font-size:11.6px;color:var(--blue);white-space:nowrap;}
+
+/* 时间轴 */
+.timeline-track{display:flex;overflow-x:auto;padding:22px 0 8px;position:relative;margin:10px 0 4px;}
+.timeline-track::before{content:'';position:absolute;top:53px;left:0;right:0;height:1px;background:var(--line);}
+.tn{flex:1 1 0;min-width:86px;text-align:center;padding:0 6px;position:relative;z-index:1;}
+.tn-y{font-family:var(--font-mono);font-size:11.4px;color:var(--blue);font-weight:700;height:20px;line-height:20px;margin-bottom:7px;}
+.tn-d{width:9px;height:9px;border-radius:50%;background:var(--neb);border:2px solid var(--paper);box-shadow:0 0 0 1px var(--neb);margin:0 auto 9px;}
+.tn-t{font-size:12.2px;font-weight:700;color:var(--head);line-height:1.5;min-height:2.9em;}
+.tn-s{font-size:11.2px;color:var(--muted);line-height:1.55;margin-top:3px;overflow-wrap:anywhere;}
+
+/* 论证链 */
+.arg{display:flex;flex-direction:column;gap:9px;margin:14px 0;}
+.arg-step{display:flex;gap:13px;background:var(--card);border:1px solid var(--line-soft);border-radius:var(--radius);padding:12px 16px;}
+.ag-n{flex:0 0 24px;height:24px;display:flex;align-items:center;justify-content:center;background:var(--blue);color:#fff;font-family:var(--font-mono);font-size:11px;border-radius:50%;margin-top:2px;}
+.ag-t{font-size:13.4px;font-weight:700;color:var(--head);margin-bottom:3px;}
+.ag-b{font-size:12.9px;color:var(--text);line-height:1.75;}
+
+/* 公式 */
+.formula{background:#0f1729;color:#e9e5d8;border-radius:var(--radius);padding:16px 20px;margin:14px 0;font-family:var(--font-serif);font-size:16px;text-align:center;letter-spacing:.02em;}
+.formula .fm-note{display:block;font-family:var(--font-sans);font-size:11.4px;color:#9aa6ba;margin-top:9px;letter-spacing:0;line-height:1.7;}
+
+/* 引用 */
+.quote-block{background:#f7f5ed;border-left:3px solid var(--neb);border-radius:0 var(--radius) var(--radius) 0;padding:18px 22px;margin:18px 0;font-family:var(--font-serif);font-size:16.5px;line-height:1.85;color:#1b2437;}
+.qb-from{display:block;margin-top:10px;font-family:var(--font-sans);font-size:11.4px;color:var(--faint);text-align:right;}
+
+/* 规律卡 */
+.pattern-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+.pattern-card{background:var(--card);border:1px solid var(--line-soft);border-radius:var(--radius);padding:15px 17px;box-shadow:var(--shadow);}
+.pattern-card .pt-n{font-family:var(--font-mono);font-size:10.6px;color:var(--neb);letter-spacing:.08em;margin-bottom:5px;}
+.pattern-card .pt-t{font-size:13.6px;font-weight:700;color:var(--head);margin-bottom:6px;padding-bottom:6px;border-bottom:1px dashed var(--line-soft);}
+.pattern-card .pt-b{font-size:12.6px;color:var(--text);line-height:1.75;}
+.pattern-card.wide{grid-column:1 / -1;background:linear-gradient(135deg,#101a2e,#1a2540);border-color:#1a2540;}
+.pattern-card.wide .pt-n{color:var(--starl);}
+.pattern-card.wide .pt-t{color:#f4f1e7;border-bottom-color:rgba(255,255,255,.16);}
+.pattern-card.wide .pt-b{color:#b9c1d0;}
+
+/* 规律条目 */
+.law-card{background:var(--card);border:1px solid var(--line-soft);border-left:3px solid var(--neb);border-radius:0 var(--radius) var(--radius) 0;padding:13px 17px;margin-bottom:9px;}
+.lw-idx{font-family:var(--font-mono);font-size:10.4px;color:var(--faint);letter-spacing:.08em;}
+.lw-t{font-size:13.4px;font-weight:700;color:var(--head);margin:2px 0 4px;}
+.lw-b{font-size:12.7px;color:var(--text);line-height:1.75;}
+
+/* 对照双栏 */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:14px 0;}
+.col h4{font-size:13px;color:var(--head);margin-bottom:6px;}
+.col p{font-size:12.7px;color:var(--text);line-height:1.78;}
+
+/* 人物 */
+.person-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:14px 0;}
+.person{background:var(--card);border:1px solid var(--line-soft);border-top:3px solid var(--blue);border-radius:0 0 var(--radius) var(--radius);padding:15px 17px;}
+.p-name{font-size:14px;font-weight:700;color:var(--head);}
+.p-years{font-family:var(--font-mono);font-size:10.8px;color:var(--faint);margin:2px 0 7px;}
+.p-why{font-size:12.5px;color:var(--text);line-height:1.75;}
+
+/* 延伸表 */
+table.extension{width:100%;border-collapse:collapse;font-size:12.8px;background:var(--card);}
+table.extension th{width:16%;background:#f2efe6;color:var(--head);text-align:left;padding:11px 13px;border-bottom:1px solid var(--line);font-size:12.2px;vertical-align:top;}
+table.extension td{padding:11px 13px;border-bottom:1px solid var(--line-soft);line-height:1.75;vertical-align:top;}
+
+/* 反思 */
+.reflection-block{background:#f6f5ef;border:1px dashed var(--line);border-radius:var(--radius);padding:16px 20px;margin:14px 0;}
+.rf-t{font-size:13.4px;font-weight:700;color:var(--head);margin-bottom:6px;}
+.reflection-block p{font-size:12.9px;line-height:1.8;color:var(--text);}
+
+.note{font-size:11.8px;color:var(--faint);line-height:1.75;margin:8px 0 0;}
+
+/* 术语按钮 */
+.gloss{display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;margin-left:3px;background:var(--neb);color:#fff;border:none;border-radius:50%;font-size:10px;font-weight:700;cursor:pointer;vertical-align:super;line-height:1;padding:0;font-family:var(--font-mono);}
+.gloss:hover{background:var(--blue);}
+
+/* 弹窗 */
+.modal-mask{position:fixed;inset:0;background:rgba(10,16,32,.55);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px;}
+.modal-mask.hidden{display:none;}
+.modal-box{background:#fdfcf8;border-radius:10px;max-width:560px;width:100%;max-height:76vh;overflow-y:auto;padding:26px 30px;position:relative;box-shadow:0 16px 48px rgba(0,0,0,.3);}
+.m-close{position:absolute;top:12px;right:16px;background:none;border:none;font-size:17px;color:var(--faint);cursor:pointer;line-height:1;}
+.m-t{font-size:16px;font-weight:700;color:var(--head);margin-bottom:10px;padding-right:24px;}
+.m-b{font-size:13.4px;line-height:1.85;color:var(--text);}
+
+/* 返回顶部 */
+.backtop{position:fixed;right:26px;bottom:26px;width:40px;height:40px;border-radius:50%;background:var(--blue);color:#fff;border:none;font-size:16px;cursor:pointer;opacity:0;pointer-events:none;transition:.25s;z-index:200;box-shadow:0 4px 14px rgba(15,23,41,.28);}
+.backtop.on{opacity:1;pointer-events:auto;}
+
+.footer-note{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);font-size:11.4px;color:var(--faint);line-height:1.8;}
+
+@media (max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:16px 16px 70px;}
+  .hero{padding:28px 22px 26px;}
+  .hero h1{font-size:24px;}
+  .hero .soul{font-size:16px;}
+  .hero .narrative{max-width:100%;font-size:12.6px;}
+  .hero .stamp{display:none;}
+  .info-grid,.info-grid.pair,.info-grid.three,.pattern-grid,.person-grid,.two-col{grid-template-columns:1fr;}
+  .pattern-card.wide{grid-column:auto;}
+  .hero .meta{font-size:11.4px;gap:4px 14px;}
+  table.matrix{min-width:560px;}
+  table.extension{min-width:560px;}
+}
+@media print{
+  .sidebar,.backtop,.modal-mask{display:none!important;}
+  .main{margin-left:0;max-width:100%;padding:0;}
+  body{background:#fff;}
+  .hero{background:#111;box-shadow:none;}
+  .section{page-break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="brand">
+    <span class="brand-t">时间简史</span>
+    <span class="brand-s">A BRIEF HISTORY OF TIME</span>
+  </div>
+  <ul class="toc-list">
+    <li><a href="#frame">00 全书是一条问题链</a></li>
+    <li><a href="#scale">01 尺度：从 10⁻³⁵ 到 10²⁶</a></li>
+    <li><a href="#chrono">02 认知年表</a></li>
+    <li><a href="#spacetime">03 时空不是舞台</a></li>
+    <li><a href="#expand">04 宇宙在膨胀</a></li>
+    <li><a href="#quantum">05 不确定性与粒子</a></li>
+    <li><a href="#hole">06 黑洞与视界</a></li>
+    <li><a href="#radiation">07 黑洞会蒸发</a></li>
+    <li><a href="#origin">08 无边界假设</a></li>
+    <li><a href="#arrow">09 三种时间箭头</a></li>
+    <li><a href="#worm">10 虫洞与统一</a></li>
+    <li><a href="#conclusion">11 结论：知道上帝的心意</a></li>
+    <li class="toc-l2"><a href="#people">三个人的接力</a></li>
+    <li class="toc-l2"><a href="#laws">七条可迁移判断</a></li>
+    <li class="toc-l2"><a href="#update">时效审查</a></li>
+    <li class="toc-l2"><a href="#limits">局限与可质疑处</a></li>
+    <li class="toc-l2"><a href="#extend">延伸与比较</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+
+<div class="hero" id="hero">
+  <div class="star"></div>
+  <div class="kicker">Cosmology · 1988 / 2025</div>
+  <h1>时间简史</h1>
+  <div class="h1-en">A Brief History of Time — from the Big Bang to Black Holes</div>
+  <div class="meta">
+    <span><strong>史蒂芬·霍金</strong>（1942—2018）</span>
+    <span>许明贤 · 吴忠超 译</span>
+    <span>湖南科学技术出版社</span>
+    <span>1988 初版 / 1996 插图版 / 2025 新版</span>
+    <span>12 章 · 302 页</span>
+  </div>
+  <div class="badges">
+    <span class="badge">科普经典</span>
+    <span class="badge">宇宙学</span>
+    <span class="badge">问题链结构</span>
+    <span class="badge">时效性极强</span>
+  </div>
+  <div class="soul">宇宙有没有开端，时间有没有起点——霍金把这两个问题，从哲学家的桌上搬到了方程里。</div>
+  <div class="narrative">这本书不是在讲"宇宙知识"，而是在拆一套常识：你以为空间是容器、时间是均匀流动的、过去不可改变。每读一章，就有一个直觉被拆掉。全书从头到尾只做一件事——把"我们从何而来"逼到物理定律能回答的边界上，然后诚实地告诉你：边界外面，现在还不知道。</div>
+  <div class="stamp">EDITIO<br>2025</div>
+</div>
+
+<div class="section" id="frame">
+  <div class="sect-head"><span class="sect-num">00</span><h2>全书是一条问题链，不是一个知识清单</h2></div>
+  <p class="lead">十二个章节名看起来散（宇宙图像、时空、膨胀、不确定性、粒子、黑洞……），其实是一条单向的推理链：每一步都靠上一步的结论才能提出下一个问题。看懂这条链，比记住任何一个结论都有用。</p>
+
+  <div class="chain">
+    <div class="ch-item"><div class="ch-n">01</div><div class="ch-b"><b>先问：宇宙有开端吗</b><span>第 1 章。从亚里士多德到哈勃，人类换过五次宇宙图像。霍金真正的落点是奥古斯丁那句话：时间本身就是宇宙的一部分，所以"之前"没有意义。</span></div></div>
+    <div class="ch-item"><div class="ch-n">02</div><div class="ch-b"><b>要回答它，先得重定义时间</b><span>第 2 章。光速不变逼出"同时性是相对的"，等效原理把引力变成时空弯曲。时间和空间从此不是舞台，是演员。</span></div></div>
+    <div class="ch-item"><div class="ch-n">03</div><div class="ch-b"><b>有了新时空，才看得懂红移</b><span>第 3 章。所有星系都在远离我们，且越远越快。倒推回去，就得到一个密度无限大的起点——大爆炸。</span></div></div>
+    <div class="ch-item"><div class="ch-n">04</div><div class="ch-b"><b>但起点处，广义相对论失效了</b><span>第 4—5 章。尺度缩到极小时，不确定性原理不允许"位置和速度同时确定"。要谈开端，必须先把量子力学接进来。</span></div></div>
+    <div class="ch-item"><div class="ch-n">05</div><div class="ch-b"><b>量子力学一进来，黑洞就不黑了</b><span>第 6—7 章。这是全书的心脏：视界附近的真空涨落让黑洞持续辐射、损失质量，最终蒸发。黑洞有温度，也就有熵。</span></div></div>
+    <div class="ch-item"><div class="ch-n">06</div><div class="ch-b"><b>于是可以谈"宇宙的边界条件"</b><span>第 8 章。既然奇点处物理失效，霍金换了个提法：宇宙的边界条件，就是它没有边界——像地球表面，问"北极以北"本身没有意义。</span></div></div>
+    <div class="ch-item"><div class="ch-n">07</div><div class="ch-b"><b>最后剩下时间本身的方向</b><span>第 9—11 章。为什么我们只记得过去？热力学箭头、心理学箭头、宇宙学箭头，为什么指向同一边。收尾在"能不能统一"。</span></div></div>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">这条链的真正形状：每章都在给下一章"拆掉一个前提"</div>
+    <div class="ic-b">普通科普是"叠加"——这章讲相对论，下章讲量子力学。这本书是"替换"：第 1 章的绝对时空被第 2 章废掉，第 3 章的大爆炸奇点被第 4 章的量子力学搅浑，第 6 章那个"只进不出"的黑洞被第 7 章自己推翻。霍金是故意这么排的——他要你在读完之前，亲历一次"确定感被逐步瓦解"的过程。</div>
+    <div class="ic-n">这也是为什么很多人读前六章觉得"都懂"，到第七章突然卡住：那里不是知识增量，是世界观换轨。</div>
+  </div>
+</div>
+
+<div class="section" id="scale">
+  <div class="sect-head"><span class="sect-num">01</span><h2>尺度：这本书横跨 61 个数量级</h2></div>
+  <p class="lead">宇宙学最反直觉的地方不是结论，是尺度。人的直觉只在 10⁻³ 到 10⁷ 米这一段被训练过，而这门学问的战场从 10⁻³⁵ 米一直铺到 10²⁶ 米。下面这张表建议先看一遍，再看后面任何一章。</p>
+
+  <div class="table-scroll">
+    <table class="matrix">
+      <tr><th style="width:16%">量级</th><th style="width:20%">对应尺度</th><th>这里发生的事</th><th style="width:14%">书中位置</th></tr>
+      <tr><td class="mono">10⁻³⁵ m</td><td><strong>普朗克长度</strong><button class="gloss" onclick="openModal('planck')" aria-label="术语：普朗克尺度">?</button></td><td>引力和量子效应同等重要，现有两套理论同时失效。时空本身在这里可能不再是连续的光滑面。</td><td>第 11 章</td></tr>
+      <tr><td class="mono">10⁻¹⁵ m</td><td>原子核</td><td>强相互作用的地盘，夸克被"禁闭"在里面，永远单独拿不出来。</td><td>第 5 章</td></tr>
+      <tr><td class="mono">10⁻¹⁰ m</td><td>原子</td><td>电磁力主导。原子几乎全是空的，但"空"的部分由量子涨落填满。</td><td>第 4 章</td></tr>
+      <tr><td class="mono">10³ m</td><td>一座山 / 史瓦西半径</td><td>太阳压缩到 3 公里就成黑洞。这个数字小得离谱，正说明引力要压过其他力有多难。</td><td>第 6 章</td></tr>
+      <tr><td class="mono">10⁷ m</td><td>地球</td><td>人类直觉的极限。再往上，日常语言开始失效。</td><td>—</td></tr>
+      <tr><td class="mono">10¹¹ m</td><td>1 天文单位</td><td>阳光到这里要 8 分 20 秒。我们看到的太阳，永远是 8 分钟前的太阳。</td><td>第 2 章</td></tr>
+      <tr><td class="mono">10²¹ m</td><td>银河系直径（约 10 万光年）</td><td>中心有一个 400 万太阳质量的黑洞，人马座 A*。</td><td>第 6 章</td></tr>
+      <tr><td class="mono">10²⁶ m</td><td><strong>可观测宇宙</strong></td><td>直径约 930 亿光年。注意：不是 138 亿光年——空间本身在这 138 亿年里一直在膨胀。</td><td>第 3、8 章</td></tr>
+    </table>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">"可观测宇宙 930 亿光年"和"宇宙 138 亿岁"不矛盾</div>
+    <div class="ic-b">光最多只能跑 138 亿年，但发出那束光的星系，在光飞行期间又被空间膨胀推远了。所以"看到的最远距离"和"现在它离我们多远"是两个数。前者约 138 亿光年（光行距离），后者约 465 亿光年（共动距离），直径就是 930 亿光年。</div>
+    <div class="ic-n">这一条在 1988 年的书里没有——当时还没有精确定下的宇宙年龄和暗能量。新版补的 9 页正是补这类东西。</div>
+  </div>
+</div>
+
+<div class="section" id="chrono">
+  <div class="sect-head"><span class="sect-num">02</span><h2>认知年表：三百多年的接力</h2></div>
+  <p class="lead">霍金在书末专门给伽利略、牛顿、爱因斯坦各写了一篇小传，不是礼节性的致敬，而是因为这三个人把"宇宙可以被计算"这件事一步步做实。下面是他们与后来者的接力线。</p>
+
+  <div class="timeline-track">
+    <div class="tn"><div class="tn-y">1687</div><div class="tn-d"></div><div class="tn-t">牛顿<br>《原理》</div><div class="tn-s">绝对时空</div></div>
+    <div class="tn"><div class="tn-y">1905</div><div class="tn-d"></div><div class="tn-t">狭义<br>相对论</div><div class="tn-s">光速不变</div></div>
+    <div class="tn"><div class="tn-y">1915</div><div class="tn-d"></div><div class="tn-t">广义<br>相对论</div><div class="tn-s">引力即几何</div></div>
+    <div class="tn"><div class="tn-y">1929</div><div class="tn-d"></div><div class="tn-t">哈勃<br>定律</div><div class="tn-s">宇宙膨胀</div></div>
+    <div class="tn"><div class="tn-y">1965</div><div class="tn-d"></div><div class="tn-t">微波<br>背景</div><div class="tn-s">大爆炸余温</div></div>
+    <div class="tn"><div class="tn-y">1974</div><div class="tn-d"></div><div class="tn-t">霍金<br>辐射</div><div class="tn-s">黑洞有温度</div></div>
+    <div class="tn"><div class="tn-y">1988</div><div class="tn-d"></div><div class="tn-t">本书<br>出版</div><div class="tn-s">销量逾千万</div></div>
+    <div class="tn"><div class="tn-y">1998</div><div class="tn-d"></div><div class="tn-t">加速<br>膨胀</div><div class="tn-s">暗能量登场</div></div>
+    <div class="tn"><div class="tn-y">2015</div><div class="tn-d"></div><div class="tn-t">引力波<br>探测</div><div class="tn-s">引力波现身</div></div>
+    <div class="tn"><div class="tn-y">2019</div><div class="tn-d"></div><div class="tn-t">黑洞<br>照片</div><div class="tn-s">首张照片</div></div>
+  </div>
+
+  <p class="note">三个关键跳跃：1687 到 1915 之间隔了 228 年，1915 到 1965 只用 50 年就走到大爆炸的实证，1974 到 2019 又用 45 年把黑洞从方程变成了照片。时间轴的右半段（1998 年以后）超出了本书正文范围，但它决定了这本书今天该怎么读——详见第 14 节的时效审查。</p>
+</div>
+
+<div class="section" id="spacetime">
+  <div class="sect-head"><span class="sect-num">03</span><h2>时空不是舞台，是演员</h2></div>
+  <p class="lead">第 1—2 章。霍金先用一章半把旧宇宙图像拆干净，然后才允许你进入相对论。这个顺序很讲究：不先让你感到"绝对空间"有多自然，你就体会不到它被推翻时有多彻底。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">第 1 章 · 五次换图</div>
+      <div class="content">亚里士多德的地心说、托勒密的均轮、哥白尼的日心、开普勒的椭圆、伽利略的望远镜、牛顿的万有引力——霍金压缩成一句话：每一次换图，都不是"发现新天体"，而是"放弃一个关于人在宇宙中位置的前提"。</div>
+      <div class="example"><strong>他真正的落点</strong>：奥古斯丁在《上帝之城》里说，时间也是被创造的，所以"创世之前"这句话不成立。霍金说，这句话比很多现代宇宙学讨论都清醒。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">第 1 章 · 为什么夜是黑的</div>
+      <div class="content">奥伯斯佯谬：如果宇宙无限大、无限老、恒星均匀分布，那么朝任何方向看都应该看到一颗星，夜空应该亮如白昼。夜是黑的，说明宇宙要么有年龄，要么在膨胀——两者都对。</div>
+      <div class="example"><strong>一个问题的价值</strong>：这个佯谬在 1823 年提出时被当成哲学牢骚，最后成了大爆炸的第一个间接证据。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">第 2 章 · 同时性是相对的</div>
+      <div class="content">光速对所有观察者都一样，这条假设逼出一个代价：不同运动状态下的人，对"这两件事同时发生"的判断不一样。既然同时性不绝对，时间就不能是一个统一的公共刻度。</div>
+      <div class="example"><strong>可验证</strong>：GPS 卫星每天要做相对论校正，净效应约 +38 微秒（狭义效应让它慢 7 微秒，广义效应让它快 45 微秒）。不校正，定位每天漂移十几公里。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">第 2 章 · 引力是几何</div>
+      <div class="content"><button class="gloss" onclick="openModal('equivalence')" aria-label="术语：等效原理">?</button>等效原理：在密闭电梯里，你分不清"自己被地球拉着"和"电梯在加速"。由此推出：引力不是一种力，是时空被质量弯曲后，物体沿最短路径运动的结果。</div>
+      <div class="example"><strong>1919 年的判决</strong>：日全食时观测到星光被太阳偏折，偏折量符合广义相对论而非牛顿力学。爱因斯坦一夜成名。</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "空间和时间可以形成一个空间—时间，而这个空间—时间不是平的，它被宇宙中的质量和能量弯曲。"
+    <span class="qb-from">第 2 章大意 · 综合提炼，非逐字引用</span>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">这一章真正被拆掉的，是"现在"这个词</div>
+    <div class="ic-b">如果同时性取决于观察者，那么"全宇宙此刻正在发生的事"就不存在。不存在一个统一的"现在"横切整个宇宙。这一点后面会反复用到：谈"宇宙年龄 138 亿年"时，说的其实是"对我们这些观察者而言的宇宙时"。</div>
+    <div class="ic-n">霍金没有把这句话讲得这么哲学，但它是第 8 章"虚时间"能成立的前提。</div>
+  </div>
+</div>
+
+<div class="section" id="expand">
+  <div class="sect-head"><span class="sect-num">04</span><h2>宇宙在膨胀，所以它有过一个起点</h2></div>
+  <p class="lead">第 3 章。这一章是全书证据最扎实、也最容易被误解的一章。红移本身只是一条观测事实，"大爆炸"是从它倒推出来的模型——而倒推这件事，有自己的边界。</p>
+
+  <div class="info-grid three">
+    <div class="info-card">
+      <div class="label">红移不是"星系在飞"<button class="gloss" onclick="openModal('redshift')" aria-label="术语：红移">?</button></div>
+      <div class="content">常见误解：大爆炸像一个炸弹，星系是碎片，从中心飞出去。实际模型是：空间本身在拉伸，星系是嵌在这块布上的点。所以"爆炸中心"不存在，任何一点看出去，别的点都在远离。</div>
+      <div class="example"> 类比：葡萄干面包在烤箱里膨胀，每颗葡萄干都看到别人在远离，且离得越远退行越快——但面包没有"中心"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">哈勃常数一直在改</div>
+      <div class="content">1929 年哈勃算出约 500 km/s/Mpc，是因为当时把造父变星的周光关系标定错了。此后每一代测量都在往下修：现在主流区间 67—73 km/s/Mpc。</div>
+      <div class="example"><strong>今天的麻烦</strong>：用微波背景推出来是 67.4，用近邻宇宙的造父变星测出来是 73。差 9%，远超误差范围，被称作"哈勃张力"，至今未解。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">稳恒态为什么输了</div>
+      <div class="content">霍伊尔提出的稳恒态模型：宇宙在膨胀，但物质不断凭空产生，密度恒定，没有起点。它在哲学上更"干净"（不需要创世），在观测上却输给了一个预言——微波背景辐射。</div>
+      <div class="example"><strong>讽刺的是</strong>："大爆炸"（Big Bang）这个词是霍伊尔在 BBC 广播里带着嘲讽造出来的，结果被对手拿来当正式名称。</div>
+    </div>
+  </div>
+
+  <h3>三条独立的证据，指向同一个结论</h3>
+  <div class="table-scroll">
+    <table class="matrix">
+      <tr><th style="width:22%">证据</th><th>观测到什么</th><th style="width:24%">它排除了什么</th></tr>
+      <tr><td><strong>星系红移</strong></td><td>几乎所有星系都在远离，退行速度与距离成正比。</td><td>排除了静态宇宙。</td></tr>
+      <tr><td><strong>微波背景</strong><button class="gloss" onclick="openModal('cmb')" aria-label="术语：微波背景">?</button></td><td>全天各方向都有 2.725 K 的微波辐射，各向异性只有十万分之一量级。1965 年彭齐亚斯与威尔逊偶然测到，起初以为是鸽子粪干扰。</td><td>排除了稳恒态——这是"整个宇宙曾经很热很密"的直接遗迹。</td></tr>
+      <tr><td><strong>轻元素丰度</strong></td><td>宇宙中氢与氦的质量比约 3:1，氦-4 的丰度约 24%，与"大爆炸后几分钟内的核合成"计算高度吻合。</td><td>排除了"元素都是恒星造出来的"——恒星核合成算不出这么高的氦。</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section" id="quantum">
+  <div class="sect-head"><span class="sect-num">05</span><h2>不确定性：宇宙原则上不可精确预测</h2></div>
+  <p class="lead">第 4—5 章。这两章在全书中像一段"技术插曲"，其实是后面所有转折的支点。没有不确定性原理，就没有真空涨落；没有真空涨落，就没有霍金辐射。</p>
+
+  <div class="two-col">
+    <div class="col">
+      <h4>不确定性原理到底说了什么</h4>
+      <p>不是"我们测量技术不够好"，而是"粒子本身没有同时确定的位置和动量"。这不是知识论的限制，是本体论的性质。位置测得越准，动量就越不确定，反之亦然。<button class="gloss" onclick="openModal('uncertainty')" aria-label="术语：不确定性原理">?</button></p>
+      <p>海森堡 1927 年提出。霍金在书里强调它的一层残酷含义：<strong>拉普拉斯式的"知道初始状态就能算出全部未来"彻底破产</strong>。宇宙在原则上就有不可预测的成分。</p>
+    </div>
+    <div class="col">
+      <h4>费曼的"对历史求和"</h4>
+      <p>另一种等价表述：粒子从 A 到 B，不是走一条路，而是同时走所有可能的路。每条路有一个"权重"，最后叠加出概率幅。这个图像在第 8 章会变成"宇宙同时走所有可能的形状"——无边界假设的数学基础就在这里。</p>
+    </div>
+  </div>
+
+  <h3>四种力，一张对照表</h3>
+  <div class="table-scroll">
+    <table class="matrix">
+      <tr><th style="width:18%">力</th><th style="width:20%">作用范围</th><th>负责什么</th><th style="width:22%">统一进度</th></tr>
+      <tr><td><strong>强</strong></td><td class="mono">10⁻¹⁵ m</td><td>把夸克粘成质子中子，把核子粘成原子核。最强，但极短。</td><td>与电磁在更高能标下统一（GUT），未验证</td></tr>
+      <tr><td><strong>电磁</strong></td><td>无限远</td><td>原子、化学、光、所有日常现象。与弱力已在 1967 年统一为电弱理论。</td><td>已统一，1983 年被实验证实</td></tr>
+      <tr><td><strong>弱</strong></td><td class="mono">10⁻¹⁸ m</td><td>放射性衰变、太阳里的氢聚变第一步。短到几乎不算"力"。</td><td>同上</td></tr>
+      <tr><td><strong>引力</strong></td><td>无限远</td><td>最弱，却支配宇宙大尺度结构。两个质子之间的引力比电磁力弱约 10³⁹ 倍。</td><td>无法重正化，尚未纳入标准模型</td></tr>
+    </table>
+  </div>
+
+  <p class="note">霍金对"引力为什么这么弱"给过一个解释方向：引力可能泄漏到额外维度里，所以我们只感受到它的一小部分。这类想法属于弦论/膜世界，至今没有实验支持。</p>
+</div>
+
+<div class="section" id="hole">
+  <div class="sect-head"><span class="sect-num">06</span><h2>黑洞：一个只进不出的区域</h2></div>
+  <p class="lead">第 6 章。这一章在 1988 年是纯理论，因为当时一个黑洞都还没被确认。今天它已经是观测对象了——但霍金写这一章时用的推理，仍然是最好的入门路径。</p>
+
+  <div class="arg">
+    <div class="arg-step"><div class="ag-n">1</div><div><div class="ag-t">先算逃逸速度</div><div class="ag-b">从地球扔石头，速度够快就能飞出去。把同样的算法用到太阳上，要求逃逸速度等于光速，得到一个半径：约 3 公里。这就是<button class="gloss" onclick="openModal('horizon')" aria-label="术语：事件视界">?</button>史瓦西半径——18 世纪米歇尔和拉普拉斯就做过这个计算，叫"暗星"。</div></div></div>
+    <div class="arg-step"><div class="ag-n">2</div><div><div class="ag-t">但牛顿的算法是错的，结论却是对的</div><div class="ag-b">正确的图像来自广义相对论：质量把时空弯到连光锥都向内倾斜，任何世界线都无法向外。史瓦西 1916 年给出严格解，但当时没人相信这种天体真的存在。</div></div></div>
+    <div class="arg-step"><div class="ag-n">3</div><div><div class="ag-t">恒星塌缩会撞上奇点</div><div class="ag-b">质量足够大的恒星烧完燃料后，简并压撑不住，塌缩无法停止。彭罗斯 1965 年证明：一旦塌缩越过某个点，就必然形成<button class="gloss" onclick="openModal('singularity')" aria-label="术语：奇点">?</button>奇点。霍金把这个定理用到整个宇宙，反推出宇宙必须有过一个起点——这是他博士期间最重要的成果。</div></div></div>
+    <div class="arg-step"><div class="ag-n">4</div><div><div class="ag-t">黑洞只有三个参数</div><div class="ag-b">"无毛定理"：无论原来是什么东西塌缩成的，黑洞外面只能测到质量、角动量、电荷。所有其他信息都消失在视界里面——这句话后来引发了物理学三十年最大的争论。</div></div></div>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">"视界"不是一层膜，是因果的分界</div>
+    <div class="ic-b">很多人以为掉进黑洞会撞上一道边界。不是。视界是一条"不归线"：跨过去之后，所有可能的前进方向都指向中心。对一个足够大的黑洞，你在跨越视界的那一刻，甚至感觉不到任何异常——因为潮汐力在视界处还很温和。</div>
+    <div class="ic-n">霍金在书里用一个很有效的比喻：这就像划船靠近瀑布，越靠近水流越快，某个位置之后无论怎么划都回不去了。</div>
+  </div>
+
+  <div class="quote-block">
+    "黑洞之所以是黑的，是因为它里面的引力强到连光都逃不出来。"
+    <span class="qb-from">第 6 章大意 · 综合提炼</span>
+  </div>
+</div>
+
+<div class="section" id="radiation">
+  <div class="sect-head"><span class="sect-num">07</span><h2>全书的心脏：黑洞不是这么黑的</h2></div>
+  <p class="lead">第 7 章。这是霍金一生最重要的物理工作，也是这本书唯一一处"作者亲手推翻自己上一章结论"的地方。1974 年他发现这件事时，据他自己说，第一反应是不相信——因为如果黑洞会蒸发，那就意味着宇宙的最终结局不是坍缩，而是蒸发殆尽。</p>
+
+  <div class="arg">
+    <div class="arg-step"><div class="ag-n">1</div><div><div class="ag-t">真空不是空的</div><div class="ag-b">不确定性原理允许能量在极短时间内"借"出来。真空里不断产生虚粒子对，又在瞬间湮灭。在平坦空间里，这没有任何可观测后果。</div></div></div>
+    <div class="arg-step"><div class="ag-n">2</div><div><div class="ag-t">但在视界边上，这对粒子被拆散了</div><div class="ag-b">一对虚粒子，一个落在视界外，一个落进去。落进去的那个带负能量（相对于外部观察者），于是黑洞的总质量减少；逃出来的那个变成实粒子，被我们看到。</div></div></div>
+    <div class="arg-step"><div class="ag-n">3</div><div><div class="ag-t">于是黑洞有温度</div><div class="ag-b">这不是比喻。辐射谱精确是黑体谱，温度只由质量、电荷、角动量决定。黑洞成了一个热力学对象。</div></div></div>
+    <div class="arg-step"><div class="ag-n">4</div><div><div class="ag-t">越小的黑洞越热，死得越快</div><div class="ag-b">温度反比于质量。太阳质量的黑洞温度约 6×10⁻⁸ K，比微波背景冷得多，所以现在还在吸热、净增长。但如果黑洞足够小，它会越蒸发越热、越热越快，最后在一场爆炸中消失。</div></div></div>
+  </div>
+
+  <div class="formula">
+    T = ħc³ / (8πGMk<sub>B</sub>)
+    <span class="fm-note">霍金温度。质量越小温度越高——分母里的 M 说明了一切。太阳质量黑洞算出约 6×10⁻⁸ K，远低于 2.725 K 的宇宙背景温度，所以它现在只进不出。</span>
+  </div>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">为什么这是个"不得不信"的结果</div>
+      <div class="content">霍金不是先想要这个结论再凑推导。他是把量子场论放到弯曲时空里算，结果自己冒出来的。他一开始不相信，反复检查了推导，结论依然成立。这就是它值得被写进书里的原因。</div>
+      <div class="example"><strong>一句话总结</strong>：广义相对论说黑洞只进不出，量子力学说真空不空，两者一碰，黑洞就必须辐射。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">代价：信息悖论</div>
+      <div class="content">如果黑洞完全蒸发，那些掉进去的信息去哪了？量子力学要求演化可逆、信息守恒；广义相对论说视界内的信息永远出不来。两者不能都对。这就是<button class="gloss" onclick="openModal('info')" aria-label="术语：信息悖论">?</button>信息悖论。</div>
+      <div class="example"><strong>霍金当年的立场</strong>：信息确实丢失了，量子力学需要修改。他为此和索恩跟普雷斯基尔打了赌。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">一个意外的副产品：熵</div>
+      <div class="content">贝肯斯坦先提出：黑洞的熵正比于视界<strong>面积</strong>，而不是体积。霍金起初反对，算出温度后反而证实了这个关系。这违背了"熵应正比于体积"的常识。</div>
+      <div class="example"><strong>后果在三十年后才显现</strong>：面积而非体积——这正是全息原理的起点。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">这一章在书里的位置很怪</div>
+      <div class="content">它夹在"黑洞"和"宇宙起源"之间，看起来像插曲。但从结构上看，它是全书唯一的"转折点"：前面所有章节都在建立"宇宙由确定定律支配"的信心，这一章第一次让定律之间互相打架。</div>
+      <div class="example">标题本身就是一句反驳：先让你接受"黑洞是黑的"，再告诉你不是。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="origin">
+  <div class="sect-head"><span class="sect-num">08</span><h2>无边界假设：问"之前"本身没有意义</h2></div>
+  <p class="lead">第 8 章是全书最难的一章，也是霍金自己最看重的一章。难点不在数学，在一个思维动作：他放弃了"宇宙从某个时刻开始"这个提法，改问"宇宙的边界条件是什么"。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">先解决"为什么这么均匀"</div>
+      <div class="content">微波背景在天的两个相反方向温度几乎一样（差十万分之一）。这两个区域从未有过因果接触——光来不及跑过去。那它们为什么温度相同？<button class="gloss" onclick="openModal('inflation')" aria-label="术语：暴胀">?</button>暴胀理论（古斯 1980）给了一个答案：极早期空间经历过一次指数级膨胀，原本相连的一小块被瞬间吹大。</div>
+      <div class="example"><strong>书里的位置</strong>：霍金提到了暴胀，但没有把它当作定论展开——这个分寸在 1988 年是对的。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">再解决"奇点处物理失效"</div>
+      <div class="content">如果宇宙真从奇点开始，那在起点处所有方程都失效，物理学就断在门口了。霍金的办法：把时间换成虚时间<button class="gloss" onclick="openModal('imaginary')" aria-label="术语：虚时间">?</button>，在这个数学空间里，宇宙没有起点也没有终点，是一个闭合的曲面。</div>
+      <div class="example"><strong>怎么理解</strong>：不要问"虚时间是真的吗"。它是一个坐标变换，目的是让方程在起点处不发散。物理意义要靠观测来判。</div>
+    </div>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">地球表面这个类比，是全书最好的一个比喻</div>
+    <div class="ic-b">问"地球的南方在哪里"是没意义的——你走得再南，也不会掉出地球。同样，无边界假设<button class="gloss" onclick="openModal('noboundary')" aria-label="术语：无边界假设">?</button>说：宇宙在虚时间里是一个闭合的球面，问"大爆炸之前"就像问"北极以北"。不是我们不知道，是这个问题没有指称。</div>
+    <div class="ic-n">这个类比很强，但它只解决"起点"的语言问题，不解决"为什么有物而非无物"。霍金自己也承认这一点。</div>
+  </div>
+
+  <div class="two-col">
+    <div class="col">
+      <h4>人择原理：弱版</h4>
+      <p>我们观察到的宇宙，必然允许观察者存在。这不是解释，是一个筛选条件：在无数可能里，我们只能出现在能长出人的那一个。它能排除一些模型（比如宇宙年龄太短、维度太多的），但不能解释为什么是这个宇宙。</p>
+    </div>
+    <div class="col">
+      <h4>人择原理：强版</h4>
+      <p>宇宙之所以是这样，是因为必须有观察者来看它。这一版近乎目的论，霍金用得比较克制，但在第 8 章和第 12 章确实伸到了这个方向。批评者说：这是"解释的终止"，不是解释。<button class="gloss" onclick="openModal('anthropic')" aria-label="术语：人择原理">?</button></p>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="arrow">
+  <div class="sect-head"><span class="sect-num">09</span><h2>三种时间箭头，为什么指向同一边</h2></div>
+  <p class="lead">第 9 章。物理定律几乎都是时间对称的——把方程里的 t 换成 -t，照样成立。可我们经验到的世界强烈不对称：杯子会碎，不会自己合起来。这个矛盾，是全书最有哲学味的一节。</p>
+
+  <div class="info-grid three">
+    <div class="info-card">
+      <div class="label">热力学箭头</div>
+      <div class="content">熵总是增加。这是热力学第二定律。<button class="gloss" onclick="openModal('entropy')" aria-label="术语：熵">?</button>熵可以理解为"无序程度"或"宏观状态对应的微观排列数"。系统自发从低熵走向高熵，因为高熵的排列方式多得多。</div>
+      <div class="example"><strong>不是"必然"</strong>：严格说这是统计性的。杯子自己合起来的概率不为零，只是小到宇宙年龄内等不到。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">心理学箭头</div>
+      <div class="content">我们记得过去，不记得未来。霍金指出，这其实是热力学箭头的副产品：记忆是一个把过去的状态编码进大脑的过程，而这个过程本身要消耗能量、增加熵。所以能记住的方向，必然是熵增的方向。</div>
+      <div class="example">换句话说：不是"因为有时间所以我们记得"，而是"因为熵在增，我们才有'记得'这件事"。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">宇宙学箭头</div>
+      <div class="content">宇宙在膨胀。这个方向定义了宇宙学的"过去"和"未来"。霍金的问题是：这三个箭头为什么一致？他的答案：因为宇宙从一个非常低熵、高度有序的状态出发，三个箭头都被这个初始条件带着走。</div>
+      <div class="example"><strong>真正的谜</strong>：为什么初始熵那么低？这个问题他没有解决，只是指出来。</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    "宇宙的无序度随时间增加——这就是时间箭头的方向。"
+    <span class="qb-from">第 9 章大意 · 综合提炼</span>
+  </div>
+
+  <p class="note">这一章常被误读成"霍金证明了时间有方向"。他没有。他做的是：把三个本来分开讨论的箭头放进同一个初始条件里，说明它们不必各自假设。</p>
+</div>
+
+<div class="section" id="worm">
+  <div class="sect-head"><span class="sect-num">10</span><h2>虫洞、时间旅行，与"为什么我们没见过时间旅行者"</h2></div>
+  <p class="lead">第 10—11 章。到这一步，霍金从"解释宇宙"转向"试探边界"：广义相对论的方程允许什么，物理现实允许什么。这两章是全书争议最大、也最容易被当成科幻读的部分。</p>
+
+  <div class="info-grid pair">
+    <div class="info-card">
+      <div class="label">虫洞是方程的合法解</div>
+      <div class="content">广义相对论确实允许时空存在"把手"结构：两个遥远区域被一条短通道连起来。但它需要<strong>负能量</strong>来撑住通道，否则会瞬间塌缩。量子效应能不能提供足够的负能量，至今没有答案。</div>
+      <div class="example"><strong>注意分寸</strong>：霍金写的是"理论上不排除"，不是"可能存在"。这两个说法差得很远。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">祖父悖论与"时序保护"</div>
+      <div class="content">如果回到过去杀掉祖父，你就不会出生，也就不会回去杀他。霍金的回应是一个猜想（他叫"时序保护猜想"）：物理定律会以某种方式禁止闭合类时曲线的形成。这是个猜想，没有证明。</div>
+      <div class="example"><strong>另一种可能</strong>：量子力学的多历史解释——回去的人进入的是另一个历史分支。这样悖论消失，但"改变自己的过去"也不可能。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">弦论与 M 理论</div>
+      <div class="content">把引力和其他三种力统一起来的主流尝试：基本单元不是点粒子，是一维的弦；要自洽，时空需要更多维度（超弦要 10 维，M 理论 11 维）。多出来的维度必须卷曲到极小，才符合观测。<button class="gloss" onclick="openModal('mtheory')" aria-label="术语：M理论">?</button></div>
+      <div class="example"><strong>书里的态度</strong>：霍金把它当作"最有希望的方向"，但明确说它还没有实验支持。</div>
+    </div>
+    <div class="info-card">
+      <div class="label">哥德尔那一脚，踢得不太准</div>
+      <div class="content">霍金在结尾引用哥德尔不完备定理，暗示"也许不存在一个完备的物理理论"。这个类比被不少逻辑学家和物理学家批评为误用：不完备定理针对的是足够强的形式算术系统，不能直接套到物理学上。<button class="gloss" onclick="openModal('godel')" aria-label="术语：哥德尔不完备定理">?</button></div>
+      <div class="example"><strong>但结论可能仍成立</strong>：即便论证有瑕疵，"只有越来越精确的近似、没有终极理论"这个判断，在量子引力领域至今是主流看法之一。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="conclusion">
+  <div class="sect-head"><span class="sect-num">11</span><h2>结论：为什么这本书能卖一千万册</h2></div>
+  <p class="lead">第 12 章很短。霍金在这里做了一件超出科普的事：他把"发现统一理论"说成人类理性的终极成就，并且用了一个宗教味极重的句子收尾。这句话既是他最著名的一句，也是他被误读最多的一句。</p>
+
+  <div class="quote-block">
+    "如果我们真的找到了答案，那将是人类理性的终极胜利——因为到那时，我们就能知道上帝的心意了。"
+    <span class="qb-from">第 12 章结尾 · 许明贤、吴忠超译本大意，各版措辞略有差异</span>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">这里的"上帝"是斯宾诺莎的上帝，不是人格神</div>
+    <div class="ic-b">霍金用的是爱因斯坦式的说法：上帝 = 自然定律的总体。"知道上帝的心意"= 掌握宇宙的最终方程，不是"见到神"。这一点在中文语境里经常被读反。</div>
+    <div class="ic-n">他后来在 2010 年的《大设计》里把话说死了：宇宙不需要造物主，哲学已死。那本书的立场比这本硬得多。</div>
+  </div>
+
+  <h3>书里那句被反复引用的"公式警告"</h3>
+  <p class="lead">前言里霍金提到，编辑警告他：书里每多一个公式，销量就会减半。所以他只留了一个公式——E=mc²。这条轶事常被当作笑话，其实是这本书的写作方法论：<strong>用类比代替推导，用图像代替方程</strong>。代价是，读者得到的是"理解的感觉"，不是可计算的能力。</p>
+
+  <div class="arg">
+    <div class="arg-step"><div class="ag-n">1</div><div><div class="ag-t">他的收尾不是"我们知道了"，而是"我们快要能问了"</div><div class="ag-b">全书回答的是"宇宙如何演化"，没有回答"宇宙为什么存在"。霍金把这个区别摆得很清楚：前者是物理，后者在那个年代还没有物理。</div></div></div>
+    <div class="arg-step"><div class="ag-n">2</div><div><div class="ag-t">"哲学已死"这句话，这本书里还没有</div><div class="ag-b">1988 年的霍金对哲学还算客气，只在结尾说哲学家"跟不上科学的速度"。二十二年后他才把话说绝。读这本书时不要把后来的霍金提前塞进来。</div></div></div>
+    <div class="arg-step"><div class="ag-n">3</div><div><div class="ag-t">它的真正贡献是"让一个问题变成公共话题"</div><div class="ag-b">大爆炸、黑洞、时间起点，在这本书之前是物理学共同体内部的事。之后它们成了普通人会争论的话题。这比任何一个具体结论的影响都大。</div></div></div>
+  </div>
+</div>
+
+<div class="section" id="people">
+  <div class="sect-head"><span class="sect-num">12</span><h2>三个人的接力：书末为什么单独立传</h2></div>
+  <p class="lead">书末附了伽利略、牛顿、爱因斯坦三篇小传。这不是凑页数——这三个人分别解决了"能不能观测""能不能计算""能不能重定义"三个层次的问题。</p>
+
+  <div class="person-grid">
+    <div class="person">
+      <div class="p-name">伽利略</div>
+      <div class="p-years">1564—1642</div>
+      <div class="p-why">把"看"变成"测量"。他用望远镜看到木星卫星、金星光相，证明天体不是完美的球体，也支持了日心说。霍金称他是"现代科学之父"，重点不在他看到了什么，而在他坚持"观测可以否决权威"。</div>
+    </div>
+    <div class="person">
+      <div class="p-name">牛顿</div>
+      <div class="p-years">1643—1727</div>
+      <div class="p-why">把"测量"变成"方程"。万有引力与三大运动定律第一次让天上和地上服从同一套规律。霍金接任的卢卡斯数学教授席位，牛顿也坐过——这个位置本身就是一种传承的隐喻。</div>
+    </div>
+    <div class="person">
+      <div class="p-name">爱因斯坦</div>
+      <div class="p-years">1879—1955</div>
+      <div class="p-why">把"方程"背后的时空观换掉。相对论不是修补牛顿，是重新定义"时间"和"空间"是什么。霍金全书的技术骨架，几乎都建在他 1915 年那组方程上。</div>
+    </div>
+  </div>
+
+  <p class="note">一个霍金本人常被提到的巧合：他生于 1942 年 1 月 8 日，正是伽利略逝世三百周年；逝于 2018 年 3 月 14 日，正是爱因斯坦诞辰一百三十九周年。他在书里没写这件事，但序言里提过生日与伽利略的巧合。</p>
+</div>
+
+<div class="section" id="laws">
+  <div class="sect-head"><span class="sect-num">13</span><h2>七条可迁移的判断</h2></div>
+  <p class="lead">以下七条是我从全书抽出来的结构性判断，不是霍金的原话，但每一条都能在书里找到落点。它们不限于宇宙学。</p>
+
+  <div class="pattern-grid">
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 01</div>
+      <div class="pt-t">理论被推翻，往往不是算错了，是前提被换了</div>
+      <div class="pt-b">地心说不缺精度（托勒密的均轮能算得很准），它输在"地球必须是中心"这个前提上。稳恒态也一样：它不是算不出来，是被一条它没预言到的证据否掉了。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 02</div>
+      <div class="pt-t">两套正确的理论相撞处，才是新物理的入口</div>
+      <div class="pt-b">广义相对论和量子力学各自都极其成功，一在奇点处相撞，就冒出霍金辐射。学科里的"前沿"常常不在某一套理论内部，而在两套理论的接缝上。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 03</div>
+      <div class="pt-t">"不可观测"不等于"不存在"，但等于"不能当论据"</div>
+      <div class="pt-b">霍金谈虚时间、谈其他宇宙时很小心：数学上自洽，不等于物理上成立。他自己对暴胀、对弦论都留了余地。这个分寸感，比结论更值得学。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 04</div>
+      <div class="pt-t">好的科普不是简化结论，是简化推理路径</div>
+      <div class="pt-b">他保留了推理的骨架（先算逃逸速度，再换成广义相对论），砍掉的是数学。读者失去的是计算能力，保住的是"为什么必须这么想"。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 05</div>
+      <div class="pt-t">"为什么"问不下去时，先问"边界条件是什么"</div>
+      <div class="pt-b">这是无边界假设最可迁移的一招：当一个问题的提法本身导致死循环（之前是什么？），换问法比硬答有效。工程、组织、人生决策里都适用。</div>
+    </div>
+    <div class="pattern-card">
+      <div class="pt-n">JUDGE 06</div>
+      <div class="pt-t">最难解释的不是复杂，是"初始为什么那么简单"</div>
+      <div class="pt-b">三种时间箭头之所以一致，是因为宇宙起点熵极低。物理定律解释演化，解释不了初始条件。任何领域的深水区，最后都卡在"初始条件从哪来"。</div>
+    </div>
+    <div class="pattern-card wide">
+      <div class="pt-n">JUDGE 07 · 总纲</div>
+      <div class="pt-t">这本书的真正价值，是让你习惯"在不知道答案的情况下继续推理"</div>
+      <div class="pt-b">霍金从头到尾没有给你一个完整答案：奇点处物理失效、信息悖论未决、量子引力没有实验、初始熵为什么低不知道。但他把每一步的边界都画得很清楚。读完之后的正确状态不是"我懂宇宙了"，而是"我知道人类卡在哪几道门上"。这种"带着缺口思考"的能力，比任何一个结论都耐用。</div>
+    </div>
+  </div>
+</div>
+
+<div class="section" id="update">
+  <div class="sect-head"><span class="sect-num">14</span><h2>时效审查：1988 年之后，哪些话要改</h2></div>
+  <p class="lead">这本书最需要提醒的一点：它的正文写于 1988 年。2025 年新版加了 9 页"新发现"，但补不完三十七年的差距。下面每一条都是"书里说 X，现在是 Y"——读的时候必须自己叠上去。</p>
+
+  <div class="table-scroll">
+    <table class="matrix">
+      <tr><th style="width:26%">书里的说法（1988）</th><th>现在（2026）</th><th style="width:16%">性质</th></tr>
+      <tr>
+        <td>黑洞只是理论预言，尚无确证</td>
+        <td>已确认大量恒星级黑洞（天鹅座 X-1 早已被认定），星系中心普遍存在超大质量黑洞。2019 年事件视界望远镜发布 M87* 照片，2022 年发布人马座 A*。2015 年 LIGO 探测到的引力波，正来自双黑洞合并。</td>
+        <td><strong>由理论变观测</strong></td>
+      </tr>
+      <tr>
+        <td>霍金辐射会导致信息丢失，量子力学可能需要修改</td>
+        <td>霍金本人在 2004 年都柏林会议上改口，承认信息不会丢失，并认输那场赌局。主流看法是信息以某种方式被编码在辐射里（具体机制仍在争论）。书中第 7 章的立场已不是作者本人的最终立场。</td>
+        <td><strong>作者自我修正</strong></td>
+      </tr>
+      <tr>
+        <td>宇宙膨胀在减速（引力应该拉住它）</td>
+        <td>1998 年通过 Ia 型超新星发现膨胀在<strong>加速</strong>。原因被命名为暗能量，占宇宙总能量约 68%。霍金写书时默认宇宙学常数 Λ=0，这个默认已经错了。</td>
+        <td><strong>被推翻</strong></td>
+      </tr>
+      <tr>
+        <td>宇宙年龄约 100—150 亿年（当时误差很大）</td>
+        <td>普朗克卫星 2018 年结果：137.7 亿年，误差不到 1%。但哈勃常数存在"张力"：早期宇宙推 67.4，近邻测量 73，差 9%，未解。</td>
+        <td><strong>精度提升 + 新矛盾</strong></td>
+      </tr>
+      <tr>
+        <td>大统一理论预言质子会衰变</td>
+        <td>至今未观测到质子衰变，实验下限已超过 10³⁴ 年，最早那批简单 GUT 模型基本被排除。</td>
+        <td><strong>预言落空</strong></td>
+      </tr>
+      <tr>
+        <td>弦论/M 理论是最有希望的统一方案</td>
+        <td>仍是主流方向之一，但 LHC 至今未发现超对称粒子，也没有任何实验证据。批评声音（如 2006 年那场著名争论）比 1988 年大得多。</td>
+        <td><strong>地位下降</strong></td>
+      </tr>
+      <tr>
+        <td>尚未找到希格斯粒子（第 5 章提到它是待验证的机制）</td>
+        <td>2012 年 CERN 宣布发现希格斯玻色子，质量约 125 GeV。标准模型最后一块拼图补齐。</td>
+        <td><strong>被证实</strong></td>
+      </tr>
+      <tr>
+        <td>无边界假设是描述宇宙起源的最佳方案</td>
+        <td>仍是重要方案，但没有观测判决，数学上也未被证明唯一。霍金晚年与赫托格提出"自上而下的宇宙学"，对原方案做了实质修改。</td>
+        <td><strong>仍是假设</strong></td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="insight-card">
+    <div class="ic-t">最该注意的一条：第 7 章的作者立场已经变了</div>
+    <div class="ic-b">很多人拿"霍金说黑洞会摧毁信息"当定论引用。但霍金 2004 年就公开认输，承认信息守恒。也就是说，这本书里最有名的那一章，结论部分已被作者本人撤回。读科普时，"作者当时相信什么"和"学界现在相信什么"，是两件事——这本书把这两件事的差距拉得特别大。</div>
+    <div class="ic-n">反过来看，这也说明科学是这么运作的：不是靠权威定音，是靠赌局、会议、观测一次次修正。</div>
+  </div>
+</div>
+
+<div class="section" id="limits">
+  <div class="sect-head"><span class="sect-num">15</span><h2>局限与可质疑处</h2></div>
+  <p class="lead">这本书的地位毋庸置疑，但把它当"宇宙学圣经"读就会出问题。以下七条是我认为最需要在读的时候打个标记的地方。</p>
+
+  <div class="law-card"><span class="lw-idx">LIMIT 01</span><div class="lw-t">成书太早，正文缺了三大块</div><div class="lw-b">暗能量、加速膨胀、引力波探测——今天宇宙学的三大支柱，书里一个都没有。2025 版加的 9 页只能算补丁，不能算修订。真要了解现状，得另找 2015 年后的书。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 02</span><div class="lw-t">为了可读性，把争议写成了定论</div><div class="lw-b">暴胀、弦论、人择原理在书里都显得比学界共识更确定。1988 年时这些确实更被看好，但霍金的叙述方式（少用"可能""有争议"）会让读者误判它们的证据强度。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 03</span><div class="lw-t">人择原理是"解释的终止"，不是解释</div><div class="lw-b">"宇宙必须允许观察者存在"这句话几乎不可反驳，正因如此它解释力很弱。用它回答"为什么常数这么巧"，等于说"因为不巧的话就没人来问"。这在逻辑上成立，在物理上近乎同义反复。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 04</span><div class="lw-t">无边界假设没有被观测支持，也没有被证明唯一</div><div class="lw-b">它在数学上优雅，能消掉奇点，但至今没有一个可判决的实验。把它当成"霍金解决了宇宙起源问题"，是对书的最大误读——霍金自己用的是"提出一个方案"这种措辞。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 05</span><div class="lw-t">"上帝"的隐喻在中文语境里容易读反</div><div class="lw-b">霍金用的是爱因斯坦式的斯宾诺莎上帝（= 自然定律），不是人格神。但中文读者常把结尾那句读成宗教宣言。他自己在 2010 年明确否认人格化造物主，说明这个隐喻的传播效果并不好。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 06</span><div class="lw-t">正文没有一条参考文献</div><div class="lw-b">这是科普书的通行做法，但对想深挖的读者很不友好。哪个结论是观测、哪个是猜想、哪个是霍金自己的推测，正文里常常混在一起。想分辨，只能自己去查原始论文。</div></div>
+  <div class="law-card"><span class="lw-idx">LIMIT 07</span><div class="lw-t">中文译本有术语与版本差异</div><div class="lw-b">"奇点/奇异点""事件视界/视界"在不同版本、不同出版社之间并不统一，页码更是完全对不上（1988 版、1996 插图版、2025 新版页数差别很大）。引用时最好标章节号，不要标页码。</div></div>
+</div>
+
+<div class="section" id="extend">
+  <div class="sect-head"><span class="sect-num">16</span><h2>延伸与比较</h2></div>
+
+  <div class="table-scroll">
+    <table class="extension">
+      <tr><th>本书定位</th><td>二十世纪最成功的科普书，也是"用类比讲前沿物理"这一写法的模板。它的历史意义大于它今天的信息价值：作为"入门的第一本"仍然合格，作为"现状参考"已经过期。</td></tr>
+      <tr><th>适合谁读</th><td>完全没接触过宇宙学的人；想理解"科学家怎么推理"而不是"结论是什么"的人；需要一份共同语言来读后续更硬的书的人。</td></tr>
+      <tr><th>不适合谁</th><td>想知道 2020 年后宇宙学现状的人（请直接看时效审查那节，或换书）；想要推导和公式的人；对"人择原理"这类解释不满、希望看到严格论证的人。</td></tr>
+      <tr><th>本书局限</th><td>成书 1988，缺暗能量与引力波；争议被写得比共识更确定；无参考文献；作者本人在第 7 章的立场 2004 年已撤回；中文版术语与页码不统一。</td></tr>
+      <tr><th>对照阅读</th><td>
+        <strong>霍金《大设计》（2010）</strong>：同一些问题，立场硬得多，明确宣称"哲学已死"、宇宙不需要造物主。对照读能看出霍金二十多年间的变化。<br>
+        <strong>霍金《果壳中的宇宙》（2001）</strong>：续作，M 理论与膜世界讲得更细，插图更多，但结构比《时间简史》散。<br>
+        <strong>基普·索恩《黑洞与时间弯曲》</strong>：同领域，但走的是"人 + 技术细节"路线。想看霍金辐射背后的争论怎么发生的，这本更清楚；索恩后来因 LIGO 拿了诺贝尔奖。<br>
+        <strong>温伯格《最初三分钟》</strong>：大爆炸的定量版，1977 年成书，比霍金更硬，也更早过时。<br>
+        <strong>卡尔·萨根《宇宙》</strong>：同一片天空，完全不同的气质——霍金讲定律，萨根讲人在宇宙中的位置。
+      </td></tr>
+      <tr><th>读法建议</th><td>第一遍按原顺序读，不要跳第 7 章。第二遍只读第 7、8、9 三章——全书真正的思想密度都在这三章。第 11 章（统一理论）可以快读，它的内容在 2026 年已经需要整段替换。</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="section" id="reflect">
+  <div class="sect-head"><span class="sect-num">17</span><h2>留给读者</h2></div>
+
+  <div class="reflection-block">
+    <div class="rf-t">一个问题：如果宇宙的初始条件无法由定律推出，那"为什么存在"还算物理问题吗？</div>
+    <p>霍金把这个问题推到极致，然后用无边界假设绕过了它：不是"定律推出了初始条件"，而是"初始条件就是没有边界"。这个绕法很漂亮，但它把问题从"为什么"换成了"什么样"。你也可以选择不接受这个换法——很多哲学家就不接受。</p>
+  </div>
+
+  <div class="reflection-block">
+    <div class="rf-t">第二个问题：一本结论大面积过期的科普书，为什么还值得读？</div>
+    <p>因为它教的是"怎么想"，不是"想出了什么"。书里那些推理动作——先算逃逸速度再换成时空弯曲、用虚时间把奇点抹掉、用三种箭头互证——不会因为观测更新而失效。过时的是答案，不是方法。</p>
+  </div>
+
+  <div class="reflection-block">
+    <div class="rf-t">第三个问题：霍金为什么要在结尾谈"上帝"？</div>
+    <p>因为他要回答的问题（我们从何而来）在人类文化里一直由宗教占据。他用物理学的答案去接这个问题，就必须处理那个词。你可以把这句读成"科学的谦逊"（我们只想知道定律），也可以读成"科学的傲慢"（定律就是全部答案）。霍金本人后期的立场，明显偏后者。</p>
+  </div>
+
+  <div class="footer-note">
+    《时间简史》知识图谱 · 依据许明贤、吴忠超译本（湖南科学技术出版社）整理<br>
+    版本信息：1988 年首版，1996 年插图版据 Moonrunner Design 英文版译出，2025 年新版插图版（ISBN 9787571034061）新增 9 页近年宇宙学发现<br>
+    引文说明：标注"综合提炼"者为对原书论证的转述，非逐字原文；标注章节者仅指该论述出现的位置
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<div class="modal-mask hidden" id="modalMask" onclick="if(event.target===this)closeModal()">
+  <div class="modal-box">
+    <button class="m-close" onclick="closeModal()" aria-label="关闭">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<button class="backtop" id="backtop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部">↑</button>
+
+<script>
+const glossary = {
+  planck: { t: "普朗克尺度", d: "由普朗克常数、光速、引力常数组合出的最小尺度：长度约 1.6×10⁻³⁵ 米，时间约 5.4×10⁻⁴⁴ 秒。在这个尺度上，量子效应与引力效应同样强，广义相对论和量子场论同时失效。它是现有物理学的边界，不是某种东西的大小。" },
+  uncertainty: { t: "不确定性原理", d: "海森堡 1927 年提出：位置与动量、能量与时间这类共轭量，不可能同时被精确确定。乘积的下限由普朗克常数给出。这不是仪器精度问题，而是量子态本身的性质——粒子在测量之前就没有同时确定的位置和动量。" },
+  equivalence: { t: "等效原理", d: "引力质量与惯性质量等效，因此在一个封闭的加速参照系里，无法通过任何局部实验区分\"引力\"与\"加速\"。爱因斯坦由此把引力解释为时空弯曲：物体在弯曲时空中沿测地线运动，看上去像被\"拉\"。" },
+  horizon: { t: "事件视界", d: "黑洞的边界，是一个单向的因果面：物质和光可以从外面进去，出不来。它不是物理表面，没有任何东西\"挡\"在那里。对一个足够大的黑洞，穿越视界时局部感受不到异常，因为潮汐力在视界处还很弱。" },
+  singularity: { t: "奇点", d: "时空曲率发散、密度趋于无限的点。在经典广义相对论里，它是时空的\"边缘\"，物理定律在那里失效。彭罗斯与霍金在 1965—1970 年证明：在很一般的条件下，引力塌缩必然导致奇点——不需要任何对称性假设。" },
+  redshift: { t: "红移", d: "光波被拉长、频率降低的现象。宇宙学红移来自空间本身的膨胀，不是星系在空间里飞行。红移量 z 与退行速度的关系在低速下近似 v ≈ cz，高速时必须用相对论公式。" },
+  cmb: { t: "宇宙微波背景辐射", d: "大爆炸后约 38 万年，宇宙冷却到能让电子与质子结合成中性原子，光子终于可以自由传播。这批光子被膨胀拉长到今天，温度 2.725 K，落在微波波段。它的微小温度起伏（十万分之一量级）是后来所有结构的种子。" },
+  inflation: { t: "暴胀", d: "古斯 1980 年提出：极早期宇宙经历过一次指数级膨胀，在极短时间内把尺度放大了至少 10²⁶ 倍。它解释了两个难题——为什么宇宙如此均匀（本来相连的一小块被吹大），以及为什么空间如此平坦。" },
+  imaginary: { t: "虚时间", d: "把时间坐标乘以虚数单位 i 得到的数学变量。在这个空间里，时间方向与空间方向没有本质区别，时空成为一个闭合曲面，奇点消失。它是一种坐标变换，不是一个\"真的存在的时间\"；物理意义需要由观测来判定。" },
+  noboundary: { t: "无边界假设", d: "霍金与哈特尔 1983 年提出：宇宙的边界条件就是它没有边界。在虚时间里，宇宙像一个闭合球面——有限但无界。因此\"大爆炸之前\"这个问法，就像问\"地球表面以北\"一样，没有指称对象。它消掉了奇点，但仍是一个未被观测检验的方案。" },
+  anthropic: { t: "人择原理", d: "弱版：我们观察到的宇宙必然允许观察者存在，这是一个筛选条件。强版：宇宙之所以如此，是因为必须有观察者。弱版近乎逻辑必然，解释力很弱；强版接近目的论，争议极大。霍金两处都用过，但都算克制。" },
+  entropy: { t: "熵", d: "系统的无序程度，或等价地，同一宏观状态对应的微观排列数。热力学第二定律说孤立系统的熵不减。黑洞的熵正比于视界面积而非体积（贝肯斯坦—霍金），这个反常比例是后来全息原理的起点。" },
+  info: { t: "信息悖论", d: "量子力学要求物理演化可逆、信息守恒；广义相对论说落入视界的信息永远出不来；霍金辐射又只携带热谱、看似不含信息。若黑洞完全蒸发，信息就消失了。霍金 1974 年接受这个结论，2004 年改口承认信息可以逃出。争论至今未彻底解决。" },
+  mtheory: { t: "M 理论", d: "统一五种超弦理论的框架，需要 11 维时空。它的低能极限包含超引力。至今没有任何实验证据，LHC 也未发现它预言的超对称粒子。霍金在书里把它列为最有希望的方向，但明确说尚未验证。" },
+  godel: { t: "哥德尔不完备定理", d: "1931 年证明：任何足够强、能表达算术的形式系统，都存在系统内既不能证明也不能证伪的命题；且这样的系统无法在自身内部证明自己的一致性。霍金用它暗示物理学可能没有完备的终极理论，但这个类比被不少逻辑学家认为不成立——定理针对形式算术系统，不能直接套到物理理论上。" }
+};
+
+function openModal(key){
+  var d = glossary[key];
+  if(!d) return;
+  document.getElementById('modalBody').innerHTML = '<div class="m-t">'+d.t+'</div><div class="m-b">'+d.d+'</div>';
+  document.getElementById('modalMask').classList.remove('hidden');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modalMask').classList.add('hidden');
+  document.body.style.overflow='';
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeModal(); });
+
+(function(){
+  var links = document.querySelectorAll('.toc-list a[href^="#"]');
+  var items = [];
+  links.forEach(function(l){
+    var el = document.getElementById(l.getAttribute('href').slice(1));
+    if(el) items.push({link:l, el:el});
+  });
+  function update(){
+    var y = window.scrollY + 140, cur = null;
+    for(var i=items.length-1;i>=0;i--){
+      if(items[i].el.offsetTop <= y){ cur = items[i].link; break; }
+    }
+    links.forEach(function(l){ l.classList.toggle('active', l===cur); });
+  }
+  window.addEventListener('scroll', update);
+  update();
+})();
+
+(function(){
+  var b = document.getElementById('backtop');
+  window.addEventListener('scroll', function(){ b.classList.toggle('on', window.scrollY>500); });
+})();
+</script>
+</body>
+</html>
