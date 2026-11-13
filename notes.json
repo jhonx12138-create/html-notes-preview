@@ -589,5 +589,50 @@
     "category": "通识与科普",
     "author": "卡洛·罗韦利",
     "rating": 8.9
+  },
+  {
+    "id": "69",
+    "title": "《增长黑客》",
+    "file": "notes/note69.html",
+    "date": "2026-11-13",
+    "category": "商业与市场",
+    "author": "范冰",
+    "rating": 7.8
+  },
+  {
+    "id": "70",
+    "title": "《第二曲线创新》",
+    "file": "notes/note70.html",
+    "date": "2026-11-13",
+    "category": "商业与市场",
+    "author": "李善友",
+    "rating": 7.5
+  },
+  {
+    "id": "71",
+    "title": "《重读资本论》",
+    "file": "notes/note71.html",
+    "date": "2026-11-13",
+    "category": "政治与经济",
+    "author": "王德峰",
+    "rating": 8.7
+  },
+  {
+    "id": "72",
+    "title": "《领导梯队》",
+    "file": "notes/note72.html",
+    "date": "2026-11-13",
+    "category": "组织与管理",
+    "author": "拉姆·查兰 / 斯蒂芬·德罗特 / 詹姆斯·诺埃尔",
+    "rating": 8.4
+  },
+  {
+    "id": "73",
+    "title": "《心理学讲义》",
+    "file": "notes/note73.html",
+    "date": "2026-11-13",
+    "category": "认知与心理",
+    "author": "李松蔚",
+    "rating": 8.0
   }
 ]

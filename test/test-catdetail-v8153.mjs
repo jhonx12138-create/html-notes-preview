@@ -18,7 +18,7 @@ import { readFileSync } from 'node:fs';
 const BASE = process.env.BASE || 'http://localhost:8899/index.html';
 // v8.15.3：当前展示版本号。升版时改这里 + index.html 的 5 处展示文案；
 // 下方「版本自检」会直接从 index.html 源码读实际版本比对，漏改任一处都会明确报红。
-const APP_VERSION = 'v8.15.3';
+const APP_VERSION = 'v8.15.4';
 const CHROME = '/Users/xuezhiyong/.cache/puppeteer/chrome/mac_arm-149.0.7827.22/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 

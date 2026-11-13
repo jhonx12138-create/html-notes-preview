@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>心理学讲义 · 知识图谱</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --ink:#2a2b31;
+  --ink2:#40424a;
+  --accent:#4c7a71;
+  --accent-l:#7ba79d;
+  --warm:#a2643f;
+  --paper:#faf7f1;
+  --card:#fffdf8;
+  --line:#e5ded1;
+  --muted:#75726b;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--paper);color:var(--ink);
+  font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,sans-serif;
+  font-size:15px;line-height:1.85;-webkit-font-smoothing:antialiased;
+}
+/* 侧栏 */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:222px;background:var(--card);
+  border-right:1px solid var(--line);padding:26px 0 30px;overflow-y:auto;z-index:50;}
+.brand{padding:0 20px 18px;border-bottom:1px solid var(--line);margin-bottom:14px;}
+.brand-cn{font-family:"Songti SC","Source Han Serif SC",serif;font-size:19px;font-weight:700;letter-spacing:.06em;}
+.brand-en{font-size:9.5px;letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-top:6px;}
+.toc-list{list-style:none;padding:0 10px;}
+.toc-list a{display:block;padding:6px 10px;font-size:13px;color:var(--ink2);text-decoration:none;
+  border-left:2px solid transparent;transition:.16s;line-height:1.5;}
+.toc-list a:hover{background:#f2eee4;color:var(--accent);}
+.toc-list a.active{color:var(--accent);border-left-color:var(--accent);background:#eef2ee;font-weight:600;}
+.toc-l2{padding-left:10px;font-size:12.4px;}
+/* 主体 */
+.main{margin-left:222px;max-width:980px;padding:0 46px 80px;}
+.header{position:relative;overflow:hidden;margin:0 -46px;padding:52px 52px 40px;
+  background:linear-gradient(140deg,#f1e9d9 0%,#eae0cd 60%,#e6dcc7 100%);
+  border-bottom:1px solid #ded4c0;}
+.hd-tag{font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:#8d7350;margin-bottom:15px;}
+.header h1{font-family:"Songti SC","Source Han Serif SC",serif;font-size:40px;line-height:1.25;
+  font-weight:700;letter-spacing:.04em;position:relative;z-index:2;}
+.header .subtitle{font-size:15px;color:#5b5449;margin-top:12px;line-height:1.85;max-width:540px;position:relative;z-index:2;}
+.meta{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:#ddd2bd;border:1px solid #ddd2bd;
+  margin-top:28px;position:relative;z-index:2;width:66%;}
+.meta-i{background:#f7f1e4;padding:11px 14px;}
+.meta-k{font-size:10px;letter-spacing:.14em;color:#96805f;text-transform:uppercase;}
+.meta-v{font-size:12.8px;color:#413c34;margin-top:3px;line-height:1.6;}
+.hd-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;position:relative;z-index:2;}
+.tag{font-size:11px;padding:3px 10px;border:1px solid #c9b692;color:#7c6440;border-radius:20px;letter-spacing:.04em;background:rgba(255,255,255,.4);}
+.hd-art{position:absolute;right:34px;bottom:58px;width:230px;opacity:.5;z-index:1;pointer-events:none;}
+.watermark{position:absolute;right:-6px;bottom:-72px;font-family:"Songti SC",serif;font-size:250px;
+  line-height:1;color:#a2643f;opacity:.06;z-index:0;user-select:none;}
+/* 章节 */
+.section{padding:44px 0 10px;border-top:1px solid var(--line);}
+.section:first-of-type{border-top:none;}
+.section h2{font-family:"Songti SC","Source Han Serif SC",serif;font-size:25px;font-weight:700;
+  letter-spacing:.02em;display:flex;align-items:baseline;gap:12px;margin-bottom:14px;}
+.section h2 .no{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;font-weight:600;
+  color:var(--accent);letter-spacing:.12em;position:relative;top:-4px;}
+.lead{color:#4a4a44;font-size:14.6px;margin-bottom:22px;max-width:790px;}
+.lead strong{color:var(--warm);font-weight:600;}
+h3{font-size:16.5px;font-weight:700;margin:30px 0 12px;letter-spacing:.02em;}
+h3::before{content:'';display:inline-block;width:3px;height:14px;background:var(--accent);margin-right:9px;position:relative;top:1px;}
+p{margin-bottom:13px;}
+p.note{font-size:12.8px;color:var(--muted);}
+em{font-style:normal;background:linear-gradient(transparent 62%,#e8dfc9 62%);padding:0 1px;}
+/* 四层结构 */
+.strata{border:1px solid var(--line);background:var(--card);margin:24px 0 26px;}
+.stratum{display:grid;grid-template-columns:74px 1fr;padding:17px 20px;border-bottom:1px solid var(--line);}
+.stratum:last-child{border-bottom:none;}
+.stratum-n{font-family:"Songti SC",serif;font-size:30px;color:var(--accent);opacity:.5;line-height:1;}
+.stratum-t{font-size:15.5px;font-weight:700;}
+.stratum-t span{font-size:12px;color:var(--muted);font-weight:400;margin-left:8px;letter-spacing:.02em;}
+.stratum-q{font-size:13px;color:#4d4d47;margin-top:4px;}
+.stratum-k{font-size:12.2px;color:var(--accent);margin-top:7px;letter-spacing:.01em;line-height:1.7;}
+.stratum:nth-child(2){border-left:3px solid #c9b692;}
+.stratum:nth-child(3){border-left:3px solid #b9a479;}
+.stratum:nth-child(4){border-left:3px solid #a2916c;}
+.stratum:nth-child(5){border-left:3px solid #8a7a58;}
+/* 卡片组 */
+.info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0 24px;}
+.info-grid.two{grid-template-columns:1fr 1fr;}
+.info-card{background:var(--card);border:1px solid var(--line);padding:18px 18px 16px;position:relative;}
+.info-card::before{content:'';position:absolute;left:0;top:0;width:2px;height:26px;background:var(--accent);}
+.info-card h4{font-size:13.6px;font-weight:700;margin-bottom:8px;}
+.info-card p{font-size:13.2px;color:#4d4d47;line-height:1.75;margin:0;}
+.info-card p + p{margin-top:8px;}
+.info-card .kv{font-size:11.5px;color:var(--muted);margin-top:10px;}
+/* 六路径 */
+.path-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0 24px;}
+.path-card{background:var(--card);border:1px solid var(--line);padding:16px 16px 14px;}
+.path-n{font-family:"Helvetica Neue",Arial,sans-serif;font-size:10.5px;letter-spacing:.14em;color:var(--accent-l);margin-bottom:5px;}
+.path-name{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+.path-desc{font-size:12.6px;color:#50504a;line-height:1.72;}
+.path-limit{font-size:11.8px;color:var(--warm);margin-top:8px;line-height:1.66;}
+/* 关键词格 */
+.kw-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:22px 0 26px;}
+.kw{background:var(--card);padding:15px 15px 14px;}
+.kw-t{font-size:13.8px;font-weight:700;color:var(--ink);margin-bottom:5px;}
+.kw-t b{color:var(--accent);font-weight:600;font-family:"Helvetica Neue",Arial,sans-serif;font-size:11px;margin-right:6px;letter-spacing:.06em;}
+.kw-d{font-size:12.5px;color:#52524c;line-height:1.7;}
+/* 判据卡 */
+.law-card{background:#eff2ec;border-left:3px solid var(--accent);padding:16px 20px;margin:20px 0;
+  font-size:13.6px;color:#3b463f;line-height:1.8;}
+.law-card b{color:var(--warm);font-weight:700;}
+.law-k{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#7d8f83;margin-bottom:6px;}
+/* 步进链 */
+.chain{margin:18px 0 22px;}
+.chain-item{display:grid;grid-template-columns:30px 1fr;gap:14px;padding:11px 0;border-bottom:1px solid var(--line);}
+.chain-item:last-child{border-bottom:none;}
+.chain-n{width:26px;height:26px;border-radius:50%;background:var(--ink2);color:#fff;font-size:12px;
+  font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;margin-top:2px;}
+.chain-t{font-size:13.4px;font-weight:600;margin-bottom:3px;}
+.chain-d{font-size:12.9px;color:#55554f;line-height:1.72;}
+/* 表格 */
+.table-scroll{overflow-x:auto;margin:20px 0 26px;-webkit-overflow-scrolling:touch;}
+table{border-collapse:collapse;width:100%;font-size:12.9px;background:var(--card);}
+table.matrix th,table.extension th{background:#39423d;color:#f1ede1;font-weight:600;font-size:12px;
+  padding:10px 12px;text-align:left;letter-spacing:.04em;border:1px solid #39423d;}
+table.matrix td,table.extension td{padding:10px 12px;border:1px solid var(--line);vertical-align:top;
+  color:#4a4a44;line-height:1.7;}
+table.matrix tbody tr:nth-child(even) td{background:#f8f5ed;}
+table.matrix td:first-child{font-weight:600;color:var(--ink);background:#f1eee3;}
+table.matrix tbody tr:nth-child(even) td:first-child{background:#ece8db;}
+table.extension td:first-child{font-weight:600;color:var(--ink);}
+.nw{white-space:nowrap;}
+/* 引用 */
+.quote-block{border-left:2px solid var(--accent);padding:6px 0 6px 22px;margin:24px 0;
+  font-family:"Songti SC","Source Han Serif SC",serif;font-size:17px;line-height:1.85;color:#33302a;}
+.quote-src{display:block;font-family:"PingFang SC",sans-serif;font-size:11.5px;color:var(--muted);
+  margin-top:10px;letter-spacing:.03em;}
+/* 提示 */
+.callout{background:#f0efe6;border:1px solid #ddd7c6;padding:15px 18px;margin:20px 0;
+  font-size:13.2px;color:#42423a;line-height:1.78;}
+.callout-t{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--warm);margin-bottom:5px;font-weight:700;}
+/* 要点列表 */
+.signal{list-style:none;margin:14px 0 20px;padding-left:0;}
+.signal li{font-size:13.2px;color:#4a4a44;margin-bottom:9px;line-height:1.75;position:relative;padding-left:22px;}
+.signal li::before{content:'—';position:absolute;left:0;color:var(--accent-l);}
+/* 局限 */
+.limit-list{margin:18px 0 24px;}
+.limit-item{display:grid;grid-template-columns:34px 1fr;gap:14px;padding:14px 0;border-bottom:1px solid var(--line);}
+.limit-item:last-child{border-bottom:none;}
+.limit-n{font-family:"Helvetica Neue",Arial,sans-serif;font-size:12px;color:var(--warm);font-weight:700;padding-top:3px;}
+.limit-c b{display:block;font-size:13.6px;color:var(--ink);margin-bottom:4px;}
+.limit-c span{font-size:12.9px;color:#55554f;line-height:1.75;}
+/* 术语按钮 */
+.gloss{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
+  border:1px solid var(--accent-l);background:#f0f4f1;color:var(--accent);font-size:9.5px;font-weight:700;
+  line-height:1;cursor:pointer;vertical-align:super;margin-left:1px;font-family:Arial,sans-serif;transition:.15s;padding:0;}
+.gloss:hover{background:var(--accent);color:#fff;border-color:var(--accent);}
+/* 弹窗 */
+.modal-overlay{position:fixed;inset:0;background:rgba(28,30,26,.7);z-index:200;display:none;
+  align-items:center;justify-content:center;padding:24px;}
+.modal-overlay.visible{display:flex;}
+.modal-card{background:var(--card);max-width:520px;width:100%;padding:28px 30px;position:relative;
+  border-top:3px solid var(--accent);max-height:80vh;overflow-y:auto;}
+.modal-title{font-family:"Songti SC",serif;font-size:18px;font-weight:700;margin-bottom:12px;}
+.modal-body{font-size:13.6px;color:#46463f;line-height:1.85;}
+.close-btn{position:absolute;right:14px;top:10px;background:none;border:none;font-size:22px;color:#9a9488;cursor:pointer;line-height:1;}
+.close-btn:hover{color:var(--accent);}
+/* 页脚 */
+.footer{margin-top:52px;padding-top:22px;border-top:1px solid var(--line);}
+.footer-note{font-size:11.8px;color:var(--muted);line-height:1.9;}
+.back-to-top{position:fixed;right:26px;bottom:26px;width:38px;height:38px;background:var(--ink2);color:#fff;
+  border:none;cursor:pointer;font-size:14px;display:none;align-items:center;justify-content:center;z-index:60;}
+.back-to-top.show{display:flex;}
+@media (max-width:1180px){.hd-art{display:none;}.meta{width:100%;}}
+@media (max-width:900px){
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:0 16px 70px;max-width:100%;}
+  .header{margin:0 -16px;padding:30px 20px 26px;}
+  .header h1{font-size:26px;}
+  .header .subtitle{font-size:13.6px;}
+  .watermark{font-size:150px;bottom:-44px;}
+  .meta{grid-template-columns:1fr;margin-top:22px;}
+  .section h2{font-size:20px;}
+  .info-grid,.info-grid.two,.path-grid{grid-template-columns:1fr;}
+  .kw-grid{grid-template-columns:1fr 1fr;}
+  .stratum{grid-template-columns:56px 1fr;padding:14px 15px;}
+  .stratum-n{font-size:24px;}
+  .table-scroll table{min-width:620px;}
+  .quote-block{font-size:15.5px;padding-left:16px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="brand">
+    <div class="brand-cn">心理学讲义</div>
+    <div class="brand-en">Lectures on Psychology</div>
+  </div>
+  <ul class="toc-list">
+    <li><a href="#map">01　全书骨架：四层</a></li>
+    <li><a href="#history">02　序章：六条路径</a></li>
+    <li><a href="#var">03　第一章　变量</a></li>
+    <li><a href="#mech">04　第二章　机制</a></li>
+    <li><a href="#rel">05　第三章　关系</a></li>
+    <li><a href="#method">06　第四章　方法</a></li>
+    <li><a href="#stance">07　三个贯穿立场</a></li>
+    <li><a href="#concept">08　概念速查</a></li>
+    <li><a href="#use">09　怎么读这本书</a></li>
+    <li><a href="#quotes">10　金句</a></li>
+    <li><a href="#limits">11　局限</a></li>
+    <li><a href="#extend">12　延伸对照</a></li>
+  </ul>
+</nav>
+
+<div class="main">
+  <header class="header">
+    <div class="hd-tag">Lectures on Psychology · 2024</div>
+    <h1>心理学讲义</h1>
+    <div class="subtitle">零基础入门，三十四讲。它不按流派史讲，而是按你关心的问题分四层：人由什么构成、这些部分怎么自己运转、人怎么被关系塑造、最后能做什么。</div>
+    <div class="meta">
+      <div class="meta-i"><div class="meta-k">作者</div><div class="meta-v">李松蔚</div></div>
+      <div class="meta-i"><div class="meta-k">出品</div><div class="meta-v">得到图书 ·「得到讲义」系列</div></div>
+      <div class="meta-i"><div class="meta-k">出版社</div><div class="meta-v">新星出版社</div></div>
+      <div class="meta-i"><div class="meta-k">出版时间</div><div class="meta-v">2024 年 5 月（部分印次标 6 月）</div></div>
+      <div class="meta-i"><div class="meta-k">ISBN</div><div class="meta-v">978-7-5133-5611-4</div></div>
+      <div class="meta-i"><div class="meta-k">篇幅</div><div class="meta-v">精装 504／520 页，约 43.6 万字</div></div>
+      <div class="meta-i"><div class="meta-k">结构</div><div class="meta-v">序章 2 讲 + 四章 32 讲，共 34 讲</div></div>
+      <div class="meta-i"><div class="meta-k">原作名</div><div class="meta-v">Lectures on Psychology</div></div>
+    </div>
+    <div class="hd-tags">
+      <span class="tag">心理学入门</span>
+      <span class="tag">系统式家庭治疗</span>
+      <span class="tag">变量 · 机制</span>
+      <span class="tag">关系视角</span>
+      <span class="tag">改变与接纳</span>
+    </div>
+    <svg class="hd-art" viewBox="0 0 240 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#a2643f" stroke-width="1.3" opacity=".8">
+        <rect x="8" y="10" width="186" height="38"/>
+        <rect x="26" y="58" width="168" height="38"/>
+        <rect x="44" y="106" width="150" height="38"/>
+        <rect x="62" y="154" width="132" height="38"/>
+      </g>
+      <g fill="#a2643f" opacity=".85">
+        <rect x="8" y="10" width="4" height="38"/>
+        <rect x="26" y="58" width="4" height="38"/>
+        <rect x="44" y="106" width="4" height="38"/>
+        <rect x="62" y="154" width="4" height="38"/>
+      </g>
+    </svg>
+    <div class="watermark">心</div>
+  </header>
+
+  <section class="section" id="map">
+    <h2><span class="no">01</span>全书骨架：四层，三十四讲</h2>
+    <p class="lead">大多数心理学入门书按「流派—人物—年代」排队，这本书不是。它按<strong>一个人认识自己的顺序</strong>分成四层：先看清自己由哪些部分构成（变量），再看这些部分怎么自动运转（机制），再看它们如何被关系塑造（关系），最后才谈能做什么（方法）。四层之间有依赖关系——<em>不知道变量，机制就无从谈起；不理解关系，方法就会变成硬改自己。</em></p>
+
+    <div class="strata">
+      <div class="stratum">
+        <div class="stratum-n">壹</div>
+        <div>
+          <div class="stratum-t">变量<span>9 讲 · 人由什么构成</span></div>
+          <div class="stratum-q">把「我就是这样的人」拆成一组可以分别观察、分别变化的东西。</div>
+          <div class="stratum-k">稳态 · 图式 · 自我 · 人格 · 环境 · 发展 · 需求 · 心态 · 建构</div>
+        </div>
+      </div>
+      <div class="stratum">
+        <div class="stratum-n">贰</div>
+        <div>
+          <div class="stratum-t">机制<span>8 讲 · 这些部分怎么自己转</span></div>
+          <div class="stratum-q">变量之间会连成自动回路，看不见，但能通过结果反推。</div>
+          <div class="stratum-k">内置算法 · 内隐 · 文化 · 情绪 · 记忆 · 内驱 · 归因 · 问题解决</div>
+        </div>
+      </div>
+      <div class="stratum">
+        <div class="stratum-n">叁</div>
+        <div>
+          <div class="stratum-t">关系<span>7 讲 · 人怎么被关系塑造</span></div>
+          <div class="stratum-q">很多「个人问题」，其实是某段关系里的循环被固定住了。</div>
+          <div class="stratum-k">社会化 · 亲密关系 · 家庭 · 异常 · 抑郁 · 焦虑／创伤／成瘾 · 人格障碍</div>
+        </div>
+      </div>
+      <div class="stratum">
+        <div class="stratum-n">肆</div>
+        <div>
+          <div class="stratum-t">方法<span>8 讲 · 那能做什么</span></div>
+          <div class="stratum-q">改变有改变的做法，接纳有接纳的做法，最难的是分清该用哪个。</div>
+          <div class="stratum-k">改变 · 精神分析 · 行为训练 · 认知重构 · 短程治疗 · 重新定义问题 · 安置 · 接纳</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>四章与六条路径的对应</h3>
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead><tr><th>章</th><th>主要借用哪条路径</th><th>这一章在回答什么</th></tr></thead>
+        <tbody>
+          <tr><td class="nw">第一章 变量</td><td>结构主义 + 功能主义</td><td>人由哪些可拆解的部分组成，这些部分在什么条件下变化</td></tr>
+          <tr><td class="nw">第二章 机制</td><td>精神分析 + 行为主义 + 认知科学</td><td>看不见的过程如何自动运转，为什么「想通」不等于「改变」</td></tr>
+          <tr><td class="nw">第三章 关系</td><td>系统论视角下的多派交叉</td><td>问题如何在人与人的互动里被维持，又怎样因关系改变而消失</td></tr>
+          <tr><td class="nw">第四章 方法</td><td>人本主义 + 各类疗法技术</td><td>面对能改的、只能改一点的、改不了的，分别怎么办</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">说明：这张对应表是我按目录与各章内容归纳的，作者本人没有给出这样一张严格映射表；六条路径的完整清单见下一节。</p>
+
+    <div class="callout">
+      <div class="callout-t">一句话抓住全书</div>
+      把「我是什么样的人」换成「<strong>什么在什么条件下起作用</strong>」。前一句是判决，后一句才有操作空间。
+    </div>
+  </section>
+
+  <section class="section" id="history">
+    <h2><span class="no">02</span>序章：六条路径，六种「定位问题」的方式</h2>
+    <p class="lead">序章两讲，一讲说心理学是干什么的，一讲用三十页把一百多年的心理学史压成六条路径。作者对心理学的定义很朴素：<strong>用科学的方法弥补个体经验与直觉的不足，为生活提供专业帮助</strong>。而六条路径的意义不是让你背流派，是让你知道——同一个行为，至少有六种解释方式，选哪种解释，决定了你接下来怎么动。</p>
+
+    <div class="path-grid">
+      <div class="path-card">
+        <div class="path-n">PATH 01</div>
+        <div class="path-name">结构主义</div>
+        <div class="path-desc">把人拆成一个个心理结构：情绪、认知、人格、态度。问题不属于「我」，属于我身上某个变量。</div>
+        <div class="path-limit">局限：拆开之后可能看不到整体，也容易让人把责任推给「我的某个部件」。</div>
+      </div>
+      <div class="path-card">
+        <div class="path-n">PATH 02</div>
+        <div class="path-name">功能主义</div>
+        <div class="path-desc">人是整体，且一直在变；变化有功能——为了适应环境。同一个行为，换个环境就不出现了。</div>
+        <div class="path-limit">局限：解释力强，但容易变成「什么都能解释」。</div>
+      </div>
+      <div class="path-card">
+        <div class="path-n">PATH 03</div>
+        <div class="path-name">精神分析</div>
+        <div class="path-desc">人有一部分自己看不见（无意识），但它影响巨大。谈话让无意识浮现，本身就足以带来改变。</div>
+        <div class="path-limit">局限：难验证，疗程长，对现实问题的直接指导弱。</div>
+      </div>
+      <div class="path-card">
+        <div class="path-n">PATH 04</div>
+        <div class="path-name">行为主义</div>
+        <div class="path-desc">只看刺激与反应。改变外部条件，就能改变行为，不必先改内心。</div>
+        <div class="path-limit">局限：忽略人的意志与同意，滥用会变成操控。</div>
+      </div>
+      <div class="path-card">
+        <div class="path-n">PATH 05</div>
+        <div class="path-name">认知科学</div>
+        <div class="path-desc">把心智看成大脑的算法：同样的输入，不同算法给出不同输出。改变就是优化算法。</div>
+        <div class="path-limit">局限：把人当信息处理系统，情感与身体经验容易被简化掉。</div>
+      </div>
+      <div class="path-card">
+        <div class="path-n">PATH 06</div>
+        <div class="path-name">人本主义</div>
+        <div class="path-desc">把人当活人，不当研究对象。相信当事人自己有向上的力量，咨询师只提供无条件的关注与陪伴。</div>
+        <div class="path-limit">局限：态度很好，技术偏少，遇到重问题容易只剩「陪伴」。</div>
+      </div>
+    </div>
+
+    <h3>六条路径的正确用法</h3>
+    <p>它们不是六个发展阶段，也不是「越往后越先进」。它们是<strong>六个探照灯</strong>：同一件「孩子不肯写作业」，结构主义看到注意力与习惯，功能主义看到这个任务对他意味着什么，精神分析看到他和父母之间没说出口的冲突，行为主义看到写完之后的后果安排，认知科学看到他如何解释「写不好」，人本主义则先问「他自己想不想」。</p>
+    <p>所以这本书真正的读法不是记住六个名字，而是练一件事：<em>遇到问题时，先问自己「我现在用的是哪条路径的解释」，再问「换一条路径，会不会更有用」。</em></p>
+    <div class="law-card">
+      <span class="law-k">序章给出的标准</span>
+      <b>一个心理学解释好不好，不看它是否符合某个门派，而看它对人有没有帮助。</b>这是全书的价值排序：疗效优先于正确，帮助优先于体系。
+    </div>
+  </section>
+
+  <section class="section" id="var">
+    <h2><span class="no">03</span>第一章　变量：人不是一种性格，是一组状态</h2>
+    <p class="lead">这一章要松动的是最顽固的一句话：<strong>「我就是这样的人。」</strong>九个关键词，其实是一个个可以单独拿出来看的旋钮——它们有各自的稳定机制，也有各自的变化条件。看懂旋钮，才有「调」的可能。</p>
+
+    <div class="kw-grid">
+      <div class="kw"><div class="kw-t"><b>01</b>稳态<button class="gloss" onclick="openModal('steady')" aria-label="术语：稳态">?</button></div><div class="kw-d">系统会回到它熟悉的平衡点，所以「本性难移」不只是懒，是稳态在拉你回去。改变的第一步常是打破稳态，而不是加大意志力。</div></div>
+      <div class="kw"><div class="kw-t"><b>02</b>图式<button class="gloss" onclick="openModal('schema')" aria-label="术语：图式">?</button></div><div class="kw-d">人用已有框架解释新信息。同一张棋盘图，A 格看着比 B 格深，其实颜色一样——你看到的不是光，是你的解释。</div></div>
+      <div class="kw"><div class="kw-t"><b>03</b>自我</div><div class="kw-d">自我不是一颗固定的内核，而是一套叙事与角色的集合。它会随场景切换，也会被你说给自己听的故事改写。</div></div>
+      <div class="kw"><div class="kw-t"><b>04</b>人格</div><div class="kw-d">稳定的行为倾向，但稳定不等于不可变，且始终与情境交互。这也是星座与 MBTI 流行的原因：它们提供确定感。</div></div>
+      <div class="kw"><div class="kw-t"><b>05</b>环境</div><div class="kw-d">外界输入直接改变行为。很多「人的问题」换成环境问题就解决了：噪音、通勤、座位、谁在旁边。</div></div>
+      <div class="kw"><div class="kw-t"><b>06</b>发展</div><div class="kw-d">时间本身是变量。同一个行为在二十岁和四十岁含义不同，因为阶段任务不同。</div></div>
+      <div class="kw"><div class="kw-t"><b>07</b>需求</div><div class="kw-d">需求是有层级的，也是永不满足的：满足了这一层，下一层立刻变成「必须」。</div></div>
+      <div class="kw"><div class="kw-t"><b>08</b>心态</div><div class="kw-d">怎么看待稳定与变化，本身就是一个变量。把能力看成固定量，还是看成可增长的，会改变你面对失败的方式。</div></div>
+      <div class="kw"><div class="kw-t"><b>09</b>建构<button class="gloss" onclick="openModal('construct')" aria-label="术语：建构">?</button></div><div class="kw-d">语言和观念塑造现实。换一个说法，感受就会变——这不是自我安慰，是认知层面的真实作用。</div></div>
+    </div>
+
+    <h3>同一句话，两种说法</h3>
+    <p>变量思维最容易练，方法就是改写句子。左边是判决，说完只能认；右边是描述，说完可以动手。下面五组是我按第一章的逻辑写的示范。</p>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>判决式说法</th><th>变量式说法</th><th>换掉了什么</th></tr></thead>
+        <tbody>
+          <tr><td>我太懒了</td><td>我在没有明确截止时间时启动困难</td><td>从人格，换到条件</td></tr>
+          <tr><td>我社恐</td><td>我在需要即兴发言的场合心跳很快、说话变短</td><td>从标签，换到具体场景</td></tr>
+          <tr><td>孩子不听话</td><td>孩子在我连续催三次之后才开始对抗</td><td>从品性，换到互动顺序</td></tr>
+          <tr><td>我情绪化</td><td>我睡眠不足时，更容易被小事点燃</td><td>从性格，换到状态</td></tr>
+          <tr><td>我不适合做管理</td><td>我在给负面反馈时，还没有可用的说法</td><td>从天赋，换到技能</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">这五组是我按第一章九个变量的逻辑做的示范，不是原书例句。</p>
+
+    <h3>这一章真正想给你的东西</h3>
+    <p>不是九个名词，是一个动作：<strong>把「我很差」翻译成「我的某个变量，在当前条件下被激活了」。</strong>前者无法操作，后者可以问：哪个变量？什么条件？条件能不能换？</p>
+    <p>九个词之间还有内在联系，作者用棋盘错觉这类例子把它们串起来：图式必须在环境中形成，环境一变它就会发展，而发展又会改写你对自己的叙事（自我）。所以变量不是九个抽屉，是一张网。</p>
+    <div class="law-card">
+      <span class="law-k">这一章的判断句</span>
+      <b>先分清「这是本性」还是「这是这个位置上的稳态」。</b>如果是后者，换位置比改自己便宜得多；如果真是前者，也还有「接纳」这条路（第四章）。
+    </div>
+  </section>
+
+  <section class="section" id="mech">
+    <h2><span class="no">04</span>第二章　机制：看不见的那部分，才是自动运转的部分</h2>
+    <p class="lead">变量是零件，机制是零件之间的连线。这一章最实用的结论是：<strong>很多问题之所以改不动，是因为它已经变成自动回路——你越想控制，回路转得越快。</strong>对付自动回路，靠下决心无效，得改输入条件。</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>内置算法</h4>
+        <p>进化给的快捷方式：怕蛇不怕插座、损失比收益更刺眼。它让你在信息不全时快速决策，也让你系统性地误判。</p>
+      </div>
+      <div class="info-card">
+        <h4>内隐</h4>
+        <p>说不出但存在：内隐记忆、内隐态度。你可能嘴上否认偏见，手却先做出了选择。</p>
+      </div>
+      <div class="info-card">
+        <h4>文化</h4>
+        <p>集体的无意识。同一件事在不同文化里有不同脚本，很多「性格差异」其实是脚本差异。</p>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>情绪</h4>
+        <p>一部分可控，一部分不可控。把它当敌人会加重它，把它当信息则能读出它在提示什么。</p>
+      </div>
+      <div class="info-card">
+        <h4>记忆</h4>
+        <p>回忆不是回放，是重建。每次回忆都会按当下的状态改写一点，所以「我一直记得很清楚」本身需要打折。</p>
+      </div>
+      <div class="info-card">
+        <h4>内驱<button class="gloss" onclick="openModal('drive')" aria-label="术语：内驱">?</button></h4>
+        <p>「想不想」和「能不能」是两件事。很多拖延不是动机问题，是能力或路径问题。</p>
+      </div>
+    </div>
+    <div class="info-grid two">
+      <div class="info-card">
+        <h4>归因<button class="gloss" onclick="openModal('attrib')" aria-label="术语：归因">?</button></h4>
+        <p>真相不止一个。归因是一种习惯：把事归到人身上（他就是这样），还是归到情境上（他被放在了这个位置）。归因方式一变，情绪和行动都会变。</p>
+      </div>
+      <div class="info-card">
+        <h4>问题解决</h4>
+        <p>「总可以做点什么」。把一团糟拆成下一个具体动作，是这一讲最落地的部分——大问题之所以压人，是因为它没有被拆。</p>
+      </div>
+    </div>
+
+    <h3>四个常见回路，卡点在哪</h3>
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead><tr><th>回路</th><th>它怎么自转</th><th>可以从哪切</th></tr></thead>
+        <tbody>
+          <tr><td class="nw">拖延</td><td>任务模糊 → 焦虑 → 回避 → 更焦虑 → 任务显得更模糊</td><td>把任务切到「下一个具体动作」这一层，先让模糊消失</td></tr>
+          <tr><td class="nw">失眠</td><td>睡不着 → 担心明天 → 更清醒 → 更担心</td><td>离开床，把「睡不着」和「床」这组连接断开</td></tr>
+          <tr><td class="nw">争吵</td><td>指责 → 防御 → 更重的指责 → 更硬的防御</td><td>改一个动作：先说自己的感受，不评价对方</td></tr>
+          <tr><td class="nw">反复检查</td><td>检查 → 短暂安心 → 更不放心 → 检查得更频繁</td><td>限定次数，并允许不安存在一段时间</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">四个回路是按第二章「自动运转」的思路举的例子，原书并未列此表。</p>
+
+    <div class="callout">
+      <div class="callout-t">机制章的方法论含义</div>
+      如果问题是自动运转的，那么「我下次注意」几乎必然失败。有效的做法只有两种：<strong>改触发条件</strong>（避开或替换那个输入），或者<strong>改回路的出口</strong>（让自动反应之后接一个不同的动作）。
+    </div>
+  </section>
+
+  <section class="section" id="rel">
+    <h2><span class="no">05</span>第三章　关系：问题常常不在你身上</h2>
+    <p class="lead">这是全书最有个人印记的一章，也是李松蔚作为系统式家庭治疗师的看家部分。命题只有一句：<strong>很多被当成「个人毛病」的东西，其实是一段关系里的循环被固定住了。</strong>所以他不急着改人，先改关系的走法。</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>社会化</h4>
+        <p>人为什么不能随心所欲：我们从小在学习「哪些欲望可以表达」。所谓性格，很多是社会化的产物。</p>
+      </div>
+      <div class="info-card">
+        <h4>亲密关系</h4>
+        <p>恋爱那么麻烦为什么还要谈：亲密提供的是「被看见」，代价是必须暴露自己。</p>
+      </div>
+      <div class="info-card">
+        <h4>家庭<button class="gloss" onclick="openModal('family')" aria-label="术语：家庭生命周期">?</button></h4>
+        <p>社会关系的最小模块。一个人变化，全家都会跟着调整——所以家庭里的改变总会遇到阻力，那阻力不是坏心，是系统在维持平衡。</p>
+      </div>
+    </div>
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>异常</h4>
+        <p>当一个人和世界的相处方式偏离到影响生活，就被称为异常。但「异常」的边界由谁定，本身就是个问题。</p>
+      </div>
+      <div class="info-card">
+        <h4>抑郁</h4>
+        <p>是医学的病，还是关系的病？作者把「抑郁症」这个词拆成不同状态分别讨论，因为同一个词常常指的不是同一件事。</p>
+      </div>
+      <div class="info-card">
+        <h4>焦虑 · 创伤 · 成瘾</h4>
+        <p>层出不穷的「时代病」。它们的共同点是：短期有效、长期代价高，且被环境持续喂养。</p>
+      </div>
+    </div>
+    <p>还有一讲专门讲<em>人格障碍</em><button class="gloss" onclick="openModal('pd')" aria-label="术语：人格障碍">?</button>：当「关系生病」变成一种长期固定的模式，被诊断为障碍的往往不是一个人，而是一段关系的稳定形态。</p>
+
+    <h3>系统视角的四个提问</h3>
+    <p>关系视角听起来抽象，落到操作上其实就四句话。遇到反复出现的问题，按顺序问一遍，通常能问出「该动哪一段关系」。</p>
+    <div class="chain">
+      <div class="chain-item">
+        <div class="chain-n">1</div>
+        <div><div class="chain-t">这个问题在谁在场时最明显</div>
+        <div class="chain-d">如果只在某个人面前发生，那它就不是「他的性格」，是这段关系的特定产物。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">2</div>
+        <div><div class="chain-t">谁受影响最大，谁又最被指责</div>
+        <div class="chain-d">这两个常常不是同一个人。被指责的人往往只是症状的承载体，不是问题的来源。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">3</div>
+        <div><div class="chain-t">如果问题明天消失，谁的生活要跟着改</div>
+        <div class="chain-d">系统的阻力常常来自这里：症状也在维持某种平衡，有人从中获得位置或豁免。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">4</div>
+        <div><div class="chain-t">这个循环从哪一步开始，哪一步最容易打断</div>
+        <div class="chain-d">不必从头改，找一个成本最低的节点换动作，循环就转不下去了。</div></div>
+      </div>
+    </div>
+    <p class="note">这四个提问是我对第三章思路的归纳，原书以案例叙述为主，未给出这张清单。</p>
+
+    <h3>抑郁这一讲，值得单独记住</h3>
+    <p>作者反对把「抑郁」当成一个笼统的标签，因为不同的人用这个词指代的东西差别很大。他倾向于按状态区分：<strong>抑郁发作、发作的间歇期、以及正常的抑郁情绪</strong>——三者的应对方式完全不同，混为一谈就会出现「你就是想太多」这种伤害。</p>
+    <p>对应的帮助方式也很具体：先寻求医学帮助，其次为当事人创造一个更有利于康复的环境，最后是帮他去病理化，也就是别把他整个人等同于一个诊断。<em>去病理化</em><button class="gloss" onclick="openModal('depath')" aria-label="术语：去病理化">?</button>不是否认疾病，是不让疾病吞掉这个人。</p>
+
+    <div class="quote-block">
+      很多时候，问题不在你身上，而是关系变了，问题就消失了。
+      <span class="quote-src">—— 内容简介（官方文案原文）</span>
+    </div>
+    <p class="note">抑郁分三状态、帮助三条建议，来自读者笔记与书评的转述，具体表述以原书第三章第五讲为准。</p>
+  </section>
+
+  <section class="section" id="method">
+    <h2><span class="no">06</span>第四章　方法：改变与接纳，是两条腿</h2>
+    <p class="lead">方法章面对一个诚实的前提：<strong>有些事改不了。</strong>所以它不是一本「如何变更好」的操作手册，而是一张分诊表——先判断这件事属于哪一种，再决定用哪套方法。用错方法比不方法更伤人，比如对一件改不了的事反复「努力改变」。</p>
+
+    <div class="chain">
+      <div class="chain-item">
+        <div class="chain-n">1</div>
+        <div><div class="chain-t">改变：做「更好的自己」，很难吗</div>
+        <div class="chain-d">难在「更好」是谁的标准。如果目标是别人给的，改变从一开始就缺动力。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">2</div>
+        <div><div class="chain-t">精神分析：在关系中改变</div>
+        <div class="chain-d">改变不靠自我说服，靠一段新的关系经验——有人在场，你才能看见自己原来的模式。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">3</div>
+        <div><div class="chain-t">行为训练：从具体到整体</div>
+        <div class="chain-d">先改一个具体动作，而不是先改心态。动作变了，心态会跟上，这个顺序不能反。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">4</div>
+        <div><div class="chain-t">认知重构：一念一世界</div>
+        <div class="chain-d">同一件事换个解释，情绪就变了。但它不是自我欺骗，前提是新解释必须更接近事实。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">5</div>
+        <div><div class="chain-t">短程治疗<button class="gloss" onclick="openModal('short')" aria-label="术语：短程治疗">?</button>：对「改变」的反思</div>
+        <div class="chain-d">为什么有的问题谈一次就好？因为要改的不是问题本身，是维持问题的那个循环。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">6</div>
+        <div><div class="chain-t">重新定义问题<button class="gloss" onclick="openModal('reframe')" aria-label="术语：重新定义问题">?</button>：「对手」到底长什么样</div>
+        <div class="chain-d">把「我太焦虑」重写成「我在为一个不清楚的标准持续紧张」，对手一变，打法就变。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">7</div>
+        <div><div class="chain-t">安置<button class="gloss" onclick="openModal('settle')" aria-label="术语：安置">?</button>：解决不了的困难，怎么办</div>
+        <div class="chain-d">不是所有困难都要消灭。给它一个固定的位置、时间与说法，它就不再侵占全部生活。</div></div>
+      </div>
+      <div class="chain-item">
+        <div class="chain-n">8</div>
+        <div><div class="chain-t">接纳<button class="gloss" onclick="openModal('accept')" aria-label="术语：接纳">?</button>：积极主动的自我调适</div>
+        <div class="chain-d">接纳不是躺平，是承认事实之后，把力气从「改变事实」转到「改变与事实的关系」。</div></div>
+      </div>
+    </div>
+
+    <h3>改变为什么常常失败</h3>
+    <ul class="signal">
+      <li>目标是别人给的。「变得更好」如果没有具体指向，人会一直停在准备阶段。</li>
+      <li>一次改太多。稳态的反扑速度与改动幅度成正比，改得越猛，回弹越快。</li>
+      <li>只改想法，不改触发条件。回路还在原来的位置等着你，靠意志力硬扛，扛不过环境。</li>
+    </ul>
+
+    <h3>三张处方：先分诊，再动手</h3>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>处境</th><th>该用的方法</th><th>最该避免的</th></tr></thead>
+        <tbody>
+          <tr><td>能改，但一直没动</td><td>行为训练：切一个最小动作，先做起来</td><td>继续分析原因，把分析当成行动</td></tr>
+          <tr><td>只能改一部分</td><td>重新定义问题 + 认知重构：先看清哪部分可控</td><td>用「全部改好」的标准要求自己，然后放弃</td></tr>
+          <tr><td>改不了（既成事实、他人、身体条件）</td><td>安置 + 接纳：给它位置，收回注意力</td><td>反复「努力改变」，把痛苦延长</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">这张分诊表是我按第四章八讲的内容归并的，不是原书表格；「安置」与「接纳」的区别，原书有更细的界定。</p>
+
+    <div class="law-card">
+      <span class="law-k">这一章的核心判据</span>
+      <b>先问「这件事能不能改」，再问「怎么改」。</b>跳过第一问，方法越用力，挫败越深。
+    </div>
+  </section>
+
+  <section class="section" id="stance">
+    <h2><span class="no">07</span>三个贯穿全书的立场</h2>
+    <p class="lead">以下三条不在目录里，是我读完之后认为贯穿四章的三个立场。它们比任何单个概念都更耐用，也更能解释作者为什么这样组织材料。</p>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>一、变量思维：把判决换成描述</h4>
+        <p>「我懒」是判决，无法执行；「我在没有明确截止时间时启动困难」是描述，可以设计对策。这本书几乎每一讲都在做这个转换——把人格化的评价，换成对条件与状态的描述。</p>
+        <div class="kv">见于第一章，也贯穿方法章</div>
+      </div>
+      <div class="info-card">
+        <h4>二、系统视角：先看循环，再看个人</h4>
+        <p>遇到反复出现的问题，先问「这个模式在维持什么」。比如孩子越拖、家长越催，催又加重拖——这时改任何一方都无效，得改循环本身。</p>
+        <div class="kv">见于第三章，也是作者的治疗底色</div>
+      </div>
+      <div class="info-card">
+        <h4>三、帮助优先：有用胜过正确</h4>
+        <p>六条路径互相矛盾，作者的解法不是调和，而是按「对人有没有帮助」来取用。这是一种实用主义姿态，也意味着这本书不打算给你一套统一的理论。</p>
+        <div class="kv">见于序章，是全书的取舍原则</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="concept">
+    <h2><span class="no">08</span>概念速查：十四个词，一张表</h2>
+    <p class="lead">这一节是给「想直接查」的人准备的。每个词配一句话定义和它出现的章，读完能对上号即可，不必背。</p>
+
+    <div class="table-scroll">
+      <table class="matrix">
+        <thead><tr><th>概念</th><th>一句话</th><th>出处</th></tr></thead>
+        <tbody>
+          <tr><td class="nw">稳态</td><td>系统倾向于回到熟悉的平衡点，改变会被它拉回去</td><td class="nw">一章 · 1</td></tr>
+          <tr><td class="nw">图式</td><td>用已有框架解释新信息，所以人看到的是解释而非事实</td><td class="nw">一章 · 2</td></tr>
+          <tr><td class="nw">建构</td><td>语言与观念参与塑造现实，换说法就换感受</td><td class="nw">一章 · 9</td></tr>
+          <tr><td class="nw">内置算法</td><td>进化形成的快速判断规则，快但系统性偏差</td><td class="nw">二章 · 1</td></tr>
+          <tr><td class="nw">内隐</td><td>说不出、测得到、会影响行为的那部分心理内容</td><td class="nw">二章 · 2</td></tr>
+          <tr><td class="nw">归因</td><td>把结果解释成人格还是情境，这个习惯决定情绪走向</td><td class="nw">二章 · 7</td></tr>
+          <tr><td class="nw">内驱</td><td>「想不想」与「能不能」要分开诊断</td><td class="nw">二章 · 6</td></tr>
+          <tr><td class="nw">社会化</td><td>学习哪些欲望可以表达，性格的一部分由此而来</td><td class="nw">三章 · 1</td></tr>
+          <tr><td class="nw">家庭生命周期</td><td>家庭像有机体，会经历阶段转换，每次转换都要求成员改角色</td><td class="nw">三章 · 3</td></tr>
+          <tr><td class="nw">去病理化</td><td>把人和诊断分开，不让人被一个标签吞掉</td><td class="nw">三章 · 5</td></tr>
+          <tr><td class="nw">人格障碍</td><td>关系模式长期固定到影响生活，问题常落在关系而非个人</td><td class="nw">三章 · 7</td></tr>
+          <tr><td class="nw">短程治疗</td><td>不追根源，直接改维持问题的循环，因此可以很短</td><td class="nw">四章 · 5</td></tr>
+          <tr><td class="nw">重新定义问题</td><td>改写问题的描述，使新的解法成为可能</td><td class="nw">四章 · 6</td></tr>
+          <tr><td class="nw">安置</td><td>给无法解决的困难一个固定位置，限制它的侵占范围</td><td class="nw">四章 · 7</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="use">
+    <h2><span class="no">09</span>怎么读这本书</h2>
+    <p class="lead">五百页、三十四讲，通读一遍大约要十几小时。它有两种完全不同的用法，选错了会觉得「讲得都对但用不上」。</p>
+
+    <div class="info-grid two">
+      <div class="info-card">
+        <h4>用法一：当教材通读</h4>
+        <p>按顺序读，重点在前两章。变量与机制是地基，读完你会得到一套描述自己的词汇。第三章可以慢一点，第四章读快了容易变成鸡汤。</p>
+        <div class="kv">适合：想系统补一遍心理学的人</div>
+      </div>
+      <div class="info-card">
+        <h4>用法二：当词典查</h4>
+        <p>带着一个具体问题，从目录找到对应的讲，只读那一讲，再回到「概念速查」串一下相邻概念。这本书的目录本身就是一张索引。</p>
+        <div class="kv">适合：正在被某件事卡住的人</div>
+      </div>
+    </div>
+
+    <h3>三条读法建议</h3>
+    <ul class="signal">
+      <li>每读完一讲，用一句话把标题里的「为什么」改写成「在什么条件下」。改得出来，才算读懂。</li>
+      <li>遇到让你不舒服的段落，先别急着反驳——那通常是你身上某个稳态被碰到了。</li>
+      <li>第四章不要跳过「安置」和「接纳」两讲。多数人只想要「改变」，但真正让人松一口气的往往是前两个。</li>
+    </ul>
+
+    <div class="callout">
+      <div class="callout-t">边界提醒</div>
+      这是一本入门讲义，不是诊疗手册。它没有量表、没有诊断标准，也不能替代精神科医生的判断。<strong>如果问题已经影响到睡眠、进食、工作或人身安全，先看医生，再读书。</strong>
+    </div>
+  </section>
+
+  <section class="section" id="quotes">
+    <h2><span class="no">10</span>金句：分得清原话与转述</h2>
+    <p class="lead">讲义体的书，金句大多藏在讲标题里。下面分开列：能指到官方文案的原话，和来自读者笔记的转述。</p>
+
+    <div class="quote-block">
+      很多时候，问题不在你身上，而是关系变了，问题就消失了。
+      <span class="quote-src">—— 内容简介（官方文案原文）</span>
+    </div>
+
+    <div class="quote-block">
+      心理学就是用科学的方法，弥补每个人个体经验和直觉的不足，为生活提供专业的帮助。
+      <span class="quote-src">—— 序章第一讲（读者笔记转述，非逐字引文）</span>
+    </div>
+
+    <div class="quote-block">
+      对普通人来说，心理学唯一重要的任务就是帮助人。
+      <span class="quote-src">—— 序章第一讲（读者笔记转述）</span>
+    </div>
+
+    <h3>标题本身就是判断句</h3>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>讲标题</th><th>它在质疑什么</th></tr></thead>
+        <tbody>
+          <tr><td>稳态：为什么「江山易改，本性难移」</td><td>质疑「难移」等于「不能移」，难移是稳态在起作用</td></tr>
+          <tr><td>人格：为什么我们爱聊星座和 MBTI</td><td>质疑标签带来的确定感，是不是我们真正需要的东西</td></tr>
+          <tr><td>抑郁：是医学的病，还是关系的病</td><td>质疑用一个词概括所有抑郁状态的做法</td></tr>
+          <tr><td>重新定义问题：「对手」到底长什么样</td><td>质疑「问题很清楚，只是解决不了」这个前提</td></tr>
+          <tr><td>安置：解决不了的困难，怎么办</td><td>质疑「所有困难都必须被解决」</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="section" id="limits">
+    <h2><span class="no">11</span>局限：入门书的边界在哪里</h2>
+    <p class="lead">这本书的优点和缺点是同一件事：它太想对读者有用了。为了让知识「可用」，它必须在准确性与可读性之间不断让步，这些让步值得提前知道。</p>
+
+    <div class="limit-list">
+      <div class="limit-item">
+        <div class="limit-n">01</div>
+        <div class="limit-c"><b>讲义体例：广而浅，是结构决定的</b><span>三十四讲覆盖心理学主要领域，平均每讲十几页。想要深度必须回原典——尤其是认知、神经科学部分，这本书只给到「知道有这么回事」的层次。</span></div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-n">02</div>
+        <div class="limit-c"><b>六条路径是「简化史」</b><span>真实心理学史远比六分法破碎：流派互相渗透、时间重叠、内部也分裂。六分法作为入门地图很好用，但别把它当成学科的真实结构。</span></div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-n">03</div>
+        <div class="limit-c"><b>系统视角解释力强，可证伪性弱</b><span>「关系变了，问题就消失了」这句话几乎能解释一切，也因此很难被检验。它作为治疗思路极有效，作为科学命题则需要更严格的限定。</span></div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-n">04</div>
+        <div class="limit-c"><b>经典研究要打折</b><span>入门书难免引用社会心理学的经典实验，而这个领域近十几年经历了可重复性危机。读到「实验证明」时，最好补一句「当年证明」。</span></div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-n">05</div>
+        <div class="limit-c"><b>个案不等于规律</b><span>咨询室的案例生动、有说服力，但它是为了说明思路而选的，不构成证据。把个案当普适结论，是读这类书最常见的误用。</span></div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-n">06</div>
+        <div class="limit-c"><b>没有工具，就做不了自助评估</b><span>书里没有量表、没有诊断标准、没有分级建议。它能帮你理解，但不能帮你判断「我到了什么程度」——这件事只能交给专业评估。</span></div>
+      </div>
+      <div class="limit-item">
+        <div class="limit-n">07</div>
+        <div class="limit-c"><b>对重度问题的指导有限</b><span>关系视角对轻中度困扰很有力，但涉及重度抑郁、双相、精神病性症状时，医学干预是主线。书中也提醒要求医，只是这条提醒很容易被读者略过。</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="extend">
+    <h2><span class="no">12</span>延伸对照：接下来读什么</h2>
+    <p class="lead">这本书像一张地图，地图之后要选一条路走进去。下面七本按「补哪一块」来配，不是按名气排。</p>
+
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>书</th><th>补的是哪一块</th><th>什么时候读</th></tr></thead>
+        <tbody>
+          <tr><td>津巴多《心理学与生活》</td><td>教科书式的全面与准确，补本书「广而浅」的部分</td><td>想系统学一遍，或准备考试</td></tr>
+          <tr><td>迈尔斯《社会心理学》</td><td>第二章机制的社会面：归因、从众、态度</td><td>对「人怎么被他人影响」特别好奇时</td></tr>
+          <tr><td>斯坦诺维奇《这才是心理学》</td><td>怎么辨别伪心理学，补本书没讲的科学方法论</td><td>读任何心理学科普之前，先读这本</td></tr>
+          <tr><td>李松蔚《5% 的改变》</td><td>同一作者，把系统视角落到「小行动」上</td><td>读完方法章，想知道明天具体做什么</td></tr>
+          <tr><td>纳皮尔《热锅上的家庭》</td><td>系统式家庭治疗的真实案例，第三章的展开版</td><td>对家庭议题有直接困扰时</td></tr>
+          <tr><td>卡尼曼《思考，快与慢》</td><td>「内置算法」的完整版，双系统与偏差清单</td><td>想深挖机制章的认知部分</td></tr>
+          <tr><td>岸见一郎《被讨厌的勇气》</td><td>人本／阿德勒脉络，和「接纳」一讲对照读</td><td>纠结于「要不要为自己活」时</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <div class="callout-t">如果只加一本</div>
+      加《这才是心理学》。这本讲义教你「心理学有哪些说法」，那本教你「<strong>凭什么相信这些说法</strong>」。前者给地图，后者给罗盘，配起来才不容易被各种心理学术语唬住。
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-note">
+      本页依据李松蔚《心理学讲义》（新星出版社，2024 年 5 月，ISBN 978-7-5133-5611-4，得到图书出品）整理，章节与讲次标题照录原书目录。<br>
+      引号内文字标注了出处：官方内容简介为原文；序章两句来自公开读者笔记的转述，已注明非逐字引文。凡未标引号者均为归纳与转述，不冒充原文。<br>
+      本页为单文件 HTML，无外部依赖，可离线阅读。内容为知识梳理，不构成任何医疗或心理治疗建议。
+    </div>
+  </footer>
+</div>
+
+<button class="back-to-top" id="toTop" aria-label="返回顶部">↑</button>
+
+<div class="modal-overlay" id="modal">
+  <div class="modal-card">
+    <button class="close-btn" id="closeBtn" aria-label="关闭">×</button>
+    <div class="modal-title" id="modalTitle"></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+var glossary = {
+  'pd': {
+    t: '人格障碍',
+    d: '指一个人的关系模式长期固定、缺乏弹性，并在多个场景里造成明显困扰或功能损害。本书把它放在「关系」一章而不是「异常」一章，用意是提醒：被诊断为障碍的常常不是某个人的内部缺陷，而是一段关系长期卡住的形态。'
+  },
+  'depath': {
+    t: '去病理化',
+    d: '不是否认疾病的存在，而是拒绝让一个诊断吞掉整个人。做法包括：把「他是抑郁症」改成「他正在经历抑郁发作」，把注意力从标签转回具体的人、具体的生活条件。本书在讨论如何帮助抑郁者时给出这条建议，位置在第三章第五讲。'
+  },
+  'steady': {
+    t: '稳态',
+    d: '系统受到扰动后倾向于回到原有平衡的机制。本书用它解释「江山易改，本性难移」：不是性格不可变，而是变化会被稳态拉回去。因此改变的关键往往不是加大意志力，而是打破原有平衡（换环境、换关系、换节奏）。'
+  },
+  'schema': {
+    t: '图式',
+    d: '人用来解释新信息的既有框架。它决定你「看到什么」，而不只是「怎么想」。本书用棋盘错觉说明：同一块颜色在不同图式下会被看成深浅不同。图式在环境中形成，也会随环境变化而发展。'
+  },
+  'construct': {
+    t: '建构',
+    d: '语言与观念参与塑造现实的过程。同一件事换一种说法，感受与行动都会变。本书把它放在变量章最后一讲，是因为前面八个变量都在讲「有什么」，建构讲的是「这些是怎么被说出来的」。'
+  },
+  'attrib': {
+    t: '归因',
+    d: '对结果发生原因的解释习惯。归到人格（他就是懒）还是归到情境（这个任务没有明确标准），会导向完全不同的情绪与行动。本书强调「真相不止一个」，归因方式本身是可以换的。'
+  },
+  'drive': {
+    t: '内驱',
+    d: '本书把动机拆成「想不想」与「能不能」两件事。很多被当成意志力问题的拖延，其实是路径或能力问题；先补能力，动机才会回来。'
+  },
+  'reframe': {
+    t: '重新定义问题',
+    d: '通过改写问题的描述，让原本无解的局面出现新的解法。它不改变事实，改变的是「对手长什么样」——对手一变，打法就变。位置在第四章第六讲。'
+  },
+  'settle': {
+    t: '安置',
+    d: '面对无法解决的困难时，给它一个固定的位置：固定的时间、固定的说法、固定的处理方式，从而限制它对生活的侵占。它不是解决，也不是放弃，而是划界。'
+  },
+  'accept': {
+    t: '接纳',
+    d: '本书把它定义为「积极主动的自我调适」：先承认事实不可改，再把力气从改变事实转向改变与事实的关系。因此接纳不是躺平，它同样需要动作，只是动作的方向不同。'
+  },
+  'short': {
+    t: '短程治疗',
+    d: '不追童年根源，直接干预「维持问题的循环」，因此疗程可以很短。它的理论前提是系统式的：问题之所以持续，是因为有一个回路在不断供能，切断供能比追溯起源更有效。'
+  },
+  'family': {
+    t: '家庭生命周期',
+    d: '家庭像有机体，会经历形成、扩展、收缩等阶段。每次阶段转换都要求成员改变角色与规则，转换期最容易出现症状。本书用它解释：一个人的变化为什么会牵动全家。'
+  }
+};
+
+function openModal(key){
+  var g = glossary[key];
+  if(!g) return;
+  document.getElementById('modalTitle').textContent = g.t;
+  document.getElementById('modalBody').textContent = g.d;
+  document.getElementById('modal').classList.add('visible');
+}
+document.getElementById('closeBtn').addEventListener('click', function(){
+  document.getElementById('modal').classList.remove('visible');
+});
+document.getElementById('modal').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('visible');
+});
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Escape') document.getElementById('modal').classList.remove('visible');
+});
+
+var toTop = document.getElementById('toTop');
+window.addEventListener('scroll', function(){
+  if(window.scrollY > 600){ toTop.classList.add('show'); } else { toTop.classList.remove('show'); }
+  var secs = document.querySelectorAll('.section');
+  var links = document.querySelectorAll('.toc-list a');
+  var cur = '';
+  secs.forEach(function(s){
+    if(s.getBoundingClientRect().top <= 120) cur = s.id;
+  });
+  links.forEach(function(a){
+    a.classList.toggle('active', a.getAttribute('href') === '#' + cur);
+  });
+});
+toTop.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+</script>
+</body>
+</html>

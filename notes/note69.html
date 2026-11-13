@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《增长黑客》· 知识图谱</title>
+<style>
+:root{
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","PingFang SC","Hiragino Sans GB",sans-serif;
+  --font-serif:Georgia,"Noto Serif SC","Source Han Serif SC",STSong,serif;
+  --font-mono:"SF Mono","Cascadia Code",Consolas,monospace;
+
+  --primary:#1d4a3f; --primary-light:#e7efeb; --primary-dark:#10241f;
+  --accent:#2f8a6f; --accent-deep:#1d4a3f;
+  --gold:#b8842c; --gold-light:#f2e6cf;
+  --bg:#f5f4ef; --bg-card:#fffdf9; --bg-soft:#efeee6; --bg-softer:#e5e4d8;
+  --bg-tag:#dfe9e2;
+  --text:#2a302c; --text-heading:#161d19; --text-muted:#6f7a72; --text-light:#8d968f;
+  --border:#d6d5c9; --border-soft:#e4e3d8;
+  --highlight:#eef4f0; --highlight-strong:#dfe9e2;
+  --shadow-sm:0 1px 3px rgba(22,29,25,.06); --shadow:0 2px 10px rgba(22,29,25,.07);
+  --radius-sm:4px; --radius:8px; --radius-lg:12px;
+  --color-concept:#5b4b8a; --color-tool:#1d6a8c; --color-case:#2f7d4f;
+  --color-history:#a8752a; --color-insight:#1d7a67; --color-debate:#a8412f;
+  --color-solution:#2f7d4f; --color-crisis:#b03a2e; --color-mechanism:#2f8a6f;
+  --color-effect:#7a4a8a; --color-core:#1d4a3f;
+  --warn-bg:#fbf6e9; --warn-border:#e8d9b5; --example-bg:#fbfaf4;
+  --reflect-bg:#f1efe6; --quote-border:#b8842c;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+/* 侧栏 */
+.sidebar{position:fixed;top:0;left:0;width:216px;height:100vh;background:var(--bg-card);border-right:1px solid var(--border-soft);padding:22px 14px 40px;overflow-y:auto;z-index:100;}
+.sidebar h3{font-size:11.5px;color:var(--text-muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:12px;padding-left:8px;}
+.sidebar .toc-list{list-style:none;}
+.sidebar .toc-list li{margin-bottom:1px;}
+.sidebar .toc-list a{display:block;padding:5px 10px;border-radius:var(--radius-sm);font-size:12.8px;color:var(--text);border-left:3px solid transparent;transition:background .15s;}
+.sidebar .toc-list a:hover{background:var(--bg-softer);text-decoration:none;}
+.sidebar .toc-list a.active{background:var(--primary-light);color:var(--primary-dark);font-weight:600;border-left-color:var(--primary);}
+.sidebar .toc-l2 a{padding-left:20px;font-size:11.8px;color:var(--text-muted);}
+.sidebar .sb-foot{margin-top:18px;padding:10px 10px 0;border-top:1px dashed var(--border);font-size:11px;color:var(--text-light);line-height:1.6;}
+
+/* 主区 */
+.main{margin-left:216px;max-width:1080px;padding:30px 36px 110px;}
+
+/* 页头 */
+.header{position:relative;overflow:hidden;border-radius:var(--radius-lg);padding:34px 36px 30px;margin-bottom:26px;background:linear-gradient(135deg,#101f1b 0%,#1a3d34 52%,#245244 100%);color:#e9efe9;box-shadow:0 6px 26px rgba(16,36,31,.18);}
+.header h1{font-size:30px;line-height:1.3;color:#fff;margin-bottom:8px;padding-left:14px;border-left:4px solid var(--gold);letter-spacing:.01em;}
+.header .subtitle{color:#a9bdb3;font-size:13.5px;margin-bottom:16px;padding-left:18px;}
+.header .meta{display:flex;flex-wrap:wrap;gap:7px 22px;font-size:12.5px;color:#b9c9c1;padding:11px 16px;background:rgba(255,255,255,.07);border-radius:var(--radius);margin-bottom:14px;}
+.header .meta strong{color:#fff;font-weight:600;}
+.header .framework-badges{display:flex;flex-wrap:wrap;gap:7px;position:relative;z-index:2;}
+.header .badge{background:rgba(255,255,255,.11);color:#dfe9e2;padding:3px 12px;border-radius:20px;font-size:11.5px;font-weight:600;letter-spacing:.02em;}
+.header .core-narrative{margin-top:16px;font-size:14px;color:#cfdcd4;line-height:1.7;position:relative;z-index:2;}
+.header .core-narrative b{color:#f0e4c9;}
+.hd-curve{position:absolute;left:0;bottom:0;width:100%;height:100%;opacity:.5;pointer-events:none;}
+.hd-mark{position:absolute;right:18px;bottom:-24px;font-family:var(--font-mono);font-size:104px;font-weight:800;color:rgba(255,255,255,.045);letter-spacing:-3px;pointer-events:none;line-height:1;}
+
+/* 区块 */
+.section{margin-bottom:30px;}
+.section h2{font-size:20px;color:var(--text-heading);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--primary-light);display:flex;align-items:baseline;gap:9px;}
+.section h2 .no{font-family:var(--font-mono);font-size:12.5px;color:var(--gold);font-weight:700;letter-spacing:.06em;}
+.section h3{font-size:15.5px;color:var(--text-heading);margin:22px 0 9px;padding-left:9px;border-left:3px solid var(--accent);}
+.section h4{font-size:14px;color:var(--primary-dark);margin:16px 0 6px;}
+.section p{font-size:14px;margin-bottom:10px;}
+.section p.lead{color:var(--text-muted);font-size:13.2px;margin-bottom:14px;}
+
+/* 卡片 */
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:13px;margin:14px 0;}
+.info-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px 18px;transition:box-shadow .18s,transform .18s;}
+.info-card:hover{box-shadow:var(--shadow);}
+.info-card .label{font-weight:700;font-size:13.5px;margin-bottom:7px;color:var(--text-heading);padding-left:9px;}
+.info-card .content{font-size:13.2px;line-height:1.7;}
+.info-card .example{margin-top:9px;padding:7px 11px;background:var(--example-bg);border-radius:var(--radius-sm);font-size:12.3px;color:var(--text-muted);border-left:3px solid var(--border);line-height:1.6;}
+.info-card .example strong{color:var(--accent-deep);}
+.info-card.concept .label{border-left:4px solid var(--color-concept);}
+.info-card.tool .label{border-left:4px solid var(--color-tool);}
+.info-card.case .label{border-left:4px solid var(--color-case);}
+.info-card.history .label{border-left:4px solid var(--color-history);}
+.info-card.insight .label{border-left:4px solid var(--color-insight);}
+.info-card.debate .label{border-left:4px solid var(--color-debate);}
+.info-card.solution .label{border-left:4px solid var(--color-solution);}
+.info-card.crisis .label{border-left:4px solid var(--color-crisis);}
+.info-card.mechanism .label{border-left:4px solid var(--color-mechanism);}
+.info-card.effect .label{border-left:4px solid var(--color-effect);}
+.info-card.core .label{border-left:4px solid var(--color-core);}
+
+.insight-card{background:var(--highlight);border:1px solid var(--border-soft);border-left:4px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;padding:16px 20px;margin-bottom:11px;}
+.insight-card .insight-title{font-weight:700;font-size:14.2px;color:var(--primary-dark);margin-bottom:5px;}
+.insight-card .insight-body{font-size:13.4px;line-height:1.72;}
+.insight-card .insight-evidence{font-size:11.8px;color:var(--text-muted);margin-top:8px;padding-top:7px;border-top:1px dashed var(--border);}
+
+.law-card{background:var(--bg-card);border:1px solid var(--border-soft);border-left:5px solid var(--primary);border-radius:0 var(--radius) var(--radius) 0;padding:14px 18px;margin-bottom:9px;}
+.law-card h4{font-size:13.6px;color:var(--primary-dark);margin:0 0 5px;}
+.law-card p{font-size:13px;line-height:1.68;margin:0;}
+
+.pattern-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:11px;margin:14px 0;}
+.pattern-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:15px 17px;}
+.pattern-card .pattern-name{font-weight:700;font-size:13.6px;color:var(--primary-dark);margin-bottom:6px;padding-bottom:5px;border-bottom:1px dashed var(--border-soft);}
+.pattern-card .pattern-desc{font-size:12.8px;line-height:1.66;}
+.pattern-card .pattern-examples{font-size:11.8px;color:var(--text-light);margin-top:7px;}
+
+.reflection-block{background:var(--reflect-bg);border:1px solid var(--border-soft);border-radius:var(--radius);padding:15px 19px;margin:14px 0;}
+.reflection-block .reflection-title{font-weight:700;font-size:13.6px;color:var(--primary-dark);margin-bottom:7px;}
+.reflection-block p{font-size:13px;line-height:1.72;margin-bottom:7px;}
+.reflection-block p:last-child{margin-bottom:0;}
+
+blockquote.quote-block{background:var(--bg-card);border-left:4px solid var(--quote-border);margin:16px 0;padding:15px 19px;font-family:var(--font-serif);font-size:14.6px;color:var(--text-heading);border-radius:0 var(--radius) var(--radius) 0;box-shadow:var(--shadow-sm);line-height:1.75;}
+blockquote.quote-block .cite{display:block;margin-top:9px;font-family:var(--font-sans);font-size:11.8px;color:var(--text-muted);text-align:right;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0;}
+
+/* 表格 */
+.table-scroll{overflow-x:auto;margin:14px 0;}
+table.extension{width:100%;border-collapse:collapse;font-size:12.8px;}
+table.extension th{background:var(--primary-light);color:var(--primary-dark);padding:9px 12px;text-align:left;font-weight:700;border-bottom:2px solid var(--border);white-space:nowrap;}
+table.extension td{padding:9px 12px;border-bottom:1px solid var(--border-soft);vertical-align:top;line-height:1.62;}
+table.extension tr:hover td{background:var(--bg-soft);}
+table.extension td:first-child{white-space:nowrap;font-weight:600;color:var(--primary-dark);}
+table.extension.tight td,table.extension.tight th{padding:7px 10px;}
+.nw{white-space:nowrap;}
+
+/* 漏斗 */
+.funnel{margin:18px 0 10px;}
+.fn-row{display:grid;grid-template-columns:minmax(0,1fr) 218px;gap:14px;align-items:center;margin-bottom:7px;}
+.fn-track{background:var(--bg-soft);border-radius:3px;height:44px;display:flex;}
+.fn-bar{height:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 13px;border-radius:3px;color:#fff;font-size:12.6px;font-weight:600;min-width:120px;}
+.fn-bar em{font-style:normal;font-family:var(--font-mono);font-size:11px;opacity:.85;letter-spacing:.04em;}
+.fn-note{font-size:11.8px;color:var(--text-muted);line-height:1.5;}
+
+/* 指标条 */
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;background:var(--border-soft);border:1px solid var(--border-soft);margin:15px 0;border-radius:var(--radius);overflow:hidden;}
+.metric{background:var(--bg-card);padding:13px 15px;}
+.metric b{display:block;font-family:var(--font-mono);font-size:21px;color:var(--primary);line-height:1.25;font-weight:700;}
+.metric span{font-size:11.5px;color:var(--text-muted);display:block;margin-top:3px;line-height:1.45;}
+
+/* 步进链 */
+.chain{list-style:none;counter-reset:ch;margin:14px 0;}
+.chain li{position:relative;padding:9px 0 9px 42px;margin-left:11px;border-left:2px solid var(--border-soft);}
+.chain li:last-child{border-left-color:transparent;}
+.chain li::before{counter-increment:ch;content:counter(ch,decimal-leading-zero);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--primary);color:#fff;border-radius:50%;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);line-height:1;}
+.chain li b{color:var(--text-heading);font-size:13.4px;}
+.chain li p{font-size:12.9px;color:var(--text);margin:3px 0 0;line-height:1.65;}
+
+/* 双栏对照 */
+.vs-block{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:14px 0;}
+.vs-col{padding:14px 16px;background:var(--bg-card);}
+.vs-col.old{background:var(--bg-soft);border-right:1px solid var(--border);}
+.vs-col h5{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.vs-col ul{list-style:none;}
+.vs-col li{font-size:12.8px;line-height:1.6;padding:4px 0 4px 14px;position:relative;}
+.vs-col li::before{content:"·";position:absolute;left:2px;color:var(--accent);font-weight:700;}
+
+/* 术语按钮 */
+.glossary-trigger{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;background:var(--accent);color:#fff;border:none;border-radius:50%;font-size:10.5px;font-weight:700;cursor:pointer;vertical-align:1px;margin-left:3px;transition:transform .15s;font-family:var(--font-mono);}
+.glossary-trigger:hover{transform:scale(1.14);}
+
+/* 弹窗 */
+.modal-overlay{position:fixed;inset:0;background:rgba(16,36,31,.45);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(2px);padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:26px 30px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.24);position:relative;}
+.modal-card .close-btn{position:absolute;top:11px;right:15px;background:none;border:none;font-size:19px;cursor:pointer;color:var(--text-muted);line-height:1;padding:4px;}
+.modal-card h4{font-size:15.5px;color:var(--text-heading);margin:0 0 9px;}
+.modal-card p{font-size:13.4px;line-height:1.8;margin-bottom:7px;}
+.modal-card .gl-formula{font-family:var(--font-mono);background:var(--bg-soft);padding:8px 11px;border-radius:var(--radius-sm);font-size:12.4px;margin:8px 0;color:var(--primary-dark);}
+
+.back-to-top{position:fixed;bottom:26px;right:26px;background:var(--primary);color:#fff;border:none;border-radius:50%;width:42px;height:42px;font-size:17px;cursor:pointer;box-shadow:0 3px 12px rgba(16,36,31,.28);z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;}
+.back-to-top.visible{opacity:1;pointer-events:auto;}
+
+.footer-note{margin-top:36px;padding-top:16px;border-top:1px solid var(--border-soft);font-size:11.8px;color:var(--text-light);line-height:1.75;}
+.footer-note b{color:var(--text-muted);font-weight:600;}
+
+.callout{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:13px 17px;margin:14px 0;font-size:13px;line-height:1.7;}
+.callout b{color:#8a5a12;}
+.limit-list{list-style:none;margin:12px 0;}
+.limit-list li{position:relative;padding:9px 0 9px 24px;border-bottom:1px dashed var(--border-soft);font-size:13.2px;line-height:1.68;}
+.limit-list li:last-child{border-bottom:none;}
+.limit-list li::before{content:"!";position:absolute;left:0;top:10px;width:16px;height:16px;background:var(--color-debate);color:#fff;border-radius:3px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;}
+.limit-list li b{color:var(--text-heading);}
+
+@media print{
+  body{background:#fff;}
+  .sidebar,.back-to-top,.modal-overlay{display:none!important;}
+  .main{margin-left:0;padding:0;max-width:100%;}
+  .header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  h2,h3{page-break-after:avoid;}
+  .info-card,.insight-card,.law-card,.pattern-card,blockquote.quote-block{page-break-inside:avoid;}
+}
+@media (max-width:860px){
+  body{overflow-x:hidden;}
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:14px 13px 70px;}
+  .header{padding:24px 20px;}
+  .header h1{font-size:22px;}
+  .header .hd-mark{font-size:64px;bottom:-10px;}
+  .header .meta{display:grid;grid-template-columns:1fr;gap:3px;padding:10px 13px;}
+  .header .meta span{overflow-wrap:anywhere;}
+  .info-grid,.pattern-grid,.two-col,.vs-block{grid-template-columns:1fr;}
+  .vs-col.old{border-right:none;border-bottom:1px solid var(--border);}
+  .fn-row{grid-template-columns:1fr;gap:4px;}
+  .fn-bar{font-size:11.6px;padding:0 10px;}
+  .fn-note{padding-left:2px;margin-bottom:4px;}
+  .metric-row{grid-template-columns:1fr 1fr;}
+  .table-scroll table{min-width:600px;}
+  table.extension td,table.extension th{padding:8px 10px;}
+  .modal-card{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#map">01　全书骨架</a></li>
+    <li><a href="#what">02　什么是增长黑客</a></li>
+    <li><a href="#pmf">03　第 2 章 · 创造正确的产品</a></li>
+    <li><a href="#acquire">04　第 3 章 · 获取用户</a></li>
+    <li><a href="#activate">05　第 4 章 · 激发活跃</a></li>
+    <li><a href="#retain">06　第 5 章 · 提高留存</a></li>
+    <li><a href="#revenue">07　第 6 章 · 增加收入</a></li>
+    <li><a href="#viral">08　第 7 章 · 病毒传播</a></li>
+    <li><a href="#cases">09　第 8 章 · 案例集</a></li>
+    <li><a href="#quotes">10　金句存档</a></li>
+    <li><a href="#limits">11　该打折扣的地方</a></li>
+    <li><a href="#extend">12　延伸对照</a></li>
+  </ul>
+  <div class="sb-foot">范冰 · 电子工业出版社<br>2015 年 7 月 · 8 章</div>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <svg class="hd-curve" viewBox="0 0 1000 320" preserveAspectRatio="none" aria-hidden="true">
+      <defs>
+        <linearGradient id="gfill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#7fd4b4" stop-opacity="0.28"/>
+          <stop offset="100%" stop-color="#7fd4b4" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path d="M0,300 C120,296 200,290 300,272 C400,254 470,240 560,208 C660,172 730,120 820,80 C890,50 950,36 1000,30 L1000,320 L0,320 Z" fill="url(#gfill)"/>
+      <path d="M0,300 C120,296 200,290 300,272 C400,254 470,240 560,208 C660,172 730,120 820,80 C890,50 950,36 1000,30" fill="none" stroke="#7fd4b4" stroke-width="2" stroke-opacity="0.55"/>
+      <circle cx="820" cy="80" r="5" fill="#e8d5a8" fill-opacity="0.9"/>
+      <circle cx="1000" cy="30" r="5" fill="#e8d5a8" fill-opacity="0.9"/>
+    </svg>
+    <div class="hd-mark">AARRR</div>
+    <h1>增长黑客</h1>
+    <div class="subtitle">创业公司的用户与收入增长秘籍</div>
+    <div class="meta">
+      <span><strong>作者</strong> 范冰（XDash）</span>
+      <span><strong>出版</strong> 电子工业出版社 · 2015 年 7 月</span>
+      <span><strong>ISBN</strong> 9787121263606</span>
+      <span><strong>篇幅</strong> 332 页 / 396 千字</span>
+      <span><strong>结构</strong> 8 章</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">AARRR 漏斗</span>
+      <span class="badge">PMF 前置</span>
+      <span class="badge">案例驱动</span>
+      <span class="badge">中国互联网</span>
+      <span class="badge">2015 年初版</span>
+    </div>
+    <div class="core-narrative">
+      这本书真正的主张不是「省钱做营销」，而是：<b>增长不是一个部门的事，是产品本身的一个属性</b>——把用户从第一次听说到持续付钱的全过程拆成可测量的漏斗，然后在每一层上用工程手段做实验。它给的是一套拆解动作的顺序，不是一堆技巧。
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <section class="section" id="map">
+    <h2><span class="no">01</span>全书骨架：一本书就是一条漏斗</h2>
+    <p class="lead">八章不是并列的八个话题，是一条有严格先后顺序的流水线。前两章解决「能不能做」，中间四章对应 AARRR 中间四层，第七章是放大器，第八章回头做证据。</p>
+
+    <div class="funnel">
+      <div class="fn-row">
+        <div class="fn-track"><div class="fn-bar" style="width:100%;background:linear-gradient(90deg,#10241f,#1d4a3f)">获取 Acquisition <em>第 3 章</em></div></div>
+        <div class="fn-note">从哪来人：渠道、种子、冷启动</div>
+      </div>
+      <div class="fn-row">
+        <div class="fn-track"><div class="fn-bar" style="width:88%;background:linear-gradient(90deg,#1d4a3f,#28604f)">激活 Activation <em>第 4 章</em></div></div>
+        <div class="fn-note">来了有没有做那件关键的事</div>
+      </div>
+      <div class="fn-row">
+        <div class="fn-track"><div class="fn-bar" style="width:74%;background:linear-gradient(90deg,#28604f,#2f7a60)">留存 Retention <em>第 5 章</em></div></div>
+        <div class="fn-note">下周还在不在，这是复利的开关</div>
+      </div>
+      <div class="fn-row">
+        <div class="fn-track"><div class="fn-bar" style="width:58%;background:linear-gradient(90deg,#2f7a60,#348a6c)">收入 Revenue <em>第 6 章</em></div></div>
+        <div class="fn-note">愿不愿意付，付多少，付多久</div>
+      </div>
+      <div class="fn-row">
+        <div class="fn-track"><div class="fn-bar" style="width:44%;background:linear-gradient(90deg,#348a6c,#b8842c)">传播 Referral <em>第 7 章</em></div></div>
+        <div class="fn-note">用户替你把漏斗的口子撕大</div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:2px">漏斗之上还有一道闸门：<b>第 2 章的产品-市场契合（PMF）</b>。产品不对，下面四层做得再漂亮，也只是把水倒进漏底的桶。</p>
+
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>章</th><th>主题</th><th>这一章在回答什么</th><th>落地的抓手</th></tr></thead>
+        <tbody>
+          <tr><td>第 1 章</td><td>增长黑客的崛起</td><td>这个角色是谁、从哪来、凭什么能低成本增长</td><td>角色定义、团队编成、能力模型</td></tr>
+          <tr><td>第 2 章</td><td>创造正确的产品</td><td>什么条件下才配谈增长</td><td>MVP、需求验证、aha moment、40% 测试</td></tr>
+          <tr><td>第 3 章</td><td>获取用户</td><td>第一批人在哪，怎么把他们低成本弄进来</td><td>种子用户、渠道矩阵、ASO、内容与换量</td></tr>
+          <tr><td>第 4 章</td><td>激发活跃</td><td>人来了，怎么让他完成第一次价值交付</td><td>新手引导、关键行为、游戏化、推送、A/B</td></tr>
+          <tr><td>第 5 章</td><td>提高留存</td><td>怎么让人第二次、第三次回来</td><td>留存曲线、魔法数字、召回、会员体系</td></tr>
+          <tr><td>第 6 章</td><td>增加收入</td><td>怎么把注意力和关系换成钱，且不伤留存</td><td>变现模式、免费增值分层、定价、LTV/CAC</td></tr>
+          <tr><td>第 7 章</td><td>病毒传播</td><td>怎么让增长自己长出来</td><td>K 因子、病毒循环、动机设计</td></tr>
+          <tr><td>第 8 章</td><td>完整案例集</td><td>这些方法在真实公司里长什么样</td><td>跨行业样本对照</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="metric-row">
+      <div class="metric"><b>1 个</b><span>核心漏斗：AARRR</span></div>
+      <div class="metric"><b>3 类</b><span>角色：增长 / 数据 / 内容</span></div>
+      <div class="metric"><b>0 元</b><span>理想状态的获客成本</span></div>
+      <div class="metric"><b>40%</b><span>PMF 的经验分界线</span></div>
+      <div class="metric"><b>&gt;1</b><span>K 因子的自增长门槛</span></div>
+    </div>
+
+    <div class="insight-card">
+      <div class="insight-title">全书只有一个真正的判断：顺序不能颠倒</div>
+      <div class="insight-body">范冰把「增长」拆成了一条有严格前置条件的链：产品不对 → 谈获取是浪费钱；获取了不激活 → 留存是假数字；留存不行 → 收入是透支；收入模型不成立 → 病毒传播只是加速死亡。所以这本书读法不该是「挑有用的章节看」，而是照顺序自查自己卡在哪一层。</div>
+      <div class="insight-evidence">对应第 2 章开头与第 5 章对「留存是增长的地基」的反复强调</div>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="section" id="what">
+    <h2><span class="no">02</span>什么是增长黑客：一个被误解的岗位</h2>
+    <p class="lead">第 1 章做的是「正名」。中文语境里「黑客」两个字带着灰产联想，而范冰要立的是另一件事：这是一个用工程与数据替代预算的岗位。</p>
+
+    <h3>2.1 概念的三个坐标</h3>
+    <p>书里把 <b>growth hacker</b><button class="glossary-trigger" onclick="openModal('growthhacker')" aria-label="术语：增长黑客">?</button>的来历拆成三段：2010 年 Sean Ellis 在博客里第一次用这个词招人，他要找一个「唯一北极星是增长」的人；2012 年 Andrew Chen 写文章把它推到台前，说这是「新型的营销副总裁」；再往后，Dropbox、Airbnb、Facebook 这些公司的实践把方法论补齐。所以它不是学院产物，是先有干法、后有名字。</p>
+
+    <div class="info-grid">
+      <div class="info-card concept">
+        <div class="label">定位：夹在三个部门中间</div>
+        <div class="content">产品管功能，市场管声量，技术管实现。增长黑客站在三者交界处：他不写完整的商业计划，也不做品牌广告，而是问「哪个改动能让这条曲线弯一下」，然后自己动手改产品、埋点、跑实验。</div>
+        <div class="example"><strong>判断标准</strong>：一个需求如果他只能提建议、不能自己上线验证，那他就还是市场部的人。</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">方法的底色：先算，再做</div>
+        <div class="content">传统营销的顺序是「先定预算，再看效果」；增长黑客的顺序是「先算清单位经济，再决定投不投」。同样是拉新，前者问「这个渠道能不能曝光一千万」，后者问「这个渠道来的用户，30 天留存和 LTV 是多少」。</div>
+        <div class="example"><strong>口头禅</strong>：不可测量的增长，等于不可管理的增长。</div>
+      </div>
+      <div class="info-card debate">
+        <div class="label">边界：不是灰产</div>
+        <div class="content">书里专门划了线：爬取通讯录、伪造邀请、机器注册、诱导分享，这类手段短期数字好看，但会把产品推到平台封禁和用户反感的对立面。真正的低成本来自「机制设计」，不是「绕过规则」。</div>
+        <div class="example"><strong>反例</strong>：2015 年后微信对诱导分享的连续封杀，让一批靠「分享得红包」起来的应用直接归零。</div>
+      </div>
+    </div>
+
+    <h3>2.2 与传统营销的分野</h3>
+    <div class="vs-block">
+      <div class="vs-col old">
+        <h5>传统市场推广</h5>
+        <ul>
+          <li>预算是主要变量，钱多声量大</li>
+          <li>以曝光、认知、份额为KPI</li>
+          <li>投放周期以月/季度计</li>
+          <li>效果评估靠调研与归因模型</li>
+          <li>产品改动要排期，跨部门协调</li>
+          <li>失败代价是预算打水漂</li>
+        </ul>
+      </div>
+      <div class="vs-col">
+        <h5>增长黑客</h5>
+        <ul>
+          <li>产品机制是主要变量，改动即投放</li>
+          <li>以激活率、留存、K 因子为KPI</li>
+          <li>实验周期以天/周计</li>
+          <li>效果评估靠对照实验与分层数据</li>
+          <li>自己写代码上线，当天看数</li>
+          <li>失败代价是几小时开发和一次回滚</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>2.3 团队怎么编</h3>
+    <p>书里给了几种典型编成，核心逻辑是「一个能拍板的人 + 一个能出数的人 + 一个能出内容/界面的人」，人少但闭环。</p>
+    <ul class="chain">
+      <li><b>增长负责人</b><p>不一定管人，但要对整条漏斗的数字负责。职责不是提需求，而是决定「这个季度只打哪一层」。</p></li>
+      <li><b>数据 / 工程</b><p>埋点、看板、实验平台。没有这套东西，增长团队会退化成「提需求给研发排队」的部门，实验速度立刻掉一个量级。</p></li>
+      <li><b>内容 / 设计</b><p>落地页、引导流程、推送文案、病毒素材。同一套机制，文案差一档，转化率能差一倍。</p></li>
+    </ul>
+    <div class="callout"><b>书里提醒的组织陷阱：</b>把增长团队挂在市场部下面，它会被拉去做campaign；挂在产品部下面，它会被拉去做版本功能。真正能跑起来的形态，是它对「增长指标」直接负责，并且拥有改动产品的权限。</div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这一章在 2026 年还成立吗</div>
+      <p>「用产品改动替代预算」这个内核依然成立，但成立的条件变苛刻了：2015 年一个产品改个分享机制就能白拿流量，因为平台还没设防；今天每个平台的分享、外链、通知都加了闸门，机制设计的空间被压缩，剩下的是「更精细的召回」和「更硬的产品价值」。换句话说，方法没死，免费的那部分红利死了。</p>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="section" id="pmf">
+    <h2><span class="no">03</span>第 2 章 · 创造正确的产品：增长的闸门</h2>
+    <p class="lead">这一章是全书的门槛。范冰的态度很硬：没有 <b>PMF</b><button class="glossary-trigger" onclick="openModal('pmf')" aria-label="术语：PMF">?</button>就开始做增长，等于给一个漏底的桶加水。</p>
+
+    <h3>3.1 为什么顺序不能反</h3>
+    <p>书里讲了一个很朴素的算术：增长黑客的手段多是「提高转化率」，而转化率的提升有天花板。一个激活率 8% 的产品，做到极致也许能到 15%，这是翻倍；但一个需求本身不成立的产品，激活率从 2% 提到 4%，依然没人留下。手段能优化系数，优化不了需求本身。</p>
+    <p>所以判断标准不是「用户喜不喜欢」，而是「用户离不离得开」。这两件事在问卷上都能得高分，在数据上完全不同：喜欢的人会点赞，离不开的人会骂着你继续用。</p>
+
+    <div class="insight-card">
+      <div class="insight-title">PMF 的三种假阳性</div>
+      <div class="insight-body">书里散落着几个判断，合起来是一张体检表：一是「朋友都说好」——熟人样本天然偏正面；二是「留存率还行」——早期用户是带着新鲜感来的，前两周数字好看不代表第三个月还在；三是「有人愿意付钱」——一次性买断的付费不能证明持续需求。三个都过关，才值得往下走。</div>
+      <div class="insight-evidence">对应第 2 章对需求验证与留存关系的论述</div>
+    </div>
+
+    <h3>3.2 MVP：先验证有没有人要</h3>
+    <p><b>MVP</b><button class="glossary-trigger" onclick="openModal('mvp')" aria-label="术语：MVP">?</button>最容易做错的地方，是把「最小」理解成「简陋」。书里给的界定是：它必须交付一次完整的价值闭环，只是把范围压到最小。用户能用它从头到尾办成一件事，哪怕这件事只覆盖一个场景、一个城市、一类人。</p>
+    <ul class="chain">
+      <li><b>先写死假设</b><p>「什么人、在什么场景下、为了解决什么，会用它，并且愿意为此付出什么」。这句话写不出来，MVP 就没有验证对象。</p></li>
+      <li><b>找最小可验证动作</b><p>不是「上线一个 App」，而是「让 50 个人愿意留下手机号」「让 10 个人愿意付 20 块」。动作越接近真实付出，信号越可信。</p></li>
+      <li><b>设一个杀掉它的标准</b><p>事前写下「如果两周内低于 X，就放弃」。没有这条，团队会用各种理由把失败解释成「还早」。</p></li>
+    </ul>
+
+    <h3>3.3 aha moment：把「有用」变成一个动作</h3>
+    <p>书里最实用的一节。所谓 <b>aha moment</b><button class="glossary-trigger" onclick="openModal('aha')" aria-label="术语：aha moment">?</button>，不是用户说「哇」，而是用户在数据里做出了某个动作之后，长期留存突然抬起来。它必须可测量、可复现、可提前触发。</p>
+    <div class="table-scroll">
+      <table class="extension tight">
+        <thead><tr><th>产品</th><th>被识别出的关键行为</th><th>它为什么是分水岭</th></tr></thead>
+        <tbody>
+          <tr><td>Facebook</td><td>注册后 7 天内加满 10 个好友</td><td>信息流有了内容，产品从「通讯录」变成「每天要看的东西」</td></tr>
+          <tr><td>Twitter</td><td>关注满 30 人</td><td>时间线密度够了，刷新才有新内容，否则打开就是空白</td></tr>
+          <tr><td>Dropbox</td><td>在任意设备上放入第一个文件</td><td>体验到「跨设备同步」这个核心承诺，而不是把它当网盘</td></tr>
+          <tr><td>LinkedIn</td><td>填完资料并导入通讯录</td><td>从「简历托管」变成「能看到谁认识谁」的网络</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>找到它的方法书里讲得很直白：把留存用户和流失用户的行为序列拉出来对比，找出那件「留存的人几乎都做了、流失的人大多没做」的事。然后做实验——把新用户强行推到那个动作上，看留存是否真的抬起来。抬不起来，说明是伪相关，换一个再试。</p>
+
+    <h3>3.4 40% 测试：一个能自己做的体检</h3>
+    <p><b>40% 测试</b><button class="glossary-trigger" onclick="openModal('forty')" aria-label="术语：40% 测试">?</button>是全书成本最低的一个工具：给现有用户发一封只有一道题的邮件——「如果明天开始不能再用这个产品，你会有多失望」，三个选项：非常失望 / 有点失望 / 不失望。回答「非常失望」的比例超过 40%，视为达到 PMF。</p>
+    <div class="callout"><b>它的工作原理：</b>满意度问卷测的是「好用不好用」，这道题测的是「离不离得开」。人可以觉得一个产品很好用但随时能换掉，那种产品在增长上永远做不出复利。<br><b>它的局限：</b>样本是自己现有用户，天然过滤掉了不感兴趣的人，所以 40% 只能当相对指标看趋势，不能当绝对判据——一群铁杆粉丝打 60 分，不代表市场有一千万人需要它。</div>
+
+    <h3>3.5 伪需求的三种长相</h3>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">一、把「解决方案」当「问题」</div>
+        <div class="pattern-desc">团队爱上一个技术方案，再回头找场景。表现为：用户听完介绍说「挺酷」，但没有使用场景可填。技术越新，越容易犯。</div>
+        <div class="pattern-examples">判断：能不能说出用户上一次遇到这个问题时是怎么解决的</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">二、把「小众人群」当「市场」</div>
+        <div class="pattern-desc">需求真实，但人群太薄。表现为：留存极高、总量极低，怎么推广都长不动。这在工具类产品里最常见。</div>
+        <div class="pattern-examples">判断：目标人群的总量乘以可触达比例，够不够支撑生意</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">三、把「补贴带来的需求」当「真需求」</div>
+        <div class="pattern-desc">价格一到零，用户蜂拥而至；补贴一停，日活腰斩。表现为留存曲线在补贴结束的那一周断崖。</div>
+        <div class="pattern-examples">判断：去掉补贴后做一次小流量实验，看真实转化</div>
+      </div>
+    </div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这一章最容易被跳过的部分</div>
+      <p>大多数团队读这本书是冲着第 3—7 章的手法来的，但书里把 PMF 放在最前面，恰好说明一件事：手法是通用件，需求是专用件。同一套裂变机制，装在一个真需求上叫增长，装在一个伪需求上叫骚扰。所以读到后面的技巧时，最好每隔一段回来问一次：我确定自己那件事是有人非要的吗。</p>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="section" id="acquire">
+    <h2><span class="no">04</span>第 3 章 · 获取用户：第一批人从哪来</h2>
+    <p class="lead">这一章篇幅最长，因为它面对的是最贵的问题。范冰的思路不是「渠道越多越好」，而是「先造一个密度，再复制密度」。</p>
+
+    <h3>4.1 冷启动的三种局面</h3>
+    <p><b>冷启动</b><button class="glossary-trigger" onclick="openModal('coldstart')" aria-label="术语：冷启动">?</button>难在哪，取决于你的产品缺什么。书里按缺的东西分了三类，对应完全不同的打法：</p>
+    <div class="info-grid">
+      <div class="info-card crisis">
+        <div class="label">缺用户：单边产品</div>
+        <div class="content">工具、内容、社区早期都属此类。没有用户就没有内容，没有内容就留不住用户。破法是人工注入第一批内容或身份，让新来的人看到「这里已经有人」。</div>
+        <div class="example"><strong>样本</strong>：知乎早期用邀请码控制供给，先请一批行业里有名的人进来写答案，再放开注册。</div>
+      </div>
+      <div class="info-card mechanism">
+        <div class="label">缺供给：双边平台</div>
+        <div class="content">打车、外卖、民宿，先有司机还是先有乘客是个死结。破法是缩到一个城市、一个商圈、一个时段，人为把两边凑满，让体验先成立。</div>
+        <div class="example"><strong>样本</strong>：共享出行早期都从单城单区切入，跑通供需密度后再复制到下一城。</div>
+      </div>
+      <div class="info-card tool">
+        <div class="label">缺认知：新品类</div>
+        <div class="content">用户不知道自己需要这个。这时拉新不是买流量，是教育市场，要靠内容、案例、对比，把「你原来是这样解决问题的」讲清楚。</div>
+        <div class="example"><strong>样本</strong>：早期云存储、协同文档都先做「对比传统方式」的内容，而不是直接投效果广告。</div>
+      </div>
+    </div>
+
+    <h3>4.2 种子用户：密度比规模重要</h3>
+    <p>书里对种子用户的要求近乎苛刻：人少、但密度高、且愿意容忍不完美。小米早期的社区、Facebook 从单所大学起步、Quora 的邀请制，都是同一个逻辑——先在极小范围里做出「这里很热闹」的错觉，让产品看起来是活的。</p>
+    <blockquote class="quote-block">
+      先在一个小池子里把水烧开，再倒进大池子。
+      <span class="cite">对第 3 章冷启动与种子用户策略的归纳，非原文</span>
+    </blockquote>
+    <p>选种子用户的三个筛子：<b>高频</b>（会用很多次，能暴露问题）、<b>有影响力</b>（愿意说，且有人听）、<b>能忍</b>（接受早期版本的粗糙）。三个都占的人极少，所以书里建议手动一个个找，而不是投广告筛。</p>
+
+    <h3>4.3 渠道矩阵：十个入口的性价比</h3>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>渠道</th><th>成本</th><th>起量速度</th><th>用户质量</th><th>可放大性</th><th>书里的判断</th></tr></thead>
+        <tbody>
+          <tr><td>应用商店 ASO</td><td>低</td><td>中</td><td>高（带意图）</td><td>中</td><td>2015 年前后性价比最高，关键词与截图是主战场</td></tr>
+          <tr><td>内容 / SEO</td><td>低</td><td>慢</td><td>高</td><td>高</td><td>复利型渠道，前期最苦、后期最稳</td></tr>
+          <tr><td>社交传播</td><td>极低</td><td>快</td><td>中</td><td>看 K 因子</td><td>上限极高但不可控，依赖产物本身可传播</td></tr>
+          <tr><td>换量 / BD</td><td>低</td><td>中</td><td>中</td><td>低</td><td>适合冷启动期互换用户，量级有限</td></tr>
+          <tr><td>地推</td><td>高</td><td>快</td><td>中低</td><td>中</td><td>本地生活类绕不开，但要算清单店模型</td></tr>
+          <tr><td>效果广告</td><td>高</td><td>极快</td><td>低</td><td>高</td><td>唯一能瞬时放大的渠道，前提是 LTV/CAC 撑得住</td></tr>
+          <tr><td>PR / 事件</td><td>中</td><td>脉冲</td><td>低</td><td>低</td><td>制造一次尖峰，留不住人就是白花钱</td></tr>
+          <tr><td>工具型病毒</td><td>极低</td><td>中</td><td>高</td><td>高</td><td>产物自带水印、签名、分享链接，最理想的一种</td></tr>
+          <tr><td>KOL / 社群</td><td>中</td><td>中</td><td>中高</td><td>低</td><td>适合冷启动建立信任，不适合规模化</td></tr>
+          <tr><td>预装 / 刷机</td><td>中</td><td>快</td><td>极低</td><td>中</td><td>数字好看，留存极差，属于自欺型渠道</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>4.4 只打一个渠道，打到极致</h3>
+    <p>书里最反直觉的一条建议：早期不要同时铺五个渠道做测试，而是把所有资源压在一个最可能有戏的渠道上，做到「这个渠道里没人比你更懂」。原因是渠道有学习曲线——同样的预算，懂行的人能把转化率做到新手的几倍，而分散投入会让每条线都停在半懂不懂的位置。</p>
+    <p>什么时候开第二个渠道？当第一个渠道的边际成本明显上升、或者已经触到该渠道的天花板时。判断方法很简单：把同一渠道的投放按时间切片，看单位成本是不是在持续爬升。</p>
+
+    <h3>4.5 ASO：把商店当成一个搜索产品</h3>
+    <p><b>ASO</b><button class="glossary-trigger" onclick="openModal('aso')" aria-label="术语：ASO">?</button>在书里被当成一个完整的优化对象，可动的变量有六类：标题与副标题的关键词位置、关键词字段的取舍、截图的顺序与信息密度、评分数量与近期评价、更新频率、以及外部导流对榜单的带动。它的逻辑与 SEO 同源：用户带着明确意图搜索，你只要在他搜的词上排前面，转化率就远高于信息流广告。</p>
+
+    <h3>4.6 红线：哪些手段不能碰</h3>
+    <ul class="limit-list">
+      <li><b>伪造用户与数据</b>：机器注册、刷单、刷评。短期做出漂亮的曲线，长期让所有指标失真，团队会照着假数据做决策，这是最贵的代价。</li>
+      <li><b>未授权抓取关系链</b>：爬通讯录、导入他人好友关系。2015 年尚属灰色，今天在《个人信息保护法》下是明确的违法行为。</li>
+      <li><b>诱导分享与骚扰</b>：强制分享才能解锁、群发式裂变。平台规则一封，用户资产瞬间归零，且会反噬品牌。</li>
+      <li><b>虚假承诺式落地页</b>：文案与产品不符。转化率可以做到很高，退款率和差评会把它吃回去。</li>
+    </ul>
+  </section>
+
+  <!-- 05 -->
+  <section class="section" id="activate">
+    <h2><span class="no">05</span>第 4 章 · 激发活跃：从「注册」到「用上」</h2>
+    <p class="lead">这一章处理的是最容易被数字骗过去的一段：注册量很好看，但真正完成关键动作的人很少。范冰把它定义成一个独立环节，而不是「获取的下半段」。</p>
+
+    <h3>5.1 激活不是注册</h3>
+    <p>激活（activation）的定义在书里很明确：用户完成了那个能体现产品核心价值的动作。注册只是留下了一个账号，激活才是真的用上了。二者的差距常常是十倍：一万个注册，可能只有八百个人真正体验过产品承诺的那件事。</p>
+    <p>定义激活事件的三条要求：<b>唯一</b>（一个产品只能有一个主激活事件，多了就无法归因）、<b>可测</b>（埋点能抓到）、<b>接近价值</b>（不是「点了按钮」，而是「得到了结果」）。</p>
+
+    <h3>5.2 怎么找到关键行为</h3>
+    <ol class="chain">
+      <li><b>按留存分组回溯</b><p>取 30 天后仍在用的用户与已流失用户，比较他们在前 3 天的行为序列，找出差异最大的动作。</p></li>
+      <li><b>控制变量排除伪相关</b><p>「打开过设置页」可能只是活跃的结果而非原因。用实验验证：强制新用户做这个动作，看留存是否提升。</p></li>
+      <li><b>把它写进新手路径</b><p>找到之后不是写进报告，而是改产品：让新用户在最短路径上必然遇到它。</p></li>
+    </ol>
+
+    <h3>5.3 新手引导的三条原则</h3>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">最短路径</div>
+        <div class="pattern-desc">从打开到第一次价值交付，步骤越少越好。每多一步，就多一层流失。书里的经验是：超过五步的引导，完成率会掉一半以上。</div>
+        <div class="pattern-examples">做法：能默认的就默认，能后置的就后置（如注册放到体验之后）</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">即时价值</div>
+        <div class="pattern-desc">先给东西，再要东西。让用户在第一分钟就看到结果，而不是先填完十个字段再看。</div>
+        <div class="pattern-examples">做法：预置内容、示例数据、模板，让空白页不空</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">可跳过</div>
+        <div class="pattern-desc">强制教程是最常见的自伤。老用户被拦一次就可能再也不来，而新用户里也有一部分人只想自己摸索。</div>
+        <div class="pattern-examples">做法：引导分层，按行为触发而不是按顺序播放</div>
+      </div>
+    </div>
+
+    <h3>5.4 游戏化与进度感</h3>
+    <p>书里对游戏化的态度是克制的：徽章、积分、等级这些表层机制很容易做，但真正起作用的是<b>进度可见</b>。LinkedIn 的资料完整度进度条、Foursquare 的徽章、各类产品的「还差一步」，本质都在做同一件事——把「继续用」变成一个可见的、未完成的任务。人对未完成的东西有天然的不适感，这比奖励更持久。</p>
+    <div class="callout"><b>书里的提醒：</b>游戏化不能替代价值。产品本身没用，加多少徽章都留不住人；反过来，产品有用但用户没意识到，进度条这类设计能显著提高激活率。它放大的是已有价值，不是创造价值。</div>
+
+    <h3>5.5 社交关系：最便宜的激活器</h3>
+    <p>导入通讯录、「可能认识的人」、邀请同事加入，这类设计的效力在于：它一次解决了「内容从哪来」和「为什么要回来」两个问题。用户看到熟人在里面，产品就从工具变成了场所。书里举的样本是 Facebook 与 LinkedIn 的关系链导入，配合「你已经有多少好友在这里」的提示，把激活率抬了一大截。</p>
+    <p>但这条路的成本在今天变了：未经授权读取通讯录已是违规操作，合规的做法是让用户主动授权、且明确告知用途，转化率会低很多。这是 2015 与 2026 之间最大的一道沟。</p>
+
+    <h3>5.6 推送：最容易被用坏的工具</h3>
+    <p>推送在书里被描述成一把双刃剑：它是唯一能主动把用户拉回来的免费通道，也是最容易造成卸载的动作。可操作的原则有四条：<b>时机</b>（在用户可能需要的时刻，而不是你方便的时刻）、<b>频次</b>（宁少勿多，一条打扰的成本高于十条的有效）、<b>相关性</b>（基于行为而不是全体群发）、<b>可退出</b>（让用户能自己调频次，否则他会用卸载来调）。</p>
+
+    <h3>5.7 A/B 测试：不是加个开关就算实验</h3>
+    <p><b>A/B 测试</b><button class="glossary-trigger" onclick="openModal('abtest')" aria-label="术语：A/B 测试">?</button>在书里占了不小篇幅，因为它把「增长」从经验变成可积累的知识。三条纪律值得单独记住：</p>
+    <ul class="limit-list">
+      <li><b>一次只改一个变量</b>：同时改文案和按钮颜色，赢了也不知道赢在哪，输了更不知道输在哪。</li>
+      <li><b>样本量事前算好</b>：跑到一半看到「显著」就停，是把随机波动当成结论，业内叫偷看（peeking）。</li>
+      <li><b>只认预先定义的核心指标</b>：跑完在一堆指标里挑一个涨了的宣布成功，这叫多重比较，几乎必然出现假阳性。</li>
+    </ul>
+
+    <h3>5.8 一次增长实验的完整流程</h3>
+    <p>书里散落在各章的步骤，串起来其实是一条固定的流水线。它的价值在于「固定」——把判断变成流程，团队才不会每做一次都从头争论。</p>
+    <ol class="chain">
+      <li><b>定层</b><p>先确定这一轮只打漏斗的哪一层。同时想改获取和留存，等于没有优先级。</p></li>
+      <li><b>找数</b><p>把这一层最近 8 周的数据按渠道、版本、人群拆开，找出偏离最大的那一段。凭直觉提假设，多半会打在没病的地方。</p></li>
+      <li><b>写假设</b><p>统一格式：「如果我对某类用户做某改动，那么某指标会上升，因为某原因」。写不出「因为」，说明这只是个想法。</p></li>
+      <li><b>算样本</b><p>按当前基线转化率和想检测的最小提升幅度，算出需要多少样本、跑多少天。算不出来就先别开实验。</p></li>
+      <li><b>做最小实现</b><p>能用配置解决的不写代码，能上一半流量的不全量。实验的目的是获取信息，不是发布功能。</p></li>
+      <li><b>判读</b><p>只看事前定好的指标；同时看护栏指标（崩溃率、投诉率、退款率）有没有被搞坏，赢了主指标却搞坏护栏，等于没赢。</p></li>
+      <li><b>沉淀</b><p>不管输赢都写一句结论进知识库。输掉的实验价值不低于赢的，因为它排除了一条路——前提是有人记得。</p></li>
+    </ol>
+
+    <div class="insight-card">
+      <div class="insight-title">Airbnb 的那次摄影实验，是这一章的样板</div>
+      <div class="insight-body">书里反复引用的案例：Airbnb 发现房源照片质量直接影响下单，于是雇摄影师上门免费为房东拍照。这不是营销动作，是产品动作——它改的是供给质量，而非投放素材。结果是房源转化率明显上升，并成为公司早期增长的关键一击。</div>
+      <div class="insight-evidence">这类「改供给而非改流量」的手段，是增长黑客区别于投放的最典型特征</div>
+    </div>
+  </section>
+
+  <!-- 06 -->
+  <section class="section" id="retain">
+    <h2><span class="no">06</span>第 5 章 · 提高留存：增长真正的复利开关</h2>
+    <p class="lead">如果全书只能留一章，范冰自己会留这一章。因为获取是线性的，留存是乘法的：留存率每提高一点，前面所有投入的价值都被放大一次。</p>
+
+    <h3>6.1 先读懂留存曲线的形状</h3>
+    <p>留存曲线不是一条斜率恒定的下滑线，它的形状本身就在告诉你产品是什么类型：</p>
+    <div class="table-scroll">
+      <table class="extension tight">
+        <thead><tr><th>曲线形状</th><th>含义</th><th>典型产品</th><th>该做什么</th></tr></thead>
+        <tbody>
+          <tr><td>持续下滑到零</td><td>没有稳定使用场景，用户是一次性需求</td><td>大部分小工具、活动页</td><td>要么接受低留存靠不断拉新，要么改产品找复购场景</td></tr>
+          <tr><td>下滑后走平</td><td>存在一个稳定的核心人群</td><td>社区、垂直工具</td><td>找到并放大那个平台期人群的特征</td></tr>
+          <tr><td>微笑曲线</td><td>跌到谷底后回升，说明有召回或季节性复购</td><td>电商、票务、招聘</td><td>把召回机制固化，别让回升靠运气</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>书里强调一个常被忽略的读法：看留存要看<b>分层</b>，不能只看总盘子。按渠道分（哪个渠道来的人留得久）、按行为分（做了某动作的人留得久）、按人群分（哪类用户是核心）。总留存 20% 可能意味着「10% 的铁杆 + 90% 的过客」，这两拨人要用完全不同的策略。</p>
+
+    <h3>6.2 魔法数字：把「用得好」量化</h3>
+    <p><b>魔法数字</b><button class="glossary-trigger" onclick="openModal('magicnumber')" aria-label="术语：魔法数字">?</button>是这一章最像「黑客」的部分：在数据里捞出「在注册后 N 天内完成 M 次某动作」的用户，其长期留存显著高于其他人。Facebook 的「7 天 10 个好友」是流传最广的一个。</p>
+    <p>用法上有个关键分岔：魔法数字只能说明相关性，不能说明因果。正确的下一步是实验——把新用户强行推到那个状态，看留存是否真的抬升。抬不动，说明这个数字只是「活跃的结果」，不是「留存的原因」，那就要换一个候选继续找。</p>
+
+    <h3>6.3 流失要分两类看</h3>
+    <div class="two-col">
+      <div class="info-card debate">
+        <div class="label">主动流失</div>
+        <div class="content">用户决定不用了：需求消失、找到替代、体验太差。应对是改产品、改定位，或者在流失前识别信号（使用频次下降、核心功能不再触碰）做干预。</div>
+        <div class="example"><strong>信号</strong>：连续两周未打开，且最后一次会话时长明显低于均值</div>
+      </div>
+      <div class="info-card solution">
+        <div class="label">被动流失</div>
+        <div class="content">用户想用但用不了：忘记密码、换设备、支付失败、通知被关、应用被清理。这类流失占比常常被低估，而它的挽回成本最低。</div>
+        <div class="example"><strong>动作</strong>：失败支付重试、换机引导、沉默用户召回短信</div>
+      </div>
+    </div>
+    <p>书里给的判断很实用：先算被动流失占多少，再决定要不要投人力做召回系统。很多团队一上来就做「流失用户访谈」，其实相当一部分人根本没想走，只是被技术问题挡住了。</p>
+
+    <h3>6.4 召回：成本最低的一次增长</h3>
+    <p>召回的三个抓手按成本从低到高：站内（消息中心、红点）、站外（推送、短信、邮件）、权益（优惠券、专属内容）。书里的经验是：召回文案要给出「回来的理由」，而不是「我们想你了」。有效的理由通常有三类——你错过的东西、你未完成的事、只对你有效的权益。</p>
+    <div class="callout"><b>一条经常被忽略的算术：</b>召回一个老用户的成本，通常是一次新客获取的五分之一到十分之一；而老用户的二次留存率往往高于新用户。所以在预算紧张时，先做召回，再做拉新，是更划算的顺序。</div>
+
+    <h3>6.5 会员与订阅：把留存写进商业模式</h3>
+    <p>书里用会员制解释了「为什么有些产品的留存天生更高」：一旦用户预付了一年的钱，他就有了使用的动机，否则会觉得浪费。Amazon Prime、Costco 的会员费本质是同一件事——用沉没成本换取使用频次。这也是订阅制比买断制更受资本市场偏爱的结构原因：收入可预测，留存被合同锁定。</p>
+
+    <h3>6.6 低频产品怎么办</h3>
+    <p>不是所有产品都能做日活。招聘、婚庆、装修、二手车，用户一生只用几次，用「日活」衡量它们是错的。书里给的方向是换指标：看「需求发生时是否想起你」，也就是心智占有率，而不是打开频次。对应的手段也不同——不做推送轰炸，做搜索占位、口碑、以及需求周期到来前的提醒。</p>
+  </section>
+
+  <!-- 07 -->
+  <section class="section" id="revenue">
+    <h2><span class="no">07</span>第 6 章 · 增加收入：把关系换成钱</h2>
+    <p class="lead">这一章最容易被读成「怎么多赚钱」，其实它问的是另一件事：在什么位置收费，才不会把前面四层积累的关系一次性折现掉。</p>
+
+    <h3>7.1 五种变现模式的取舍</h3>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>模式</th><th>收入来源</th><th>对留存的影响</th><th>适用条件</th></tr></thead>
+        <tbody>
+          <tr><td>广告</td><td>流量卖给广告主</td><td>负（打断体验，且需持续做大DAU）</td><td>规模极大、使用时长长</td></tr>
+          <tr><td>增值服务</td><td>少数重度用户付费</td><td>正（免费用户不受损）</td><td>存在明显分层需求</td></tr>
+          <tr><td>订阅</td><td>按周期收费</td><td>正（锁定使用动机）</td><td>持续交付价值、可预期</td></tr>
+          <tr><td>电商 / 佣金</td><td>交易抽成</td><td>中性（取决于交易体验）</td><td>有交易场景与供给</td></tr>
+          <tr><td>企业服务</td><td>按席位/用量收费</td><td>正（嵌入工作流后极难替换）</td><td>决策链清晰、可量化ROI</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>书里的判断标准不是「哪个赚钱多」，而是「哪个和你的使用场景不冲突」。广告要求你把用户时间拉长，订阅要求你把价值做深，这两件事在同一个产品里往往互相消耗。</p>
+
+    <h3>7.2 免费增值：卡在哪条线上</h3>
+    <p><b>freemium</b><button class="glossary-trigger" onclick="openModal('freemium')" aria-label="术语：freemium">?</button>的全部设计难度，在于「免费版给多少」。给少了，用户没形成习惯就走；给多了，没有升级动机。书里给的经验是卡在「用户已经投入、且需求会随使用量自然增长」的位置——存储空间、项目数量、协作人数、导出格式，都是这类天然会胀的维度。</p>
+    <div class="insight-card">
+      <div class="insight-title">定价不是成本加成，是价值分段</div>
+      <div class="insight-body">书里几处案例指向同一个结论：用户愿意付的钱，取决于他从中获得的价值，而不是你的成本。所以定价实验要测的不是「多少钱能收到最多」，而是「在哪一档上，用户的付费意愿和留存同时最优」。降价能提高转化，但会把高意愿用户也一起降价，长期损伤收入结构。</div>
+      <div class="insight-evidence">对应第 6 章对定价实验与付费转化的讨论</div>
+    </div>
+
+    <h3>7.3 LTV / CAC：能不能规模化的唯一判据</h3>
+    <p><b>LTV</b><button class="glossary-trigger" onclick="openModal('ltv')" aria-label="术语：LTV">?</button>与 <b>CAC</b><button class="glossary-trigger" onclick="openModal('cac')" aria-label="术语：CAC">?</button>的关系，是这本书里最像财务的一节：一个用户一辈子贡献的毛利，必须显著高于获取他的成本，否则投放越多亏得越快。行业里常用的经验线是比值不低于 3。</p>
+    <div class="metric-row">
+      <div class="metric"><b>LTV</b><span>客单价 × 毛利率 × 复购次数</span></div>
+      <div class="metric"><b>CAC</b><span>渠道费用 ÷ 有效新客数</span></div>
+      <div class="metric"><b>≥3</b><span>可规模投放的经验下限</span></div>
+      <div class="metric"><b>≤12 月</b><span>回本周期越长，越依赖融资续命</span></div>
+    </div>
+    <p>这个比值还有一层用法：它决定了你能不能用「补贴换规模」。补贴本质是把未来的 LTV 提前花掉，如果 LTV 本身站不住，补贴只是在推迟死亡时间。</p>
+
+    <h3>7.4 补贴经济学的三个前提</h3>
+    <p>书里对国内补贴大战的复盘相当克制，但结论清晰：补贴能成立，需要三个条件同时满足，缺一个就是烧钱。</p>
+    <ul class="chain">
+      <li><b>补贴带来的是增量需求，不是替代需求</b><p>如果用户本来就会买，只是等你发券，那补贴买到的只是「本来该有的收入」，不是新用户。</p></li>
+      <li><b>补贴结束后留存不塌</b><p>判断方法是做小范围停补实验，看留存曲线的断崖有多深。断崖越浅，补贴越像投资；越深，越像买数据。</p></li>
+      <li><b>补贴能换来结构性优势</b><p>规模带来单位成本下降、网络效应、或者供给锁定。换不来任何结构变化的补贴，只是把行业利润率打薄。</p></li>
+    </ul>
+
+    <h3>7.5 收入优化的具体抓手</h3>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">付费墙位置</div>
+        <div class="pattern-desc">同一堵墙，放在用户第一次触到限制时，转化率远高于放在注册时。原则是「先让他尝到甜头，再在甜头被打断的地方收费」。</div>
+        <div class="pattern-examples">测法：把墙分别放在第 1 次、第 3 次、第 7 次使用后，比转化与退款</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">价格锚点</div>
+        <div class="pattern-desc">三档定价里，中间档的销量往往最高，因为最贵那档的作用是「让中间那档显得合理」。锚点不是虚设，它决定了用户对「贵」的感知基准。</div>
+        <div class="pattern-examples">做法：上架一个明显溢价的顶配版，观察中间档转化变化</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">优惠券的定向</div>
+        <div class="pattern-desc">全量发券等于全量降价。定向发给「高意愿但未付费」的人群，才既提转化又不损伤原价体系。</div>
+        <div class="pattern-examples">判据：只看券核销率不看人群分层，是最常见的浪费</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="section" id="viral">
+    <h2><span class="no">08</span>第 7 章 · 病毒传播：让漏斗自己裂开</h2>
+    <p class="lead">这一章是全书的放大器，也是最容易被误读成「做个分享按钮」的一章。范冰的界定很清楚：病毒传播不是营销活动，是产品结构。</p>
+
+    <h3>8.1 K 因子：一个能算的系数</h3>
+    <p><b>K 因子</b><button class="glossary-trigger" onclick="openModal('kfactor')" aria-label="术语：K 因子">?</button>把「病毒式增长」从形容词变成了算式：每个用户发出多少邀请，乘以邀请被接受的比例。K 大于 1，用户自己会生用户；K 小于 1，增长会衰减，需要投放补足。</p>
+    <div class="callout"><b>一个残酷的算术：</b>K=0.5 意味着每一代用户只有上一代的一半，三轮之后新增就趋近于零；而 K=1.1 意味着指数级膨胀。所以真实世界里微小的 K 值差异，会在几个月后拉开几个数量级的差距。这也是为什么大公司愿意为 0.1 的提升投入巨大资源。</div>
+    <p>书里同时提醒：K 因子高的产品往往留存低——因为拉来的人是被利益或好奇心驱动的，不是被需求驱动的。评估病毒渠道时必须把「邀请来的用户的留存」单独拉出来看，否则会得到一个漂亮的虚假增长。</p>
+
+    <h3>8.2 病毒循环的四个部件</h3>
+    <p><b>病毒循环</b><button class="glossary-trigger" onclick="openModal('viralloop')" aria-label="术语：病毒循环">?</button>要闭合，四个部件缺一不可：</p>
+    <ol class="chain">
+      <li><b>载体</b><p>用户使用产品时自然产生的东西：一封邮件、一个共享链接、一张带水印的图、一份协作文档。载体必须会被圈外人看到。</p></li>
+      <li><b>动机</b><p>用户为什么愿意让它被看到：为了炫耀、为了省事、为了给对方好处、为了自己得奖励。动机不成立，载体再显眼也没人发。</p></li>
+      <li><b>路径</b><p>圈外人看到之后，几步能进入产品。每多一步跳转、多一次注册，转化率掉一大截。</p></li>
+      <li><b>摩擦</b><p>进入之后能否立刻获得和发送者一样的价值。做不到，循环就在这一环断掉，只带来一次无效访问。</p></li>
+    </ol>
+
+    <h3>8.3 五类动机与它们的样本</h3>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>动机</th><th>机制</th><th>书里的样本</th><th>可持续性</th></tr></thead>
+        <tbody>
+          <tr><td>实用</td><td>传播是使用的副产品，不传播反而麻烦</td><td>Hotmail 邮件底部签名；协作文档必须邀请对方才能用</td><td>高，嵌在流程里</td></tr>
+          <tr><td>利益</td><td>双方都得好处</td><td>Dropbox 邀请双方各得空间；PayPal 注册与邀请返现</td><td>中，成本可控则长期有效</td></tr>
+          <tr><td>社交货币</td><td>传播让自己显得有品味、有见识</td><td>网易云音乐年度听歌报告、各类测试类 H5</td><td>低，易疲劳</td></tr>
+          <tr><td>情绪</td><td>被内容打动，愿意转给别人</td><td>冰桶挑战；公益类传播</td><td>低，不可复制</td></tr>
+          <tr><td>身份</td><td>传播是加入某个群体的仪式</td><td>邀请码制社区；内测资格</td><td>中，依赖稀缺感</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>书里最有价值的一句判断藏在这些案例背后：<b>可持续的病毒传播几乎都是「实用型」的</b>。因为实用型的传播不需要额外预算、不依赖情绪周期、也不会被用户厌倦。靠奖励和情绪起来的传播，衰减速度往往比想象中快得多。</p>
+
+    <h3>8.4 中国样本：红包、拼团与它们的代价</h3>
+    <p>微信红包是中文互联网最经典的一次病毒循环：发红包必须拉人进群、必须绑定支付，传播动作与使用动作完全重合。拼团类产品同理——想拿到低价，必须拉人。这类设计的效力极高，但代价也明确：它把社交关系当成了筹码，一旦频次过高，用户会开始屏蔽、退群，最终由平台出手限制。</p>
+    <blockquote class="quote-block">
+      增长手段的上限，往往不是技术决定的，是用户的容忍度决定的。
+      <span class="cite">对第 7 章病毒传播伦理边界的归纳，非原文</span>
+    </blockquote>
+
+    <h3>8.5 速朽的爆红：为什么火得快凉得更快</h3>
+    <p>书里对国内几款现象级应用的复盘值得单独记住：脸萌、足记这类产品，靠一个可分享的产物在几天内刷屏，又在几周内归于平静。原因不复杂——它们的传播动机是「新鲜」，而新鲜是一次性消耗品；产品本身没有留下持续使用的理由。这类增长不是病毒循环，是病毒式的一次性爆发，K 因子看着很高，但第二代用户的留存接近于零。</p>
+
+    <h3>8.6 平台反噬</h3>
+    <ul class="limit-list">
+      <li><b>规则风险</b>：诱导分享、外链跳转、强制关注，平台随时可以一封了之，且通常不提前通知。</li>
+      <li><b>账号风险</b>：批量注册、模拟器、群控，一旦被识别，用户资产直接清零。</li>
+      <li><b>品牌风险</b>：被拉黑、被投诉、被媒体点名，恢复成本远高于当初省下的推广费。</li>
+      <li><b>数据风险</b>：靠刷量堆出来的曲线会污染所有后续决策，团队会在错误的基数上做预算。</li>
+    </ul>
+  </section>
+
+
+  <!-- 09 -->
+  <section class="section" id="cases">
+    <h2><span class="no">09</span>第 8 章 · 案例集：把方法放回现场</h2>
+    <p class="lead">最后一章是证据章。它把前面五层的 <b>AARRR</b><button class="glossary-trigger" onclick="openModal('aarrr')" aria-label="术语：AARRR">?</button>逐个填上真实公司，读法不该是「看别人怎么成功」，而是「看每一步对应漏斗哪一层、可复制性有多高」。</p>
+
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>样本</th><th>卡在哪一层</th><th>关键动作</th><th>结果</th><th>可复制性</th></tr></thead>
+        <tbody>
+          <tr><td>Hotmail</td><td>传播</td><td>每封外发邮件底部加一行带链接的签名</td><td>用户随邮件扩散，几乎零获客成本</td><td>高，但如今被反垃圾规则限制</td></tr>
+          <tr><td>PayPal</td><td>获取 + 传播</td><td>注册返现、邀请返现，双向激励</td><td>早期用户规模快速抬升</td><td>中，需强资金与风控</td></tr>
+          <tr><td>Dropbox</td><td>传播</td><td>邀请双方各得存储空间；共享文件夹即传播载体</td><td>口碑带来的新增占比极高</td><td>高，前提是产品有天然共享场景</td></tr>
+          <tr><td>Airbnb</td><td>激活 + 供给质量</td><td>给房东免费上门摄影；房东一键同步房源到分类信息站</td><td>房源转化率与供给质量同时上升</td><td>中，需地面团队</td></tr>
+          <tr><td>Facebook</td><td>激活 + 留存</td><td>以「10 天加满 10 个好友」为关键行为；通讯录导入</td><td>新用户留存显著抬升</td><td>高，逻辑可迁移</td></tr>
+          <tr><td>LinkedIn</td><td>激活</td><td>资料完整度进度条；通讯录导入形成关系网</td><td>激活率与网络密度同时提高</td><td>高</td></tr>
+          <tr><td>小米</td><td>获取 + 留存</td><td>早期社区沉淀核心用户，让用户参与版本讨论</td><td>以极低市场费用建立第一批口碑</td><td>中，需长期投入社区</td></tr>
+          <tr><td>知乎</td><td>冷启动</td><td>邀请码控制供给，先请专业人群产出内容</td><td>内容密度先成立，再放开规模</td><td>中，依赖种子人群质量</td></tr>
+          <tr><td>微信红包</td><td>传播</td><td>发红包必须拉人、必须绑卡，传播动作与使用动作重合</td><td>支付用户在极短时间内完成跃迁</td><td>低，依赖社交基础设施</td></tr>
+          <tr><td>滴滴</td><td>获取 + 留存</td><td>双边补贴，单城打透后复制</td><td>份额快速集中</td><td>低，资本门槛极高</td></tr>
+          <tr><td>美丽说 / 蘑菇街</td><td>获取</td><td>导购内容 + 社区，承接电商平台的溢出流量</td><td>以内容低成本获客</td><td>中，依赖平台生态位</td></tr>
+          <tr><td>脸萌 / 足记</td><td>传播（一次性）</td><td>产物极易分享，短时间刷屏</td><td>爆发式增长后迅速回落</td><td>低，属一次性爆发而非循环</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="lead">表中「结果」为书中叙述的定性描述，具体数字书中多为转述且年份久远，此处不逐一列举，避免以讹传讹。</p>
+
+    <div class="callout"><b>读案例的正确姿势：</b>先问「这家公司当时缺什么」，再看「它补的是漏斗哪一层」，最后问「这个动作放到我的产品上，前提条件具备吗」。跳过前两步直接抄动作，就是把别人的解药当补药吃。尤其注意样本里的幸存者偏差——用同样手段失败的公司不会出现在书里，也没有人统计它们有多少。</div>
+
+    <h3>9.1 三类案例的可迁移度</h3>
+    <div class="info-grid">
+      <div class="info-card case">
+        <div class="label">高可迁移：机制型</div>
+        <div class="content">Facebook 的关键行为识别、LinkedIn 的进度条、Dropbox 的双向激励。它们背后是行为原理，换一个产品仍然成立，只需重新校准参数。</div>
+        <div class="example"><strong>用法</strong>：抄结构，不抄数字</div>
+      </div>
+      <div class="info-card history">
+        <div class="label">中可迁移：资源型</div>
+        <div class="content">Airbnb 的摄影师、小米的社区、滴滴的补贴。方法本身不神秘，但它们依赖地面团队、长期投入或巨额资本。</div>
+        <div class="example"><strong>用法</strong>：先算自己有没有对应的组织和钱</div>
+      </div>
+      <div class="info-card crisis">
+        <div class="label">低可迁移：时机型</div>
+        <div class="content">微信红包、现象级刷屏应用。它们吃的是某个特定时刻的平台红利或社交基础设施，换时间换场景就不成立。</div>
+        <div class="example"><strong>用法</strong>：当故事听，别当方法论</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 -->
+  <section class="section" id="quotes">
+    <h2><span class="no">10</span>金句存档</h2>
+    <p class="lead">这本书的写法偏实操，能原样引用的完整句子不多。以下分成两类：标注了出处的为可查原文（内容简介、章节标题、书中引述的他人原话），其余为归纳，不作原文引用。</p>
+
+    <blockquote class="quote-block">
+      增长黑客是介于技术和市场之间的新型团队角色，主要依靠技术和数据的力量来达成各种营销目标，而非传统意义上靠砸钱来获取用户的市场推广角色。
+      <span class="cite">图书内容简介原文（电子工业出版社，2015）</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      低成本甚至零成本地用「技术」来让产品获得有效增长。
+      <span class="cite">图书内容简介原文，是对「增长黑客」的一句话定义</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      A growth hacker is a person whose true north is growth.
+      <span class="cite">Sean Ellis 语，书中引述；「北极星是增长」这一表述后来演化为北极星指标</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      创造正确的产品。
+      <span class="cite">第 2 章章名。四个字放在全书第二章的位置，本身就是一种排序主张</span>
+    </blockquote>
+
+    <div class="table-scroll">
+      <table class="extension tight">
+        <thead><tr><th>归纳（非原文）</th><th>它在说哪件事</th></tr></thead>
+        <tbody>
+          <tr><td>增长不是营销的一个分支，是产品的一个属性</td><td>全书总纲：手段必须落在产品上才能生效</td></tr>
+          <tr><td>产品不对，增长只是把漏水倒得更快</td><td>PMF 前置的判断</td></tr>
+          <tr><td>先在一个小池子里把水烧开</td><td>冷启动的密度优先原则</td></tr>
+          <tr><td>留存是乘法，获客是加法</td><td>为什么第 5 章最重要</td></tr>
+          <tr><td>可持续的病毒传播几乎都是实用型的</td><td>对五类传播动机的取舍</td></tr>
+          <tr><td>增长手段的上限，是用户的容忍度</td><td>对诱导分享与灰产手段的边界判断</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 11 -->
+  <section class="section" id="limits">
+    <h2><span class="no">11</span>该打折扣的地方</h2>
+    <p class="lead">这本书写于 2015 年，是中国移动互联网流量红利的顶点。十年后读，方法与判断要分开对待：底层的行为原理还成立，具体的渠道与手段大半已经失效，有几条今天甚至是违规的。</p>
+
+    <ul class="limit-list">
+      <li><b>一、红利期的方法，在存量期会反噬。</b>书里大量手段依赖「平台还没设防」：外链可以随意跳、分享可以强制、通讯录可以读取、应用商店排名可以靠刷。这些口子在 2016 年之后陆续关闭，iOS 的 ATT（2021）更是把跨应用归因基本掐断。同样的动作今天做，成本高一个量级、风险高一整个量级。</li>
+      <li><b>二、幸存者偏差没有被处理。</b>书里选的都是活下来的公司，用同样手段失败的数量没有分母。读到「某某靠一个签名档做到千万用户」时，要补一句：同时期做同样事情的几百家公司，现在都不在了。</li>
+      <li><b>三、案例数据多为二手转述。</b>不少数字来自当时的媒体报道与创业者自述，既无法回溯原始数据，也经过了美化。本书的案例适合看机制，不适合引用具体数字做测算。</li>
+      <li><b>四、AARRR 本身已经被反思。</b>后来的实践者提出 RARRA（留存优先）等变体，理由是：在获客成本极低的年代，先拉新再补留存是划算的；在今天，先修留存再放量才是理性的。书里的顺序没错，但权重需要按时代重排。</li>
+      <li><b>五、部分手段今天已属违规。</b>未经授权读取通讯录、诱导分享、批量注册、爬取用户数据，在《个人信息保护法》《数据安全法》与各平台规则下都有明确后果。读这一章时要主动做减法，把这一类别剔除。</li>
+      <li><b>六、组织前提被默认为已具备。</b>书里的增长团队假设公司有埋点体系、有实验平台、有改动产品的权限。多数中小团队三样都没有，照搬会退化成「用 Excel 记 KPI 的市场部」，反而增加内耗。</li>
+      <li><b>七、「零成本」在成熟品类里是幻觉。</b>真正让获客成本降下来的，是产品本身的差异化，而不是某个技巧。书里最诚实的部分其实是第 2 章——但它最不被读者重视，因为那一章没有可抄的动作。</li>
+    </ul>
+
+    <div class="reflection-block">
+      <div class="reflection-title">关于留存的一个补充</div>
+      <p><b>churn</b><button class="glossary-trigger" onclick="openModal('churn')" aria-label="术语：流失">?</button>这个词在书里没有单独定义，但它贯穿第 5 章。今天的实践里有一个更细的区分值得补上：新用户流失（前 7 天没激活）与老用户流失（用了一段时间后放弃）的成因完全不同，前者是引导问题，后者是价值衰减或替代品出现。把两者混在一个流失率里看，会得出错误结论。</p>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="section" id="extend">
+    <h2><span class="no">12</span>延伸对照：把它放回书架</h2>
+    <p class="lead">这本书的位置很清楚：它不讲为什么，讲怎么做。所以它需要上游的理论书来解释原因，也需要下游的实操书来补细节。</p>
+
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>对照书</th><th>定位</th><th>局限</th><th>怎么配合读</th></tr></thead>
+        <tbody>
+          <tr><td>《精益创业》<br>Eric Ries</td><td>给出「假设—验证—迭代」的方法论母体，本书的执行层从这里长出来</td><td>偏制造与开发流程，对获客与变现几乎不谈</td><td>先读它建立验证思维，再读本书学具体杠杆</td></tr>
+          <tr><td>《上瘾》<br>Nir Eyal</td><td>用「触发—行动—可变奖励—投入」解释留存的心理机制</td><td>偏设计伦理讨论，缺少量化与渠道视角</td><td>用它解释第 5 章为什么有效，也用它警惕过度设计</td></tr>
+          <tr><td>《引爆点》<br>Malcolm Gladwell</td><td>解释流行如何发生：个别人物、附着力、环境威力</td><td>案例事后归因，缺少可操作指标</td><td>读第 7 章病毒传播时做补充，理解「为什么会传」</td></tr>
+          <tr><td>《跨越鸿沟》<br>Geoffrey Moore</td><td>解释早期采用者与主流市场之间的断档</td><td>面向 B2B 科技产品，消费类适配有限</td><td>用来判断「种子用户很爱你」到底是好事还是陷阱</td></tr>
+          <tr><td>《营销管理》<br>菲利普·科特勒</td><td>完整的营销理论框架：STP、4P、渠道与品牌</td><td>体系庞大、节奏慢，不解决「明天怎么涨」</td><td>当字典查，避免把战术当战略</td></tr>
+          <tr><td>《精益数据分析》<br>Alistair Croll</td><td>把指标定义、 cohort 分析、商业模式分类讲清楚</td><td>工具与平台已过时，概念仍有效</td><td>补本书最薄的一块：指标怎么定义才不算自欺</td></tr>
+          <tr><td>《硅谷增长黑客实战笔记》<br>曲卉</td><td>中文语境下更现代的操作手册，AARRR 拆得更细</td><td>同样有平台时效问题，案例偏 SaaS</td><td>当作本书的更新版对照，看哪些手法被淘汰</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>12.1 一个人或小团队，能用的是哪几页</h3>
+    <p>如果读者是自己运营产品的人——没有增长团队、没有实验平台、预算也很有限——这本书里真正能落地的其实是四件事，其余都要打对折：</p>
+    <ul class="chain">
+      <li><b>把北极星指标定对</b><p><b>northstar</b><button class="glossary-trigger" onclick="openModal('northstar')" aria-label="术语：北极星指标">?</button>这个说法在书里还没流行，但逻辑已经在了：选一个能代表「用户获得了价值」的指标，而不是「我做了多少动作」。粉丝数、注册数是动作，读完率、复用次数才是价值。</p></li>
+      <li><b>找出一个关键行为，把它前置</b><p>不需要复杂埋点，把老用户和新用户各找十个问一遍「你第一次觉得这东西有用，是在做什么的时候」，答案往往高度集中。</p></li>
+      <li><b>只做一个渠道，做够三个月</b><p>对个人运营者，内容渠道的复利远高于投放。这条在 2026 年反而比 2015 年更成立，因为平台的自然分发仍然奖励持续产出。</p></li>
+      <li><b>把召回当成日常动作</b><p>不做群发，做定向：谁三周没来、谁卡在某个步骤、谁付过一次又停了。三类人三套话术，成本极低，效果远好于再拉一批新用户。</p></li>
+    </ul>
+
+    <div class="insight-card">
+      <div class="insight-title">最后一句判断</div>
+      <div class="insight-body">这本书的价值不在那些具体招式——它们大半已经过期；价值在于它提供了一个「先算后做、分层归因、小步实验」的工作习惯。这个习惯在任何流量环境里都成立，而且越是在红利消失的时候越值钱。反过来，如果只从中拿走几个裂变套路，那读它还不如不读。</div>
+      <div class="insight-evidence">综合全书判断，非书中原文</div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    <b>版本</b>　范冰《增长黑客：创业公司的用户与收入增长秘籍》，电子工业出版社，2015 年 7 月第 1 版，ISBN 9787121263606，332 页。<br>
+    <b>说明</b>　本页为读书整理，非原文摘录。标注「简介原文」「章节标题」「书中引述」的为可查文本；其余段落为归纳与评述，含对 2015 年后行业变化的补充判断，不代表作者观点。<br>
+    <b>整理日期</b>　2026-11-13　·　仅供个人学习回顾
+  </div>
+
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()" aria-label="关闭">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部">↑</button>
+
+<script>
+var glossary = {
+  growthhacker: {title:"增长黑客 growth hacker", content:"<p>2010 年由 Sean Ellis 提出，指以增长为唯一北极星、能用产品与技术手段而非预算达成增长的角色。介于产品、市场、技术之间。</p><p>书里给的判别标准很实用：他能不能自己把想法上线，并用数据证明有效。能，就是增长黑客；不能，就是提需求的人。</p>"},
+  aarrr: {title:"AARRR 漏斗", content:"<p>Dave McClure 于 2007 年提出的用户生命周期模型：Acquisition 获取、Activation 激活、Retention 留存、Revenue 收入、Referral 传播。</p><p>它的价值不在五个词，而在于把「增长」这件模糊的事拆成五个可以分别度量、分别归因的环节。每一层的转化率相乘，就是整体的增长效率。</p><div class='gl-formula'>整体转化 = 获取率 × 激活率 × 留存率 × 付费率 × 传播系数</div><p>所以增长的第一动作不是「加大投放」，而是找到乘数里最小的那一项。</p>"},
+  pmf: {title:"PMF 产品-市场契合", content:"<p>Product/Market Fit，Marc Andreessen 2007 年提出：产品恰好满足了某个市场的真实需求，以至于用户会主动传播、愿意付费、流失很低。</p><p>它的反面不是「产品不好」，而是「产品好，但没人非要它」。书里认为这是增长的前置条件，没有它，后面所有手段都是在放大一个错误。</p>"},
+  mvp: {title:"MVP 最小可行产品", content:"<p>用最小成本做出能验证核心假设的版本，先看有没有人要，再谈做得好不好。</p><p>关键在「可行」而不是「最小」：它必须能交付一次完整的价值，否则用户的反馈测的不是需求，而是半成品。</p>"},
+  aha: {title:"aha moment 惊喜时刻", content:"<p>用户第一次真切感到「这东西对我有用」的那个瞬间。它通常对应一个可测量的行为，而不是一种感受。</p><p>增长团队要做的是把这个行为找出来，然后在新用户路径上尽可能早、尽可能必然地触发它。</p>"},
+  forty: {title:"40% 测试", content:"<p>Sean Ellis 的做法：问现有用户「如果明天开始不能再用这个产品，你会有多失望」，选项为非常失望/有点失望/不失望。</p><div class='gl-formula'>回答「非常失望」的比例 ≥ 40% → 视为达到 PMF</div><p>它测的不是满意度，是不可替代性。满意可以很廉价，失望才说明依赖。</p>"},
+  coldstart: {title:"冷启动 cold start", content:"<p>产品没有用户、没有内容、没有网络效应时，如何从零启动第一批供需。</p><p>书里强调冷启动的核心是「人为制造一个密度」：先在极小范围里让供需同时够用，再复制这个密度，而不是一开始就铺全国。</p>"},
+  aso: {title:"ASO 应用商店优化", content:"<p>App Store Optimization：通过标题、副标题、关键词、截图、评分、更新节奏等可控变量，提高应用在商店搜索结果与榜单中的曝光和转化。</p><p>2015 年前后这是性价比最高的渠道之一，因为用户带着明确意图进入搜索框；今天它的权重被竞价广告和平台推荐稀释了很多。</p>"},
+  cac: {title:"CAC 获客成本", content:"<p>Customer Acquisition Cost：获取一个有效用户（或付费用户）的平均成本，通常把渠道费用与相关人力折算进去。</p><p>它必须和 LTV 一起看，单看 CAC 没有意义：CAC 低但用户三天就流失，等于白送。</p>"},
+  ltv: {title:"LTV 用户生命周期价值", content:"<p>Life Time Value：一个用户从进入到彻底流失，给公司贡献的净收入（或毛利）。</p><div class='gl-formula'>经验法则：LTV / CAC ≥ 3 视为健康</div><p>书里反复强调这个比值，因为它是「能不能规模化投放」的唯一判据：比值不到，投放越多亏得越快。</p>"},
+  kfactor: {title:"K 因子病毒系数", content:"<p>衡量一个老用户平均能带来多少新用户。</p><div class='gl-formula'>K = i × c　（i 每个用户发出的邀请数，c 邀请的转化率）</div><p>K &gt; 1：每个用户带来超过一个新用户，理论上可以自增长；K &lt; 1：增长会衰减，必须靠投放补。大多数产品的真实 K 值在 0.2—0.6 之间。</p>"},
+  viralloop: {title:"病毒循环 viral loop", content:"<p>用户使用产品 → 产生一个带有产品痕迹的产物 → 这个产物被非用户看到 → 非用户为了得到同样的东西而进入产品。这一圈闭合，才叫循环。</p><p>它不是「分享按钮」，而是产物本身必须对圈外人有用。Hotmail 的邮件签名、Dropbox 的共享文件夹，都是产物自带传播。</p>"},
+  northstar: {title:"北极星指标 North Star Metric", content:"<p>一个能同时代表用户获得价值和公司获得增长的单一指标，比如 Airbnb 的「完成入住的间夜数」、Spotify 的「总收听时长」。</p><p>好的北极星指标有三个特征：反映真实价值、可被团队影响、能领先于收入。用「注册数」当北极星是典型错误，因为它衡量的是动作，不是价值。</p>"},
+  freemium: {title:"免费增值 freemium", content:"<p>用免费版获取规模，用付费版变现。设计的关键不是「免费给多少」，而是「在哪一条线上卡住」。</p><p>卡得太早，用户还没形成使用习惯就走；卡得太晚，免费版已经够用，没人升级。书里给的经验是：卡在「用户已经投入、且需求随使用量自然增长」的位置。</p>"},
+  churn: {title:"流失 churn", content:"<p>一段时间内停止使用（或取消订阅）的用户占比。要区分主动流失（用户决定走）与被动流失（想用但用不了，如换手机、忘记密码、支付失败）。</p><p>被动流失往往占三到五成，而且是最容易被忽略的一块：一条找回短信的成本，远低于一次拉新。</p>"},
+  abtest: {title:"A/B 测试", content:"<p>把流量随机分成两组，只改一个变量，比较结果差异是否显著。</p><p>三条纪律：一次只改一个变量；样本量事前算好，不要中途看结果就停；只看预先定义的核心指标，不要在一堆指标里挑好看的那个（多重比较问题）。</p>"},
+  magicnumber: {title:"魔法数字 magic number", content:"<p>在数据里捞出「做到某个动作 N 次、且发生在注册后 M 天内」的用户，其长期留存显著高于其他人。这个 N 和 M 就是魔法数字。</p><p>它只描述相关性，因果要靠实验验证：把新用户强行推到那个动作，看留存是否真的抬起来，抬不起来说明是伪相关。</p>"}
+};
+function openModal(key){
+  var d = glossary[key];
+  if(!d) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + d.title + '</h4>' + d.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar .toc-list a[href^="#"]'));
+  var secs = links.map(function(l){ return document.getElementById(l.getAttribute('href').slice(1)); });
+  function sync(){
+    var y = window.scrollY + 130, idx = 0;
+    for(var i=0;i<secs.length;i++){ if(secs[i] && secs[i].offsetTop <= y) idx = i; }
+    links.forEach(function(l,i){ l.classList.toggle('active', i===idx); });
+  }
+  window.addEventListener('scroll', sync, {passive:true});
+  window.addEventListener('resize', sync);
+  sync();
+})();
+
+(function(){
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function(){ btn.classList.toggle('visible', window.scrollY > 600); }, {passive:true});
+})();
+</script>
+</body>
+</html>

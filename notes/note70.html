@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《第二曲线创新》· 知识图谱</title>
+<style>
+:root{
+  --font-sans:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC","PingFang SC","Hiragino Sans GB",sans-serif;
+  --font-serif:Georgia,"Noto Serif SC","Source Han Serif SC",STSong,serif;
+  --font-mono:"SF Mono","Cascadia Code",Consolas,monospace;
+
+  --primary:#2a3a63; --primary-light:#e8ebf3; --primary-dark:#151d33;
+  --accent:#3f5aa6; --accent-deep:#22305a;
+  --cinnabar:#b5432f; --cinnabar-light:#f4e4df;
+  --gold:#a8863c;
+  --bg:#f5f4ef; --bg-card:#fffdf8; --bg-soft:#eeece4; --bg-softer:#e4e1d5;
+  --bg-tag:#e0e4ef;
+  --text:#2a2c33; --text-heading:#16181f; --text-muted:#70737d; --text-light:#8e919b;
+  --border:#d7d4c8; --border-soft:#e5e2d6;
+  --highlight:#eef0f6; --highlight-strong:#dfe3ee;
+  --shadow-sm:0 1px 3px rgba(21,29,51,.06); --shadow:0 2px 10px rgba(21,29,51,.08);
+  --radius-sm:4px; --radius:8px; --radius-lg:12px;
+  --color-concept:#5b4b8a; --color-tool:#2f5f8a; --color-case:#2f7d4f;
+  --color-history:#a8752a; --color-insight:#2a6b6b; --color-debate:#b5432f;
+  --color-solution:#2f7d4f; --color-crisis:#a83a2a; --color-mechanism:#3f5aa6;
+  --color-effect:#7a4a8a; --color-core:#2a3a63;
+  --warn-bg:#fbf6e9; --warn-border:#e8d9b5; --example-bg:#fbfaf4;
+  --reflect-bg:#f0eee5; --quote-border:#b5432f;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{font-family:var(--font-sans);background:var(--bg);color:var(--text);line-height:1.75;}
+a{color:var(--accent);text-decoration:none;}
+a:hover{text-decoration:underline;}
+
+.sidebar{position:fixed;top:0;left:0;width:216px;height:100vh;background:var(--bg-card);border-right:1px solid var(--border-soft);padding:20px 13px 40px;overflow-y:auto;z-index:100;}
+.sidebar h3{font-size:11.5px;color:var(--text-muted);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:11px;padding-left:8px;}
+.sidebar .toc-list{list-style:none;}
+.sidebar .toc-list li{margin-bottom:1px;}
+.sidebar .toc-list a{display:block;padding:5px 9px;border-radius:var(--radius-sm);font-size:12.4px;color:var(--text);border-left:3px solid transparent;transition:background .15s;line-height:1.5;}
+.sidebar .toc-list a:hover{background:var(--bg-softer);text-decoration:none;}
+.sidebar .toc-list a.active{background:var(--primary-light);color:var(--primary-dark);font-weight:600;border-left-color:var(--primary);}
+.sidebar .sb-part{margin:11px 0 4px;padding-left:9px;font-size:10.5px;letter-spacing:.1em;color:var(--gold);font-weight:700;}
+.sidebar .sb-foot{margin-top:16px;padding:10px 9px 0;border-top:1px dashed var(--border);font-size:11px;color:var(--text-light);line-height:1.6;}
+
+.main{margin-left:216px;max-width:1080px;padding:30px 36px 110px;}
+
+.header{position:relative;overflow:hidden;border-radius:var(--radius-lg);padding:34px 36px 30px;margin-bottom:26px;background:linear-gradient(150deg,#101728 0%,#1c2745 50%,#2a3a63 100%);color:#e8ebf3;box-shadow:0 6px 26px rgba(16,23,40,.2);}
+.header h1{font-size:30px;line-height:1.3;color:#fff;margin-bottom:8px;padding-left:14px;border-left:4px solid var(--cinnabar);letter-spacing:.01em;}
+.header .subtitle{color:#a8b2ca;font-size:13.5px;margin-bottom:16px;padding-left:18px;}
+.header .meta{display:flex;flex-wrap:wrap;gap:7px 22px;font-size:12.5px;color:#b6bfd3;padding:11px 16px;background:rgba(255,255,255,.07);border-radius:var(--radius);margin-bottom:14px;position:relative;z-index:2;}
+.header .meta strong{color:#fff;font-weight:600;}
+.header .framework-badges{display:flex;flex-wrap:wrap;gap:7px;position:relative;z-index:2;}
+.header .badge{background:rgba(255,255,255,.11);color:#dfe4f0;padding:3px 12px;border-radius:20px;font-size:11.5px;font-weight:600;}
+.header .core-narrative{margin-top:16px;font-size:14px;color:#ccd3e3;line-height:1.7;position:relative;z-index:2;}
+.header .core-narrative b{color:#f0d9b8;}
+.hd-curve{position:absolute;right:0;top:0;height:100%;width:56%;opacity:.85;pointer-events:none;}
+.hd-mark{position:absolute;right:14px;bottom:-26px;font-family:var(--font-mono);font-size:110px;font-weight:800;color:rgba(255,255,255,.045);line-height:1;pointer-events:none;}
+
+.section{margin-bottom:30px;}
+.section h2{font-size:20px;color:var(--text-heading);margin-bottom:14px;padding-bottom:8px;border-bottom:2px solid var(--primary-light);display:flex;align-items:baseline;gap:9px;}
+.section h2 .no{font-family:var(--font-mono);font-size:12.5px;color:var(--cinnabar);font-weight:700;letter-spacing:.06em;}
+.section h3{font-size:15.5px;color:var(--text-heading);margin:22px 0 9px;padding-left:9px;border-left:3px solid var(--accent);}
+.section p{font-size:14px;margin-bottom:10px;}
+.section p.lead{color:var(--text-muted);font-size:13.2px;margin-bottom:14px;}
+
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:13px;margin:14px 0;}
+.info-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:16px 18px;transition:box-shadow .18s;}
+.info-card:hover{box-shadow:var(--shadow);}
+.info-card .label{font-weight:700;font-size:13.5px;margin-bottom:7px;color:var(--text-heading);padding-left:9px;}
+.info-card .content{font-size:13.2px;line-height:1.7;}
+.info-card .example{margin-top:9px;padding:7px 11px;background:var(--example-bg);border-radius:var(--radius-sm);font-size:12.3px;color:var(--text-muted);border-left:3px solid var(--border);line-height:1.6;}
+.info-card .example strong{color:var(--accent-deep);}
+.info-card.concept .label{border-left:4px solid var(--color-concept);}
+.info-card.tool .label{border-left:4px solid var(--color-tool);}
+.info-card.case .label{border-left:4px solid var(--color-case);}
+.info-card.history .label{border-left:4px solid var(--color-history);}
+.info-card.insight .label{border-left:4px solid var(--color-insight);}
+.info-card.debate .label{border-left:4px solid var(--color-debate);}
+.info-card.solution .label{border-left:4px solid var(--color-solution);}
+.info-card.crisis .label{border-left:4px solid var(--color-crisis);}
+.info-card.mechanism .label{border-left:4px solid var(--color-mechanism);}
+.info-card.effect .label{border-left:4px solid var(--color-effect);}
+.info-card.core .label{border-left:4px solid var(--color-core);}
+
+.insight-card{background:var(--highlight);border:1px solid var(--border-soft);border-left:4px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;padding:16px 20px;margin-bottom:11px;}
+.insight-card .insight-title{font-weight:700;font-size:14.2px;color:var(--primary-dark);margin-bottom:5px;}
+.insight-card .insight-body{font-size:13.4px;line-height:1.72;}
+.insight-card .insight-evidence{font-size:11.8px;color:var(--text-muted);margin-top:8px;padding-top:7px;border-top:1px dashed var(--border);}
+
+.law-card{background:var(--bg-card);border:1px solid var(--border-soft);border-left:5px solid var(--primary);border-radius:0 var(--radius) var(--radius) 0;padding:14px 18px;margin-bottom:9px;}
+.law-card h4{font-size:13.6px;color:var(--primary-dark);margin:0 0 5px;}
+.law-card p{font-size:13px;line-height:1.68;margin:0;}
+
+.pattern-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:11px;margin:14px 0;}
+.pattern-card{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:15px 17px;}
+.pattern-card .pattern-name{font-weight:700;font-size:13.6px;color:var(--primary-dark);margin-bottom:6px;padding-bottom:5px;border-bottom:1px dashed var(--border-soft);}
+.pattern-card .pattern-desc{font-size:12.8px;line-height:1.66;}
+.pattern-card .pattern-examples{font-size:11.8px;color:var(--text-light);margin-top:7px;}
+
+.reflection-block{background:var(--reflect-bg);border:1px solid var(--border-soft);border-radius:var(--radius);padding:15px 19px;margin:14px 0;}
+.reflection-block .reflection-title{font-weight:700;font-size:13.6px;color:var(--primary-dark);margin-bottom:7px;}
+.reflection-block p{font-size:13px;line-height:1.72;margin-bottom:7px;}
+.reflection-block p:last-child{margin-bottom:0;}
+
+blockquote.quote-block{background:var(--bg-card);border-left:4px solid var(--quote-border);margin:16px 0;padding:15px 19px;font-family:var(--font-serif);font-size:14.6px;color:var(--text-heading);border-radius:0 var(--radius) var(--radius) 0;box-shadow:var(--shadow-sm);line-height:1.78;}
+blockquote.quote-block .cite{display:block;margin-top:9px;font-family:var(--font-sans);font-size:11.8px;color:var(--text-muted);text-align:right;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:14px 0;}
+.table-scroll{overflow-x:auto;margin:14px 0;}
+table.extension{width:100%;border-collapse:collapse;font-size:12.8px;}
+table.extension th{background:var(--primary-light);color:var(--primary-dark);padding:9px 12px;text-align:left;font-weight:700;border-bottom:2px solid var(--border);white-space:nowrap;}
+table.extension td{padding:9px 12px;border-bottom:1px solid var(--border-soft);vertical-align:top;line-height:1.62;}
+table.extension tr:hover td{background:var(--bg-soft);}
+table.extension td:first-child{white-space:nowrap;font-weight:600;color:var(--primary-dark);}
+table.extension.tight td,table.extension.tight th{padding:7px 10px;}
+
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;background:var(--border-soft);border:1px solid var(--border-soft);margin:15px 0;border-radius:var(--radius);overflow:hidden;}
+.metric{background:var(--bg-card);padding:13px 15px;}
+.metric b{display:block;font-family:var(--font-mono);font-size:21px;color:var(--primary);line-height:1.25;font-weight:700;}
+.metric span{font-size:11.5px;color:var(--text-muted);display:block;margin-top:3px;line-height:1.45;}
+
+.chain{list-style:none;counter-reset:ch;margin:14px 0;}
+.chain li{position:relative;padding:9px 0 9px 42px;margin-left:11px;border-left:2px solid var(--border-soft);}
+.chain li:last-child{border-left-color:transparent;}
+.chain li::before{counter-increment:ch;content:counter(ch,decimal-leading-zero);position:absolute;left:-13px;top:10px;width:24px;height:24px;background:var(--primary);color:#fff;border-radius:50%;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);line-height:1;}
+.chain li b{color:var(--text-heading);font-size:13.4px;}
+.chain li p{font-size:12.9px;color:var(--text);margin:3px 0 0;line-height:1.65;}
+
+.vs-block{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:14px 0;}
+.vs-col{padding:14px 16px;background:var(--bg-card);}
+.vs-col.old{background:var(--bg-soft);border-right:1px solid var(--border);}
+.vs-col h5{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;}
+.vs-col ul{list-style:none;}
+.vs-col li{font-size:12.8px;line-height:1.6;padding:4px 0 4px 14px;position:relative;}
+.vs-col li::before{content:"·";position:absolute;left:2px;color:var(--accent);font-weight:700;}
+
+.figure{background:var(--bg-card);border:1px solid var(--border-soft);border-radius:var(--radius);padding:14px 16px 8px;margin:16px 0;}
+.figure svg{width:100%;height:auto;display:block;}
+.figure figcaption{font-size:11.8px;color:var(--text-muted);text-align:center;margin-top:6px;padding-top:6px;border-top:1px dashed var(--border-soft);}
+
+.glossary-trigger{display:inline-flex;align-items:center;justify-content:center;width:17px;height:17px;background:var(--accent);color:#fff;border:none;border-radius:50%;font-size:10.5px;font-weight:700;cursor:pointer;vertical-align:1px;margin-left:3px;transition:transform .15s;font-family:var(--font-mono);}
+.glossary-trigger:hover{transform:scale(1.14);}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(16,23,40,.48);display:flex;align-items:center;justify-content:center;z-index:999;backdrop-filter:blur(2px);padding:20px;}
+.modal-overlay.hidden{display:none;}
+.modal-card{background:var(--bg-card);border-radius:var(--radius-lg);padding:26px 30px;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.25);position:relative;}
+.modal-card .close-btn{position:absolute;top:11px;right:15px;background:none;border:none;font-size:19px;cursor:pointer;color:var(--text-muted);line-height:1;padding:4px;}
+.modal-card h4{font-size:15.5px;color:var(--text-heading);margin:0 0 9px;}
+.modal-card p{font-size:13.4px;line-height:1.8;margin-bottom:7px;}
+.modal-card .gl-formula{font-family:var(--font-mono);background:var(--bg-soft);padding:8px 11px;border-radius:var(--radius-sm);font-size:12.4px;margin:8px 0;color:var(--primary-dark);}
+
+.back-to-top{position:fixed;bottom:26px;right:26px;background:var(--primary);color:#fff;border:none;border-radius:50%;width:42px;height:42px;font-size:17px;cursor:pointer;box-shadow:0 3px 12px rgba(16,23,40,.3);z-index:200;opacity:0;transition:opacity .3s;pointer-events:none;}
+.back-to-top.visible{opacity:1;pointer-events:auto;}
+
+.footer-note{margin-top:36px;padding-top:16px;border-top:1px solid var(--border-soft);font-size:11.8px;color:var(--text-light);line-height:1.75;}
+.footer-note b{color:var(--text-muted);font-weight:600;}
+
+.callout{background:var(--warn-bg);border:1px solid var(--warn-border);border-radius:var(--radius);padding:13px 17px;margin:14px 0;font-size:13px;line-height:1.7;}
+.callout b{color:#8a5a12;}
+.limit-list{list-style:none;margin:12px 0;}
+.limit-list li{position:relative;padding:9px 0 9px 24px;border-bottom:1px dashed var(--border-soft);font-size:13.2px;line-height:1.68;}
+.limit-list li:last-child{border-bottom:none;}
+.limit-list li::before{content:"!";position:absolute;left:0;top:10px;width:16px;height:16px;background:var(--color-debate);color:#fff;border-radius:3px;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;line-height:1;}
+.limit-list li b{color:var(--text-heading);}
+
+@media print{
+  body{background:#fff;}
+  .sidebar,.back-to-top,.modal-overlay{display:none!important;}
+  .main{margin-left:0;padding:0;max-width:100%;}
+  .header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  h2,h3{page-break-after:avoid;}
+  .info-card,.insight-card,.law-card,.pattern-card,.figure,blockquote.quote-block{page-break-inside:avoid;}
+}
+@media (max-width:860px){
+  body{overflow-x:hidden;}
+  .sidebar{display:none;}
+  .main{margin-left:0;padding:14px 13px 70px;}
+  .header{padding:24px 20px;}
+  .header h1{font-size:22px;}
+  .hd-curve{width:100%;opacity:.25;}
+  .hd-mark{font-size:64px;bottom:-12px;}
+  .header .meta{display:grid;grid-template-columns:1fr;gap:3px;padding:10px 13px;}
+  .header .meta span{overflow-wrap:anywhere;}
+  .info-grid,.pattern-grid,.two-col,.vs-block{grid-template-columns:1fr;}
+  .vs-col.old{border-right:none;border-bottom:1px solid var(--border);}
+  .metric-row{grid-template-columns:1fr 1fr;}
+  .table-scroll table{min-width:600px;}
+  table.extension td,table.extension th{padding:8px 10px;}
+  .modal-card{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <h3>本书图谱导航</h3>
+  <ul class="toc-list">
+    <li><a href="#map">01　全书骨架</a></li>
+    <li class="sb-part">创新篇</li>
+    <li><a href="#curve">02　第一曲线与极限点</a></li>
+    <li><a href="#second">03　第二曲线与非连续性</a></li>
+    <li><a href="#fractal">04　分形创新</a></li>
+    <li class="sb-part">战略篇</li>
+    <li><a href="#combo">05　组合创新</a></li>
+    <li><a href="#point">06　单一要素与破局点</a></li>
+    <li><a href="#lever">07　战略杠杆</a></li>
+    <li class="sb-part">竞争篇</li>
+    <li><a href="#mismatch">08　错位竞争</a></li>
+    <li><a href="#disrupt">09　颠覆式创新</a></li>
+    <li><a href="#edge">10　边缘分化</a></li>
+    <li class="sb-part">组织篇</li>
+    <li><a href="#org">11　价值网与组织心智</a></li>
+    <li><a href="#break">12　破界创新</a></li>
+    <li class="sb-part">收尾</li>
+    <li><a href="#quotes">13　金句存档</a></li>
+    <li><a href="#limits">14　该打折扣的地方</a></li>
+    <li><a href="#extend">15　延伸对照</a></li>
+  </ul>
+  <div class="sb-foot">李善友 · 人民邮电出版社<br>2019 年 8 月 · 12 章四篇</div>
+</nav>
+
+<div class="main">
+
+  <div class="header" id="header">
+    <svg class="hd-curve" viewBox="0 0 620 320" preserveAspectRatio="xMaxYMid meet" aria-hidden="true">
+      <path d="M20,300 C120,298 200,292 268,262 C330,234 372,168 402,120 C424,86 440,62 448,54" fill="none" stroke="#8fa4d6" stroke-width="2" stroke-opacity=".65"/>
+      <path d="M448,54 C460,88 478,132 508,158 C536,182 566,190 600,192" fill="none" stroke="#c9806d" stroke-width="2" stroke-opacity=".7" stroke-dasharray="5 4"/>
+      <path d="M392,300 C420,300 448,296 470,282 C494,266 512,238 528,206 C542,178 556,152 574,134" fill="none" stroke="#d9c39a" stroke-width="2" stroke-opacity=".85"/>
+      <circle cx="448" cy="54" r="4.5" fill="#d9c39a"/>
+      <circle cx="528" cy="206" r="3.5" fill="#d9c39a" fill-opacity=".9"/>
+    </svg>
+    <div class="hd-mark">S</div>
+    <h1>第二曲线创新</h1>
+    <div class="subtitle">增长的极限，与跨越极限的方法</div>
+    <div class="meta">
+      <span><strong>作者</strong> 李善友</span>
+      <span><strong>出版</strong> 人民邮电出版社 · 2019 年 8 月</span>
+      <span><strong>ISBN</strong> 978-7-115-51477-6</span>
+      <span><strong>结构</strong> 12 章 · 创新／战略／竞争／组织四篇</span>
+    </div>
+    <div class="framework-badges">
+      <span class="badge">S 曲线</span>
+      <span class="badge">非连续性</span>
+      <span class="badge">12 个思维模型</span>
+      <span class="badge">案例驱动</span>
+      <span class="badge">哲科思维</span>
+    </div>
+    <div class="core-narrative">
+      全书只讲一件事：<b>任何一条增长曲线都会走到尽头，而尽头不是终点，是必须换一条曲线的地方</b>。前后十二章不是十二个并列的方法，是一套「先认命、再找出路」的顺序——先承认极限点必然到来，再拆解怎么在第一条曲线还好看的时候，长出第二条。
+    </div>
+  </div>
+
+  <!-- 01 -->
+  <section class="section" id="map">
+    <h2><span class="no">01</span>全书骨架：一条论证链，十二个模型</h2>
+    <p class="lead">四篇是有严格顺序的：创新篇讲「为什么会死」，战略篇讲「怎么找新曲线」，竞争篇讲「从哪个口子进」，组织篇讲「为什么你明明知道却做不到」。</p>
+
+    <figure class="figure">
+      <svg viewBox="0 0 700 300" role="img" aria-label="两条S曲线示意：第一条到达极限点后掉头向下，第二条在第一曲线仍上升时从下方启动，穿破局点后接续增长">
+        <line x1="50" y1="255" x2="660" y2="255" stroke="#d7d4c8" stroke-width="1"/>
+        <line x1="50" y1="255" x2="50" y2="26" stroke="#d7d4c8" stroke-width="1"/>
+        <text x="16" y="34" font-size="11" fill="#8e919b">增长</text>
+        <text x="636" y="274" font-size="11" fill="#8e919b">时间</text>
+        <path d="M50,250 C150,248 210,238 265,210 C315,184 350,132 380,80 C400,46 412,36 420,33" fill="none" stroke="#2a3a63" stroke-width="2.6"/>
+        <path d="M420,33 C432,62 456,116 492,158 C528,200 566,222 604,230" fill="none" stroke="#b5432f" stroke-width="2.2" stroke-dasharray="6 4"/>
+        <circle cx="420" cy="33" r="5" fill="#b5432f"/>
+        <text x="428" y="26" font-size="11.5" fill="#b5432f" font-weight="700">极限点</text>
+        <path d="M268,214 C320,214 372,196 416,168 C458,141 492,104 520,74" fill="none" stroke="#a8863c" stroke-width="2.6"/>
+        <circle cx="416" cy="168" r="4.5" fill="#a8863c"/>
+        <text x="424" y="182" font-size="11.5" fill="#8a6d2c" font-weight="700">破局点</text>
+        <line x1="416" y1="168" x2="416" y2="255" stroke="#a8863c" stroke-width="1" stroke-dasharray="3 3"/>
+        <text x="256" y="246" font-size="10.5" fill="#70737d">第一曲线</text>
+        <text x="512" y="92" font-size="10.5" fill="#8a6d2c">第二曲线</text>
+        <text x="316" y="278" font-size="10.5" fill="#70737d">启动窗口：第一曲线还在涨的时候</text>
+      </svg>
+      <figcaption>两条曲线的交点之前必须先有第二条——等到第一条掉头再动手，资源、人才、心智都不在了</figcaption>
+    </figure>
+
+    <h3>1.1 主论证链</h3>
+    <ol class="chain">
+      <li><b>增长有极限</b><p>任何 S 曲线都会到顶。这是宿命，不是能力问题。</p></li>
+      <li><b>极限点前必须换道</b><p>第二曲线要在第一曲线还在增长时启动，否则没有资源喂养新业务。</p></li>
+      <li><b>新曲线从旧曲线里长</b><p>不是凭空设计，是把已有的子业务放进市场做选择——分形创新。</p></li>
+      <li><b>新曲线要过破局点</b><p>靠单一要素最大化，把一件事做到十倍好，而不是十件事各好一点。</p></li>
+      <li><b>支点要稳、力臂要长</b><p>战略杠杆：不变的使命作支点，十倍速要素作力臂。</p></li>
+      <li><b>别在对手的主场打</b><p>错位竞争，进一个对手不认的价值网。</p></li>
+      <li><b>或者从低端、从边缘进</b><p>低端颠覆与边缘分化，是弱者唯二的天然后门。</p></li>
+      <li><b>但组织会拽住你</b><p>价值网与组织心智让在位者看见了也不做。</p></li>
+      <li><b>最后是破界</b><p>回到第一性原理，把隐含假设打掉，边界自己就外扩了。</p></li>
+    </ol>
+
+    <h3>1.2 十二个模型，各自解决什么问题</h3>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>篇</th><th>章</th><th>模型</th><th>它回答的问题</th></tr></thead>
+        <tbody>
+          <tr><td>创新篇</td><td>第 1 章</td><td>第一曲线 / 极限点</td><td>为什么增长一定会停</td></tr>
+          <tr><td>创新篇</td><td>第 2 章</td><td>第二曲线 / 非连续性</td><td>停之前该做什么</td></tr>
+          <tr><td>创新篇</td><td>第 3 章</td><td>分形创新</td><td>新曲线从哪来</td></tr>
+          <tr><td>战略篇</td><td>第 4 章</td><td>组合创新</td><td>创新到底是在做什么动作</td></tr>
+          <tr><td>战略篇</td><td>第 5 章</td><td>单一要素 / 破局点</td><td>资源有限时先打哪里</td></tr>
+          <tr><td>战略篇</td><td>第 6 章</td><td>战略杠杆</td><td>怎么把力气放大</td></tr>
+          <tr><td>竞争篇</td><td>第 7 章</td><td>错位竞争</td><td>正面打不过怎么办</td></tr>
+          <tr><td>竞争篇</td><td>第 8 章</td><td>颠覆式创新 / 低端颠覆</td><td>弱者从哪个口子进来</td></tr>
+          <tr><td>竞争篇</td><td>第 9 章</td><td>边缘分化</td><td>为什么创新总在边缘发生</td></tr>
+          <tr><td>组织篇</td><td>第 10 章</td><td>价值网络</td><td>为什么你的优势会变成枷锁</td></tr>
+          <tr><td>组织篇</td><td>第 11 章</td><td>组织心智</td><td>为什么看见了也不做</td></tr>
+          <tr><td>组织篇</td><td>第 12 章</td><td>破界创新</td><td>怎么从根上换一套假设</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 02 -->
+  <section class="section" id="curve">
+    <h2><span class="no">02</span>第一曲线：增长的极限</h2>
+    <p class="lead">这一章是全书的悲观部分，也是必要部分：先把「你会到顶」这件事说死，后面的方法才有意义。</p>
+
+    <h3>2.1 什么叫 S 曲线</h3>
+    <p><b>S 曲线</b><button class="glossary-trigger" onclick="openModal('scurve')" aria-label="术语：S 曲线">?</button> 描述的是一项业务从投入到饱和的全过程：早期投入大、增长慢，因为要教育市场、磨产品；中段规模效应起来，增速最快；后段市场饱和、替代品出现，增速放缓直到见顶。这条曲线不是财务模型造出来的，是大量产业史的归纳。</p>
+    <p>关键在于：曲线内的所有努力，都叫<b>连续性创新</b>。同一套技术路线、同一批客户、同一个价值网，把产品做得更好、更便宜、更快。它有效，但它的有效期由曲线本身决定——曲线到顶，再努力也只是让顶端更平一点。</p>
+    <div class="vs-block">
+      <div class="vs-col old">
+        <h5>连续性创新</h5>
+        <ul>
+          <li>沿着同一曲线改进</li>
+          <li>服务同一批客户、同一类需求</li>
+          <li>能力是复用的，越做越熟练</li>
+          <li>风险低、见效快、可预测</li>
+          <li>终点：极限点</li>
+        </ul>
+      </div>
+      <div class="vs-col">
+        <h5>非连续性创新</h5>
+        <ul>
+          <li>跳到一条新曲线</li>
+          <li>服务新需求或新人群</li>
+          <li>能力大多作废，要从头学</li>
+          <li>风险高、见效慢、不可预测</li>
+          <li>终点：另一条曲线的极限点</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>2.2 极限点：为什么识别它「价值千金」</h3>
+    <p><b>极限点</b><button class="glossary-trigger" onclick="openModal('limitpoint')" aria-label="术语：极限点">?</button> 是一条曲线由升转降的那个拐点。作者反复强调它的价值：早半年看见，你有资源做第二条曲线；晚半年看见，你只剩裁员和降价两张牌。</p>
+    <p>难在哪？难在你手上的仪表盘全是滞后指标。营收、利润、市占率，这些数字反映的是过去。等它们掉头，组织已经进入自我强化的下行循环——削减研发、流失人才、渠道信心下滑，每一步都在加深下滑。</p>
+    <div class="insight-card">
+      <div class="insight-title">先行信号：单一要素十倍速变坏</div>
+      <div class="insight-body">作者给的判据是「某个单一要素出现十倍速的恶化」，而不是整体指标的小幅波动。比如某个关键客户的采购量骤降、某个核心渠道的成本翻倍、某个技术指标的改进速度突然停滞。逻辑是：系统的崩塌从最薄的一环开始，而不是从平均值开始。</div>
+      <div class="insight-evidence">第 1 章「单一要素十倍速变坏」一节</div>
+    </div>
+    <p>这套判据好用，但也模糊：「十倍速」在多数业务里没有可比的基准，什么时候算变坏、和什么比，书里没有给出统一口径。实操中更可靠的做法是盯住「技术改进的边际收益」——当同样的研发投入换来的性能提升越来越小时，曲线已经在接近顶端。</p>
+
+    <h3>2.3 企业的宿命</h3>
+    <p>作者的态度很硬：没有长青的产品，只有不断替换的曲线。一家公司能活很久，不是因为它的一条曲线活得久，而是因为它换过很多条曲线。这句话听起来像鸡汤，但它有个冷酷的推论——<b>企业的寿命不由最长的那条曲线决定，而由两条曲线交接时的那段空档决定</b>。</p>
+    <div class="callout"><b>为什么传统管理会扼杀创新：</b>管理的目标是确定性——预算、KPI、流程、评审，全都是为了提高可预测性。而新业务在早期恰恰是不可预测的：指标难看、逻辑讲不清、资源要得多。用成熟业务的管理方式去管新业务，等于用尺子量温度。所以作者主张「独立小机构」，让新业务暂时逃出主体系的考核逻辑。</div>
+
+    <h3>2.4 几条已经走完的曲线</h3>
+    <p>把极限点放到产业史里看，会更容易接受它的必然性。下面几条曲线的共同点不是「企业不努力」，而是「努力的方向是对的，但曲线本身到顶了」。</p>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>旧曲线</th><th>到顶的大致时点</th><th>接续的新曲线</th><th>在位者发生了什么</th></tr></thead>
+        <tbody>
+          <tr><td>胶卷相机</td><td>2000 年代初销量见顶</td><td>数码相机 → 手机摄影</td><td>发明了数码技术，却没把它当成主业</td></tr>
+          <tr><td>功能手机</td><td>2010 年前后</td><td>智能手机</td><td>份额从四成跌到被并购，用了约六年</td></tr>
+          <tr><td>PC 整机</td><td>2011 年出货量见顶</td><td>移动设备</td><td>行业整体进入存量替换</td></tr>
+          <tr><td>传统百货</td><td>2010 年代持续下滑</td><td>电商与即时零售</td><td>门店资产从优势变成成本</td></tr>
+          <tr><td>燃油车</td><td>进行中</td><td>新能源</td><td>供应链与渠道优势正在重估</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>读这张表要注意一件事：这些公司大多<b>看见了</b>新技术，有的甚至是自己发明的。它们的失败不在于信息，而在于把新技术放进了旧的价值网里评估——用旧曲线的毛利、渠道、客户标准去打分，新曲线永远不及格。</p>
+
+    <div class="metric-row">
+      <div class="metric"><b>10×</b><span>识别极限点的信号强度</span></div>
+      <div class="metric"><b>1 条</b><span>一家公司同时只有一条主曲线</span></div>
+      <div class="metric"><b>0</b><span>长青产品数量</span></div>
+      <div class="metric"><b>2 条</b><span>交接时同时在跑的业务</span></div>
+    </div>
+  </section>
+
+  <!-- 03 -->
+  <section class="section" id="second">
+    <h2><span class="no">03</span>第二曲线：一条新曲线，不是一个新功能</h2>
+    <p class="lead">「<b>第二曲线</b><button class="glossary-trigger" onclick="openModal('secondcurve')" aria-label="术语：第二曲线">?</button>」是全书最容易被滥用的词。作者花了整章去划界：什么样的新业务算，什么样的不算。而它之所以必要，是因为两条曲线之间横着一道<b>非连续性</b><button class="glossary-trigger" onclick="openModal('discontinuity')" aria-label="术语：非连续性">?</button>——旧曲线的能力到新曲线里大半作废。</p>
+
+    <h3>3.1 市场的连续性，企业的非连续性</h3>
+    <p>书里有个很关键的区分：<b>市场可以连续，企业会死</b>。当一条技术曲线走到尽头，市场不会消失，需求会用另一条曲线被满足——原来的客户还在，只是不再买你。所以「行业没问题」不能安慰任何人，问题从来在企业这一侧。</p>
+    <p>这也解释了为什么在位者总是在新曲线里输：它们不是没看见需求，而是它们的组织、成本结构、渠道关系，全都是为旧曲线优化的。换曲线等于把这些资产一次性作废，而作废资产在任何一个考核体系里都是重罪。</p>
+
+    <h3>3.2 大哥吃小弟效应</h3>
+    <p>新业务在体内孵化，最常见的结果不是长起来，是被老业务吃掉：预算被挤占、人才被抽走、渠道被优先分配给高毛利产品，最后新业务变成一个汇报里的词。作者把这个叫「大哥吃小弟」——不是恶意的，是资源分配的自然结果。</p>
+    <p>破解办法不是讲道理，而是改结构：独立核算、独立办公地点、独立汇报线，甚至独立品牌。<b>亚马逊把 Kindle 团队放在加州而不是西雅图总部</b>，就是这一逻辑的极端执行——物理隔离，减少日常摩擦。</p>
+
+    <h3>3.3 什么才算第二曲线</h3>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">算：新需求 + 新能力组合</div>
+        <div class="pattern-desc">服务的是原来服务不了的人，或者解决的是原来解决不了的问题；用的能力组合与旧业务不同。典型案例是从卖设备转向卖服务、从卖产品转向卖订阅。</div>
+        <div class="pattern-examples">判据：旧曲线的团队照原样干，干不成这件事</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">算：有自己的破局点</div>
+        <div class="pattern-desc">新曲线要从零开始过一个阈值，过了才自我循环。有独立的增长逻辑，不依赖旧业务输血才能活。</div>
+        <div class="pattern-examples">判据：停掉旧业务的补贴，它还能不能转</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">不算：地理扩张与人群下探</div>
+        <div class="pattern-desc">同一套产品卖到新城市、新国家、新人群，本质是复制而非新曲线。它受的是同一条曲线的极限点约束。</div>
+        <div class="pattern-examples">判据：极限点来的时候，它会不会一起到顶</div>
+      </div>
+    </div>
+
+    <h3>3.4 启动时机的两难</h3>
+    <p>这是全书最实在的一段：第二曲线启动得太早，会拖死主业——新业务长期亏损，主业被抽血，两头空；启动得太晚，主业已经没有余粮，新业务只能饿着长。作者的答案是「在第一曲线还在上升、但已看见极限点的时候启动」，用主业的现金流养新业务。</p>
+    <div class="insight-card">
+      <div class="insight-title">这个答案在事后看永远正确</div>
+      <div class="insight-body">「在极限点之前启动」是一句无懈可击的话，但它把最难的判断留给了读者：极限点在哪。作者给的信号是单一要素十倍速变坏，可这个信号本身就要求你先知道哪个要素是关键。于是实操中真正可用的做法，往往不是预测极限点，而是保持多个小赌注同时在场——这也是他下一章讲分形创新的原因。</div>
+      <div class="insight-evidence">对第 2、3 章衔接处的评述，非原文</div>
+    </div>
+  </section>
+
+  <!-- 04 -->
+  <section class="section" id="fractal">
+    <h2><span class="no">04</span>分形创新：新曲线从旧曲线里长出来</h2>
+    <p class="lead">第三章是全书的方法论转折点：它把「第二曲线从哪来」这个问题，从战略规划问题改成了演化问题。</p>
+
+    <h3>4.1 变异 + 选择 = 新物种</h3>
+    <p>作者借生物进化打比方：新物种不是设计出来的，是变异产生多样性、环境做选择、活下来的被放大。放到企业里，<b>变异</b>是各种小试验、新玩法、边缘业务；<b>选择</b>是市场反馈——有没有人真的用、真的付钱。企业能做的是提高变异的速度和数量，以及减少对选择的干预。</p>
+    <div class="callout"><b>最容易犯的错：</b>把「选择」交给内部评审会而不是市场。评审会偏好熟悉的东西，会把真正的变异提前掐死。作者的立场是——让子弹飞一会儿，用真实数据淘汰，而不是用会议室里的判断淘汰。</div>
+
+    <h3>4.2 分形：子业务要能独立面对市场</h3>
+    <p><b>分形创新</b><button class="glossary-trigger" onclick="openModal('fractal')" aria-label="术语：分形创新">?</button> 的关键不是「多做小项目」，而是每个小项目都保持与整体的自相似结构：有自己的用户、自己的价值交付、自己的成本收益。它不是一个功能模块，而是一个能独立存活的迷你业务。</p>
+    <p>为什么强调独立？因为只有独立面对市场，反馈才是真的。功能模块的「成功」由内部指标定义（上线了、用的人不少），迷你业务的成功由市场定义（有人愿意为它付钱、它自己能覆盖成本）。前者产生汇报，后者产生第二曲线。</p>
+
+    <h3>4.3 变异的数量与速度</h3>
+    <p>演化不保证方向，只保证概率。所以作者的建议很朴素：多试、快试、便宜地试。三个变量里，最容易改的是<b>单个试验的成本</b>——把一次试错从半年压到两周，一年内的变异数量就翻了十倍。</p>
+    <div class="table-scroll">
+      <table class="extension tight">
+        <thead><tr><th>做法</th><th>对演化的影响</th><th>常见障碍</th></tr></thead>
+        <tbody>
+          <tr><td>缩短试验周期</td><td>单位时间变异数量上升</td><td>版本节奏被主业务占用</td></tr>
+          <tr><td>降低单次成本</td><td>同样的预算能试更多次</td><td>要求「一次做对」，评审过重</td></tr>
+          <tr><td>允许小范围失败</td><td>选择由市场完成，而非内部</td><td>考核体系把失败当污点</td></tr>
+          <tr><td>分离核算</td><td>新业务不被老业务吸血</td><td>财务与人力体系不支持</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>4.4 分形算法的启示</h3>
+    <p>书里用「分形算法」这个词讲递归：一个规则反复作用，产生自相似的复杂结构。放到组织上，意思是不要试图一次性设计出第二曲线，而要设计一套能持续产生新曲线的机制——种子、土壤、筛选规则。机制对了，具体的曲线是哪一条，反而是涌现出来的。</p>
+    <div class="reflection-block">
+      <div class="reflection-title">这一章的分量</div>
+      <p>如果只读一章，我会选这一章而不是第二曲线那一章。因为「要在极限点前启动第二曲线」只是正确的废话，而「用低成本变异 + 市场选择来生成曲线」是可执行的动作。前者是判断，后者是能力。</p>
+    </div>
+  </section>
+
+  <!-- 05 -->
+  <section class="section" id="combo">
+    <h2><span class="no">05</span>组合创新：创新不是发明</h2>
+    <p class="lead">第四章把「创新」这个虚词翻译成了一个动词：拆开，再重连。</p>
+
+    <h3>5.1 创新不等于发明创造</h3>
+    <p><b>组合创新</b><button class="glossary-trigger" onclick="openModal('combination')" aria-label="术语：组合创新">?</button> 承接的是熊彼特的定义：创新是把生产要素做新的组合。按这个定义，发明是技术事件，创新是经济事件——只有被市场接受、改变了生产或消费方式，才算创新。这个区分很重要，它把创新从「天才的灵光」拉回到「可拆解、可训练的动作」。</p>
+    <blockquote class="quote-block">
+      创新是把生产要素重新组合。
+      <span class="cite">熊彼特语，第 4 章的核心引述</span>
+    </blockquote>
+
+    <h3>5.2 用还原论拆到最小单元</h3>
+    <p>组合的前提是拆得够细。拆得粗，只能做出「更好的旧东西」；拆到最小单元，才能做出「没见过的新东西」。书里的示范是马斯克算火箭成本：不买整枚火箭，而是把火箭拆成材料、零件、制造工序，逐项去市场上问价，发现原材料成本只有整箭报价的极小一部分，于是自己造。</p>
+    <p>这个拆法有两个要求：一是拆到「可独立定价」的颗粒度，二是承认自己的拆法可能不对——换一种拆法，会得到完全不同的组合空间。</p>
+
+    <h3>5.3 供需连：一个够用的重连框架</h3>
+    <p>拆完之后怎么重连？作者给了三要素：<b>供给</b>（谁提供、提供什么）、<b>需求</b>（谁需要、在什么场景需要）、<b>连接</b>（两者怎么碰上、怎么交付、怎么收钱）。三者中任意一个换掉，就是一个新的组合。</p>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>换掉哪个</th><th>典型做法</th><th>案例感觉</th></tr></thead>
+        <tbody>
+          <tr><td>供给</td><td>把自营换成平台，把产品换成服务</td><td>卖设备 → 卖使用时长</td></tr>
+          <tr><td>需求</td><td>同一能力服务另一群人</td><td>为科研做的技术，转向消费级</td></tr>
+          <tr><td>连接</td><td>换渠道、换交付方式、换收费方式</td><td>线下门店 → 社群预售 → 订阅制</td></tr>
+          <tr><td>三者同时换</td><td>重新定义一门生意</td><td>最容易出第二曲线，也最容易失败</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>这个框架不新鲜，但好用：它的价值在于把「我该怎么创新」这个无从下手的问题，变成「我手上这三样东西，哪一样可以换」。换一样，风险可控；换三样，就是创业。</p>
+  </section>
+
+  <!-- 06 -->
+  <section class="section" id="point">
+    <h2><span class="no">06</span>单一要素：找到并击穿破局点</h2>
+    <p class="lead">战略篇的第二把刀。它回答的是资源有限时最实际的问题：钱和人都不够，先打哪里。</p>
+
+    <h3>6.1 两条曲线，两个关键点</h3>
+    <p>作者把两个点分得很清楚：第一曲线的关键点是<b>极限点</b>——看见它，是为了及时换道；第二曲线的关键点是<b>破局点</b><button class="glossary-trigger" onclick="openModal('threshold')" aria-label="术语：破局点">?</button>——击穿它，新业务才开始自我循环。前者是防守，后者是进攻。</p>
+    <p>破局点的定义是「由外部输血转为自我造血的临界点」。过点之前，增长全靠投入；过点之后，正循环启动：老用户带来新用户，收入覆盖获客，规模带来成本下降。</p>
+
+    <h3>6.2 怎么识别：单一要素十倍速变化</h3>
+    <p><b>单一要素</b><button class="glossary-trigger" onclick="openModal('singlefactor')" aria-label="术语：单一要素">?</button> 在这本书里既是一个分析单位，也是一个下注单位。识别破局点的信号，是某个要素出现十倍速的变化——通常来自需求侧：某类用户突然变多、某个使用场景突然成立、某个成本项突然塌下来。</p>
+    <div class="callout"><b>为什么是「十倍」而不是「10%」：</b>因为只有量级变化才能撕开新的价值网。10% 的改善会被在位者的资源优势抹平；10 倍的变化会让原来的成本结构、渠道逻辑、定价体系统统失效，这才给新进入者留出空间。</div>
+
+    <h3>6.3 怎么击穿：单一要素最大化</h3>
+    <p>识别之后是取舍。作者的说法是「舍九取一」：把其他八个要素维持在及格线，把全部资源压在那一个要素上，把它做到远超行业水平。逻辑是系统的表现由关键少数决定，平均用力等于没有用力。</p>
+    <ol class="chain">
+      <li><b>列出全部要素</b><p>供给、需求、连接三段各有哪些变量，穷举出来，别急着判断。</p></li>
+      <li><b>找变化最快的那一个</b><p>看哪个变量在过去一年出现了量级变化，而同行还没反应过来。</p></li>
+      <li><b>把它做到极致</b><p>不是提升 20%，是做到别人做不到的程度。做不到极致，等于没选。</p></li>
+      <li><b>其余全部守底线</b><p>不追求样样优秀，只保证不拖后腿。这一步最难，因为组织天然想做全能选手。</p></li>
+    </ol>
+
+    <h3>6.4 美团的破局点</h3>
+    <p>书里用美团讲这一步：团购大战时，各家都在抢一线城市的份额、拼广告、拼地推人数，美团选的是「本地生活服务 + 下沉城市 + 精细化运营」这个组合，把资源压在单城盈利模型上，而不是全国铺量。这个选择在当时看起来不够激进，但它让单位经济先转正，等别人开始收缩时它有现金流继续打。</p>
+    <div class="insight-card">
+      <div class="insight-title">单一要素的隐藏前提</div>
+      <div class="insight-body">「把所有资源压在一个要素上」成立的前提是：你选对了那个要素。而选对的概率并不高——书里给的是成功案例，失败案例同样这么做，只是选错了变量。所以更稳的做法是先用小成本验证「这个要素是不是真的能撬动」，再压重注。先验证后 all in，顺序不能反。</div>
+      <div class="insight-evidence">对第 5 章方法的风险补注，非原文</div>
+    </div>
+  </section>
+
+  <!-- 07 -->
+  <section class="section" id="lever">
+    <h2><span class="no">07</span>战略杠杆：把力气放大</h2>
+    <p class="lead">第六章把前面几个模型拼成一个结构：支点、杠杆、力臂、外力。它是全书最像「框架图」的一章。</p>
+
+    <h3>7.1 四要素</h3>
+    <p><b>战略杠杆</b><button class="glossary-trigger" onclick="openModal('lever')" aria-label="术语：战略杠杆">?</button> 的结构是这样的：</p>
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>部件</th><th>指什么</th><th>判断标准</th></tr></thead>
+        <tbody>
+          <tr><td>支点</td><td>长期不变的使命与第一性原理</td><td>十年后还成立吗</td></tr>
+          <tr><td>杠杆</td><td>企业的核心能力</td><td>只能选一个，能不能说清</td></tr>
+          <tr><td>力臂</td><td>那个十倍速变化的单一要素</td><td>是不是在量级变化</td></tr>
+          <tr><td>外力</td><td>时代红利、技术周期</td><td>是顺风还是逆风</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>四者相乘的逻辑是：支点决定方向不跑偏，力臂决定投入产出比，外力决定这段时间值不值得加注。缺一个，杠杆都撬不动——支点不稳会翻车，力臂太短白费劲，逆风时加杠杆只是加速亏损。</p>
+
+    <h3>7.2 战略支点：不变的一</h3>
+    <p>作者反复强调「不变的一」：环境在变，但企业要有一个不随环境变化的内核，否则每次风口来都跟着转向，最后什么也没积累。亚马逊的例子是「以客户为中心、持续降低价格与提升体验」，这个内核从卖书到卖云服务都没变过，变的只是承载它的业务形态。</p>
+
+    <h3>7.3 核心能力：舍九取一</h3>
+    <p>与单一要素同理，核心能力也只能选一个。多数公司的战略文件里写着五条核心能力，等于没有核心能力。作者的标准很苛刻：那件「别人学不会、自己做起来不费力」的事，才算。</p>
+    <h3>7.4 亚马逊的支点</h3>
+    <p>书里用亚马逊做正例：它的支点不是「网上卖书」，而是「以客户为中心、持续把价格打下来、把体验做上去」。这个支点定了之后，业务形态从图书到全品类、从自营到平台、从零售到云服务，每次换形态都不需要改支点。</p>
+    <p>更关键的是力臂的选择。亚马逊早期把资源压在「价格 + 配送速度」这两个变量上，而不是同时做质量、品类、客服、售后——因为前两者直接决定复购，而复购决定单位经济。等这两项做到行业极值，飞轮才转起来：低价带来更多客户，更多客户带来更大采购量，采购量带来更低成本，成本又支撑更低价格。</p>
+    <div class="callout"><b>飞轮不是四个圈，是一个闭环。</b>很多公司把飞轮画出来挂着，但没有一圈是转得动的——因为每一环都需要做到临界值才有推力。支点稳、力臂长、每一环过阈值，三者缺一，飞轮就是一张图。</div>
+
+    <div class="reflection-block">
+      <div class="reflection-title">这个模型的问题</div>
+      <p>杠杆是个漂亮的类比，但它的四个部件在真实决策中很难同时量化：支点无法验证、外力无法预测、力臂要靠事后确认。它的实际用途不是算，而是<b>逼你把话说清楚</b>——你的支点是什么、你的杠杆是什么、你压的那个要素是什么。三句话说不出来，说明战略还是散的。当成思维检查表用，比当公式用更靠谱。</p>
+    </div>
+  </section>
+
+  <!-- 08 -->
+  <section class="section" id="mismatch">
+    <h2><span class="no">08</span>错位竞争：与其更好，不如不同</h2>
+    <p class="lead">竞争篇开篇。作者先算了一笔概率账，再给出结论：正面竞争不是勇敢，是数学上不划算。</p>
+
+    <h3>8.1 为什么正面打不赢</h3>
+    <p><b>错位竞争</b><button class="glossary-trigger" onclick="openModal('mismatch')" aria-label="术语：错位竞争">?</button> 的前提判断是：在位者在既有维度上的优势是复利积累的结果——供应链、渠道、品牌、人才，每一样都是十年起的差距。你在同一个维度上追赶，等于用别人的主场规则比赛。</p>
+    <p>更麻烦的是，就算你做得更好，用户也未必换。转换成本、习惯、信任，都是隐形的护城河。所以「更好」在商业上常常等于「没差别」。</p>
+    <blockquote class="quote-block">
+      与其更好，不如不同。
+      <span class="cite">第 7 章章名，也是错位竞争的一句话总结</span>
+    </blockquote>
+
+    <h3>8.2 错位竞争法则</h3>
+    <div class="pattern-grid">
+      <div class="pattern-card">
+        <div class="pattern-name">换人群</div>
+        <div class="pattern-desc">服务在位者服务不了或不愿服务的人。这群人的需求强度可能更低，但数量更大、竞争更少。</div>
+        <div class="pattern-examples">样本：从一线白领转向下沉市场用户</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">换场景</div>
+        <div class="pattern-desc">同一功能，换一个使用场景。场景变了，评价标准就变了，在位者的优势可能不再重要。</div>
+        <div class="pattern-examples">样本：从「出行预订」转向「本地周边游」</div>
+      </div>
+      <div class="pattern-card">
+        <div class="pattern-name">换价值网</div>
+        <div class="pattern-desc">换一套供给、渠道、收费方式，搭一个对手看不上的生态位。这是最彻底也最难的一种。</div>
+        <div class="pattern-examples">样本：从佣金模式转向自营 + 会员</div>
+      </div>
+    </div>
+
+    <h3>8.3 美团的两次错位</h3>
+    <p>书里给了两个连续案例。第一次是团购：当同行在一线城市烧钱抢份额时，美团把资源放在二三四线城市的本地生活服务上，避开正面消耗，先把单位模型跑正。第二次是酒旅：当携程占据商旅高星酒店时，美团从低星酒店和本地住宿切入——那块市场客单价低、履约复杂，对携程来说是「不值得做」的生意。</p>
+    <p>两次的共同点不是「选了个小市场」，而是<b>选了个在位者用现有成本结构做会亏的市场</b>。这一点比「差异化」三个字精确得多：错位的本质是让对方的经济模型失效，而不是让自己的产品显得特别。</p>
+  </section>
+
+  <!-- 09 -->
+  <section class="section" id="disrupt">
+    <h2><span class="no">09</span>颠覆式创新：创业者的「理想后门」</h2>
+    <p class="lead">这一章是克里斯坦森《创新者的窘境》的本土化重述，也是全书最扎实的一章——因为它讲的是一个有统计规律的产业现象，而不是一个漂亮概念。</p>
+
+    <h3>9.1 两种第二曲线</h3>
+    <div class="two-col">
+      <div class="info-card solution">
+        <div class="label">低端颠覆</div>
+        <div class="content">从「性能够用、价格低得多」的低端切入，先吃掉在位者不愿意服务的市场，再沿性能曲线往上爬，最终吃掉主流市场。</div>
+        <div class="example"><strong>特点</strong>：起步时产品更差，但更便宜、更简单</div>
+      </div>
+      <div class="info-card insight">
+        <div class="label">高端迁徙</div>
+        <div class="content">从高端切入，先服务对性能最敏感、付费意愿最强的小众人群，再往下渗透。</div>
+        <div class="example"><strong>特点</strong>：起步时产品更好但更贵，需要极强的技术差异化</div>
+      </div>
+    </div>
+    <p>作者认为对创业者更现实的是前者。原因很直白：高端迁徙要求你在技术上真的领先，这个门槛比「便宜」高得多；而低端市场的在位者不会反击，因为在它的成本结构里，那块业务的毛利率撑不起它的组织开销。</p>
+
+    <h3>9.2 右上角迁移力</h3>
+    <p><b>低端颠覆</b><button class="glossary-trigger" onclick="openModal('lowend')" aria-label="术语：低端颠覆">?</button> 之所以反复发生，是因为在位者有一个几乎无法抵抗的引力：往右上角走——更高性能、更高毛利、更优质的客户。这个迁移对它是理性的：同样的研发投入，服务高端客户的回报更高。</p>
+    <p>但迁移会留下空白：那些「够用就好」的客户被逐渐放弃，而他们的数量往往更大。空白就是入口。</p>
+
+    <h3>9.3 小钢厂的故事</h3>
+    <p>书里沿用经典案例：小型钢厂用废钢电炉起家，先做建筑用螺纹钢这类低端产品，质量不如高炉钢，但成本低得多。大型钢企主动放弃这块低毛利业务，转向板材等高附加值产品。小钢厂站稳后逐步改进质量，一级一级往上攻，最终把大型钢企逼到只剩最高端的一小块。</p>
+    <p>这个案例的关键不是「便宜能赢」，而是<b>「低端是一个可以往上爬的起点」</b>：低端市场提供的现金流和规模，正好支撑技术改进，形成正循环。</p>
+
+    <h3>9.4 从低端切入，不等于永远低端</h3>
+    <p>作者专门写了这一节，因为很多人把低端颠覆理解成「做便宜货」，然后一直做便宜货，最后被困在低毛利里。正确的路径是：以低端为入口获得立足点，再用积累的规模和数据往上迁移，最终进入主流市场。拼多多是书里（第 2 版更明确）用来讲这件事的样本——从低价白牌切入，再逐步做品牌化与品质升级。</p>
+    <div class="callout"><b>一个反例提醒：</b>低端颠覆成立的前提是「低端市场的规模足以养活技术改进」。如果低端市场本身太小，或者改进所需的投入远超低端利润，这条路会走成死胡同——只剩便宜，没有升级。</div>
+  </section>
+
+  <!-- 10 -->
+  <section class="section" id="edge">
+    <h2><span class="no">10</span>边缘分化：伟大创新从不诞生在中心</h2>
+    <p class="lead">这一章写法最像科普：从生物进化讲到科学革命，最后落到企业。它想说的其实一句话——中心的资源最多，也最不容错。</p>
+
+    <h3>10.1 边缘为什么能赢</h3>
+    <p>边缘有三个结构性优势：<b>没人管</b>（不用按主流标准证明自己）、<b>成本低</b>（试错代价小）、<b>标准松</b>（允许用不同的做法解决同一个问题）。中心则相反，资源多但审查严，任何偏离主流价值网的动作都会被拦下。</p>
+
+    <h3>10.2 生物与科学，是同一个故事</h3>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">生物：隔离产生新物种</div>
+        <div class="content">地理隔离让两个种群各自积累变异，最终形成生殖隔离。共同点：新物种不是在最繁盛的中心地带出现的，而是在边缘的小种群中。</div>
+        <div class="example"><strong>对应</strong>：独立小机构、独立考核、独立办公地点</div>
+      </div>
+      <div class="info-card concept">
+        <div class="label">科学：范式转换从异端开始</div>
+        <div class="content">常规科学在既有范式内解题，异常累积到无法解释时，新范式从边缘研究者那里提出。旧范式不是被说服的，是被下一代人替换的。</div>
+        <div class="example"><strong>对应</strong>：组织心智的更新往往要靠换人</div>
+      </div>
+    </div>
+
+    <h3>10.3 创新，加速创新</h3>
+    <p>书里最后落到一个正反馈：一条新曲线会为下一条曲线提供工具与方法，所以曲线的间隔越来越短。这意味着两件事——企业换道的频率必须提高；个人的学习周期也必须缩短。作者把这句写成了对读者的直接要求：过去一门手艺能养一辈子，现在一门手艺的有效期可能只有十年。</p>
+    <div class="reflection-block">
+      <div class="reflection-title">这一章的证据强度</div>
+      <p>生物与科学的类比很有说服力，但类比本身不是论证：生物进化没有「决策者」，企业有；物种变异是随机的，企业的试验是有意图的。类比能启发，不能当证明。读这一章时，把它当「为什么该给边缘留资源」的说服材料，比当「边缘一定能赢」的规律更稳妥。</p>
+    </div>
+  </section>
+
+
+  <!-- 11 -->
+  <section class="section" id="org">
+    <h2><span class="no">11</span>价值网与组织心智：为什么你看见了也不做</h2>
+    <p class="lead">组织篇两章，是全书最不客气的地方。它讲的不是「怎么创新」，而是「为什么明明知道该创新，却动不了」。</p>
+
+    <h3>11.1 客户价值网：客户替你筛掉了未来</h3>
+    <p><b>价值网络</b><button class="glossary-trigger" onclick="openModal('valueweb')" aria-label="术语：价值网络">?</button> 是企业嵌入的一整套关系：现有客户、供应商、渠道、投资人。它最大的作用不是提供资源，而是提供<b>筛选标准</b>——什么需求值得听、什么方案值得投。</p>
+    <p>问题在于，这套标准是根据现在的业务校准的。新曲线早期服务的是「现在还不重要的客户」，在新标准里自然排不上优先级。于是不是没人提，而是提了也过不了会。</p>
+    <div class="callout"><b>硬盘行业是这一章的核心证据。</b>从 14 英寸到 8 英寸、5.25 英寸、3.5 英寸、2.5 英寸、1.8 英寸，每一次容量变小、市场变新，都是新公司做起来、老公司被替换。老公司不是没有技术，它们几乎都率先做出了样品——但它们的主流客户说「不需要」，于是项目被推迟，直到市场不属于它们。</div>
+
+    <h3>11.2 资本价值网：增长预期也是枷锁</h3>
+    <p>上市公司还多一层约束：资本市场的增长预期。新业务早期会拉低整体毛利率和增速，财报不好看，股价就跌。管理层于是有一个理性选择——回购、分红、优化现有业务，而不是投入一个五年后才见效的方向。作者把这层叫资本价值网，它比客户价值网更硬，因为它有季度节奏。</p>
+
+    <h3>11.3 组织心智：不用讨论就知道怎么做</h3>
+    <p><b>组织心智</b><button class="glossary-trigger" onclick="openModal('mindset')" aria-label="术语：组织心智">?</button> 是长期成功沉淀下来的共同假设。它的正面是效率：很多决策不需要开会，大家自然做出同一个判断。它的负面是——这套自动反应是为旧环境校准的，环境一变，越熟练错得越快。</p>
+    <div class="table-scroll">
+      <table class="extension tight">
+        <thead><tr><th>表现</th><th>背后的心智</th><th>后果</th></tr></thead>
+        <tbody>
+          <tr><td>「这个市场太小，不值得做」</td><td>规模必须匹配现有成本结构</td><td>放弃所有早期小市场</td></tr>
+          <tr><td>「客户没提这个需求」</td><td>需求由现有客户定义</td><td>错过非客户的需求</td></tr>
+          <tr><td>「毛利太低，会拖累报表」</td><td>毛利率是硬约束</td><td>无法进入低端颠覆的入口</td></tr>
+          <tr><td>「让老团队顺手做一下」</td><td>新业务是旧业务的附属</td><td>大哥吃小弟，项目自然消亡</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>11.4 隔离：唯一被反复验证的办法</h3>
+    <p>作者给的解法不是「改变心智」——那太慢，也不可控——而是<b>隔离</b>：把新业务放进独立小机构，独立核算、独立考核、独立汇报，甚至物理上搬出去。亚马逊做电子书时把团队放在加州而不是西雅图，就是为了让它不进入总部的日常评价体系。</p>
+    <p>但隔离有代价，书里也承认：独立机构拿不到主业的资源，容易变成「被放逐的试验田」；而如果给足资源又不考核，它会变成养老部门。所以真正难的不是隔离，是<b>隔离之后怎么管</b>——给多少资源、用什么指标、什么时候收回。这一节书里给了原则，没给方案。</p>
+    <div class="insight-card">
+      <div class="insight-title">IBM 与微软：两种不同的转身</div>
+      <div class="insight-body">书里用两家公司对照：一家在原有体系里做新业务，被旧业务的价值网反复拽回；另一家则通过组织重组与人事更替，让新业务获得独立的政治地位。共同结论是——转型不是技术问题，是权力与考核的问题。</div>
+      <div class="insight-evidence">第 11 章「IBM 和微软的转型之痛」</div>
+    </div>
+  </section>
+
+  <!-- 12 -->
+  <section class="section" id="break">
+    <h2><span class="no">12</span>破界创新：把隐含假设打掉</h2>
+    <p class="lead">最后一章回到最底层。前面十一章都在既有边界内找机会，这一章讲的是——边界本身是怎么来的。</p>
+
+    <h3>12.1 第一性原理在这里怎么用</h3>
+    <p><b>第一性原理</b><button class="glossary-trigger" onclick="openModal('firstprinciple')" aria-label="术语：第一性原理">?</button> 在书里不是物理学概念，而是一个提问方式：这个业务赖以成立的最底层假设是什么？如果它不成立，会怎样？多数行业的边界，其实是被一个从未被检验的假设框住的。</p>
+    <blockquote class="quote-block">
+      奇点下移，边界外延。
+      <span class="cite">第 12 章副题，也是破界创新的动作描述</span>
+    </blockquote>
+
+    <h3>12.2 破界三部曲</h3>
+    <ol class="chain">
+      <li><b>找到隐含假设</b><p>不是问「我们做错了什么」，而是问「我们默认了什么」。比如「电脑只能给科研机构用」「手机必须有键盘」「酒店必须评星」。这些假设当年都合理，只是没人再检验。</p></li>
+      <li><b>打破它</b><p>把假设拿掉，看业务还剩下什么。剩下的是真需求，被拿走的是历史包袱。这一步往往让人不适，因为它否定的不是方案，是身份。</p></li>
+      <li><b>在新边界里重建</b><p>边界外扩之后，原来的能力未必够用，需要重新组合要素——这时前面讲的组合创新、单一要素才有用武之地。</p></li>
+    </ol>
+
+    <h3>12.3 两个经典破界</h3>
+    <div class="info-grid">
+      <div class="info-card history">
+        <div class="label">计算机：从「仪器」到「个人设备」</div>
+        <div class="content">早期行业假设计算机是给科研与军工的大型仪器，于是所有设计围绕「更大更强」。小型机把「必须大」这个假设打破，PC 又把「必须由专家操作」打破。每一次破界，都让前一代领导者的优势变成负债。</div>
+        <div class="example"><strong>被打破的假设</strong>：计算机只能服务于机构</div>
+      </div>
+      <div class="info-card case">
+        <div class="label">手机：键盘不是必需品</div>
+        <div class="content">iPhone 之前，行业假设手机必须有实体键盘，因为输入效率。乔布斯拿掉的不是键盘，是「手机是一台打电话的工具」这个假设——一旦它是「一块屏幕」，键盘自然消失，整个交互范式重写。</div>
+        <div class="example"><strong>被打破的假设</strong>：输入方式决定设备形态</div>
+      </div>
+    </div>
+
+    <h3>12.4 破界与第二曲线的关系</h3>
+    <p>作者把破界放在最后，是有用意的：它是第二曲线的极端形态。分形创新是在既有边界内长出新业务，破界创新是把边界本身挪走——后者更难，但一旦成立，得到的不是一条新曲线，而是一个新空间。</p>
+    <div class="reflection-block">
+      <div class="reflection-title">这一章最容易被误读的地方</div>
+      <p>「打破假设」听起来很爽，但隐含假设之所以存在，是因为它当年解决过真实问题。把所有假设都当包袱拆掉，得到的不是创新，是失忆。真正的破界有一个前提：你要先弄清楚这个假设当初为什么被立起来，再判断它今天是否仍然成立。跳过前一步的「破界」，通常只是把公司拆散。</p>
+    </div>
+  </section>
+
+  <!-- 13 -->
+  <section class="section" id="quotes">
+    <h2><span class="no">13</span>金句存档</h2>
+    <p class="lead">这本书的语言偏课堂口播，完整可引的句子不多。以下只收录能核到位置的：目录标题、官方内容简介、书中明确引述他人之处。其余归纳另列一表，标「非原文」。</p>
+
+    <blockquote class="quote-block">
+      不创新等死，乱创新找死。
+      <span class="cite">图书内容简介原文（人民邮电出版社，2019）</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      现象层面的总结是经验，哲学和科学层面的提炼是第一性原理，其力量不可同日而语。
+      <span class="cite">图书内容简介原文</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      与其更好，不如不同。
+      <span class="cite">第 7 章章名，错位竞争的一句话总结</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      你拥有的，往往会变成制约你的。
+      <span class="cite">第 10 章副题，讲价值网络</span>
+    </blockquote>
+
+    <blockquote class="quote-block">
+      每一步都是上一步的结果。
+      <span class="cite">第 3 章副题，讲分形创新</span>
+    </blockquote>
+
+    <div class="table-scroll">
+      <table class="extension tight">
+        <thead><tr><th>归纳（非原文）</th><th>它对应哪一章的判断</th></tr></thead>
+        <tbody>
+          <tr><td>企业不是死于能力不足，是死于曲线到顶</td><td>第 1 章 极限点</td></tr>
+          <tr><td>第二曲线不是延长线，是另起一条</td><td>第 2 章 非连续性</td></tr>
+          <tr><td>新曲线不是设计出来的，是选出来的</td><td>第 3 章 分形创新</td></tr>
+          <tr><td>平均用力，等于没有用力</td><td>第 5 章 单一要素</td></tr>
+          <tr><td>错位的本质，是让对方的经济模型失效</td><td>第 7 章 错位竞争</td></tr>
+          <tr><td>转型不是技术问题，是权力与考核的问题</td><td>第 11 章 组织心智</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- 14 -->
+  <section class="section" id="limits">
+    <h2><span class="no">14</span>该打折扣的地方</h2>
+    <p class="lead">这本书影响力很大，但它的论证方式和理论来源都需要摆在明面上说清楚。以下七条不是挑刺，是读它之前该知道的边界。</p>
+
+    <ul class="limit-list">
+      <li><b>一、核心概念基本都有出处，「原创」是整合而非发明。</b>第二曲线来自查尔斯·汉迪（Charles Handy）的同名著作；低端颠覆与价值链迁移来自克里斯坦森《创新者的窘境》；第一性原理来自亚里士多德，商业上的流行用法来自马斯克；组合创新是熊彼特的原话。作者真正的贡献是把这些拼成一套中文可讲、可教的框架，并配了大量本土案例。把它当原创理论读，会高估它的新颖度。</li>
+      <li><b>二、S 曲线的拐点，几乎只能在事后画出来。</b>「在极限点之前启动第二曲线」这句话成立，但极限点本身是个事后概念。书里给的先行信号是「单一要素十倍速变坏」，可这个信号没有统一口径，也没有可复用的测量方法——什么算变坏、和哪一段时间比，全靠判断。</li>
+      <li><b>三、案例只有成功者，没有分母。</b>亚马逊、Netflix、美团、字节，都是极少数活下来的。同样执行「独立小机构」「单一要素最大化」而失败的公司不会出现在书里，也没有人统计数量。这类论证能提供启发，不能提供概率。</li>
+      <li><b>四、有不可证伪的风险。</b>做成了叫「第二曲线」，做败了叫「乱创新」，两个词都能解释同一件事。当一个框架可以解释所有结果时，它就失去了预测力。阅读时最好反问：什么样的事实会让这套理论被推翻？书里没有回答。</li>
+      <li><b>五、案例多为二手转述。</b>硬盘行业、小钢厂、IBM 与微软，主要来自《创新者的窘境》等既有著作；亚马逊、美团的部分细节来自公开报道。这些转述在讲课时足够，做决策依据时需要回到原始材料。</li>
+      <li><b>六、十二个模型颗粒度不一，操作性重叠。</b>组合创新、单一要素、战略杠杆三章在实操上高度交叠——都要先拆要素、再选一个、再放大。读者容易变成「每样都占一点」，反而失去优先级。真正能直接用的，其实只有单一要素与错位竞争两章。</li>
+      <li><b>七、组织部分的建议偏原则，落地最难的部分没说。</b>「建立独立小机构」讲得清楚，「独立机构给多少资源、用什么指标考核、什么时候收回、负责人向谁汇报」这些真正决定成败的问题，书里只有零星几句。而这恰恰是绝大多数公司做不成的环节。</li>
+    </ul>
+
+    <div class="callout"><b>还有一个语境问题：</b>书里案例集中在互联网与消费电子，这两个行业的共同点是「技术变化快、边际成本低、可以快速试错」。放到重资产、强监管、长周期的行业（能源、医药、金融基础设施），第二曲线的启动成本高一个量级，「先小步试错再放大」的路径未必成立。</div>
+  </section>
+
+  <!-- 15 -->
+  <section class="section" id="extend">
+    <h2><span class="no">15</span>延伸对照：把它放回书架</h2>
+    <p class="lead">这本书的位置是「中文商业教育里的整合者」。它的上游是几本硬核原著，它的下游是具体的创业操作。</p>
+
+    <div class="table-scroll">
+      <table class="extension">
+        <thead><tr><th>对照书</th><th>定位</th><th>局限</th><th>怎么配合读</th></tr></thead>
+        <tbody>
+          <tr><td>《创新者的窘境》<br>克里斯坦森</td><td>低端颠覆与价值网的理论源头，有产业数据支撑</td><td>写作于 1997 年，案例集中在硬盘与挖掘机，语言偏学术</td><td>本书第 8—10 章的底本。想认真用低端颠覆，必须读原著</td></tr>
+          <tr><td>《第二曲线》<br>查尔斯·汉迪</td><td>概念的母本，讲的是组织与人生的双重曲线</td><td>偏哲学随笔，缺少操作细节与案例密度</td><td>先读它理解「为什么必须在上升期换道」，再读李善友学怎么做</td></tr>
+          <tr><td>《只有偏执狂才能生存》<br>安迪·格鲁夫</td><td>「战略拐点」的提出者，英特尔转型的第一手记录</td><td>时代较早，PC 产业语境</td><td>与本书第 1 章极限点对读，看当事人怎么识别拐点</td></tr>
+          <tr><td>《技术的本质》<br>布莱恩·阿瑟</td><td>技术如何通过组合进化，是「组合创新」的深层解释</td><td>理论密度高，不提供管理建议</td><td>读第 4 章组合创新时配读，理解为什么组合能产生新能力</td></tr>
+          <tr><td>《规模》<br>杰弗里·韦斯特</td><td>用标度律解释增长极限与生命周期的数学结构</td><td>偏复杂系统科学，离企业操作远</td><td>给「S 曲线为什么必然到顶」提供一个非商业的解释</td></tr>
+          <tr><td>《科学革命的结构》<br>托马斯·库恩</td><td>范式与范式转换，本书第 9、12 章的思想来源</td><td>科学史专著，不涉及商业</td><td>读「边缘分化」「破界创新」时对照，理解范式为何不可说服</td></tr>
+          <tr><td>《精益创业》<br>埃里克·莱斯</td><td>把「小步试错」变成可执行流程</td><td>偏产品开发，不涉及战略与组织</td><td>本书讲「多变异、快选择」，它讲具体怎么做实验</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>15.1 如果只带走三件事</h3>
+    <ol class="chain">
+      <li><b>用「曲线」看自己的业务处在哪一段</b><p>不要求精确，只要能回答：增速是在加速、见顶、还是已经下滑。答案不同，接下来该做的事完全不同。</p></li>
+      <li><b>把「新业务」从主体系里拿出来</b><p>不用等战略清晰。先给它独立的核算和汇报线，让它能在不被主业务评价的情况下活过前两年。</p></li>
+      <li><b>练「舍九取一」的判断力</b><p>这是全书最难也最有用的一条。资源永远不够，能不能说出「这一件事做到极致，其他都守底线」，决定了你是集中突破还是平均用力。</p></li>
+    </ol>
+
+    <div class="insight-card">
+      <div class="insight-title">最后一句判断</div>
+      <div class="insight-body">这本书最好的用法，不是当方法论手册，而是当一副眼镜：它让你在看见一条增长曲线时，习惯性地问三句——它快到顶了吗、下一条在哪、我现在的组织允许我去吗。三句都答得出来，书就没白读；答不出来，抄再多模型也只是换个说法安慰自己。</div>
+      <div class="insight-evidence">综合全书判断，非书中原文</div>
+    </div>
+  </section>
+
+  <div class="footer-note">
+    <b>版本</b>　李善友《第二曲线创新》，人民邮电出版社，2019 年 8 月，ISBN 978-7-115-51477-6，12 章四篇（创新／战略／竞争／组织）。<br>
+    <b>版本说明</b>　2021 年另有第 2 版（ISBN 978-7-115-54805-4），结构重组为 8 章，章名与案例均有调整；本页按 2019 年初版 12 章整理。<br>
+    <b>说明</b>　本页为读书整理，非原文摘录。标注「章名／副题／内容简介原文」的为可核文本，其余为归纳与评述，含对理论来源与论证方式的辨析，不代表作者观点。<br>
+    <b>整理日期</b>　2026-11-13　·　仅供个人学习回顾
+  </div>
+
+</div>
+
+<div class="modal-overlay hidden" id="modalOverlay" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="close-btn" onclick="closeModal()" aria-label="关闭">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="返回顶部">↑</button>
+
+<script>
+var glossary = {
+  scurve: {title:"S 曲线", content:"<p>描述一项技术、产品或业务从萌芽到成熟的生命周期曲线：前期投入大、增长慢；中期加速；后期增速放缓直至见顶。</p><p>它的关键含义是：增长不是线性的，且一定有上限。曲线顶端那个点叫极限点。</p>"},
+  limitpoint: {title:"极限点", content:"<p>第一曲线增长停止、开始掉头向下的那个点。识别它的能力被作者称为「价值千金」。</p><p>难点在于：财务数据是滞后指标，等你看到营收下滑，往往已经过了半年到一年。所以要看先行信号——单一要素出现十倍速变坏。</p>"},
+  discontinuity: {title:"非连续性", content:"<p>两条 S 曲线之间不是平滑过渡，而是一个断崖。旧曲线的能力、流程、价值观，在新曲线里大多失效。</p><p>非连续性带来的真正困难不是技术，是组织：越是在旧曲线里成功，越难在新曲线里重新做一次学生。</p>"},
+  secondcurve: {title:"第二曲线", content:"<p>不是第一曲线的延长线，而是一条全新的 S 曲线，有自己的破局点、自己的极限点。</p><p>判断标准有三条：服务的是不是新需求、用的是不是新能力组合、增长逻辑是不是换了一套。只把老产品卖到新地区，不算第二曲线。</p>"},
+  fractal: {title:"分形创新", content:"<p>第二曲线不是顶层设计出来的，是从第一曲线的某个子业务里长出来的。子业务单独面对市场，被选择、被放大，长成新曲线。</p><p>分形这个词借自几何：整体与局部自相似。放到组织里，意思是每个小业务都该是一个可以独立演化的「种子」。</p>"},
+  combination: {title:"组合创新", content:"<p>熊彼特的定义：创新是把生产要素重新组合。所以创新不等于发明，不等于技术突破。</p><p>操作上分两步：用还原论把事物拆到最小要素，再用新的方式重连。作者给的重连框架是「供需连」——供给、需求、连接方式。</p>"},
+  singlefactor: {title:"单一要素", content:"<p>在众多变量里挑出一个，把它做到十倍好，而不是让所有变量都改善 10%。</p><p>逻辑是：系统的表现由最关键的少数变量决定，平均用力等于没有用力。</p>"},
+  threshold: {title:"破局点 / 阈值", content:"<p>新业务从「靠输血」转为「自己转」的那个临界点。过了它，正循环开始：用户带来用户，收入覆盖成本。</p><p>没过之前，一切增长都是补贴出来的假象。</p>"},
+  lever: {title:"战略杠杆", content:"<p>作者的四要素模型：一个支点（不变的使命）、一根杠杆（核心能力，舍九取一）、一段力臂（单一要素）、一股外力（十倍速变化的红利）。</p><div class='gl-formula'>增长 = 支点 × 杠杆 × 力臂 × 外力</div><p>支点不稳，力气越大偏得越远；力臂不长，投入产出比就上不去。</p>"},
+  mismatch: {title:"错位竞争", content:"<p>不在对手的主价值网里比谁更好，而是找一个新的技术与市场的组合，搭一个对手看不上的价值网。</p><p>「与其更好，不如不同」——因为在同一维度上，在位者的资源优势是碾压性的。</p>"},
+  lowend: {title:"低端颠覆", content:"<p>从「性能够用但价格低得多」的低端切入，先吃掉在位者不愿意服务的市场，再沿着性能曲线往上爬。</p><p>在位者不反击，不是因为看不见，而是因为那块市场的毛利率低于它的成本结构。</p>"},
+  valueweb: {title:"价值网络", content:"<p>企业嵌入的一整套关系：客户、供应商、渠道、投资人。它决定了什么需求会被听见、什么方案会被批准。</p><p>作者的核心判断：你拥有的，往往会变成制约你的。因为价值网会替你筛选机会，而筛选标准是旧的。</p>"},
+  mindset: {title:"组织心智", content:"<p>组织在长期成功中形成的共同假设与决策惯性，表现为「不用讨论就知道该怎么做」。</p><p>它的好处是效率，坏处是当环境非连续变化时，这套自动反应恰好是错的。</p>"},
+  firstprinciple: {title:"第一性原理", content:"<p>回到最底层、不可再拆的假设上重新推理，而不是在既有结论上做类比。</p><p>在本书里它主要用作「破界」的工具：找出业务赖以成立的那个隐含假设，把它打掉，边界自然外扩。</p>"}
+};
+function openModal(key){
+  var d = glossary[key];
+  if(!d) return;
+  document.getElementById('modalContent').innerHTML = '<h4>' + d.title + '</h4>' + d.content;
+  document.getElementById('modalOverlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  document.getElementById('modalOverlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeModal(); });
+
+(function(){
+  var links = Array.prototype.slice.call(document.querySelectorAll('.sidebar .toc-list a[href^="#"]'));
+  var secs = links.map(function(l){ return document.getElementById(l.getAttribute('href').slice(1)); });
+  function sync(){
+    var y = window.scrollY + 130, idx = 0;
+    for(var i=0;i<secs.length;i++){ if(secs[i] && secs[i].offsetTop <= y) idx = i; }
+    links.forEach(function(l,i){ l.classList.toggle('active', i===idx); });
+  }
+  window.addEventListener('scroll', sync, {passive:true});
+  window.addEventListener('resize', sync);
+  sync();
+})();
+
+(function(){
+  var btn = document.getElementById('backToTop');
+  window.addEventListener('scroll', function(){ btn.classList.toggle('visible', window.scrollY > 600); }, {passive:true});
+})();
+</script>
+</body>
+</html>
